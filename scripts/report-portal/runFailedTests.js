@@ -13,12 +13,27 @@ const BATCH_SIZE = 50;
 
 /**
  * Per-launch Cypress environment overrides.
- * NIGHTLY keeps the defaults defined in cypress.config.js (no overrides).
- * The release launches point at their own validation environments, so we
- * override baseUrl / OKAPI_HOST / tenant / login instead of maintaining
- * separate cypress.config.js files.
+ *
+ * NIGHTLY and QG run against the default snapshot environment; their entries below
+ * mirror the defaults in cypress.config.js so every launch is explicit here. The
+ * release launches point at their own validation environments, so they override
+ * baseUrl / OKAPI_HOST / tenant / login instead of maintaining separate config files.
  */
+const SNAPSHOT_DIKU = {
+  baseUrl: 'https://folio-etesting-snapshot-diku.ci.folio.org',
+  env: {
+    baseUrl: 'https://folio-etesting-snapshot-diku.ci.folio.org',
+    OKAPI_HOST: 'https://folio-etesting-snapshot-kong.ci.folio.org',
+    OKAPI_TENANT: 'diku',
+    LOGIN: 'diku_admin',
+    diku_login: 'diku_admin',
+    ecsEnabled: false,
+  },
+};
+
 const LAUNCH_ENV_OVERRIDES = {
+  [LAUNCHES.NIGHTLY]: SNAPSHOT_DIKU,
+  [LAUNCHES.QG]: SNAPSHOT_DIKU,
   [LAUNCHES.RELEASE_ECS]: {
     baseUrl: 'https://folio-etesting-release-validation-consortium.ci.folio.org',
     env: {

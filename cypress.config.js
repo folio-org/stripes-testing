@@ -13,32 +13,7 @@ const testRailPlugin = require('cypress-testrail-simple/src/plugin');
 const httpTasks = require('./cypress/tasks/httpTasks');
 const flakyMarkerHandler = require('./scripts/report-portal/afterSpecHandler');
 
-let activeEnvironment = null; // DO NOT SET ENV HERE, do it in ./environments.js file
-let environments = {};
-try {
-  // eslint-disable-next-line global-require
-  ({ activeEnvironment, environments } = require('./environments'));
-} catch (e) {
-  // cypress/environments.js is gitignored and proceed with defaults
-}
-
 const delay = async (ms) => new Promise((res) => setTimeout(res, ms));
-
-const envOverrides = (activeEnvironment && environments[activeEnvironment]) || {};
-if (activeEnvironment && !environments[activeEnvironment]) {
-  const available = Object.keys(environments).join(', ');
-  throw new Error(
-    `Environment "${activeEnvironment}" not found in cypress/environments.js\nAvailable: ${available}`,
-  );
-}
-
-let cypressLocal = {};
-try {
-  // eslint-disable-next-line global-require, import/extensions
-  cypressLocal = require('./cypress.local.js');
-} catch (e) {
-  // cypress.local.js is gitignored and optional
-}
 
 /**
  * Chains after:spec handlers to ensure both TestRail and flaky marker handlers execute.
@@ -99,9 +74,42 @@ module.exports = defineConfig({
   responseTimeout: 60000,
   downloadsFolder: 'cypress/downloads',
   env: {
-    OKAPI_HOST: 'https://folio-etesting-cypress-kong.ci.folio.org',
+    downloadsFolder: 'cypress/downloads',
+
+    // LOGIN: 'diku_admin',
+    // PASSWORD: 'admin',
+    // OKAPI_HOST: 'https://folio-etesting-cypress-kong.ci.folio.org',
+    // OKAPI_TENANT: 'diku',
+    // diku_login: 'diku_admin',
+    // baseUrl: 'https://folio-etesting-cypress-diku.ci.folio.org',
+
+    LOGIN: 'diku_admin',
+    PASSWORD: 'admin',
+    OKAPI_HOST: 'https://folio-etesting-snapshot-kong.ci.folio.org',
     OKAPI_TENANT: 'diku',
     diku_login: 'diku_admin',
+    baseUrl: 'https://folio-etesting-snapshot-diku.ci.folio.org',
+
+    // LOGIN: 'consortium_admin',
+    // PASSWORD: 'admin',
+    // OKAPI_HOST: 'https://ecs-folio-etesting-snapshot-kong.ci.folio.org',
+    // OKAPI_TENANT: 'consortium',
+    // diku_login: 'consortium_admin',
+    // baseUrl: 'https://folio-etesting-snapshot-diku.ci.folio.org',
+
+    // LOGIN: 'diku_admin',
+    // PASSWORD: 'admin',
+    // OKAPI_HOST: 'https://folio-edev-corsair-kong.ci.folio.org',
+    // OKAPI_TENANT: 'diku',
+    // diku_login: 'diku_admin',
+
+    // LOGIN: 'consortium_admin',
+    // PASSWORD: 'admin',
+    // OKAPI_HOST: 'https://ecs-folio-etesting-cypress-kong.ci.folio.org',
+    // OKAPI_TENANT: 'consortium',
+    // diku_login: 'consortium_admin',
+    // baseUrl: 'https://folio-etesting-cypress-consortium.ci.folio.org',
+
     diku_password: 'admin',
     z3950_login: 'z3950Admin',
     z3950_password: 'password',
@@ -119,10 +127,14 @@ module.exports = defineConfig({
     runAsAdmin: false,
     systemRoleName: 'adminRole',
     newSettings: false,
-    ...(envOverrides.env || {}),
   },
   reporterOptions: reportportalOptions,
   e2e: {
+    baseUrl: 'https://folio-etesting-snapshot-diku.ci.folio.org',
+    // baseUrl: 'https://folio-etesting-snapshot-consortium.ci.folio.org',
+    // baseUrl: 'https://folio-etesting-cypress-consortium.ci.folio.org',
+    // baseUrl: 'https://folio-etesting-cypress-diku.ci.folio.org',
+
     async setupNodeEvents(on, config) {
       on('file:preprocessor', webpackPreprocessor());
 
@@ -208,7 +220,6 @@ module.exports = defineConfig({
 
         // HTTP tasks (axios requests in Node.js context)
         ...httpTasks,
-        ...cypressLocal.tasks?.(on, config),
       });
 
       // keep Cypress running until the ReportPortal reporter is finished. this is a
@@ -243,8 +254,6 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: envOverrides.baseUrl || 'https://folio-etesting-cypress-diku.ci.folio.org',
     testIsolation: false,
   },
-  ...cypressLocal.cypress,
 });

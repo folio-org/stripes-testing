@@ -116,6 +116,13 @@ Environment variables (in the plist `EnvironmentVariables` or the repo `.env`):
 - `CI_API_KEY` — Report Portal API token (used for the flaky detection + history stats).
 - `JIRA_FLAKY_PROJECT` — *(optional)* target project for the tasks (default `FAT`).
 - `JIRA_FLAKY_LINK_TYPE` — *(optional)* issue link type name (default `Relates`).
+- `TEAMS` — *(optional)* comma-separated team names, e.g. `Vega` or `Firebird,Corsair`.
+- `LAUNCHES` — *(optional)* comma-separated launch names (default: all supported).
+- `CONCURRENCY` — *(optional)* max parallel runs (default `4`).
+
+> Precedence for teams / launches / concurrency / epic is **CLI flag > `.env` var >
+> built-in default**, so a teammate can set `TEAMS=Vega` once in `.env` and just run
+> `node scripts/report-portal/runFailedTestsMatrix.js` without repeating `--teams`.
 
 > If `JIRA_EPIC` is ever empty the run logs a loud warning that flaky-test tasks were
 > **not** created/updated, so it's easy to notice.

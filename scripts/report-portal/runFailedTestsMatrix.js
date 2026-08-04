@@ -21,10 +21,13 @@ const { createJiraClient } = require('../helpers/api.client');
  *   node scripts/report-portal/runFailedTestsMatrix.js --sync-only --epic UXPROD-5976
  *
  * Options:
- *   --teams        Comma-separated team names (default: Firebird,Corsair)
- *   --launches     Comma-separated launch names (default: all supported launches)
- *   --concurrency  Max runs in parallel (default: 4)
+ *   --teams        Comma-separated team names (default: TEAMS env or Firebird,Corsair)
+ *   --launches     Comma-separated launch names (default: LAUNCHES env or all supported)
+ *   --concurrency  Max runs in parallel (default: CONCURRENCY env or 4)
  *   --headed       Run Cypress in headed mode
+ *
+ * Precedence for teams / launches / concurrency / epic: CLI flag > env var (.env) > default.
+ * Relevant .env vars: TEAMS, LAUNCHES, CONCURRENCY, JIRA_EPIC.
  *   --sync-only    Skip the Cypress reruns; only collect tests already marked flaky
  *                  in Report Portal and sync them to the epic. Useful to (re)create
  *                  tickets without re-running tests.
@@ -37,6 +40,7 @@ const { createJiraClient } = require('../helpers/api.client');
  *                  the environment / .env file.
  */
 
+const DEFAULT_CONCURRENCY = 4;
 const DEFAULT_TEAMS = ['Firebird', 'Corsair'];
 const DEFAULT_LAUNCHES = [
   LAUNCHES.NIGHTLY,
@@ -49,10 +53,18 @@ const SCRIPT = path.join(__dirname, 'runFailedTests.js');
 
 function parseArgs() {
   const argv = process.argv.slice(2);
+  const parseList = (value) => value
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  // Precedence: CLI flag > env var (.env) > built-in default.
   const args = {
-    teams: DEFAULT_TEAMS,
-    launches: DEFAULT_LAUNCHES,
-    concurrency: 4,
+    teams: process.env.TEAMS ? parseList(process.env.TEAMS) : DEFAULT_TEAMS,
+    launches: process.env.LAUNCHES ? parseList(process.env.LAUNCHES) : DEFAULT_LAUNCHES,
+    concurrency: process.env.CONCURRENCY
+      ? Math.max(1, parseInt(process.env.CONCURRENCY, 10) || 1)
+      : DEFAULT_CONCURRENCY,
     headed: false,
     epic: null,
     syncOnly: false,
@@ -65,15 +77,9 @@ function parseArgs() {
     } else if (arg === '--sync-only') {
       args.syncOnly = true;
     } else if (arg === '--teams' && argv[i + 1]) {
-      args.teams = argv[++i]
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean);
+      args.teams = parseList(argv[++i]);
     } else if (arg === '--launches' && argv[i + 1]) {
-      args.launches = argv[++i]
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean);
+      args.launches = parseList(argv[++i]);
     } else if (arg === '--concurrency' && argv[i + 1]) {
       args.concurrency = Math.max(1, parseInt(argv[++i], 10) || 1);
     } else if (arg === '--epic' && argv[i + 1]) {
