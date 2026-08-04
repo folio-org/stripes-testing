@@ -12,6 +12,47 @@ const WINDOWS_MAX_SPEC_LENGTH = 7000;
 const BATCH_SIZE = 50;
 
 /**
+ * Per-launch Cypress environment overrides.
+ * NIGHTLY keeps the defaults defined in cypress.config.js (no overrides).
+ * The release launches point at their own validation environments, so we
+ * override baseUrl / OKAPI_HOST / tenant / login instead of maintaining
+ * separate cypress.config.js files.
+ */
+const LAUNCH_ENV_OVERRIDES = {
+  [LAUNCHES.RELEASE_ECS]: {
+    baseUrl: 'https://folio-etesting-release-validation-consortium.ci.folio.org',
+    env: {
+      baseUrl: 'https://folio-etesting-release-validation-consortium.ci.folio.org',
+      OKAPI_HOST: 'https://ecs-folio-etesting-release-validation-kong.ci.folio.org',
+      OKAPI_TENANT: 'consortium',
+      LOGIN: 'consortium_admin',
+      diku_login: 'consortium_admin',
+      ecsEnabled: true,
+    },
+  },
+  [LAUNCHES.RELEASE_NON_ECS]: {
+    baseUrl: 'https://folio-etesting-release-validation-diku.ci.folio.org',
+    env: {
+      baseUrl: 'https://folio-etesting-release-validation-diku.ci.folio.org',
+      OKAPI_HOST: 'https://folio-etesting-release-validation-kong.ci.folio.org',
+      OKAPI_TENANT: 'diku',
+      LOGIN: 'diku_admin',
+      diku_login: 'diku_admin',
+      ecsEnabled: false,
+    },
+  },
+};
+
+/**
+ * Build Cypress config/env overrides for a given launch.
+ * @param {string} launchName - Report Portal launch name
+ * @returns {{baseUrl?: string, env?: Object}} Overrides (empty for NIGHTLY / QG)
+ */
+function getLaunchEnvOverrides(launchName) {
+  return LAUNCH_ENV_OVERRIDES[launchName] || {};
+}
+
+/**
  * Checks if batching is needed based on platform and total spec path length
  * @param {string[]} testPaths - Array of test paths
  * @returns {boolean} True if batching is needed
@@ -38,9 +79,20 @@ async function runCypressSpecs(specs, options) {
     headed: options.headed || false,
   };
 
-  if (options.itemsFilePath) {
+  const overrides = options.launchOverrides || {};
+
+  // Override baseUrl at the top-level config so Cypress uses the launch's env.
+  if (overrides.baseUrl) {
+    cypressOptions.config = {
+      ...(cypressOptions.config || {}),
+      baseUrl: overrides.baseUrl,
+    };
+  }
+
+  if (options.itemsFilePath || overrides.env) {
     cypressOptions.env = {
-      itemsFilePath: options.itemsFilePath,
+      ...(overrides.env || {}),
+      ...(options.itemsFilePath && { itemsFilePath: options.itemsFilePath }),
     };
   }
 
@@ -134,12 +186,27 @@ function parseArgs() {
 }
 
 /**
+ * Validate that the provided launch name is one of the supported launches.
+ * @param {string} launchName - Launch name to validate
+ * @throws {Error} If the launch name is not supported
+ */
+function validateLaunchName(launchName) {
+  const supportedLaunches = Object.values(LAUNCHES);
+  if (!supportedLaunches.includes(launchName)) {
+    throw new Error(
+      `Unsupported --launchName "${launchName}". Supported launches: ${supportedLaunches.join(', ')}`,
+    );
+  }
+}
+
+/**
  * Distribute test paths across parallel workers using round-robin
  * @param {string[]} testPaths - Array of test paths
  * @param {number} numberOfWorkers - Number of parallel workers
+ * @param {{baseUrl?: string, env?: Object}} [launchOverrides] - Per-launch Cypress overrides
  * @returns {string[]} Array of worker commands
  */
-function distributeTestsToWorkers(testPaths, numberOfWorkers) {
+function distributeTestsToWorkers(testPaths, numberOfWorkers, launchOverrides = {}) {
   if (numberOfWorkers <= 1 || testPaths.length === 0) {
     return [];
   }
@@ -151,11 +218,19 @@ function distributeTestsToWorkers(testPaths, numberOfWorkers) {
     workers[index % numberOfWorkers].push(testPath);
   });
 
+  // Build CLI flags for launch-specific overrides (baseUrl + env)
+  const configFlag = launchOverrides.baseUrl ? ` --config baseUrl=${launchOverrides.baseUrl}` : '';
+  const envFlag = launchOverrides.env
+    ? ` --env ${Object.entries(launchOverrides.env)
+      .map(([key, value]) => `${key}=${value}`)
+      .join(',')}`
+    : '';
+
   // Generate commands for each worker
   return workers
     .filter((specs) => specs.length > 0)
     .map((specs) => {
-      return `npx cypress run --spec ${specs.join(',')} --browser chrome`;
+      return `npx cypress run --spec ${specs.join(',')} --browser chrome${configFlag}${envFlag}`;
     });
 }
 
@@ -168,7 +243,14 @@ async function main() {
   try {
     const { launchName, team, headed, threads } = parseArgs();
 
+    validateLaunchName(launchName);
+
+    const launchOverrides = getLaunchEnvOverrides(launchName);
+
     console.log(`Launch: ${launchName}`);
+    if (launchOverrides.baseUrl) {
+      console.log(`Base URL: ${launchOverrides.baseUrl}`);
+    }
     console.log(`Team: ${team}`);
     console.log(`Headed: ${headed}`);
     console.log(`Threads: ${threads}`);
@@ -182,7 +264,7 @@ async function main() {
     // If parallel execution requested, generate worker batches and exit
     if (threads > 1) {
       console.log(`Generating ${threads} parallel worker batches...\n`);
-      const workerCommands = distributeTestsToWorkers(uniqTestPaths, threads);
+      const workerCommands = distributeTestsToWorkers(uniqTestPaths, threads, launchOverrides);
 
       const workersData = {
         workers: workerCommands,
@@ -193,7 +275,9 @@ async function main() {
 
       fs.writeFileSync('failedTestsWorkers.json', JSON.stringify(workersData, null, 2));
       console.log(`✓ Generated failedTestsWorkers.json with ${workerCommands.length} workers`);
-      console.log(`✓ Tests per worker: ${Math.ceil(uniqTestPaths.length / workerCommands.length)}\n`);
+      console.log(
+        `✓ Tests per worker: ${Math.ceil(uniqTestPaths.length / workerCommands.length)}\n`,
+      );
 
       // Count flaky tests (tests marked as "To Investigate")
       fs.writeFileSync('flaky-recheck-count.txt', String(itemsToInvestigate.length));
@@ -212,6 +296,7 @@ async function main() {
     await runCypressTests(uniqTestPaths, {
       headed,
       itemsFilePath: tempFile,
+      launchOverrides,
     });
 
     // Clean up temp file
@@ -236,6 +321,17 @@ async function main() {
     }
 
     fs.writeFileSync('flaky-recheck-count.txt', String(totalMarked));
+
+    // Machine-readable summary line (consumed by runFailedTestsMatrix.js)
+    console.log(
+      `RESULT_SUMMARY ${JSON.stringify({
+        launchName,
+        team: team || 'all',
+        failed: itemsToInvestigate.length,
+        marked: totalMarked,
+        stillFailing: failedItems.length,
+      })}`,
+    );
 
     process.exit(0);
   } catch (error) {

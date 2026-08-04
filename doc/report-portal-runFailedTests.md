@@ -2,15 +2,30 @@
 
 ## Overview
 
-The `runFailedTests.js` script fetches failed tests from the latest Report Portal launch (`runNightlyCypressEurekaTests` or `folioQualityGates`), reruns them using the Cypress Module API, and marks any tests that pass on rerun as flaky in Report Portal **immediately after each spec file completes** (not after all tests finish).
+The `runFailedTests.js` script fetches failed tests from the latest Report Portal launch (`runNightlyCypressEurekaTests`, `folioQualityGates`, `runNightlyEurekaReleaseTests-non-ecs`, or `runNightlyEurekaReleaseTests-ecs`), reruns them using the Cypress Module API, and marks any tests that pass on rerun as flaky in Report Portal **immediately after each spec file completes** (not after all tests finish).
 
 ## Arguments
 
 Parse arguments from the user's request:
 
-- `--launchName`: Name of the Report Portal launch (default: `runNightlyCypressEurekaTests`)
+- `--launchName`: Name of the Report Portal launch (default: `runNightlyCypressEurekaTests`). Supported values:
+  - `runNightlyCypressEurekaTests`
+  - `folioQualityGates`
+  - `runNightlyEurekaReleaseTests-non-ecs`
+  - `runNightlyEurekaReleaseTests-ecs`
 - `--team`: Team name (e.g., Volaris, Firebird). Optional - if not specified, all teams are considered
 - `--headed`: Run Cypress in headed mode (boolean flag, default: false)
+
+### Per-launch environments
+
+The script overrides Cypress `baseUrl` / `OKAPI_HOST` / tenant / login at runtime based on the launch, so **no separate `cypress.config.js` files are needed**:
+
+| Launch | Base URL | Tenant | ECS |
+| --- | --- | --- | --- |
+| `runNightlyCypressEurekaTests` | default from `cypress.config.js` | diku | no |
+| `folioQualityGates` | default from `cypress.config.js` | diku | no |
+| `runNightlyEurekaReleaseTests-non-ecs` | `https://folio-etesting-release-validation-diku.ci.folio.org` | diku | no |
+| `runNightlyEurekaReleaseTests-ecs` | `https://folio-etesting-release-validation-consortium.ci.folio.org` | consortium | yes |
 
 ## Execution
 
@@ -23,6 +38,8 @@ node scripts/report-portal/runFailedTests.js [arguments]
 Examples:
 - Default (nightly tests): `node scripts/report-portal/runFailedTests.js`
 - With team: `node scripts/report-portal/runFailedTests.js --launchName runNightlyCypressEurekaTests --team Volaris`
+- Release non-ECS: `node scripts/report-portal/runFailedTests.js --launchName runNightlyEurekaReleaseTests-non-ecs`
+- Release ECS: `node scripts/report-portal/runFailedTests.js --launchName runNightlyEurekaReleaseTests-ecs`
 - Headed mode: `node scripts/report-portal/runFailedTests.js --launchName folioQualityGates --team Firebird --headed`
 
 ## Required Environment Variables

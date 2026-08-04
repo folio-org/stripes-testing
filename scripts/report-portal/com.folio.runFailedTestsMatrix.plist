@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  launchd job: run the Report Portal failed-tests matrix once per day.
+
+  Install (see scripts/report-portal/README-dailyMatrix.md for full steps):
+    cp scripts/report-portal/com.folio.runFailedTestsMatrix.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.folio.runFailedTestsMatrix.plist
+
+  Change the time by editing StartCalendarInterval (Hour/Minute, 24h clock).
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.folio.runFailedTestsMatrix</string>
+
+    <!-- The script to run -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>/Users/vadymshchekotilin/IdeaProjects/epm/stripes-testing/scripts/report-portal/dailyMatrix.sh</string>
+    </array>
+
+    <!-- Run every day at 12:00 midday (change Hour/Minute as needed, 24h clock) -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>12</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- If the Mac was asleep/off at the scheduled time, run as soon as possible after wake -->
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/vadymshchekotilin/IdeaProjects/epm/stripes-testing</string>
+
+    <!-- launchd-level stdout/stderr (the script also writes its own timestamped logs) -->
+    <key>StandardOutPath</key>
+    <string>/Users/vadymshchekotilin/IdeaProjects/epm/stripes-testing/logs/reports/launchd.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/vadymshchekotilin/IdeaProjects/epm/stripes-testing/logs/reports/launchd.err.log</string>
+
+    <!-- Give the job a login-like environment -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+
+        <!-- Epic under which one flaky-test task per case is created/updated after each run -->
+        <key>JIRA_EPIC</key>
+        <string>UXPROD-5976</string>
+
+        <!-- Base64 of "email:api_token" for Jira Cloud. Required to post the comment.
+             Prefer keeping the real value in the repo .env (JIRA_API_KEY=...) instead
+             of committing it here. -->
+        <key>JIRA_API_KEY</key>
+        <string></string>
+    </dict>
+</dict>
+</plist>
+
