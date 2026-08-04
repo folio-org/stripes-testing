@@ -47,7 +47,7 @@ describe('Inventory', () => {
   });
 
   afterEach('delete test data', () => {
-    cy.getAdminToken();
+    cy.getAdminToken(false);
     instanceIds.forEach((instanceId) => {
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId);
     });
