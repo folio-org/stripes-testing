@@ -33,9 +33,7 @@ describe('Lists', () => {
           waiter: Lists.waitLoading,
         });
 
-        // Step 2: Check the pagination - both Previous and Next buttons are inactive
-        // Step 3: Hover over the "Next" button - cursor remains arrow and button is inactive
-        // Step 4: Hover over the "Previous" button - cursor remains arrow and button is inactive
+        // Step 2-4: Check the pagination - both Previous and Next buttons are inactive
         Lists.verifyLandingPagePaginationButtonsState({ previous: true, next: true });
       },
     );

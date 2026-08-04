@@ -3,22 +3,21 @@ import Capabilities from '../../../../support/dictionary/capabilities';
 import { Lists } from '../../../../support/fragments/lists/lists';
 import Users from '../../../../support/fragments/users/users';
 
+let userData1 = {};
+let userData2 = {};
+let entityTypeWithEmptyOwner;
+let invalidUuidEntityType;
+const capabSetsToAssign = [CapabilitySets.moduleListsManage];
+const capabsToAssign = [
+  Capabilities.fqmEntityTypesCustomCollectionCreate,
+  Capabilities.fqmEntityTypesCustomItemView,
+  Capabilities.fqmEntityTypesCustomItemEdit,
+  Capabilities.fqmEntityTypesCustomItemDelete,
+];
+
 describe('Lists', () => {
   describe('Query Builder', () => {
     describe('Custom Entity Types', () => {
-      let userData1 = {};
-      let userData2 = {};
-      let entityTypeWithEmptyOwner;
-      let invalidUuidEntityType;
-
-      const capabSetsToAssign = [CapabilitySets.moduleListsManage];
-      const capabsToAssign = [
-        Capabilities.fqmEntityTypesCustomCollectionCreate,
-        Capabilities.fqmEntityTypesCustomItemView,
-        Capabilities.fqmEntityTypesCustomItemEdit,
-        Capabilities.fqmEntityTypesCustomItemDelete,
-      ];
-
       before('Create test data', () => {
         cy.createTempUser([]).then((userProperties) => {
           userData1 = userProperties;
