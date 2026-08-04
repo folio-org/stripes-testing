@@ -286,7 +286,7 @@ export default {
       });
   },
 
-  createViaUiIncomplete: (userData) => {
+  createViaUiIncomplete: (userData, { submit = true } = {}) => {
     return cy
       .do([
         Dropdown('Actions').find(Button()).click(),
@@ -302,8 +302,10 @@ export default {
         Select({ id: 'type' }).choose(userData.userType ? userData.userType : 'Staff'),
       ])
       .then(() => {
-        cy.wait(10000);
-        cy.do(Button({ id: 'clickable-save' }).click());
+        if (submit) {
+          cy.wait(10000);
+          cy.do(Button({ id: 'clickable-save' }).click());
+        }
       });
   },
 
@@ -438,7 +440,7 @@ export default {
   saveCreatedUser() {
     cy.intercept('POST', /\/users|\/users-keycloak\/users/).as('createUser');
     cy.do(Button({ id: 'clickable-save' }).click());
-    cy.wait('@createUser', { timeout: 130000 });
+    return cy.wait('@createUser', { timeout: 130000 });
   },
 
   checkZeroSearchResultsHeader: () => {

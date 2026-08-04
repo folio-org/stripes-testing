@@ -96,6 +96,7 @@ describe('Eureka', () => {
             expect(responseC.status).to.eq(201);
 
             cy.login(userA.username, testData.password);
+            cy.wait(3000);
             cy.login(userC.username, testData.password);
           });
         });
