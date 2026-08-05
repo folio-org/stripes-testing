@@ -158,6 +158,7 @@ describe('Bulk-edit', () => {
             BulkEditActions.startBulkDeleteButtonExists();
 
             // Step 5: Download matched records (CSV)
+            BulkEditActions.openActions();
             BulkEditActions.downloadMatchedResults();
             BulkEditFiles.verifyValueInRowByUUID(
               fileNames.matchedRecordsCSV,
@@ -186,6 +187,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 user');
 
             // Step 8: Reopen "Start bulk delete" and click "Delete"
+            BulkEditActions.openActions();
             BulkEditActions.clickStartBulkDeleteButton();
             BulkEditActions.verifyDeleteUserRecordsModalButtons();
             BulkEditActions.clickDeleteButtonInDeleteUserRecordsModal();
