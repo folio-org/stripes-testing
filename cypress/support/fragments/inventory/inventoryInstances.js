@@ -45,7 +45,7 @@ const inventoriesList = MultiColumnList({ id: or('list-inventory', 'list-plugin-
 const resultsPaneContent = PaneContent({ id: 'pane-results-content' });
 const actionsButton = rootSection.find(Button('Actions'));
 const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-select' }).find(
-  Checkbox({ ariaLabel: 'Select instance' }),
+  Checkbox({ ariaLabel: including('Select instance') }),
 );
 const instanceCheckbox = (idx) => inventoriesList
   .find(MultiColumnListRow({ index: idx }))
