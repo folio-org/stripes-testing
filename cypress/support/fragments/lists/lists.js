@@ -64,6 +64,7 @@ const resetAllButton = filterPane.find(Button('Reset all'));
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
 const editQueryButton = Button('Edit query');
 const resultViewerTable = MultiColumnList({ id: 'results-viewer-table' });
+const listsTable = MultiColumnList();
 
 const activeCheckbox = Checkbox({ id: 'clickable-filter-status-active' });
 const inactiveCheckbox = Checkbox({ id: 'clickable-filter-status-inactive' });
@@ -667,6 +668,95 @@ const UI = {
     cy.expect(resultViewerTable.find(MultiColumnListHeader(columnName)).exists());
   },
 
+  verifyLandingPageTableColumns(expectedColumns) {
+    cy.get('[role=columnheader]').then((headers) => {
+      const columnNames = [...headers].map((header) => header.innerText.trim());
+      expect(columnNames).to.include.members(expectedColumns);
+    });
+  },
+
+  verifyListDetailsInRecordsTable(expectedDetails) {
+    cy.then(() => MultiColumnListCell({ content: expectedDetails.name }).row()).then((index) => {
+      const targetRow = MultiColumnListRow({ indexRow: `row-${index}` });
+
+      if (expectedDetails.name) {
+        cy.expect(
+          targetRow
+            .find(MultiColumnListCell({ column: 'List name', content: expectedDetails.name }))
+            .exists(),
+        );
+      }
+      if (expectedDetails.recordType) {
+        cy.expect(
+          targetRow
+            .find(
+              MultiColumnListCell({ column: 'Record type', content: expectedDetails.recordType }),
+            )
+            .exists(),
+        );
+      }
+      if (expectedDetails.records !== undefined) {
+        cy.expect(
+          targetRow
+            .find(MultiColumnListCell({ column: 'Records', content: expectedDetails.records }))
+            .exists(),
+        );
+      }
+      if (expectedDetails.status) {
+        cy.expect(
+          targetRow
+            .find(MultiColumnListCell({ column: 'Status', content: expectedDetails.status }))
+            .exists(),
+        );
+      }
+      if (expectedDetails.source) {
+        cy.expect(
+          targetRow
+            .find(MultiColumnListCell({ column: 'Source', content: expectedDetails.source }))
+            .exists(),
+        );
+      }
+      if (expectedDetails.lastUpdated === '') {
+        cy.do(targetRow.find(MultiColumnListCell({ column: 'Last updated', content: '' })));
+      } else if (expectedDetails.lastUpdated) {
+        cy.expect(
+          targetRow
+            .find(
+              MultiColumnListCell({
+                column: 'Last updated',
+                content: expectedDetails.lastUpdated,
+              }),
+            )
+            .exists(),
+        );
+      }
+      if (expectedDetails.visibility) {
+        cy.expect(
+          targetRow
+            .find(
+              MultiColumnListCell({ column: 'Visibility', content: expectedDetails.visibility }),
+            )
+            .exists(),
+        );
+      }
+    });
+  },
+
+  verifyLandingPagePaginationButtonsState({ previous, next }) {
+    cy.expect(listsTable.find(Button('Previous')).has({ disabled: previous }));
+    cy.expect(listsTable.find(Button('Next')).has({ disabled: next }));
+  },
+
+  clickLandingPageNextButton() {
+    cy.do(listsTable.find(Button('Next')).click());
+    cy.wait(1000);
+  },
+
+  clickLandingPagePreviousButton() {
+    cy.do(listsTable.find(Button('Previous')).click());
+    cy.wait(1000);
+  },
+
   verifyResultCellContains(rowIndex, columnName, content) {
     this.verifyResultColumnDisplayed(columnName);
     cy.expect(
@@ -858,6 +948,10 @@ const UI = {
   selectRecordTypeFilter(type) {
     cy.do(filterPane.find(MultiSelect()).choose(type));
     cy.wait(1000);
+  },
+
+  verifyRecordTypeSelectedinFilter(type) {
+    cy.expect(filterPane.find(MultiSelect()).has({ selected: type }));
   },
 
   verifyRecordTypeFilterDropdownContainsOptions(options) {
