@@ -13,7 +13,7 @@ describe('fse-serials - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195636 - verify that serials page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195636 - verify that serials page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'serials', 'serials-management', 'TC195636'] },
     () => {
       Serials.waitLoading();

@@ -13,8 +13,8 @@ describe('fse-erm-usage - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195310 - verify that erm-usage module is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'folio_erm-usage', 'erm-usage'] },
+    `TC195310 - verify that erm-usage module is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'folio_erm-usage', 'erm-usage', 'TC195310'] },
     () => {
       ErmUsage.waitLoading();
     },

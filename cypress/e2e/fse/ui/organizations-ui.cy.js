@@ -20,7 +20,7 @@ describe('fse-organizations - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195376 - verify that organizations page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195376 - verify that organizations page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'organizations', 'TC195376'] },
     () => {
       Organizations.waitLoading();
@@ -56,11 +56,11 @@ describe('fse-organizations - UI (data manipulation)', () => {
   });
 
   it(
-    `TC195623 - create organization and assign interfase for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195623 - create organization and assign interfase for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['nonProd', 'fse', 'ui', 'organizations', 'fse-user-journey', 'TC195623'] },
     () => {
       // create new organization via UI
-      Organizations.createOrganizationViaUi(organization);
+      Organizations.createOrganization(organization);
       Organizations.checkOrganizationInfo(organization);
       // assign an interface
       Organizations.editOrganization();
@@ -92,12 +92,12 @@ describe('fse-organizations - UI (data manipulation)', () => {
   });
 
   it(
-    `TC195673 - create organization, add organization to agreement for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195673 - create organization, add organization to agreement for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['nonProd', 'fse', 'ui', 'organizations', 'fse-user-journey', 'TC195673'] },
     () => {
       // create new organization via UI
       organization.name += 'FSE_TEST_TC195673';
-      Organizations.createOrganizationViaUi(organization);
+      Organizations.createOrganization(organization);
       Organizations.checkOrganizationInfo(organization);
       // add organization to an agreement
       TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.AGREEMENTS);

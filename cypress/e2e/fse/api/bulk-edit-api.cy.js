@@ -7,7 +7,7 @@ describe('fse-bulk-edit', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `TC195813 - Get bulk edit logs user for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195813 - Get bulk edit logs user for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'api', 'bulk-edit', 'loc', 'TC195813'] },
     () => {
       cy.getBulkEditLogsUsers().then((response) => {

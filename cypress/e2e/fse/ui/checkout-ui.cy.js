@@ -44,8 +44,8 @@ describe('fse-checkout - UI (data manipulation)', () => {
   });
 
   it(
-    `TC195283 - verify that checkout module is displayed for ${Cypress.env('OKAPI_HOST')}`,
-    { tags: ['fse', 'ui', 'checkout', 'nonProd', 'fse-user-journey'] },
+    `TC195283 - verify that checkout module is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'checkout', 'nonProd', 'fse-user-journey', 'TC195283'] },
     () => {
       Checkout.waitLoading();
     },
