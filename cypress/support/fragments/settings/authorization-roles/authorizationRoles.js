@@ -412,12 +412,12 @@ export default {
     cy.do([targetActionsButton.click(), editButton.click()]);
     cy.expect([
       editRolePane.exists(),
-      editRolePane.find(Spinner()).absent(),
       capabilitiesAccordion.has({ open: true }),
       capabilitySetsAccordion.exists(),
       saveButton.exists(),
       unassignAllCapabilitiesButton.exists(),
       selectApplicationButton.exists(),
+      editRolePane.find(Spinner()).absent(),
     ]);
   },
 
