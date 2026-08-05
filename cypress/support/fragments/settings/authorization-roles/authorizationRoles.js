@@ -119,6 +119,8 @@ const createNameErrorText = including('Role could not be created: Failed to crea
 const successDeleteText = 'Role has been deleted successfully';
 const typeKeyValue = KeyValue('Type');
 const generalInfoDateFormat = 'M/D/YYYY h:mm A';
+const continueButton = Button('Continue');
+
 const confirmShareModalText = (roleName) => `Are you sure you want to share ${roleName} with ALL members?  Please note: Sharing a role with many capabilities or capability sets can take several minutes to complete, especially in systems with a large number of members. Avoid refreshing or closing this page during the process.`;
 const shareNameErrorText = (tenantNames) => `Role could not be shared: Name is already in use at one or more member libraries - ${tenantNames.join(', ')}.`;
 const saveNameErrorText = (tenantNames) => `Role could not be updated: Name is already in use at one or more member libraries - ${tenantNames.join(', ')}.`;
@@ -139,6 +141,8 @@ const expectedCapabilityTableActions = {
   ],
   [CAPABILITY_TYPES.PROCEDURAL]: [CAPABILITY_ACTIONS.EXECUTE],
 };
+
+const unselectSetConfirmModal = Modal({ id: 'unselect-capability-set-confirmation-modal' });
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
@@ -247,11 +251,15 @@ export default {
     this.verifyResourceOrAppPresent(notExpectedAppNamesRegexp, 0, false);
   },
 
-  selectCapabilitySetCheckbox: ({ table, resource, action }, isSelected = true) => {
+  selectCapabilitySetCheckbox: (
+    { table, resource, action, type },
+    { isSelected = true, confirmModal = false, dismissModal = false } = {},
+  ) => {
+    const targetTable = type && !table ? type : table;
     let targetRowIndex;
     cy.do(
       capabilitySetsAccordion
-        .find(capabilityTables[table])
+        .find(capabilityTables[targetTable])
         .find(MultiColumnListCell(resource, { column: 'Resource' }))
         .perform((el) => {
           targetRowIndex = +el.parentElement.getAttribute('data-row-inner');
@@ -259,12 +267,22 @@ export default {
     );
     cy.then(() => {
       const targetCheckbox = capabilitySetsAccordion
-        .find(capabilityTables[table])
+        .find(capabilityTables[targetTable])
         .find(MultiColumnListRow({ index: targetRowIndex, isContainer: false }))
         .find(MultiColumnListCell({ column: including(action) }))
         .find(Checkbox({ isWrapper: false }));
       cy.do(targetCheckbox.click());
-      cy.expect(targetCheckbox.has({ checked: isSelected }));
+      if (!isSelected && confirmModal) {
+        cy.expect(unselectSetConfirmModal.exists());
+        cy.do(continueButton.click());
+        cy.expect(unselectSetConfirmModal.absent());
+        cy.expect(targetCheckbox.has({ checked: isSelected }));
+      } else if (!isSelected && dismissModal) {
+        cy.expect(unselectSetConfirmModal.exists());
+        cy.do(cancelButton.click());
+        cy.expect(unselectSetConfirmModal.absent());
+        cy.expect(targetCheckbox.has({ checked: !isSelected }));
+      } else cy.expect(targetCheckbox.has({ checked: isSelected }));
       // wait for capabilities selection to be updated
       cy.wait(1000);
     });
@@ -358,17 +376,19 @@ export default {
     cy.expect([Spinner().absent(), capabilitySetsAccordion.find(MultiColumnListRow()).absent()]);
   },
 
-  verifyCapabilitySetCheckboxEnabled: ({ table, resource, action }, isEnabled = true) => {
+  verifyCapabilitySetCheckboxEnabled: ({ table, resource, action, type }, isEnabled = true) => {
+    const targetTable = type && !table ? type : table;
     const targetCheckbox = capabilitySetsAccordion
-      .find(capabilityTables[table])
+      .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     if (isEnabled) cy.expect(targetCheckbox.has({ disabled: !isEnabled }));
     else cy.expect(targetCheckbox.has({ checked: true, labelText: 'Read-only' }));
   },
 
-  verifyCapabilitySetCheckboxChecked: ({ table, resource, action }, isSelected = true) => {
+  verifyCapabilitySetCheckboxChecked: ({ table, resource, action, type }, isSelected = true) => {
+    const targetTable = type && !table ? type : table;
     const targetCheckbox = capabilitySetsAccordion
-      .find(capabilityTables[table])
+      .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     cy.expect(targetCheckbox.has({ checked: isSelected }));
   },
