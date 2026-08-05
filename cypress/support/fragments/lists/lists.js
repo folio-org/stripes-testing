@@ -54,7 +54,7 @@ const exportList = Button('Export all columns (CSV)');
 const exportListVisibleColumns = Button('Export selected columns (CSV)');
 const testQuery = Button('Test query');
 const runQueryAndSave = Button('Run query & save');
-const filterPane = Pane('Filter');
+const filterPane = Pane('Search & filter');
 const listsPane = Pane('Lists');
 const newLink = Link('New');
 const statusAccordion = filterPane.find(Accordion('Status'));
@@ -76,6 +76,7 @@ const cancelConfirmationModal = Modal('Are you sure?');
 const buildQueryModal = Modal('Build query');
 
 const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
+const linkSelector = 'a[data-test-text-link="true"]';
 
 const constants = {
   cannedListInactivePatronsWithOpenLoans: 'Inactive patrons with open loans',
@@ -93,6 +94,7 @@ const constants = {
     usersWithFeeFineLoans: 'Users with fees/fines, loans',
     usersWithManualBlocks: 'Users with manual blocks',
     lostItemsRequiringActualCost: 'Lost items requiring actual cost',
+    loans: 'Loans',
   },
   userColumns: [
     'User — Active',
@@ -175,6 +177,22 @@ const UI = {
   expandListInformationAccordion() {
     cy.do(listInformationAccording.open());
     cy.wait(1000);
+  },
+
+  verifyListInformationAccordionIsExpanded(isExpanded = true) {
+    cy.expect(listInformationAccording.has({ open: isExpanded }));
+  },
+
+  clickOnCollapseAllButton() {
+    cy.get(linkSelector).contains('Collapse all').click();
+  },
+
+  verifyCollapseAllButtonAbsent() {
+    cy.get(linkSelector).contains('Collapse all').should('not.exist');
+  },
+
+  clickOnExpandAllButton() {
+    cy.get(linkSelector).contains('Expand all').click();
   },
 
   clickOnQueryAccordion() {
@@ -291,6 +309,14 @@ const UI = {
     cy.wait(1000);
   },
 
+  verifyListsPaneTitle(title) {
+    cy.expect(Pane({ title }).exists());
+  },
+
+  verifyListsPaneSubTitle(subtitle) {
+    cy.expect(Pane({ subtitle }).exists());
+  },
+
   verifyDuplicateListButtonIsActive() {
     cy.expect(duplicateList.exists());
     cy.expect(duplicateList.has({ disabled: false }));
@@ -391,6 +417,10 @@ const UI = {
     cy.expect(cancelConfirmationModal.find(HTML('There are unsaved changes')).exists());
     cy.expect(cancelConfirmationModal.find(Button('Close without saving')).exists());
     cy.expect(cancelConfirmationModal.find(Button('Keep editing')).exists());
+  },
+
+  verifyCancellationModalAbsent() {
+    cy.expect(cancelConfirmationModal.absent());
   },
 
   closeWithoutSaving() {
@@ -624,13 +654,17 @@ const UI = {
     return cy.get('*[class^="mclRowContainer"]').contains(listName).should('be.visible');
   },
 
-  verifyRecordsNumber(number) {
-    cy.get('[class^=paneHeader-]').contains(`${number} records found`).should('be.visible');
+  verifyRecordsNumber(number, sVerifyPaneHeader = true) {
+    if (sVerifyPaneHeader) {
+      cy.get('[class^=paneHeader-]').contains(`${number} records found`).should('be.visible');
+    }
     cy.get('#results-viewer-accordion').contains(`${number} records found`).should('be.visible');
   },
 
-  verifySingleRecordNumber() {
-    cy.get('[class^=paneHeader-]').contains('1 record found').should('be.visible');
+  verifySingleRecordNumber(isVerifyPaneHeader = true) {
+    if (isVerifyPaneHeader) {
+      cy.get('[class^=paneHeader-]').contains('1 record found').should('be.visible');
+    }
     cy.get('#results-viewer-accordion').contains('1 record found').should('be.visible');
   },
 
