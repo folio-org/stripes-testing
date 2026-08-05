@@ -70,7 +70,7 @@ describe('Inventory', () => {
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                 testData.collegeTenant.holdings.sourceId = folioSource.id;
               });
-              cy.getLoanTypes({ limit: 1 }).then((res) => {
+              cy.getLoanTypes({ limit: 1, query: 'source==folio' }).then((res) => {
                 testData.collegeTenant.item.loanTypeId = res[0].id;
               });
               cy.getBookMaterialType().then((res) => {
@@ -126,7 +126,7 @@ describe('Inventory', () => {
             InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
               testData.universityTenant.firstHoldings.sourceId = folioSource.id;
             });
-            cy.getLoanTypes({ limit: 1 }).then((res) => {
+            cy.getLoanTypes({ limit: 1, query: 'source==folio' }).then((res) => {
               testData.universityTenant.item.loanTypeId = res[0].id;
             });
             cy.getBookMaterialType().then((res) => {

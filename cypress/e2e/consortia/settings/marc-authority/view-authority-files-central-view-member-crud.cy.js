@@ -64,7 +64,7 @@ describe('MARC', () => {
 
         after('Delete test data', () => {
           cy.resetTenant();
-          cy.getAdminToken();
+          cy.getAdminToken(false);
           cy.deleteAuthoritySourceFileViaAPI(testData.sourceFileId);
           Users.deleteViaApi(testUser.userId);
         });
@@ -74,6 +74,10 @@ describe('MARC', () => {
           { tags: ['extendedPathECS', 'spitfire', 'C430208'] },
           () => {
             cy.resetTenant();
+            // Force increased limit for UI to load all files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
             cy.login(testUser.username, testUser.password, {
               path: TopMenu.settingsAuthorityFilesPath,
               waiter: ManageAuthorityFiles.waitContentLoading,

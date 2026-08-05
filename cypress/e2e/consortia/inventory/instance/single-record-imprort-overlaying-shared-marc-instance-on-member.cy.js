@@ -55,6 +55,7 @@ describe('Inventory', () => {
             Permissions.uiInventorySingleRecordImport.gui,
             Permissions.uiInventoryViewCreateEditInstances.gui,
             Permissions.settingsDataImportView.gui,
+            Permissions.copycatProfilesCollectionGet.gui,
           ]);
           cy.resetTenant();
 
@@ -82,8 +83,9 @@ describe('Inventory', () => {
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
-          cy.getAdminToken();
           InventoryInstance.startOverlaySourceBibRecord();
+          cy.getToken(testData.user.username, testData.user.password);
+          cy.setTenant(Affiliations.College);
           InventoryInstance.overlayWithOclc(testData.oclcNumber);
           InventoryInstance.waitLoading();
 

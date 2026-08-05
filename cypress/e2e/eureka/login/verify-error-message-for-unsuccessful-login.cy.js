@@ -13,7 +13,6 @@ describe('Eureka', () => {
     };
 
     before('Create users, data', () => {
-      cy.getAdminToken();
       cy.createTempUser([]).then((userProperties) => {
         testData.userA = userProperties;
       });
@@ -26,6 +25,8 @@ describe('Eureka', () => {
         });
       });
       cy.then(() => {
+        cy.logoutViaApi();
+        cy.clearCookies({ domain: null });
         cy.visit('/');
         cy.selectTenantIfDropdown();
       });

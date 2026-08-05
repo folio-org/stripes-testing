@@ -173,6 +173,7 @@ describe('Data Import', () => {
       });
 
       afterEach('Delete test data', () => {
+        cy.getAdminToken();
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
         cy.getAdminToken().then(() => {

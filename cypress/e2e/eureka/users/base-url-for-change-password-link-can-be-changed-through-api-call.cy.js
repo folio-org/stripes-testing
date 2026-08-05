@@ -15,8 +15,8 @@ describe('Eureka', () => {
       CapabilitySets.uiUsersResetPassword,
       CapabilitySets.baseUrlManage,
     ];
+    const defaultBaseUrl = Cypress.config().baseUrl;
 
-    let defaultBaseUrl;
     let tempUser;
     let userA;
 
@@ -31,9 +31,10 @@ describe('Eureka', () => {
       'C1322906 Base url for "change password" link can be changed through api call (eureka)',
       { tags: ['criticalPath', 'eureka', 'C1322906'] },
       () => {
+        cy.getAdminToken();
+        cy.setFrontEndBaseUrlViaApi(defaultBaseUrl);
         // Preconditions moved to the test body to ensure after block always fires
         cy.then(() => {
-          cy.getAdminToken();
           cy.createTempUser([]).then((createdUserProperties) => {
             tempUser = createdUserProperties;
             cy.assignCapabilitiesToExistingUser(tempUser.userId, [], capabSetsToAssign);
@@ -44,8 +45,6 @@ describe('Eureka', () => {
                 path: TopMenu.usersPath,
                 waiter: Users.waitLoading,
               });
-
-              defaultBaseUrl = Cypress.config().baseUrl;
 
               UsersSearchPane.searchByUsername(userA.username);
               UsersSearchPane.selectUserFromList(userA.username);

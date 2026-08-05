@@ -87,19 +87,23 @@ export default {
   },
 
   clearDefaultHeldbyFilter() {
-    cy.wait(2000);
-    this.clearDefaultFilter(heldbyAccordionName);
-    cy.expect(
-      rootModal
-        .find(
+    cy.wait(3000);
+
+    cy.get('body').then(($body) => {
+      const clearBtn = $body.find(
+        `[aria-label="Clear selected filters for \\"${heldbyAccordionName}\\""], [aria-label="Clear selected ${heldbyAccordionName} filters"]`,
+      );
+      if (clearBtn.length > 0) {
+        this.clearDefaultFilter(heldbyAccordionName);
+        cy.expect(
           Button({
             ariaLabel: or(
               `Clear selected filters for "${heldbyAccordionName}"`,
               `Clear selected ${heldbyAccordionName} filters`,
             ),
-          }),
-        )
-        .absent(),
-    );
+          }).absent(),
+        );
+      }
+    });
   },
 };

@@ -51,7 +51,7 @@ describe('Data Import', () => {
       SettingsOrders.selectContentInGeneralOrders('Purchase order lines limit');
       // First set to a random number, to make sure "Save" button is clickable
       OrderLinesLimit.setPOLLimit(defaultPurchaseOrderLinesLimit);
-      SettingsOrders.verifyPurchaseOrderLinesLimit();
+      SettingsOrders.verifyPurchaseOrderLinesLimitValue(defaultPurchaseOrderLinesLimit);
 
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
@@ -78,7 +78,7 @@ describe('Data Import', () => {
       () => {
         // #1 Go to "Settings" application -> Select "Orders" setting -> Select "Purchase order lines limit"
         SettingsOrders.selectContentInGeneralOrders('Purchase order lines limit');
-        SettingsOrders.verifyPurchaseOrderLinesLimit();
+        SettingsOrders.verifyPurchaseOrderLinesLimitValue(defaultPurchaseOrderLinesLimit);
 
         // #2 Go to "Settings" application -> Select "Data import" setting -> Select "Field mapping profiles" -> Click "Actions" button -> Click "New field mapping profile" option
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);

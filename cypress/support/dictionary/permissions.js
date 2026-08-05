@@ -1255,6 +1255,10 @@ export default {
     gui: 'Settings (Inventory): Configure classification browse',
     details: ['absentInEvrk'],
   },
+  copycatProfilesCollectionGet: {
+    internal: 'copycat.profiles.collection.get',
+    gui: 'CopyCat - get CopyCat profiles',
+  },
   settingsDataImportView: {
     internal: 'ui-data-import.view',
     gui: 'Data import: Can view only',

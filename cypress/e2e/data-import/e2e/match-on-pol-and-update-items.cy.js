@@ -238,7 +238,7 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         const itemBarcode = Helper.getRandomBarcode();
 
         // delete created files

@@ -206,7 +206,7 @@ describe('Inventory', () => {
 
         after('Delete user, data', () => {
           cy.resetTenant();
-          cy.getAdminToken();
+          cy.getAdminToken(false);
           cy.setTenant(Affiliations.College);
           Users.deleteViaApi(user.userId);
           InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);

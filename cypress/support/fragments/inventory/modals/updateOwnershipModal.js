@@ -1,4 +1,10 @@
-import { Button, Modal, Selection, SelectionList } from '../../../../../interactors';
+import {
+  Button,
+  Modal,
+  Selection,
+  SelectionList,
+  SelectionOption,
+} from '../../../../../interactors';
 import SelectLocationModal from './selectLocationModal';
 
 const updateOwnershipModal = Modal('Update ownership');
@@ -52,11 +58,10 @@ export default {
   validateLocationDropdown(location) {
     cy.wait(1500);
     cy.do(selectHoldingsDropdown.open());
-    cy.then(() => {
-      return SelectionList({ placeholder: 'Filter options list' }).optionList();
-    }).then((list) => {
-      cy.wait(1000);
-      cy.wrap(list).should('include', location);
-    });
+    cy.expect(
+      SelectionList({ placeholder: 'Filter options list' })
+        .find(SelectionOption(location))
+        .exists(),
+    );
   },
 };

@@ -254,9 +254,7 @@ export default {
   },
   addExistingPrecedingTitle: (precedingTitle) => {
     cy.do(Button({ id: 'find-instance-trigger' }).click());
-    cy.ifConsortia(true, () => {
-      InventoryInstanceModal.clearDefaultHeldbyFilter();
-    });
+    if (!Cypress.env('ecsEnabled')) InventoryInstanceModal.clearDefaultHeldbyFilter();
     InventoryInstanceModal.searchByTitle(precedingTitle);
     InventoryInstanceModal.selectInstance();
   },

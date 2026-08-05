@@ -47,6 +47,10 @@ describe('MARC', () => {
               }, 20_000);
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
               ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+              // Force increased limit for UI to load all files
+              cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+                req.url = req.url.replace(/limit=\d+/, 'limit=200');
+              });
               cy.visit(TopMenu.settingsAuthorityFilesPath);
             },
           );
