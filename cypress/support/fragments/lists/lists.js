@@ -54,7 +54,7 @@ const exportList = Button('Export all columns (CSV)');
 const exportListVisibleColumns = Button('Export selected columns (CSV)');
 const testQuery = Button('Test query');
 const runQueryAndSave = Button('Run query & save');
-const filterPane = Pane('Filter');
+const filterPane = Pane('Search & filter');
 const listsPane = Pane('Lists');
 const newLink = Link('New');
 const statusAccordion = filterPane.find(Accordion('Status'));
@@ -88,6 +88,15 @@ const constants = {
     items: 'Items',
     organizations: 'Organizations',
     purchaseOrderLines: 'Purchase order lines',
+    budgets: 'Budgets',
+    fundWithLedger: 'Fund with ledger',
+    invoiceLines: 'Invoice lines',
+    invoices: 'Invoices',
+    purchaseOrderLinesWithTitles: 'Purchase order lines with titles',
+    purchaseOrders: 'Purchase orders',
+    voucherLinesWithFund: 'Voucher lines with fund',
+    voucherLinesWithInvoiceFundOrganization: 'Voucher lines with invoice, fund, organization',
+    vouchers: 'Vouchers',
     instancesWithMarcBibliographic: 'Instances with MARC bibliographic',
     receivingPieces: 'Receiving pieces',
     feeFineAccountsWithUsers: 'Fee/Fine accounts with users',
