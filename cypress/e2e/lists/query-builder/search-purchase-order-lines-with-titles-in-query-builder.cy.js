@@ -116,7 +116,7 @@ describe('Lists', () => {
         QueryModal.verifySelectedOperator(QUERY_OPERATIONS.NOT_IN);
 
         // Step 5: Select a language value and verify "Test query" becomes active
-        QueryModal.chooseFromValueMultiselect('English');
+        QueryModal.chooseFromValueMultiselect('English', 0, { exactMatch: true });
         QueryModal.testQueryDisabled(false);
 
         // Step 6: Run first test query and verify results
