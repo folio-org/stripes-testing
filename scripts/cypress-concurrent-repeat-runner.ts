@@ -8,14 +8,29 @@ import { EventEmitter } from 'node:events';
 import { clearLine, cursorTo } from 'node:readline';
 import { Command, InvalidArgumentError, Option } from 'commander';
 
-// Repeats one Cypress spec through a bounded worker pool and records each run independently.
-type CliOptions = {
-  spec: string;
+type SharedCliOptions = {
   runs: number;
   threads: number;
   browser: string;
   timeoutSec: number;
   outDir: string;
+};
+
+// Repeats each selected Cypress spec through a bounded worker pool and records every run independently.
+type CliOptions = SharedCliOptions & {
+  specs: string[];
+};
+
+type ParsedCliOptions = SharedCliOptions & {
+  spec?: string[];
+  specsFile?: string;
+  thread?: number;
+};
+
+type SpecRunConfig = SharedCliOptions & {
+  spec: string;
+  specNumber: number;
+  specCount: number;
 };
 
 type OutputPaths = {
@@ -99,10 +114,16 @@ const nonNegativeInt = (value: string): number => {
     : invalidNumber('must be a non-negative integer');
 };
 
+const commaSeparatedSpecs = (value: string): string[] => {
+  const specs = value.split(',').map((spec) => spec.trim()).filter(Boolean);
+  return specs.length ? specs : invalidNumber('must contain at least one spec');
+};
+
 const program = new Command()
   .name('cypress-concurrent-repeat-runner')
-  .description('Run one Cypress spec repeatedly with bounded concurrency')
-  .requiredOption('-s, --spec <path>', 'Cypress spec to run')
+  .description('Run Cypress specs repeatedly with bounded concurrency')
+  .addOption(new Option('-s, --spec <paths>', 'comma-separated Cypress specs').argParser(commaSeparatedSpecs).conflicts('specsFile'))
+  .addOption(new Option('-f, --specs-file <path>', 'file containing one Cypress spec per line').conflicts('spec'))
   .option('-r, --runs <number>', 'total repetitions', positiveInt, 10)
   .option('-t, --threads <number>', 'maximum concurrent runs', positiveInt, 1)
   .addOption(new Option('--thread <number>', 'alias for --threads').argParser(positiveInt).hideHelp())
@@ -114,16 +135,46 @@ const program = new Command()
   .addHelpText('after', `
 ${styles.cyan('Examples:')}
   npx tsx scripts/cypress-concurrent-repeat-runner.ts --spec cypress/e2e/example.cy.js
-  npx tsx scripts/cypress-concurrent-repeat-runner.ts --spec cypress/e2e/example.cy.js --runs 10 --threads 3
+  npx tsx scripts/cypress-concurrent-repeat-runner.ts --spec cypress/e2e/first.cy.js,cypress/e2e/second.cy.js --runs 10 --threads 3
+  npx tsx scripts/cypress-concurrent-repeat-runner.ts --specs-file specs.txt --runs 5 --threads 2
 
 ${styles.dim('Set NO_COLOR=1 to disable colored output.')}`);
 
 program.parse();
 
-const parsedOptions = program.opts<CliOptions & { thread?: number }>();
+const cliError = (message: string): never => program.error(message);
+
+/** Reads one spec per line, trimming whitespace and ignoring empty rows. */
+const readSpecsFile = (filePath: string): string[] => {
+  const resolvedPath = path.resolve(cwd, filePath);
+  const isFile = fs.existsSync(resolvedPath) && fs.statSync(resolvedPath).isFile();
+  const contents = isFile
+    ? fs.readFileSync(resolvedPath, 'utf8')
+    : cliError(`specs file does not exist: ${filePath}`);
+  const specs = contents
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  return specs.length
+    ? specs
+    : cliError(`specs file contains no specs: ${filePath}`);
+};
+
+const parsedOptions = program.opts<ParsedCliOptions>();
+const {
+  spec: singleSpec,
+  specsFile: specsFilePath,
+  thread: threadAlias,
+  ...sharedOptions
+} = parsedOptions;
+const resolvedSpecs = specsFilePath
+  ? readSpecsFile(specsFilePath)
+  : singleSpec || [];
 const options: CliOptions = {
-  ...parsedOptions,
-  threads: parsedOptions.thread ?? parsedOptions.threads,
+  ...sharedOptions,
+  specs: resolvedSpecs.length ? resolvedSpecs : cliError('one of --spec or --specs-file is required'),
+  threads: threadAlias ?? parsedOptions.threads,
 };
 
 const ensureDir = (dirPath: string): void => {
@@ -158,9 +209,21 @@ const detectFailureReason = (text: string, timedOut: boolean, timeoutSec: number
 };
 
 /** Initializes a fresh set of run logs while preserving the summary metadata for this invocation. */
-const prepareOutput = ({ spec, threads, runs, browser, timeoutSec, outDir }: CliOptions): OutputPaths => {
+const prepareOutput = ({
+  spec,
+  specNumber,
+  specCount,
+  threads,
+  runs,
+  browser,
+  timeoutSec,
+  outDir,
+}: SpecRunConfig): OutputPaths => {
   const logsDir = path.resolve(cwd, outDir);
-  const filePrefix = sanitizeForFileName(path.basename(spec, '.cy.js') || path.basename(spec));
+  const basePrefix = sanitizeForFileName(path.basename(spec, '.cy.js') || path.basename(spec));
+  const filePrefix = specCount > 1
+    ? `${String(specNumber).padStart(3, '0')}-${basePrefix}`
+    : basePrefix;
   const summaryPath = path.join(logsDir, `${filePrefix}-summary.txt`);
 
   ensureDir(logsDir);
@@ -172,6 +235,7 @@ const prepareOutput = ({ spec, threads, runs, browser, timeoutSec, outDir }: Cli
   const summary = [
     'Cypress concurrent repeat summary',
     `Spec: ${spec}`,
+    `Spec number: ${specNumber}/${specCount}`,
     `Threads: ${threads}`,
     `Runs: ${runs}`,
     `Browser: ${browser}`,
@@ -260,7 +324,7 @@ const runOne = ({
   spec,
   browser,
   timeoutSec,
-}: CliOptions & OutputPaths & { runNumber: number }): Promise<RunResult> => {
+}: SpecRunConfig & OutputPaths & { runNumber: number }): Promise<RunResult> => {
   const logPath = path.join(logsDir, `${filePrefix}-run-${runNumber}.log`);
   const outStream = fs.createWriteStream(logPath, { flags: 'w' });
   const cypressExecutable = path.resolve(cwd, 'node_modules/cypress/bin/cypress');
@@ -281,7 +345,7 @@ const runOne = ({
 };
 
 /** Schedules all repetitions without allowing active Cypress processes to exceed the thread limit. */
-const runWorkerPool = async (config: CliOptions, output: OutputPaths): Promise<RunResult[]> => {
+const runWorkerPool = async (config: SpecRunConfig, output: OutputPaths): Promise<RunResult[]> => {
   // Workers claim the next run from shared state, keeping concurrency at or below --threads.
   const state = { nextRun: 1, active: 0 };
   const results: RunResult[] = [];
@@ -374,11 +438,35 @@ const writeSummary = (results: RunResult[], summaryPath: string): number => {
   return failed.length;
 };
 
-// Keep orchestration linear: prepare files, execute all runs, then expose aggregate success to the shell.
+/** Runs one spec and returns its failure count before the next file row is processed. */
+const runSpec = async (config: SpecRunConfig): Promise<number> => {
+  console.log(styles.bold(`\nSpec ${config.specNumber}/${config.specCount}: ${config.spec}`));
+  const output = prepareOutput(config);
+  const results = await runWorkerPool(config, output);
+  return writeSummary(results, output.summaryPath);
+};
+
+/** Consumes the queue in order; only repeated runs for the current spec may execute concurrently. */
+const runSpecsQueue = (queue: SpecRunConfig[]): Promise<number[]> => queue.reduce<Promise<number[]>>(
+  (pendingCounts, specConfig) => pendingCounts.then(async (counts) => [
+    ...counts,
+    await runSpec(specConfig),
+  ]),
+  Promise.resolve([]),
+);
+
+// Build the queue in CLI/file order and keep --threads scoped to one spec at a time.
 const run = async (): Promise<void> => {
-  const output = prepareOutput(options);
-  const results = await runWorkerPool(options, output);
-  process.exitCode = writeSummary(results, output.summaryPath) > 0 ? 1 : 0;
+  const { specs: selectedSpecs, ...config } = options;
+  const queue = selectedSpecs.map((selectedSpec, index) => ({
+    ...config,
+    spec: selectedSpec,
+    specNumber: index + 1,
+    specCount: selectedSpecs.length,
+  }));
+  const failureCounts = await runSpecsQueue(queue);
+
+  process.exitCode = failureCounts.some((count) => count > 0) ? 1 : 0;
 };
 
 run().catch((error: Error) => {
