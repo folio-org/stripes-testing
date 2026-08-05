@@ -86,6 +86,16 @@ Cypress.Commands.add('postEdgeOrdersGobiIntegration', (requestBody) => {
   });
 });
 
+Cypress.Commands.add('postEdgeOrdersMosaicIntegration', () => {
+  cy.request({
+    method: 'GET',
+    url: `${Cypress.env('EDGE_HOST')}/orders/validate?type=MOSAIC&apikey=${Cypress.env('EDGE_API_KEY')}`,
+    headers: {
+      'user-agent': 'FSE_AQA_Suite',
+    },
+  });
+});
+
 Cypress.Commands.add('getEdgeDematicAsrItems', (externalStorageId) => {
   cy.request({
     method: 'GET',

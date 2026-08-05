@@ -54,6 +54,19 @@ export default {
       Pane({ id: 'receiving-results-pane' }).exists(),
     ]);
   },
+  verifyPageDisplayed() {
+    cy.expect([
+      Pane({ id: 'receiving-filters-pane' }).exists(),
+      Pane({ id: 'receiving-results-pane' }).exists(),
+    ]);
+  },
+  verifySearchAndActionsAvailable() {
+    cy.expect([
+      TextField({ id: 'input-record-search' }).exists(),
+      Select({ id: 'input-record-search-qindex' }).exists(),
+    ]);
+    cy.expect(actionsButton.exists());
+  },
   clearSearchField() {
     cy.do(TextField({ id: 'input-record-search' }).fillIn(''));
   },

@@ -260,6 +260,18 @@ export default {
     cy.get('@print').should('have.been.called');
   },
 
+  createOrganization(organization) {
+    cy.expect(buttonNew.exists());
+    cy.do(buttonNew.click());
+    cy.wait(4000);
+    cy.do([
+      organizationStatus.choose(organization.status),
+      organizationNameField.fillIn(organization.name),
+      organizationCodeField.fillIn(organization.code),
+      saveAndClose.click(),
+    ]);
+  },
+
   createOrganizationViaUi: (organization) => {
     cy.expect(buttonNew.exists());
     cy.do(buttonNew.click());

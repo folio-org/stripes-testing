@@ -27,3 +27,19 @@ Cypress.Commands.add('deleteLicenseById', (id) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getLicenses', () => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'licenses/licenses',
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getLicenseFileRaw', (id) => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: `licenses/files/${id}/raw`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
