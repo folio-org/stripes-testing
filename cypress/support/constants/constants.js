@@ -134,6 +134,7 @@ export const FOLIO_RECORD_TYPE = {
   INVOICE: 'Invoice',
   MARCBIBLIOGRAPHIC: 'MARC Bibliographic',
   MARCAUTHORITY: 'MARC Authority',
+  LINKEDDATA: 'Linked data',
 };
 
 export const PAYMENT_METHOD = {
