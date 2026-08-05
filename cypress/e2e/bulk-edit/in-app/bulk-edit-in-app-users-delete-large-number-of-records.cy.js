@@ -141,6 +141,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedRecordsExists();
 
         // Step 2: Download matched records (CSV)
+        BulkEditActions.openActions();
         BulkEditActions.downloadMatchedResults();
         BulkEditFiles.verifyValueInRowByUUID(
           matchedRecordsFileName,
@@ -151,7 +152,6 @@ describe('Bulk-edit', () => {
         );
 
         // Step 3: Open "Actions" menu, click "Start bulk delete" and verify the confirmation modal
-        BulkEditActions.openActions();
         BulkEditActions.clickStartBulkDeleteButton();
         BulkEditActions.verifyDeleteUserRecordsModalContent(2, 30);
         BulkEditActions.verifyDeleteUserRecordsModalButtons();
@@ -178,7 +178,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.downloadMatchedRecordsAbsent();
         BulkEditActions.downloadErrors();
         FileManager.verifyFileIncludes(errorsFromCommittingFileName, [
-          'Error',
+          'ERROR',
           userWithOpenTransaction.userId,
           'Open fees/fines',
         ]);
