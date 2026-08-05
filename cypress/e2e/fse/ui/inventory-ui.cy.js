@@ -9,6 +9,7 @@ import BrowseClassifications from '../../../support/fragments/inventory/search/b
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
+import Modals from '../../../support/fragments/modals';
 
 describe('fse-inventory - UI (no data manipulation)', () => {
   beforeEach(() => {
@@ -19,10 +20,12 @@ describe('fse-inventory - UI (no data manipulation)', () => {
       waiter: InventorySearchAndFilter.waitLoading,
     });
     cy.allure().logCommandSteps();
+    // close service point modal if it appears after login
+    Modals.closeModalWithEscapeIfAny();
   });
 
   it(
-    `TC195318 TC195689 - verify that inventory page is displayed, search works for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195318,TC195689 - verify that inventory page is displayed, search works for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'inventory', 'TC195318', 'TC195689'] },
     () => {
       cy.intercept('GET', '/search/instances/facets?*').as('getFacets');
@@ -39,7 +42,7 @@ describe('fse-inventory - UI (no data manipulation)', () => {
   );
 
   it(
-    `TC195766 - check inventory classifications ${Cypress.env('OKAPI_HOST')}`,
+    `TC195766 - check inventory classifications ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['ramsons', 'fse', 'ui', 'inventory', 'TC195766'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();

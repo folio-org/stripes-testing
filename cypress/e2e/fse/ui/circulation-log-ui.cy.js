@@ -13,7 +13,7 @@ describe('fse-circulation-log - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195286 - verify that circulation log module is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195286 - verify that circulation log module is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'circulation-log', 'TC195286'] },
     () => {
       CirculationLog.waitLoading();

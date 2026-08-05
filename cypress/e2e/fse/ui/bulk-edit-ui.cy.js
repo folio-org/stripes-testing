@@ -1,22 +1,43 @@
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import BulkEditSearch from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { Localization } from '../../../support/fragments/settings/tenant/general';
+import Modals from '../../../support/fragments/modals';
 
 describe('fse-bulk-edit - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
     cy.loginAsAdmin({
-      path: TopMenu.bulkEditPath,
-      waiter: BulkEditSearch.waitLoading,
+      path: SettingsMenu.sessionLocalePath,
+      waiter: Localization.americanEnglishButtonWaitLoading,
     });
     cy.allure().logCommandSteps();
+    // close service point modal if it appears after login
+    Modals.closeModalWithEscapeIfAny();
+    // change session locale to English (temporary action, won't affect tenant settings)
+    Localization.selectAmericanEnglish();
+    // close service point modal if it appears switching locale
+    Modals.closeModalWithEscapeIfAny();
   });
 
   it(
-    `TC195812 - verify that bulk edit page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195812 - verify that bulk edit page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'bulk-edit', 'TC195812'] },
     () => {
+      cy.get('body').then(($body) => {
+        if (
+          $body.find(`[data-test-app-list] a:contains("${APPLICATION_NAMES.BULK_EDIT}"):visible`)
+            .length
+        ) {
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+        } else {
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.BULK_EDIT);
+        }
+      });
+      BulkEditSearch.waitLoading();
       BulkEditSearch.verifyBulkEditImage();
       // verify logs items
       BulkEditSearch.openLogsSearch();

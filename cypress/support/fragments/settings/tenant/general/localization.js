@@ -17,6 +17,9 @@ const primaryCurrencySystemSelect = rootPane.find(Select(including(primaryCurren
 const saveButton = rootPane.find(Button({ type: 'submit' }));
 const lockIcon = HTML({ className: including('icon-lock') });
 
+// needed for prod tenants with non-English default language, where this button originally can have different name
+const AmericanEnglishButton = "//button[.//span[contains(normalize-space(.), 'American English')]]";
+
 export const LANGUAGES = {
   AMERICAN_ENGLISH: { name: 'American English / American English', value: 'en-US' },
   BRITISH_ENGLISH: { name: 'British English / British English', value: 'en-GB' },
@@ -73,5 +76,18 @@ export default {
   },
   clickChangeSessionLocalLanguage() {
     cy.do(changeSessionLocaleLink.click());
+  },
+  // needed for prod tenants with non-English default language
+  americanEnglishButtonWaitLoading() {
+    cy.xpath(AmericanEnglishButton).should('be.visible').should('not.be.disabled');
+  },
+  selectAmericanEnglish() {
+    // Intercept the translations fetch
+    cy.intercept('GET', '**/translations/en_US-*.json').as('translations');
+
+    cy.xpath(AmericanEnglishButton).should('be.visible').click();
+
+    // Wait for changes to apply and translations to load
+    cy.wait('@translations');
   },
 };

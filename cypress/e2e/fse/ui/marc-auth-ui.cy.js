@@ -1,26 +1,47 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
-import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
+import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { Localization } from '../../../support/fragments/settings/tenant/general';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Modals from '../../../support/fragments/modals';
 
 describe('fse-marc-authority - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
     cy.loginAsAdmin({
-      path: TopMenu.marcAuthorities,
-      waiter: MarcAuthorities.waitLoading,
+      path: SettingsMenu.sessionLocalePath,
+      waiter: Localization.americanEnglishButtonWaitLoading,
     });
     cy.allure().logCommandSteps();
+    // close service point modal if it appears after login
+    Modals.closeModalWithEscapeIfAny();
+    // change session locale to English (temporary action, won't affect tenant settings)
+    Localization.selectAmericanEnglish();
+    // close service point modal if it appears switching locale
+    Modals.closeModalWithEscapeIfAny();
   });
 
   it(
-    `TC195332 - verify that marc authority page is displayed for ${Cypress.env('OKAPI_HOST')}`,
+    `TC195332 - verify that marc authority page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'marc-authorities', 'TC195332'] },
     () => {
+      cy.get('body').then(($body) => {
+        if (
+          $body.find(
+            `[data-test-app-list] a:contains("${APPLICATION_NAMES.MARC_AUTHORITY}"):visible`,
+          ).length
+        ) {
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
+        } else {
+          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.MARC_AUTHORITY);
+        }
+      });
       MarcAuthorities.waitLoading();
     },
   );
