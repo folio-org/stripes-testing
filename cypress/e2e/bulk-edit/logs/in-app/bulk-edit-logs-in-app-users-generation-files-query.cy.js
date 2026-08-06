@@ -56,7 +56,7 @@ describe('Bulk-edit', () => {
               active: true,
               username: testUser.username,
               personal: {
-                preferredContactTypeId: '002',
+                preferredContactTypeIds: ['002'],
                 lastName: getTestEntityValue('lastName'),
                 email: testUser.email,
               },

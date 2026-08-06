@@ -11,7 +11,7 @@ describe('Eureka', () => {
         personal: {
           lastName: `AT_C627444_LastName_${getRandomPostfix()}`,
           email: 'AT_C627444@test.com',
-          preferredContactTypeId: '002',
+          preferredContactTypeIds: ['002'],
         },
       },
       noKeycloakErrorMessage: "Keycloak user doesn't exist",
