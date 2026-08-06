@@ -46,6 +46,26 @@ type RunResult = {
   signal: NodeJS.Signals | null;
   reason: string;
   logPath: string;
+  startedAt: string;
+  endedAt: string;
+  durationMs: number;
+};
+
+type WorkerPoolResult = {
+  results: RunResult[];
+  startedAt: string;
+  endedAt: string;
+  durationMs: number;
+  peakConcurrency: number;
+};
+
+type SpecResult = WorkerPoolResult & {
+  config: SpecRunConfig;
+  output: OutputPaths;
+  passed: number;
+  failed: number;
+  passRate: number;
+  classification: string;
 };
 
 type ProcessCompletion = {
@@ -76,8 +96,8 @@ const styles = {
   dim: color('2'),
 };
 
-const formatElapsed = (startedAt: number): string => {
-  const elapsedSeconds = Math.floor((Date.now() - startedAt) / 1000);
+const formatDuration = (durationMs: number): string => {
+  const elapsedSeconds = Math.floor(durationMs / 1000);
   const hours = Math.floor(elapsedSeconds / 3600);
   const minutes = Math.floor((elapsedSeconds % 3600) / 60);
   const seconds = elapsedSeconds % 60;
@@ -85,6 +105,10 @@ const formatElapsed = (startedAt: number): string => {
   return [hours, minutes, seconds]
     .map((value) => String(value).padStart(2, '0'))
     .join(':');
+};
+
+const formatElapsed = (startedAt: number): string => {
+  return formatDuration(Date.now() - startedAt);
 };
 
 const clearProgress = (): void => {
@@ -245,7 +269,7 @@ const prepareOutput = ({
 
   fs.writeFileSync(
     summaryPath,
-    summary,
+    `${summary}\n\n`,
     'utf8',
   );
 
@@ -266,6 +290,8 @@ const waitForCompletion = ({
   logPath,
   timeoutSec,
 }: ProcessContext): Promise<RunResult> => new Promise((resolve) => {
+  const startedAtMs = Date.now();
+  const startedAt = new Date(startedAtMs).toISOString();
   let output = '';
   let timedOut = false;
   let settled = false;
@@ -290,9 +316,20 @@ const waitForCompletion = ({
         const reason = passed
           ? ''
           : startError || detectFailureReason(output, timedOut, timeoutSec);
+        const endedAtMs = Date.now();
 
         outStream.end();
-        resolve({ runNumber, passed, exitCode, signal: signal ?? null, reason, logPath });
+        resolve({
+          runNumber,
+          passed,
+          exitCode,
+          signal: signal ?? null,
+          reason,
+          logPath,
+          startedAt,
+          endedAt: new Date(endedAtMs).toISOString(),
+          durationMs: endedAtMs - startedAtMs,
+        });
       });
   };
 
@@ -345,13 +382,14 @@ const runOne = ({
 };
 
 /** Schedules all repetitions without allowing active Cypress processes to exceed the thread limit. */
-const runWorkerPool = async (config: SpecRunConfig, output: OutputPaths): Promise<RunResult[]> => {
+const runWorkerPool = async (config: SpecRunConfig, output: OutputPaths): Promise<WorkerPoolResult> => {
   // Workers claim the next run from shared state, keeping concurrency at or below --threads.
   const state = { nextRun: 1, active: 0 };
   const results: RunResult[] = [];
   const activeRuns = new Set<number>();
   const workerCount = Math.min(config.threads, config.runs);
   const startedAt = Date.now();
+  let peakConcurrency = 0;
   const renderProgress = (): void => {
     const runNumbers = [...activeRuns].sort((first, second) => first - second).join(', ');
     const progress = `[Progress] elapsed ${formatElapsed(startedAt)} | completed ${results.length}/${config.runs} | active ${state.active} (${runNumbers})`;
@@ -369,12 +407,13 @@ const runWorkerPool = async (config: SpecRunConfig, output: OutputPaths): Promis
   const worker = async (): Promise<void> => {
     const runNumber = state.nextRun;
     const hasWork = runNumber <= config.runs;
+    state.nextRun += Number(hasWork);
 
     return hasWork
       ? Promise.resolve()
         .then(() => {
-          state.nextRun += 1;
           state.active += 1;
+          peakConcurrency = Math.max(peakConcurrency, state.active);
           activeRuns.add(runNumber);
           clearProgress();
           console.log(styles.cyan(`[Run ${runNumber}/${config.runs}] started (active: ${state.active})`));
@@ -387,8 +426,8 @@ const runWorkerPool = async (config: SpecRunConfig, output: OutputPaths): Promis
           activeRuns.delete(runNumber);
           clearProgress();
           console.log(result.passed
-            ? styles.green(`[Run ${runNumber}/${config.runs}] PASSED`)
-            : styles.red(`[Run ${runNumber}/${config.runs}] FAILED (exit ${result.exitCode})`));
+            ? styles.green(`[Run ${runNumber}/${config.runs}] PASSED (${formatDuration(result.durationMs)})`)
+            : styles.red(`[Run ${runNumber}/${config.runs}] FAILED (exit ${result.exitCode}, ${formatDuration(result.durationMs)})`));
           [result.reason]
             .filter(Boolean)
             .forEach((reason) => console.log(styles.yellow(`  Reason: ${reason}`)));
@@ -401,13 +440,30 @@ const runWorkerPool = async (config: SpecRunConfig, output: OutputPaths): Promis
   await Promise.all(Array.from({ length: workerCount }, worker));
   clearInterval(progressTimer);
   clearProgress();
-  return results.toSorted((first, second) => first.runNumber - second.runNumber);
+  const endedAt = Date.now();
+  return {
+    results: results.toSorted((first, second) => first.runNumber - second.runNumber),
+    startedAt: new Date(startedAt).toISOString(),
+    endedAt: new Date(endedAt).toISOString(),
+    durationMs: endedAt - startedAt,
+    peakConcurrency,
+  };
 };
 
-/** Appends deterministic per-run results and returns the failure count used for the CLI exit status. */
-const writeSummary = (results: RunResult[], summaryPath: string): number => {
+const getFailureGroups = (results: RunResult[]): Array<{ reason: string; count: number }> => Array.from(
+  results
+    .filter(({ passed }) => !passed)
+    .reduce((groups, { reason }) => groups.set(reason, (groups.get(reason) || 0) + 1), new Map<string, number>()),
+  ([reason, count]) => ({ reason, count }),
+).toSorted((first, second) => second.count - first.count || first.reason.localeCompare(second.reason));
+
+/** Appends complete per-run and per-spec statistics and returns structured data for aggregation. */
+const writeSummary = (config: SpecRunConfig, output: OutputPaths, pool: WorkerPoolResult): SpecResult => {
+  const { results, startedAt, endedAt, durationMs, peakConcurrency } = pool;
   const failed = results.filter(({ passed }) => !passed);
   const passed = results.length - failed.length;
+  const passRate = results.length ? (passed / results.length) * 100 : 0;
+  const failureGroups = getFailureGroups(results);
   const classifications = [
     { matches: failed.length === 0, value: 'ALL PASSED' },
     { matches: failed.length === results.length, value: 'ALL FAILED' },
@@ -417,46 +473,124 @@ const writeSummary = (results: RunResult[], summaryPath: string): number => {
     const status = result.passed ? 'PASSED' : `FAILED (exit ${result.exitCode})`;
     return [
       `Run ${result.runNumber}: ${status}`,
+      `Started: ${result.startedAt}`,
+      `Ended: ${result.endedAt}`,
+      `Duration: ${formatDuration(result.durationMs)} (${result.durationMs}ms)`,
+      `Signal: ${result.signal || 'none'}`,
       ...result.reason ? [`Reason: ${result.reason}`] : [],
       `Log: ${path.relative(cwd, result.logPath)}`,
       '',
     ];
   });
+  const failureLines = failureGroups.flatMap(({ reason, count }) => [`${count}x ${reason}`]);
 
   fs.appendFileSync(
-    summaryPath,
-    [...lines, `Passed: ${passed}`, `Failed: ${failed.length}`, `Classification: ${classification}`].join('\n'),
+    output.summaryPath,
+    [
+      ...lines,
+      `Started: ${startedAt}`,
+      `Ended: ${endedAt}`,
+      `Duration: ${formatDuration(durationMs)} (${durationMs}ms)`,
+      `Peak concurrency: ${peakConcurrency}/${config.threads}`,
+      `Passed: ${passed}`,
+      `Failed: ${failed.length}`,
+      `Pass rate: ${passRate.toFixed(2)}%`,
+      `Classification: ${classification}`,
+      '',
+      'Failure groups:',
+      ...failureLines.length ? failureLines : ['none'],
+    ].join('\n'),
     'utf8',
   );
 
   console.log(styles.bold('\n--- Summary ---'));
-  console.log(`Summary file: ${styles.cyan(path.relative(cwd, summaryPath))}`);
+  console.log(`Summary file: ${styles.cyan(path.relative(cwd, output.summaryPath))}`);
+  console.log(`Duration: ${formatDuration(durationMs)}`);
+  console.log(`Peak concurrency: ${peakConcurrency}/${config.threads}`);
   console.log(`Passed: ${styles.green(passed)} / ${results.length}`);
   console.log(`Failed: ${failed.length ? styles.red(failed.length) : styles.green(failed.length)} / ${results.length}`);
+  console.log(`Pass rate: ${passRate.toFixed(2)}%`);
   console.log(`Classification: ${failed.length ? styles.yellow(classification) : styles.green(classification)}`);
 
-  return failed.length;
+  return {
+    ...pool,
+    config,
+    output,
+    passed,
+    failed: failed.length,
+    passRate,
+    classification,
+  };
 };
 
-/** Runs one spec and returns its failure count before the next file row is processed. */
-const runSpec = async (config: SpecRunConfig): Promise<number> => {
+/** Runs one spec and returns its complete statistics before the next file row is processed. */
+const runSpec = async (config: SpecRunConfig): Promise<SpecResult> => {
   console.log(styles.bold(`\nSpec ${config.specNumber}/${config.specCount}: ${config.spec}`));
   const output = prepareOutput(config);
-  const results = await runWorkerPool(config, output);
-  return writeSummary(results, output.summaryPath);
+  const pool = await runWorkerPool(config, output);
+  return writeSummary(config, output, pool);
 };
 
 /** Consumes the queue in order; only repeated runs for the current spec may execute concurrently. */
-const runSpecsQueue = (queue: SpecRunConfig[]): Promise<number[]> => queue.reduce<Promise<number[]>>(
-  (pendingCounts, specConfig) => pendingCounts.then(async (counts) => [
-    ...counts,
+const runSpecsQueue = (queue: SpecRunConfig[]): Promise<SpecResult[]> => queue.reduce<Promise<SpecResult[]>>(
+  (pendingResults, specConfig) => pendingResults.then(async (results) => [
+    ...results,
     await runSpec(specConfig),
   ]),
   Promise.resolve([]),
 );
 
+/** Writes queue-wide totals so multi-spec executions can be assessed from one report. */
+const writeAggregateSummary = (specResults: SpecResult[], outDir: string, startedAtMs: number): string => {
+  const summaryPath = path.resolve(cwd, outDir, 'execution-summary.txt');
+  const endedAtMs = Date.now();
+  const totalRuns = specResults.reduce((total, specResult) => total + specResult.results.length, 0);
+  const passed = specResults.reduce((total, specResult) => total + specResult.passed, 0);
+  const failed = totalRuns - passed;
+  const passRate = totalRuns ? (passed / totalRuns) * 100 : 0;
+  const peakConcurrency = Math.max(...specResults.map((specResult) => specResult.peakConcurrency));
+  const allRuns = specResults.flatMap((specResult) => specResult.results);
+  const failureGroups = getFailureGroups(allRuns);
+  const specLines = specResults.flatMap((specResult) => [
+    `Spec ${specResult.config.specNumber}/${specResult.config.specCount}: ${specResult.config.spec}`,
+    `  Runs: ${specResult.results.length} | Passed: ${specResult.passed} | Failed: ${specResult.failed} | Pass rate: ${specResult.passRate.toFixed(2)}%`,
+    `  Duration: ${formatDuration(specResult.durationMs)} | Peak concurrency: ${specResult.peakConcurrency}/${specResult.config.threads}`,
+    `  Classification: ${specResult.classification}`,
+    `  Summary: ${path.relative(cwd, specResult.output.summaryPath)}`,
+    '',
+  ]);
+  const failureLines = failureGroups.map(({ reason, count }) => `${count}x ${reason}`);
+
+  fs.writeFileSync(summaryPath, [
+    'Cypress concurrent repeat execution summary',
+    `Started: ${new Date(startedAtMs).toISOString()}`,
+    `Ended: ${new Date(endedAtMs).toISOString()}`,
+    `Duration: ${formatDuration(endedAtMs - startedAtMs)} (${endedAtMs - startedAtMs}ms)`,
+    `Specs: ${specResults.length}`,
+    `Runs: ${totalRuns}`,
+    `Configured threads: ${specResults[0]?.config.threads || 0}`,
+    `Peak concurrency: ${peakConcurrency}`,
+    `Passed: ${passed}`,
+    `Failed: ${failed}`,
+    `Pass rate: ${passRate.toFixed(2)}%`,
+    '',
+    ...specLines,
+    'Failure groups:',
+    ...failureLines.length ? failureLines : ['none'],
+  ].join('\n'), 'utf8');
+
+  console.log(styles.bold('\n=== Execution Summary ==='));
+  console.log(`Summary file: ${styles.cyan(path.relative(cwd, summaryPath))}`);
+  console.log(`Specs: ${specResults.length} | Runs: ${totalRuns}`);
+  console.log(`Duration: ${formatDuration(endedAtMs - startedAtMs)} | Peak concurrency: ${peakConcurrency}`);
+  console.log(`Passed: ${styles.green(passed)} | Failed: ${failed ? styles.red(failed) : styles.green(failed)} | Pass rate: ${passRate.toFixed(2)}%`);
+
+  return summaryPath;
+};
+
 // Build the queue in CLI/file order and keep --threads scoped to one spec at a time.
 const run = async (): Promise<void> => {
+  const startedAt = Date.now();
   const { specs: selectedSpecs, ...config } = options;
   const queue = selectedSpecs.map((selectedSpec, index) => ({
     ...config,
@@ -464,9 +598,10 @@ const run = async (): Promise<void> => {
     specNumber: index + 1,
     specCount: selectedSpecs.length,
   }));
-  const failureCounts = await runSpecsQueue(queue);
+  const specResults = await runSpecsQueue(queue);
+  writeAggregateSummary(specResults, config.outDir, startedAt);
 
-  process.exitCode = failureCounts.some((count) => count > 0) ? 1 : 0;
+  process.exitCode = specResults.some(({ failed }) => failed > 0) ? 1 : 0;
 };
 
 run().catch((error: Error) => {
