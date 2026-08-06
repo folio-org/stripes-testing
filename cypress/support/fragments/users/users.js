@@ -47,7 +47,7 @@ const defaultUser = {
   barcode: undefined,
   personal: {
     preferredFirstName: 'preferredName',
-    preferredContactTypeId: '002',
+    preferredContactTypeIds: ['002'],
     firstName: 'testPermFirst',
     middleName: 'testMiddleName',
     lastName: defaultUserName,
