@@ -9,7 +9,7 @@ import TopMenu from '../../support/fragments/topMenu';
 
 describe('Permissions', () => {
   describe('Permissions --> Users', () => {
-    const resetLinkPart = `${Cypress.config('baseUrl')}/reset-password`;
+    const resetLinkPart = `${Cypress.config().baseUrl}/reset-password`;
     const originalPermissions = [Permissions.inventoryAll.gui];
     const updatedPermissions = [
       Permissions.uiUsersView.gui,
@@ -20,6 +20,7 @@ describe('Permissions', () => {
 
     before('Create user', () => {
       cy.getAdminToken();
+      cy.setFrontEndBaseUrlViaApi(Cypress.config().baseUrl);
       cy.createTempUser(originalPermissions).then((createdUserProperties) => {
         testUser = createdUserProperties;
       });
@@ -41,15 +42,17 @@ describe('Permissions', () => {
         cy.getAdminToken();
         cy.assignPermissionsToExistingUser(testUser.userId, updatedPermissions);
 
-        cy.login(testUser.username, testUser.password, {
-          path: TopMenu.usersPath,
-          waiter: UsersSearchPane.waitLoading,
+        cy.then(() => {
+          cy.login(testUser.username, testUser.password, {
+            path: TopMenu.usersPath,
+            waiter: UsersSearchPane.waitLoading,
+          });
+          UsersSearchPane.searchByUsername(testUser.username);
+          UsersSearchPane.selectUserFromList(testUser.username);
+          UserEdit.openEdit();
+          UserEdit.clickResetPasswordLink();
+          UserEdit.verifyResetLink(including(resetLinkPart));
         });
-        UsersSearchPane.searchByUsername(testUser.username);
-        UsersSearchPane.selectUserFromList(testUser.username);
-        UserEdit.openEdit();
-        UserEdit.clickResetPasswordLink();
-        UserEdit.verifyResetLink(including(resetLinkPart));
       },
     );
   });

@@ -109,6 +109,10 @@ describe('MARC', () => {
             SettingsPane.waitLoading();
             // Step 1: Switch to Member tenant and go to Manage authority files
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            // Force increased limit for UI to load all files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
             SettingsPane.selectSettingsTab(testData.manageAuthFilesOption);
             ManageAuthorityFiles.waitLoading();
             ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();

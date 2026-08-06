@@ -8,6 +8,7 @@ import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -122,6 +123,11 @@ describe('MARC', () => {
             });
 
             // Verify back to instance view and holdings record deleted
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
+            InventorySearchAndFilter.closeInstanceDetailPane();
+            cy.wait(2000);
+            InventoryInstances.selectInstanceById(instanceId);
             InventoryInstance.waitLoading();
             InventoryInstance.waitInstanceRecordViewOpened();
 

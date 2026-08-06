@@ -269,7 +269,7 @@ describe('Data Import', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
         createdAuthorityIDs.forEach((id, index) => {
-          if (index) MarcAuthority.deleteViaAPI(id);
+          if (index) MarcAuthority.deleteViaAPI(id, true);
           else InventoryInstance.deleteInstanceViaApi(id);
         });
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);

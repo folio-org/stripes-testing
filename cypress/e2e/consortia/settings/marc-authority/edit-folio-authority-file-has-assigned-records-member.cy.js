@@ -95,6 +95,10 @@ describe('MARC', () => {
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, marcAuthorityTabName);
             SettingsPane.waitLoading();
+            // Force increased limit for UI to load all files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
             SettingsPane.selectSettingsTab(manageAuthFilesOption);
             ManageAuthorityFiles.waitLoading();
             ManageAuthorityFiles.checkAuthorityFilesTableExists();

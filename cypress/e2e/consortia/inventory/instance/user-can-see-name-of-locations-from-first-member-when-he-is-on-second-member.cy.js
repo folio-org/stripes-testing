@@ -98,7 +98,7 @@ describe('Inventory', () => {
 
       after('Delete test data', () => {
         cy.resetTenant();
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         Users.deleteViaApi(user.userId);
         cy.setTenant(Affiliations.University);
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(

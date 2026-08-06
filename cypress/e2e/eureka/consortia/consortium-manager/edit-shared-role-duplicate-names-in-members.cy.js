@@ -199,7 +199,7 @@ describe('Eureka', () => {
     });
 
     it(
-      'C1263896 ECS | Edit shared authorization role when roles with the same name exist in member tenants (consortia) (thunderjet)',
+      'C1263896 ECS | Edit shared authorization role when roles with the same name exist in member tenants (consortia) (thunderjet) (eureka)',
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C1263896'] },
       () => {
         // Step 1: Navigate to Consortium Manager and select all tenants
@@ -301,7 +301,12 @@ describe('Eureka', () => {
         SelectMembers.selectMember(tenantNames.central);
         AuthorizationRoles.searchRole(testData.sharedRoleName);
         AuthorizationRoles.clickOnRoleName(testData.sharedRoleName);
+        AuthorizationRoles.checkCapabilitySetsAccordionCounter('1');
+        AuthorizationRoles.checkUsersAccordion(1);
         AuthorizationRoles.openForEdit(testData.sharedRoleName);
+        testData.sharedRoleCapabilitySets.forEach((set) => {
+          AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);
+        });
 
         // Step 15: Edit shared role to original member name - should succeed
         AuthorizationRoles.fillRoleNameDescription(testData.memberRoleName);

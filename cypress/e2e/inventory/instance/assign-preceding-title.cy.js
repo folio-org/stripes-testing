@@ -46,7 +46,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         cy.getInstanceById(instanceIds[0])
           .then((body) => {
             const requestBody = body;

@@ -62,6 +62,9 @@ describe('Inventory', () => {
           });
         }
       });
+      InventoryInstances.deleteInstanceByTitleViaApi(
+        'search for "Instance" by "Series statement" field without special characters',
+      );
 
       cy.getAdminToken();
       DataImport.uploadFileViaApi(

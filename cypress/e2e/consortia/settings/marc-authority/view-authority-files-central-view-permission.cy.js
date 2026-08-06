@@ -59,6 +59,10 @@ describe('MARC', () => {
           'C422258 View "Manage authority files" pane in "Settings >> MARC authority" with view permissions in Central tenant (consortia) (spitfire)',
           { tags: ['extendedPathECS', 'spitfire', 'C422258'] },
           () => {
+            // Force increased limit for UI to load all files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
             cy.login(testUser.username, testUser.password, {
               path: TopMenu.settingsAuthorityFilesPath,
               waiter: ManageAuthorityFiles.waitContentLoading,

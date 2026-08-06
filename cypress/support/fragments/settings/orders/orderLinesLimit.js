@@ -35,11 +35,12 @@ export default {
 
   setPOLLimit(value) {
     const limit = String(value);
-    cy.do(
-      Pane('Purchase order lines limit')
-        .find(TextField('Set purchase order lines limit'))
-        .fillIn(limit),
+    const targetField = Pane('Purchase order lines limit').find(
+      TextField('Set purchase order lines limit'),
     );
+    cy.expect(targetField.has({ disabled: false }));
+    cy.wait(1000);
+    cy.do(targetField.fillIn(limit));
     cy.do(Button('Save').click());
     cy.wait(2000);
   },

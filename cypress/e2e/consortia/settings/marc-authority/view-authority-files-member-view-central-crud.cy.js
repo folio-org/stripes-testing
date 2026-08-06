@@ -73,6 +73,10 @@ describe('MARC', () => {
           { tags: ['extendedPathECS', 'spitfire', 'C422259'] },
           () => {
             cy.setTenant(Affiliations.College);
+            // Force increased limit for UI to load all files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
             cy.login(testUser.username, testUser.password, {
               path: TopMenu.settingsAuthorityFilesPath,
               waiter: ManageAuthorityFiles.waitContentLoading,

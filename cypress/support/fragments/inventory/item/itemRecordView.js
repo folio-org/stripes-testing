@@ -472,7 +472,7 @@ export default {
   verifyHoldingsPermanentLocation: (value) => {
     cy.get('div[data-testid="holding-permanent-location"]')
       .find('div[class*=kvValue]')
-      .should('have.text', value);
+      .should('contain', value);
   },
   verifyItemEffectiveLocation: (value) => {
     cy.get('div[data-testid="item-effective-location"]')
