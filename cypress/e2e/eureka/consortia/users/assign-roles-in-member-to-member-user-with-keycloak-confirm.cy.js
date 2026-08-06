@@ -62,13 +62,13 @@ describe('Eureka', () => {
         cy.getUserGroups().then((groupId) => {
           ['userA', 'userB', 'userC', 'userD', 'userE'].forEach((key) => {
             userBodies[key].patronGroup = groupId;
-            cy.createUserWithoutKeycloakInEurekaApi(userBodies[key]).then((userId) => {
+            Users.createViaApi(userBodies[key]).then((user) => {
               users[key] = {
-                userId,
+                userId: user.id,
                 username: userBodies[key].username,
                 lastName: userBodies[key].personal.lastName,
               };
-              assignedUserIds.push(userId);
+              assignedUserIds.push(user.id);
             });
           });
         });

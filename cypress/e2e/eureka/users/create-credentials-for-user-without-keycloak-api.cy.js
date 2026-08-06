@@ -32,15 +32,15 @@ describe('Eureka', () => {
         cy.ifConsortia(true, () => {
           userB.type = 'patron';
         });
-        cy.createUserWithoutKeycloakInEurekaApi(userA).then((userId) => {
-          testData.userAId = userId;
-          userIds.push(userId);
+        Users.createViaApi(userA).then((user) => {
+          testData.userAId = user.id;
+          userIds.push(user.id);
         });
-        cy.createUserWithoutKeycloakInEurekaApi(userB).then((userId) => {
-          testData.userBId = userId;
-          userIds.push(userId);
+        Users.createViaApi(userB).then((user) => {
+          testData.userBId = user.id;
+          userIds.push(user.id);
         });
-        Users.createViaApi(userC).then((user) => {
+        Users.createViaApi(userC, { keycloak: true }).then((user) => {
           testData.userCId = user.id;
           userIds.push(user.id);
         });
