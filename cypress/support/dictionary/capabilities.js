@@ -64,11 +64,6 @@ export default {
     resource: 'Fqm EntityTypes Custom Collection',
     action: CAPABILITY_ACTIONS.CREATE,
   },
-  fqmEntityTypesCustomCollectionExecute: {
-    type: CAPABILITY_TYPES.DATA,
-    resource: 'Fqm EntityTypes Custom Collection',
-    action: CAPABILITY_ACTIONS.EXECUTE,
-  },
   fqmEntityTypesCustomItemView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'Fqm EntityTypes Custom Item',

@@ -1884,6 +1884,18 @@ export default {
     cy.do(fulfillmentPreferenceSelect.clickInfoButton());
   },
 
+  assertNativeValidationMessage(field, expectedMessage) {
+    cy.expect(field.has({ nativeValidationMessage: expectedMessage }));
+  },
+
+  assertTextFieldNativeValidationMessage(fieldLabel, expectedMessage) {
+    this.assertNativeValidationMessage(TextField(fieldLabel), expectedMessage);
+  },
+
+  assertUsernameFieldNativeValidationMessage(expectedMessage) {
+    this.assertTextFieldNativeValidationMessage(including('Username'), expectedMessage);
+  },
+
   verifyFulfillmentPreferenceTooltip() {
     cy.expect(
       HTML(
