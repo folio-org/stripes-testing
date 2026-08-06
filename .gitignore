@@ -41,3 +41,4 @@ cypress.local.js
 .agents/*
 skills-lock.json
 .local/
+.folio/rp-failure-intelligence/

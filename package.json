@@ -17,7 +17,8 @@
     "test:cypress:running-service": "cypress run",
     "test:cypress:snapshot": "cypress run --config baseUrl=https://folio-snapshot.dev.folio.org",
     "test:cypress:yakbak": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && yakbak-proxy -v -i -n https://folio-snapshot-okapi.dev.folio.org & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2",
-    "cypress:repeat": "tsx scripts/cypress-concurrent-repeat-runner.ts"
+    "cypress:repeat": "tsx scripts/cypress-concurrent-repeat-runner.ts",
+    "rp-failure-intelligence": "npx --yes github:folio-org/folio-rp-failure-intelligence run"
   },
   "husky": {
     "hooks": {
