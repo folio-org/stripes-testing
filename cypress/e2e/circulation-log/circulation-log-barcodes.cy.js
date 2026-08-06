@@ -25,7 +25,7 @@ describe('Circulation log', () => {
     active: true,
     username: `secondusername ${getRandomPostfix()}`,
     personal: {
-      preferredContactTypeId: '002',
+      preferredContactTypeIds: ['002'],
       firstName: 'secondUserFirstName',
       lastName: 'secondUserLastName',
       email: 'test2@folio.org',
