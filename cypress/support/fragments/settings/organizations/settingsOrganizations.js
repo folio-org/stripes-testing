@@ -13,7 +13,7 @@ import InteractorsTools from '../../../utils/interactorsTools';
 const organizationsSettingsSection = Section({ id: 'settings-nav-pane' });
 const enableBankingInformationCheckbox = Checkbox('Enable banking information');
 const saveButton = Button('Save');
-const newCategory = Button('+ New');
+const newCategory = Button('New');
 const defaultCategories = {
   id: uuid(),
   value: `autotest_category_name_${getRandomPostfix()}`,
