@@ -27,9 +27,23 @@ const TOTAL_PREFIX = 'Total recorded flaky occurrences:';
 // Machine-readable footer so a later run can resolve the RP test behind a ticket.
 const META_PREFIX = 'RP-Meta:';
 // A test passing this many consecutive most-recent runs is considered stable → close.
-const STABLE_STREAK_THRESHOLD = 10;
+const STABLE_STREAK_THRESHOLD = 4;
 // Status the ticket is moved to once the test is deemed stable.
 const STABLE_TARGET_STATUS = 'Closed';
+
+// FOLIO's "Development Team" single-select field; the team name (e.g. "Firebird")
+// matches its option values exactly.
+const TEAM_FIELD_ID = 'customfield_10057';
+
+/**
+ * Build the Jira `fields` fragment that stores the team in the Development Team field.
+ * Returns an empty object when no team is given so callers can spread it safely.
+ * @param {string} team - team name (e.g. "Firebird")
+ * @returns {Object}
+ */
+function buildTeamField(team) {
+  return team ? { [TEAM_FIELD_ID]: { value: team } } : {};
+}
 
 /**
  * Extract the TestRail case id (the number after the leading "C") from a test name.
@@ -291,6 +305,7 @@ async function createOrUpdateTicket(jiraClient, { featureKey }, entry) {
     const descriptionText = buildDescriptionText(entry, merged, stats);
     await updateIssueFields(jiraClient, existing.key, {
       description: textToAdf(descriptionText),
+      ...buildTeamField(entry.team),
     });
     return { action: 'updated', key: existing.key, summary: entry.summary };
   }
@@ -305,6 +320,7 @@ async function createOrUpdateTicket(jiraClient, { featureKey }, entry) {
     // Label with the flaky marker + the feature key so the close pass can scope precisely.
     labels: [FLAKY_LABEL, featureKey],
     description: textToAdf(descriptionText),
+    ...buildTeamField(entry.team),
   };
 
   const created = await createIssue(jiraClient, fields);
