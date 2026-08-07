@@ -469,17 +469,6 @@ Cypress.Commands.add('promoteUserToKeycloakApi', (userId, ignoreErrors = false) 
   });
 });
 
-Cypress.Commands.add('createUserWithoutKeycloakInEurekaApi', (userBody) => {
-  cy.okapiRequest({
-    method: 'POST',
-    path: 'users',
-    body: userBody,
-    isDefaultSearchParamsRequired: false,
-  }).then(({ body }) => {
-    return body.id;
-  });
-});
-
 Cypress.Commands.add('getUserWithBlUsersByUsername', (username) => {
   cy.okapiRequest({
     path: `bl-users/by-username/${username}`,
