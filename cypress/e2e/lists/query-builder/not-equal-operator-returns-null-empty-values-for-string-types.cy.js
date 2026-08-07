@@ -35,7 +35,7 @@ describe('Lists', () => {
             type: 'patron',
             personal: {
               lastName: testData.userWithBarcode.username,
-              preferredContactTypeId: '002',
+              preferredContactTypeIds: ['002'],
             },
           },
           [],
@@ -52,7 +52,7 @@ describe('Lists', () => {
             type: 'patron',
             personal: {
               lastName: testData.userWithoutBarcode.username,
-              preferredContactTypeId: '002',
+              preferredContactTypeIds: ['002'],
             },
           },
           [],

@@ -141,7 +141,7 @@ export default {
       barcode: uuid(),
       username: `user${getRandomLetters(14)}`,
       personal: {
-        preferredContactTypeId: '002',
+        preferredContactTypeIds: ['002'],
         lastName: `test_user_${uuid()}`,
         email: 'test@folio.org',
       },

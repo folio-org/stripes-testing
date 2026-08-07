@@ -287,6 +287,7 @@ export const usersFieldValues = {
   preferredContactType: 'User — Preferred contact type',
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
+  userDepartmentNames: 'User — Department names',
   userCreatedDate: 'User — User created date',
   userUpdatedDate: 'User — User updated date',
   userId: 'User — User UUID',
@@ -324,6 +325,7 @@ export const purchaseOrderLinesFieldValues = {
   locationsCode: 'POL — Locations — Code',
   vendorOrgEdiType: 'Vendor org — EDI vendor type',
   vendorOrgName: 'Vendor org — Name',
+  acquisitionUnitNames: 'PO — Acquisition unit names',
 };
 export const dateTimeOperators = [
   'Select operator',

@@ -25,7 +25,7 @@ describe('Users', () => {
       firstName: `AT_C844850_FirstName_${index}`,
       lastName: `${testData.commonUserName}_${index}`,
       email: `AT_C844850_${index}_${randomPostfix}@folio.org`,
-      preferredContactTypeId: '002',
+      preferredContactTypeIds: ['002'],
     },
     patronGroup: testData.patronGroupId,
     type: 'staff',

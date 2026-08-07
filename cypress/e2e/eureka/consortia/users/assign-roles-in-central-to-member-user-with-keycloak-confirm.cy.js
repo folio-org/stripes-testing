@@ -48,7 +48,7 @@ describe('Eureka', () => {
           personal: {
             lastName: `AT_C1347151_LastName_${letter}_${randomPostfix}`,
             email: 'AT_C1347151@test.com',
-            preferredContactTypeId: '002',
+            preferredContactTypeIds: ['002'],
           },
         };
       });
@@ -77,13 +77,13 @@ describe('Eureka', () => {
             ['userA', 'userB', 'userC', 'userD', 'userE', 'userF', 'userG', 'userH'].forEach(
               (key) => {
                 userBodies[key].patronGroup = groupId;
-                cy.createUserWithoutKeycloakInEurekaApi(userBodies[key]).then((userId) => {
+                Users.createViaApi(userBodies[key]).then((user) => {
                   users[key] = {
-                    userId,
+                    userId: user.id,
                     username: userBodies[key].username,
                     lastName: userBodies[key].personal.lastName,
                   };
-                  assignedUserIds.push(userId);
+                  assignedUserIds.push(user.id);
                 });
               },
             );

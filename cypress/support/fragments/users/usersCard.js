@@ -85,7 +85,6 @@ const openedFeesFinesLink = feesFinesAccordion.find(Link({ id: 'clickable-viewcu
 const closedFeesFinesLink = feesFinesAccordion.find(HTML({ id: 'clickable-viewclosedaccounts' }));
 const userRolesAccordion = rootSection.find(Accordion('User roles'));
 const userRolesEmptyText = 'No user roles found';
-const usersPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'users';
 const profilePictureCard = Image({ alt: 'Profile picture' });
 const lastNameField = KeyValue('Last name');
 const firstNameField = KeyValue('First name');
@@ -651,7 +650,7 @@ export default {
     return cy
       .okapiRequest({
         method: 'GET',
-        path: `${usersPath}/${userId}`,
+        path: `users/${userId}`,
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body);

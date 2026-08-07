@@ -34,7 +34,7 @@ describe('Bulk-edit', () => {
                   personal: {
                     lastName: userForTesting.lastName,
                     email: 'test@folio.org',
-                    preferredContactTypeId: '002',
+                    preferredContactTypeIds: ['002'],
                   },
                 });
               },

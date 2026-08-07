@@ -9,7 +9,7 @@ const closeNewEditFormButton = Button({ id: 'clickable-close-service-point' });
 const collapseAllButton = Button('Collapse all');
 const generalInfo = Button({ id: 'accordion-toggle-button-generalInformation' });
 const locationSection = Button({ id: 'accordion-toggle-button-locationSection' });
-const newButton = Button('+ New');
+const newButton = Button('New');
 const editButton = Button('Edit');
 const saveAndCloseButton = Button('Save & close');
 
