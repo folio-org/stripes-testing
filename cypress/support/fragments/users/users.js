@@ -32,7 +32,6 @@ const deleteYesButton = Button({ id: 'delete-user-button' });
 const zeroResultsFoundText = '0 records found';
 const numberOfSearchResultsHeader = '//p[@id="paneHeaderusers-search-results-pane-subtitle"]';
 
-const usersApiPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'users';
 const createUserPane = Pane('Create User');
 
 const actionsButton = Button('Actions');
@@ -77,10 +76,10 @@ export default {
 
     return user;
   },
-  createViaApi: (user) => cy
+  createViaApi: (user, { keycloak = false } = {}) => cy
     .okapiRequest({
       method: 'POST',
-      path: usersApiPath,
+      path: keycloak ? 'users-keycloak/users' : 'users',
       body: user,
       isDefaultSearchParamsRequired: false,
     })

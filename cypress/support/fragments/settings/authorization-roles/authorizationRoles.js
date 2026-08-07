@@ -34,7 +34,7 @@ import {
 } from '../../../constants';
 
 const rolesPane = Pane('Authorization roles');
-const newButton = Button(or('+ New', 'New'));
+const newButton = Button('New');
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
 const deleteButton = Button('Delete');
