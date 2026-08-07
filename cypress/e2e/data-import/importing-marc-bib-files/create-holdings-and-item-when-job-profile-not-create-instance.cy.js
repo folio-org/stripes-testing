@@ -20,6 +20,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import {
@@ -44,7 +45,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
-    let instanceHrid;
+    let instanceId;
     const quantityOfItems = '1';
     const fileName = `C368009 autotestFileName${getRandomPostfix()}.mrc`;
     const exportedFileName = `C368009 autotestExportedFileName${getRandomPostfix()}.mrc`;
@@ -105,7 +106,7 @@ describe('Data Import', () => {
           fileName,
           DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
         ).then((response) => {
-          instanceHrid = response[0].instance.hrid;
+          instanceId = response[0].instance.id;
         });
 
         cy.login(user.username, user.password, {
@@ -118,14 +119,8 @@ describe('Data Import', () => {
     after('Delete test data', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
-      cy.getAdminToken().then(() => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            cy.deleteItemViaApi(instance.items[0].id);
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+      cy.getAdminToken(false).then(() => {
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId);
         // delete generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
@@ -188,7 +183,9 @@ describe('Data Import', () => {
         const selectedRecords = 1;
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventorySearchAndFilter.bySource(ACCEPTED_DATA_TYPE_NAMES.MARC);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        InventorySearchAndFilter.searchInstanceByTitle(instanceId);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         InventorySearchAndFilter.closeInstanceDetailPane();
         InventorySearchAndFilter.selectResultCheckboxes(selectedRecords);
         InventorySearchAndFilter.exportInstanceAsMarc();

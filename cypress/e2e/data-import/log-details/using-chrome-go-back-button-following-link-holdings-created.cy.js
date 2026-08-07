@@ -7,7 +7,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -26,7 +26,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Log details', () => {
     let user;
-    let instanceHrid;
+    let instanceId;
     const filePath = 'oneMarcBib.mrc';
     const fileName = `C353587 autotestFile${getRandomPostfix()}.mrc`;
     const mappingProfile = {
@@ -76,7 +76,7 @@ describe('Data Import', () => {
 
         // upload a marc file for creating of the new instance, holding
         DataImport.uploadFileViaApi(filePath, fileName, jobProfile.profileName).then((response) => {
-          instanceHrid = response[0].instance.hrid;
+          instanceId = response[0].instance.id;
         });
 
         cy.login(userProperties.username, userProperties.password, {
@@ -92,12 +92,7 @@ describe('Data Import', () => {
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(user.userId);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId);
       });
     });
 

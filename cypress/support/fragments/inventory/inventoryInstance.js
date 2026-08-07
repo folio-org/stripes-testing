@@ -492,7 +492,8 @@ export default {
 
   selectTopRecord() {
     cy.do(
-      MultiColumnListRow({ index: 0 })
+      paneResultsSection
+        .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 1 }))
         .find(Button())
         .click(),
@@ -1033,9 +1034,6 @@ export default {
     cy.wait(1000);
     cy.do(moveHoldingsToAnotherInstanceButton.click());
     InventoryInstanceSelectInstanceModal.waitLoading();
-    cy.ifConsortia(true, () => {
-      this.clearDefaultHeldbyFilter();
-    });
     InventoryInstanceSelectInstanceModal.searchByTitle(toInstance);
     InventoryInstanceSelectInstanceModal.selectInstance();
     this.moveItemBackToInstance(fromHolding, toInstance, shouldOpen, itemIndex);

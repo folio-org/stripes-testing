@@ -90,18 +90,24 @@ export default {
     cy.wait(3000);
 
     cy.get('body').then(($body) => {
-      const clearBtn = $body.find(
-        `[aria-label="Clear selected filters for \\"${heldbyAccordionName}\\""], [aria-label="Clear selected ${heldbyAccordionName} filters"]`,
-      );
+      const clearBtn = $body
+        .find('[data-testid="data-test-find-records-modal"]')
+        .find(
+          `[aria-label="Clear selected filters for \\"${heldbyAccordionName}\\""], [aria-label="Clear selected ${heldbyAccordionName} filters"]`,
+        );
       if (clearBtn.length > 0) {
         this.clearDefaultFilter(heldbyAccordionName);
         cy.expect(
-          Button({
-            ariaLabel: or(
-              `Clear selected filters for "${heldbyAccordionName}"`,
-              `Clear selected ${heldbyAccordionName} filters`,
-            ),
-          }).absent(),
+          rootModal
+            .find(
+              Button({
+                ariaLabel: or(
+                  `Clear selected filters for "${heldbyAccordionName}"`,
+                  `Clear selected ${heldbyAccordionName} filters`,
+                ),
+              }),
+            )
+            .absent(),
         );
       }
     });

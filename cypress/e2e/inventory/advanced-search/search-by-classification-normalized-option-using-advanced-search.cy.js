@@ -111,6 +111,7 @@ describe('Inventory', () => {
         });
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          InventorySearchAndFilter.byShared('No');
         });
       });
     });

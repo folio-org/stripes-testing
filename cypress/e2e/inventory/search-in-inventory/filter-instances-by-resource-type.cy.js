@@ -97,6 +97,10 @@ describe('Inventory', () => {
             InventoryInstances.checkSearchResultCount(
               '^' + instances1.response.body.totalRecords.toLocaleString('en-US') + ' record',
             );
+            cy.ifConsortia(true, () => {
+              InventorySearchAndFilter.byShared('No');
+              InventorySearchAndFilter.checkNoSharedInstancesInResultList();
+            });
             InventoryInstances.selectInstance();
             InventoryInstance.waitInventoryLoading();
             InstanceRecordView.verifyResourceType(instanceTypes[0].name);

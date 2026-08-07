@@ -16,6 +16,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -96,15 +97,7 @@ describe('Data Import', () => {
             profile.mappingProfile.name,
           );
         });
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"hrid"=="${testData.instanceHRID}"`,
-        }).then((instance) => {
-          instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
-          instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        });
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instanceId);
       });
     });
 
@@ -182,8 +175,8 @@ describe('Data Import', () => {
         });
         FileDetails.verifyMultipleItemsStatus(3);
         FileDetails.openInstanceInInventory();
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          testData.instanceHRID = initialInstanceHrId;
+        InventoryInstance.getId().then((initialInstanceId) => {
+          testData.instanceId = initialInstanceId;
         });
         InventoryInstance.checkIsHoldingsCreated([`${testData.permanentLocation} >`]);
         InventoryInstance.openHoldingsAccordion(`${testData.permanentLocation} >`);

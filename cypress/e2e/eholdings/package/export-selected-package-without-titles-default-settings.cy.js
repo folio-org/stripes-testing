@@ -21,7 +21,7 @@ import {
 describe('eHoldings', () => {
   describe('Package', () => {
     const testData = {
-      searchQuery: 'A+ Lagomorph Journals',
+      searchQuery: 'E-Journal',
       selectedStatus: 'Selected',
       titlesNumber: 0,
       fileName: `C356414autoTestFile${getRandomPostfix()}.csv`,

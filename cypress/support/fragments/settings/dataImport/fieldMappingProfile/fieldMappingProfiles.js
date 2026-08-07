@@ -41,7 +41,7 @@ const marcAuthorityUpdateMappingProfile = {
 };
 const openNewMappingProfileForm = () => {
   cy.wait(2000);
-  cy.do(actionsButton.click());
+  cy.do(resultsPane.find(actionsButton).click());
   cy.wait(1000);
   cy.do(Button('New field mapping profile').click());
 };
@@ -159,6 +159,7 @@ export default {
     search(mappingProfileName);
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
     FieldMappingProfileView.closeViewMode(mappingProfileName);
+    cy.wait(1500);
   },
   checkListOfExistingProfilesIsDisplayed: () => {
     cy.wait(2000);

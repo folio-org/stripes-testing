@@ -111,6 +111,7 @@ describe('Inventory', () => {
         'C476810 "Select Instance" plugin | Filter "Instance" records by "Nature of content" filter/facet (spitfire)',
         { tags: ['extendedPath', 'spitfire', 'C476810'] },
         () => {
+          if (!Cypress.env('ecsEnabled')) InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.toggleAccordionByName(natureOfContentAccordionName);
           SelectInstanceModal.checkOptionsWithCountersExistInAccordion(
             natureOfContentAccordionName,

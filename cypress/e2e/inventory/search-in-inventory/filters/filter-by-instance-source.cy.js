@@ -70,6 +70,7 @@ describe('Inventory', () => {
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventorySearchAndFilter.byShared('No');
+            InventorySearchAndFilter.checkNoSharedInstancesInResultList();
           });
           InventorySearchAndFilter.verifyAccordionExistance(sourceAccordionName, true);
           InventorySearchAndFilter.toggleAccordionByName(sourceAccordionName);

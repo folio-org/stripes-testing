@@ -10,11 +10,13 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
+import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
     const testData = {
       resourceId: '58-1017-3389',
+      packageName: 'Anthrosource (Wiley)',
       fileName: `C367920autoTestFile${getRandomPostfix()}.csv`,
       fileMask: '*_resource.csv',
     };
@@ -30,15 +32,21 @@ describe('eHoldings', () => {
         Permissions.uiAgreementsSearchAndView.gui,
         Permissions.uiNotesItemView.gui,
         Permissions.exportManagerAll.gui,
-      ]).then((userProperties) => {
-        testData.user = userProperties;
-        EHoldingsTitle.changeResourceSelectionStatusViaApi({ resourceId: testData.resourceId });
+      ])
+        .then((userProperties) => {
+          testData.user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password, {
-          path: `/eholdings/resources/${testData.resourceId}`,
-          waiter: EHoldingsResourceView.waitLoading,
+          EHoldingsPackages.setCustomCoverageForPackageViaAPI(testData.packageName, '', '');
+        })
+        .then(() => {
+          EHoldingsTitle.changeResourceSelectionStatusViaApi({ resourceId: testData.resourceId });
+        })
+        .then(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: `/eholdings/resources/${testData.resourceId}`,
+            waiter: EHoldingsResourceView.waitLoading,
+          });
         });
-      });
     });
 
     after('Deleting user, data', () => {

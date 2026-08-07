@@ -123,7 +123,7 @@ export default {
       .okapiRequest({
         method: 'POST',
         path: 'field-protection-settings/marc',
-        body: fieldBody,
+        body: { ...fieldBody, source: 'USER' },
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => {

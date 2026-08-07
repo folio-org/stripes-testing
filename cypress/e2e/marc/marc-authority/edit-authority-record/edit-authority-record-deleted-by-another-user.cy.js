@@ -93,6 +93,7 @@ describe('MARC', () => {
 
           // Steps 5-7: User B (via API) deletes the same record while User A is editing
           cy.then(() => {
+            cy.wait(2000);
             cy.getToken(userB.username, userB.password);
             MarcAuthority.deleteViaAPI(authorityId);
             cy.recurse(
@@ -102,6 +103,7 @@ describe('MARC', () => {
               (foundAuthorities) => foundAuthorities.length === 0,
               { limit: 10, timeout: 12000, delay: 1000 },
             );
+            cy.wait(2000);
             cy.getToken(userA.username, userA.password);
           }).then(() => {
             // Step 8: User A edits 1XX field

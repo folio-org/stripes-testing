@@ -8,6 +8,7 @@ import VersionHistorySection from '../../../../support/fragments/inventory/versi
 import Z3950TargetProfiles from '../../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Inventory', () => {
   describe('Version history', () => {
@@ -101,7 +102,12 @@ describe('Inventory', () => {
           InstanceRecordEdit.waitLoading();
           InstanceRecordEdit.chooseInstanceStatusTerm(testData.instanceStatusTerm);
           InstanceRecordEdit.clickSaveAndCloseButton();
-          InstanceRecordView.verifyInstanceRecordViewOpened();
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
+          InventorySearchAndFilter.closeInstanceDetailPane();
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
           InstanceRecordView.verifyInstanceStatusTerm(testData.instanceStatusTerm);
           InstanceRecordView.clickVersionHistoryButton();
           VersionHistorySection.waitLoading();

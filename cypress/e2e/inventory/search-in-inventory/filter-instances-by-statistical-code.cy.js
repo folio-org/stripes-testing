@@ -36,7 +36,7 @@ describe('Inventory', () => {
               statisticalCodes = codes.filter((item) => item.source !== 'local');
             });
             cy.getStatisticalCodeTypes({ limit: 200 }).then((codeTypes) => {
-              statisticalCodeTypes = codeTypes.filter((item) => item.source === 'folio');
+              statisticalCodeTypes = codeTypes.filter((item) => item.source !== 'local');
             });
           })
             .then(() => {
@@ -52,6 +52,7 @@ describe('Inventory', () => {
                 });
               }
               statisticalCodes.forEach((code, index) => {
+                cy.log(code.name);
                 statisticalCodes[index].uiOptionName =
                   `${statisticalCodeTypes.filter((type) => type.id === code.statisticalCodeTypeId)[0].name}: ${code.code} - ${code.name}`;
               });
@@ -70,6 +71,8 @@ describe('Inventory', () => {
               InventorySearchAndFilter.instanceTabIsDefault();
               cy.ifConsortia(true, () => {
                 InventorySearchAndFilter.clearDefaultHeldbyFilter();
+                InventorySearchAndFilter.byShared('No');
+                InventorySearchAndFilter.checkNoSharedInstancesInResultList();
               });
             });
         });
@@ -163,11 +166,19 @@ describe('Inventory', () => {
                 InventoryInstance.waitInventoryLoading();
                 InstanceRecordView.verifyStatisticalCode(statisticalCodes[1].name);
                 InventorySearchAndFilter.clearFilter(testData.statisticalCodeAccordionName);
+                cy.ifConsortia(true, () => {
+                  InventorySearchAndFilter.byShared('No', false);
+                });
                 InventorySearchAndFilter.verifyResultPaneEmpty();
 
                 cy.intercept('/search/instances*').as('getInstancesQuery');
                 InventoryInstances.searchByTitle(testData.instancesTitlePrefix);
                 cy.wait('@getInstancesQuery', { timeout: 10_000 });
+
+                cy.ifConsortia(true, () => {
+                  InventorySearchAndFilter.byShared('No');
+                  InventorySearchAndFilter.checkNoSharedInstancesInResultList();
+                });
 
                 cy.intercept('/search/instances*').as('getInstances4');
                 InventorySearchAndFilter.selectMultiSelectFilterOption(

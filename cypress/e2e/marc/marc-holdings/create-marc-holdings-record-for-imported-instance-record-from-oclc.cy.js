@@ -14,7 +14,7 @@ import Users from '../../../support/fragments/users/users';
 describe('MARC', () => {
   describe('MARC Holdings', () => {
     let user;
-    let instanceHrid;
+    let instanceId;
     const testData = {
       tag852: '852',
       headerTitle: /New .*MARC holdings record/,
@@ -24,15 +24,15 @@ describe('MARC', () => {
 
     before('create test data and login', () => {
       cy.getAdminToken();
-      InventoryInstances.deleteInstanceByTitleViaApi('The wolves / Alex Berenson.');
+      InventoryInstances.deleteFullInstancesByTitleViaApi('The wolves / Alex Berenson.');
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
       cy.loginAsAdmin({
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
       InventoryActions.import(testData.oclc);
-      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-        instanceHrid = initialInstanceHrId;
+      InventoryInstance.getId().then((initialInstanceId) => {
+        instanceId = initialInstanceId;
       });
 
       cy.createTempUser([
@@ -51,12 +51,7 @@ describe('MARC', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId);
     });
 
     it(
@@ -65,9 +60,6 @@ describe('MARC', () => {
       () => {
         InventorySearchAndFilter.searchByParameter('Identifier (all)', `(OCoLC)${testData.oclc}`);
         InstanceRecordView.verifyInstancePaneExists();
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHrid = initialInstanceHrId;
-        });
         InventoryInstance.checkExpectedMARCSource();
         InventoryInstance.goToMarcHoldingRecordAdding();
         QuickMarcEditor.waitLoading();

@@ -14,12 +14,13 @@ const selectedTestTypes = [
 ];
 
 const selectedStatus = [
-  // status.Passed,
+  status.Passed,
   status.Blocked,
   status.Untested,
   status.Retest,
   status.Failed,
   status.Unassigned,
+  status.ToInvestigate,
 ];
 const selectedTeams = [
   team.Firebird,
