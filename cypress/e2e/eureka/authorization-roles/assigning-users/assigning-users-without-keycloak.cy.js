@@ -41,15 +41,15 @@ describe('Eureka', () => {
               testData.userAGroup = Cypress.env('userGroups')[0].group;
               testData.userBGroup = Cypress.env('userGroups')[1].group;
               testData.userCGroup = Cypress.env('userGroups')[2].group;
-              cy.createUserWithoutKeycloakInEurekaApi(userBodies[0]).then((userId) => {
-                testData.userAId = userId;
-                userIds.push(userId);
+              Users.createViaApi(userBodies[0]).then((user) => {
+                testData.userAId = user.id;
+                userIds.push(user.id);
               });
-              cy.createUserWithoutKeycloakInEurekaApi(userBodies[1]).then((userId) => {
-                testData.userBId = userId;
-                userIds.push(userId);
+              Users.createViaApi(userBodies[1]).then((user) => {
+                testData.userBId = user.id;
+                userIds.push(user.id);
               });
-              Users.createViaApi(userBodies[2]).then((user) => {
+              Users.createViaApi(userBodies[2], { keycloak: true }).then((user) => {
                 testData.userCId = user.id;
                 userIds.push(user.id);
               });
