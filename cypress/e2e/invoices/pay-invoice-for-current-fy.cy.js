@@ -174,7 +174,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
       it(
         'C388545 Approve and pay invoice created in current FY when related order line was created in previous FY and user does not have "Invoice: Pay invoices in a different fiscal year" permission (thunderjet) (TaaS)',
-        { tags: ['criticalPath', 'thunderjet', 'C388545'] },
+        { tags: ['criticalPath', 'thunderjet', 'C388545', 'nonParallel'] },
         () => {
           // Click on "PO number" link on "Orders" pane
           const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

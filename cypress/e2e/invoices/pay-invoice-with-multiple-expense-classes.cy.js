@@ -141,7 +141,7 @@ describe('Invoices', () => {
 
   it(
     'C15859 Pay an invoice with multiple "Expense classes" assigned to it (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'C15859'] },
+    { tags: ['criticalPath', 'thunderjet', 'C15859', 'nonParallel'] },
     () => {
       Invoices.openNewInvoiceForm();
       InvoiceNewForm.createInvoice({
