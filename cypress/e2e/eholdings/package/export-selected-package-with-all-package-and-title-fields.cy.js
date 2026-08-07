@@ -22,7 +22,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 describe('eHoldings', () => {
   describe('Package', () => {
     const testData = {
-      packageName: 'Book Online Library',
+      packageName: 'Wiley Online Library Online Book Series',
       fileName: `C353945autoTestFile${getRandomPostfix()}.csv`,
       fileMask: '*_package.csv',
       selectedStatus: 'Selected',

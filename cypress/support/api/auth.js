@@ -160,17 +160,21 @@ Cypress.Commands.add('getConsortiaStatus', () => {
   });
 });
 
-Cypress.Commands.add('ifConsortia', (condition, callback) => {
+Cypress.Commands.add('ifConsortia', (condition, callback, negativeCallback = null) => {
   return cy.wrap(Cypress.env('isConsortia')).then((isConsortiaStatus) => {
     if (isConsortiaStatus === undefined) {
       cy.getConsortiaStatus().then(({ isConsortia }) => {
         Cypress.env('isConsortia', isConsortia);
         if (condition === isConsortia) {
           return cy.wrap(callback());
+        } else if (negativeCallback) {
+          return cy.wrap(negativeCallback());
         }
       });
     } else if (condition === isConsortiaStatus) {
       return cy.wrap(callback());
+    } else if (negativeCallback) {
+      return cy.wrap(negativeCallback());
     }
   });
 });
