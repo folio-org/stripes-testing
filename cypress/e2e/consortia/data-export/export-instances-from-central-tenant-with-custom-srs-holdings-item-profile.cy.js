@@ -211,7 +211,7 @@ function addHoldingsAndItems(instance, tenantAffiliation) {
     cy.getMaterialTypes({ limit: 1 }).then((res) => {
       tenantMaterialTypeId = res.id;
     });
-    cy.getLocations({ limit: 1 }).then((locations) => {
+    cy.getLocations({ query: 'name="Main Library"' }).then((locations) => {
       tenantLocationId = locations.id;
       tenantLocationCode = locations.code;
     });

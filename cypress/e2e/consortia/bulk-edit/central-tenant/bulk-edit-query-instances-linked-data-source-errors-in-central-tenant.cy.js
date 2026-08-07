@@ -23,10 +23,12 @@ import QueryModal, {
   instanceFieldValues,
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import DateTools from '../../../../support/utils/dateTools';
 
 let user;
 let instanceTypeId;
 let fileNames;
+const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
 const postfix = randomFourDigitNumber();
 const folioInstance = {
   title: `AT_C651550_${postfix} folio instance testBulkEdit_${getRandomPostfix()}`,
@@ -128,8 +130,8 @@ describe('Bulk-edit', () => {
         QueryModal.verify();
         QueryModal.selectField(instanceFieldValues.updatedDate);
         QueryModal.verifySelectedField(instanceFieldValues.updatedDate);
-        QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN);
-        QueryModal.fillInValueTextfield('01/01/2020');
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+        QueryModal.fillInValueTextfield(today);
         QueryModal.addNewRow();
         QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
         QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);

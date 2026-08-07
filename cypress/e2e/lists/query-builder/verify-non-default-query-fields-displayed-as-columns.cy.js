@@ -1,6 +1,7 @@
 import Permissions from '../../../support/dictionary/permissions';
 import QueryModal, {
   holdingsFieldValues,
+  instanceFieldValues,
   QUERY_OPERATIONS,
 } from '../../../support/fragments/bulk-edit/query-modal';
 import { Lists } from '../../../support/fragments/lists/lists';
@@ -103,6 +104,13 @@ describe('Lists', () => {
 
         // Step 3: Verify preview of matched records and columns are displayed
         QueryModal.verifyPreviewOfRecordsMatched();
+
+        cy.ifConsortia(true, () => {
+          QueryModal.clickShowColumnsButton();
+          QueryModal.clickCheckboxInShowColumns(holdingsFieldValues.affiliationName);
+          QueryModal.clickCheckboxInShowColumns(holdingsFieldValues.tenantId);
+          QueryModal.clickCheckboxInShowColumns(instanceFieldValues.instanceTenantId);
+        });
 
         defaultHoldingsColumns.forEach((column) => {
           QueryModal.verifyColumnDisplayed(column);

@@ -2,6 +2,7 @@ import Permissions from '../../../support/dictionary/permissions';
 import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 import QueryModal, {
   holdingsFieldValues,
+  instanceFieldValues,
   QUERY_OPERATIONS,
 } from '../../../support/fragments/bulk-edit/query-modal';
 import { Lists } from '../../../support/fragments/lists/lists';
@@ -114,6 +115,13 @@ describe('Lists', () => {
 
         // Step 3: Verify preview of matched records and default columns are displayed
         QueryModal.verifyPreviewOfRecordsMatched();
+
+        cy.ifConsortia(true, () => {
+          QueryModal.clickShowColumnsButton();
+          QueryModal.clickCheckboxInShowColumns(holdingsFieldValues.affiliationName);
+          QueryModal.clickCheckboxInShowColumns(holdingsFieldValues.tenantId);
+          QueryModal.clickCheckboxInShowColumns(instanceFieldValues.instanceTenantId);
+        });
 
         allDefaultColumns.forEach((column) => {
           QueryModal.verifyColumnDisplayed(column);

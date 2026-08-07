@@ -3,6 +3,7 @@ import QueryModal, {
   instanceFieldValues,
   QUERY_OPERATIONS,
 } from '../../../../support/fragments/bulk-edit/query-modal';
+import DateTools from '../../../../support/utils/dateTools';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import { Lists } from '../../../../support/fragments/lists/lists';
@@ -12,6 +13,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 
 let user;
 const testCaseId = 'C844251';
+const todayDate = DateTools.getCurrentDate();
 const listData = {
   name: `AT_${testCaseId}_List_${getRandomPostfix()}`,
   description: `AT_${testCaseId}_Desc_${getRandomPostfix()}`,
@@ -204,8 +206,13 @@ describe('Lists', () => {
           QueryModal.verifySelectedOperator(QUERY_OPERATIONS.NOT_EQUAL, 1);
           QueryModal.fillInValueTextfield(randomValue, 1);
           QueryModal.verifyTextFieldValue(randomValue, 1);
+          QueryModal.addNewRow();
+          QueryModal.selectField(instanceFieldValues.createdDate, 2);
+          QueryModal.verifySelectedField(instanceFieldValues.createdDate, 2);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 2);
+          QueryModal.pickDate(todayDate, 2);
           QueryModal.verifyQueryAreaContent(
-            `(instance.title starts with ${titlePrefix}) AND (instance.source_uri != ${randomValue})`,
+            `(instance.title starts with ${titlePrefix}) AND (instance.source_uri != ${randomValue}) AND (instance.created_at == ${todayDate})`,
           );
           QueryModal.clickTestQuery();
           QueryModal.waitForQueryTestToFinish();
@@ -250,8 +257,11 @@ describe('Lists', () => {
             QueryModal.verifySelectedField(instanceFieldValues.instanceSourceUri, 1);
             QueryModal.verifySelectedOperator(QUERY_OPERATIONS.NOT_EQUAL, 1);
             QueryModal.verifyTextFieldValue(randomValue, 1);
+            QueryModal.verifySelectedField(instanceFieldValues.createdDate, 2);
+            QueryModal.verifySelectedOperator(QUERY_OPERATIONS.EQUAL, 2);
+            QueryModal.verifySelectedDateInCalendar(todayDate, 2);
             QueryModal.verifyQueryAreaContent(
-              `(instance.title starts with ${titlePrefix}) AND (instance.source_uri != ${randomValue})`,
+              `(instance.title starts with ${titlePrefix}) AND (instance.source_uri != ${randomValue}) AND (instance.created_at == ${todayDate})`,
             );
             QueryModal.testQueryDisabled(false);
 
