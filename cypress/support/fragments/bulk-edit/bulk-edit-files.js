@@ -77,6 +77,7 @@ export default {
   getAllQueryDownloadedFileNames(bulkEditJobId, isDateIncluded = false) {
     return {
       identifiersQueryFilename: `Query-${bulkEditJobId}.csv`,
+      queryStatementFilename: `QueryStatement-${bulkEditJobId}.txt`,
       matchedRecordsCSV: isDateIncluded
         ? `${todayDate}-Matched-Records-Query-${bulkEditJobId}.csv`
         : `*-Matched-Records-Query-${bulkEditJobId}.csv`,

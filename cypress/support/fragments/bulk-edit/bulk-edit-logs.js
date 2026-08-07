@@ -54,6 +54,12 @@ const errorsCommittingBtn = DropdownMenu().find(
 const queryIdentifiersBtn = DropdownMenu().find(
   Button('File with identifiers of the records affected by bulk update'),
 );
+const queryStatementBtn = DropdownMenu().find(
+  Button('File with the query used to trigger the bulk edit'),
+);
+const errorsDeletingBtn = DropdownMenu().find(
+  Button('File with errors encountered when deleting the records'),
+);
 const logsActionButton = Button({ icon: 'ellipsis' });
 const newCheckbox = Checkbox('New');
 const retrievingRecordsCheckbox = Checkbox('Retrieving records');
@@ -489,6 +495,24 @@ export default {
     cy.expect([triggerBtn.exists(), matchingRecordsBtn.exists()]);
   },
 
+  verifyLogsRowActionForBulkDeleteWithQuery() {
+    cy.expect([
+      queryIdentifiersBtn.exists(),
+      queryStatementBtn.exists(),
+      matchingRecordsBtn.exists(),
+      errorsDeletingBtn.exists(),
+    ]);
+  },
+
+  verifyLogsRowActionForBulkDeleteWithErrors() {
+    cy.expect([
+      triggerBtn.exists(),
+      matchingRecordsBtn.exists(),
+      errorsDeletingBtn.exists(),
+      previewPorposedChangesBtn.absent(),
+    ]);
+  },
+
   verifyLogsRowActionWhenCompleted(isMarcInstance = false) {
     cy.expect([
       triggerBtn.exists(),
@@ -611,6 +635,16 @@ export default {
 
   downloadFileWithCommitErrors() {
     cy.do(errorsCommittingBtn.click());
+    this.waitingFileDownload();
+  },
+
+  downloadQueryStatementFile() {
+    cy.do(queryStatementBtn.click());
+    this.waitingFileDownload();
+  },
+
+  downloadFileWithErrorsFromDeleting() {
+    cy.do(errorsDeletingBtn.click());
     this.waitingFileDownload();
   },
 
