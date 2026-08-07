@@ -34,7 +34,7 @@ describe('Eureka', () => {
                     lastName: `AT_C627395_LastName_${i}_${randomPostfix}`,
                     firstName: `AT_C627395_FirstName_${i}_${randomPostfix}`,
                     email: 'AT_C627395@test.com',
-                    preferredContactTypeId: '002',
+                    preferredContactTypeIds: ['002'],
                   },
                 });
               }

@@ -24,7 +24,7 @@ describe('MARC', () => {
         personal: {
           lastName: `AT_C356850_LastName_${getRandomPostfix()}`,
           email: 'AT_C356850@test.com',
-          preferredContactTypeId: '002',
+          preferredContactTypeIds: ['002'],
         },
       },
       userPassword: 'MyComplicatedPassword123!',

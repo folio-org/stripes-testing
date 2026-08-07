@@ -65,7 +65,7 @@ describe(
                   lastName: `AT_C584520_LastName_${i}_${randomPostfix}`,
                   firstName: `AT_C584520_FirstName_${i}_${randomPostfix}`,
                   email: 'AT_C584520@test.com',
-                  preferredContactTypeId: '002',
+                  preferredContactTypeIds: ['002'],
                 },
               });
             }
