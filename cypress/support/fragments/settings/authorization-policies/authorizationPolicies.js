@@ -26,7 +26,7 @@ const recordLastUpdatedHeader = generalInformationAccordion.find(
 );
 const policySearchInputField = policiesPane.find(TextField({ testid: 'search-field' }));
 const policySearchButton = policiesPane.find(Button({ dataTestID: 'search-button' }));
-const newButton = policiesPane.find(Button('+ New'));
+const newButton = policiesPane.find(Button('New'));
 const metadataAccordion = Button({ text: including('Record last updated: ') });
 const actionsButton = Button('Actions');
 const clearFieldButton = Button({ icon: 'times-circle-solid' });

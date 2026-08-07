@@ -1,4 +1,3 @@
-
 import {
   Button,
   HTML,
@@ -7,7 +6,7 @@ import {
   MultiColumnListCell,
   MultiColumnListRow,
   Pane,
-  TextField
+  TextField,
 } from '../../../../../interactors';
 import FinanceHelper from '../../finance/financeHelper';
 
@@ -22,8 +21,7 @@ const saveButton = Button('Save');
 const deleteButton = Button('Delete');
 const editEntityButton = Button({ icon: 'edit' });
 const deleteEntityButton = Button({ icon: 'trash' });
-const newButton = Button('+ New');
-
+const newButton = Button('New');
 
 const defaults = {
   defaultPrefix: {
@@ -75,7 +73,11 @@ const UI = {
   },
 
   editPrefix(oldName, newName, newDesc) {
-    cy.do(MultiColumnListRow({ content: including(oldName), isContainer: true }).find(editEntityButton).click());
+    cy.do(
+      MultiColumnListRow({ content: including(oldName), isContainer: true })
+        .find(editEntityButton)
+        .click(),
+    );
     cy.wait(1000);
     cy.do(nameField.fillIn(newName));
     cy.do(descriptionField.fillIn(newDesc));
@@ -84,7 +86,11 @@ const UI = {
   },
 
   editSuffix(oldName, newName, newDesc) {
-    cy.do(MultiColumnListRow({ content: including(oldName), isContainer: true }).find(editEntityButton).click());
+    cy.do(
+      MultiColumnListRow({ content: including(oldName), isContainer: true })
+        .find(editEntityButton)
+        .click(),
+    );
     cy.wait(1000);
     cy.do(nameField.fillIn(newName));
     cy.do(descriptionField.fillIn(newDesc));
@@ -93,22 +99,38 @@ const UI = {
   },
 
   deletePrefix(name) {
-    cy.do(MultiColumnListRow({ content: including(name), isContainer: true }).find(deleteEntityButton).click());
+    cy.do(
+      MultiColumnListRow({ content: including(name), isContainer: true })
+        .find(deleteEntityButton)
+        .click(),
+    );
   },
 
   deleteSuffix(name) {
-    cy.do(MultiColumnListRow({ content: including(name), isContainer: true }).find(deleteEntityButton).click());
+    cy.do(
+      MultiColumnListRow({ content: including(name), isContainer: true })
+        .find(deleteEntityButton)
+        .click(),
+    );
   },
 
   checkCannotDeletePrefixModal() {
     cy.expect(cannotDeletePrefixModal.exists());
-    cy.expect(cannotDeletePrefixModal.find(HTML('This prefix cannot be deleted, as it is in use by one or more records.')).exists());
+    cy.expect(
+      cannotDeletePrefixModal
+        .find(HTML('This prefix cannot be deleted, as it is in use by one or more records.'))
+        .exists(),
+    );
     cy.expect(cannotDeletePrefixModal.find(buttonOkay).exists());
   },
 
   checkCannotDeleteSuffixModal() {
     cy.expect(cannotDeleteSuffixModal.exists());
-    cy.expect(cannotDeleteSuffixModal.find(HTML('This suffix cannot be deleted, as it is in use by one or more records.')).exists());
+    cy.expect(
+      cannotDeleteSuffixModal
+        .find(HTML('This suffix cannot be deleted, as it is in use by one or more records.'))
+        .exists(),
+    );
     cy.expect(cannotDeleteSuffixModal.find(buttonOkay).exists());
   },
 
@@ -160,13 +182,13 @@ const API = {
       method: 'DELETE',
       path: `orders/prefixes/${id}`,
       isDefaultSearchParamsRequired: false,
-      failOnStatusCode: false
+      failOnStatusCode: false,
     });
   },
 
   deletePrefixByNameViaApi(name) {
-    this.getPrefixesViaApi().then(response => {
-      const prefix = response.body.prefixes.find(p => p.name === name);
+    this.getPrefixesViaApi().then((response) => {
+      const prefix = response.body.prefixes.find((p) => p.name === name);
       if (prefix) {
         this.deletePrefixViaApi(prefix.id);
       }
@@ -185,18 +207,18 @@ const API = {
       method: 'DELETE',
       path: `orders/suffixes/${id}`,
       isDefaultSearchParamsRequired: false,
-      failOnStatusCode: false
+      failOnStatusCode: false,
     });
   },
 
   deleteSuffixByNameViaApi(name) {
-    this.getSuffixesViaApi().then(response => {
-      const suffix = response.body.suffixes.find(s => s.name === name);
+    this.getSuffixesViaApi().then((response) => {
+      const suffix = response.body.suffixes.find((s) => s.name === name);
       if (suffix) {
         this.deleteSuffixViaApi(suffix.id);
       }
     });
-  }
+  },
 };
 
 export const PrefixSuffix = {
