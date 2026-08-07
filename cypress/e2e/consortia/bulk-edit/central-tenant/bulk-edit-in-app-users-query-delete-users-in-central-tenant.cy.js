@@ -238,7 +238,9 @@ describe('Bulk-edit', () => {
 
             // Step 16: Download "File with the query used to trigger the bulk edit"
             BulkEditLogs.downloadQueryStatementFile();
-            FileManager.verifyFileIncludes(fileNames.queryStatementFilename, ['users.id in']);
+            FileManager.verifyFileIncludes(fileNames.queryStatementFilename, [
+              `(users.id in (${userUUIDs.replace(/,/g, ', ')}))`,
+            ]);
 
             // Step 17: Download "File with the matching records"
             BulkEditLogs.downloadFileWithMatchingRecords();

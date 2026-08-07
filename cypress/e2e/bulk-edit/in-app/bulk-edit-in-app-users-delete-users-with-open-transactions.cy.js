@@ -90,11 +90,6 @@ describe('Bulk-edit', () => {
           waiter: BulkEditSearchPane.waitLoading,
         });
 
-        // NOTE: the manual test case calls for a .csv file with 10,000 User UUIDs
-        // (records with and without open transactions). Automating the test with the
-        // full volume is impractical in this environment, so a small representative
-        // set (one user without and one user with open transactions) is used instead,
-        // covering the same functional flow and assertions as the manual test.
         FileManager.createFile(
           `cypress/fixtures/${userUUIDsFileName}`,
           `"${userToDelete.userId}"\n"${userWithOpenTransaction.userId}"`,
@@ -125,7 +120,7 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C1385659 Verify bulk delete for large number of User records (10.000) (firebird)',
+      'C1385659 Verify bulk deletion of User records (firebird)',
       { tags: ['extendedPath', 'firebird', 'C1385659'] },
       () => {
         // Step 1: Check the Preview of records matched
