@@ -73,6 +73,10 @@ describe('MARC', () => {
           .then(() => {
             cy.wait(70_000); // wait for new source files to be processed
             cy.getAdminToken();
+            // Force increased limit for UI to load all files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
               waiter: MarcAuthorities.waitLoading,

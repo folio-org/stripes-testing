@@ -284,6 +284,8 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkRowsCount(1);
 
         InventorySearchAndFilter.switchToHoldings();
+        InventorySearchAndFilter.holdingsTabIsDefault();
+        InventorySearchAndFilter.clearDefaultHeldbyFilter();
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,
@@ -309,6 +311,8 @@ describe('Inventory', () => {
         InventorySearchAndFilter.checkRowsCount(3);
 
         InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.itemTabIsDefault();
+        InventorySearchAndFilter.clearDefaultHeldbyFilter();
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(
           0,

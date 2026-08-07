@@ -11,7 +11,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 
 describe('Inventory', () => {
   describe('MARC Bibliographic', () => {
-    describe('Version history', { retries: { runMode: 1 } }, () => {
+    describe('Version history', { retries: { runMode: 1, openMode: 1 } }, () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
         instanceTitle: `AT_C692115_MarcBibInstance_${randomPostfix}`,
@@ -198,7 +198,7 @@ describe('Inventory', () => {
         },
       ];
 
-      before('Create test data', () => {
+      beforeEach('Create test data', () => {
         cy.getAdminToken();
 
         cy.createTempUser(permissions).then((userProperties) => {
@@ -219,7 +219,7 @@ describe('Inventory', () => {
         });
       });
 
-      after('Delete test data', () => {
+      afterEach('Delete test data', () => {
         cy.getAdminToken();
         InventoryInstance.deleteInstanceViaApi(testData.createdRecordId);
         Users.deleteViaApi(testData.userProperties.userId);

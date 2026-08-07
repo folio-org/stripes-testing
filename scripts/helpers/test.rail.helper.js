@@ -6,6 +6,7 @@ const status = {
   Retest: 4,
   Failed: 5,
   Unassigned: 6,
+  ToInvestigate: 12,
 };
 
 const team = {

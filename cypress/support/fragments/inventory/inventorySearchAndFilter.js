@@ -277,22 +277,15 @@ export default {
     cy.expect(MultiColumnListRow().exists());
   },
 
-  byShared(condititon) {
+  byShared(condititon, isSelected = true) {
+    const action = isSelected ? 'checkIfNotSelected' : 'uncheckIfSelected';
     cy.wait(1000);
     cy.then(() => sharedAccordion.open()).then((isOpen) => {
       if (!isOpen) cy.do(sharedAccordion.clickHeader());
       if (condititon === 'Yes') {
-        cy.do(
-          sharedAccordion
-            .find(Checkbox({ id: 'clickable-filter-shared-true' }))
-            .checkIfNotSelected(),
-        );
+        cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-true' }))[action]());
       } else {
-        cy.do(
-          sharedAccordion
-            .find(Checkbox({ id: 'clickable-filter-shared-false' }))
-            .checkIfNotSelected(),
-        );
+        cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-false' }))[action]());
       }
       cy.wait(1000);
       cy.expect(sharedAccordion.find(Spinner()).absent());

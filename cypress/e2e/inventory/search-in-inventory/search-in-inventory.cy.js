@@ -156,7 +156,10 @@ describe('Inventory', () => {
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.byShared('No');
         });
+        cy.intercept('GET', '/search/instances?*').as('searchInstances');
         InventoryInstances.searchByTitle('*');
+        cy.wait('@searchInstances');
+        cy.wait(1000);
         InventoryInstances.waitLoading();
         InventoryInstances.selectInstance();
         InventorySearchAndFilter.verifyInstanceDetailsView();

@@ -18,7 +18,7 @@ describe('MARC', () => {
       authority: {
         title: 'Type of heading test',
         searchOption: 'Keyword',
-        all: '*',
+        all: 'C365113',
       },
 
       facetOptions: {
@@ -85,7 +85,7 @@ describe('MARC', () => {
     after(() => {
       cy.getAdminToken();
       createdAuthorityIDs.forEach((id) => {
-        MarcAuthority.deleteViaAPI(id);
+        MarcAuthority.deleteViaAPI(id, true);
       });
       Users.deleteViaApi(testData.userProperties.userId);
     });

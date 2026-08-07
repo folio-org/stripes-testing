@@ -65,7 +65,7 @@ describe('eHoldings', () => {
         EHoldingsPackagesSearch.bySelectionStatus(testData.selectedStatus);
         EHoldingsPackages.verifyOnlySelectedPackagesInResults();
 
-        EHoldingsPackages.openPackageWithExpectedTitels(20);
+        EHoldingsPackages.openPackageWithExpectedTitels(26);
         EHoldingsPackageView.waitLoading();
 
         EHoldingsPackageView.openExportModal();

@@ -19,11 +19,11 @@ describe('Data Import', () => {
         field: '*',
         indicator1: '*',
         indicator2: '*',
-        subfield: '5',
+        subfield: 'a',
         data: 'VLR',
       },
       secondProtectedFieldData: {
-        field: '600',
+        field: '400',
         indicator1: '*',
         indicator2: '*',
         subfield: 'a',
@@ -69,8 +69,9 @@ describe('Data Import', () => {
 
     it(
       'C366101 MARC Authority field protections display but disallow override on field mapping create/edit page (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C366101'] },
+      { tags: ['extendedPath', 'folijet', 'nonParallel', 'C366101'] },
       () => {
+        cy.wait(5000);
         FieldMappingProfiles.openNewMappingProfileForm();
         FieldMappingProfiles.checkNewMappingProfileFormIsOpened();
         NewFieldMappingProfile.fillMappingProfileForUpdatesMarcAuthority(testData.mappingProfile);

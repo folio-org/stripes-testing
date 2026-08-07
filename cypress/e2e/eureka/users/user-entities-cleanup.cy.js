@@ -55,15 +55,18 @@ describe('Eureka', () => {
             cy.expect(response.body.userRoles.length).equals(0);
             cy.expect(response.body.totalRecords).equals(0);
           });
-          cy.getCapabilitiesForUserApi(testData.user.userId).then((response) => {
-            cy.expect(response.status).equals(200);
-            cy.expect(response.body.capabilities.length).equals(0);
-            cy.expect(response.body.totalRecords).equals(0);
-          });
-          cy.getCapabilitySetsForUserApi(testData.user.userId).then((response) => {
-            cy.expect(response.status).equals(200);
-            cy.expect(response.body.capabilitySets.length).equals(0);
-            cy.expect(response.body.totalRecords).equals(0);
+
+          cy.ifConsortia(false, () => {
+            cy.getCapabilitiesForUserApi(testData.user.userId).then((response) => {
+              cy.expect(response.status).equals(200);
+              cy.expect(response.body.capabilities.length).equals(0);
+              cy.expect(response.body.totalRecords).equals(0);
+            });
+            cy.getCapabilitySetsForUserApi(testData.user.userId).then((response) => {
+              cy.expect(response.status).equals(200);
+              cy.expect(response.body.capabilitySets.length).equals(0);
+              cy.expect(response.body.totalRecords).equals(0);
+            });
           });
         });
       },

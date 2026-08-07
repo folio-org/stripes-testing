@@ -159,11 +159,11 @@ describe('Inventory', () => {
 
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.checkBrowseOptionSelected(testData.callNumberOption);
-        InventorySearchAndFilter.verifyBrowseResultsEmptyPane();
-        InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
         });
+        InventorySearchAndFilter.verifyBrowseResultsEmptyPane();
+        InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
 
         BrowseContributors.browse(testData.query);
         BrowseCallNumber.checkSearchResultsTable();

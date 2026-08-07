@@ -37,6 +37,7 @@ import Users from '../../../../support/fragments/users/users';
 import { getLongDelay } from '../../../../support/utils/cypressTools';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Inventory', () => {
   describe('Version history', () => {
@@ -110,8 +111,9 @@ describe('Inventory', () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(testData.instanceId);
-          InventoryInstances.selectInstance();
-          InstanceRecordView.verifyInstanceRecordViewOpened();
+          InventoryInstances.selectInstanceById(testData.instanceId);
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
         });
       });
 
@@ -134,6 +136,7 @@ describe('Inventory', () => {
           cy.intercept('/data-export/quick-export').as('getHrid');
           cy.wait('@getHrid', getLongDelay()).then((req) => {
             const expectedRecordHrid = req.response.body.jobExecutionHrId;
+            InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
             ExportFile.downloadExportedMarcFileWithRecordHrid(
@@ -184,9 +187,13 @@ describe('Inventory', () => {
             RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.instance,
           );
-          FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
-
-          InstanceRecordView.verifyInstanceRecordViewOpened();
+          cy.wait(2000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          InventoryInstances.waitContentLoading();
+          InventoryInstances.searchByTitle(testData.instanceId);
+          InventoryInstances.selectInstanceById(testData.instanceId);
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
           InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
           InstanceRecordView.clickVersionHistoryButton();
           VersionHistorySection.waitLoading();

@@ -142,6 +142,7 @@ describe('Data Import', () => {
         cy.intercept('/data-export/quick-export').as('getHrid');
         cy.wait('@getHrid', getLongDelay()).then((req) => {
           const expectedRecordHrid = req.response.body.jobExecutionHrId;
+          InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
 
           // download exported marc file
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
@@ -191,7 +192,13 @@ describe('Data Import', () => {
           RECORD_STATUSES.UPDATED,
           FileDetails.columnNameInResultList.instance,
         );
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+        cy.wait(2000);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+        InventoryInstances.waitContentLoading();
+        InventoryInstances.searchByTitle(testData.instanceId);
+        InventoryInstances.selectInstanceById(testData.instanceId);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
         InstanceRecordView.verifyResourceIdentifier(
           testData.identifier.type,

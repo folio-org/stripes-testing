@@ -27,6 +27,10 @@ describe('MARC', () => {
           (userProperties) => {
             testData.user = userProperties;
 
+            // Force increased limit for UI to load all files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.settingsAuthorityFilesPath,
               waiter: ManageAuthorityFiles.waitLoading,
@@ -39,7 +43,7 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
         cy.getAuthoritySourceFileIdViaAPI(testData.name).then((id) => {
-          cy.deleteAuthoritySourceFileViaAPI(id);
+          cy.deleteAuthoritySourceFileViaAPI(id, true);
         });
       });
 
