@@ -199,6 +199,19 @@ async function transitionIssueTo(api, issueKey, targetStatusName) {
 }
 
 /**
+ * Permanently delete a Jira issue (Jira Cloud REST API v3).
+ * @param {import('axios').AxiosInstance} api - Jira axios client (createJiraClient)
+ * @param {string} issueKey - e.g. "FAT-1234"
+ * @returns {Promise<void>}
+ */
+async function deleteIssue(api, issueKey) {
+  const response = await api.delete(`issue/${issueKey}`);
+  if (response.status !== 204) {
+    throw new Error(`Error deleting issue ${issueKey} (status ${response.status})`);
+  }
+}
+
+/**
  * Create an issue link between two issues.
  * @param {import('axios').AxiosInstance} api - Jira axios client (createJiraClient)
  * @param {Object} opts
@@ -230,4 +243,5 @@ module.exports = {
   getTransitions,
   transitionIssueTo,
   createIssueLink,
+  deleteIssue,
 };

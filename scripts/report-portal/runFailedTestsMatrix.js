@@ -6,7 +6,11 @@ const path = require('path');
 
 const { LAUNCHES } = require('./constants/constants');
 const { getFlakyItems } = require('./services/itemService');
-const { syncFlakyTickets } = require('./services/flakyTicketService');
+const {
+  syncFlakyTickets,
+  purgeBelowCriteriaTickets,
+  purgeAllFeatureTickets,
+} = require('./services/flakyTicketService');
 const { createJiraClient } = require('../helpers/api.client');
 
 /**
@@ -68,6 +72,8 @@ function parseArgs() {
     headed: false,
     epic: null,
     syncOnly: false,
+    resetBelowCriteria: false,
+    resetAll: false,
   };
 
   for (let i = 0; i < argv.length; i++) {
@@ -76,6 +82,10 @@ function parseArgs() {
       args.headed = true;
     } else if (arg === '--sync-only') {
       args.syncOnly = true;
+    } else if (arg === '--reset-below-criteria') {
+      args.resetBelowCriteria = true;
+    } else if (arg === '--reset-all') {
+      args.resetAll = true;
     } else if (arg === '--teams' && argv[i + 1]) {
       args.teams = parseList(argv[++i]);
     } else if (arg === '--launches' && argv[i + 1]) {
@@ -259,9 +269,56 @@ async function collectFlakyTests(launches, teams) {
 }
 
 async function main() {
-  const { teams, launches, concurrency, headed, epic, syncOnly } = parseArgs();
+  const { teams, launches, concurrency, headed, epic, syncOnly, resetBelowCriteria, resetAll } =
+    parseArgs();
 
   fs.mkdirSync(LOGS_DIR, { recursive: true });
+
+  // Hard reset: delete EVERY ticket associated with the feature (linked via "Relates" or
+  // labelled by this automation), regardless of history/criteria, then exit so a fresh
+  // sync can recreate them cleanly from Report Portal.
+  if (resetAll) {
+    if (!epic) {
+      console.error('✗ --reset-all requires an epic (pass --epic KEY or set JIRA_EPIC).');
+      process.exit(1);
+    }
+    const jiraApiKey = process.env.JIRA_API_KEY;
+    if (!jiraApiKey) {
+      console.error('✗ JIRA_API_KEY is not set (add it to your environment or .env).');
+      process.exit(1);
+    }
+    const jiraClient = createJiraClient(jiraApiKey);
+    const { deleted } = await purgeAllFeatureTickets(jiraClient, { featureKey: epic });
+    console.log(
+      `\n✔ Hard reset done under ${epic}: ${deleted.length} deleted. ` +
+        'Re-run with --sync-only to recreate fresh tickets from Report Portal.',
+    );
+    process.exit(0);
+  }
+
+  // One-time reset: delete stale flaky tickets whose test no longer meets the create
+  // criteria (e.g. old tickets carrying 30-run statistics), then exit so a subsequent
+  // normal sync can recreate them fresh with correctly-scoped 10-run history.
+  if (resetBelowCriteria) {
+    if (!epic) {
+      console.error(
+        '✗ --reset-below-criteria requires an epic (pass --epic KEY or set JIRA_EPIC).',
+      );
+      process.exit(1);
+    }
+    const jiraApiKey = process.env.JIRA_API_KEY;
+    if (!jiraApiKey) {
+      console.error('✗ JIRA_API_KEY is not set (add it to your environment or .env).');
+      process.exit(1);
+    }
+    const jiraClient = createJiraClient(jiraApiKey);
+    const { deleted, kept } = await purgeBelowCriteriaTickets(jiraClient, { featureKey: epic });
+    console.log(
+      `\n✔ Reset done under ${epic}: ${deleted.length} deleted, ${kept.length} kept. ` +
+        'Re-run without --reset-below-criteria to recreate fresh tickets.',
+    );
+    process.exit(0);
+  }
 
   let results = [];
   if (syncOnly) {
@@ -303,15 +360,19 @@ async function main() {
 
       const jiraClient = createJiraClient(jiraApiKey);
       const ticketResults = await syncFlakyTickets(jiraClient, { epicKey: epic }, flakyGroups);
-      const { synced, closed } = ticketResults;
+      const { synced, closed, deleted } = ticketResults;
 
       const created = synced.filter((r) => r.action === 'created').length;
       const updated = synced.filter((r) => r.action === 'updated').length;
+      const reopened = synced.filter((r) => r.action === 'reopened').length;
+      const skipped = synced.filter((r) => r.action === 'skipped').length;
       const errored = synced.filter((r) => r.action === 'error').length;
       const closedCount = closed.filter((r) => r.action === 'closed').length;
+      const deletedCount = (deleted || []).filter((r) => r.action === 'deleted').length;
       console.log(
         `\n✔ Flaky tickets synced under ${epic}: ${created} created, ${updated} updated, ` +
-          `${closedCount} closed (stable), ${errored} failed.`,
+          `${reopened} reopened, ${skipped} skipped, ${closedCount} closed (stable), ` +
+          `${deletedCount} deleted (below criteria), ${errored} failed.`,
       );
 
       // Save a local audit copy of what was synced.

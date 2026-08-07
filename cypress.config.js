@@ -1,5 +1,11 @@
 const { defineConfig } = require('cypress');
 const path = require('path');
+
+// Force a deterministic timezone so date rendering does not depend on the local
+// machine/browser timezone (prevents +1 day shifts when uploading/verifying dates).
+// Can be overridden by exporting TZ before running Cypress, e.g. `TZ=America/New_York`.
+process.env.TZ = process.env.TZ || 'UTC';
+
 const globby = require('globby');
 const converter = require('json-2-csv');
 const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
@@ -83,19 +89,19 @@ module.exports = defineConfig({
     // diku_login: 'diku_admin',
     // baseUrl: 'https://folio-etesting-cypress-diku.ci.folio.org',
 
-    LOGIN: 'diku_admin',
-    PASSWORD: 'admin',
-    OKAPI_HOST: 'https://folio-etesting-snapshot-kong.ci.folio.org',
-    OKAPI_TENANT: 'diku',
-    diku_login: 'diku_admin',
-    baseUrl: 'https://folio-etesting-snapshot-diku.ci.folio.org',
-
-    // LOGIN: 'consortium_admin',
+    // LOGIN: 'diku_admin',
     // PASSWORD: 'admin',
-    // OKAPI_HOST: 'https://ecs-folio-etesting-snapshot-kong.ci.folio.org',
-    // OKAPI_TENANT: 'consortium',
-    // diku_login: 'consortium_admin',
+    // OKAPI_HOST: 'https://folio-etesting-snapshot-kong.ci.folio.org',
+    // OKAPI_TENANT: 'diku',
+    // diku_login: 'diku_admin',
     // baseUrl: 'https://folio-etesting-snapshot-diku.ci.folio.org',
+
+    LOGIN: 'consortium_admin',
+    PASSWORD: 'admin',
+    OKAPI_HOST: 'https://ecs-folio-etesting-snapshot-kong.ci.folio.org',
+    OKAPI_TENANT: 'consortium',
+    diku_login: 'consortium_admin',
+    baseUrl: 'https://folio-etesting-snapshot-diku.ci.folio.org',
 
     // LOGIN: 'diku_admin',
     // PASSWORD: 'admin',
@@ -130,8 +136,8 @@ module.exports = defineConfig({
   },
   reporterOptions: reportportalOptions,
   e2e: {
-    baseUrl: 'https://folio-etesting-snapshot-diku.ci.folio.org',
-    // baseUrl: 'https://folio-etesting-snapshot-consortium.ci.folio.org',
+    // baseUrl: 'https://folio-etesting-snapshot-diku.ci.folio.org',
+    baseUrl: 'https://folio-etesting-snapshot-consortium.ci.folio.org',
     // baseUrl: 'https://folio-etesting-cypress-consortium.ci.folio.org',
     // baseUrl: 'https://folio-etesting-cypress-diku.ci.folio.org',
 

@@ -9,6 +9,7 @@ const {
   postComment,
   transitionIssueTo,
   createIssueLink,
+  deleteIssue,
 } = require('../../helpers/jira.helper');
 const { getItemHistoryStats } = require('./itemService');
 const { getLatestLaunch } = require('./launchService');
@@ -24,16 +25,61 @@ const FEATURE_LINK_TYPE = process.env.JIRA_FLAKY_LINK_TYPE || 'Relates';
 // Marker line kept in every managed description so runs can find & extend the log.
 const LOG_HEADER = 'Flakiness log (auto-updated):';
 const TOTAL_PREFIX = 'Total recorded flaky occurrences:';
+// Sticky marker: once a ticket's test has met the flaky-create criteria it stays set,
+// so the reconcile pass never deletes a test that was legitimately flaky — it closes it.
+const QUALIFIED_PREFIX = 'Ever met flaky-create criteria:';
 // Machine-readable footer so a later run can resolve the RP test behind a ticket.
 const META_PREFIX = 'RP-Meta:';
+// Only the last N Report Portal runs are considered for every decision below.
+const HISTORY_DEPTH = 10;
 // A test passing this many consecutive most-recent runs is considered stable → close.
-const STABLE_STREAK_THRESHOLD = 4;
+const STABLE_STREAK_THRESHOLD = 3;
 // Status the ticket is moved to once the test is deemed stable.
 const STABLE_TARGET_STATUS = 'Closed';
+// Status a closed ticket is reopened to when the test turns flaky again.
+const REOPEN_TARGET_STATUS = process.env.JIRA_FLAKY_REOPEN_STATUS || 'Open';
+// Ticket-creation criteria: a test must be flaky in at least this many of the last
+// HISTORY_DEPTH runs (3/10 = 30% > 20%) to warrant a ticket. Tickets whose test no
+// longer meets this bar are deleted.
+const FLAKY_CREATE_MIN_COUNT = 3;
 
 // FOLIO's "Development Team" single-select field; the team name (e.g. "Firebird")
 // matches its option values exactly.
 const TEAM_FIELD_ID = 'customfield_10057';
+
+/**
+ * Whether a test's Report Portal history qualifies for a flaky ticket:
+ * flaky in >= FLAKY_CREATE_MIN_COUNT of the last HISTORY_DEPTH runs (flaky rate > 20%).
+ * @param {Object|null} stats - getItemHistoryStats output
+ * @returns {boolean}
+ */
+function meetsCreateCriteria(stats) {
+  return !!stats && (stats.flaky || 0) >= FLAKY_CREATE_MIN_COUNT;
+}
+
+/**
+ * Map a flaky rate (0..1 over the last HISTORY_DEPTH runs) to a Jira priority name:
+ *   < 40% → P4, < 60% → P3, < 80% → P2, >= 80% → P1.
+ * @param {number} flakyRate
+ * @returns {string}
+ */
+function priorityForRate(flakyRate) {
+  const pct = (flakyRate || 0) * 100;
+  if (pct < 40) return 'P4';
+  if (pct < 60) return 'P3';
+  if (pct < 80) return 'P2';
+  return 'P1';
+}
+
+/**
+ * Build the Jira `fields` fragment that sets the ticket priority from a flaky rate.
+ * @param {Object|null} stats - getItemHistoryStats output
+ * @returns {Object}
+ */
+function buildPriorityField(stats) {
+  if (!stats) return {};
+  return { priority: { name: priorityForRate(stats.flakyRate) } };
+}
 
 /**
  * Build the Jira `fields` fragment that stores the team in the Development Team field.
@@ -167,14 +213,19 @@ function buildStatsLines(stats) {
   if (!stats || !stats.totalRuns) return [];
   const pct = (stats.flakyRate * 100).toFixed(1);
   const lines = [
-    `Run statistics (last ${stats.totalRuns} run(s), via Report Portal history):`,
+    `Run statistics (last ${stats.totalRuns} of up to ${HISTORY_DEPTH} run(s), via Report Portal history):`,
     `- Passed: ${stats.passed}`,
     `- Flaky: ${stats.flaky} (flaky rate: ${pct}%)`,
     `- Failed: ${stats.failed}`,
+    `- Priority: ${priorityForRate(stats.flakyRate)} (by flaky rate)`,
   ];
   if (stats.skipped) lines.push(`- Skipped: ${stats.skipped}`);
   if (stats.firstSeen) lines.push(`- First seen: ${dayStamp(stats.firstSeen)}`);
   if (stats.lastSeen) lines.push(`- Last seen: ${dayStamp(stats.lastSeen)}`);
+  // Make the decision rule explicit so ticket readers understand the numbers above.
+  lines.push(
+    `- Flaky-ticket criteria: flaky in >= ${FLAKY_CREATE_MIN_COUNT} of the last ${HISTORY_DEPTH} runs (> 20%)`,
+  );
   return lines;
 }
 
@@ -183,9 +234,10 @@ function buildStatsLines(stats) {
  * @param {Object} entry - aggregated flaky test entry
  * @param {Set<string>} logLines - merged, de-duplicated observation lines
  * @param {Object|null} [stats] - Report Portal history statistics
+ * @param {boolean} [everQualified] - whether the test has ever met the create criteria
  * @returns {string}
  */
-function buildDescriptionText(entry, logLines, stats = null) {
+function buildDescriptionText(entry, logLines, stats = null, everQualified = true) {
   const sortedLines = Array.from(logLines).sort();
   const parts = [];
   parts.push(
@@ -207,12 +259,26 @@ function buildDescriptionText(entry, logLines, stats = null) {
   parts.push(...sortedLines);
   parts.push('');
   parts.push(`${TOTAL_PREFIX} ${sortedLines.length}`);
+  // Sticky flag so the reconcile pass closes (not deletes) a once-legitimately-flaky test.
+  parts.push(`${QUALIFIED_PREFIX} ${everQualified ? 'yes' : 'no'}`);
   // Machine-readable footer used by the auto-close pass to re-resolve the RP test.
   if (entry.uniqueId) {
     parts.push('');
     parts.push(`${META_PREFIX} uniqueId=${entry.uniqueId}; launch=${entry.launchName || ''}`);
   }
   return parts.join('\n');
+}
+
+/**
+ * Parse the sticky "ever met flaky-create criteria" flag from a ticket description.
+ * Tickets that predate the flag return null (unknown) so callers can fall back safely.
+ * @param {string} text - plain-text description (adfToText output)
+ * @returns {boolean|null}
+ */
+function parseEverQualified(text) {
+  const line = (text || '').split('\n').find((l) => l.trim().startsWith(QUALIFIED_PREFIX));
+  if (!line) return null;
+  return /:\s*yes\b/i.test(line);
 }
 
 /**
@@ -280,13 +346,15 @@ async function findExistingTicket(jiraClient, entry) {
 async function createOrUpdateTicket(jiraClient, { featureKey }, entry) {
   const newLines = entry.observations.map(observationLine);
 
-  // Pull pass/flaky/fail statistics from Report Portal history (best-effort).
+  // Pull pass/flaky/fail statistics from Report Portal history (best-effort), scoped to
+  // the last HISTORY_DEPTH runs — these drive the create/priority decisions below.
   let stats = null;
   if (entry.uniqueId && entry.launchId) {
     try {
       stats = await getItemHistoryStats({
         launchId: entry.launchId,
         uniqueId: entry.uniqueId,
+        historyDepth: HISTORY_DEPTH,
       });
     } catch (err) {
       console.warn(`  ! Could not fetch RP history for "${entry.summary}": ${err.message}`);
@@ -295,23 +363,57 @@ async function createOrUpdateTicket(jiraClient, { featureKey }, entry) {
 
   const existing = await findExistingTicket(jiraClient, entry);
 
+  // Only tests that are flaky in >= FLAKY_CREATE_MIN_COUNT of the last HISTORY_DEPTH
+  // runs (flaky rate > 20%) warrant a ticket. When history is unavailable we fall back
+  // to trusting the current-run flaky mark so we never silently drop a real signal.
+  const qualifies = stats ? meetsCreateCriteria(stats) : true;
+  if (!existing && !qualifies) {
+    return { action: 'skipped', summary: entry.summary };
+  }
+
+  const priorityField = buildPriorityField(stats);
+  const teamField = buildTeamField(entry.team);
+
   if (existing) {
-    // Merge previous log lines (read the full issue for its ADF description).
+    // Merge previous log lines (read the full issue for its ADF description + status).
     const full = await getIssue(jiraClient, existing.key);
     const existingText = adfToText(full.fields?.description);
     const merged = parseExistingLogLines(existingText);
     newLines.forEach((line) => merged.add(line));
 
-    const descriptionText = buildDescriptionText(entry, merged, stats);
+    // Sticky flag: once true it stays true, so a once-flaky test is never deleted later.
+    const priorQualified = parseEverQualified(existingText);
+    const everQualified = priorQualified === true || qualifies;
+
+    const descriptionText = buildDescriptionText(entry, merged, stats, everQualified);
     await updateIssueFields(jiraClient, existing.key, {
       description: textToAdf(descriptionText),
-      ...buildTeamField(entry.team),
+      ...teamField,
+      ...priorityField,
     });
+
+    // Reopen a previously-closed ticket when the test is flaky again and still qualifies.
+    const isDone = (full.fields?.status?.statusCategory?.key || '').toLowerCase() === 'done';
+    if (isDone && qualifies) {
+      const outcome = await transitionIssueTo(jiraClient, existing.key, REOPEN_TARGET_STATUS);
+      if (outcome.transitioned) {
+        await postComment(
+          jiraClient,
+          existing.key,
+          'Reopened by flaky-test automation: the test was detected flaky again and matches ' +
+            `the create criteria (>= ${FLAKY_CREATE_MIN_COUNT} flaky of the last ${HISTORY_DEPTH} runs).`,
+        );
+        return { action: 'reopened', key: existing.key, summary: entry.summary };
+      }
+      console.warn(`  ! ${existing.key}: flaky again but not reopened — ${outcome.reason}`);
+    }
+
     return { action: 'updated', key: existing.key, summary: entry.summary };
   }
 
   const merged = new Set(newLines);
-  const descriptionText = buildDescriptionText(entry, merged, stats);
+  // A ticket only reaches creation when the create criteria are met, so mark it qualified.
+  const descriptionText = buildDescriptionText(entry, merged, stats, true);
 
   const fields = {
     project: { key: TICKET_PROJECT_KEY },
@@ -320,7 +422,8 @@ async function createOrUpdateTicket(jiraClient, { featureKey }, entry) {
     // Label with the flaky marker + the feature key so the close pass can scope precisely.
     labels: [FLAKY_LABEL, featureKey],
     description: textToAdf(descriptionText),
-    ...buildTeamField(entry.team),
+    ...teamField,
+    ...priorityField,
   };
 
   const created = await createIssue(jiraClient, fields);
@@ -361,8 +464,16 @@ async function syncFlakyTickets(jiraClient, { epicKey }, flakyGroups) {
     try {
       // eslint-disable-next-line no-await-in-loop
       const result = await createOrUpdateTicket(jiraClient, { featureKey }, entry);
-      const verb = result.action === 'created' ? '＋ Created' : '↻ Updated';
-      console.log(`  ${verb} ${result.key}: ${result.summary}`);
+      if (result.action === 'skipped') {
+        console.log(`  – Skipped (below criteria): ${result.summary}`);
+      } else {
+        const verbs = {
+          created: '＋ Created',
+          updated: '↻ Updated',
+          reopened: '↺ Reopened',
+        };
+        console.log(`  ${verbs[result.action]} ${result.key}: ${result.summary}`);
+      }
       results.push(result);
     } catch (err) {
       const detail = err.response?.data ? JSON.stringify(err.response.data) : err.message;
@@ -371,26 +482,31 @@ async function syncFlakyTickets(jiraClient, { epicKey }, flakyGroups) {
     }
   }
 
-  // After syncing the currently-flaky tests, close tickets whose test has since
-  // become stable (a now-stable test drops out of the flaky set, so it must be
-  // re-checked here rather than in the sync loop above).
+  // After syncing the currently-flaky tests, reconcile the remaining open tickets:
+  // close the ones whose test became stable and delete the ones that no longer meet
+  // the flaky-create criteria (a stale/no-longer-flaky test drops out of the flaky set,
+  // so it must be re-checked here rather than in the sync loop above).
   // eslint-disable-next-line no-use-before-define
-  const closed = await closeStableTickets(jiraClient, { featureKey });
+  const { closed, deleted } = await reconcileTickets(jiraClient, { featureKey });
 
-  return { synced: results, closed };
+  return { synced: results, closed, deleted };
 }
 
 /**
- * Scan open flaky tickets linked to the feature and close any whose underlying test
- * has passed cleanly for the last STABLE_STREAK_THRESHOLD consecutive runs.
+ * Reconcile open flaky tickets linked to the feature against fresh Report Portal
+ * history (last HISTORY_DEPTH runs). For each open ticket:
+ *   - if the test passed the last STABLE_STREAK_THRESHOLD consecutive runs → close it;
+ *   - else if the test no longer meets the flaky-create criteria → delete it;
+ *   - otherwise leave it open (still legitimately flaky).
  * @param {import('axios').AxiosInstance} jiraClient
  * @param {Object} opts
  * @param {string} opts.featureKey - tracking feature (used as a scoping label)
- * @param {number} [opts.threshold]
- * @returns {Promise<Array>} per-ticket close results
+ * @param {number} [opts.threshold] - consecutive clean passes required to close
+ * @returns {Promise<{closed: Array, deleted: Array}>}
  */
-async function closeStableTickets(jiraClient, { featureKey, threshold = STABLE_STREAK_THRESHOLD }) {
-  const results = [];
+async function reconcileTickets(jiraClient, { featureKey, threshold = STABLE_STREAK_THRESHOLD }) {
+  const closed = [];
+  const deleted = [];
   const jql =
     `project = "${TICKET_PROJECT_KEY}" AND labels = "${FLAKY_LABEL}" AND labels = "${featureKey}" ` +
     'AND statusCategory != Done ORDER BY created ASC';
@@ -400,13 +516,15 @@ async function closeStableTickets(jiraClient, { featureKey, threshold = STABLE_S
     openTickets = await searchIssues(jiraClient, jql, 100);
   } catch (err) {
     console.error(`  ✗ Could not list open flaky tickets: ${err.message}`);
-    return results;
+    return { closed, deleted };
   }
 
-  if (!openTickets.length) return results;
+  if (!openTickets.length) return { closed, deleted };
 
   console.log(
-    `\nChecking ${openTickets.length} open flaky ticket(s) for ${threshold}-run stability...`,
+    `\nReconciling ${openTickets.length} open flaky ticket(s) ` +
+      `(close ever-flaky tests after ${threshold} clean runs, delete tickets that never ` +
+      'met the create criteria)...',
   );
 
   // Cache latest launch id per launch name to avoid repeated lookups.
@@ -425,6 +543,31 @@ async function closeStableTickets(jiraClient, { featureKey, threshold = STABLE_S
     return id;
   };
 
+  const closeTicket = async (key, summary, streak) => {
+    const outcome = await transitionIssueTo(jiraClient, key, STABLE_TARGET_STATUS);
+    if (!outcome.transitioned) {
+      console.warn(`  ! ${key}: stable but not closed — ${outcome.reason}`);
+      return { action: 'close-skipped', key, summary, reason: outcome.reason };
+    }
+    await postComment(
+      jiraClient,
+      key,
+      'Auto-closed by flaky-test automation: this test passed cleanly for the last ' +
+        `${streak} consecutive Report Portal runs, so it is considered stable.`,
+    );
+    console.log(`  ✓ Closed ${key} (stable ${streak} runs): ${summary}`);
+    return { action: 'closed', key, summary, streak };
+  };
+
+  const removeTicket = async (key, summary, stats) => {
+    await deleteIssue(jiraClient, key);
+    const flaky = stats?.flaky ?? 0;
+    console.log(
+      `  ✗ Deleted ${key} (never met create criteria; ${flaky}/${HISTORY_DEPTH} flaky): ${summary}`,
+    );
+    return { action: 'deleted', key, summary, flaky };
+  };
+
   const evaluateTicket = async (ticket) => {
     const key = ticket.key;
     const summary = ticket.fields?.summary || key;
@@ -437,49 +580,203 @@ async function closeStableTickets(jiraClient, { featureKey, threshold = STABLE_S
       const launchId = await resolveLaunchId(launch);
       if (!launchId) return null;
 
-      const stats = await getItemHistoryStats({ launchId, uniqueId, historyDepth: threshold });
+      const stats = await getItemHistoryStats({ launchId, uniqueId, historyDepth: HISTORY_DEPTH });
       const streak = trailingStablePasses(stats.timeline);
-      if (streak < threshold) return null;
 
-      const outcome = await transitionIssueTo(jiraClient, key, STABLE_TARGET_STATUS);
-      if (!outcome.transitioned) {
-        console.warn(`  ! ${key}: stable but not closed — ${outcome.reason}`);
-        return { action: 'close-skipped', key, summary, reason: outcome.reason };
+      // A test is "legitimate" if it ever met the create criteria: the sticky flag in the
+      // description, or (for pre-flag / current) meeting the criteria in the last runs.
+      const priorQualified = parseEverQualified(text);
+      const everQualified = priorQualified === true || meetsCreateCriteria(stats);
+
+      // Never legitimately flaky → delete (a false-positive ticket that shouldn't exist).
+      if (!everQualified) {
+        return { bucket: 'deleted', result: await removeTicket(key, summary, stats) };
       }
-
-      await postComment(
-        jiraClient,
-        key,
-        'Auto-closed by flaky-test automation: this test passed cleanly for the last ' +
-          `${streak} consecutive Report Portal runs, so it is considered stable.`,
-      );
-      console.log(`  ✓ Closed ${key} (stable ${streak} runs): ${summary}`);
-      return { action: 'closed', key, summary, streak };
+      // Was flaky before: keep it, and only close once it's been stable long enough.
+      if (streak >= threshold) {
+        return { bucket: 'closed', result: await closeTicket(key, summary, streak) };
+      }
+      // Legitimately flaky and not yet stable → leave the ticket open.
+      return null;
     } catch (err) {
       const detail = err.response?.data ? JSON.stringify(err.response.data) : err.message;
-      console.error(`  ✗ Stability check failed for ${key}: ${detail}`);
-      return { action: 'error', key, summary, error: detail };
+      console.error(`  ✗ Reconcile failed for ${key}: ${detail}`);
+      return { bucket: 'closed', result: { action: 'error', key, summary, error: detail } };
     }
   };
 
   for (const ticket of openTickets) {
     // eslint-disable-next-line no-await-in-loop
-    const result = await evaluateTicket(ticket);
-    if (result) results.push(result);
+    const evaluated = await evaluateTicket(ticket);
+    if (evaluated) {
+      if (evaluated.bucket === 'deleted') deleted.push(evaluated.result);
+      else closed.push(evaluated.result);
+    }
   }
 
-  return results;
+  return { closed, deleted };
+}
+
+/**
+ * One-time reset: delete every flaky ticket linked to the feature whose test does NOT
+ * currently meet the create criteria (flaky in < FLAKY_CREATE_MIN_COUNT of the last
+ * HISTORY_DEPTH runs). Unlike reconcileTickets this ignores the sticky "ever qualified"
+ * flag on purpose — it wipes stale tickets so a fresh sync can recreate them with new,
+ * correctly-scoped statistics. Tickets without resolvable RP history are left untouched.
+ * @param {import('axios').AxiosInstance} jiraClient
+ * @param {Object} opts
+ * @param {string} opts.featureKey - tracking feature (used as a scoping label)
+ * @returns {Promise<{deleted: Array, kept: Array}>}
+ */
+async function purgeBelowCriteriaTickets(jiraClient, { featureKey }) {
+  const deleted = [];
+  const kept = [];
+  const jql =
+    `project = "${TICKET_PROJECT_KEY}" AND labels = "${FLAKY_LABEL}" AND labels = "${featureKey}" ` +
+    'ORDER BY created ASC';
+
+  let tickets;
+  try {
+    tickets = await searchIssues(jiraClient, jql, 200);
+  } catch (err) {
+    console.error(`  ✗ Could not list flaky tickets: ${err.message}`);
+    return { deleted, kept };
+  }
+
+  if (!tickets.length) return { deleted, kept };
+
+  console.log(
+    '\nPurging flaky tickets below criteria ' +
+      `(< ${FLAKY_CREATE_MIN_COUNT} flaky of the last ${HISTORY_DEPTH} runs) among ${tickets.length}...`,
+  );
+
+  const launchIdCache = new Map();
+  const resolveLaunchId = async (launchName) => {
+    if (!launchName) return null;
+    if (launchIdCache.has(launchName)) return launchIdCache.get(launchName);
+    let id;
+    try {
+      const launch = await getLatestLaunch({ name: launchName });
+      id = launch?.id || null;
+    } catch {
+      id = null;
+    }
+    launchIdCache.set(launchName, id);
+    return id;
+  };
+
+  for (const ticket of tickets) {
+    const key = ticket.key;
+    const summary = ticket.fields?.summary || key;
+    try {
+      const text = adfToText(ticket.fields?.description);
+      const { uniqueId, launch } = parseMeta(text);
+      // eslint-disable-next-line no-await-in-loop
+      const launchId = uniqueId ? await resolveLaunchId(launch) : null;
+      // eslint-disable-next-line no-await-in-loop
+      const stats = launchId
+        ? await getItemHistoryStats({ launchId, uniqueId, historyDepth: HISTORY_DEPTH })
+        : null;
+
+      if (stats && meetsCreateCriteria(stats)) {
+        kept.push({ action: 'kept', key, summary, flaky: stats.flaky });
+      } else {
+        const flaky = stats?.flaky ?? '?';
+        // eslint-disable-next-line no-await-in-loop
+        await deleteIssue(jiraClient, key);
+        console.log(
+          `  ✗ Deleted ${key} (below criteria; ${flaky}/${HISTORY_DEPTH} flaky): ${summary}`,
+        );
+        deleted.push({ action: 'deleted', key, summary, flaky });
+      }
+    } catch (err) {
+      const detail = err.response?.data ? JSON.stringify(err.response.data) : err.message;
+      console.error(`  ✗ Purge failed for ${key}: ${detail}`);
+    }
+  }
+
+  console.log(`\n✔ Purge complete: ${deleted.length} deleted, ${kept.length} kept.`);
+  return { deleted, kept };
+}
+
+/**
+ * Hard reset: delete EVERY ticket associated with the feature, regardless of label,
+ * history or the sticky flag. Association is resolved two ways and unioned:
+ *   1) issues linked to the feature (e.g. "Relates") — read from the feature's issuelinks;
+ *   2) FAT tickets carrying the flaky label + the feature key label (our managed set).
+ * This is the nuclear option to wipe stale/mismatched tickets before a clean re-sync.
+ * @param {import('axios').AxiosInstance} jiraClient
+ * @param {Object} opts
+ * @param {string} opts.featureKey - tracking feature (e.g. "UXPROD-5976")
+ * @returns {Promise<{deleted: Array}>}
+ */
+async function purgeAllFeatureTickets(jiraClient, { featureKey }) {
+  const deleted = [];
+  const keys = new Set();
+
+  // 1) Everything linked to the feature (any link type, e.g. "Relates").
+  try {
+    const feature = await getIssue(jiraClient, featureKey);
+    for (const link of feature.fields?.issuelinks || []) {
+      const linked = link.inwardIssue || link.outwardIssue;
+      const linkedKey = linked?.key;
+      // Only wipe tickets in the flaky project to avoid touching unrelated links.
+      if (linkedKey && linkedKey.startsWith(`${TICKET_PROJECT_KEY}-`)) {
+        keys.add(linkedKey);
+      }
+    }
+  } catch (err) {
+    console.error(`  ✗ Could not read links on ${featureKey}: ${err.message}`);
+  }
+
+  // 2) Any FAT tickets our automation labelled for this feature (linked or not).
+  const jql =
+    `project = "${TICKET_PROJECT_KEY}" AND labels = "${FLAKY_LABEL}" AND labels = "${featureKey}" ` +
+    'ORDER BY created ASC';
+  try {
+    const labelled = await searchIssues(jiraClient, jql, 500);
+    labelled.forEach((issue) => keys.add(issue.key));
+  } catch (err) {
+    console.error(`  ✗ Could not list labelled flaky tickets: ${err.message}`);
+  }
+
+  if (!keys.size) {
+    console.log(`\nNo tickets found associated with ${featureKey}.`);
+    return { deleted };
+  }
+
+  console.log(`\nHard-deleting ${keys.size} ticket(s) associated with ${featureKey}...`);
+
+  for (const key of keys) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      await deleteIssue(jiraClient, key);
+      console.log(`  ✗ Deleted ${key}`);
+      deleted.push({ action: 'deleted', key });
+    } catch (err) {
+      const detail = err.response?.data ? JSON.stringify(err.response.data) : err.message;
+      console.error(`  ✗ Failed to delete ${key}: ${detail}`);
+    }
+  }
+
+  console.log(`\n✔ Hard reset complete: ${deleted.length} deleted.`);
+  return { deleted };
 }
 
 module.exports = {
   syncFlakyTickets,
-  closeStableTickets,
+  reconcileTickets,
+  purgeBelowCriteriaTickets,
+  purgeAllFeatureTickets,
   aggregateFlakyTests,
   buildSummary,
   parseCaseId,
+  meetsCreateCriteria,
+  priorityForRate,
   buildDescriptionText,
   parseExistingLogLines,
   buildStatsLines,
   parseMeta,
+  parseEverQualified,
   trailingStablePasses,
 };

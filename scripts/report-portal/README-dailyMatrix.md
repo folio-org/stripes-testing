@@ -100,13 +100,59 @@ Behaviour:
 - Flaky tests seen across multiple launches/teams are aggregated per case + team, so
   each ticket accumulates history over successive daily runs.
 - **Auto-close when stable**: after syncing, the run scans open flaky tasks linked to
-  the feature and, for each, re-checks the test's Report Portal history. If the test has
-  **passed cleanly for the last 10 consecutive runs**, the task is transitioned to
-  **Closed** with an explanatory comment. (The threshold is `STABLE_STREAK_THRESHOLD` in
-  `services/flakyTicketService.js`.) A now-stable test drops out of the flaky set, so
-  this dedicated pass is what eventually closes it.
+  the feature and, for each, re-checks the test's Report Portal history (last 10 runs).
+  If the test has **passed cleanly for the last 3 consecutive runs**, the task is
+  transitioned to **Closed** with an explanatory comment. (The threshold is
+  `STABLE_STREAK_THRESHOLD` in `services/flakyTicketService.js`.)
+- **Create criteria**: a ticket is only created for tests that are **flaky in ≥ 3 of the
+  last 10 runs** (flaky rate > 20%, `FLAKY_CREATE_MIN_COUNT`).
+- **Priority by flaky rate**: `< 40% → P4`, `< 60% → P3`, `< 80% → P2`, `≥ 80% → P1`
+  (`priorityForRate`); refreshed on every update.
+- **Reopen when flaky again**: a previously-closed ticket whose test turns flaky again
+  and still meets the create criteria is transitioned back to **Open** with a comment.
+- **Delete only false positives**: an open ticket is **deleted** only if its test
+  **never** met the create criteria (a sticky `Ever met flaky-create criteria: yes`
+  marker is kept in the description). A test that **was** flaky enough is never deleted —
+  it is **closed** once it reaches the pass threshold above.
 - Requires `JIRA_API_KEY`. A local audit copy is saved to
   `logs/flaky-tickets-<FEATURE>.json`.
+
+### One-time reset of stale tickets
+
+To wipe flaky tickets that no longer meet the create criteria (e.g. old tickets that
+still carry 30-run statistics) so a fresh sync can recreate them with correct 10-run
+history, run the reset once, then a normal sync:
+
+```bash
+# Deletes every flaky ticket under the epic whose test is currently below criteria
+node scripts/report-portal/runFailedTestsMatrix.js --reset-below-criteria --epic UXPROD-5976
+
+# Then recreate fresh tickets
+node scripts/report-portal/runFailedTestsMatrix.js --sync-only --epic UXPROD-5976
+```
+
+The reset ignores the sticky "ever qualified" flag on purpose — it only keeps tickets
+whose test currently meets the criteria and deletes the rest. Tickets without resolvable
+Report Portal history are left untouched.
+
+### Nuke everything under the feature and re-sync
+
+If tickets are stale/mismatched (old descriptions, missing labels, only attached via the
+"Relates" link), wipe **every** ticket associated with the feature and recreate them
+from scratch:
+
+```bash
+# Deletes ALL tickets linked to the feature (via "Relates") + any this automation
+# labelled for it — regardless of history, labels or the sticky flag
+node scripts/report-portal/runFailedTestsMatrix.js --reset-all --epic UXPROD-5976
+
+# Then recreate fresh tickets from Report Portal
+node scripts/report-portal/runFailedTestsMatrix.js --sync-only --epic UXPROD-5976
+```
+
+`--reset-all` collects keys two ways and unions them: (1) the feature's `issuelinks`
+(only `FAT-*` issues are touched, to avoid unrelated links), and (2) a label search for
+`flaky-automation` + the epic key. It then deletes each and exits.
 
 Environment variables (in the plist `EnvironmentVariables` or the repo `.env`):
 
