@@ -34,7 +34,8 @@ import {
 } from '../../../constants';
 
 const rolesPane = Pane('Authorization roles');
-const newButton = Button('+ New');
+// "+ New" in Settings, "New" in Consortium manager:
+const newButton = Button(or('+ New', 'New'));
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
 const deleteButton = Button('Delete');
