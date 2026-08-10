@@ -81,7 +81,7 @@ describe('OAI-PMH', () => {
 
       after('Delete test data', () => {
         cy.resetTenant();
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         // Delete holdings from College tenant where they were created
         cy.setTenant(Affiliations.College);
         if (testData.holdingsId) {
@@ -156,7 +156,7 @@ describe('OAI-PMH', () => {
 
             // Step 8: Verify GetRecord response with marc21 metadata format
             cy.resetTenant();
-            cy.getAdminToken();
+            cy.getAdminToken(false);
             cy.setTenant(Affiliations.College);
             OaiPmhEdge.getRecordRequest(
               testData.folioInstance.id,

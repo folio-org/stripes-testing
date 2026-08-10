@@ -1122,7 +1122,7 @@ describe('Lists', () => {
           Lists.verifyPreviewOfRecordsMatched();
           cy.contains(testData.instanceTitle).should('be.visible');
           QueryModal.verifyQueryAreaContent(
-            `(instance.classifications[*]->type_name in [${testData.classificationIdentifierTypeName}] AND (instance.created_at == ${todayDate}))`,
+            `(instance.classifications[*]->type_name in [${testData.classificationIdentifierTypeName}]) AND (instance.created_at == ${todayDate})`,
           );
         },
       );

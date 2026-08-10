@@ -69,6 +69,8 @@ describe('Lists', () => {
               private: false,
             };
 
+            cy.wait(10_000);
+
             // Step 1: Execute POST API to create custom entity type with empty id
             Lists.createCustomEntityType(customEntityType).then((response) => {
               customEntityType.id = response.body.id;
@@ -95,6 +97,8 @@ describe('Lists', () => {
                 essentialOnly: source.essentialOnly,
               });
             });
+
+            cy.wait(60 * 1000 * 5); // need to wait around 5 minutes for the created custom entity type to be available in Lists
 
             // Step 2: Go to Lists landing page and verify the ET is available and queryable
             cy.login(userData.username, userData.password, {

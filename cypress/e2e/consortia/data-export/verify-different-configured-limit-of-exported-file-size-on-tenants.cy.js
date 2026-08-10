@@ -73,7 +73,7 @@ describe('Data Export', () => {
 
     after('Delete test data', () => {
       cy.resetTenant();
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       cy.configureDataExportFileLimit('slice_size', defaultSliceSize);
       cy.setTenant(Affiliations.College);
       cy.configureDataExportFileLimit('slice_size', defaultSliceSize);

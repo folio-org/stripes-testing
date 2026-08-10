@@ -311,7 +311,7 @@ describe('Data Export', () => {
         });
       });
 
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as(
         'getJobExecutions',
       );
@@ -323,7 +323,7 @@ describe('Data Export', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken();
+    cy.getAdminToken(false);
     Users.deleteViaApi(user.userId);
     additionalUsers.forEach((additionalUser) => {
       Users.deleteViaApi(additionalUser.userId);

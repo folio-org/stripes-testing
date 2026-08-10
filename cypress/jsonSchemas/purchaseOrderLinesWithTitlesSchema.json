@@ -30,7 +30,7 @@
             "type": ["string", "null"]
           },
           "instance.editions": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "instance.succeedingTitles": {
             "type": ["string", "null"]
@@ -51,10 +51,10 @@
             "type": ["string", "null"]
           },
           "instance.format_names": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "instance.statistical_code_names": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "instance.instance_type_name": {
             "type": ["string", "null"]
@@ -324,7 +324,7 @@
             "type": ["string", "null"]
           },
           "purchase_order.acquisition_unit": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "pol.order_format": {
             "type": ["string", "null"]
