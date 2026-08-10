@@ -34,7 +34,7 @@ const elements = {
   editButton: Button({ icon: 'edit' }),
   cancelButton: Button('Cancel'),
   saveButton: Button('Save'),
-  newButton: Button('+ New'),
+  newButton: Button('New'),
   deleteButton: Button({ icon: 'trash' }),
   deleteModal: Modal('Delete Call number type'),
   deleteButtonInModal: Button('Delete'),

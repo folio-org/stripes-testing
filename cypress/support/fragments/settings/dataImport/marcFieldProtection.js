@@ -9,7 +9,7 @@ import {
 } from '../../../../../interactors';
 
 const fieldProtectionList = MultiColumnList({ id: 'editList-marc-field-protection' });
-const newButton = Button('+ New');
+const newButton = Button('New');
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');
 const editButton = Button({ icon: 'edit' });
