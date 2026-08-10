@@ -96,7 +96,7 @@ describe('Lists', () => {
           { tags: ['criticalPath', 'corsair', 'C648489'] },
           () => {
             listName = getTestEntityValue('C648489_List');
-
+            cy.clearLocalStorage();
             cy.loginAsAdmin({
               path: TopMenu.listsPath,
               waiter: Lists.filtersWaitLoading,
@@ -133,6 +133,7 @@ describe('Lists', () => {
           "C648494 Verify that it's possible to update the textbox custom fields, and all existing queries are still available (corsair)",
           { tags: ['criticalPath', 'corsair', 'C648494'] },
           () => {
+            cy.clearLocalStorage();
             listName = getTestEntityValue('C648494_List');
 
             cy.loginAsAdmin({
@@ -167,9 +168,11 @@ describe('Lists', () => {
 
             // Wait for the update to propagate to the entity type
             waitForCustomFieldToBeQueryable(testData.updatedFieldLabel);
+            cy.wait(60_000); // Wait for the update to propagate to the query builder
 
             // Go to the "Lists" app and open the list that uses the updated custom field
             cy.visit(TopMenu.listsPath);
+            cy.reload();
             Lists.waitLoading();
             Lists.openList(listName);
 
@@ -193,7 +196,7 @@ describe('Lists', () => {
           { tags: ['extendedPath', 'corsair', 'C648499'] },
           () => {
             listName = getTestEntityValue('C648499_List');
-
+            cy.clearLocalStorage();
             cy.loginAsAdmin({
               path: TopMenu.listsPath,
               waiter: Lists.filtersWaitLoading,

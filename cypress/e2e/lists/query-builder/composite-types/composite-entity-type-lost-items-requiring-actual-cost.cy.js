@@ -25,16 +25,6 @@ const testData = {
   userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
 };
 
-const ownerBody = {
-  owner: 'AutotestOwner' + getRandomPostfix(),
-  servicePointOwner: [
-    {
-      value: testData.userServicePoint.id,
-      label: testData.userServicePoint.name,
-    },
-  ],
-};
-
 const lostItemFeePolicy = {
   name: `ActualCostPolicy_${getRandomPostfix()}`,
   chargeAmountItem: {
@@ -62,6 +52,15 @@ describe('Lists', () => {
 
           Locations.getViaApiAnyDefault().then((location) => {
             testData.defaultLocation = location[0];
+            const ownerBody = {
+              owner: 'AutotestOwner' + getRandomPostfix(),
+              servicePointOwner: [
+                {
+                  value: testData.defaultLocation.primaryServicePoint,
+                  label: testData.defaultLocation.primaryServicePoint,
+                },
+              ],
+            };
 
             testData.instanceId = InventoryInstances.createInstanceViaApi(
               instanceName,

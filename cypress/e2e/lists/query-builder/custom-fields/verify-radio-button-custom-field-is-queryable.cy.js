@@ -195,6 +195,8 @@ describe('Lists', () => {
           () => {
             listName = getTestEntityValue('C648493_List');
 
+            cy.wait(60_000);
+
             cy.loginAsAdmin({
               path: TopMenu.listsPath,
               waiter: Lists.filtersWaitLoading,
@@ -242,9 +244,11 @@ describe('Lists', () => {
 
             // Wait ~5-6 min for the update to propagate to the entity type
             waitForCustomFieldToBeQueryable(testData.updatedFieldLabel);
+            cy.wait(60_000);
 
             // #3 Go to the "Lists" app and open the list that uses the updated custom field
             cy.visit(TopMenu.listsPath);
+            cy.reload();
             Lists.waitLoading();
             Lists.openList(listName);
 
