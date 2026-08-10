@@ -61,6 +61,7 @@ const statusAccordion = filterPane.find(Accordion('Status'));
 const visibilityAccordion = filterPane.find(Accordion('Visibility'));
 const recordTypesAccordion = filterPane.find(Accordion('Record types'));
 const resetAllButton = filterPane.find(Button('Reset all'));
+const searchField = filterPane.find(TextField({ id: 'input-record-search' }));
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
 const editQueryButton = Button('Edit query');
 const resultViewerTable = MultiColumnList({ id: 'results-viewer-table' });
@@ -929,6 +930,23 @@ const UI = {
       recordTypesAccordion.find(Checkbox('Users')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Purchase order lines')).has({ checked: false }),
     ]);
+  },
+
+  verifySearchBox(placeholderText) {
+    if (placeholderText) {
+      cy.expect(searchField.has({ placeholder: placeholderText }));
+    } else {
+      cy.expect(searchField.exists());
+    }
+  },
+
+  verifySearchButtonDisabled() {
+    cy.expect(filterPane.find(Button('Search')).has({ disabled: true }));
+  },
+
+  verifyCollapseButtonTooltip(tooltipText) {
+    cy.do(filterPane.find(Button({ icon: 'caret-left' })).hover());
+    cy.expect(Tooltip({ text: tooltipText }).exists());
   },
 
   collapseFilterPane() {

@@ -1,23 +1,74 @@
+import Permissions from '../../support/dictionary/permissions';
 import { Lists } from '../../support/fragments/lists/lists';
 import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 
 describe('Lists', () => {
   describe('Filter lists', () => {
+    let userData;
+
+    before('Create test data', () => {
+      cy.createTempUser([
+        Permissions.listsAll.gui,
+        Permissions.uiUsersViewRequests.gui,
+        Permissions.uiOrdersCreate.gui,
+        Permissions.uiOrganizationsViewEditCreate.gui,
+        Permissions.loansAll.gui,
+        Permissions.inventoryAll.gui,
+      ]).then((userProperties) => {
+        userData = userProperties;
+      });
+    });
+
     beforeEach(() => {
-      cy.loginAsAdmin({ path: TopMenu.listsPath, waiter: Lists.waitLoading });
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
+    });
+
+    after('Delete test data', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(userData.userId);
     });
 
     it(
-      'C411808 Verify the Filter pane structure (corsair)',
+      'C411808 Verify the Search & filter pane structure (corsair)',
       { tags: ['criticalPath', 'corsair', 'C411808'] },
       () => {
-        Lists.verifyCheckboxChecked('Active');
-        Lists.verifyCheckboxUnchecked('Inactive');
-        Lists.verifyCheckboxUnchecked('Shared');
-        Lists.verifyCheckboxUnchecked('Private');
+        // Step 2: Check the left pane
+        // Verify search box with placeholder text "Search lists"
+        Lists.verifySearchBox('Search lists');
+
+        // Verify "Search" button is disabled
+        Lists.verifySearchButtonDisabled();
+
+        // Verify "Reset all" button is disabled
         Lists.verifyResetAllButtonDisabled();
 
+        // Verify all accordions are expanded
+        Lists.verifyAccordionExpandedInFilter('Status');
+        Lists.verifyAccordionExpandedInFilter('Visibility');
+        Lists.verifyAccordionExpandedInFilter('Source');
+        Lists.verifyAccordionExpandedInFilter('Created by');
+        Lists.verifyAccordionExpandedInFilter('Updated by');
+        Lists.verifyAccordionExpandedInFilter('Record types');
+
+        // Verify "Active" checkbox is selected by default in Status accordion
+        Lists.verifyCheckboxChecked('Active');
+        Lists.verifyCheckboxUnchecked('Inactive');
+
+        // Verify Visibility accordion checkboxes
+        Lists.verifyCheckboxUnchecked('Shared');
+        Lists.verifyCheckboxUnchecked('Private');
+
+        // Step 3: Hover on the left hand arrow
+        Lists.verifyCollapseButtonTooltip('Collapse Search & filter pane');
+
+        // Step 4: Click on the left hand arrow - collapse the pane
         Lists.collapseFilterPane();
+
+        // Step 5: Click on the right hand arrow - expand the pane
         Lists.expandFilterPane();
       },
     );
