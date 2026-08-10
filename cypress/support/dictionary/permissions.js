@@ -629,6 +629,7 @@ export default {
     gui: 'Fee/Fine History: Can create, edit and remove accounts',
   },
   uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
+  uiUsersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUserLoansAnonymize: {
     internal: 'ui-users.loans-anonymize.execute',
     gui: 'Users: User loans anonymize',
