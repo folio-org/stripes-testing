@@ -273,7 +273,7 @@ describe('eHoldings', () => {
                 EHoldingsPackagesSearch.bySelectionStatus('Selected');
                 EHoldingsPackages.openPackage();
                 EHoldingsPackage.editProxyActions();
-                EHoldingsPackageView.patronRadioButton('No');
+                EHoldingsPackageView.chooseExclusionOptions({ pf: true, ftf: true, marc: true });
                 EHoldingsPackage.saveAndClose();
                 EHoldingsPackageView.waitLoading();
                 EHoldingsPackage.waitForTitlesState({
@@ -285,7 +285,7 @@ describe('eHoldings', () => {
                 EHoldingsPackageView.waitLoading();
                 EHoldingsPackage.verifyTitleFound(titleName);
                 EHoldingsPackage.verifyTitleFound('SelectedTitle is set to hide');
-                EHoldingsPackageView.verifyAlternativeRadio('No');
+                EHoldingsPackageView.verifyExclusionOptions({ pf: true, ftf: true, marc: true });
               });
           });
         });
