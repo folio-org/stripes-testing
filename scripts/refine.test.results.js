@@ -33,6 +33,8 @@ const teams = [
   team.Thunderjet,
   team.Vega,
   team.Volaris,
+  team.Eureka,
+  team.Promin,
 ];
 
 function getJoinedHistory(history) {
