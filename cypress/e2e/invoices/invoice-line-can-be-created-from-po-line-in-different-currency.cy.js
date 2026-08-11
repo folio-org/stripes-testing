@@ -197,7 +197,7 @@ describe('Invoices', () => {
 
   it(
     'C411677 Invoice line can be created from PO line in different currency (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C411677'] },
+    { tags: ['extendedPath', 'thunderjet', 'C411677', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
