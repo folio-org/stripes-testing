@@ -128,32 +128,36 @@ describe('Invoices', () => {
     Users.deleteViaApi(testData.user.userId);
   });
 
-  it('C3453 Pay invoice (thunderjet)', { tags: ['criticalPath', 'thunderjet', 'C3453'] }, () => {
-    Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
-    Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
-    Invoices.waitLoading();
-    Invoices.payInvoice();
-    InvoiceView.verifyStatus(INVOICE_STATUSES.PAID);
-    Invoices.selectInvoiceLine();
-    InvoiceLineDetails.waitLoading();
-    InvoiceLineDetails.openFundDetailsPane(testData.fund.name);
-    FundDetails.waitLoading();
+  it(
+    'C3453 Pay invoice (thunderjet)',
+    { tags: ['criticalPath', 'thunderjet', 'C3453', 'nonParallel'] },
+    () => {
+      Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
+      Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
+      Invoices.waitLoading();
+      Invoices.payInvoice();
+      InvoiceView.verifyStatus(INVOICE_STATUSES.PAID);
+      Invoices.selectInvoiceLine();
+      InvoiceLineDetails.waitLoading();
+      InvoiceLineDetails.openFundDetailsPane(testData.fund.name);
+      FundDetails.waitLoading();
 
-    const CurrentBudgetDetails = FundDetails.openCurrentBudgetDetails();
-    CurrentBudgetDetails.waitLoading();
-    CurrentBudgetDetails.clickViewTransactionsLink();
-    Transactions.checkTransactionsList({
-      records: [{ type: 'Payment' }],
-      present: true,
-    });
-    Transactions.selectTransaction('Payment');
-    TransactionDetails.waitLoading();
-    TransactionDetails.checkTransactionDetails({
-      fiscalYear: testData.fiscalYear.code,
-      amount: '$10.00',
-      source: testData.invoice.vendorInvoiceNo,
-      type: 'Credit',
-      fund: `${testData.fund.name} (${testData.fund.code})`,
-    });
-  });
+      const CurrentBudgetDetails = FundDetails.openCurrentBudgetDetails();
+      CurrentBudgetDetails.waitLoading();
+      CurrentBudgetDetails.clickViewTransactionsLink();
+      Transactions.checkTransactionsList({
+        records: [{ type: 'Payment' }],
+        present: true,
+      });
+      Transactions.selectTransaction('Payment');
+      TransactionDetails.waitLoading();
+      TransactionDetails.checkTransactionDetails({
+        fiscalYear: testData.fiscalYear.code,
+        amount: '$10.00',
+        source: testData.invoice.vendorInvoiceNo,
+        type: 'Credit',
+        fund: `${testData.fund.name} (${testData.fund.code})`,
+      });
+    },
+  );
 });
