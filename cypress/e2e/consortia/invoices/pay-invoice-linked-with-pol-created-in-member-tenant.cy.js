@@ -187,7 +187,7 @@ describe('Invoices', () => {
 
     it(
       'C610245 Pay invoice linked with POL created in Member tenant (consortia) (thunderjet)',
-      { tags: ['smokeECS', 'thunderjet', 'C610245'] },
+      { tags: ['smokeECS', 'thunderjet', 'C610245', 'nonParallel'] },
       () => {
         Invoices.searchByNumber(firstInvoice.vendorInvoiceNo);
         Invoices.selectInvoice(firstInvoice.vendorInvoiceNo);
