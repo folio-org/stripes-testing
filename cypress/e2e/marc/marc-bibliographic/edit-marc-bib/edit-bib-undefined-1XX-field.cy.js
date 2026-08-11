@@ -37,16 +37,18 @@ describe('MARC', () => {
 
           getBibliographicSpec().then((bibSpec) => {
             specId = bibSpec.id;
-            toggleAllUndefinedValidationRules(specId, { enable: true });
-          });
+            toggleAllUndefinedValidationRules(specId, { enable: false });
 
-          cy.createSimpleMarcBibViaAPI(testData.title).then((instanceId) => {
-            createdInstanceId = instanceId;
+            cy.createSimpleMarcBibViaAPI(testData.title).then((instanceId) => {
+              createdInstanceId = instanceId;
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
+              toggleAllUndefinedValidationRules(specId, { enable: true });
+
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.userProperties.username, testData.userProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
               });
             });
           });
