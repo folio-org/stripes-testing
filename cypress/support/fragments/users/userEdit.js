@@ -102,7 +102,7 @@ const lastNameField = TextField({ id: 'adduser_lastname' });
 const firstNameField = TextField({ id: 'adduser_firstname' });
 const middleNameField = TextField({ id: 'adduser_middlename' });
 const preferredFirstName = TextField({ id: 'adduser_preferredname' });
-const preferredContactSelect = Select({ id: 'adduser_preferredcontact' });
+const preferredContactSelect = MultiSelect({ id: 'adduser_preferredcontact' });
 const preferableServicePointSelect = Select({ id: 'servicePointPreference' });
 const barcodeField = TextField({ id: 'adduser_barcode' });
 const emailField = TextField({ id: 'adduser_email' });
@@ -1882,6 +1882,18 @@ export default {
 
   clickFulfillmentPreferenceInfoIcon() {
     cy.do(fulfillmentPreferenceSelect.clickInfoButton());
+  },
+
+  assertNativeValidationMessage(field, expectedMessage) {
+    cy.expect(field.has({ nativeValidationMessage: expectedMessage }));
+  },
+
+  assertTextFieldNativeValidationMessage(fieldLabel, expectedMessage) {
+    this.assertNativeValidationMessage(TextField(fieldLabel), expectedMessage);
+  },
+
+  assertUsernameFieldNativeValidationMessage(expectedMessage) {
+    this.assertTextFieldNativeValidationMessage(including('Username'), expectedMessage);
   },
 
   verifyFulfillmentPreferenceTooltip() {

@@ -15,7 +15,7 @@ import {
 const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
 const targetProfilesListPane = Pane('Z39.50 target profiles');
 const newPane = Pane('New');
-const newButton = Button('+ New');
+const newButton = Button('New');
 const editButton = Button('Edit');
 
 const validOclcAuthentication = '100481406/PAOLF';

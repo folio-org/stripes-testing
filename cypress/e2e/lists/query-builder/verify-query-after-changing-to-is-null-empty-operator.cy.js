@@ -58,7 +58,7 @@ describe('Lists', () => {
         // Step 3: Change operator from "equals" to "is null/empty"
         QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
         QueryModal.verifySelectedValue('Select value');
-        QueryModal.verifyQueryAreaContent('(instance.id  is null/empty )');
+        QueryModal.verifyQueryAreaContent('(instance.id is null/empty )');
       },
     );
   });

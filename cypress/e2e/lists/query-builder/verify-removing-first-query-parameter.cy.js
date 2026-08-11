@@ -64,7 +64,7 @@ describe('Lists', () => {
         QueryModal.clickGarbage(0);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, true);
         QueryModal.verifyBooleanColumnAbsent();
-        QueryModal.verifySelectedField('');
+        QueryModal.verifySelectedField('Select field');
         QueryModal.verifyQueryAreaContent('');
       },
     );

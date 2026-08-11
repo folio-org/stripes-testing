@@ -20,7 +20,7 @@ import DeleteCancelReason from '../../modal/delete-cancel-reason';
 
 const rootPane = Pane({ id: 'consortia-controlled-vocabulary-pane' });
 const subjectTypesList = MultiColumnList({ id: 'editList-subjecttypes' });
-const newButton = Button('+ New');
+const newButton = Button('New');
 const selectMembersButton = Button('Select members');
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');

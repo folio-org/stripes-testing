@@ -85,7 +85,7 @@ function createRequestApi(
     barcode: uuid(),
     username: `testUser-${uuid()}`,
     personal: {
-      preferredContactTypeId: '002',
+      preferredContactTypeIds: ['002'],
       lastName: `testUser-${uuid()}`,
       email: 'test@folio.org',
       addresses: [{ addressTypeId: null, primaryAddress: true }],
@@ -815,6 +815,10 @@ export default {
     );
   },
 
+  verifyResultsCount(count) {
+    cy.get('[data-row-index]').should('have.length', count);
+  },
+
   clickResetAllButton() {
     cy.expect(resetAllButton.has({ disabled: false }));
     cy.do(resetAllButton.click());
@@ -1003,5 +1007,11 @@ export default {
         return a.localeCompare(b);
       },
     });
+  },
+
+  verifyRequestStatusInList(status) {
+    cy.expect(
+      requestsResultsSection.find(MultiColumnListCell({ content: including(status) })).exists(),
+    );
   },
 };

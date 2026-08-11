@@ -207,7 +207,7 @@ describe('Invoices', () => {
 
   it(
     'C388538 Approve invoice in previous FY and pay invoice in current FY (for previous FY) (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'C388538'] },
+    { tags: ['criticalPath', 'thunderjet', 'C388538', 'nonParallel'] },
     () => {
       Orders.searchByParameter('PO number', testData.orderNumber);
       Orders.selectFromResultsList(testData.orderNumber);

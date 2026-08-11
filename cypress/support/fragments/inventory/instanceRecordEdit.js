@@ -29,7 +29,7 @@ const addClassificationButton = classificationSection.find(Button('Add classific
 const actionsButton = Button('Actions');
 const identifierAccordion = Accordion('Identifier');
 const contributorAccordion = Accordion('Contributor');
-const subjectAccordion = Accordion('Subject');
+const subjectAccordion = Accordion('Subject', { id: including('instanceSection') });
 const contributorButton = Button('Add contributor');
 const deleteButton = Button({ icon: 'trash' });
 const supressFromDiscoveryCheckbox = Checkbox({ name: 'discoverySuppress' });
@@ -297,6 +297,52 @@ export default {
     if (isbn) cy.do(TextField({ name: `${fieldNamePref}.isbn` }).fillIn(isbn));
     if (issn) cy.do(TextField({ name: `${fieldNamePref}.issn` }).fillIn(issn));
   },
+  clickAddSubjectButton: () => {
+    cy.do(subjectAccordion.find(Button('Add subject')).click());
+  },
+
+  verifySubjectRowIsDisplayed: () => {
+    cy.expect([
+      subjectField.exists(),
+      Select({ name: 'subjects[0].sourceId' }).exists(),
+      Select({ name: 'subjects[0].typeId' }).exists(),
+    ]);
+  },
+
+  selectSubjectSource: (sourceName, row = 0) => {
+    cy.do(Select({ name: `subjects[${row}].sourceId` }).choose(sourceName));
+    cy.expect(Select({ name: `subjects[${row}].sourceId` }).has({ checkedOptionText: sourceName }));
+  },
+
+  selectSubjectType: (typeName, row = 0) => {
+    cy.do(Select({ name: `subjects[${row}].typeId` }).choose(typeName));
+    cy.expect(Select({ name: `subjects[${row}].typeId` }).has({ checkedOptionText: typeName }));
+  },
+
+  verifySubjectSourceOptions: (sources, index = 0) => {
+    sources.forEach((source) => {
+      cy.expect(
+        Select({ name: `subjects[${index}].sourceId` }).has({ optionsText: including(source) }),
+      );
+    });
+  },
+
+  verifySubjectTypeOptions: (types, index = 0) => {
+    types.forEach((type) => {
+      cy.expect(
+        Select({ name: `subjects[${index}].typeId` }).has({ optionsText: including(type) }),
+      );
+    });
+  },
+
+  verifySubjectRowIsRemoved: () => {
+    cy.expect(subjectField.absent());
+  },
+
+  changeSubjectAtIndex: (index, value) => {
+    cy.do(TextField({ name: `subjects[${index}].value` }).fillIn(value));
+  },
+
   addSubject: (subject) => {
     cy.do([subjectAccordion.find(Button('Add subject')).click(), subjectField.fillIn(subject)]);
   },

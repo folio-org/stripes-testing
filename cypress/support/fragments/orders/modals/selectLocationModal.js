@@ -11,12 +11,14 @@ export default {
   verifyModalView() {
     cy.expect(selectLocationModal.exists());
   },
-  selectLocation(institutionId) {
+  selectLocation(locationSearchValue) {
     cy.do([
-      selectLocationModal.find(TextField({ id: 'input-record-search' })).fillIn(institutionId),
+      selectLocationModal
+        .find(TextField({ id: 'input-record-search' }))
+        .fillIn(locationSearchValue),
       selectLocationModal.find(Button('Search')).click(),
       selectLocationModal
-        .find(MultiColumnListCell({ content: institutionId, row: 0, columnIndex: 0 }))
+        .find(MultiColumnListCell({ content: locationSearchValue, row: 0, columnIndex: 0 }))
         .click(),
     ]);
   },

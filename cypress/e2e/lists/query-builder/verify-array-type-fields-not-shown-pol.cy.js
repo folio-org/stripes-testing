@@ -127,7 +127,7 @@ describe('Lists', () => {
 
     it(
       'C451493 [POL] Verify that array type fields are not shown in the Query Builder (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C451493'] },
+      { tags: ['criticalPathBroken', 'corsair', 'C451493'] },
       () => {
         // Step 1: Create new list with Purchase order lines record type and build query
         Lists.openNewListPane();

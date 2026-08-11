@@ -19,6 +19,7 @@ import {
   Calendar,
   Pane,
   or,
+  not,
 } from '../../../../interactors';
 import { pluralize } from '../../utils/stringTools';
 
@@ -28,7 +29,7 @@ const testQueryButton = buildQueryModal.find(Button('Test query'));
 const cancelButton = buildQueryModal.find(Button('Cancel'));
 const runQueryButton = buildQueryModal.find(Button(or('Run query', 'Run query & save')));
 const runQueryAndSave = buildQueryModal.find(Button('Run query & save'));
-const xButton = buildQueryModal.find(Button({ icon: 'times' }));
+const xButton = buildQueryModal.find(Button({ ariaLabel: 'Close ' }));
 const previewTable = buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' }));
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
@@ -75,6 +76,7 @@ const embeddedTableHeadersMap = {
     'Distribution type',
     'Value',
   ],
+  polLocations: ['Name', 'Code', 'Quantity electronic', 'Quantity physical'],
   userAddress: [
     'City',
     'Region',
@@ -151,28 +153,41 @@ export const holdingsFieldValues = {
   holdingsStatisticalCodeNames: 'Holdings — Statistical codes',
   holdingsTags: 'Holdings — Tags',
   affiliationName: 'Holdings — Affiliation name',
+  holdingsAdditionalCallNumbersCallNumber:
+    'Holdings — Holdings additional call numbers — Call number',
+  holdingsAdditionalCallNumbersPrefix: 'Holdings — Holdings additional call numbers — Prefix',
+  holdingsAdditionalCallNumbersSuffix: 'Holdings — Holdings additional call numbers — Suffix',
+  holdingsAdditionalCallNumbersType: 'Holdings — Holdings additional call numbers — Type',
+  holdingsTypeType: 'Holdings type — Type',
 };
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
   instanceId: 'Instance — Instance UUID',
   instanceTenantId: 'Instance — Tenant ID',
   instanceHrid: 'Instance — Instance HRID',
+  indexTitle: 'Instance — Index title',
   instanceResourceTitle: 'Instance — Resource title',
+  resourceType: 'Instance — Resource type',
   instanceSource: 'Instance — Source',
+  instanceSourceUri: 'Instance — Instance source URI',
   instanceStatusCode: 'Instance status — Code',
+  instanceStatusTerm: 'Instance status — Term',
   staffSuppress: 'Instance — Staff suppress',
   suppressFromDiscovery: 'Instance — Suppress from discovery',
   flagForDeletion: 'Instance — Flag for deletion',
   previouslyHeld: 'Instance — Previously held',
+  recordVersion: 'Instance — Record version',
   createdDate: 'Instance — Created date',
   updatedDate: 'Instance — Updated date',
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
+  date2: 'Instance — Date 2',
   instanceDateTypeName: 'Instance date type — Name',
   statisticalCodeNames: 'Instance — Statistical codes',
   statisticalCodeUuids: 'Instance — Statistical code UUIDs',
   languages: 'Instance — Languages',
   formatNames: 'Instance — Format names',
+  modeOfIssuance: 'Instance — Mode of issuance',
   noteType: 'Instance — Notes — Note type',
   note: 'Instance — Notes — Note',
   noteStaffOnly: 'Instance — Notes — Staff only',
@@ -208,6 +223,8 @@ export const instanceFieldValues = {
   electronicAccessURLRelationship: 'Instance — Electronic access — URL relationship',
   tags: 'Instance — Tags',
   series: 'Instance — Series',
+  marcBibliographicMarcJsonb: 'MARC bibliographic — MARC jsonb',
+  marcBibliographicState: 'MARC bibliographic — State',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -270,7 +287,9 @@ export const usersFieldValues = {
   preferredContactType: 'User — Preferred contact type',
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
+  userDepartmentNames: 'User — Department names',
   userCreatedDate: 'User — User created date',
+  userUpdatedDate: 'User — User updated date',
   userId: 'User — User UUID',
   userName: 'User — Username',
   userType: 'User — Type',
@@ -283,6 +302,8 @@ export const usersFieldValues = {
   userAddressCity: 'User — Address — City',
   userAddressLine1: 'User — Address — Line 1',
   userAddressLine2: 'User — Address — Line 2',
+  userAddressCountry: 'User — Address — Country',
+  userAddressPrimaryAddress: 'User — Address — Primary address',
 };
 export const transactionFieldValues = {
   encumbranceAmountCredited: 'Transaction — Encumbrance amount credited',
@@ -291,6 +312,7 @@ export const transactionFieldValues = {
 export const organizationFieldValues = {
   code: 'Organization — Code',
   name: 'Organization — Name',
+  uuid: 'Organization — UUID',
 };
 export const purchaseOrderLinesFieldValues = {
   poNumber: 'PO — PO number',
@@ -300,8 +322,10 @@ export const purchaseOrderLinesFieldValues = {
   uuid: 'POL — UUID',
   costCurrency: 'POL — Cost currency',
   costPOLEstimatedPrice: 'POL — Cost PO line estimated price',
+  locationsCode: 'POL — Locations — Code',
   vendorOrgEdiType: 'Vendor org — EDI vendor type',
   vendorOrgName: 'Vendor org — Name',
+  acquisitionUnitNames: 'PO — Acquisition unit names',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -473,6 +497,7 @@ export default {
       RepeatableFieldItem({ index: row }).find(Selection()).filter(string),
     ]);
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).chooseWithoutVerification(string));
+    cy.wait(500);
   },
 
   filterFieldSelectionList(string, row = 0) {
@@ -622,6 +647,15 @@ export default {
     cy.do(targetSelection.open());
     expectedFields.forEach((field) => {
       cy.expect(SelectionList().has({ optionList: including(field) }));
+    });
+    this.closeOpenedSelection();
+  },
+
+  verifyFieldOptionAbsent(expectedFields, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+    cy.do(targetSelection.open());
+    expectedFields.forEach((field) => {
+      cy.expect(SelectionList().has({ optionList: not(including(field)) }));
     });
     this.closeOpenedSelection();
   },
@@ -1232,6 +1266,8 @@ export default {
         ];
       case 'additionalCallNumbers':
         return [dataObj.callNumber, dataObj.prefix, dataObj.suffix, dataObj.type];
+      case 'polLocations':
+        return [dataObj.name, dataObj.code, dataObj.quantityElectronic, dataObj.quantityPhysical];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -1344,6 +1380,13 @@ export default {
       itemIdentifier,
       expectedAdditionalCallNumbers,
     );
+  },
+
+  verifyPOLLocationsEmbeddedTableInQueryModal(
+    polIdentifier,
+    expectedLocations, // Can be a single location object or array of objects, ex: { name: 'Main Library', code: 'KU/CC/DI/A', quantityElectronic: '0', quantityPhysical: '1' }
+  ) {
+    this.verifyEmbeddedTableInQueryModal('polLocations', polIdentifier, expectedLocations);
   },
 
   clickShowColumnsButton() {

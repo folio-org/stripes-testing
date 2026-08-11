@@ -62,7 +62,7 @@ const resetButton = Button('Reset all');
 const openContactSectionButton = Button({
   id: 'accordion-toggle-button-contactPeopleSection',
 });
-const newButton = Button('+ New');
+const newButton = Button('New');
 const addContacsModal = Modal('Add contacts');
 const lastNameField = TextField({ name: 'lastName' });
 const firstNameField = TextField({ name: 'firstName' });

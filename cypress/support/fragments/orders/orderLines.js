@@ -143,6 +143,7 @@ const submitOrderLine = () => {
     }
   });
 };
+const titleLookupTrigger = Button({ id: 'find-instance-trigger' });
 
 // Filters
 const donorFilterAccordion = Accordion(ORDER_LINE_FILTER_LABELS.DONOR);
@@ -334,8 +335,8 @@ export default {
     cy.do(Button({ id: 'accordion-toggle-button-linkedInstances' }).click());
   },
 
-  addPackageTitle: () => {
-    cy.do(Button({ id: 'find-instance-trigger' }).click());
+  clickInstanceTitleLookup() {
+    cy.do(titleLookupTrigger.click());
   },
 
   varifyAddingInstanceTPackageTitle: (instanceTitle, polNumber) => {
@@ -2034,7 +2035,7 @@ export default {
   selectRandomInstanceInTitleLookUP: (instanceName, rowNumber = 0) => {
     cy.wait(4000);
     cy.do([
-      Button({ id: 'find-instance-trigger' }).click(),
+      titleLookupTrigger.click(),
       selectInstanceModal.find(TextField({ name: 'query' })).fillIn(instanceName),
       selectInstanceModal.find(searchButton).click(),
       selectInstanceModal.find(MultiColumnListRow({ index: rowNumber })).click(),

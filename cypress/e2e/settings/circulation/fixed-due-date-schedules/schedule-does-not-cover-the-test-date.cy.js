@@ -82,7 +82,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
           barcode: USER_BARCODE,
           username: `username_${getRandomPostfix()}`,
           personal: {
-            preferredContactTypeId: '002',
+            preferredContactTypeIds: ['002'],
             lastName: `Test user ${getRandomPostfix()}`,
             email: 'test@folio.org',
           },

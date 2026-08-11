@@ -133,10 +133,10 @@ describe('Lists', () => {
 
           // Step 3: Test with "is null/empty" operator
           QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
-          QueryModal.verifySelectedOperator(` ${QUERY_OPERATIONS.IS_NULL}`);
-          QueryModal.verifyQueryAreaContent('(items.former_ids  is null/empty )');
+          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IS_NULL);
+          QueryModal.verifyQueryAreaContent('(items.former_ids is null/empty )');
           QueryModal.selectValueFromSelect('False');
-          QueryModal.verifyQueryAreaContent('(items.former_ids  is null/empty false)');
+          QueryModal.verifyQueryAreaContent('(items.former_ids is null/empty False)');
           QueryModal.testQueryDisabled(false);
           QueryModal.clickTestQuery();
 

@@ -8,6 +8,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 const listName = `AT_C451554_List_${getRandomPostfix()}`;
 const testData = {
@@ -35,8 +36,8 @@ describe('Lists', () => {
         testData.instanceTypeId = instanceTypes[0].id;
       });
 
-      cy.getLocations({ limit: 1 }).then((location) => {
-        testData.locationId = location.id;
+      Locations.getViaApiAnyDefault().then((location) => {
+        testData.locationId = location[0].id;
       });
 
       cy.then(() => {

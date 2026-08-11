@@ -16,6 +16,7 @@ import {
   HTML,
   ValueChipRoot,
   DropdownMenu,
+  Checkbox,
 } from '../../../../interactors';
 import eHoldingsProviderView from './eHoldingsProviderView';
 import { FILTER_STATUSES } from './eholdingsConstants';
@@ -161,7 +162,7 @@ export default {
   verifyPackageWithTag(packageName, tagName) {
     cy.expect(
       packagesList
-        .find(MultiColumnListRow({ content: including(packageName) }))
+        .find(MultiColumnListRow({ content: including(packageName), isContainer: false }))
         .find(MultiColumnListCell({ content: including(tagName) }))
         .exists(),
     );
@@ -208,5 +209,13 @@ export default {
             name: provider.attributes.name,
           }));
       });
+  },
+
+  toggleShowColumnsOption(columnName, { isChecked = true } = {}) {
+    this.clickActionsButtonInPackagesSection();
+    const targetCheckbox = DropdownMenu().find(Checkbox(columnName));
+    cy.do(isChecked ? targetCheckbox.checkIfNotSelected() : targetCheckbox.uncheckIfSelected());
+    cy.do(packagesActionsButton.click());
+    cy.expect(DropdownMenu().absent());
   },
 };

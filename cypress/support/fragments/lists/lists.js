@@ -21,6 +21,7 @@ import {
   MultiSelect,
   MultiSelectOption,
   not,
+  or,
   Pane,
   RadioButton,
   SelectionList,
@@ -30,6 +31,7 @@ import {
 } from '../../../../interactors';
 import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import ArrayUtils from '../../utils/arrays';
+import { poll } from '../../utils/polling';
 
 const listInformationAccording = Accordion('List information');
 const queryAccordion = Accordion({ id: 'results-viewer-accordion' });
@@ -52,9 +54,9 @@ const exportList = Button('Export all columns (CSV)');
 const exportListVisibleColumns = Button('Export selected columns (CSV)');
 const testQuery = Button('Test query');
 const runQueryAndSave = Button('Run query & save');
-const filterPane = Pane('Filter');
+const filterPane = Pane('Search & filter');
 const listsPane = Pane('Lists');
-const newLink = new Link('New');
+const newLink = Link('New');
 const statusAccordion = filterPane.find(Accordion('Status'));
 const visibilityAccordion = filterPane.find(Accordion('Visibility'));
 const recordTypesAccordion = filterPane.find(Accordion('Record types'));
@@ -62,6 +64,7 @@ const resetAllButton = filterPane.find(Button('Reset all'));
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
 const editQueryButton = Button('Edit query');
 const resultViewerTable = MultiColumnList({ id: 'results-viewer-table' });
+const listsTable = MultiColumnList();
 
 const activeCheckbox = Checkbox({ id: 'clickable-filter-status-active' });
 const inactiveCheckbox = Checkbox({ id: 'clickable-filter-status-inactive' });
@@ -73,6 +76,7 @@ const cancelConfirmationModal = Modal('Are you sure?');
 const buildQueryModal = Modal('Build query');
 
 const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
+const linkSelector = 'a[data-test-text-link="true"]';
 
 const constants = {
   cannedListInactivePatronsWithOpenLoans: 'Inactive patrons with open loans',
@@ -84,6 +88,22 @@ const constants = {
     items: 'Items',
     organizations: 'Organizations',
     purchaseOrderLines: 'Purchase order lines',
+    budgets: 'Budgets',
+    fundWithLedger: 'Fund with ledger',
+    invoiceLines: 'Invoice lines',
+    invoices: 'Invoices',
+    purchaseOrderLinesWithTitles: 'Purchase order lines with titles',
+    purchaseOrders: 'Purchase orders',
+    voucherLinesWithFund: 'Voucher lines with fund',
+    voucherLinesWithInvoiceFundOrganization: 'Voucher lines with invoice, fund, organization',
+    vouchers: 'Vouchers',
+    instancesWithMarcBibliographic: 'Instances with MARC bibliographic',
+    receivingPieces: 'Receiving pieces',
+    feeFineAccountsWithUsers: 'Fee/Fine accounts with users',
+    usersWithFeeFineLoans: 'Users with fees/fines, loans',
+    usersWithManualBlocks: 'Users with manual blocks',
+    lostItemsRequiringActualCost: 'Lost items requiring actual cost',
+    loans: 'Loans',
   },
   userColumns: [
     'User — Active',
@@ -128,7 +148,10 @@ const UI = {
     cy.expect([HTML(including('Lists')).exists(), filterPane.exists(), listsPane.exists()]);
     cy.wait(5000);
     // wait for Lists landing page to be loaded (main pane and filter pane). Do NOT wait for every list to complete compiling (if any)
-    cy.xpath('//div[starts-with(@class, "paneContent---")]/div/div[contains(@class, "spinner---")]', { timeout: 120000 }).should('not.exist');
+    cy.xpath(
+      '//div[starts-with(@class, "paneContent---")]/div/div[contains(@class, "spinner---")]',
+      { timeout: 120000 },
+    ).should('not.exist');
   },
 
   filtersWaitLoading() {
@@ -163,6 +186,22 @@ const UI = {
   expandListInformationAccordion() {
     cy.do(listInformationAccording.open());
     cy.wait(1000);
+  },
+
+  verifyListInformationAccordionIsExpanded(isExpanded = true) {
+    cy.expect(listInformationAccording.has({ open: isExpanded }));
+  },
+
+  clickOnCollapseAllButton() {
+    cy.get(linkSelector).contains('Collapse all').click();
+  },
+
+  verifyCollapseAllButtonAbsent() {
+    cy.get(linkSelector).contains('Collapse all').should('not.exist');
+  },
+
+  clickOnExpandAllButton() {
+    cy.get(linkSelector).contains('Expand all').click();
   },
 
   clickOnQueryAccordion() {
@@ -279,6 +318,14 @@ const UI = {
     cy.wait(1000);
   },
 
+  verifyListsPaneTitle(title) {
+    cy.expect(Pane({ title }).exists());
+  },
+
+  verifyListsPaneSubTitle(subtitle) {
+    cy.expect(Pane({ subtitle }).exists());
+  },
+
   verifyDuplicateListButtonIsActive() {
     cy.expect(duplicateList.exists());
     cy.expect(duplicateList.has({ disabled: false }));
@@ -379,6 +426,10 @@ const UI = {
     cy.expect(cancelConfirmationModal.find(HTML('There are unsaved changes')).exists());
     cy.expect(cancelConfirmationModal.find(Button('Close without saving')).exists());
     cy.expect(cancelConfirmationModal.find(Button('Keep editing')).exists());
+  },
+
+  verifyCancellationModalAbsent() {
+    cy.expect(cancelConfirmationModal.absent());
   },
 
   closeWithoutSaving() {
@@ -612,13 +663,17 @@ const UI = {
     return cy.get('*[class^="mclRowContainer"]').contains(listName).should('be.visible');
   },
 
-  verifyRecordsNumber(number) {
-    cy.get('[class^=paneHeader-]').contains(`${number} records found`).should('be.visible');
+  verifyRecordsNumber(number, sVerifyPaneHeader = true) {
+    if (sVerifyPaneHeader) {
+      cy.get('[class^=paneHeader-]').contains(`${number} records found`).should('be.visible');
+    }
     cy.get('#results-viewer-accordion').contains(`${number} records found`).should('be.visible');
   },
 
-  verifySingleRecordNumber() {
-    cy.get('[class^=paneHeader-]').contains('1 record found').should('be.visible');
+  verifySingleRecordNumber(isVerifyPaneHeader = true) {
+    if (isVerifyPaneHeader) {
+      cy.get('[class^=paneHeader-]').contains('1 record found').should('be.visible');
+    }
     cy.get('#results-viewer-accordion').contains('1 record found').should('be.visible');
   },
 
@@ -654,6 +709,95 @@ const UI = {
   verifyResultColumnDisplayed(columnName) {
     cy.do(resultViewerTable.scrollHeaderIntoView(columnName));
     cy.expect(resultViewerTable.find(MultiColumnListHeader(columnName)).exists());
+  },
+
+  verifyLandingPageTableColumns(expectedColumns) {
+    cy.get('[role=columnheader]').then((headers) => {
+      const columnNames = [...headers].map((header) => header.innerText.trim());
+      expect(columnNames).to.include.members(expectedColumns);
+    });
+  },
+
+  verifyListDetailsInRecordsTable(expectedDetails) {
+    cy.then(() => MultiColumnListCell({ content: expectedDetails.name }).row()).then((index) => {
+      const targetRow = MultiColumnListRow({ indexRow: `row-${index}` });
+
+      if (expectedDetails.name) {
+        cy.expect(
+          targetRow
+            .find(MultiColumnListCell({ column: 'List name', content: expectedDetails.name }))
+            .exists(),
+        );
+      }
+      if (expectedDetails.recordType) {
+        cy.expect(
+          targetRow
+            .find(
+              MultiColumnListCell({ column: 'Record type', content: expectedDetails.recordType }),
+            )
+            .exists(),
+        );
+      }
+      if (expectedDetails.records !== undefined) {
+        cy.expect(
+          targetRow
+            .find(MultiColumnListCell({ column: 'Records', content: expectedDetails.records }))
+            .exists(),
+        );
+      }
+      if (expectedDetails.status) {
+        cy.expect(
+          targetRow
+            .find(MultiColumnListCell({ column: 'Status', content: expectedDetails.status }))
+            .exists(),
+        );
+      }
+      if (expectedDetails.source) {
+        cy.expect(
+          targetRow
+            .find(MultiColumnListCell({ column: 'Source', content: expectedDetails.source }))
+            .exists(),
+        );
+      }
+      if (expectedDetails.lastUpdated === '') {
+        cy.do(targetRow.find(MultiColumnListCell({ column: 'Last updated', content: '' })));
+      } else if (expectedDetails.lastUpdated) {
+        cy.expect(
+          targetRow
+            .find(
+              MultiColumnListCell({
+                column: 'Last updated',
+                content: expectedDetails.lastUpdated,
+              }),
+            )
+            .exists(),
+        );
+      }
+      if (expectedDetails.visibility) {
+        cy.expect(
+          targetRow
+            .find(
+              MultiColumnListCell({ column: 'Visibility', content: expectedDetails.visibility }),
+            )
+            .exists(),
+        );
+      }
+    });
+  },
+
+  verifyLandingPagePaginationButtonsState({ previous, next }) {
+    cy.expect(listsTable.find(Button('Previous')).has({ disabled: previous }));
+    cy.expect(listsTable.find(Button('Next')).has({ disabled: next }));
+  },
+
+  clickLandingPageNextButton() {
+    cy.do(listsTable.find(Button('Next')).click());
+    cy.wait(1000);
+  },
+
+  clickLandingPagePreviousButton() {
+    cy.do(listsTable.find(Button('Previous')).click());
+    cy.wait(1000);
   },
 
   verifyResultCellContains(rowIndex, columnName, content) {
@@ -847,6 +991,10 @@ const UI = {
   selectRecordTypeFilter(type) {
     cy.do(filterPane.find(MultiSelect()).choose(type));
     cy.wait(1000);
+  },
+
+  verifyRecordTypeSelectedinFilter(type) {
+    cy.expect(filterPane.find(MultiSelect()).has({ selected: type }));
   },
 
   verifyRecordTypeFilterDropdownContainsOptions(options) {
@@ -1170,13 +1318,23 @@ const QueryBuilder = {
                 break;
               case 'is null/empty':
                 if (locator) {
-                  cy.expect(
-                    MultiColumnListCell({
-                      row: index,
-                      columnIndex: columnNumber,
-                      content: valueInColumn,
-                    }).exists(),
-                  );
+                  if (Array.isArray(valueInColumn)) {
+                    cy.expect(
+                      MultiColumnListCell({
+                        row: index,
+                        columnIndex: columnNumber,
+                        content: or(...valueInColumn),
+                      }).exists(),
+                    );
+                  } else {
+                    cy.expect(
+                      MultiColumnListCell({
+                        row: index,
+                        columnIndex: columnNumber,
+                        content: valueInColumn,
+                      }).exists(),
+                    );
+                  }
                 } else {
                   cy.expect(MultiColumnListCell({ row: index, content: '' }).exists());
                 }
@@ -1221,14 +1379,14 @@ const QueryBuilder = {
 
   getNumberOfFoundRecordsFromPaneHeader(listName) {
     return cy
-      .then(() => Pane(listName).subtitle)
-      .then((subtitle) => {
-        const subtitleText = String(subtitle);
-        const match = subtitleText.match(/(\d+) records found/);
-        if (match) {
-          return Number(match[1]);
-        }
-        return 0;
+      .get('[class^=paneHeader-]')
+      .contains(listName)
+      .closest('[class^=paneHeader-]')
+      .contains(/records? found/)
+      .invoke('text')
+      .then((text) => {
+        const match = text.match(/(\d+) records? found/);
+        return match ? Number(match[1]) : 0;
       });
   },
 };
@@ -1441,6 +1599,34 @@ const API = {
       path: `entity-types/${id}`,
       isDefaultSearchParamsRequired: false,
       failOnStatusCode,
+    });
+  },
+
+  waitForCustomFieldToBeQueryable(fieldLabel, recordType) {
+    return this.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
+      return poll(
+        () => this.getEntityTypeByIdViaApi(entityTypeId, { failOnStatusCode: false }),
+        ({ body }) => body.columns?.some(({ labelAlias, queryable }) => labelAlias === fieldLabel && queryable),
+        {
+          timeout: 360000,
+          delay: 15000,
+          errorMessage: `"${fieldLabel}" custom field did not become queryable for ${recordType}`,
+        },
+      );
+    });
+  },
+
+  waitForFieldLabelToBeAbsent(fieldLabel, recordType) {
+    return this.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
+      return poll(
+        () => this.getEntityTypeByIdViaApi(entityTypeId, { failOnStatusCode: false }),
+        ({ body }) => !body.columns?.some(({ labelAlias }) => labelAlias === fieldLabel),
+        {
+          timeout: 360000,
+          delay: 15000,
+          errorMessage: `"${fieldLabel}" custom field did not disappear from ${recordType}`,
+        },
+      );
     });
   },
 

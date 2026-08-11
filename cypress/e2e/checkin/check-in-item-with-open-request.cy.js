@@ -213,7 +213,7 @@ describe('Check in', () => {
       CheckInPane.checkResultsInTheRow(checkInResultsData.statusForS);
 
       CheckInActions.checkActionsMenuOptions(['printTransitSlip', 'requestDetails']);
-      CheckInActions.openRequestDetails(itemData.barcode);
+      CheckInActions.checkRequestDetails(itemData.barcode);
       CheckInActions.openCheckInPane();
 
       SwitchServicePoint.switchServicePoint(servicePointS1.name);
@@ -225,7 +225,7 @@ describe('Check in', () => {
       CheckInPane.checkResultsInTheRow(checkInResultsData.statusForS1);
 
       CheckInActions.checkActionsMenuOptions(['printHoldSlip', 'requestDetails']);
-      CheckInActions.openRequestDetails(itemData.barcode);
+      CheckInActions.checkRequestDetails(itemData.barcode);
     },
   );
 });
