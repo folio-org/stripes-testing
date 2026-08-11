@@ -55,7 +55,7 @@ describe('Invoices', () => {
 
   it(
     'C196776 Invoice: approve invoice (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C196776'] },
+    { tags: ['extendedPath', 'thunderjet', 'C196776', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);

@@ -16,7 +16,7 @@ export const actionIcons = {
   trash: 'trash',
 };
 
-const newButton = Button('+ New');
+const newButton = Button('New');
 const memberLibrariesShare = Checkbox({ labelText: 'Share' });
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save');

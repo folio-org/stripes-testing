@@ -14,7 +14,7 @@ import DeleteCancelReason from '../../../consortium-manager/modal/delete-cancel-
 
 const rootPane = Pane('Subject sources');
 const modalWithErrorMessage = Modal('Cannot delete Subject source');
-const newButton = Button('+ New');
+const newButton = Button('New');
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');
 

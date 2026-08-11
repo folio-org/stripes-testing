@@ -11,7 +11,7 @@ const firstUser = {
   active: true,
   username: `firstusername ${randomFourDigitNumber()}`,
   personal: {
-    preferredContactTypeId: '002',
+    preferredContactTypeIds: ['002'],
     firstName: 'firstUserFirstName',
     middleName: 'firstUserMiddleName',
     lastName: 'firstuserlastname',
@@ -23,7 +23,7 @@ const secondUser = {
   active: true,
   username: `secondusername ${randomFourDigitNumber()}`,
   personal: {
-    preferredContactTypeId: '002',
+    preferredContactTypeIds: ['002'],
     firstName: 'secondUserFirstName',
     middleName: 'secondUserMiddleName',
     lastName: 'seconduserlastname',

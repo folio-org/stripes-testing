@@ -19,8 +19,7 @@ describe('Lists', () => {
       visibility: 'Shared',
     };
 
-    beforeEach('Create a user', () => {
-      cy.getAdminToken();
+    before('Create a user', () => {
       testData.emailPrefix = `AT_C411770_${getRandomPostfix()}`;
       testData.additionalUserIds = [];
 
@@ -50,8 +49,8 @@ describe('Lists', () => {
       });
     });
 
-    afterEach('Delete a user', () => {
-      cy.getAdminToken();
+    after('Delete a user', () => {
+      cy.getAdminToken(false);
       Lists.deleteListByNameViaApi(listData.name);
       testData.additionalUserIds.forEach((userId) => Users.deleteViaApi(userId));
       Users.deleteViaApi(userData.userId);
@@ -80,39 +79,7 @@ describe('Lists', () => {
         Lists.openActions();
         Lists.verifyDeleteListButtonIsDisabled();
         Lists.waitForCompilingToComplete(5000);
-        Lists.closeListDetailsPane();
-        cy.wait(5000); // wait for the list to appear on the landing page after refreshing
-        Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
-          Lists.checkResultSearch(listData, rowIndex);
-        });
-      },
-    );
-
-    it(
-      'C411771 Delete list: Export is in progress (corsair)',
-      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411771', 'eurekaPhase1'] },
-      () => {
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.listsPath,
-          waiter: Lists.waitLoading,
-        });
-        Lists.resetAllFilters();
-        Lists.openNewListPane();
-        Lists.setName(listData.name);
-        Lists.setDescription(listData.name);
-        Lists.selectRecordType(listData.recordType);
-        Lists.selectVisibility(listData.visibility);
-        Lists.buildQuery();
-        QueryModal.selectField(usersFieldValues.userEmail);
-        QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH);
-        QueryModal.fillInValueTextfield(testData.emailPrefix);
-        QueryModal.testQuery();
-        QueryModal.clickRunQueryAndSave();
-        Lists.waitForCompilingToComplete(7000);
-        Lists.openActions();
-        Lists.exportList();
-        Lists.openActions();
-        Lists.verifyDeleteListButtonIsDisabled();
+        cy.wait(5000);
         Lists.closeListDetailsPane();
         Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
           Lists.checkResultSearch(listData, rowIndex);

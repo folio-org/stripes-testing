@@ -237,7 +237,7 @@ describe('Orders', () => {
 
   it(
     'C451534 Encumbrance status is unreleased when an Order was unopened and then reopened and does not create an additional encumbrance (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C451534'] },
+    { tags: ['extendedPath', 'thunderjet', 'C451534', 'nonParallel'] },
     () => {
       Orders.searchByParameter('PO number', testData.order.poNumber);
       Orders.selectFromResultsList(testData.order.poNumber);

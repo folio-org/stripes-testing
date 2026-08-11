@@ -255,7 +255,7 @@ describe('Invoices', () => {
 
   it(
     'C407745 Check error message when approve invoice with an invoice-level adjustment and its invoice line is multi-fund distributed by amounts (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C407745'] },
+    { tags: ['extendedPath', 'thunderjet', 'C407745', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);

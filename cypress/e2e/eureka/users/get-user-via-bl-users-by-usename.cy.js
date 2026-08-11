@@ -11,7 +11,7 @@ describe('Eureka', () => {
         personal: {
           lastName: `AT_C451589_LastName_${getRandomPostfix()}`,
           email: 'AT_C451589@test.com',
-          preferredContactTypeId: '002',
+          preferredContactTypeIds: ['002'],
         },
       },
     };
@@ -26,11 +26,11 @@ describe('Eureka', () => {
       cy.getUserGroups().then((groupId) => {
         console.log('BEFORE block: After getting user groups');
         userWithoutKeycloak.patronGroup = groupId;
-        cy.createUserWithoutKeycloakInEurekaApi(userWithoutKeycloak).then((userId) => {
+        Users.createViaApi(userWithoutKeycloak).then((user) => {
           console.log('BEFORE block: After creating user without Keycloak');
-          testData.userWithoutKeycloakId = userId;
+          testData.userWithoutKeycloakId = user.id;
         });
-        Users.createViaApi(userWithKeycloak).then((user) => {
+        Users.createViaApi(userWithKeycloak, { keycloak: true }).then((user) => {
           console.log('BEFORE block: After creating user with Keycloak');
           testData.userWithKeycloakId = user.id;
         });

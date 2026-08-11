@@ -71,22 +71,24 @@ describe('MARC', () => {
 
         getBibliographicSpec().then((spec) => {
           specId = spec.id;
-          toggleAllUndefinedValidationRules(specId, { enable: true });
-        });
+          toggleAllUndefinedValidationRules(specId, { enable: false });
 
-        cy.createTempUser([
-          Permissions.uiInventoryViewInstances.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        ]).then((createdUserProperties) => {
-          user.userProperties = createdUserProperties;
+          cy.createTempUser([
+            Permissions.uiInventoryViewInstances.gui,
+            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          ]).then((createdUserProperties) => {
+            user.userProperties = createdUserProperties;
 
-          cy.createSimpleMarcBibViaAPI(testData.instanceTitle).then((instanceId) => {
-            createdInstanceId = instanceId;
+            cy.createSimpleMarcBibViaAPI(testData.instanceTitle).then((instanceId) => {
+              createdInstanceId = instanceId;
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(user.userProperties.username, user.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
+              toggleAllUndefinedValidationRules(specId, { enable: true });
+
+              cy.waitForAuthRefresh(() => {
+                cy.login(user.userProperties.username, user.userProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
               });
             });
           });

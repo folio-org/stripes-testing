@@ -19,7 +19,7 @@ import ConfirmShareModal from '../../modal/confirm-share';
 import DeleteCancelReason from '../../modal/delete-cancel-reason';
 
 const subjectSourcesList = MultiColumnList({ id: 'editList-subjectsources' });
-const newButton = Button('+ New');
+const newButton = Button('New');
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');
 const nameField = TextField({ placeholder: 'name' });
