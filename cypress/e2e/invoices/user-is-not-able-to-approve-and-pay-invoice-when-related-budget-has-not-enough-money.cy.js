@@ -302,7 +302,7 @@ describe('Invoices', () => {
 
   it(
     'C396385 User is not able to approve and pay invoice when related budget has not enough money (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C396385'] },
+    { tags: ['extendedPath', 'thunderjet', 'C396385', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(testData.firstInvoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.firstInvoice.vendorInvoiceNo);
