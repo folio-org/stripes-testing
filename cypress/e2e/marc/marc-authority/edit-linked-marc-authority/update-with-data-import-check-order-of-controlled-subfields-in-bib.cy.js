@@ -37,6 +37,7 @@ import {
 
 const testData = {
   createdAuthorityID: null,
+  otherCreatedAuthorityIDs: [],
   createdBibID: null,
   userProperties: null,
   firstAuthFileName: 'marcAuthFileForC605928-1.mrc',
@@ -51,16 +52,17 @@ const testData = {
   authorityHeadingType: 'Geographic Name',
   tag651: '651',
   tag151: '151',
-  field651_2: 28,
-  field651_2_ind1: '\\',
-  field651_2_ind2: '0',
-  bib651Controlled: '$a United States of America', // TODO This should probably be the full uncontrolled...
-  // TODO consolidate and unify these, some repetition and different names for same things going on
-  bib651Uri: 'http://id.loc.gov/authorities/subjects/sh85140220',
-  bib651Uncontrolled1: '$x History $e Country $b States $e USA $y Civil War, 1861-1865 $x Cavalry operations.',
-  bib651Uncontrolled2: '$8 number801 $1 URI1 $8 number802',
+  field651Index: 28,
+  field651Ind1: '\\',
+  field651Ind2: '0',
+  field651ControlledInitial: '$a United States of America',
+  field651Uri: 'http://id.loc.gov/authorities/subjects/sh85140220',
+  field651Uncontrolled1Initial: '$x History $e Country $b States $e USA $y Civil War, 1861-1865 $x Cavalry operations.',
+  field651Uncontrolled2: '$8 number801 $1 URI1 $8 number802',
   updatedAuthTitle: 'United States of America USA Independence war History Civil War, 1861-1865 Cavalry operations',
   updatedAuth151: '$a United States of America $z USA $y Independence war $x History $y Civil War, 1861-1865 $x Cavalry operations',
+  field651ControlledUpdated: '$a United States of America $z USA $y Independence war $x History $y Civil War, 1861-1865 $x Cavalry operations',
+  field651Uncontrolled1Updated: '$e Country $b States $e USA',
 };
 
 // Config to set up data import job profile for updating MARC authority
@@ -129,6 +131,7 @@ describe('MARC', () => {
           DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         ).then((response) => {
           testData.createdAuthorityID = response[0].authority.id;
+          testData.otherCreatedAuthorityIDs = [response[1].authority.id, response[2].authority.id];
 
           // Upload instance
           DataImport.uploadFileViaApi(
@@ -143,8 +146,8 @@ describe('MARC', () => {
               authorityIds: [testData.createdAuthorityID],
               bibFieldTags: [testData.tag651],
               authorityFieldTags: [testData.tag151],
-              finalBibFieldContents: [`${testData.bib651Controlled} ${testData.bib651Uncontrolled1} ${testData.bib651Uncontrolled2}`],
-              bibFieldIndexes: [testData.field651_2],
+              finalBibFieldContents: [`${testData.field651ControlledInitial} ${testData.field651Uncontrolled1Initial} ${testData.field651Uncontrolled2}`],
+              bibFieldIndexes: [testData.field651Index],
             });
             MarcAuthorities.waitAuthorityLinked(testData.createdAuthorityID, 1);
           });
@@ -176,6 +179,11 @@ describe('MARC', () => {
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         if (testData.createdAuthorityID) MarcAuthority.deleteViaAPI(testData.createdAuthorityID);
+        if (testData.otherCreatedAuthorityIDs.length > 0) {
+          testData.otherCreatedAuthorityIDs.forEach((id) => {
+            MarcAuthority.deleteViaAPI(id);
+          });
+        }
         if (testData.createdBibID) InventoryInstance.deleteInstanceViaApi(testData.createdBibID);
         if (testData.userProperties) Users.deleteViaApi(testData.userProperties.userId);
       });
@@ -223,18 +231,15 @@ describe('MARC', () => {
           // Open editor and verify 2nd linked 651's controlled and uncontrolled input order
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.waitLoading();
-          // TODO testrail spec says uncontrolled should be something else - discrepancy because
-          // of error in testrail spec or error in setup? when it's originally set before the update,
-          // by me, effectively, is that affecting this outcome?
           QuickMarcEditor.verifyTagFieldAfterLinking(
-            testData.field651_2,
+            testData.field651Index,
             testData.tag651, 
-            testData.field651_2_ind1,
-            testData.field651_2_ind2,
-            testData.bib651Controlled,
-            testData.bib651Uncontrolled1,
-            `$0 ${testData.bib651Uri}`,
-            testData.bib651Uncontrolled2,
+            testData.field651Ind1,
+            testData.field651Ind2,
+            testData.field651ControlledInitial,     // testData.field651ControlledUpdated
+            testData.field651Uncontrolled1Initial,  // testData.field651Uncontrolled1Updated
+            `$0 ${testData.field651Uri}`,
+            testData.field651Uncontrolled2,
           );
         }
       );
