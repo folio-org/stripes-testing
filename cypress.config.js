@@ -9,7 +9,7 @@ const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 const webpackPreprocessor = require('@cypress/webpack-batteries-included-preprocessor');
-const testRailPlugin = require('cypress-testrail-simple/src/plugin');
+const { createTestRailReporter } = require('./scripts/testrail/reportResults');
 const httpTasks = require('./cypress/tasks/httpTasks');
 const flakyMarkerHandler = require('./scripts/report-portal/afterSpecHandler');
 
@@ -42,38 +42,31 @@ try {
 
 /**
  * Chains after:spec handlers to ensure both TestRail and flaky marker handlers execute.
- * Since Cypress's on() overwrites previous handlers (except for 'task'), we need to intercept
- * the TestRail plugin's handler registration and combine it with the flaky marker handler.
+ * Since Cypress's on() overwrites previous handlers (except for 'task'), both handlers are
+ * registered through a single after:spec callback.
+ *
+ * TestRail reporting is handled by ./scripts/testrail/reportResults instead of the
+ * cypress-testrail-simple plugin, so that failed results also carry the Cypress error
+ * text in the TestRail "comment" field. Results in TestRail are append-only - only one
+ * reporter may post per spec, otherwise each test gets duplicate result rows.
  */
 async function setupAfterSpecChaining(on, config) {
-  if (config.env.itemsFilePath) {
-    let testRailAfterSpecHandler;
+  const reportTestRailResults = await createTestRailReporter(config);
 
-    // Intercept after:spec registration from TestRail plugin
-    const interceptedOn = (event, handler) => {
-      if (event === 'after:spec') {
-        testRailAfterSpecHandler = handler;
-      } else {
-        on(event, handler);
-      }
-    };
-
-    // Let TestRail plugin register its handler (captured by interceptor)
-    await testRailPlugin(interceptedOn, config);
-
-    // Register combined handler that calls both
-    on('after:spec', async (spec, results) => {
-      // Call TestRail handler first
-      if (testRailAfterSpecHandler) {
-        await testRailAfterSpecHandler(spec, results);
-      }
-      // Then call flaky marker handler
-      await flakyMarkerHandler(spec, results, config.env.itemsFilePath);
-    });
-  } else {
-    // Normal flow: just register TestRail plugin
-    await testRailPlugin(on, config);
+  if (!reportTestRailResults && !config.env.itemsFilePath) {
+    return;
   }
+
+  on('after:spec', async (spec, results) => {
+    // Report results to TestRail first
+    if (reportTestRailResults) {
+      await reportTestRailResults(spec, results);
+    }
+    // Then call flaky marker handler
+    if (config.env.itemsFilePath) {
+      await flakyMarkerHandler(spec, results, config.env.itemsFilePath);
+    }
+  });
 }
 
 const reportportalOptions = {
