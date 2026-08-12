@@ -8,7 +8,7 @@
 * Delete broken Dockerfile (Node 8, Ubuntu Xenial). Refs UITEST-139.
 * Lock `axios` to `1.16.1` to include security updates. Refs UITEST-142.
 * Supply Personal Data Disclosure form. Refs UITEST-135.
-* Lock `axios` to `1.18.1` to include security updates. Refs UITEST-144.
+* Lock `axios` to `1.19.0` to include security updates. Refs UITEST-144.
 
 ## [5.0.1](https://github.com/folio-org/stripes-testing/tree/v5.0.1) (2026-03-31)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v5.0.0...v5.0.1)
