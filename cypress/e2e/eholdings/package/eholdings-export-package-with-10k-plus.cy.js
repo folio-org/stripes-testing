@@ -19,11 +19,11 @@ import { FILTER_STATUSES } from '../../../support/fragments/eholdings/eholdingsC
 describe('eHoldings', () => {
   describe('Package', () => {
     const testData = {
-      packageName: 'VLeBooks',
+      packageName: 'Sage Reference & Academic Books A to Z',
       selectedStatus: 'selected',
       packageExportFields: ['Holdings status', 'Package Id'],
       titleExportFields: ['Alternate title(s)', 'Description'],
-      titleFilterParams: ['Francaise e', 'Title'],
+      titleFilterParams: ['Handbook of Theories', 'Title'],
       fileName: `C367972exportCSVFile${getRandomPostfix()}.csv`,
       fileMask: '*_package.csv',
     };
@@ -84,7 +84,7 @@ describe('eHoldings', () => {
         ExportSettingsModal.verifyExportButtonDisabled();
         ExportSettingsModal.clickCancelButton();
         EHoldingsPackage.searchTitles(...testData.titleFilterParams);
-        EHoldingsPackage.filterTitles(FILTER_STATUSES.NOT_SELECTED);
+        EHoldingsPackage.filterTitles(FILTER_STATUSES.SELECTED);
         // wait for titles list to update
         cy.wait(6000);
         EHoldingsPackageView.verifyNumberOfTitlesLessThan(10000);
@@ -132,7 +132,7 @@ describe('eHoldings', () => {
               'Package Name',
               testData.packageName,
               'Title Name',
-              'Française',
+              testData.titleFilterParams[0],
             ],
           );
           FileManager.deleteFolder(Cypress.config('downloadsFolder'));

@@ -72,6 +72,7 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.switchToBrowseTab();
+        BrowseSubjects.waitForSubjectToAppear(testData.subject.name, true, false, { quantity: 2 });
         cy.wait(5000);
         BrowseSubjects.searchBrowseSubjects(testData.subject.name);
         cy.wait(3000);

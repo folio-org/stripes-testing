@@ -315,7 +315,23 @@ export default {
     this.getPackageViaApi(packageName).then((searchResponse) => {
       this.getPackageDataViaApi(searchResponse.body.data[0].id).then(({ body: { data } }) => {
         data.attributes.isSelected = false;
-        data.attributes.visibilityData.isHidden = isHidden;
+        data.attributes.visibility = [
+          {
+            category: 'PF',
+            reason: '',
+            hidden: isHidden,
+          },
+          {
+            category: 'FTF',
+            reason: '',
+            hidden: isHidden,
+          },
+          {
+            category: 'MARC',
+            reason: '',
+            hidden: isHidden,
+          },
+        ];
         data.attributes.customCoverage = {
           beginCoverage: '',
           endCoverage: '',
