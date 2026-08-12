@@ -21,6 +21,7 @@ import {
   MultiSelect,
   MultiSelectOption,
   not,
+  or,
   Pane,
   RadioButton,
   SelectionList,
@@ -524,7 +525,7 @@ const UI = {
   selectRecordType(type) {
     cy.get('button[name=recordType]').click();
     cy.do([SelectionList().filter(type), SelectionList().select(type)]);
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   verifySelectedOptionsInRecordTypeDropdown(type) {
@@ -564,6 +565,12 @@ const UI = {
   verifyRecordTypeDropdownOptions(type) {
     cy.then(() => new SelectionList().optionList()).then((options) => {
       cy.expect(options).to.include(type);
+    });
+  },
+
+  verifyAllOptionsInRecordTypeDropdown(arrayOfTypes) {
+    cy.then(() => SelectionList().optionList()).then((options) => {
+      cy.expect(options).to.deep.equal(arrayOfTypes);
     });
   },
 
@@ -1301,7 +1308,30 @@ const QueryBuilder = {
                   );
                 }
                 break;
+              case 'in':
+                if (locator) {
+                  cy.expect(
+                    MultiColumnListCell({
+                      row: index,
+                      columnIndex: columnNumber,
+                      content: Array.isArray(valueInColumn)
+                        ? or(...valueInColumn.map((v) => including(v)))
+                        : including(valueInColumn),
+                    }).exists(),
+                  );
+                } else {
+                  cy.expect(
+                    MultiColumnListCell({
+                      row: index,
+                      content: Array.isArray(valueInColumn)
+                        ? or(...valueInColumn.map((v) => including(v)))
+                        : including(valueInColumn),
+                    }).exists(),
+                  );
+                }
+                break;
               case 'not in':
+              case 'not equal to':
                 if (locator) {
                   cy.expect(
                     MultiColumnListCell({
@@ -1318,13 +1348,23 @@ const QueryBuilder = {
                 break;
               case 'is null/empty':
                 if (locator) {
-                  cy.expect(
-                    MultiColumnListCell({
-                      row: index,
-                      columnIndex: columnNumber,
-                      content: valueInColumn,
-                    }).exists(),
-                  );
+                  if (Array.isArray(valueInColumn)) {
+                    cy.expect(
+                      MultiColumnListCell({
+                        row: index,
+                        columnIndex: columnNumber,
+                        content: or(...valueInColumn),
+                      }).exists(),
+                    );
+                  } else {
+                    cy.expect(
+                      MultiColumnListCell({
+                        row: index,
+                        columnIndex: columnNumber,
+                        content: valueInColumn,
+                      }).exists(),
+                    );
+                  }
                 } else {
                   cy.expect(MultiColumnListCell({ row: index, content: '' }).exists());
                 }
@@ -1601,7 +1641,11 @@ const API = {
     return this.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
       return poll(
         () => this.getEntityTypeByIdViaApi(entityTypeId, { failOnStatusCode: false }),
-        ({ body }) => body.columns?.some(({ labelAlias, queryable }) => labelAlias === fieldLabel && queryable),
+        ({ body }) => {
+          return body.columns?.some(
+            ({ labelAlias, queryable }) => labelAlias === fieldLabel && queryable,
+          );
+        },
         {
           timeout: 360000,
           delay: 15000,
