@@ -1,4 +1,4 @@
-import axe from 'axe-core';
+import { axe } from '@folio/jest-config-stripes';
 
 export const axeModuleConfig = {
   runOnly: ['wcag2a', 'wcag2aa'],
