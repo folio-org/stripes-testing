@@ -69,14 +69,15 @@ describe('Organizations', () => {
       `C6713 Test the Organizations app filters (except Tags): ${filter.name} (thunderjet)`,
       { tags: ['smoke', 'thunderjet', 'C6713'] },
       () => {
-        filter.filterActions();
-
         // Search by organization name to verify that the filter works correctly
         // This should return only one organization in the search results - pagination safe
         OrganizationsSearchAndFilter.searchByParameters(
           ORGANIZATION_SEARCH_OPTIONS.NAME,
           organization.name,
         );
+        OrganizationsSearchAndFilter.waitLoading();
+
+        filter.filterActions();
 
         OrganizationsSearchAndFilter.checkSearchAndFilterPaneExists();
         Organizations.selectOrganization(organization.name);
