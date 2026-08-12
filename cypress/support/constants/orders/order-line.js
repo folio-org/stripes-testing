@@ -1,3 +1,19 @@
+export const ORDER_LINE_SEARCH_INDEX_LABELS = {
+  CONTRIBUTOR: 'Contributor',
+  DONOR_DEPRECATED: 'Donor (Deprecated)',
+  KEYWORD: 'Keyword',
+  POL_NUMBER: 'PO line number',
+  PRODUCT_ID: 'Product ID',
+  PRODUCT_ID_ISBN: 'Product ID ISBN',
+  PUBLISHER: 'Publisher',
+  REQUESTER: 'Requester',
+  SELECTOR: 'Selector',
+  TITLE_OR_PACKAGE: 'Title or package name',
+  VENDOR_ACCOUNT: 'Vendor account',
+  VENDOR_REF_NUMBER: 'Vendor reference number',
+  VOLUMES: 'Volumes',
+};
+
 export const ORDER_LINE_ACCORDION_NAMES = {
   ITEM_DETAILS: 'Item details',
   PURCHASE_ORDER_LINE: 'Purchase order line',

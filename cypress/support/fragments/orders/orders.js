@@ -124,11 +124,15 @@ export default {
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then(({ body }) => {
           orderLine.acquisitionMethod = body.acquisitionMethods[0].id;
           orderLine.purchaseOrderId = order.id;
-          OrderLines.createOrderLineViaApi(orderLine);
+          OrderLines.createOrderLineViaApi(orderLine).then((r) => {
+            cy.wrap(r).as('orderLine');
+          });
         });
       } else {
         orderLine.purchaseOrderId = order.id;
-        OrderLines.createOrderLineViaApi(orderLine);
+        OrderLines.createOrderLineViaApi(orderLine).then((r) => {
+          cy.wrap(r).as('orderLine');
+        });
       }
     });
     return cy.get('@order');
