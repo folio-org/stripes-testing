@@ -96,6 +96,10 @@ describe('Inventory', () => {
       searchQueries.forEach((searchQuery) => {
         InventoryInstances.deleteInstanceByTitleViaApi(searchQuery);
       });
+      InventoryInstances.deleteInstanceByTitleViaApi('C369042*');
+      InventoryInstances.deleteInstanceByTitleViaApi(
+        'MSEARCH-466 Title 1 Search by "Alternative title"',
+      );
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
@@ -115,6 +119,7 @@ describe('Inventory', () => {
     });
 
     beforeEach('Login', () => {
+      cy.wait(3000);
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
@@ -122,7 +127,7 @@ describe('Inventory', () => {
     });
 
     after('Deleting user, records', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(true);
       Users.deleteViaApi(testData.userProperties.userId);
       createdRecordIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
@@ -141,6 +146,11 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifyInstanceDisplayed(expectedTitle);
           });
           InventorySearchAndFilter.checkRowsCount(expectedTitles[index].length);
+          if (expectedTitles[index].length === 1) {
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
+            InventoryInstance.checkInstanceTitle(expectedTitles[index][0]);
+          }
         });
       },
     );

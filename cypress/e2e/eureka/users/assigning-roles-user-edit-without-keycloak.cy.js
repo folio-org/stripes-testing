@@ -42,7 +42,7 @@ describe(
               lastName: `AT_C627437_LastName_${randomPostfix}`,
               firstName: `AT_C627437_FirstName_${randomPostfix}`,
               email: 'AT_C627437@test.com',
-              preferredContactTypeId: '002',
+              preferredContactTypeIds: ['002'],
             },
           },
         };
@@ -50,8 +50,8 @@ describe(
         cy.getAdminToken();
         cy.getUserGroups().then(() => {
           testData.userBody.patronGroup = Cypress.env('userGroups')[0].id;
-          cy.createUserWithoutKeycloakInEurekaApi(testData.userBody).then((userId) => {
-            testData.userId = userId;
+          Users.createViaApi(testData.userBody).then((user) => {
+            testData.userId = user.id;
           });
           cy.createTempUser([]).then((createdUserProperties) => {
             testData.tempUser = createdUserProperties;

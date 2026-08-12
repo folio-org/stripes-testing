@@ -162,6 +162,7 @@ export const holdingsFieldValues = {
 };
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
+  affiliationName: 'Instance — Affiliation name',
   instanceId: 'Instance — Instance UUID',
   instanceTenantId: 'Instance — Tenant ID',
   instanceHrid: 'Instance — Instance HRID',
@@ -225,6 +226,7 @@ export const instanceFieldValues = {
   series: 'Instance — Series',
   marcBibliographicMarcJsonb: 'MARC bibliographic — MARC jsonb',
   marcBibliographicState: 'MARC bibliographic — State',
+  instanceShared: 'Instance — Shared',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -237,6 +239,7 @@ export const itemFieldValues = {
   itemCheckOutNotesStaffOnly: 'Item — Check out notes — Staff only',
   itemCheckInNotesNote: 'Item — Check in notes — Note',
   itemCheckInNotesStaffOnly: 'Item — Check in notes — Staff only',
+  itemCreatedDate: 'Item — Created date',
   itemStatus: 'Item — Status',
   itemHrid: 'Item — Item HRID',
   itemUuid: 'Item — Item UUID',
@@ -287,6 +290,7 @@ export const usersFieldValues = {
   preferredContactType: 'User — Preferred contact type',
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
+  userDepartmentNames: 'User — Department names',
   userCreatedDate: 'User — User created date',
   userUpdatedDate: 'User — User updated date',
   userId: 'User — User UUID',
@@ -324,6 +328,7 @@ export const purchaseOrderLinesFieldValues = {
   locationsCode: 'POL — Locations — Code',
   vendorOrgEdiType: 'Vendor org — EDI vendor type',
   vendorOrgName: 'Vendor org — Name',
+  acquisitionUnitNames: 'PO — Acquisition unit names',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -815,6 +820,19 @@ export default {
         hasMatch,
         `Expected to find option containing "${expectedOption}". Available options: [${options.join(', ')}]`,
       ).to.be.true;
+    });
+    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
+  },
+
+  verifExactListOfOptionsInMultiselectMenu(arrayOfExpectedOptions, row = 0) {
+    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
+    cy.then(() => MultiSelectMenu().optionList()).then((actualOptions) => {
+      const sortedActualOptions = [...actualOptions].sort();
+      const sortedExpectedOptions = [...arrayOfExpectedOptions].sort();
+      expect(
+        sortedActualOptions,
+        `Expected options to match: [${sortedExpectedOptions.join(', ')}]`,
+      ).to.deep.equal(sortedExpectedOptions);
     });
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
   },

@@ -16,7 +16,8 @@
     "test:cypress:local": "stripes serve --port 3001 & wait-on http://localhost:3001 && cypress run && kill $!",
     "test:cypress:running-service": "cypress run",
     "test:cypress:snapshot": "cypress run --config baseUrl=https://folio-snapshot.dev.folio.org",
-    "test:cypress:yakbak": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && yakbak-proxy -v -i -n https://folio-snapshot-okapi.dev.folio.org & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2"
+    "test:cypress:yakbak": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && yakbak-proxy -v -i -n https://folio-snapshot-okapi.dev.folio.org & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2",
+    "cypress:repeat": "tsx scripts/cypress-concurrent-repeat-runner.ts"
   },
   "husky": {
     "hooks": {
@@ -55,6 +56,7 @@
     "axe-core": "4.3.3",
     "axios": "1.19.0",
     "babel-loader": "^9.2.1",
+    "commander": "12.1.0",
     "cypress": "12.0.0",
     "cypress-cloud": "^1.9.6",
     "cypress-downloadfile": "^1.2.1",
@@ -101,5 +103,9 @@
       "sharp": "0.32.6"
     }
   },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
+  "devDependencies": {
+    "@types/node": "^24",
+    "typescript": "^5.9.3"
+  }
 }

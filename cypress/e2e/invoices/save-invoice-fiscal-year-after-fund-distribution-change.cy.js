@@ -169,7 +169,7 @@ describe('Invoices', () => {
 
   it(
     'C396360 Save invoice fiscal year after fund distribution change to fund using different ledger if FY was undefined (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'C396360'] },
+    { tags: ['criticalPath', 'thunderjet', 'C396360', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

@@ -70,6 +70,8 @@ describe('Patron notices', () => {
       noticePolicyTemplate = {
         ...NewNoticePolicyTemplate.getDefaultUI(),
         category: NOTICE_CATEGORIES.loan,
+        noticeFormat: 'Email',
+        body: NewNoticePolicyTemplate.getDefaultUI().body + '{{item.title}}',
       };
       noticePolicy = {
         ...NewNoticePolicy.getDefaultUI(),
@@ -255,8 +257,6 @@ describe('Patron notices', () => {
       () => {
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();
-        NewNoticePolicyTemplate.addToken(testData.noticePolicyTemplateToken);
-        noticePolicyTemplate.body += '{{item.title}}';
         NewNoticePolicyTemplate.create(noticePolicyTemplate);
         NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
         NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
@@ -311,8 +311,6 @@ describe('Patron notices', () => {
       () => {
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();
-        NewNoticePolicyTemplate.addToken(testData.noticePolicyTemplateToken);
-        noticePolicyTemplate.body += '{{item.title}}';
         NewNoticePolicyTemplate.create(noticePolicyTemplate);
         NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
         NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);

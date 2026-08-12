@@ -1723,4 +1723,14 @@ export default {
       }),
     );
   },
+
+  /* INTERCEPTORS */
+
+  interceptPostInvoices() {
+    cy.intercept('POST', '/invoice/invoices*').as('waiterForInvoicesPostQueryCompleted');
+  },
+
+  waitForInvoicesPostQueryCompleted() {
+    return cy.wait('@waiterForInvoicesPostQueryCompleted');
+  },
 };

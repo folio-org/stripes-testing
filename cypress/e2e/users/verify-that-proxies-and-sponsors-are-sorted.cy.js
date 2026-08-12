@@ -27,7 +27,7 @@ describe('Users', () => {
             username: getTestEntityValue(user),
             barcode: uuid(),
             personal: {
-              preferredContactTypeId: '002',
+              preferredContactTypeIds: ['002'],
               lastName: `${user}${getRandomPostfix()}`,
               email: 'test@folio.org',
             },

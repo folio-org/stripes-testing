@@ -34,6 +34,7 @@ const saveButton = patronNoticeForm.find(Button('Save & close'));
 const newButton = Button({ id: 'clickable-create-entry' });
 const activeCheckbox = Checkbox({ id: 'input-patron-notice-active' });
 const categorySelect = Select({ name: 'category' });
+const noticeFormatField = Select({ label: 'Notice format*' });
 const actionsButton = Button('Actions');
 const tokenButton = Button('{ }');
 const addTokenButton = Button(titles.addToken);
@@ -47,12 +48,14 @@ export const createNoticeTemplate = ({
   name = 'autotest_template_name',
   category = NOTICE_CATEGORIES.loan,
   noticeOptions = {},
+  noticeFormat = 'Email',
 }) => {
   const templateName = `${name}-${getRandomPostfix()}`;
   return {
     name: templateName,
     category,
     description: 'Created by autotest team',
+    noticeFormat,
     subject: `autotest_template_subject_${getRandomPostfix()}`,
     body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
     previewText: 'Test email body The Wines of Italy',
@@ -121,6 +124,9 @@ export default {
     cy.do(descriptionField.fillIn(noticePolicyTemplate.description));
     cy.expect(descriptionField.has({ value: noticePolicyTemplate.description }));
 
+    cy.do(noticeFormatField.choose(noticePolicyTemplate.noticeFormat));
+
+    cy.expect(subjectField.has({ disabled: false }));
     cy.do(subjectField.fillIn(noticePolicyTemplate.subject));
     cy.expect(subjectField.has({ value: noticePolicyTemplate.subject }));
 
@@ -247,7 +253,7 @@ export default {
       name: noticePolicyTemplate.name,
       description: noticePolicyTemplate.description,
       category: noticePolicyTemplate.category.requestId,
-      subject: noticePolicyTemplate.subject,
+      noticeFormat: noticePolicyTemplate.noticeFormat,
       body: noticePolicyTemplate.body,
     };
     Object.values(propertiesToCheck).forEach((prop) => {
@@ -336,7 +342,6 @@ export default {
     } else {
       this.startAdding();
       this.checkInitialState();
-      this.addToken('item.title');
       this.create(template, false);
       this.chooseCategory(template.category.name);
     }

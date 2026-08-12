@@ -8,4 +8,5 @@ export * from './inventory';
 export * from './invoices';
 export * from './orders';
 export * from './organizations';
+export * from './query-builder';
 export * from './receiving';
