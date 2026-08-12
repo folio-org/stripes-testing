@@ -14,8 +14,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import { ITEM_STATUS_NAMES } from '../../../support/constants/inventory/item';
+import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
+const todayDate = DateTools.getCurrentDate();
 const userPermissions = [
   Permissions.listsAll.gui,
   Permissions.uiOrganizationsViewEditCreate.gui,
@@ -165,6 +167,10 @@ describe('Lists', () => {
 
         // Step 4: Select a value and run test query
         QueryModal.chooseFromValueMultiselect(tenantNames.central);
+        QueryModal.addNewRow();
+        QueryModal.selectField(instanceFieldValues.createdDate, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.pickDate(todayDate, 1);
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();
@@ -195,6 +201,10 @@ describe('Lists', () => {
 
         // Step 8: Select a value and run test query
         QueryModal.chooseFromValueMultiselect(tenantNames.college);
+        QueryModal.addNewRow();
+        QueryModal.selectField(holdingsFieldValues.updatedDate, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.pickDate(todayDate, 1);
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();
@@ -229,6 +239,10 @@ describe('Lists', () => {
 
         // Step 12: Select a value and run test query
         QueryModal.chooseFromValueMultiselect(tenantNames.college);
+        QueryModal.addNewRow();
+        QueryModal.selectField(itemFieldValues.itemCreatedDate, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.pickDate(todayDate, 1);
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();

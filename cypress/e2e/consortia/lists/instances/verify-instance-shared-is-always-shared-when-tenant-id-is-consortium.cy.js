@@ -10,7 +10,10 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import { Lists } from '../../../../support/fragments/lists/lists';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+
+const todayDate = DateTools.getCurrentDate();
 
 const testData = {
   user: {},
@@ -85,8 +88,16 @@ describe('Lists', () => {
           // Step 5: Select "equals" operator, choose "consortium" value, run test query
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
           QueryModal.chooseValueSelect(Affiliations.Consortia);
+
+          // narrow results to instances created today
+          QueryModal.addNewRow();
+          QueryModal.selectField(instanceFieldValues.createdDate, 1);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+          QueryModal.pickDate(todayDate, 1);
+
+          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
           QueryModal.clickTestQuery();
-          QueryModal.waitForQueryTestToFinish();
+          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
 
           // Step 6: Verify preview of matched records
           QueryModal.verifyPreviewOfRecordsMatched();

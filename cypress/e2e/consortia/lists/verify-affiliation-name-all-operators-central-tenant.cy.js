@@ -9,8 +9,10 @@ import { Lists } from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
+import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
+const todayDate = DateTools.getCurrentDate();
 const userPermissions = [
   Permissions.listsAll.gui,
   Permissions.uiOrganizationsViewEditCreate.gui,
@@ -34,6 +36,12 @@ const buildInstanceAffiliationQuery = () => {
   Lists.buildQuery();
   QueryModal.verify();
   QueryModal.selectField(instanceFieldValues.affiliationName);
+};
+const addCreatedDateFilter = () => {
+  QueryModal.addNewRow();
+  QueryModal.selectField(instanceFieldValues.createdDate, 1);
+  QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+  QueryModal.pickDate(todayDate, 1);
 };
 
 describe('Lists', () => {
@@ -121,6 +129,7 @@ describe('Lists', () => {
         buildInstanceAffiliationQuery();
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.chooseValueSelect(tenantNames.central);
+        addCreatedDateFilter();
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();
@@ -136,6 +145,7 @@ describe('Lists', () => {
         buildInstanceAffiliationQuery();
         QueryModal.selectOperator(QUERY_OPERATIONS.NOT_EQUAL);
         QueryModal.chooseValueSelect(tenantNames.central);
+        addCreatedDateFilter();
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();
@@ -152,6 +162,7 @@ describe('Lists', () => {
         QueryModal.selectOperator(QUERY_OPERATIONS.IN);
         QueryModal.chooseFromValueMultiselect(tenantNames.central);
         QueryModal.chooseFromValueMultiselect(tenantNames.college);
+        addCreatedDateFilter();
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();
@@ -167,6 +178,7 @@ describe('Lists', () => {
         QueryModal.selectOperator(QUERY_OPERATIONS.NOT_IN);
         QueryModal.chooseFromValueMultiselect(tenantNames.central);
         QueryModal.chooseFromValueMultiselect(tenantNames.college);
+        addCreatedDateFilter();
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyQueryReturnsNoResults();
@@ -176,6 +188,7 @@ describe('Lists', () => {
         buildInstanceAffiliationQuery();
         QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
         QueryModal.selectValueFromSelect('True');
+        addCreatedDateFilter();
         QueryModal.clickTestQuery();
         QueryModal.verifyQueryReturnsNoResults();
 
@@ -184,6 +197,7 @@ describe('Lists', () => {
         buildInstanceAffiliationQuery();
         QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
         QueryModal.selectValueFromSelect('False');
+        addCreatedDateFilter();
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();

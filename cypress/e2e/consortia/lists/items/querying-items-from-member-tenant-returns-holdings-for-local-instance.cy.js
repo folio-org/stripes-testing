@@ -20,11 +20,21 @@ import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import { INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 
+const memberTenants = [
+  {
+    affiliation: Affiliations.College,
+    instanceTitle: `AT_C552522_LocalInstance_${getRandomPostfix()}`,
+    itemBarcode: `AT_C552522_Item_${getRandomPostfix()}`,
+  },
+  {
+    affiliation: Affiliations.University,
+    instanceTitle: `AT_C552522_LocalInstance_University_${getRandomPostfix()}`,
+    itemBarcode: `AT_C552522_Item_University_${getRandomPostfix()}`,
+  },
+];
 const testData = {
   user: {},
   listName: `AT_C552522_List_${getRandomPostfix()}`,
-  instanceTitle: `AT_C552522_LocalInstance_${getRandomPostfix()}`,
-  itemBarcode: `AT_C552522_Item_${getRandomPostfix()}`,
 };
 const todayDate = DateTools.getCurrentDate();
 const userPermissions = [
@@ -44,43 +54,44 @@ describe('Lists', () => {
           testData.instanceTypeId = instanceTypes[0].id;
         });
 
-        // Create local instance, holding, and item in College (Tenant_A)
-        cy.withinTenant(Affiliations.College, () => {
-          cy.getLocations({ limit: 1 }).then((location) => {
-            testData.locationId = location.id;
-          });
-          cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
-            testData.loanTypeId = loanTypes[0].id;
-          });
-          cy.getDefaultMaterialType().then((materialType) => {
-            testData.materialTypeId = materialType.id;
-          });
-          InventoryHoldings.getHoldingsFolioSource().then((source) => {
-            testData.sourceId = source.id;
-          });
+        memberTenants.forEach((tenant) => {
+          cy.withinTenant(tenant.affiliation, () => {
+            cy.getLocations({ limit: 1 }).then((location) => {
+              tenant.locationId = location.id;
+            });
+            cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
+              tenant.loanTypeId = loanTypes[0].id;
+            });
+            cy.getDefaultMaterialType().then((materialType) => {
+              tenant.materialTypeId = materialType.id;
+            });
+            InventoryHoldings.getHoldingsFolioSource().then((source) => {
+              tenant.sourceId = source.id;
+            });
 
-          cy.then(() => {
-            InventoryInstances.createFolioInstanceViaApi({
-              instance: {
-                instanceTypeId: testData.instanceTypeId,
-                title: testData.instanceTitle,
-              },
-            }).then(({ instanceId }) => {
-              testData.instanceId = instanceId;
-              InventoryHoldings.createHoldingRecordViaApi({
-                instanceId,
-                permanentLocationId: testData.locationId,
-                sourceId: testData.sourceId,
-              }).then((holding) => {
-                testData.holdingsId = holding.id;
-                InventoryItems.createItemViaApi({
-                  barcode: testData.itemBarcode,
-                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                  holdingsRecordId: testData.holdingsId,
-                  materialType: { id: testData.materialTypeId },
-                  permanentLoanType: { id: testData.loanTypeId },
-                }).then((item) => {
-                  testData.itemId = item.id;
+            cy.then(() => {
+              InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId: testData.instanceTypeId,
+                  title: tenant.instanceTitle,
+                },
+              }).then(({ instanceId }) => {
+                tenant.instanceId = instanceId;
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId,
+                  permanentLocationId: tenant.locationId,
+                  sourceId: tenant.sourceId,
+                }).then((holding) => {
+                  tenant.holdingsId = holding.id;
+                  InventoryItems.createItemViaApi({
+                    barcode: tenant.itemBarcode,
+                    status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                    holdingsRecordId: tenant.holdingsId,
+                    materialType: { id: tenant.materialTypeId },
+                    permanentLoanType: { id: tenant.loanTypeId },
+                  }).then((item) => {
+                    tenant.itemId = item.id;
+                  });
                 });
               });
             });
@@ -109,16 +120,12 @@ describe('Lists', () => {
       after('Delete test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        cy.withinTenant(Affiliations.College, () => {
-          if (testData.itemId) {
-            InventoryItems.deleteItemViaApi(testData.itemId);
-          }
-          if (testData.holdingsId) {
-            InventoryHoldings.deleteHoldingRecordViaApi(testData.holdingsId);
-          }
-          if (testData.instanceId) {
-            InventoryInstance.deleteInstanceViaApi(testData.instanceId);
-          }
+        memberTenants.forEach((tenant) => {
+          cy.withinTenant(tenant.affiliation, () => {
+            if (tenant.itemId) InventoryItems.deleteItemViaApi(tenant.itemId);
+            if (tenant.holdingsId) InventoryHoldings.deleteHoldingRecordViaApi(tenant.holdingsId);
+            if (tenant.instanceId) InventoryInstance.deleteInstanceViaApi(tenant.instanceId);
+          });
         });
 
         if (testData.user.userId) {
@@ -161,27 +168,27 @@ describe('Lists', () => {
           QueryModal.clickCheckboxInShowColumns(instanceFieldValues.instanceSource);
           QueryModal.clickShowColumnsButton();
           QueryModal.verifyMatchedRecordsByIdentifier(
-            testData.itemBarcode,
+            memberTenants[0].itemBarcode,
             instanceFieldValues.instanceShared,
             'Local',
           );
           QueryModal.verifyMatchedRecordsByIdentifier(
-            testData.itemBarcode,
+            memberTenants[0].itemBarcode,
             instanceFieldValues.affiliationName,
             tenantNames.college,
           );
           QueryModal.verifyMatchedRecordsByIdentifier(
-            testData.itemBarcode,
+            memberTenants[0].itemBarcode,
             holdingsFieldValues.affiliationName,
             tenantNames.college,
           );
           QueryModal.verifyMatchedRecordsByIdentifier(
-            testData.itemBarcode,
+            memberTenants[0].itemBarcode,
             itemFieldValues.affiliationName,
             tenantNames.college,
           );
           QueryModal.verifyMatchedRecordsByIdentifier(
-            testData.itemBarcode,
+            memberTenants[0].itemBarcode,
             instanceFieldValues.instanceSource,
             INSTANCE_SOURCE_NAMES.FOLIO,
           );

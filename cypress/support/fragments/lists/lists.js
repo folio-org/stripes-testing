@@ -21,6 +21,7 @@ import {
   MultiSelect,
   MultiSelectOption,
   not,
+  or,
   Pane,
   RadioButton,
   SelectionList,
@@ -1347,13 +1348,23 @@ const QueryBuilder = {
                 break;
               case 'is null/empty':
                 if (locator) {
-                  cy.expect(
-                    MultiColumnListCell({
-                      row: index,
-                      columnIndex: columnNumber,
-                      content: valueInColumn,
-                    }).exists(),
-                  );
+                  if (Array.isArray(valueInColumn)) {
+                    cy.expect(
+                      MultiColumnListCell({
+                        row: index,
+                        columnIndex: columnNumber,
+                        content: or(...valueInColumn),
+                      }).exists(),
+                    );
+                  } else {
+                    cy.expect(
+                      MultiColumnListCell({
+                        row: index,
+                        columnIndex: columnNumber,
+                        content: valueInColumn,
+                      }).exists(),
+                    );
+                  }
                 } else {
                   cy.expect(MultiColumnListCell({ row: index, content: '' }).exists());
                 }
