@@ -65,7 +65,7 @@ describe('Eureka', () => {
         cy.getUserGroups().then((groupId) => {
           ['userA', 'userB', 'userC', 'userD', 'userE', 'userF', 'userG'].forEach((key) => {
             userBodies[key].patronGroup = groupId;
-            Users.createUserViaApi(userBodies[key]).then((user) => {
+            Users.createViaApi(userBodies[key]).then((user) => {
               users[key] = {
                 userId: user.id,
                 username: userBodies[key].username,

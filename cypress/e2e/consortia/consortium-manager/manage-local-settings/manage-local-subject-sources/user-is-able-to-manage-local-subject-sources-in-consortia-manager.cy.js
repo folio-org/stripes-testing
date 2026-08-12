@@ -77,9 +77,7 @@ describe('Consortia', () => {
             );
             ConsortiumSubjectSources.confirmSaveForMemberLibraries(
               subjectSource.name,
-              tenantNames.college,
-              tenantNames.central,
-              tenantNames.university,
+              ...[tenantNames.college, tenantNames.central, tenantNames.university].sort(),
             );
             ConsortiumSubjectSources.verifyThreeLocalSubjectSourcesExist(
               subjectSource.name,
