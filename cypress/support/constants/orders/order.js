@@ -117,8 +117,15 @@ export const ORDER_EXPORT_CSV_FIELDS = {
 
 export const ORDER_VIEW_FIELD_LABELS = {
   PO_NUMBER: 'PO number',
+  VENDOR: 'Vendor',
+  ORDER_TYPE: 'Order type',
 };
 
-export const ORDER_CALLOUT_MESSAGES = {
-  ORDER_UNOPENED: (orderNumber) => `The Purchase order - ${orderNumber} has been successfully unopened`,
+export const ORDER_AND_ORDER_LINE_BUTTONS = {
+  ADD_POL: 'Add POL',
+  CANCEL: 'Cancel',
+  SAVE_AND_CLOSE: 'Save & close',
+  SAVE_AND_KEEP_EDITING: 'Save & keep editing',
+  SAVE_AND_CREATE_ANOTHER: 'Save & create another',
+  SAVE_AND_OPEN: 'Save & open order',
 };

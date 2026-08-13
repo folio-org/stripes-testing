@@ -127,6 +127,7 @@ export const POL_CREATE_INVENTORY_SETTINGS_VIEW = {
 };
 
 export const POLINE_DETAILS_FIELDS = {
+  ACQUISITION_METHOD: 'Acquisition method',
   ORDER_FORMAT: 'Order format',
   RECEIPT_STATUS: 'Receipt status',
   PAYMENT_STATUS: 'Payment status',
@@ -140,6 +141,7 @@ export const POLINE_DETAILS_FIELDS = {
   CURRENCY: 'Currency',
   EXCHANGE_RATE: 'Exchange rate',
   USER_LIMIT: 'User limit',
+  RECEIVING_NOTE: 'Receiving note',
 };
 
 export const ORDER_LINE_RESULTS_ACTIONS_LABELS = {
