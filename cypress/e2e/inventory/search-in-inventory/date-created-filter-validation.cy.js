@@ -14,10 +14,10 @@ describe('Inventory', () => {
         invalidDateError: 'Please enter a valid date',
       };
       const dateInputs = [
-        [ '1923', '1925', testData.invalidDateError, testData.invalidDateError ],
-        [ '13-01-1923', '22-05-1925', testData.invalidDateError, testData.invalidDateError ],
-        [ '2024-01-30', '2021-01-30', InventorySearchAndFilter.dateOrderErrorText, false ],
-        [ '2026-08-11', '2026-08-12', false, false ],
+        ['1923', '1925', testData.invalidDateError, testData.invalidDateError],
+        ['13-01-1923', '22-05-1925', testData.invalidDateError, testData.invalidDateError],
+        ['2024-01-30', '2021-01-30', InventorySearchAndFilter.dateOrderErrorText, false],
+        ['2026-08-11', '2026-08-12', false, false],
       ];
 
       before('Setup login', () => {

@@ -1480,7 +1480,7 @@ export default {
       dateCreatedAccordion.find(filterApplyButton).exists(),
     ]);
   },
-  
+
   filterByDateCreated(dateFrom, dateTo, fromError, toError) {
     cy.intercept('/search/instances**').as('searchCall');
     cy.do([dateCreatedFromField.fillIn(dateFrom), dateCreatedToField.fillIn(dateTo)]);
