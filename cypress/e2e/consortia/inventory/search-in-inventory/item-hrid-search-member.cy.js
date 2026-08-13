@@ -240,6 +240,7 @@ describe('Inventory', () => {
               ItemRecordView.closeDetailView();
               InventorySearchAndFilter.verifySearchResult(instanceTitles[instanceIndex]);
               InventorySearchAndFilter.verifyNumberOfSearchResults(1);
+              cy.wait(1000);
             });
           });
 
