@@ -1097,7 +1097,7 @@ export default {
   getSearchParamsMap(orderNumber, orderLine) {
     const searchParamsMap = new Map();
     searchParamsMap
-      .set('Keyword', orderNumber)
+      .set('Keyword', `${orderNumber}*`)
       .set('Contributor', orderLine.contributors[0].contributor)
       .set('PO line number', orderNumber.toString().concat('-1'))
       .set('Requester', orderLine.requester)

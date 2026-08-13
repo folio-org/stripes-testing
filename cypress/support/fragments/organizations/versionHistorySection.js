@@ -1,29 +1,11 @@
-import { Card, Section } from '../../../../interactors';
+import AcqVersionHistory from '../acqVersionHistory';
 
 export default {
-  selectVersionHistoryCard(date) {
-    cy.do(
-      Section({ id: 'versions-history-pane-organization' })
-        .find(Card({ headerStart: date }))
-        .perform((el) => {
-          const btn = el.querySelector('button[icon="clock"]');
-          if (btn && !btn.disabled) {
-            btn.click();
-          }
-        }),
-    );
+  assertVersionHistoryCard(params) {
+    AcqVersionHistory.assertVersionHistoryCard('organization', params);
   },
 
-  selectVersionHistoryCardByIndex(index) {
-    cy.do(
-      Section({ id: 'versions-history-pane-organization' })
-        .find(Card({ index }))
-        .perform((el) => {
-          const btn = el.querySelector('button[icon="clock"]');
-          if (btn && !btn.disabled) {
-            btn.click();
-          }
-        }),
-    );
+  selectVersionHistoryCard({ eventDate, index }) {
+    AcqVersionHistory.selectVersionHistoryCard('organization', { eventDate, index });
   },
 };
