@@ -2787,7 +2787,7 @@ export default {
   },
 
   sortOrderLinesBy(columnName) {
-    MultiColumnListHelper.sortListBy(searchResultsPane, columnName);
+    MultiColumnListHelper.sortListBy(searchResultsPane.find(orderLineList), columnName);
   },
 
   clearFilter(filterLabel) {

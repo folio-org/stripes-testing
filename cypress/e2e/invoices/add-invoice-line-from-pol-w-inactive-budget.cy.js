@@ -85,7 +85,7 @@ describe('Invoices', () => {
       const SelectOrderLinesModal = InvoiceView.openSelectOrderLineModal();
 
       // Search for the POL, Select it by checking checkbox in "Order lines" pane, Click "Save" button
-      SelectOrderLinesModal.selectOrderLine(testData.order.poNumber);
+      SelectOrderLinesModal.selectOrderLine(`${testData.order.poNumber}*`);
 
       // Created invoice line is displayed in "Invoice lines" accordion
       InvoiceView.checkInvoiceLinesTableContent([

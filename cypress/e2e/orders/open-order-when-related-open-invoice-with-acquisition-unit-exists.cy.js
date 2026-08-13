@@ -195,6 +195,7 @@ describe('Orders', () => {
   };
 
   before('Create test data', () => {
+    cy.clearLocalStorage();
     cy.getAdminToken().then(() => {
       AcquisitionUnits.createAcquisitionUnitViaApi(testData.acqUnit).then(() => {
         cy.getAdminUserDetails().then((adminUser) => {
@@ -260,7 +261,7 @@ describe('Orders', () => {
         invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.OPEN }],
       });
       InvoiceView.openSelectOrderLineModal();
-      selectOrderLinesModal.selectOrderLine(testData.order.poNumber);
+      selectOrderLinesModal.selectOrderLine(`${testData.order.poNumber}*`);
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Acquisition units');
       AcquisitionUnits.selectAU(testData.acqUnit.name);
       AcquisitionUnits.unAssignUser(testData.user.username, testData.acqUnit.name);
