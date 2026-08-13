@@ -12,7 +12,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  ORDER_LINE_SEARCH_OPTIONS,
+  ORDER_LINE_SEARCH_INDEX_LABELS,
   ORDER_SEARCH_OPTIONS,
 } from '../../support/constants';
 
@@ -80,7 +80,7 @@ describe('Orders', () => {
     () => {
       // Delete order line from Order lines toggle
       OrderLines.searchByParameter(
-        ORDER_LINE_SEARCH_OPTIONS.POL_NUMBER,
+        ORDER_LINE_SEARCH_INDEX_LABELS.POL_NUMBER,
         testData.secondPOL.poLineNumber,
       );
       OrderLines.selectOrderline(testData.secondPOL.poLineNumber);

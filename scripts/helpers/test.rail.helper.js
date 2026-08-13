@@ -6,6 +6,8 @@ const status = {
   Retest: 4,
   Failed: 5,
   Unassigned: 6,
+  Deferred: 8,
+  ToInvestigate: 12,
 };
 
 const team = {
@@ -110,6 +112,32 @@ async function getTestRunResults(api, runId) {
   return tests;
 }
 
+async function getResultsForRun(api, runId, createdAfter) {
+  async function getResults(offset) {
+    const params = { offset };
+    if (createdAfter) {
+      params.created_after = createdAfter;
+    }
+    const response = await api.get(`get_results_for_run/${runId}`, { params });
+    return response.data;
+  }
+
+  const results = [];
+  try {
+    let offset = 0;
+    let resp;
+    do {
+      resp = await getResults(offset);
+      console.log(`${new Date().toISOString()} Fetched ${offset} results...`);
+      results.push(...resp.results);
+      offset += resp.size;
+    } while (resp._links.next != null);
+  } catch (error) {
+    console.error('Error fetching results for run:', error);
+  }
+  return results;
+}
+
 async function updateTestResult(api, testId, statusId, comment, defects) {
   try {
     await api.post(`add_result/${testId}`, {
@@ -147,6 +175,7 @@ module.exports = {
   getTestHistory,
   getCaseHistory,
   getTestRunResults,
+  getResultsForRun,
   updateTestResult,
   updateMultipleTestResults,
   getTestCase,

@@ -41,7 +41,7 @@ describe('eHoldings', () => {
           'Custom embargo period',
           'Publication type',
           'Access status type',
-          'Tag(s)', // need to update label to Tags after UIEH-1487
+          'Tag',
         ]);
         EHoldingsPackageView.verifyTitlesSearchElements();
         EHoldingsPackageView.findTitleInList(testData.titleName);
