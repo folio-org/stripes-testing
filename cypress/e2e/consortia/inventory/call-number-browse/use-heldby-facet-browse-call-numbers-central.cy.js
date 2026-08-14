@@ -143,7 +143,7 @@ describe('Inventory', () => {
             InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C402319');
             cy.getLocations({
               limit: 1,
-              query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
+              query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
             }).then((loc) => {
               locations[Affiliations.College] = loc;
             });
@@ -158,7 +158,7 @@ describe('Inventory', () => {
             InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C402319');
             cy.getLocations({
               limit: 1,
-              query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
+              query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
             }).then((loc) => {
               locations[Affiliations.University] = loc;
             });

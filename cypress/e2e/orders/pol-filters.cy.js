@@ -67,6 +67,7 @@ describe('Orders', () => {
   let orderLineNumber;
 
   before(() => {
+    cy.clearLocalStorage();
     cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;

@@ -654,8 +654,8 @@ const UI = {
   },
 
   closeListDetailsPane() {
-    cy.wait(500);
-    cy.get('div[class^=paneMenu] > button[icon=times]').click();
+    cy.wait(5000);
+    cy.get('div[class^=paneMenu] > button[icon=times]').realClick();
     cy.wait(1000);
   },
 

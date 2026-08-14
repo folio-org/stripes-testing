@@ -41,7 +41,7 @@ describe('eHoldings', () => {
           'Custom embargo period',
           'Publication type',
           'Access status type',
-          'Tag',
+          'Tags',
         ]);
         EHoldingsPackageView.verifyTitlesSearchElements();
         EHoldingsPackageView.findTitleInList(testData.titleName);
