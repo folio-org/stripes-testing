@@ -30,10 +30,11 @@ import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
 import SearchHelper from '../finance/financeHelper';
 import OrganizationDetails from './organizationDetails';
+import { COMMON_BUTTON_LABELS } from '../../constants';
 
-const buttonNew = Button('New');
-const saveAndClose = Button('Save & close');
-const saveAndKeepEditingButton = Button('Save & keep editing');
+const buttonNew = Button(COMMON_BUTTON_LABELS.NEW);
+const saveAndClose = Button(COMMON_BUTTON_LABELS.SAVE_AND_CLOSE);
+const saveAndKeepEditingButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING);
 const summaryAccordionId = 'summarySection';
 const rootSection = PaneContent({ id: 'organizations-results-pane-content' });
 const organizationList = rootSection.find(MultiColumnList({ id: 'organizations-list' }));

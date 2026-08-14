@@ -34,8 +34,8 @@ const extendedInformationSection = invoiceEditFormRoot.find(
 );
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 const cancelButton = Button('Cancel');
-const saveButton = Button('Save & close');
-const saveAndKeepEditingButton = Button('Save & keep editing');
+const saveButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_CLOSE);
+const saveAndKeepEditingButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING);
 const deleteButton = Button({ icon: 'trash' });
 const clearButton = Button({ icon: 'times-circle-solid' });
 const invoiceFormFieldSet = FieldSet({ id: 'invoice-form-links' });

@@ -1738,6 +1738,7 @@ export const COMMON_BUTTON_LABELS = {
   CONFIRM: 'Confirm',
   DELETE: 'Delete',
   NEXT: 'Next',
+  NEW: 'New',
   PREVIOUS: 'Previous',
   REMOVE: 'Remove',
   RESET_ALL: 'Reset all',
