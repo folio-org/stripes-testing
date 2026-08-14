@@ -12,7 +12,12 @@ import {
   matching,
   KeyValue,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME, ORDER_VIEW_FIELD_LABELS } from '../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  ORDER_AND_ORDER_LINE_BUTTONS,
+  ORDER_VIEW_FIELD_LABELS,
+} from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import SearchHelper from '../finance/financeHelper';
 import areYouSureModal from './modals/areYouSureModal';
@@ -24,11 +29,13 @@ const orderInfoSection = orderEditFormRoot.find(Section({ id: 'purchaseOrder' })
 const ongoingInformationSection = orderEditFormRoot.find(Section({ id: 'ongoing' }));
 const orderSummarySection = orderEditFormRoot.find(Section({ id: 'poSummary' }));
 
-const collapseAllButton = orderEditFormRoot.find(Button('Collapse all'));
-const cancelButton = orderEditFormRoot.find(Button('Cancel'));
-const saveAndCloseButton = orderEditFormRoot.find(Button('Save & close'));
-const saveAndKeepEditingButton = orderEditFormRoot.find(Button('Save & keep editing'));
-const addPoLineButton = orderEditFormRoot.find(Button('Add POL'));
+const collapseAllButton = orderEditFormRoot.find(Button(COMMON_BUTTON_LABELS.COLLAPSE_ALL));
+const cancelButton = orderEditFormRoot.find(Button(COMMON_BUTTON_LABELS.CANCEL));
+const saveAndCloseButton = orderEditFormRoot.find(Button(COMMON_BUTTON_LABELS.SAVE_AND_CLOSE));
+const saveAndKeepEditingButton = orderEditFormRoot.find(
+  Button(COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING),
+);
+const addPoLineButton = orderEditFormRoot.find(Button(ORDER_AND_ORDER_LINE_BUTTONS.ADD_POL));
 
 const infoSectionFields = {
   poNumberPrefix: orderInfoSection.find(Select({ name: 'poNumberPrefix' })),
@@ -54,10 +61,10 @@ const sections = {
 };
 
 const buttons = {
-  Cancel: cancelButton,
-  'Save & close': saveAndCloseButton,
-  'Save & keep editing': saveAndKeepEditingButton,
-  'Add POL': addPoLineButton,
+  [COMMON_BUTTON_LABELS.CANCEL]: cancelButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_CLOSE]: saveAndCloseButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING]: saveAndKeepEditingButton,
+  [ORDER_AND_ORDER_LINE_BUTTONS.ADD_POL]: addPoLineButton,
 };
 
 const requiredFields = [

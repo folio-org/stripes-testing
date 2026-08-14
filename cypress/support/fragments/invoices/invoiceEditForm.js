@@ -17,7 +17,7 @@ import {
   MultiSelectOption,
   Pane,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME, INVOICE_VIEW_FIELDS } from '../../constants';
+import { COMMON_BUTTON_LABELS, DEFAULT_WAIT_TIME, INVOICE_VIEW_FIELDS } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
@@ -62,10 +62,10 @@ const extendedInfoFields = {
 const buttons = {
   'Fiscal year': infoFields.fiscalYear,
   'Vendor name': vendorFields.vendorName,
-  Cancel: cancelButton,
-  'Save & close': saveButton,
-  'Save & keep editing': saveAndKeepEditingButton,
-  Delete: deleteButton,
+  [COMMON_BUTTON_LABELS.CANCEL]: cancelButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_CLOSE]: saveButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING]: saveAndKeepEditingButton,
+  [COMMON_BUTTON_LABELS.DELETE]: deleteButton,
 };
 
 const requiredFields = [
