@@ -55,15 +55,28 @@ const testData = {
   field651Index: 28,
   field651Ind1: '\\',
   field651Ind2: '0',
-  field651ControlledInitial: '$a United States of America',
+  field651Initial: '$a United States of America $x History $e Country $b States $e USA $y Civil War, 1861-1865 $x Cavalry operations.',
   field651Uri: 'http://id.loc.gov/authorities/subjects/sh85140220',
-  field651Uncontrolled1Initial: '$x History $e Country $b States $e USA $y Civil War, 1861-1865 $x Cavalry operations.',
   field651Uncontrolled2: '$8 number801 $1 URI1 $8 number802',
   updatedAuthTitle: 'United States of America USA Independence war History Civil War, 1861-1865 Cavalry operations',
   updatedAuth151: '$a United States of America $z USA $y Independence war $x History $y Civil War, 1861-1865 $x Cavalry operations',
   field651ControlledUpdated: '$a United States of America $z USA $y Independence war $x History $y Civil War, 1861-1865 $x Cavalry operations',
   field651Uncontrolled1Updated: '$e Country $b States $e USA',
 };
+const authoritySubfields = [
+  {
+    ruleId: '13',
+    ruleSubfields: [
+      'a',
+      'g',
+      'v',
+      'x',
+      'y',
+      'z',
+    ],
+    autoLinkingEnabled: true,
+  },
+];
 
 // Config to set up data import job profile for updating MARC authority
 const defaultActionProfileName = 'Default - Create MARC Authority';
@@ -124,6 +137,10 @@ describe('MARC', () => {
             );
           });
 
+        authoritySubfields.forEach(({ ruleId, ruleSubfields, autoLinkingEnabled }) => {
+          QuickMarcEditor.setAuthoritySubfieldsViaApi(ruleId, ruleSubfields, autoLinkingEnabled);
+        });
+
         // Upload authority
         DataImport.uploadFileViaApi(
           testData.firstAuthFileName,
@@ -146,7 +163,7 @@ describe('MARC', () => {
               authorityIds: [testData.createdAuthorityID],
               bibFieldTags: [testData.tag651],
               authorityFieldTags: [testData.tag151],
-              finalBibFieldContents: [`${testData.field651ControlledInitial} ${testData.field651Uncontrolled1Initial} ${testData.field651Uncontrolled2}`],
+              finalBibFieldContents: [`${testData.field651Initial} ${testData.field651Uncontrolled2}`],
               bibFieldIndexes: [testData.field651Index],
             });
             MarcAuthorities.waitAuthorityLinked(testData.createdAuthorityID, 1);
@@ -178,6 +195,7 @@ describe('MARC', () => {
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+        QuickMarcEditor.setAuthoritySubfieldsDefault();
         if (testData.createdAuthorityID) MarcAuthority.deleteViaAPI(testData.createdAuthorityID);
         if (testData.otherCreatedAuthorityIDs.length > 0) {
           testData.otherCreatedAuthorityIDs.forEach((id) => {
@@ -236,8 +254,8 @@ describe('MARC', () => {
             testData.tag651, 
             testData.field651Ind1,
             testData.field651Ind2,
-            testData.field651ControlledInitial,     // testData.field651ControlledUpdated
-            testData.field651Uncontrolled1Initial,  // testData.field651Uncontrolled1Updated
+            testData.field651ControlledUpdated,
+            testData.field651Uncontrolled1Updated,
             `$0 ${testData.field651Uri}`,
             testData.field651Uncontrolled2,
           );
