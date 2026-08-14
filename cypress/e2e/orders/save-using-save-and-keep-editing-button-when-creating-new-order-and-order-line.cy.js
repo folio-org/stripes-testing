@@ -9,6 +9,7 @@ import Users from '../../support/fragments/users/users';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   APPLICATION_NAMES,
+  COMMON_BUTTON_LABELS,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   ORDER_AND_ORDER_LINE_BUTTONS,
@@ -47,17 +48,17 @@ describe('Orders', () => {
 
   const buttonConditions = {
     saveCloseEnabled: [
-      { label: ORDER_AND_ORDER_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
+      { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
       {
-        label: ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
+        label: COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING,
         conditions: { disabled: false },
       },
-      { label: ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: false } },
+      { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: false } },
     ],
     saveCloseDisabled: [
-      { label: ORDER_AND_ORDER_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
-      { label: ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_KEEP_EDITING, conditions: { disabled: true } },
-      { label: ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: true } },
+      { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
+      { label: COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING, conditions: { disabled: true } },
+      { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: true } },
     ],
   };
 
@@ -162,16 +163,16 @@ describe('Orders', () => {
       // Step 8: Check the initial state of the buttons on "Add PO line" form
       OrderDetails.selectAddPOLine();
       OrderLineEditForm.checkButtonsConditions([
-        { label: ORDER_AND_ORDER_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
+        { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
         {
-          label: ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
+          label: COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING,
           conditions: { disabled: false },
         },
         {
-          label: ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_CREATE_ANOTHER,
+          label: COMMON_BUTTON_LABELS.SAVE_AND_CREATE_ANOTHER,
           conditions: { disabled: false },
         },
-        { label: ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: false } },
+        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: false } },
       ]);
 
       // Step 9: Check Required fields after clicking "Save & keep editing" button
@@ -201,16 +202,14 @@ describe('Orders', () => {
       });
       OrderLineEditForm.clickSaveAndKeepEditingButton({ orderLineCreated: true });
       OrderLineEditForm.checkButtonsConditions([
-        { label: ORDER_AND_ORDER_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
+        { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
         {
-          label: ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
+          label: COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING,
           conditions: { disabled: true },
         },
-        { label: ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: true } },
+        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: true } },
       ]);
-      OrderLineEditForm.checkButtonsNotDisplayed([
-        ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_CREATE_ANOTHER,
-      ]);
+      OrderLineEditForm.checkButtonsNotDisplayed([COMMON_BUTTON_LABELS.SAVE_AND_CREATE_ANOTHER]);
 
       // Step 11: Check buttons state after making changes and clicking "Save & keep editing" button
       OrderLineEditForm.fillOrderLineFields({
@@ -240,10 +239,10 @@ describe('Orders', () => {
       NewOrderModal.clickCreateButton();
       OrderEditForm.waitLoading();
       OrderEditForm.checkButtonsConditions([
-        { label: ORDER_AND_ORDER_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
+        { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
         { label: ORDER_AND_ORDER_LINE_BUTTONS.ADD_POL, conditions: { disabled: true } },
       ]);
-      OrderEditForm.checkButtonsNotDisplayed([ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_KEEP_EDITING]);
+      OrderEditForm.checkButtonsNotDisplayed([COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING]);
 
       // Step 14: Cancel order creation
       OrderEditForm.clickCancelButton();

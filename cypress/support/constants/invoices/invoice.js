@@ -79,12 +79,6 @@ export const CURRENCIES = {
   UAH: 'Ukrainian Hryvnia (UAH)',
 };
 
-export const INVOICE_AND_INVOICE_LINE_BUTTONS = {
-  CANCEL: 'Cancel',
-  SAVE_AND_CLOSE: 'Save & close',
-  SAVE_AND_KEEP_EDITING: 'Save & keep editing',
-};
-
 export const INVOICE_SEARCH_INDEX_LABELS = {
   ACCOUNTING_CODE: 'Accounting code',
   ALL: 'All',

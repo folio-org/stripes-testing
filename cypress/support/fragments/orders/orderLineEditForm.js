@@ -16,7 +16,12 @@ import {
   including,
   matching,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME, POLINE_DETAILS_FIELDS } from '../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  ORDER_AND_ORDER_LINE_BUTTONS,
+  POLINE_DETAILS_FIELDS,
+} from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import AreYouSureModal from './modals/areYouSureModal';
 import SelectInstanceModal from './modals/selectInstanceModal';
@@ -79,11 +84,11 @@ const costDetailsFields = {
 };
 
 const buttons = {
-  Cancel: cancelButton,
-  'Save & close': saveButton,
-  'Save & open order': saveAndOpenOrderButton,
-  'Save & keep editing': saveAndKeepEditingButton,
-  'Save & create another': saveAndCreateAnotherButton,
+  [COMMON_BUTTON_LABELS.CANCEL]: cancelButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_CLOSE]: saveButton,
+  [ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_OPEN]: saveAndOpenOrderButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING]: saveAndKeepEditingButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_CREATE_ANOTHER]: saveAndCreateAnotherButton,
 };
 const requiredFields = [
   { fieldName: POLINE_DETAILS_FIELDS.ORDER_FORMAT, field: orderLineFields.orderFormat },
