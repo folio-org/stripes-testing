@@ -33,6 +33,7 @@ describe('Organizations', () => {
     };
 
     before('Create test data and login', () => {
+      cy.clearLocalStorage();
       cy.getAdminToken();
       SettingsOrganizations.getBankingInformationStatusViaApi().then((response) => {
         if (response.settings[0].value === 'false') {
