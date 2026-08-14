@@ -3,12 +3,8 @@ import {
   APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
   EXISTING_RECORD_NAMES,
-  FOLIO_RECORD_TYPE,
   RECORD_STATUSES,
 } from '../../../../support/constants';
-import SettingsDataImport, {
-  SETTINGS_TABS,
-} from '../../../../support/fragments/settings/dataImport/settingsDataImport';
 
 import Permissions from '../../../../support/dictionary/permissions';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -79,7 +75,6 @@ const authoritySubfields = [
 ];
 
 // Config to set up data import job profile for updating MARC authority
-const defaultActionProfileName = 'Default - Create MARC Authority';
 const baseProfileName = 'C605928 Update linked MARC authority and preserve controlled subfield order';
 const mappingProfile = {
   name: `${baseProfileName} ${getRandomPostfix()}`,
@@ -155,8 +150,8 @@ describe('MARC', () => {
             testData.bibFileName,
             testData.bibUpdatedFileName,
             DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-          ).then((response) => {
-            testData.createdBibID = response[0].instance.id;
+          ).then((bibResponse) => {
+            testData.createdBibID = bibResponse[0].instance.id;
 
             QuickMarcEditor.linkMarcRecordsViaApi({
               bibId: testData.createdBibID,
@@ -234,7 +229,7 @@ describe('MARC', () => {
           MarcAuthorities.searchBy(testData.keywordOption, testData.updatedAuthTitle);
           MarcAuthorities.verifyResultsRowContent(testData.updatedAuthTitle, testData.authorityAuthorized, testData.authorityHeadingType);
           MarcAuthorities.verifyNumberOfTitlesForRowWithValue(testData.updatedAuthTitle, 1);
-          
+
           // Verify updated record field value
           MarcAuthorities.checkRowsCount(1);
           MarcAuthorities.selectFirstRecord();
@@ -244,14 +239,14 @@ describe('MARC', () => {
           // Verify instance is shown
           MarcAuthorities.clickNumberOfTitlesByHeading(testData.updatedAuthTitle);
           InventoryInstance.waitLoading();
-          InventoryInstance.waitInstanceRecordViewOpened();          
+          InventoryInstance.waitInstanceRecordViewOpened();
 
           // Open editor and verify 2nd linked 651's controlled and uncontrolled input order
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.waitLoading();
           QuickMarcEditor.verifyTagFieldAfterLinking(
             testData.field651Index,
-            testData.tag651, 
+            testData.tag651,
             testData.field651Ind1,
             testData.field651Ind2,
             testData.field651ControlledUpdated,
