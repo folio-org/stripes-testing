@@ -33,7 +33,7 @@ describe('Lists', () => {
     afterEach('Delete a user', () => {
       cy.getUserToken(userData.username, userData.password);
       Lists.deleteListByNameViaApi(listData.name);
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Users.deleteViaApi(userData.userId);
     });
 
