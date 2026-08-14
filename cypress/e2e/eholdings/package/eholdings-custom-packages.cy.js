@@ -11,7 +11,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('eHoldings', () => {
   describe('Package', () => {
     const testData = {
-      customPackageName: `C692_package_${getRandomPostfix()}`,
+      customPackageName: `C1434633_package_${getRandomPostfix()}`,
     };
 
     before('Creating user, logging in', () => {
@@ -44,8 +44,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C692 Create a custom package (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C692'] },
+      'C1434633 Create a custom package (spitfire)',
+      { tags: ['criticalPath', 'spitfire', 'C1434633'] },
       () => {
         EHoldingSearch.switchToPackages();
         cy.intercept('eholdings/packages').as('createPackage');
