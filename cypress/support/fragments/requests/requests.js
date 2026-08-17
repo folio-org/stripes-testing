@@ -85,7 +85,7 @@ function createRequestApi(
     barcode: uuid(),
     username: `testUser-${uuid()}`,
     personal: {
-      preferredContactTypeId: '002',
+      preferredContactTypeIds: ['002'],
       lastName: `testUser-${uuid()}`,
       email: 'test@folio.org',
       addresses: [{ addressTypeId: null, primaryAddress: true }],

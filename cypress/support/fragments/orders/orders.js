@@ -4,7 +4,6 @@ import {
   Button,
   Callout,
   calloutTypes,
-  Card,
   Checkbox,
   KeyValue,
   Link,
@@ -31,6 +30,7 @@ import {
   ORDER_SYSTEM_CLOSING_REASONS,
   RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
 } from '../../constants';
+import AcqVersionHistory from '../acqVersionHistory';
 import FiltersPaneHelper from '../filtersPane';
 import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
@@ -126,11 +126,15 @@ export default {
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then(({ body }) => {
           orderLine.acquisitionMethod = body.acquisitionMethods[0].id;
           orderLine.purchaseOrderId = order.id;
-          OrderLines.createOrderLineViaApi(orderLine);
+          OrderLines.createOrderLineViaApi(orderLine).then((r) => {
+            cy.wrap(r).as('orderLine');
+          });
         });
       } else {
         orderLine.purchaseOrderId = order.id;
-        OrderLines.createOrderLineViaApi(orderLine);
+        OrderLines.createOrderLineViaApi(orderLine).then((r) => {
+          cy.wrap(r).as('orderLine');
+        });
       }
     });
     return cy.get('@order');
@@ -884,30 +888,21 @@ export default {
     ]);
   },
 
-  checkVersionHistoryCard(date, textInformation) {
-    cy.expect([
-      Section({ id: 'versions-history-pane-order' })
-        .find(Card({ headerStart: date }))
-        .has({ text: textInformation }),
-    ]);
+  checkVersionHistoryCard(eventDate, { changedFields, isCurrent, source }) {
+    AcqVersionHistory.assertVersionHistoryCard('order', {
+      changedFields,
+      eventDate,
+      isCurrent,
+      source,
+    });
   },
 
-  selectVersionHistoryCard(date) {
-    cy.do([
-      Section({ id: 'versions-history-pane-order' })
-        .find(Card({ headerStart: date }))
-        .find(Button({ icon: 'clock' }))
-        .click(),
-    ]);
+  selectVersionHistoryCard(eventDate) {
+    AcqVersionHistory.selectVersionHistoryCard('order', { eventDate });
   },
 
   closeVersionHistory: () => {
-    cy.do(
-      Section({ id: 'versions-history-pane-order' })
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
-    cy.wait(2000);
+    AcqVersionHistory.closeVersionHistory('order');
     cy.expect([
       Section({ id: 'POListing' }).exists(),
       Section({ id: 'relatedInvoices' }).exists(),

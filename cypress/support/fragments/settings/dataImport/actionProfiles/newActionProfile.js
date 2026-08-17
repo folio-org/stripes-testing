@@ -57,6 +57,10 @@ export default {
     });
   },
 
+  verifyActionOptionSelected(option) {
+    cy.expect(actionSelect.has({ checkedOptionText: option }));
+  },
+
   saveProfile: () => {
     cy.wait(1000);
     cy.do(Button('Save as profile & Close').click());
@@ -140,6 +144,7 @@ export default {
   },
 
   verifySelectedFolioRecordType(option) {
+    cy.wait(1000);
     cy.expect(recordTypeselect.has({ content: including(option) }));
   },
 

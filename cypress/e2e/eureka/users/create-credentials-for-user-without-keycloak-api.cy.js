@@ -11,7 +11,7 @@ describe('Eureka', () => {
         personal: {
           lastName: `AT_C451626_LastName_${getRandomPostfix()}`,
           email: 'AT_C451626@test.com',
-          preferredContactTypeId: '002',
+          preferredContactTypeIds: ['002'],
         },
       },
       password: 'MyComplicatedPassword123!',
@@ -32,15 +32,15 @@ describe('Eureka', () => {
         cy.ifConsortia(true, () => {
           userB.type = 'patron';
         });
-        cy.createUserWithoutKeycloakInEurekaApi(userA).then((userId) => {
-          testData.userAId = userId;
-          userIds.push(userId);
+        Users.createViaApi(userA).then((user) => {
+          testData.userAId = user.id;
+          userIds.push(user.id);
         });
-        cy.createUserWithoutKeycloakInEurekaApi(userB).then((userId) => {
-          testData.userBId = userId;
-          userIds.push(userId);
+        Users.createViaApi(userB).then((user) => {
+          testData.userBId = user.id;
+          userIds.push(user.id);
         });
-        Users.createViaApi(userC).then((user) => {
+        Users.createViaApi(userC, { keycloak: true }).then((user) => {
           testData.userCId = user.id;
           userIds.push(user.id);
         });
@@ -96,6 +96,7 @@ describe('Eureka', () => {
             expect(responseC.status).to.eq(201);
 
             cy.login(userA.username, testData.password);
+            cy.wait(3000);
             cy.login(userC.username, testData.password);
           });
         });

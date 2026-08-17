@@ -61,7 +61,7 @@ describe('Consortia', () => {
           () => {
             cy.intercept('POST', '/loan-types').as('createLoanTypeCentral');
 
-            cy.do(Button('+ New').click());
+            cy.do(Button('New').click());
             cy.do(TextField().fillIn(testData.centralLoanTypeName));
             cy.do(Button('Save').click());
 
@@ -77,7 +77,7 @@ describe('Consortia', () => {
 
             cy.intercept('POST', '/loan-types').as('createLoanTypeMember');
 
-            cy.do(Button('+ New').click());
+            cy.do(Button('New').click());
             cy.do(TextField().fillIn(testData.memberLoanTypeName));
             cy.do(Button('Save').click());
 

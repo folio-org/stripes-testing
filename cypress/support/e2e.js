@@ -19,6 +19,7 @@ import './users';
 import 'cypress-file-upload';
 import 'cypress-recurse/commands';
 import './commands';
+import 'cypress-real-events';
 
 registerCypressGrep();
 setInteractorTimeout(50_000);

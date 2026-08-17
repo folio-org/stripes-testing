@@ -134,6 +134,7 @@ export const FOLIO_RECORD_TYPE = {
   INVOICE: 'Invoice',
   MARCBIBLIOGRAPHIC: 'MARC Bibliographic',
   MARCAUTHORITY: 'MARC Authority',
+  LINKEDDATA: 'Linked data',
 };
 
 export const PAYMENT_METHOD = {
@@ -240,6 +241,7 @@ export const EXISTING_RECORD_NAMES = {
   ITEM: 'ITEM',
   MARC_BIBLIOGRAPHIC: 'MARC_BIBLIOGRAPHIC',
   MARC_AUTHORITY: 'MARC_AUTHORITY',
+  MARC_HOLDINGS: 'MARC_HOLDINGS',
   INVOICE: 'INVOICE',
   ORDER: 'ORDER',
 };
@@ -660,6 +662,26 @@ export const INVENTORY_008_FIELD_DTST_DROPDOWN = {
   S: 's - Single known date/probable date',
   T: 't - Publication date and copyright date',
   U: 'u - Continuing resource status unknown',
+};
+
+export const INVENTORY_008_FIELD_ILLS_DROPDOWN = {
+  NO: '| - No attempt to code',
+  NONE: '\\ - No illustrations',
+  A: 'a - Illustrations',
+  B: 'b - Maps',
+  C: 'c - Portraits',
+  D: 'd - Charts',
+  E: 'e - Plans',
+  F: 'f - Plates',
+  G: 'g - Music',
+  H: 'h - Facsimiles',
+  I: 'i - Coats of arms',
+  J: 'j - Genealogical tables',
+  K: 'k - Forms',
+  L: 'l - Samples',
+  M: 'm - Phonodisc, phonowire, etc.',
+  O: 'o - Photographs',
+  P: 'p - Illuminations',
 };
 
 export const INVENTORY_008_FIELD_CONF_DROPDOWN = {

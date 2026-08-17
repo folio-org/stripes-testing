@@ -31,9 +31,9 @@ describe('Inventory', () => {
         cy.getAdminToken();
         cy.setTenant(Affiliations.College)
           .then(() => {
-            ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+            ServicePoints.getViaApi({ limit: 1, query: 'name<>"*auto*"' }).then((servicePoints) => {
               const collegeLocationData = Locations.getDefaultLocation({
-                servicePointId: servicePoint.id,
+                servicePointId: servicePoints[0].id,
               }).location;
               Locations.createViaApi(collegeLocationData).then((location) => {
                 testData.locationId = location.id;

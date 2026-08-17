@@ -24,7 +24,7 @@ describe('Users', () => {
             active: true,
             username: getTestEntityValue('username'),
             personal: {
-              preferredContactTypeId: '002',
+              preferredContactTypeIds: ['002'],
               firstName: sameName,
               lastName: getTestEntityValue('lastName'),
               email: 'test@folio.org',
@@ -40,7 +40,7 @@ describe('Users', () => {
             active: true,
             username: getTestEntityValue('username'),
             personal: {
-              preferredContactTypeId: '002',
+              preferredContactTypeIds: ['002'],
               firstName: sameName,
               lastName: sameLastName,
               email: 'test@folio.org',

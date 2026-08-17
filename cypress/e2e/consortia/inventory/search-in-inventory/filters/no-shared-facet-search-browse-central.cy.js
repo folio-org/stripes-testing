@@ -18,6 +18,7 @@ import InventoryItems from '../../../../../support/fragments/inventory/item/inve
 import BrowseContributors from '../../../../../support/fragments/inventory/search/browseContributors';
 import BrowseSubjects from '../../../../../support/fragments/inventory/search/browseSubjects';
 import BrowseCallNumber from '../../../../../support/fragments/inventory/search/browseCallNumber';
+import { CallNumberBrowseSettings } from '../../../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -147,16 +148,18 @@ describe('Inventory', () => {
               cy.setTenant(Affiliations.College);
               cy.getLocations({
                 limit: 1,
-                query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
+                query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
               }).then((res) => {
                 location = res;
               });
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                 holdingsSourceId = folioSource.id;
               });
-              cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
-                loanTypeId = loanTypes[0].id;
-              });
+              cy.getLoanTypes({ limit: 1, query: '(name<>"AT_*" and name<>"*auto*")' }).then(
+                (loanTypes) => {
+                  loanTypeId = loanTypes[0].id;
+                },
+              );
               cy.getMaterialTypes({ limit: 1, query: 'source=folio' }).then((res) => {
                 materialTypeId = res.id;
               });
@@ -183,6 +186,10 @@ describe('Inventory', () => {
             })
             .then(() => {
               cy.resetTenant();
+              CallNumberBrowseSettings.assignCallNumberTypesViaApi({
+                name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+                callNumberTypes: [],
+              });
               cy.login(user.username, user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,

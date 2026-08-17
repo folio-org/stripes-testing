@@ -54,7 +54,7 @@ const exportList = Button('Export all columns (CSV)');
 const exportListVisibleColumns = Button('Export selected columns (CSV)');
 const testQuery = Button('Test query');
 const runQueryAndSave = Button('Run query & save');
-const filterPane = Pane('Filter');
+const filterPane = Pane('Search & filter');
 const listsPane = Pane('Lists');
 const newLink = Link('New');
 const statusAccordion = filterPane.find(Accordion('Status'));
@@ -64,6 +64,7 @@ const resetAllButton = filterPane.find(Button('Reset all'));
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
 const editQueryButton = Button('Edit query');
 const resultViewerTable = MultiColumnList({ id: 'results-viewer-table' });
+const listsTable = MultiColumnList();
 
 const activeCheckbox = Checkbox({ id: 'clickable-filter-status-active' });
 const inactiveCheckbox = Checkbox({ id: 'clickable-filter-status-inactive' });
@@ -75,6 +76,7 @@ const cancelConfirmationModal = Modal('Are you sure?');
 const buildQueryModal = Modal('Build query');
 
 const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
+const linkSelector = 'a[data-test-text-link="true"]';
 
 const constants = {
   cannedListInactivePatronsWithOpenLoans: 'Inactive patrons with open loans',
@@ -86,12 +88,22 @@ const constants = {
     items: 'Items',
     organizations: 'Organizations',
     purchaseOrderLines: 'Purchase order lines',
+    budgets: 'Budgets',
+    fundWithLedger: 'Fund with ledger',
+    invoiceLines: 'Invoice lines',
+    invoices: 'Invoices',
+    purchaseOrderLinesWithTitles: 'Purchase order lines with titles',
+    purchaseOrders: 'Purchase orders',
+    voucherLinesWithFund: 'Voucher lines with fund',
+    voucherLinesWithInvoiceFundOrganization: 'Voucher lines with invoice, fund, organization',
+    vouchers: 'Vouchers',
     instancesWithMarcBibliographic: 'Instances with MARC bibliographic',
     receivingPieces: 'Receiving pieces',
     feeFineAccountsWithUsers: 'Fee/Fine accounts with users',
     usersWithFeeFineLoans: 'Users with fees/fines, loans',
     usersWithManualBlocks: 'Users with manual blocks',
     lostItemsRequiringActualCost: 'Lost items requiring actual cost',
+    loans: 'Loans',
   },
   userColumns: [
     'User — Active',
@@ -174,6 +186,22 @@ const UI = {
   expandListInformationAccordion() {
     cy.do(listInformationAccording.open());
     cy.wait(1000);
+  },
+
+  verifyListInformationAccordionIsExpanded(isExpanded = true) {
+    cy.expect(listInformationAccording.has({ open: isExpanded }));
+  },
+
+  clickOnCollapseAllButton() {
+    cy.get(linkSelector).contains('Collapse all').click();
+  },
+
+  verifyCollapseAllButtonAbsent() {
+    cy.get(linkSelector).contains('Collapse all').should('not.exist');
+  },
+
+  clickOnExpandAllButton() {
+    cy.get(linkSelector).contains('Expand all').click();
   },
 
   clickOnQueryAccordion() {
@@ -290,6 +318,14 @@ const UI = {
     cy.wait(1000);
   },
 
+  verifyListsPaneTitle(title) {
+    cy.expect(Pane({ title }).exists());
+  },
+
+  verifyListsPaneSubTitle(subtitle) {
+    cy.expect(Pane({ subtitle }).exists());
+  },
+
   verifyDuplicateListButtonIsActive() {
     cy.expect(duplicateList.exists());
     cy.expect(duplicateList.has({ disabled: false }));
@@ -392,6 +428,10 @@ const UI = {
     cy.expect(cancelConfirmationModal.find(Button('Keep editing')).exists());
   },
 
+  verifyCancellationModalAbsent() {
+    cy.expect(cancelConfirmationModal.absent());
+  },
+
   closeWithoutSaving() {
     cy.wait(500);
     cy.do(cancelConfirmationModal.find(closeWithoutSavingButton).click());
@@ -484,7 +524,7 @@ const UI = {
   selectRecordType(type) {
     cy.get('button[name=recordType]').click();
     cy.do([SelectionList().filter(type), SelectionList().select(type)]);
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   verifySelectedOptionsInRecordTypeDropdown(type) {
@@ -524,6 +564,12 @@ const UI = {
   verifyRecordTypeDropdownOptions(type) {
     cy.then(() => new SelectionList().optionList()).then((options) => {
       cy.expect(options).to.include(type);
+    });
+  },
+
+  verifyAllOptionsInRecordTypeDropdown(arrayOfTypes) {
+    cy.then(() => SelectionList().optionList()).then((options) => {
+      cy.expect(options).to.deep.equal(arrayOfTypes);
     });
   },
 
@@ -608,8 +654,8 @@ const UI = {
   },
 
   closeListDetailsPane() {
-    cy.wait(500);
-    cy.get('div[class^=paneMenu] > button[icon=times]').click();
+    cy.wait(5000);
+    cy.get('div[class^=paneMenu] > button[icon=times]').realClick();
     cy.wait(1000);
   },
 
@@ -623,13 +669,17 @@ const UI = {
     return cy.get('*[class^="mclRowContainer"]').contains(listName).should('be.visible');
   },
 
-  verifyRecordsNumber(number) {
-    cy.get('[class^=paneHeader-]').contains(`${number} records found`).should('be.visible');
+  verifyRecordsNumber(number, sVerifyPaneHeader = true) {
+    if (sVerifyPaneHeader) {
+      cy.get('[class^=paneHeader-]').contains(`${number} records found`).should('be.visible');
+    }
     cy.get('#results-viewer-accordion').contains(`${number} records found`).should('be.visible');
   },
 
-  verifySingleRecordNumber() {
-    cy.get('[class^=paneHeader-]').contains('1 record found').should('be.visible');
+  verifySingleRecordNumber(isVerifyPaneHeader = true) {
+    if (isVerifyPaneHeader) {
+      cy.get('[class^=paneHeader-]').contains('1 record found').should('be.visible');
+    }
     cy.get('#results-viewer-accordion').contains('1 record found').should('be.visible');
   },
 
@@ -665,6 +715,95 @@ const UI = {
   verifyResultColumnDisplayed(columnName) {
     cy.do(resultViewerTable.scrollHeaderIntoView(columnName));
     cy.expect(resultViewerTable.find(MultiColumnListHeader(columnName)).exists());
+  },
+
+  verifyLandingPageTableColumns(expectedColumns) {
+    cy.get('[role=columnheader]').then((headers) => {
+      const columnNames = [...headers].map((header) => header.innerText.trim());
+      expect(columnNames).to.include.members(expectedColumns);
+    });
+  },
+
+  verifyListDetailsInRecordsTable(expectedDetails) {
+    cy.then(() => MultiColumnListCell({ content: expectedDetails.name }).row()).then((index) => {
+      const targetRow = MultiColumnListRow({ indexRow: `row-${index}` });
+
+      if (expectedDetails.name) {
+        cy.expect(
+          targetRow
+            .find(MultiColumnListCell({ column: 'List name', content: expectedDetails.name }))
+            .exists(),
+        );
+      }
+      if (expectedDetails.recordType) {
+        cy.expect(
+          targetRow
+            .find(
+              MultiColumnListCell({ column: 'Record type', content: expectedDetails.recordType }),
+            )
+            .exists(),
+        );
+      }
+      if (expectedDetails.records !== undefined) {
+        cy.expect(
+          targetRow
+            .find(MultiColumnListCell({ column: 'Records', content: expectedDetails.records }))
+            .exists(),
+        );
+      }
+      if (expectedDetails.status) {
+        cy.expect(
+          targetRow
+            .find(MultiColumnListCell({ column: 'Status', content: expectedDetails.status }))
+            .exists(),
+        );
+      }
+      if (expectedDetails.source) {
+        cy.expect(
+          targetRow
+            .find(MultiColumnListCell({ column: 'Source', content: expectedDetails.source }))
+            .exists(),
+        );
+      }
+      if (expectedDetails.lastUpdated === '') {
+        cy.do(targetRow.find(MultiColumnListCell({ column: 'Last updated', content: '' })));
+      } else if (expectedDetails.lastUpdated) {
+        cy.expect(
+          targetRow
+            .find(
+              MultiColumnListCell({
+                column: 'Last updated',
+                content: expectedDetails.lastUpdated,
+              }),
+            )
+            .exists(),
+        );
+      }
+      if (expectedDetails.visibility) {
+        cy.expect(
+          targetRow
+            .find(
+              MultiColumnListCell({ column: 'Visibility', content: expectedDetails.visibility }),
+            )
+            .exists(),
+        );
+      }
+    });
+  },
+
+  verifyLandingPagePaginationButtonsState({ previous, next }) {
+    cy.expect(listsTable.find(Button('Previous')).has({ disabled: previous }));
+    cy.expect(listsTable.find(Button('Next')).has({ disabled: next }));
+  },
+
+  clickLandingPageNextButton() {
+    cy.do(listsTable.find(Button('Next')).click());
+    cy.wait(1000);
+  },
+
+  clickLandingPagePreviousButton() {
+    cy.do(listsTable.find(Button('Previous')).click());
+    cy.wait(1000);
   },
 
   verifyResultCellContains(rowIndex, columnName, content) {
@@ -858,6 +997,10 @@ const UI = {
   selectRecordTypeFilter(type) {
     cy.do(filterPane.find(MultiSelect()).choose(type));
     cy.wait(1000);
+  },
+
+  verifyRecordTypeSelectedinFilter(type) {
+    cy.expect(filterPane.find(MultiSelect()).has({ selected: type }));
   },
 
   verifyRecordTypeFilterDropdownContainsOptions(options) {
@@ -1164,7 +1307,30 @@ const QueryBuilder = {
                   );
                 }
                 break;
+              case 'in':
+                if (locator) {
+                  cy.expect(
+                    MultiColumnListCell({
+                      row: index,
+                      columnIndex: columnNumber,
+                      content: Array.isArray(valueInColumn)
+                        ? or(...valueInColumn.map((v) => including(v)))
+                        : including(valueInColumn),
+                    }).exists(),
+                  );
+                } else {
+                  cy.expect(
+                    MultiColumnListCell({
+                      row: index,
+                      content: Array.isArray(valueInColumn)
+                        ? or(...valueInColumn.map((v) => including(v)))
+                        : including(valueInColumn),
+                    }).exists(),
+                  );
+                }
+                break;
               case 'not in':
+              case 'not equal to':
                 if (locator) {
                   cy.expect(
                     MultiColumnListCell({
@@ -1469,7 +1635,11 @@ const API = {
     return this.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
       return poll(
         () => this.getEntityTypeByIdViaApi(entityTypeId, { failOnStatusCode: false }),
-        ({ body }) => body.columns?.some(({ labelAlias, queryable }) => labelAlias === fieldLabel && queryable),
+        ({ body }) => {
+          return body.columns?.some(
+            ({ labelAlias, queryable }) => labelAlias === fieldLabel && queryable,
+          );
+        },
         {
           timeout: 360000,
           delay: 15000,

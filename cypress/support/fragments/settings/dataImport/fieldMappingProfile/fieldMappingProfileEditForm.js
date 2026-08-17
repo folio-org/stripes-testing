@@ -235,7 +235,7 @@ const formFields = {
 
 export default {
   waitLoading() {
-    cy.expect(mappingProfileForm.exists());
+    cy.expect([mappingProfileForm.exists(), mappingProfileForm.find(Button('Actions')).absent()]);
   },
   verifyFormView({ type } = {}) {
     cy.expect([summarySection.exists(), actionProfilesSection.exists()]);
@@ -775,5 +775,9 @@ export default {
     cy.get('#edit-override-protected-section input[type="checkbox"]').each(($checkbox) => {
       cy.wrap($checkbox).should('not.be.disabled');
     });
+  },
+
+  verifyName(name) {
+    summaryFields.name.has({ value: name });
   },
 };
