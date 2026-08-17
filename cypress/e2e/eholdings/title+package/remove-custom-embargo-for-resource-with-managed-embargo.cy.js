@@ -6,14 +6,25 @@ import Users from '../../../support/fragments/users/users';
 describe('eHoldings', () => {
   describe('Title+Package', () => {
     const testData = {
-      resourceId: '19-166-60764',
+      resourceId: '19-166-356',
+      beginCoverage: '2023-01-01',
+      endCoverage: '2023-11-20',
     };
 
     before('Create user and login', () => {
       cy.getAdminToken();
-      EHoldingsResourceEdit.addCustomEmbargoViaAPI(testData.resourceId, {
-        embargoValue: 4,
-        embargoUnit: 'Months',
+      EHoldingsResourceEdit.updateResourceAttributesViaApi(testData.resourceId, {
+        customCoverages: [
+          {
+            beginCoverage: testData.beginCoverage,
+            endCoverage: testData.endCoverage,
+          },
+        ],
+        customEmbargoPeriod: {
+          embargoValue: 2,
+          embargoUnit: 'Months',
+        },
+        isSelected: true,
       });
 
       cy.createTempUser([

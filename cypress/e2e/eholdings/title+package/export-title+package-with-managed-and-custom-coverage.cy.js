@@ -2,6 +2,7 @@ import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 import EHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
+import EHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingsResourceEdit';
 import ExportSettingsModal from '../../../support/fragments/eholdings/modals/exportSettingsModal';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import Users from '../../../support/fragments/users/users';
@@ -18,7 +19,11 @@ describe('eHoldings', () => {
       fileMask: '*_resource.csv',
       customCoverageRange: {
         startDay: '01/01/2020',
+        startDayApi: '2020-01-01',
+        startDayCsv: '2020/01/01',
         endDay: '12/31/2020',
+        endDayApi: '2020-12-31',
+        endDayCsv: '2020/12/31',
       },
     };
     const calloutMessage =
@@ -33,6 +38,16 @@ describe('eHoldings', () => {
 
     before('Creating user, logging in', () => {
       cy.getAdminToken();
+
+      EHoldingsResourceEdit.updateResourceAttributesViaApi(testData.resourceId, {
+        customCoverages: [
+          {
+            beginCoverage: testData.customCoverageRange.startDayApi,
+            endCoverage: testData.customCoverageRange.endDayApi,
+          },
+        ],
+      });
+
       cy.createTempUser([
         Permissions.uieHoldingsRecordsEdit.gui,
         Permissions.uiAgreementsSearchAndView.gui,
@@ -82,8 +97,8 @@ describe('eHoldings', () => {
           EHoldingsResourceView.verifyCoverageInExportedCSV(testData.fileName, {
             managedCoverage: true,
             customCoverage: {
-              startDate: '2020/01/01',
-              endDate: '2020/12/31',
+              startDate: testData.customCoverageRange.startDayCsv,
+              endDate: testData.customCoverageRange.endDayCsv,
             },
           });
 

@@ -128,6 +128,7 @@ describe('Eureka', () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.settingsAuthorizationRoles,
           waiter: AuthorizationRoles.waitContentLoading,
+          authRefresh: true,
         });
       });
 
@@ -166,7 +167,9 @@ describe('Eureka', () => {
             AuthorizationRoles.clickOnCheckedDisabledCheckbox(capability);
           });
 
-          AuthorizationRoles.selectCapabilitySetCheckbox(testData.capabilitySet, false);
+          AuthorizationRoles.selectCapabilitySetCheckbox(testData.capabilitySet, {
+            isSelected: false,
+          });
           capabilitiesInSetSelected.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxChecked(capability, true, true);
           });

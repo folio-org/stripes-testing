@@ -153,17 +153,21 @@ Cypress.Commands.add('addCapabilitiesToNewRoleApi', (roleId, capabilityIds) => {
   });
 });
 
-Cypress.Commands.add('addCapabilitySetsToNewRoleApi', (roleId, capabilitySetIds) => {
-  cy.okapiRequest({
-    method: 'POST',
-    path: 'roles/capability-sets',
-    body: {
-      roleId,
-      capabilitySetIds: [...capabilitySetIds],
-    },
-    isDefaultSearchParamsRequired: false,
-  });
-});
+Cypress.Commands.add(
+  'addCapabilitySetsToNewRoleApi',
+  (roleId, capabilitySetIds, { customTimeout = 120_000 } = {}) => {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'roles/capability-sets',
+      body: {
+        roleId,
+        capabilitySetIds: [...capabilitySetIds],
+      },
+      isDefaultSearchParamsRequired: false,
+      customTimeout,
+    });
+  },
+);
 
 Cypress.Commands.add('deleteCapabilitiesFromRoleApi', (roleId, ignoreErrors = false) => {
   cy.okapiRequest({

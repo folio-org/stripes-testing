@@ -44,7 +44,7 @@ export default {
       const normalize = (str) => str
         .trim()
         .toLowerCase()
-        .replace(/-/g, ' ')
+        .replace(/-/g, '')
         .replace(/\s+/g, ' ')
         .replace(/\d+(\.\d+)?$/, '');
 

@@ -2,7 +2,6 @@ import { Permissions } from '../../../support/dictionary';
 import { EHoldingsResourceEdit, EHoldingsResourceView } from '../../../support/fragments/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -10,15 +9,22 @@ describe('eHoldings', () => {
       resourceId: '38-467-103587',
       customEmbargoValue: String(Math.floor(Math.random() * 15) + 1),
       customEmbargoUnit: 'Months',
+      beginCoverage: '2023-01-01',
+      endCoverage: '2023-11-20',
     };
 
     before('Create user and login', () => {
       cy.getAdminToken();
-      EHoldingsTitle.changeResourceSelectionStatusViaApi({
-        resourceId: testData.resourceId,
+      EHoldingsResourceEdit.updateResourceAttributesViaApi(testData.resourceId, {
+        customCoverages: [
+          {
+            beginCoverage: testData.beginCoverage,
+            endCoverage: testData.endCoverage,
+          },
+        ],
+        customEmbargoPeriod: {},
         isSelected: true,
       });
-      EHoldingsResourceEdit.removeCustomEmbargoViaAPI(testData.resourceId);
 
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,

@@ -9,10 +9,27 @@ describe('eHoldings', () => {
       resourceId: '413-4147601-30244350',
       updatedEmbargoValue: String(Math.floor(Math.random() * 15) + 1),
       updatedEmbargoUnit: 'Months',
+      beginCoverage: '2023-01-01',
+      endCoverage: '2023-11-20',
     };
 
     before('Create user and login', () => {
       cy.getAdminToken();
+
+      EHoldingsResourceEdit.updateResourceAttributesViaApi(testData.resourceId, {
+        customCoverages: [
+          {
+            beginCoverage: testData.beginCoverage,
+            endCoverage: testData.endCoverage,
+          },
+        ],
+        customEmbargoPeriod: {
+          embargoValue: 1,
+          embargoUnit: 'Months',
+        },
+        isSelected: true,
+      });
+
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
         Permissions.uieHoldingsRecordsEdit.gui,

@@ -40,7 +40,6 @@ export default {
           .then((cellValue) => {
             cy.wait(1000);
             cells.push(cellValue);
-            cy.log(cellValue);
           });
       })
       .then(() => {

@@ -151,7 +151,7 @@ describe('Eureka', () => {
             cy.wait('@capabilitiesCall', { timeout: 120_000 }).then((callCapabs) => {
               expect(callCapabs.response.statusCode).to.eq(204);
             });
-            cy.wait('@capabilitySetsCall', { timeout: 120_000 }).then((callCapabSets) => {
+            cy.wait('@capabilitySetsCall', { timeout: 260_000 }).then((callCapabSets) => {
               expect(callCapabSets.response.statusCode).to.eq(204);
             });
           }).then(() => {

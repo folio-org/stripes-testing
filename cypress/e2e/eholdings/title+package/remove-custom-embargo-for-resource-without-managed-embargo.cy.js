@@ -7,15 +7,33 @@ describe('eHoldings', () => {
   describe('Title+Package', () => {
     const testData = {
       resourceId: '413-4147601-30244350',
+      beginCoverage: '2023-01-01',
+      endCoverage: '2023-11-20',
     };
 
     before('Create user and login', () => {
       cy.getAdminToken();
+
+      EHoldingsResourceEdit.updateResourceAttributesViaApi(testData.resourceId, {
+        customCoverages: [
+          {
+            beginCoverage: testData.beginCoverage,
+            endCoverage: testData.endCoverage,
+          },
+        ],
+        isSelected: true,
+      });
+
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
         Permissions.uieHoldingsRecordsEdit.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+
+        EHoldingsResourceEdit.addCustomEmbargoViaAPI(testData.resourceId, {
+          embargoValue: 1,
+          embargoUnit: 'Months',
+        });
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.eholdingsPath + `/resources/${testData.resourceId}`,
