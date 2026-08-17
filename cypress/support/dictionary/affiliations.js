@@ -22,8 +22,8 @@ export default {
   },
   trillium: {
     Consortia: 'consortium',
-    University: 'university',
-    College: 'college',
+    University: 'cs00000int_0005',
+    College: 'cs00000int_0001',
   },
 }[currentEnv];
 
