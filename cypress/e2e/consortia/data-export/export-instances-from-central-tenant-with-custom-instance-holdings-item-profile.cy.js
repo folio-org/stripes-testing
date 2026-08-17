@@ -272,7 +272,7 @@ function addHoldingsAndItems(instance, tenantAffiliation) {
 
                   // Add electronic access to MARC holdings
                   cy.getRecordDataInEditorViaApi(marcHoldingId).then((marcData) => {
-                    marcData.relatedRecordVersion = 2;
+                    marcData.relatedRecordVersion = 1;
                     marcData.fields.push({
                       tag: '856',
                       content: [
