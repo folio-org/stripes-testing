@@ -12,6 +12,7 @@ const instanceEditActionButton =
   "//button[@data-testid='preview-actions-dropdown__option-ld.edit']";
 const newInstanceActionsButton =
   "//button[@data-testid='preview-actions-dropdown__option-ld.newInstance']";
+const instancesList = '//div[@data-testid="instances-list"]';
 const viewMarcButton = "//button[@data-testid='block-actions-toggle__option-ld.viewMarc']";
 const inventoryViewActionsButton =
   "//button[@data-testid='block-actions-toggle__option-ld.inventoryView']";
@@ -388,6 +389,14 @@ export default {
     cy.expect(Heading('Duplicate work').exists());
   },
 
+  duplicateInstanceWhenMultipleActions() {
+    cy.xpath(instanceActionsButton).should('exist').click();
+    cy.expect(duplicateButton.exists());
+    cy.do(duplicateButton.click());
+    cy.wait(1000);
+    cy.expect(Heading('Duplicate instance').exists());
+  },
+
   editInstanceFormViaActions() {
     cy.xpath(instanceActionsButton).click();
     cy.xpath(instanceEditActionButton).click();
@@ -730,6 +739,14 @@ export default {
     cy.xpath(instanceActionsButton).should('not.exist');
   },
 
+  checkNewInstanceButtonHidden() {
+    cy.expect(newInstanceButton.absent());
+  },
+
+  checkWorkActionsHidden() {
+    cy.expect(workActionsButton.absent());
+  },
+
   setSectionFieldValue(value, section) {
     cy.wait(1000);
     cy.xpath(
@@ -955,5 +972,22 @@ export default {
       .first()
       .click();
     cy.wait(500);
+  },
+
+  verifyInstancesList() {
+    cy.xpath(instancesList).should('be.visible');
+  },
+
+  verifyInstancesListTableColumns() {
+    cy.xpath(instancesList).xpath('//table/thead//div[text()="Title"]').should('exist');
+    cy.xpath(instancesList).xpath('//table/thead//div[text()="Publisher"]').should('exist');
+    cy.xpath(instancesList).xpath('//table/thead//div[text()="Year"]').should('exist');
+  },
+
+  verifyInstancesListSize(count) {
+    cy.xpath(instancesList).xpath('//table/tbody/tr').should('have.length', count);
+    cy.xpath(instancesList)
+      .xpath('//table/tbody/tr/td/button[text()="Edit"]')
+      .should('have.length', count);
   },
 };
