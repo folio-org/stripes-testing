@@ -49,7 +49,7 @@ export const tenantNames = {
     professional: 'Professional',
   },
   trillium: {
-    central: 'Consortium',
+    central: 'Central Office',
     college: 'College',
     university: 'University',
     professional: 'Professional',
