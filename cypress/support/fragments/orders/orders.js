@@ -126,7 +126,7 @@ export default {
     return cy.get('@order');
   },
 
-  updateOrderViaApi(order, deleteHoldings = false) {
+  updateOrderViaApi(order, deleteHoldings = false, failOnStatusCode = true) {
     cy.wait(2000);
     return cy.okapiRequest({
       method: 'PUT',
@@ -134,6 +134,7 @@ export default {
       body: order,
       searchParams: deleteHoldings ? { deleteHoldings: true } : {},
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
 
