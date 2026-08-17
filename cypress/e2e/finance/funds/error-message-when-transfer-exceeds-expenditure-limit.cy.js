@@ -11,10 +11,15 @@ import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import States from '../../../support/fragments/finance/states';
-import InteractorsTools from '../../../support/utils/interactorsTools';
+import { NumberTools } from '../../../support/utils';
+
+const toNormalizedMoney = (value, locale) => {
+  return NumberTools.formatCurrency(Number(value), locale).replaceAll(/[^0-9.-]/g, '');
+};
 
 describe('Finance', () => {
   describe('Funds', () => {
+    let locale;
     const testData = {
       user: {},
     };
@@ -51,6 +56,10 @@ describe('Finance', () => {
         Budgets.createViaApi(budgetB);
       });
 
+      cy.getTenantLocaleApi().then((tenantLocale) => {
+        locale = tenantLocale;
+      });
+
       cy.createTempUser([
         Permissions.uiFinanceCreateTransfers.gui,
         Permissions.uiFinanceViewFundAndBudget.gui,
@@ -73,35 +82,43 @@ describe('Finance', () => {
       'C825296 Meaningful error toast message appears when money transfer is unsuccessful (thunderjet) (TaaS)',
       { tags: ['extendedPath', 'thunderjet', 'C825296'] },
       () => {
+        cy.log('<----- STEP 1 ----->');
         FinanceHelper.searchByName(fundA.name);
         Funds.selectFund(fundA.name);
         const BudgetDetails = FundDetails.openCurrentBudgetDetails();
         BudgetDetails.checkBudgetDetails({
-          summary: [{ key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS, value: '$0.00' }],
+          summary: [
+            {
+              key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS,
+              value: toNormalizedMoney(0, locale),
+            },
+          ],
         });
 
+        cy.log('<----- STEP 2 ----->');
         const AddTransferModal = BudgetDetails.openAddTransferModal();
         AddTransferModal.verifyFromFieldValue('');
         AddTransferModal.verifyToFieldValue(fundA.name);
+
+        cy.log('<----- STEP 3 ----->');
         AddTransferModal.fillTransferDetails({
           fromFund: fundB.name,
           amount: '200',
         });
-        AddTransferModal.verifyConfirmButtonDisabled(false);
-
-        AddTransferModal.clickConfirmButton({
-          confirmNegative: { confirm: true },
-          expectError: true,
-        });
+        cy.focused().tab(); // to trigger validation
         AddTransferModal.verifyModalView();
-        InteractorsTools.checkCalloutMessage(
-          States.exceedExpenditureLimitError('200', budgetA.name, budgetB.name),
-          'error',
-        );
+        Funds.checkAmountInputError(States.totalAllocationCannotBeLessThanZero);
+        AddTransferModal.verifyConfirmButtonDisabled(true);
 
+        cy.log('<----- STEP 4 ----->');
         AddTransferModal.closeModal();
         BudgetDetails.checkBudgetDetails({
-          summary: [{ key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS, value: '$0.00' }],
+          summary: [
+            {
+              key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS,
+              value: toNormalizedMoney(0, locale),
+            },
+          ],
         });
       },
     );
