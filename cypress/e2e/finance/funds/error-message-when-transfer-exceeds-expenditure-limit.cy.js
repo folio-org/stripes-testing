@@ -102,10 +102,10 @@ describe('Finance', () => {
 
         cy.log('<----- STEP 3 ----->');
         AddTransferModal.fillTransferDetails({
-          fromFund: fundB.name,
           amount: '200',
+          description: 'C825296 Test transfer',
+          fromFund: fundB.name,
         });
-        cy.focused().tab(); // to trigger validation
         AddTransferModal.verifyModalView();
         Funds.checkAmountInputError(States.totalAllocationCannotBeLessThanZero);
         AddTransferModal.verifyConfirmButtonDisabled(true);
