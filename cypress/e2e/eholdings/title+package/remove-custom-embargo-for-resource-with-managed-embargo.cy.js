@@ -6,21 +6,32 @@ import Users from '../../../support/fragments/users/users';
 describe('eHoldings', () => {
   describe('Title+Package', () => {
     const testData = {
-      resourceId: '19-166-60764',
+      resourceId: '19-166-356',
+      beginCoverage: '2023-01-01',
+      endCoverage: '2023-11-20',
     };
 
     before('Create user and login', () => {
       cy.getAdminToken();
+      EHoldingsResourceEdit.updateResourceAttributesViaApi(testData.resourceId, {
+        customCoverages: [
+          {
+            beginCoverage: testData.beginCoverage,
+            endCoverage: testData.endCoverage,
+          },
+        ],
+        customEmbargoPeriod: {
+          embargoValue: 2,
+          embargoUnit: 'Months',
+        },
+        isSelected: true,
+      });
+
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
         Permissions.uieHoldingsRecordsEdit.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
-
-        EHoldingsResourceEdit.addCustomEmbargoViaAPI(testData.resourceId, {
-          embargoValue: 4,
-          embargoUnit: 'Months',
-        });
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.eholdingsPath + `/resources/${testData.resourceId}`,
@@ -30,7 +41,7 @@ describe('eHoldings', () => {
     });
 
     after('Delete user and restore custom embargo', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       EHoldingsResourceEdit.addCustomEmbargoViaAPI(testData.resourceId, {
         embargoValue: 4,
         embargoUnit: 'Months',

@@ -70,6 +70,7 @@ describe('Inventory', () => {
             );
           })
           .then(() => {
+            cy.wait(3000);
             // Step 7: Verify the config no longer contains the deleted type ID
             ClassificationBrowse.getClassigicationBrowseConfig().then(({ status, body }) => {
               expect(status).to.eq(200);

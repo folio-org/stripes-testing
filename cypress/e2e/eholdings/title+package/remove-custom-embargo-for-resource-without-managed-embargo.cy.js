@@ -7,6 +7,8 @@ describe('eHoldings', () => {
   describe('Title+Package', () => {
     const testData = {
       resourceId: '413-4147601-30244350',
+      beginCoverage: '2023-01-01',
+      endCoverage: '2023-11-20',
     };
 
     before('Create user and login', () => {
@@ -17,6 +19,16 @@ describe('eHoldings', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
+        EHoldingsResourceEdit.updateResourceAttributesViaApi(testData.resourceId, {
+          customCoverages: [
+            {
+              beginCoverage: testData.beginCoverage,
+              endCoverage: testData.endCoverage,
+            },
+          ],
+          isSelected: true,
+        });
+
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.eholdingsPath + `/resources/${testData.resourceId}`,
           waiter: EHoldingsResourceView.waitLoading,
@@ -25,7 +37,7 @@ describe('eHoldings', () => {
     });
 
     after('Delete user and restore custom embargo', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       EHoldingsResourceEdit.addCustomEmbargoViaAPI(testData.resourceId, {
         embargoValue: 1,
         embargoUnit: 'Months',

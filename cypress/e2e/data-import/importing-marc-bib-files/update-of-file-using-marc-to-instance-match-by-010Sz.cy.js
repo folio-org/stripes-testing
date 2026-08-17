@@ -193,10 +193,10 @@ describe('Data Import', () => {
           FileDetails.columnNameInResultList.instance,
         );
         cy.wait(2000);
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        InventoryInstances.waitContentLoading();
-        InventoryInstances.searchByTitle(testData.instanceId);
-        InventoryInstances.selectInstanceById(testData.instanceId);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
+        cy.reload();
         InventoryInstance.waitLoading();
         InventoryInstance.waitInstanceRecordViewOpened();
         InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);

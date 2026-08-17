@@ -2,6 +2,7 @@ import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 import EHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
+import EHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingsResourceEdit';
 import ExportSettingsModal from '../../../support/fragments/eholdings/modals/exportSettingsModal';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import Users from '../../../support/fragments/users/users';
@@ -17,8 +18,12 @@ describe('eHoldings', () => {
       fileName: `C367921autoTestFile${getRandomPostfix()}.csv`,
       fileMask: '*_resource.csv',
       customCoverageRange: {
-        startDay: '01/01/2020',
-        endDay: '12/31/2020',
+        startDay: '01/01/2026',
+        startDayApi: '2026-01-01',
+        startDayCsv: '2026/01/01',
+        endDay: '12/31/2028',
+        endDayApi: '2028-12-31',
+        endDayCsv: '2028/12/31',
       },
     };
     const calloutMessage =
@@ -33,6 +38,12 @@ describe('eHoldings', () => {
 
     before('Creating user, logging in', () => {
       cy.getAdminToken();
+
+      EHoldingsResourceEdit.addCustomCoverageViaAPI(testData.resourceId, {
+        beginDate: testData.customCoverageRange.startDayApi,
+        endDate: testData.customCoverageRange.endDayApi,
+      });
+
       cy.createTempUser([
         Permissions.uieHoldingsRecordsEdit.gui,
         Permissions.uiAgreementsSearchAndView.gui,
@@ -82,8 +93,8 @@ describe('eHoldings', () => {
           EHoldingsResourceView.verifyCoverageInExportedCSV(testData.fileName, {
             managedCoverage: true,
             customCoverage: {
-              startDate: '2020/01/01',
-              endDate: '2020/12/31',
+              startDate: testData.customCoverageRange.startDayCsv,
+              endDate: testData.customCoverageRange.endDayCsv,
             },
           });
 

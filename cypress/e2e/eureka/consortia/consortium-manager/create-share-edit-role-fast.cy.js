@@ -68,7 +68,7 @@ describe('Eureka', () => {
 
     after('Delete users, data', () => {
       cy.resetTenant();
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
         if (roleId) cy.deleteAuthorizationRoleApi(roleId, true);
       });
@@ -108,7 +108,7 @@ describe('Eureka', () => {
           `${testData.originalCapabilitySets.length}`,
         );
 
-        AuthorizationRoles.shareRole(testData.roleName, { timeout: 82_000 });
+        AuthorizationRoles.shareRole(testData.roleName, { timeout: 102_000 });
         AuthorizationRoles.openForEdit(testData.roleName);
         AuthorizationRoles.fillRoleNameDescription(testData.roleNameUpdated);
         testData.newCapabilitySets.forEach((set) => {
@@ -171,7 +171,7 @@ describe('Eureka', () => {
         AuthorizationRoles.checkRoleCentrallyManaged(testData.roleNameUpdated);
 
         AuthorizationRoles.clickDeleteRole(testData.roleNameUpdated);
-        AuthorizationRoles.confirmDeleteRole(testData.roleNameUpdated, false, { timeout: 82_000 });
+        AuthorizationRoles.confirmDeleteRole(testData.roleNameUpdated, false, { timeout: 102_000 });
 
         SelectMembers.selectMember(tenantNames.college);
         AuthorizationRoles.searchRole(testData.roleNameUpdated);

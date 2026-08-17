@@ -170,6 +170,40 @@ export default {
       });
   },
 
+  addCustomCoverageViaAPI(resourceId, { beginDate, endDate }) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `eholdings/resources/${resourceId}`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        const resourceData = response.body.data;
+
+        return cy.okapiRequest({
+          method: 'PUT',
+          path: `eholdings/resources/${resourceId}`,
+          contentTypeHeader: 'application/vnd.api+json',
+          body: {
+            data: {
+              id: resourceId,
+              type: 'resources',
+              attributes: {
+                ...resourceData.attributes,
+                customCoverages: [
+                  {
+                    beginCoverage: beginDate,
+                    endCoverage: endDate,
+                  },
+                ],
+              },
+            },
+          },
+          isDefaultSearchParamsRequired: false,
+        });
+      });
+  },
+
   addCustomEmbargoViaAPI(resourceId, { embargoValue, embargoUnit }) {
     return cy
       .okapiRequest({

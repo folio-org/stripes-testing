@@ -103,7 +103,7 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -141,7 +141,9 @@ describe('Data Import', () => {
         Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfItems);
+
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
+        OrderLines.waitLoading();
         OrderLines.verifyPOLDetailsIsOpened();
       },
     );

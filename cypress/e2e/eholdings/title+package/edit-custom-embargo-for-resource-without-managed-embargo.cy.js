@@ -9,6 +9,8 @@ describe('eHoldings', () => {
       resourceId: '413-4147601-30244350',
       updatedEmbargoValue: String(Math.floor(Math.random() * 15) + 1),
       updatedEmbargoUnit: 'Months',
+      beginCoverage: '2023-01-01',
+      endCoverage: '2023-11-20',
     };
 
     before('Create user and login', () => {
@@ -18,6 +20,20 @@ describe('eHoldings', () => {
         Permissions.uieHoldingsRecordsEdit.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+
+        EHoldingsResourceEdit.updateResourceAttributesViaApi(testData.resourceId, {
+          customCoverages: [
+            {
+              beginCoverage: testData.beginCoverage,
+              endCoverage: testData.endCoverage,
+            },
+          ],
+          customEmbargoPeriod: {
+            embargoValue: 1,
+            embargoUnit: 'Months',
+          },
+          isSelected: true,
+        });
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.eholdingsPath + `/resources/${testData.resourceId}`,

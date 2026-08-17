@@ -6,18 +6,30 @@ import Users from '../../../support/fragments/users/users';
 describe('eHoldings', () => {
   describe('Title+Package', () => {
     const testData = {
-      resourcePath: '/resources/19-166-60764',
+      resourcePath: '/resources/19-166-115780928',
       updatedEmbargoValue: String(Math.floor(Math.random() * 12) + 1),
       updatedEmbargoUnit: 'Months',
+      startDate: '2026-01-01',
+      endDate: '2026-12-31',
     };
 
     before('Create user', () => {
       cy.getAdminToken();
+      EHoldingsResourceEdit.addCustomCoverageViaAPI(testData.resourcePath.split('/').pop(), {
+        beginDate: testData.startDate,
+        endDate: testData.endDate,
+      });
+
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
         Permissions.uieHoldingsRecordsEdit.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+
+        EHoldingsResourceEdit.addCustomEmbargoViaAPI(testData.resourcePath.split('/').pop(), {
+          embargoValue: String(Number(testData.updatedEmbargoValue) + 2),
+          embargoUnit: 'Days',
+        });
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.eholdingsPath + testData.resourcePath,

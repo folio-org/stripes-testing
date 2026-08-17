@@ -15,7 +15,7 @@ describe('MARC', () => {
       const testData = {
         searchOption: 'Subject',
         typeOfHeading: 'Topical',
-        value: 'Holothuria scabra',
+        value: 'C380556 Holothuria scabra',
         authorized: 'Authorized',
         reference: 'Reference',
       };
@@ -40,6 +40,9 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Creating user', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380556 ');
+
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
