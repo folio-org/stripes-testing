@@ -192,4 +192,19 @@ export default {
   verifyInstanceListCollapsed() {
     cy.get('[class*="instance-list"]').should('not.exist');
   },
+
+  verifyInstanceListSize(index, count) {
+    cy.get('[class*="instance-list"]').eq(index).find('tbody tr').should('have.length', count);
+  },
+
+  verifyNoInstances(index) {
+    cy.get('[class*="search-result-entry-container"]')
+      .eq(index)
+      .find('[class="empty-or-closed"]')
+      .contains('No instances available');
+    cy.get('[class*="search-result-entry-container"]')
+      .eq(index)
+      .find('[data-testid="add-instance"]')
+      .should('be.visible');
+  },
 };
