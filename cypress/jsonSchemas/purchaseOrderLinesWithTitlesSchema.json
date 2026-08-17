@@ -204,7 +204,7 @@
             "type": ["string", "null"]
           },
           "instance.series": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "pol.tags": {
             "type": ["string", "null", "array"]
@@ -324,7 +324,7 @@
             "type": ["string", "null"]
           },
           "purchase_order.acquisition_unit": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "pol.order_format": {
             "type": ["string", "null"]
