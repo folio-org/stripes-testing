@@ -6,9 +6,12 @@ import {
   MultiColumnListCell,
   MultiColumnListRow,
   SearchField,
+  Section,
   TextField,
   including,
 } from '../../../../../interactors';
+import { SEARCH_AND_FILTER_PANE_TITLE } from '../../../constants';
+import FiltersPane from '../../filtersPane';
 
 const selectOrderLinesModal = Modal('Select order lines');
 const closeButton = selectOrderLinesModal.find(Button('Close'));
@@ -16,6 +19,9 @@ const saveButton = selectOrderLinesModal.find(Button('Save'));
 const searchField = selectOrderLinesModal.find(SearchField({ id: 'input-record-search' }));
 const searchButton = selectOrderLinesModal.find(Button('Search'));
 const resetButton = selectOrderLinesModal.find(Button({ id: 'reset-find-records-filters' }));
+const filtersPane = selectOrderLinesModal.find(Section({ title: SEARCH_AND_FILTER_PANE_TITLE }));
+
+const ACQUISITION_UNIT_FILTER_LABEL = 'Acquisition unit';
 
 export default {
   verifyModalView() {
@@ -83,5 +89,17 @@ export default {
   closeModal() {
     cy.do(closeButton.click());
     cy.expect(selectOrderLinesModal.absent());
+  },
+
+  clearAllFilters(options) {
+    FiltersPane.clearAllFilters(filtersPane, options);
+  },
+
+  filterBySelection(filterLabel, value, options) {
+    FiltersPane.filterBySelection(filtersPane, filterLabel, value, options);
+  },
+
+  filterByAcqUnit(value, options) {
+    this.filterBySelection(ACQUISITION_UNIT_FILTER_LABEL, value, options);
   },
 };

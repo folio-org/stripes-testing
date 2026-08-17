@@ -1801,7 +1801,9 @@ export const COMMON_BUTTON_LABELS = {
   CLOSE: 'Close',
   COLLAPSE_ALL: 'Collapse all',
   CONFIRM: 'Confirm',
+  CREATE: 'Create',
   DELETE: 'Delete',
+  EDIT: 'Edit',
   NEXT: 'Next',
   NEW: 'New',
   PREVIOUS: 'Previous',
@@ -1868,3 +1870,5 @@ export const TIMER_TYPES = {
   USER: 'USER',
   SYSTEM: 'SYSTEM',
 };
+
+export const SEARCH_AND_FILTER_PANE_TITLE = 'Search & filter';
