@@ -104,6 +104,7 @@ const constants = {
     usersWithManualBlocks: 'Users with manual blocks',
     lostItemsRequiringActualCost: 'Lost items requiring actual cost',
     loans: 'Loans',
+    orderInvoiceAnalysis: 'Order — Invoice Analysis',
   },
   userColumns: [
     'User — Active',
@@ -669,8 +670,8 @@ const UI = {
     return cy.get('*[class^="mclRowContainer"]').contains(listName).should('be.visible');
   },
 
-  verifyRecordsNumber(number, sVerifyPaneHeader = true) {
-    if (sVerifyPaneHeader) {
+  verifyRecordsNumber(number, isVerifyPaneHeader = true) {
+    if (isVerifyPaneHeader) {
       cy.get('[class^=paneHeader-]').contains(`${number} records found`).should('be.visible');
     }
     cy.get('#results-viewer-accordion').contains(`${number} records found`).should('be.visible');
