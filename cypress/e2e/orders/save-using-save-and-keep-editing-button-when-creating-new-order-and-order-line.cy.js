@@ -71,6 +71,7 @@ describe('Orders', () => {
       OrderLinesLimit.setPOLLimitViaApi(2);
       SettingsOrders.setUserCanEditPONumberViaApi(false);
       OpenOrder.setOpenOrderValue(false);
+      SettingsOrders.setUserCanEditPONumberViaApi(false);
       Organizations.createOrganizationViaApi(testData.organization).then((id) => {
         testData.organization.id = id;
       });
