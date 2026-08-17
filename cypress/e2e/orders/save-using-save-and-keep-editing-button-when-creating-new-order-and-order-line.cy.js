@@ -1,7 +1,11 @@
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import getRandomPostfix from '../../support/utils/stringTools';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
-import { OpenOrder, OrderLinesLimit } from '../../support/fragments/settings/orders';
+import {
+  OpenOrder,
+  OrderLinesLimit,
+  SettingsOrders,
+} from '../../support/fragments/settings/orders';
 import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
@@ -65,6 +69,7 @@ describe('Orders', () => {
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
       OrderLinesLimit.setPOLLimitViaApi(2);
+      SettingsOrders.setUserCanEditPONumberViaApi(false);
       OpenOrder.setOpenOrderValue(false);
       Organizations.createOrganizationViaApi(testData.organization).then((id) => {
         testData.organization.id = id;
