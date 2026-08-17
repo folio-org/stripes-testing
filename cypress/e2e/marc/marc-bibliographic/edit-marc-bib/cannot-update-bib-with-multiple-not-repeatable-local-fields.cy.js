@@ -50,7 +50,6 @@ describe('MARC', () => {
         cy.getAdminToken();
         getBibliographicSpec().then((bibSpec) => {
           specId = bibSpec.id;
-          cy.syncSpecifications(specId);
         });
       });
 

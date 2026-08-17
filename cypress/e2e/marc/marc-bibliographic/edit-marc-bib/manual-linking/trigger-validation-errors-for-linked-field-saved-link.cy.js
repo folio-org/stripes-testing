@@ -114,7 +114,8 @@ describe('MARC', () => {
             // Get bib specification ID
             getBibliographicSpec().then((bibSpec) => {
               bibSpecId = bibSpec.id;
-              cy.syncSpecifications(bibSpec.id);
+
+              toggleAllUndefinedValidationRules(bibSpecId, { enable: false });
             });
           })
             .then(() => {

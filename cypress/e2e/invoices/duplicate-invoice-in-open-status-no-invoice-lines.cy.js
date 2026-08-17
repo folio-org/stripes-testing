@@ -8,7 +8,7 @@ import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import { CodeTools, DateTools, StringTools } from '../../support/utils';
-import { INVOICE_STATUSES, INVOICE_VIEW_FIELDS } from '../../support/constants';
+import { DEFAULT_WAIT_TIME, INVOICE_STATUSES, INVOICE_VIEW_FIELDS } from '../../support/constants';
 
 describe('Invoices', () => {
   const code = CodeTools(4);
@@ -27,6 +27,14 @@ describe('Invoices', () => {
     user: {},
     locale: 'en-US',
     timezone: 'UTC',
+  };
+
+  const formatDate = (date) => {
+    return DateTools.getFormattedDateTimeInTimezoneForMetadata(
+      date,
+      testData.timezone,
+      testData.locale,
+    );
   };
 
   const createInvoice = (batchGroupId) => {
@@ -121,33 +129,42 @@ describe('Invoices', () => {
       });
       Invoices.selectDuplicateInvoice();
 
-      const currentDate = DateTools.getFormattedDateTimeInTimezoneForMetadata(
-        new Date(),
-        testData.timezone,
-        testData.locale,
-      );
-
+      Invoices.interceptPostInvoices();
       DuplicateInvoiceModal.clickDuplicateButton();
-      InvoiceView.waitLoading();
-      InvoiceView.checkInvoiceDetails({
-        title: testData.invoice.vendorInvoiceNo,
-        invoiceInformation: [
-          { key: INVOICE_VIEW_FIELDS.INVOICE_STATUS, value: INVOICE_STATUSES.OPEN },
-          { key: INVOICE_VIEW_FIELDS.FISCAL_YEAR, value: '-' },
-        ],
-        vendorDetailsInformation: [
-          { key: INVOICE_VIEW_FIELDS.VENDOR_NAME, value: testData.organization.name },
-        ],
-      });
-      cy.url().then((url) => {
-        testData.duplicatedInvoice.id = url.match(/invoice\/view\/([^/]+)/)?.[1] || null;
-      });
-      InvoiceView.toggleMetadataAccordion();
-      InvoiceView.verifyMetadataContent({
-        updated: currentDate,
-        updatedBy: `${testData.user.personal.lastName}, ${testData.user.personal.firstName}`,
-        created: currentDate,
-        createdBy: `${testData.user.personal.lastName}, ${testData.user.personal.firstName}`,
+
+      Invoices.waitForInvoicesPostQueryCompleted().then(({ response: { body } }) => {
+        const currentDate = new Date();
+        const recordCreatedDate = new Date(body.metadata.createdDate);
+        const recordUpdatedDate = new Date(body.metadata.updatedDate);
+
+        // Verify that the created and updated dates are close to the current date
+        // Allowing for a small difference due to processing time
+        // We must check actual time difference because the created and updated dates are generated on the server side
+        // That's why we cant just check for equality, we need to check that they are close enough to the current date
+        expect(recordCreatedDate.getTime()).to.be.closeTo(currentDate.getTime(), DEFAULT_WAIT_TIME);
+        expect(recordUpdatedDate.getTime()).to.be.closeTo(currentDate.getTime(), DEFAULT_WAIT_TIME);
+
+        InvoiceView.waitLoading();
+        InvoiceView.checkInvoiceDetails({
+          title: testData.invoice.vendorInvoiceNo,
+          invoiceInformation: [
+            { key: INVOICE_VIEW_FIELDS.INVOICE_STATUS, value: INVOICE_STATUSES.OPEN },
+            { key: INVOICE_VIEW_FIELDS.FISCAL_YEAR, value: '-' },
+          ],
+          vendorDetailsInformation: [
+            { key: INVOICE_VIEW_FIELDS.VENDOR_NAME, value: testData.organization.name },
+          ],
+        });
+        cy.url().then((url) => {
+          testData.duplicatedInvoice.id = url.match(/invoice\/view\/([^/]+)/)?.[1] || null;
+        });
+        InvoiceView.toggleMetadataAccordion();
+        InvoiceView.verifyMetadataContent({
+          updated: formatDate(recordUpdatedDate),
+          updatedBy: `${testData.user.personal.lastName}, ${testData.user.personal.firstName}`,
+          created: formatDate(recordCreatedDate),
+          createdBy: `${testData.user.personal.lastName}, ${testData.user.personal.firstName}`,
+        });
       });
     },
   );
