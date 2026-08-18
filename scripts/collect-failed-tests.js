@@ -6,11 +6,11 @@ require('dotenv').config();
 const { splitTestsOnChunks } = require('./split-tests-on-chunks');
 
 const selectedTestTypes = [
-  testTypes.smoke,
-  testTypes.criticalPath,
-  testTypes.extendedPath,
-  testTypes.edgeCases,
-  testTypes.backend,
+  testTypes.Smoke,
+  testTypes.CriticalPath,
+  testTypes.ExtendedPath,
+  testTypes.EdgeCases,
+  testTypes.Backend,
 ];
 
 const selectedStatus = [
@@ -20,6 +20,8 @@ const selectedStatus = [
   status.Retest,
   status.Failed,
   status.Unassigned,
+  status.NotApplicable,
+  status.Flaky,
   status.ToInvestigate,
 ];
 const selectedTeams = [
@@ -29,10 +31,13 @@ const selectedTeams = [
   team.Thunderjet,
   team.Vega,
   team.Volaris,
+  team.Citation,
   team.Corsair,
   team.Eureka,
-  team.Citation,
+  team.KInt,
+  team.Athena,
   team.Promin,
+  team.Helios,
 ];
 
 const testUsername = process.env.TESTRAIL_API_USER;
