@@ -162,6 +162,14 @@ const UI = {
     cy.expect(privateCheckbox.exists());
   },
 
+  verifyFilterPaneAbsent() {
+    cy.expect(filterPane.absent());
+  },
+
+  verifyListsPaneAbsent() {
+    cy.expect(listsPane.absent());
+  },
+
   waitForSpinnerToDisappear() {
     cy.get('[class^="spinner"]', { timeout: 120000 }).should('not.exist');
   },

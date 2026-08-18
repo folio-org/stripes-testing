@@ -121,11 +121,14 @@ describe('Lists', () => {
 
           // Step 5: Select "equals" operator and verify dropdown values include consortium + tenant affiliations
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
-          QueryModal.verifyOptionsInValueSelect([
+
+          const sortedValues = [
             Affiliations.College,
             Affiliations.Consortia,
             Affiliations.University,
-          ]);
+          ].sort();
+
+          QueryModal.verifyOptionsInValueSelect(sortedValues);
 
           // Step 6: Select "is null/empty" operator with "False" value and test query
           QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);

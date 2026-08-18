@@ -1,8 +1,10 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Permissions from '../../../support/dictionary/permissions';
 import { Lists } from '../../../support/fragments/lists/lists';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 const testData = {
@@ -50,7 +52,9 @@ describe('Lists', () => {
       () => {
         // Step 1: Switch affiliation to member tenant
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-        Lists.waitLoading();
+        TopMenuNavigation.verifyAppButtonShown(APPLICATION_NAMES.LISTS);
+        Lists.verifyFilterPaneAbsent();
+        Lists.verifyListsPaneAbsent();
         Lists.verifyNoEntityTypePermissionsWarning();
       },
     );
