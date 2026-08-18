@@ -4,7 +4,6 @@ import { Button, SearchField, Section } from '../../../interactors';
 import {
   APPLICATION_NAMES,
   COMMON_BUTTON_LABELS,
-  DEFAULT_WAIT_TIME,
   NO_ACQUISITION_UNIT_OPTION_LABEL,
   POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
@@ -16,27 +15,19 @@ import {
   Groups,
   Ledgers,
 } from '../../support/fragments/finance';
-import { Invoices } from '../../support/fragments/invoices';
-import {
-  BasicOrderLine,
-  NewOrder,
-  OrderHelper,
-  OrderLines,
-  Orders,
-} from '../../support/fragments/orders';
+import { Invoices, InvoiceView } from '../../support/fragments/invoices';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { DateTools, ExecutionFlowManager } from '../../support/utils';
+import { DateTools, ExecutionFlowManager, PaneRequestWaiter } from '../../support/utils';
 import getRandomPostfix from '../../support/utils/stringTools';
 import FiltersPane from '../../support/fragments/filtersPane';
 import SelectOrderLinesModal from '../../support/fragments/invoices/modal/selectOrderLinesModal';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import Claiming from '../../support/fragments/claiming/claiming';
-import { Receivings } from '../../support/fragments/receiving';
 
-const FILTER_PANES_DICT = {
+const FILTER_PANES = {
   CLAIMING: 'claiming-filters-pane',
   FISCAL_YEARS: 'fiscal-year-filters-pane',
   LEDGERS: 'ledger-filters-pane',
@@ -48,6 +39,22 @@ const FILTER_PANES_DICT = {
   ORDER_LINES_PLUGIN: 'ORDER_LINES_PLUGIN',
   RECEIVING: 'receiving-filters-pane',
   INVOICES: 'invoice-filters-pane',
+};
+
+const { PANE_REQUEST_PROFILE_NAMES } = PaneRequestWaiter;
+
+const PANE_PROFILES = {
+  [FILTER_PANES.CLAIMING]: PANE_REQUEST_PROFILE_NAMES.CLAIMING,
+  [FILTER_PANES.FISCAL_YEARS]: PANE_REQUEST_PROFILE_NAMES.FISCAL_YEARS,
+  [FILTER_PANES.FUNDS]: PANE_REQUEST_PROFILE_NAMES.FUNDS,
+  [FILTER_PANES.GROUPS]: PANE_REQUEST_PROFILE_NAMES.GROUPS,
+  [FILTER_PANES.INVOICES]: PANE_REQUEST_PROFILE_NAMES.INVOICES,
+  [FILTER_PANES.LEDGERS]: PANE_REQUEST_PROFILE_NAMES.LEDGERS,
+  [FILTER_PANES.ORDERS]: PANE_REQUEST_PROFILE_NAMES.ORDERS,
+  [FILTER_PANES.ORDER_LINES]: PANE_REQUEST_PROFILE_NAMES.ORDER_LINES,
+  [FILTER_PANES.ORDER_LINES_PLUGIN]: PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE,
+  [FILTER_PANES.ORGANIZATIONS]: PANE_REQUEST_PROFILE_NAMES.ORGANIZATIONS,
+  [FILTER_PANES.RECEIVING]: PANE_REQUEST_PROFILE_NAMES.RECEIVING,
 };
 
 const R = {
@@ -68,199 +75,6 @@ const R = {
 };
 
 const ACQUISITION_UNIT_FILTER_LABEL = 'Acquisition unit';
-
-/* Intercept filters' requests to wait before applying filters */
-const interceptQueries = () => {
-  AcquisitionUnits.interceptGetAcquisitionUnits();
-  Claiming.interceptGetClaimingPieces();
-  FinanceHelper.interceptGetExpenseClassesRequest();
-  FinanceHelper.interceptGetFiscalYearsRequest();
-  FinanceHelper.interceptGetLedgersRequest();
-  FinanceHelper.interceptGetGroupsRequest();
-  FinanceHelper.interceptFundsRequest();
-  FinanceHelper.interceptGetFundTypesRequest();
-  Invoices.interceptGetBatchGroups();
-  Invoices.interceptGetInvoices();
-  OrderHelper.interceptGetAcquisitionMethods();
-  OrderHelper.interceptCustomFields();
-  OrderHelper.interceptGetLocations();
-  OrderHelper.interceptGetMaterialTypes();
-  OrderHelper.interceptGetOrders();
-  OrderHelper.interceptGetOrderLines();
-  OrderHelper.interceptGetOrdersStorageSettings();
-  OrderHelper.interceptGetPrefixes();
-  OrderHelper.interceptGetReasonsForClosure();
-  OrderHelper.interceptGetSuffixes();
-  OrderHelper.interceptGetSettingsEntries();
-  OrderHelper.interceptGetTags();
-  OrderHelper.interceptGetTenantAddresses();
-  Organizations.interceptGetOrganizationTypes();
-  Organizations.interceptGetOrganizations();
-  Receivings.interceptGetReceivingTitles();
-};
-
-// To make tests more stable we should wait for pending request to enable inputs on UI
-const WAITERS_DICT = {
-  [FILTER_PANES_DICT.CLAIMING]: {
-    filters: () => {
-      AcquisitionUnits.waitForAcquisitionUnitsQueryCompleted();
-      OrderHelper.waitForCustomFieldsQueryCompleted();
-      OrderHelper.waitForGetLocationsQueryCompleted();
-      OrderHelper.waitForMaterialTypesQueryCompleted();
-      OrderHelper.waitForSettingsEntriesQueryCompleted();
-      OrderHelper.waitForTagsQueryCompleted();
-      OrderHelper.waitForTenantAddressesQueryCompleted();
-      Organizations.waitForOrganizationsQueryCompleted();
-    },
-    results: () => {
-      Claiming.waitForGetClaimingPiecesQueryCompleted();
-      Organizations.waitForOrganizationsQueryCompleted();
-    },
-  },
-  [FILTER_PANES_DICT.FISCAL_YEARS]: {
-    filters: () => {
-      AcquisitionUnits.waitForAcquisitionUnitsQueryCompleted();
-    },
-    results: () => {
-      FinanceHelper.waitForGetFiscalYearsRequestCompletion();
-    },
-  },
-  [FILTER_PANES_DICT.FUNDS]: {
-    filters: () => {
-      AcquisitionUnits.waitForAcquisitionUnitsQueryCompleted();
-      FinanceHelper.waitForGetFundTypesRequestCompletion();
-      FinanceHelper.waitForGetGroupsRequestCompletion();
-      FinanceHelper.waitForGetLedgersRequestCompletion();
-      OrderHelper.waitForSettingsEntriesQueryCompleted();
-      OrderHelper.waitForTagsQueryCompleted();
-    },
-    results: () => {
-      FinanceHelper.waitForFundsRequestCompletion();
-      FinanceHelper.waitForGetLedgersRequestCompletion();
-    },
-  },
-  [FILTER_PANES_DICT.GROUPS]: {
-    filters: () => {
-      AcquisitionUnits.waitForAcquisitionUnitsQueryCompleted();
-    },
-    results: () => {
-      FinanceHelper.waitForGetGroupsRequestCompletion();
-    },
-  },
-  [FILTER_PANES_DICT.INVOICES]: {
-    filters: () => {
-      AcquisitionUnits.waitForAcquisitionUnitsQueryCompleted();
-      FinanceHelper.waitForGetExpenseClassesRequestCompletion();
-      FinanceHelper.waitForGetFiscalYearsRequestCompletion();
-      FinanceHelper.waitForFundsRequestCompletion();
-      Invoices.waitForBatchGroupsQueryCompleted();
-      OrderHelper.waitForSettingsEntriesQueryCompleted();
-      OrderHelper.waitForTagsQueryCompleted();
-    },
-    results: () => {
-      Invoices.waitForInvoiceQueryCompleted();
-      Organizations.waitForOrganizationsQueryCompleted();
-    },
-  },
-  [FILTER_PANES_DICT.LEDGERS]: {
-    filters: () => {
-      AcquisitionUnits.waitForAcquisitionUnitsQueryCompleted();
-    },
-    results: () => {
-      FinanceHelper.waitForGetLedgersRequestCompletion();
-    },
-  },
-  [FILTER_PANES_DICT.ORDERS]: {
-    filters: () => {
-      AcquisitionUnits.waitForAcquisitionUnitsQueryCompleted();
-      FinanceHelper.waitForFundsRequestCompletion();
-      OrderHelper.waitForCustomFieldsQueryCompleted();
-      OrderHelper.waitForPrefixesQueryCompleted();
-      OrderHelper.waitForReasonsForClosureQueryCompleted();
-      OrderHelper.waitForSettingsEntriesQueryCompleted();
-      OrderHelper.waitForSuffixesQueryCompleted();
-      OrderHelper.waitForTenantAddressesQueryCompleted();
-      OrderHelper.waitForTagsQueryCompleted();
-    },
-    results: (acqUnitValue) => {
-      if (acqUnitValue !== NO_ACQUISITION_UNIT_OPTION_LABEL) {
-        AcquisitionUnits.waitForAcquisitionUnitsQueryCompleted();
-      }
-
-      OrderHelper.waitForOrdersQueryCompleted();
-      Organizations.waitForOrganizationsQueryCompleted();
-      cy.wait(DEFAULT_WAIT_TIME);
-    },
-  },
-  [FILTER_PANES_DICT.ORDER_LINES]: {
-    filters: () => {
-      AcquisitionUnits.waitForAcquisitionUnitsQueryCompleted();
-      FinanceHelper.waitForGetExpenseClassesRequestCompletion();
-      FinanceHelper.waitForFundsRequestCompletion();
-      OrderHelper.waitForAcquisitionMethodsQueryCompleted();
-      OrderHelper.waitForCustomFieldsQueryCompleted();
-      OrderHelper.waitForGetLocationsQueryCompleted();
-      OrderHelper.waitForMaterialTypesQueryCompleted();
-      OrderHelper.waitForPrefixesQueryCompleted();
-      OrderHelper.waitForSuffixesQueryCompleted();
-      OrderHelper.waitForSettingsEntriesQueryCompleted();
-      OrderHelper.waitForTagsQueryCompleted();
-    },
-    results: (acqUnitValue) => {
-      if (acqUnitValue !== NO_ACQUISITION_UNIT_OPTION_LABEL) {
-        AcquisitionUnits.waitForAcquisitionUnitsQueryCompleted();
-      }
-
-      OrderHelper.waitForOrderLinesQueryCompleted();
-      OrderHelper.waitForOrdersQueryCompleted();
-      cy.wait(DEFAULT_WAIT_TIME);
-    },
-  },
-  [FILTER_PANES_DICT.ORDER_LINES_PLUGIN]: {
-    filters: () => {
-      AcquisitionUnits.waitForAcquisitionUnitsQueryCompleted();
-      FinanceHelper.waitForGetExpenseClassesRequestCompletion();
-      FinanceHelper.waitForFundsRequestCompletion();
-      OrderHelper.waitForAcquisitionMethodsQueryCompleted();
-      OrderHelper.waitForGetLocationsQueryCompleted();
-      OrderHelper.waitForMaterialTypesQueryCompleted();
-      OrderHelper.waitForPrefixesQueryCompleted();
-      OrderHelper.waitForSuffixesQueryCompleted();
-      OrderHelper.waitForSettingsEntriesQueryCompleted();
-      OrderHelper.waitForTagsQueryCompleted();
-    },
-    results: () => {
-      OrderHelper.waitForOrderLinesQueryCompleted();
-      OrderHelper.waitForOrdersQueryCompleted();
-    },
-  },
-  [FILTER_PANES_DICT.ORGANIZATIONS]: {
-    filters: () => {
-      AcquisitionUnits.waitForAcquisitionUnitsQueryCompleted();
-      OrderHelper.waitForSettingsEntriesQueryCompleted();
-      OrderHelper.waitForTagsQueryCompleted();
-      Organizations.waitForOrganizationTypesQueryCompleted();
-    },
-    results: () => {
-      Organizations.waitForOrganizationsQueryCompleted();
-    },
-  },
-  [FILTER_PANES_DICT.RECEIVING]: {
-    filters: () => {
-      AcquisitionUnits.waitForAcquisitionUnitsQueryCompleted();
-      OrderHelper.waitForGetLocationsQueryCompleted();
-      OrderHelper.waitForMaterialTypesQueryCompleted();
-      OrderHelper.waitForSettingsEntriesQueryCompleted();
-      OrderHelper.waitForTagsQueryCompleted();
-    },
-    results: () => {
-      OrderHelper.waitForGetLocationsQueryCompleted();
-      OrderHelper.waitForOrdersQueryCompleted();
-      OrderHelper.waitForOrderLinesQueryCompleted();
-      Receivings.waitForReceivingTitlesQueryCompleted();
-    },
-  },
-};
 
 describe('Acquisition units', () => {
   const flow = new ExecutionFlowManager();
@@ -406,7 +220,13 @@ describe('Acquisition units', () => {
             accountingCode: currentFlow.get(R.ORGANIZATIONS)[index].erpCode,
             fiscalYearId: currentFlow.get(R.FISCAL_YEARS)[index].id,
             acqUnitIds: index === 0 ? [currentFlow.get(R.ACQUISITION_UNIT).id] : [],
-          }).then((invoice) => invoices.push(invoice)))
+          }).then((invoice) => Invoices.createInvoiceLineViaApi(
+            Invoices.getDefaultInvoiceLine({
+              invoiceId: invoice.id,
+              invoiceLineStatus: invoice.status,
+              accountingCode: currentFlow.get(R.ORGANIZATIONS)[index].erpCode,
+            }),
+          ).then(() => invoices.push(invoice))))
           .then(() => currentFlow.set(R.INVOICES, invoices, () => invoices.forEach(({ id }) => Invoices.deleteInvoiceViaApi(id))));
       })
       .step((currentFlow) => cy
@@ -421,15 +241,18 @@ describe('Acquisition units', () => {
           Permissions.uiOrganizationsView.gui,
           Permissions.uiReceivingView.gui,
         ])
-        .then((user) => currentFlow.set(R.USER, user, () => Users.deleteViaApi(user.userId))))
-      .step((currentFlow) => {
-        interceptQueries();
+        .then((user) => {
+          currentFlow.set(R.USER, user, () => Users.deleteViaApi(user.userId));
 
-        cy.login(currentFlow.get(R.USER).username, currentFlow.get(R.USER).password, {
-          path: TopMenu.fiscalYearPath,
-          waiter: FiscalYears.waitLoading,
-        });
-      });
+          return AcquisitionUnits.assignUserViaApi(
+            user.userId,
+            currentFlow.get(R.ACQUISITION_UNIT).id,
+          );
+        }))
+      .step((currentFlow) => cy.login(currentFlow.get(R.USER).username, currentFlow.get(R.USER).password, {
+        path: TopMenu.fiscalYearPath,
+        waiter: FiscalYears.waitLoading,
+      }));
   });
 
   after('Delete C1385303 data', () => {
@@ -440,24 +263,35 @@ describe('Acquisition units', () => {
   const filterAndVerify = ({ step, value, expected, paneId }) => {
     const filtersPane = Section({ id: paneId });
     const searchInput = SearchField({ id: 'input-record-search' });
-    const { results: waitResults } = WAITERS_DICT[paneId];
+    const pane = PANE_PROFILES[paneId];
 
     cy.log(`<--- STEP ${step}: Filter by ${value} --->`);
-    FiltersPane.filterBySelection(filtersPane, ACQUISITION_UNIT_FILTER_LABEL, value);
-    waitResults(value);
+    PaneRequestWaiter.waitForPaneRequests({
+      pane,
+      conditions: { acquisitionUnit: value !== NO_ACQUISITION_UNIT_OPTION_LABEL },
+      trigger: () => FiltersPane.filterBySelection(filtersPane, ACQUISITION_UNIT_FILTER_LABEL, value),
+    });
     FiltersPane.assertResetAllButtonState(filtersPane, { disabled: false });
 
     /* Additionally filter by entity value to avoid pagination issues */
-    cy.do([
-      searchInput.fillIn(expected),
-      filtersPane.find(Button(COMMON_BUTTON_LABELS.SEARCH)).click(),
-    ]);
-    waitResults(value);
+    PaneRequestWaiter.waitForPaneRequests({
+      pane,
+      trigger: () => cy.do([
+        searchInput.fillIn(expected),
+        filtersPane.find(Button(COMMON_BUTTON_LABELS.SEARCH)).click(),
+      ]),
+    });
 
     cy.contains('section[id$="results-pane"]', expected).should('be.visible');
     FiltersPane.assertResetAllButtonState(filtersPane, { disabled: false });
     FiltersPane.clearAllFilters(filtersPane);
   };
+
+  const openPaneAndWaitForFilters = (pane, trigger) => PaneRequestWaiter.waitForPaneRequests({
+    pane,
+    phase: 'filters',
+    trigger,
+  });
 
   it(
     'C1385303 Filter by Acquisition unit across acquisition modules (thunderjet)',
@@ -473,177 +307,196 @@ describe('Acquisition units', () => {
       const [lineWithUnit, lineWithoutUnit] = flow.get(R.LINES);
       const [invoiceWithUnit, invoiceWithoutUnit] = flow.get(R.INVOICES);
 
-      WAITERS_DICT[FILTER_PANES_DICT.FISCAL_YEARS].filters();
       filterAndVerify({
         step: 1,
-        paneId: FILTER_PANES_DICT.FISCAL_YEARS,
+        paneId: FILTER_PANES.FISCAL_YEARS,
         expected: yearWithUnit.name,
         value: unitName,
       });
       filterAndVerify({
         step: 2,
         expected: yearWithoutUnit.name,
-        paneId: FILTER_PANES_DICT.FISCAL_YEARS,
+        paneId: FILTER_PANES.FISCAL_YEARS,
         value: NO_ACQUISITION_UNIT_OPTION_LABEL,
       });
 
-      FinanceHelper.selectLedgersNavigation();
-      WAITERS_DICT[FILTER_PANES_DICT.LEDGERS].filters();
+      openPaneAndWaitForFilters(
+        PANE_REQUEST_PROFILE_NAMES.LEDGERS,
+        FinanceHelper.selectLedgersNavigation,
+      );
       filterAndVerify({
         step: 3,
         value: unitName,
         expected: ledgerWithUnit.name,
-        paneId: FILTER_PANES_DICT.LEDGERS,
+        paneId: FILTER_PANES.LEDGERS,
       });
       filterAndVerify({
         step: 4,
         value: NO_ACQUISITION_UNIT_OPTION_LABEL,
         expected: ledgerWithoutUnit.name,
-        paneId: FILTER_PANES_DICT.LEDGERS,
+        paneId: FILTER_PANES.LEDGERS,
       });
 
-      FinanceHelper.selectGroupsNavigation();
-      WAITERS_DICT[FILTER_PANES_DICT.GROUPS].filters();
+      openPaneAndWaitForFilters(
+        PANE_REQUEST_PROFILE_NAMES.GROUPS,
+        FinanceHelper.selectGroupsNavigation,
+      );
       filterAndVerify({
         step: 5,
         value: unitName,
         expected: groupWithUnit.name,
-        paneId: FILTER_PANES_DICT.GROUPS,
+        paneId: FILTER_PANES.GROUPS,
       });
       filterAndVerify({
         step: 6,
         value: NO_ACQUISITION_UNIT_OPTION_LABEL,
         expected: groupWithoutUnit.name,
-        paneId: FILTER_PANES_DICT.GROUPS,
+        paneId: FILTER_PANES.GROUPS,
       });
 
-      FinanceHelper.selectFundsNavigation();
-      WAITERS_DICT[FILTER_PANES_DICT.FUNDS].filters();
+      openPaneAndWaitForFilters(
+        PANE_REQUEST_PROFILE_NAMES.FUNDS,
+        FinanceHelper.selectFundsNavigation,
+      );
       filterAndVerify({
         step: 7,
         value: unitName,
         expected: fundWithUnit.name,
-        paneId: FILTER_PANES_DICT.FUNDS,
+        paneId: FILTER_PANES.FUNDS,
       });
       filterAndVerify({
         step: 8,
         value: NO_ACQUISITION_UNIT_OPTION_LABEL,
         expected: fundWithoutUnit.name,
-        paneId: FILTER_PANES_DICT.FUNDS,
+        paneId: FILTER_PANES.FUNDS,
       });
 
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATIONS);
-      Organizations.waitLoading();
-      WAITERS_DICT[FILTER_PANES_DICT.ORGANIZATIONS].filters();
+      openPaneAndWaitForFilters(PANE_REQUEST_PROFILE_NAMES.ORGANIZATIONS, () => {
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATIONS);
+        Organizations.waitLoading();
+      });
       filterAndVerify({
         step: 9.1,
         value: unitName,
         expected: orgWithUnit.name,
-        paneId: FILTER_PANES_DICT.ORGANIZATIONS,
+        paneId: FILTER_PANES.ORGANIZATIONS,
       });
       filterAndVerify({
         step: 9.2,
         value: NO_ACQUISITION_UNIT_OPTION_LABEL,
         expected: orgWithoutUnit.name,
-        paneId: FILTER_PANES_DICT.ORGANIZATIONS,
+        paneId: FILTER_PANES.ORGANIZATIONS,
       });
 
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
-      OrderLines.waitLoading();
-      WAITERS_DICT[FILTER_PANES_DICT.ORDER_LINES].filters();
+      openPaneAndWaitForFilters(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => {
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+        OrderLines.waitLoading();
+      });
       filterAndVerify({
         step: 11.1,
         value: unitName,
         expected: lineWithUnit.poLineNumber,
-        paneId: FILTER_PANES_DICT.ORDER_LINES,
+        paneId: FILTER_PANES.ORDER_LINES,
       });
       filterAndVerify({
         step: 11.2,
         value: NO_ACQUISITION_UNIT_OPTION_LABEL,
         expected: lineWithoutUnit.poLineNumber,
-        paneId: FILTER_PANES_DICT.ORDER_LINES,
+        paneId: FILTER_PANES.ORDER_LINES,
       });
 
-      OrderLines.selectOrders();
-      WAITERS_DICT[FILTER_PANES_DICT.ORDERS].filters();
+      openPaneAndWaitForFilters(PANE_REQUEST_PROFILE_NAMES.ORDERS, OrderLines.selectOrders);
       filterAndVerify({
         step: 10.1,
         value: unitName,
         expected: orderWithUnit.poNumber,
-        paneId: FILTER_PANES_DICT.ORDERS,
+        paneId: FILTER_PANES.ORDERS,
       });
       filterAndVerify({
         step: 10.2,
         value: NO_ACQUISITION_UNIT_OPTION_LABEL,
         expected: orderWithoutUnit.poNumber,
-        paneId: FILTER_PANES_DICT.ORDERS,
+        paneId: FILTER_PANES.ORDERS,
       });
 
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.RECEIVING);
-      WAITERS_DICT[FILTER_PANES_DICT.RECEIVING].filters();
+      openPaneAndWaitForFilters(PANE_REQUEST_PROFILE_NAMES.RECEIVING, () => {
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.RECEIVING);
+      });
       filterAndVerify({
         step: 12.1,
         value: unitName,
         expected: lineWithUnit.titleOrPackage,
-        paneId: FILTER_PANES_DICT.RECEIVING,
+        paneId: FILTER_PANES.RECEIVING,
       });
       filterAndVerify({
         step: 12.2,
         value: NO_ACQUISITION_UNIT_OPTION_LABEL,
         expected: lineWithoutUnit.titleOrPackage,
-        paneId: FILTER_PANES_DICT.RECEIVING,
+        paneId: FILTER_PANES.RECEIVING,
       });
 
       // TODO: Uncomment after https://folio-org.atlassian.net/browse/MODORDERS-1464
       // cy.log('<--- STEPS 13: Filter Claiming by Acquisition unit --->');
       // TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CLAIMING);
       // Claiming.waitLoading();
-      // WAITERS_DICT[FILTER_PANES_DICT.CLAIMING].filters();
       // filterAndVerify({
       //   step: 13.1,
       //   value: unitName,
       //   expected: lineWithUnit.poLineNumber,
-      //   paneId: FILTER_PANES_DICT.CLAIMING,
+      //   paneId: FILTER_PANES.CLAIMING,
       // });
       // filterAndVerify({
       //   step: 13.2,
       //   value: NO_ACQUISITION_UNIT_OPTION_LABEL,
       //   expected: lineWithoutUnit.poLineNumber,
-      //   paneId: FILTER_PANES_DICT.CLAIMING,
+      //   paneId: FILTER_PANES.CLAIMING,
       // });
 
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
-      Invoices.waitLoading();
-      WAITERS_DICT[FILTER_PANES_DICT.INVOICES].filters();
-      Invoices.searchByNumber(invoiceWithUnit.vendorInvoiceNo);
-      Invoices.selectInvoice(invoiceWithUnit.vendorInvoiceNo);
-      Invoices.openPolSearchPlugin();
+      openPaneAndWaitForFilters(PANE_REQUEST_PROFILE_NAMES.INVOICES, () => {
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
+        Invoices.waitLoading();
+      });
+
+      PaneRequestWaiter.waitForPaneRequests({
+        pane: PANE_REQUEST_PROFILE_NAMES.INVOICES,
+        trigger: () => {
+          Invoices.searchByNumber(invoiceWithUnit.vendorInvoiceNo);
+        },
+      });
+
+      openPaneAndWaitForFilters(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () => {
+        Invoices.selectInvoice(invoiceWithUnit.vendorInvoiceNo);
+        InvoiceView.waitLoading();
+        Invoices.openPolSearchPlugin();
+      });
 
       cy.log(`<--- DEBUG STEP 15-16.1: Filter by ${unitName} --->`);
-      WAITERS_DICT[FILTER_PANES_DICT.ORDER_LINES_PLUGIN].filters();
-      SelectOrderLinesModal.filterByAcqUnit(unitName);
-      WAITERS_DICT[FILTER_PANES_DICT.ORDER_LINES_PLUGIN].results();
+      PaneRequestWaiter.waitForPaneRequests({
+        pane: PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE,
+        trigger: () => SelectOrderLinesModal.filterByAcqUnit(unitName),
+      });
       cy.contains(lineWithUnit.poLineNumber).should('be.visible');
       SelectOrderLinesModal.clearAllFilters();
 
       cy.log(`<--- DEBUG STEP 15-16.2: Filter by ${NO_ACQUISITION_UNIT_OPTION_LABEL} --->`);
-      SelectOrderLinesModal.filterByAcqUnit(NO_ACQUISITION_UNIT_OPTION_LABEL);
-      WAITERS_DICT[FILTER_PANES_DICT.ORDER_LINES_PLUGIN].results();
+      PaneRequestWaiter.waitForPaneRequests({
+        pane: PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE,
+        trigger: () => SelectOrderLinesModal.filterByAcqUnit(NO_ACQUISITION_UNIT_OPTION_LABEL),
+      });
       cy.contains(lineWithoutUnit.poLineNumber).should('be.visible');
       SelectOrderLinesModal.closeModal();
-      Invoices.resetFilters();
 
       filterAndVerify({
         step: 14.1,
         value: unitName,
         expected: invoiceWithUnit.vendorInvoiceNo,
-        paneId: FILTER_PANES_DICT.INVOICES,
+        paneId: FILTER_PANES.INVOICES,
       });
       filterAndVerify({
         step: 14.2,
         value: NO_ACQUISITION_UNIT_OPTION_LABEL,
         expected: invoiceWithoutUnit.vendorInvoiceNo,
-        paneId: FILTER_PANES_DICT.INVOICES,
+        paneId: FILTER_PANES.INVOICES,
       });
     },
   );
