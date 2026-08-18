@@ -103,8 +103,8 @@ describe(
       });
 
       it(
-        'C478255 Verify combined Bulk Edit form for MARC Instances (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C478255'] },
+        'C1373193 Verify combined Bulk Edit form for MARC Instances (firebird)',
+        { tags: ['criticalPath', 'firebird', 'C1373193'] },
         () => {
           // Step 1: Select "Inventory - instances" radio button and "Instance UUIDs" option
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

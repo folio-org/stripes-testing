@@ -76,8 +76,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C566500 Verify Bulk edit of MARC fields flow for FOLIO Instances (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C566500'] },
+      'C1385793 Verify Bulk edit of MARC fields flow for FOLIO Instances (firebird)',
+      { tags: ['extendedPath', 'firebird', 'C1385793'] },
       () => {
         // Step 1: Check Source column
         BulkEditActions.openActions();

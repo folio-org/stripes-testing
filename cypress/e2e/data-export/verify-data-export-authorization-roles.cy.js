@@ -105,6 +105,8 @@ describe('Data Export', () => {
       AuthorizationRoles.selectUserInModal(user.username);
       AuthorizationRoles.clickSaveInAssignModal();
       AuthorizationRoles.verifyAssignedUser(user.lastName, user.firstName);
+      cy.wait(10_000);
+      cy.logout();
 
       // Step 7: Re-login with current User
       cy.login(user.username, user.password);
