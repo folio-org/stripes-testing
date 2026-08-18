@@ -1,5 +1,4 @@
 import {
-  ORDER_CALLOUT_MESSAGES,
   ORDER_FORMAT_VALUES,
   ORDER_SEARCH_INDEXES,
   ORDER_STATUSES,
@@ -18,6 +17,7 @@ import {
   OrderLines,
   Orders,
 } from '../../support/fragments/orders';
+import OrderStates from '../../support/fragments/orders/orderStates';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
@@ -86,7 +86,7 @@ describe('Orders', () => {
         orderNumber: order1Number,
         submit: true,
       });
-      InteractorsTools.checkCalloutMessage(ORDER_CALLOUT_MESSAGES.ORDER_UNOPENED(order1Number));
+      InteractorsTools.checkCalloutMessage(OrderStates.orderUnopenedSuccessfully(order1Number));
       OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
 
       cy.log('<--- STEP 3 --->');

@@ -1799,13 +1799,20 @@ export const COMMON_BUTTON_LABELS = {
   APPLY: 'Apply',
   CANCEL: 'Cancel',
   CLOSE: 'Close',
+  COLLAPSE_ALL: 'Collapse all',
   CONFIRM: 'Confirm',
+  CREATE: 'Create',
+  DELETE: 'Delete',
+  EDIT: 'Edit',
   NEXT: 'Next',
+  NEW: 'New',
   PREVIOUS: 'Previous',
   REMOVE: 'Remove',
   RESET_ALL: 'Reset all',
   SAVE: 'Save',
   SAVE_AND_CLOSE: 'Save & close',
+  SAVE_AND_CREATE_ANOTHER: 'Save & create another',
+  SAVE_AND_KEEP_EDITING: 'Save & keep editing',
   SEARCH: 'Search',
   SUBMIT: 'Submit',
   YES: 'Yes',
@@ -1863,3 +1870,5 @@ export const TIMER_TYPES = {
   USER: 'USER',
   SYSTEM: 'SYSTEM',
 };
+
+export const SEARCH_AND_FILTER_PANE_TITLE = 'Search & filter';

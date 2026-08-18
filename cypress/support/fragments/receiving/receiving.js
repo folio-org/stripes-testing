@@ -851,4 +851,12 @@ export default {
         }
       });
   },
+
+  /* Request interceptors */
+  interceptGetReceivingTitles() {
+    cy.intercept('GET', '/orders/titles*').as('waiterForReceivingTitlesQueryCompleted');
+  },
+  waitForReceivingTitlesQueryCompleted() {
+    cy.wait('@waiterForReceivingTitlesQueryCompleted');
+  },
 };

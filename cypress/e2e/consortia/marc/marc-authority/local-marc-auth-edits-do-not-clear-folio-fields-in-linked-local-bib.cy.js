@@ -228,16 +228,19 @@ describe('MARC', () => {
           Users.deleteViaApi(testData.userProperties.userId);
           cy.setTenant(Affiliations.College);
           MarcAuthority.deleteViaAPI(authorityId, true);
-          cy.getInstanceById(localInstanceId).then((instanceData) => {
-            cy.updateInstance({
-              ...instanceData,
-              parentInstances: [],
-              childInstances: [],
+          cy.then(() => {
+            cy.getInstanceById(localInstanceId).then((instanceData) => {
+              cy.updateInstance({
+                ...instanceData,
+                parentInstances: [],
+                childInstances: [],
+              });
             });
+          }).then(() => {
+            InventoryInstance.deleteInstanceViaApi(localInstanceId);
+            InventoryInstance.deleteInstanceViaApi(localParentInstanceId);
+            InventoryInstance.deleteInstanceViaApi(localChildInstanceId);
           });
-          InventoryInstance.deleteInstanceViaApi(localInstanceId);
-          InventoryInstance.deleteInstanceViaApi(localParentInstanceId);
-          InventoryInstance.deleteInstanceViaApi(localChildInstanceId);
         });
 
         it(
