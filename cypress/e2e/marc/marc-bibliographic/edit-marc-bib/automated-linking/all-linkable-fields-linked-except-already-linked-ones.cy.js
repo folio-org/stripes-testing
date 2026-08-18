@@ -240,7 +240,7 @@ describe('MARC', () => {
             });
 
             // move this step here from the precondition due to a concurrency issue in parallel runs
-            cy.getAdminToken();
+            cy.getAdminToken(false);
             linkableFields.forEach((tag) => {
               QuickMarcEditor.setRulesForField(tag, true);
             });
