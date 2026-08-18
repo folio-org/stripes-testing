@@ -79,6 +79,7 @@ export default {
       description: 'Template created by autotest team',
       subject: 'Subject_Test',
       body: 'Test_email_body',
+      noticeFormat: 'Email',
     };
   },
 
@@ -253,7 +254,7 @@ export default {
       name: noticePolicyTemplate.name,
       description: noticePolicyTemplate.description,
       category: noticePolicyTemplate.category.requestId,
-      noticeFormat: noticePolicyTemplate.noticeFormat,
+      noticeFormat: noticePolicyTemplate.noticeFormat || 'Email',
       body: noticePolicyTemplate.body,
     };
     Object.values(propertiesToCheck).forEach((prop) => {
@@ -296,6 +297,9 @@ export default {
     cy.do(descriptionField.fillIn('Test'));
     cy.expect(descriptionField.has({ value: 'Test' }));
 
+    cy.do(noticeFormatField.choose('Email'));
+
+    cy.expect(subjectField.has({ disabled: false }));
     cy.do(subjectField.fillIn(''));
     cy.wait(1000);
     cy.do(bodyField.fillIn('Test'));
@@ -310,6 +314,9 @@ export default {
     cy.do(nameField.fillIn('Test'));
     cy.expect(nameField.has({ value: 'Test' }));
 
+    cy.do(noticeFormatField.choose('Email'));
+
+    cy.expect(subjectField.has({ disabled: false }));
     cy.do(descriptionField.fillIn('Test'));
     cy.expect(descriptionField.has({ value: 'Test' }));
 
