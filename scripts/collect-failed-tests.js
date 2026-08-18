@@ -69,7 +69,12 @@ function grepTests() {
     })
     .then(() => {
       console.log(`Number of tests after filtering by status and team: ${ids.length}\n`);
-      splitTestsOnChunks(numberOfChunks, removeNonParallel ? ids.join(' ') + ' --nonParallel' : ids.join(' '), envVars, printSpecs);
+      splitTestsOnChunks(
+        numberOfChunks,
+        removeNonParallel ? ids.join(' ') + ' --nonParallel' : ids.join(' '),
+        envVars,
+        printSpecs,
+      );
     });
 }
 grepTests();
