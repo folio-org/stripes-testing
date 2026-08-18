@@ -5,9 +5,11 @@ import {
   APPLICATION_NAMES,
   COMMON_BUTTON_LABELS,
   NO_ACQUISITION_UNIT_OPTION_LABEL,
+  ORDER_STATUSES,
   POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
+import { Claiming } from '../../support/fragments/claiming';
 import {
   FinanceHelper,
   FiscalYears,
@@ -229,6 +231,11 @@ describe('Acquisition units', () => {
           ).then(() => invoices.push(invoice))))
           .then(() => currentFlow.set(R.INVOICES, invoices, () => invoices.forEach(({ id }) => Invoices.deleteInvoiceViaApi(id))));
       })
+      .step((currentFlow) => {
+        cy.wrap(currentFlow.get(R.ORDERS)).each((order) => {
+          Orders.updateOrderViaApi({ ...order, workflowStatus: ORDER_STATUSES.OPEN });
+        });
+      })
       .step((currentFlow) => cy
         .createTempUser([
           Permissions.uiClaimingView.gui,
@@ -266,6 +273,7 @@ describe('Acquisition units', () => {
     const pane = PANE_PROFILES[paneId];
 
     cy.log(`<--- STEP ${step}: Filter by ${value} --->`);
+    FiltersPane.clearAllFilters(filtersPane);
     PaneRequestWaiter.waitForPaneRequests({
       pane,
       conditions: { acquisitionUnit: value !== NO_ACQUISITION_UNIT_OPTION_LABEL },
@@ -435,22 +443,22 @@ describe('Acquisition units', () => {
         paneId: FILTER_PANES.RECEIVING,
       });
 
-      // TODO: Uncomment after https://folio-org.atlassian.net/browse/MODORDERS-1464
-      // cy.log('<--- STEPS 13: Filter Claiming by Acquisition unit --->');
-      // TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CLAIMING);
-      // Claiming.waitLoading();
-      // filterAndVerify({
-      //   step: 13.1,
-      //   value: unitName,
-      //   expected: lineWithUnit.poLineNumber,
-      //   paneId: FILTER_PANES.CLAIMING,
-      // });
-      // filterAndVerify({
-      //   step: 13.2,
-      //   value: NO_ACQUISITION_UNIT_OPTION_LABEL,
-      //   expected: lineWithoutUnit.poLineNumber,
-      //   paneId: FILTER_PANES.CLAIMING,
-      // });
+      openPaneAndWaitForFilters(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () => {
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CLAIMING);
+        Claiming.waitLoading();
+      });
+      filterAndVerify({
+        step: 13.1,
+        value: unitName,
+        expected: lineWithUnit.poLineNumber,
+        paneId: FILTER_PANES.CLAIMING,
+      });
+      filterAndVerify({
+        step: 13.2,
+        value: NO_ACQUISITION_UNIT_OPTION_LABEL,
+        expected: lineWithoutUnit.poLineNumber,
+        paneId: FILTER_PANES.CLAIMING,
+      });
 
       openPaneAndWaitForFilters(PANE_REQUEST_PROFILE_NAMES.INVOICES, () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
