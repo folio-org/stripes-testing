@@ -115,10 +115,8 @@ export default {
     InventoryInstance.editInstanceInMG();
     PreviewResource.waitLoading();
     PreviewResource.clickContinue();
-    // temporal workaround
-    EditResource.editWorkEditInstance();
     // edit edition
-    EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_WORK);
+    EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.EDIT_INSTANCE);
     EditResource.setEdition(title);
     EditResource.setValueForTheField(this.generateValidLccn(), 'LCCN');
     EditResource.saveAndClose();
