@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import { DEFAULT_LOCALE_OBJECT } from '../constants';
 
 Cypress.Commands.add(
@@ -24,6 +25,34 @@ Cypress.Commands.add('updateConfigForTenantById', (configId, body) => {
     body,
     failOnStatusCode: true,
     isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('createConfigForTenantById', (body) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'settings/entries',
+    body,
+    failOnStatusCode: true,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('toggleTagsEnabledViaApi', (isEnabled = true) => {
+  cy.getConfigForTenantByName('tags_enabled', 'ui-tags.tags.manage').then((existingTagConfig) => {
+    if (existingTagConfig) {
+      cy.updateConfigForTenantById(existingTagConfig.id, {
+        ...existingTagConfig,
+        value: isEnabled,
+      });
+    } else {
+      cy.createConfigForTenantById({
+        id: uuid(),
+        key: 'tags_enabled',
+        scope: 'ui-tags.tags.manage',
+        value: isEnabled,
+      });
+    }
   });
 });
 

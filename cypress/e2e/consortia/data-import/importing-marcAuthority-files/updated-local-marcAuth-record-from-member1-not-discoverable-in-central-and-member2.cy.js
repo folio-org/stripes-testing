@@ -95,6 +95,7 @@ describe('Data Import', () => {
 
       before('Create test data and login', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405526 ');
 
         // Create user with permissions for all three tenants
         cy.createTempUser([
@@ -107,6 +108,7 @@ describe('Data Import', () => {
             // Assign affiliations to Member 1 (University) and Member 2 (College)
             cy.assignAffiliationToUser(Affiliations.University, users.userProperties.userId);
             cy.setTenant(Affiliations.University);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405526 ');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.moduleDataImportEnabled.gui,
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -117,6 +119,7 @@ describe('Data Import', () => {
             // Assign permissions in Member 2 (College) tenant
             cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
             cy.setTenant(Affiliations.College);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405526 ');
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             ]);
@@ -189,7 +192,7 @@ describe('Data Import', () => {
 
         cy.setTenant(Affiliations.University);
         if (testData.createdAuthorityID) {
-          MarcAuthority.deleteViaAPI(testData.createdAuthorityID);
+          MarcAuthority.deleteViaAPI(testData.createdAuthorityID, true);
         }
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);

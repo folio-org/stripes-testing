@@ -5,7 +5,7 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
@@ -18,7 +18,9 @@ describe('Inventory', () => {
     describe('Filters', () => {
       describe('Consortia', () => {
         const randomPostfix = getRandomPostfix();
+        const randomLetters = getRandomLetters(8);
         const titlePrefix = `AT_C491303_${randomPostfix}`;
+        const locationPrefix = `AT_C491303_${randomLetters}`;
         const testData = {
           locations: {},
           instances: {},
@@ -110,8 +112,8 @@ describe('Inventory', () => {
             ServicePoints.createViaApi(testData.servicePointMember1);
             testData.locations.locationA_member1 = Location.getDefaultLocation(
               testData.servicePointMember1.id,
-              `${titlePrefix}_LocationA`,
-              `${titlePrefix}_A`,
+              `${locationPrefix}_LocA`,
+              `${locationPrefix}_A`,
             );
             Location.createViaApi(testData.locations.locationA_member1).then((loc) => {
               testData.locations.locationA_member1.id = loc.id;
@@ -122,8 +124,8 @@ describe('Inventory', () => {
             ServicePoints.createViaApi(testData.servicePointMember2);
             testData.locations.locationB_member2 = Location.getDefaultLocation(
               testData.servicePointMember2.id,
-              `${titlePrefix}_LocationB`,
-              `${titlePrefix}_B`,
+              `${locationPrefix}_LocB`,
+              `${locationPrefix}_B`,
             );
             Location.createViaApi(testData.locations.locationB_member2).then((loc) => {
               testData.locations.locationB_member2.id = loc.id;
@@ -132,8 +134,8 @@ describe('Inventory', () => {
             cy.setTenant(tenants.member1);
             testData.locations.testLocation_member1 = Location.getDefaultLocation(
               testData.servicePointMember1.id,
-              `${titlePrefix}_TestLocation`,
-              `${titlePrefix}_T`,
+              `${locationPrefix}_Test`,
+              `${locationPrefix}_T`,
             );
             Location.createViaApi(testData.locations.testLocation_member1).then((loc) => {
               testData.locations.testLocation_member1.id = loc.id;
@@ -141,8 +143,8 @@ describe('Inventory', () => {
             cy.setTenant(tenants.member2);
             testData.locations.testLocation_member2 = Location.getDefaultLocation(
               testData.servicePointMember2.id,
-              `${titlePrefix}_TestLocation`,
-              `${titlePrefix}_T`,
+              `${locationPrefix}_Test`,
+              `${locationPrefix}_T`,
             );
             Location.createViaApi(testData.locations.testLocation_member2).then((loc) => {
               testData.locations.testLocation_member2.id = loc.id;
@@ -432,18 +434,13 @@ describe('Inventory', () => {
           { tags: ['criticalPathECS', 'spitfire', 'C491303'] },
           () => {
             // Login and switch affiliation to Member 1
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.user.username, testData.user.password);
-              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-              InventoryInstances.waitContentLoading();
-              ConsortiumManager.switchActiveAffiliation(
-                tenantDisplayNames.central,
-                tenantDisplayNames.member1,
-              );
-              InventoryInstances.waitContentLoading();
-              cy.reload();
-              InventoryInstances.waitContentLoading();
-            }, 20_000);
+            cy.login(testData.user.username, testData.user.password);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+            InventoryInstances.waitContentLoading();
+            ConsortiumManager.switchActiveAffiliation(
+              tenantDisplayNames.central,
+              tenantDisplayNames.member1,
+            );
 
             // Step 1: Expand "Effective location (item)" dropdown
             InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);

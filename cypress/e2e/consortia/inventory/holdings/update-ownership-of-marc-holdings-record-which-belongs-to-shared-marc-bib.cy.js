@@ -42,7 +42,9 @@ describe('Inventory', () => {
           cy.resetTenant();
           cy.setTenant(Affiliations.College)
             .then(() => {
-              cy.getLocations({ query: '(name<>"*auto*" and name<>"AT_*")' }).then((res) => {
+              cy.getLocations({
+                query: '(isActive=true and name<>"*auto*" and name<>"AT_*")',
+              }).then((res) => {
                 testData.locationCollege = res;
               });
             })
@@ -117,7 +119,8 @@ describe('Inventory', () => {
         () => {
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();
-          InstanceRecordView.waitLoading();
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
           InstanceRecordView.openHoldingView();
           HoldingsRecordView.checkHoldingRecordViewOpened();
           ['cancel', 'confirm'].forEach((action) => {
@@ -129,7 +132,8 @@ describe('Inventory', () => {
               testData.locationUniversity.name,
             );
           });
-          InstanceRecordView.waitLoading();
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
           InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instanceId, false);
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.verifyMemberSubHoldingsAccordionAbsent(Affiliations.College);
@@ -138,6 +142,7 @@ describe('Inventory', () => {
           InstanceRecordView.verifyIsHoldingsCreated([`${testData.locationUniversity.name} >`]);
           InstanceRecordView.openHoldingView();
           HoldingsRecordView.checkHoldingRecordViewOpened();
+          cy.wait(3000);
           HoldingsRecordView.editInQuickMarc();
           QuickMarcEditor.waitLoading();
           QuickMarcEditor.checkContentByTag('852', `$b ${testData.locationUniversity.code}`);

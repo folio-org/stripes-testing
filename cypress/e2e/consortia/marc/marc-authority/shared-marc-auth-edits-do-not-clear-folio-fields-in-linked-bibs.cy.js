@@ -150,6 +150,7 @@ describe('MARC', () => {
         before('Create test data', () => {
           cy.resetTenant();
           cy.getAdminToken();
+          cy.toggleTagsEnabledViaApi(true);
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
 
           // Create Shared MARC Authority in Central
@@ -214,6 +215,7 @@ describe('MARC', () => {
           // Create Local MARC bib + parent/child instances in Member tenant
           cy.then(() => {
             cy.setTenant(Affiliations.College);
+            cy.toggleTagsEnabledViaApi(true);
             cy.createMarcBibliographicViaAPI(
               QuickMarcEditor.defaultValidLdr,
               marcBibFields(testData.localInstanceTitle),

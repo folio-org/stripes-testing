@@ -89,7 +89,9 @@ describe('MARC', () => {
         before('Create test data', () => {
           cy.resetTenant();
           cy.getAdminToken();
+          cy.toggleTagsEnabledViaApi(true);
           cy.setTenant(Affiliations.College);
+          cy.toggleTagsEnabledViaApi(true);
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
 
           // Create Local MARC Authority in Member tenant

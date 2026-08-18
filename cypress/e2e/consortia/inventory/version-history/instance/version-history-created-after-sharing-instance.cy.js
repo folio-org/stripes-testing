@@ -25,6 +25,7 @@ describe('Inventory', () => {
 
         before('Create test data', () => {
           cy.getAdminToken();
+          cy.toggleTagsEnabledViaApi(true);
           cy.createTempUser([]).then((userProperties) => {
             testData.user = userProperties;
 
@@ -43,6 +44,7 @@ describe('Inventory', () => {
             });
 
             cy.withinTenant(Affiliations.College, () => {
+              cy.toggleTagsEnabledViaApi(true);
               cy.getStatisticalCodes({
                 limit: 1,
                 query: 'code=="rmusic"',

@@ -4,7 +4,7 @@ import Users from '../../../../support/fragments/users/users';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
@@ -17,7 +17,9 @@ describe('Inventory', () => {
     describe('Filters', () => {
       describe('Consortia', () => {
         const randomPostfix = getRandomPostfix();
+        const randomLetters = getRandomLetters(8);
         const titlePrefix = `AT_C491302_${randomPostfix}`;
+        const locationPrefix = `AT_C491302_${randomLetters}`;
         const testData = {
           locations: {},
           instances: {},
@@ -104,8 +106,8 @@ describe('Inventory', () => {
             ServicePoints.createViaApi(testData.servicePointMember1);
             testData.locations.locationA_member1 = Location.getDefaultLocation(
               testData.servicePointMember1.id,
-              `${titlePrefix}_LocationA`,
-              `${titlePrefix}_A`,
+              `${locationPrefix}_LocA`,
+              `${locationPrefix}_A`,
             );
             Location.createViaApi(testData.locations.locationA_member1).then((loc) => {
               testData.locations.locationA_member1.id = loc.id;
@@ -116,8 +118,8 @@ describe('Inventory', () => {
             ServicePoints.createViaApi(testData.servicePointMember2);
             testData.locations.locationB_member2 = Location.getDefaultLocation(
               testData.servicePointMember2.id,
-              `${titlePrefix}_LocationB`,
-              `${titlePrefix}_B`,
+              `${locationPrefix}_LocB`,
+              `${locationPrefix}_B`,
             );
             Location.createViaApi(testData.locations.locationB_member2).then((loc) => {
               testData.locations.locationB_member2.id = loc.id;
@@ -126,8 +128,8 @@ describe('Inventory', () => {
             cy.setTenant(tenants.member1);
             testData.locations.testLocation_member1 = Location.getDefaultLocation(
               testData.servicePointMember1.id,
-              `${titlePrefix}_TestLocation`,
-              `${titlePrefix}_T`,
+              `${locationPrefix}_Test`,
+              `${locationPrefix}_T`,
             );
             Location.createViaApi(testData.locations.testLocation_member1).then((loc) => {
               testData.locations.testLocation_member1.id = loc.id;
@@ -135,8 +137,8 @@ describe('Inventory', () => {
             cy.setTenant(tenants.member2);
             testData.locations.testLocation_member2 = Location.getDefaultLocation(
               testData.servicePointMember2.id,
-              `${titlePrefix}_TestLocation`,
-              `${titlePrefix}_T`,
+              `${locationPrefix}_Test`,
+              `${locationPrefix}_T`,
             );
             Location.createViaApi(testData.locations.testLocation_member2).then((loc) => {
               testData.locations.testLocation_member2.id = loc.id;
