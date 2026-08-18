@@ -1729,8 +1729,21 @@ export default {
   interceptPostInvoices() {
     cy.intercept('POST', '/invoice/invoices*').as('waiterForInvoicesPostQueryCompleted');
   },
-
   waitForInvoicesPostQueryCompleted() {
     return cy.wait('@waiterForInvoicesPostQueryCompleted');
+  },
+
+  interceptGetInvoices() {
+    cy.intercept('GET', '/invoice/invoices*').as('waiterForInvoicesQueryCompleted');
+  },
+  waitForInvoiceQueryCompleted() {
+    cy.wait('@waiterForInvoicesQueryCompleted');
+  },
+
+  interceptGetBatchGroups() {
+    cy.intercept('GET', '/batch-groups*').as('waiterForBatchGroupsQueryCompleted');
+  },
+  waitForBatchGroupsQueryCompleted() {
+    cy.wait('@waiterForBatchGroupsQueryCompleted');
   },
 };
