@@ -51,7 +51,7 @@
             "type": ["string", "null"]
           },
           "instance.format_names": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "instance.statistical_code_names": {
             "type": ["string", "null"]
