@@ -5,15 +5,24 @@ require('dotenv').config();
 
 const { splitTestsOnChunks } = require('./split-tests-on-chunks');
 
-const selectedTestTypes = [testTypes.smoke, testTypes.criticalPath, testTypes.extendedPath];
+const selectedTestTypes = [
+  testTypes.Smoke,
+  testTypes.CriticalPath,
+  testTypes.ExtendedPath,
+  testTypes.EdgeCases,
+  testTypes.Backend,
+];
 
 const selectedStatus = [
-  // status.Passed,
+  status.Passed,
   status.Blocked,
   status.Untested,
   status.Retest,
   status.Failed,
-  // status.Unassigned,
+  status.Unassigned,
+  status.NotApplicable,
+  status.Flaky,
+  status.ToInvestigate,
 ];
 const selectedTeams = [
   team.Firebird,
@@ -22,9 +31,13 @@ const selectedTeams = [
   team.Thunderjet,
   team.Vega,
   team.Volaris,
+  team.Citation,
   team.Corsair,
   team.Eureka,
-  team.Citation,
+  team.KInt,
+  team.Athena,
+  team.Promin,
+  team.Helios,
 ];
 
 const testUsername = process.env.TESTRAIL_API_USER;
@@ -56,7 +69,12 @@ function grepTests() {
     })
     .then(() => {
       console.log(`Number of tests after filtering by status and team: ${ids.length}\n`);
-      splitTestsOnChunks(numberOfChunks, removeNonParallel ? ids.join(' ') + ' --nonParallel' : ids.join(' '), envVars, printSpecs);
+      splitTestsOnChunks(
+        numberOfChunks,
+        removeNonParallel ? ids.join(' ') + ' --nonParallel' : ids.join(' '),
+        envVars,
+        printSpecs,
+      );
     });
 }
 grepTests();

@@ -92,6 +92,7 @@ async function deleteItemsForHoldings(holdingsId) {
   const itemsResponse = await axios.get(
     `inventory/items-by-holdings-id?query=holdingsRecordId==${holdingsId}`,
   );
+  if (!itemsResponse.data.items) return;
   const deletePromises = [];
   // eslint-disable-next-line guard-for-in
   for (const item of itemsResponse.data.items) {
@@ -108,6 +109,7 @@ async function deleteHoldingsForInstance(instanceId) {
   const holdingsResponse = await axios(
     `holdings-storage/holdings?limit=200&query=instanceId="${instanceId}"`,
   );
+  if (!holdingsResponse.data.holdingsRecords) return;
   const deletePromises = [];
   // eslint-disable-next-line guard-for-in
   for (const holdings of holdingsResponse.data.holdingsRecords) {
@@ -124,8 +126,9 @@ async function deleteHoldingsForInstance(instanceId) {
 async function removeAutotestInstances() {
   const batchSize = 15;
   const autotestInstances = await axios.get(
-    '/search/instances?limit=500&query=(title all "autotest")',
+    '/search/instances?limit=500&query=(title all "autotest" or title all "AT_")',
   );
+  if (!autotestInstances.data.instances) return;
   console.log('Removing autotest instances');
   const deletePromises = [];
   const deletePromisesBatches = [];
@@ -150,8 +153,9 @@ async function removeAutotestInstances() {
 
 async function removeAutotestAuthorities() {
   const autotestAuthorities = await axios.get(
-    '/search/authorities?limit=500&query=(keyword="autotest" or keyword="auto" or keyword="C*" and authRefType="Authorized")',
+    '/search/authorities?limit=500&query=(keyword="autotest" or keyword="AT_" or keyword="C*" and authRefType="Authorized")',
   );
+  if (!autotestAuthorities.data.authorities) return;
   console.log('Removing autotest authorities');
   let counter = 1;
   for (const authority of autotestAuthorities.data.authorities) {
@@ -167,7 +171,10 @@ async function removeAuthoritiesWithSpecificSource(sourceFileId) {
   const authoritiesWithSource = await axios.get(
     `/search/authorities?limit=500&query=(sourceFileId==("${sourceFileId}"))`,
   );
-  if (authoritiesWithSource.data.authorities.length <= 100) {
+  if (
+    authoritiesWithSource.data.authorities &&
+    authoritiesWithSource.data.authorities.length <= 100
+  ) {
     for (const [index, authority] of authoritiesWithSource.data.authorities.entries()) {
       if (!((index + 1) % 15)) await wait(1500);
       await axios.delete(`/authority-storage/authorities/${authority.id}`);
