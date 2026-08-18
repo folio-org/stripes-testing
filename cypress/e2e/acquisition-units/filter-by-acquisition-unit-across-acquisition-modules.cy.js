@@ -276,7 +276,6 @@ describe('Acquisition units', () => {
     FiltersPane.clearAllFilters(filtersPane);
     PaneRequestWaiter.waitForPaneRequests({
       pane,
-      conditions: { acquisitionUnit: value !== NO_ACQUISITION_UNIT_OPTION_LABEL },
       trigger: () => FiltersPane.filterBySelection(filtersPane, ACQUISITION_UNIT_FILTER_LABEL, value),
     });
     FiltersPane.assertResetAllButtonState(filtersPane, { disabled: false });
