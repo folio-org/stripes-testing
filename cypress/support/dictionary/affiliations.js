@@ -22,8 +22,8 @@ export default {
   },
   trillium: {
     Consortia: 'consortium',
-    University: 'cs00000int_0005',
-    College: 'cs00000int_0001',
+    University: 'university',
+    College: 'college',
   },
 }[currentEnv];
 
@@ -49,7 +49,7 @@ export const tenantNames = {
     professional: 'Professional',
   },
   trillium: {
-    central: 'Central Office',
+    central: 'Consortium',
     college: 'College',
     university: 'University',
     professional: 'Professional',
