@@ -56,7 +56,7 @@ describe('Data Import', () => {
 
     before('Create test user and login', () => {
       // change 010$a to unique
-      DataImport.editMarcFile(filePathToUpload, modifiedMarcFile, ['50033023'], [unique010$a]);
+      DataImport.editMarcFile(filePathToUpload, modifiedMarcFile, ['yyy50033023'], [unique010$a]);
 
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
