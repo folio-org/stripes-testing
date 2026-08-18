@@ -104,7 +104,7 @@ describe('Invoices', () => {
 
   it(
     'C350620 Invoice is in "Paid" status after "Approve & pay" (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'C350620'] },
+    { tags: ['extendedPath', 'thunderjet', 'C350620', 'nonParallel'] },
     () => {
       Invoices.createDefaultInvoiceWithoutAddress(invoice);
       Invoices.checkCreatedInvoice(invoice);

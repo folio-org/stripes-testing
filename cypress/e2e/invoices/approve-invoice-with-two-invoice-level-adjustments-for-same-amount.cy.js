@@ -193,7 +193,7 @@ describe('Invoices', () => {
 
   it(
     'C710367 User can approve an invoice with 2 invoice-level adjustments for same amount and expense class (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'C710367'] },
+    { tags: ['criticalPath', 'thunderjet', 'C710367', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);

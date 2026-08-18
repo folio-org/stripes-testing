@@ -49,7 +49,6 @@ describe('Patron notices', () => {
           name: noticeTemplate.name,
           description: noticeTemplate.description,
           category: NOTICE_CATEGORIES.loan,
-          subject: 'Email subject: Loan',
           body: 'Email body {{item.title}}',
         });
         NewNoticePolicyTemplate.editTemplate(noticeTemplate.name);
@@ -59,7 +58,6 @@ describe('Patron notices', () => {
           name: noticeTemplate.name,
           description: noticeTemplate.description,
           category: NOTICE_CATEGORIES.loan,
-          subject: 'Email subject: Loan',
           body: newBodytext,
         });
         cy.wait(2000);

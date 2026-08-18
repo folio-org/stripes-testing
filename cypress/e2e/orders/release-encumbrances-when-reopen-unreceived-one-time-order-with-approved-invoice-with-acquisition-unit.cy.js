@@ -254,7 +254,7 @@ describe('Orders', () => {
 
   it(
     'C451635 Release encumbrances when reopen unreceived one-time order with related approved invoice with acquisition unit (Release encumbrance = true) (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'C451635'] },
+    { tags: ['criticalPath', 'thunderjet', 'C451635', 'nonParallel'] },
     () => {
       Orders.searchByParameter('PO number', testData.order.poNumber);
       Orders.selectFromResultsList(testData.order.poNumber);

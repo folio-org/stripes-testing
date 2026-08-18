@@ -26,7 +26,7 @@ describe('Users', () => {
       birthDate: '12/12/2000',
       phone: '1234567890',
       mobilePhone: '2345678901',
-      preferredContact: 'Text Message',
+      preferredContact: 'SMS text',
       status: 'Inactive',
     },
   };

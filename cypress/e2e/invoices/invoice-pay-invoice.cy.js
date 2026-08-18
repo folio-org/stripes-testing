@@ -59,7 +59,7 @@ describe('Invoices', () => {
 
   it(
     'C196779 Invoice: Pay invoices (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C196779'] },
+    { tags: ['extendedPath', 'thunderjet', 'C196779', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);

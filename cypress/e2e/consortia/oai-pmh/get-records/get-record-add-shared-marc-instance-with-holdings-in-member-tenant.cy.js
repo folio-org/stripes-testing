@@ -183,7 +183,7 @@ describe('OAI-PMH', () => {
 
             // Step 10: Verify GetRecord response with marc21 metadata format
             cy.resetTenant();
-            cy.getAdminToken();
+            cy.getAdminToken(false);
             cy.setTenant(Affiliations.College);
             OaiPmhEdge.getRecordRequest(
               testData.marcInstance.uuid,

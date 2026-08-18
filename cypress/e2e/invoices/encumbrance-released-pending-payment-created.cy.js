@@ -187,7 +187,7 @@ describe('Invoices', () => {
 
   it(
     'C350631 Encumbrance is released and Pending payment/Payment are created successfully (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'C350631'] },
+    { tags: ['extendedPath', 'thunderjet', 'C350631', 'nonParallel'] },
     () => {
       Orders.searchByParameter('PO number', testData.order.poNumber);
       Orders.selectFromResultsList(testData.order.poNumber);
