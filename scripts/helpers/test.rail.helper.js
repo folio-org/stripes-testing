@@ -6,6 +6,12 @@ const status = {
   Retest: 4,
   Failed: 5,
   Unassigned: 6,
+  Claimed: 7,
+  Deferred: 8,
+  NotApplicable: 10,
+  DeferredHotFix: 9,
+  Flaky: 11,
+  ToInvestigate: 12,
 };
 
 const team = {
@@ -18,14 +24,37 @@ const team = {
   Citation: 18,
   Corsair: 19,
   Eureka: 21,
+  Athena: 26,
+  Promin: 27,
+  Helios: 28,
+
+  Concorde: 1,
+  Bienenvolk: 2,
+  Gutenberg: 16,
+  Odin: 17,
+  Prokopovych: 5,
+  Sif: 20,
+  Thor: 7,
+  Leipzig: 10,
+  Scout: 11,
+  Reporting: 12,
+  BAMA: 14,
+  MOL: 15,
+  Klemming: 22,
+  BigFC: 23,
+  Dresden: 24,
+  KInt: 25,
+  Fenrir: 29,
 };
 
 const testTypes = {
-  smoke: 1,
-  criticalPath: 2,
-  extendedPath: 3,
-  backend: 6,
-  edgeCases: 7,
+  Smoke: 1,
+  CriticalPath: 2,
+  ExtendedPath: 3,
+  Obsolete: 4,
+  Draft: 5,
+  Backend: 6,
+  EdgeCases: 7,
 };
 
 async function getTestHistory(api, caseId, runId) {
@@ -81,6 +110,15 @@ async function getAllTestCases(api, projectId) {
     console.error('Error fetching test cases:', error);
   }
   return tests;
+}
+
+async function updateTestCasesInTestRun(api, testId, testCases) {
+  try {
+    await api.post(`update_run/${testId}`, { 'case_ids': testCases });
+    console.log(`Test run ${testId} updated successfully.`);
+  } catch (error) {
+    console.error('Error updating test run:', error);
+  }
 }
 
 async function getTestRunResults(api, runId) {
@@ -143,6 +181,7 @@ async function getTestCase(api, caseId) {
 
 module.exports = {
   getAllTestCases,
+  updateTestCasesInTestRun,
   getTestHistory,
   getCaseHistory,
   getTestRunResults,
