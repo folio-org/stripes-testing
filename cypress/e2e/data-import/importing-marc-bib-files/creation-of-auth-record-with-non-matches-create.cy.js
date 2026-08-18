@@ -29,7 +29,7 @@ import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
-    const unique010$a = `5003${randomFourDigitNumber()}`;
+    const unique010$a = `yyy423578${randomFourDigitNumber()}`;
     const filePathToUpload = 'marcAuthFileC423578.mrc';
     const modifiedMarcFile = `C423578 autotestEditedFile${getRandomPostfix()}.mrc`;
     const firstFileName = `C423578 autotestFile${getRandomPostfix()}.mrc`;
