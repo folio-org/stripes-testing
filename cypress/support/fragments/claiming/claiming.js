@@ -95,6 +95,10 @@ export default {
     });
   },
 
+  clearAllFilters() {
+    FiltersPaneHelper.clearAllFilters(filtersPane);
+  },
+
   clearFilter(filterLabel) {
     FiltersPaneHelper.clearFilter(filtersPane, filterLabel);
   },
