@@ -27,7 +27,6 @@ describe('Patron notices', () => {
       () => {
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();
-        NewNoticePolicyTemplate.addToken('item.title');
         NewNoticePolicyTemplate.create(patronNoticeTemplate);
         NewNoticePolicyTemplate.checkAfterSaving(patronNoticeTemplate);
         NewNoticePolicyTemplate.checkTemplateActions(patronNoticeTemplate);
