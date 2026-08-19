@@ -101,8 +101,8 @@ describe('Citation: check navigation', () => {
   });
 
   it(
-    'C491276 Marigold: Verify user is navigated to Marigold home page when Application header icon is clicked (citation)',
-    { tags: ['smoke', 'citation', 'C491276', 'marigold', 'shiftLeft'] },
+    'C491276 Marigold: Verify user is navigated to Marigold home page when Application header icon is clicked (promin)',
+    { tags: ['smoke', 'promin', 'C491276', 'marigold', 'shiftLeft'] },
     () => {
       // check search is displayed with lccn option
       Marigold.checkSearchOptionIsDisplayed('lccn');
