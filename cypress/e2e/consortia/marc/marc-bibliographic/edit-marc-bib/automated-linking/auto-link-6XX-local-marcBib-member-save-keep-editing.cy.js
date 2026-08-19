@@ -531,8 +531,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C770444 ECS | Auto-link 6XX "MARC Bib" fields of local bib on Member tenant when Central and Member tenants have different linkable subfields configured (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C770444'] },
+          'C770444 ECS | Auto-link 6XX "MARC Bib" fields of local bib on Member tenant when Central and Member tenants have different linkable subfields configured (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C770444'] },
           () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventoryInstances.searchByTitle(createdRecordIDs[7]);

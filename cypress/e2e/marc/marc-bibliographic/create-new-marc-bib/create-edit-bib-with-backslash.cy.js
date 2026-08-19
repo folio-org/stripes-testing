@@ -55,8 +55,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C877076 Create/Edit MARC bib record with backslash ("\\") character in some fields and check Instance detail view pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C877076'] },
+        'C877076 Create/Edit MARC bib record with backslash ("\\") character in some fields and check Instance detail view pane (promin)',
+        { tags: ['extendedPath', 'promin', 'C877076'] },
         () => {
           // Step 1: Click on "Actions" button → Select "+ New MARC bibliographic record" option
           InventoryInstance.newMarcBibRecord();

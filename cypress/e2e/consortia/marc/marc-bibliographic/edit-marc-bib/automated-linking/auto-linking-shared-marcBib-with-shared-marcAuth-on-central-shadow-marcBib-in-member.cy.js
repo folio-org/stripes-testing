@@ -199,8 +199,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C410818 Automated linking of Shared MARC bib (shadow MARC Instance in Member tenant) with Shared MARC authority records on Central tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C410818'] },
+          'C410818 Automated linking of Shared MARC bib (shadow MARC Instance in Member tenant) with Shared MARC authority records on Central tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C410818'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

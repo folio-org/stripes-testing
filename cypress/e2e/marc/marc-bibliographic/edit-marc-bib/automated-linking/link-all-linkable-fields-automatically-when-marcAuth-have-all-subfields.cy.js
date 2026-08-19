@@ -351,8 +351,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569607 Link all linkable fields automatically when MARC authority 1XXs have all subfields (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C569607'] },
+          'C569607 Link all linkable fields automatically when MARC authority 1XXs have all subfields (promin)',
+          { tags: ['criticalPath', 'promin', 'C569607'] },
           () => {
             InventoryInstances.waitContentLoading();
             InventoryInstances.searchByTitle(createdRecordIDs[0]);

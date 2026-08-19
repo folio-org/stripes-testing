@@ -125,8 +125,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C477566 Similar call numbers with different types selected are sorted alphabetically when used "Call numbers (all)" browse option (case 2) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C477566'] },
+        'C477566 Similar call numbers with different types selected are sorted alphabetically when used "Call numbers (all)" browse option (case 2) (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C477566'] },
         () => {
           const expectedRows = callNumberEndings.map((num) => `${callNumberBase} ${num}`);
           cy.login(testData.user.username, testData.user.password);

@@ -241,8 +241,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C423636 Locations from all existing tenants displays in "Effective location (item)" facet of browse pane in "Inventory" app opened from "Member" tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C423636'] },
+        'C423636 Locations from all existing tenants displays in "Effective location (item)" facet of browse pane in "Inventory" app opened from "Member" tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C423636'] },
         () => {
           const usedLocations = [
             locations[Affiliations.College][0].name,

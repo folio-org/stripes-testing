@@ -91,8 +91,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C553006 Default sort is applied to search result list in "Inventory" app according to selected option in settings ("Date" case) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C553006'] },
+      'C553006 Default sort is applied to search result list in "Inventory" app according to selected option in settings ("Date" case) (promin)',
+      { tags: ['extendedPath', 'promin', 'C553006'] },
       () => {
         InventoryInstances.searchByTitle(titlePrefix);
         InventorySearchAndFilter.verifySearchResult(instancesData[0].title);

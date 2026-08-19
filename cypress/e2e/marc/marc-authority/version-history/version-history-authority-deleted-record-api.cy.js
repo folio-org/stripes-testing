@@ -85,8 +85,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C663326 Check "Version history" API for deleted "MARC authority" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C663326'] },
+        'C663326 Check "Version history" API for deleted "MARC authority" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C663326'] },
         () => {
           // Step 1-2: Click on the 'Version history' icon and verify the pane opens
           MarcAuthority.verifyVersionHistoryButtonShown();

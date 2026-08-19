@@ -62,8 +62,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C813025 Search for Item by UUID field using "Keyword" and "Item UUID" search options (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C813025'] },
+      'C813025 Search for Item by UUID field using "Keyword" and "Item UUID" search options (promin)',
+      { tags: ['extendedPath', 'promin', 'C813025'] },
       () => {
         // Step 1: Search for an item by UUID using the “Keyword” search option
         InventorySearchAndFilter.switchToItem();

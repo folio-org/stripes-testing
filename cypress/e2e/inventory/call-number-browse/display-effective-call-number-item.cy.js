@@ -89,8 +89,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C9230 Display effective call number string on item record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C9230'] },
+      'C9230 Display effective call number string on item record (promin)',
+      { tags: ['extendedPath', 'promin', 'C9230'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password);

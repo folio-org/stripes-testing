@@ -128,8 +128,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1292059 Build query using Authority — Identifier type, Identifier value fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1292059'] },
+        'C1292059 Build query using Authority — Identifier type, Identifier value fields (promin)',
+        { tags: ['extendedPath', 'promin', 'C1292059'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

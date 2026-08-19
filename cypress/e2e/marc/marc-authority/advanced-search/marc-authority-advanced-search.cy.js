@@ -69,8 +69,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C350684 Updating Advanced Search query from modal window (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C350684'] },
+        'C350684 Updating Advanced Search query from modal window (promin)',
+        { tags: ['criticalPath', 'promin', 'C350684'] },
         () => {
           MarcAuthorities.clickActionsButton();
           MarcAuthorities.actionsSortBy('Type of heading');
@@ -132,8 +132,8 @@ describe('MARC', () => {
       );
 
       it(
-        'C350607 Advanced search of MARC authority records (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C350607'] },
+        'C350607 Advanced search of MARC authority records (promin)',
+        { tags: ['criticalPath', 'promin', 'C350607'] },
         () => {
           MarcAuthorities.clickAdvancedSearchButton();
           MarcAuthorities.checkAdvancedSearchModalFields(

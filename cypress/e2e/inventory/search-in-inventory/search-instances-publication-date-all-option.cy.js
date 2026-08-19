@@ -95,8 +95,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584425 Search for Instances by "Publication date" field using "All" search option (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C584425'] },
+      'C584425 Search for Instances by "Publication date" field using "All" search option (promin)',
+      { tags: ['extendedPath', 'promin', 'C584425'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

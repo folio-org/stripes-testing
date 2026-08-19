@@ -47,8 +47,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C627463 User without permission on Central tenant cannot see "Call number browse" pane from Member tenant when he has permission on Member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C627463'] },
+          'C627463 User without permission on Central tenant cannot see "Call number browse" pane from Member tenant when he has permission on Member tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C627463'] },
           () => {
             SettingsPane.checkOptionInSecondPaneExists(callNumberTypesOption);
             SettingsPane.checkOptionInSecondPaneExists(callNumberBrowseOption, false);

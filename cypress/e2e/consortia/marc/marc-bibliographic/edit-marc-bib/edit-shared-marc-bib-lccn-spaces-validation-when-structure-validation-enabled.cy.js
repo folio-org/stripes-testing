@@ -166,8 +166,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569535 Spaces are added automatically in LCCN during saving on "Edit MARC record" pane when LCCN structure validation is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C569535'] },
+          'C569535 Spaces are added automatically in LCCN during saving on "Edit MARC record" pane when LCCN structure validation is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C569535'] },
           () => {
             // Step 0: User is on the detail view pane of Shared "MARC bibliographic" record
             InventoryInstances.searchByTitle(sharedMarcInstanceTitle);

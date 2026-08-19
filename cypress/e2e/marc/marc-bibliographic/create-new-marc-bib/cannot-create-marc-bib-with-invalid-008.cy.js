@@ -63,8 +63,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503013 Cannot create "MARC bibliographic" record with not valid values in "008" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C503013'] },
+        'C503013 Cannot create "MARC bibliographic" record with not valid values in "008" field (promin)',
+        { tags: ['criticalPath', 'promin', 'C503013'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.checkDropdownMarkedAsInvalid(tags.tagLDR, boxes.ldrType);

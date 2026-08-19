@@ -116,8 +116,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C410822 Optimistic locking in Member tenant when shared "MARC Bib" record (shadow MARC Instance) updated by another user in another Member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C410822'] },
+          'C410822 Optimistic locking in Member tenant when shared "MARC Bib" record (shadow MARC Instance) updated by another user in another Member tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C410822'] },
           () => {
             // Steps 1-2: User A logs in to Member 1 tenant, opens record for editing
             cy.setTenant(Affiliations.College);

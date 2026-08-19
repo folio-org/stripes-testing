@@ -164,8 +164,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C1348277 Verify that Shared and Local MARC authority records are found by query from Member tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C1348277'] },
+          'C1348277 Verify that Shared and Local MARC authority records are found by query from Member tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C1348277'] },
           () => {
             // Login to College tenant (user's primary affiliation)
             cy.setTenant(Affiliations.College);

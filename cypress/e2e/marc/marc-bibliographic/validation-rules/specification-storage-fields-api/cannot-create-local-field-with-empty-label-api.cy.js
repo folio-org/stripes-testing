@@ -39,8 +39,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with E
   });
 
   it(
-    'C490926 Cannot create Local Field with empty "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['C490926', 'extendedPath', 'spitfire'] },
+    'C490926 Cannot create Local Field with empty "label" for MARC bib spec (API) (promin)',
+    { tags: ['C490926', 'extendedPath', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

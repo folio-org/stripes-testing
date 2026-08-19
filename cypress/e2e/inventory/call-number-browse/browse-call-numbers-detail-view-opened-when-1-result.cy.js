@@ -136,8 +136,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C411507 Browse (call number): Show instance result in third pane when Number of titles = 1 (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C411507'] },
+      'C411507 Browse (call number): Show instance result in third pane when Number of titles = 1 (promin)',
+      { tags: ['extendedPath', 'promin', 'C411507'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

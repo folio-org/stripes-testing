@@ -115,8 +115,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C1045414 Select instance plugin | Verify search instance requests return all default fields in response (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1045414'] },
+      'C1045414 Select instance plugin | Verify search instance requests return all default fields in response (promin)',
+      { tags: ['extendedPath', 'promin', 'C1045414'] },
       () => {
         // Step 1-3: Orders app — Add PO line → Title look-up → open plugin
         Orders.selectOrderByPONumber(testData.order.poNumber);

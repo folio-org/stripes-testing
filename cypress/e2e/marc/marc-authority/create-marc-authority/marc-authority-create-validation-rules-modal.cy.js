@@ -70,8 +70,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C523594 "MARC validation rules check" modal appears during create of MARC authority record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C523594'] },
+        'C523594 "MARC validation rules check" modal appears during create of MARC authority record (promin)',
+        { tags: ['extendedPath', 'promin', 'C523594'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.waitLoading();

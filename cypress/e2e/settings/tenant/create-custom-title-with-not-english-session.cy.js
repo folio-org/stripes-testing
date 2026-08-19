@@ -52,8 +52,8 @@ describe('eHoldings', () => {
   });
 
   it(
-    'C402349 Create custom title when session locale is not "English" (spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire', 'C402349'] },
+    'C402349 Create custom title when session locale is not "English" (promin) (TaaS)',
+    { tags: ['extendedPath', 'promin', 'C402349'] },
     () => {
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
       Localization.clickChangeSessionLocalLanguage();

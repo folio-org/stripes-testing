@@ -86,8 +86,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C476782 MARC tags are not grouped by tag values after import of "MARC authority" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C476782'] },
+      'C476782 MARC tags are not grouped by tag values after import of "MARC authority" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C476782'] },
       () => {
         // Step 1: Import MARC authority record via API using default create authority profile
         cy.getToken(testData.user.username, testData.user.password);

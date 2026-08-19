@@ -94,8 +94,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C663355 Check "Source" field in "Version history" pane when "MARC authority" record was updated by user from different tenant and user has permission to view users (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C663355'] },
+          'C663355 Check "Source" field in "Version history" pane when "MARC authority" record was updated by user from different tenant and user has permission to view users (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C663355'] },
           () => {
             // Precondition: User B edits authority from Member 2 (University)
             cy.setTenant(Affiliations.University);

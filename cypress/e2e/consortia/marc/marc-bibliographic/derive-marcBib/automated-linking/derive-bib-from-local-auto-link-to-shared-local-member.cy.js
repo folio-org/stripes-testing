@@ -266,8 +266,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C410751 Auto-Link Local MARC bib with Shared/Local MARC auth on Member tenant in Derive screen (derived from Local) (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C410751'] },
+            'C410751 Auto-Link Local MARC bib with Shared/Local MARC auth on Member tenant in Derive screen (derived from Local) (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C410751'] },
             () => {
               InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
               InventoryInstances.searchByTitle(createdInstanceId);

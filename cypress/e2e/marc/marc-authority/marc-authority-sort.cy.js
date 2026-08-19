@@ -91,8 +91,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C365113 Apply "Authority source" facet to the search result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C365113'] },
+      'C365113 Apply "Authority source" facet to the search result list (promin)',
+      { tags: ['criticalPath', 'promin', 'C365113'] },
       () => {
         cy.getAdminToken();
         DataImport.uploadFileViaApi(
@@ -140,8 +140,8 @@ describe('MARC', () => {
     );
 
     it(
-      'C350579 Sorting and displaying results of search authority records by "Actions" dropdown menu (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C350579'] },
+      'C350579 Sorting and displaying results of search authority records by "Actions" dropdown menu (promin)',
+      { tags: ['criticalPath', 'promin', 'C350579'] },
       () => {
         cy.getAdminToken();
         DataImport.uploadFileViaApi(

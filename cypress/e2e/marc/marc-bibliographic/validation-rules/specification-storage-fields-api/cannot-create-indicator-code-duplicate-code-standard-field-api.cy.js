@@ -67,8 +67,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Indicator Code Dup
   });
 
   it(
-    'C499675 Cannot create Indicator code of Standard field with duplicate "code" for MARC bib spec (API) (spitfire)',
-    { tags: ['C499675', 'extendedPath', 'spitfire'] },
+    'C499675 Cannot create Indicator code of Standard field with duplicate "code" for MARC bib spec (API) (promin)',
+    { tags: ['C499675', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

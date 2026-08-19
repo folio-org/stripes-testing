@@ -52,8 +52,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C423707 Instance | Using Advanced search with search query with not supported search option "Query search" in Inventory (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423707'] },
+      'C423707 Instance | Using Advanced search with search query with not supported search option "Query search" in Inventory (promin)',
+      { tags: ['extendedPath', 'promin', 'C423707'] },
       () => {
         InventorySearchAndFilter.selectSearchOptions(
           testData.querySearchOption,

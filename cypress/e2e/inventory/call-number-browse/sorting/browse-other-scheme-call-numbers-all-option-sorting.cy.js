@@ -210,8 +210,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C477560 Other scheme call numbers are sorted alphabetically using "Call numbers (all)" browse option (spitfire)',
-        { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C477560'] },
+        'C477560 Other scheme call numbers are sorted alphabetically using "Call numbers (all)" browse option (promin)',
+        { tags: ['criticalPathFlaky', 'promin', 'nonParallel', 'C477560'] },
         () => {
           cy.login(tempUser.username, tempUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

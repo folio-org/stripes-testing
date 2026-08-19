@@ -190,8 +190,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C387513 Subfield "$9" presence validation when editing "MARC Bibliographic" record. (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C387513'] },
+          'C387513 Subfield "$9" presence validation when editing "MARC Bibliographic" record. (promin)',
+          { tags: ['extendedPath', 'promin', 'C387513'] },
           () => {
             // Step 1: Open Edit MARC bibliographic record
             InventoryInstance.editMarcBibliographicRecord();

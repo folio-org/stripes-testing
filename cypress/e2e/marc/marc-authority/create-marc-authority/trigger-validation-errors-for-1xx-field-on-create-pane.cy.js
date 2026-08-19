@@ -78,8 +78,8 @@ describe('MARC', () => {
 
       // Will FAIL until this is fixed - https://folio-org.atlassian.net/browse/UIQM-833
       it(
-        'C566596 Trigger validation errors for 1XX field of MARC authority record on "Create MARC authority record" pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C566596'] },
+        'C566596 Trigger validation errors for 1XX field of MARC authority record on "Create MARC authority record" pane (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C566596'] },
         () => {
           cy.then(() => {
             cy.createTempUser([

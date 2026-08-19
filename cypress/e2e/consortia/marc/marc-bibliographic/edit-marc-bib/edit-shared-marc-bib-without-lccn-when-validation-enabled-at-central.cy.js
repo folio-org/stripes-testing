@@ -76,8 +76,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C514844 Save existing "MARC bib" record without "010" field when duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C514844'] },
+          'C514844 Save existing "MARC bib" record without "010" field when duplicate LCCN check is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C514844'] },
           () => {
             // Step 0: User is on the detail view pane of Shared "MARC bibliographic" record
             InventoryInstances.searchByTitle(sharedMarcInstanceTitle);

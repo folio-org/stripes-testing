@@ -102,8 +102,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C359240 Derive MARC Bib | Displaying of placeholder message when user deletes a row (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C359240'] },
+        'C359240 Derive MARC Bib | Displaying of placeholder message when user deletes a row (promin)',
+        { tags: ['extendedPath', 'promin', 'C359240'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

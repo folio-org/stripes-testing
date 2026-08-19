@@ -57,8 +57,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C554632 Edit MARC bib with selected "Date type" and field "Date 1" filled only (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C554632'] },
+        'C554632 Edit MARC bib with selected "Date type" and field "Date 1" filled only (promin)',
+        { tags: ['criticalPath', 'promin', 'C554632'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstanceById(createdRecordIDs[0]);

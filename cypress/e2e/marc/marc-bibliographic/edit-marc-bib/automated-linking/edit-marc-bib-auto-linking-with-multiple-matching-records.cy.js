@@ -101,8 +101,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C389476 Auto-linking fields when multiple valid for linking "MARC authority" records match "$0" when editing "MARC Bib" record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C389476'] },
+          'C389476 Auto-linking fields when multiple valid for linking "MARC authority" records match "$0" when editing "MARC Bib" record (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C389476'] },
           () => {
             // 1 Find and open detail view of record from precondition
             InventoryInstances.waitContentLoading();

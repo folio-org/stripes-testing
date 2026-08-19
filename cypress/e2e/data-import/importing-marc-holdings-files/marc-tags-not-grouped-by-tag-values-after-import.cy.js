@@ -79,8 +79,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C476783 MARC tags are not grouped by tag values after import of "MARC holdings" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C476783'] },
+      'C476783 MARC tags are not grouped by tag values after import of "MARC holdings" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C476783'] },
       () => {
         // Step 1: Replace HRID placeholder and import holdings via API
         DataImport.editMarcFile(

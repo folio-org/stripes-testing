@@ -26,8 +26,8 @@ describe('eHoldings', () => {
   });
 
   it(
-    'C359011 "Filter by Tag" option doesn\'t show when user doesn\'t have related permissions (spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire', 'C359011'] },
+    'C359011 "Filter by Tag" option doesn\'t show when user doesn\'t have related permissions (promin) (TaaS)',
+    { tags: ['extendedPath', 'promin', 'C359011'] },
     () => {
       // Verify that there are no "Tags" accordion button at the "Search & filter" pane.
       EHoldingsSearch.checkSearchPaneContent({

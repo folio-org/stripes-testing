@@ -104,8 +104,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C440077 Verify that all fields (except "LDR", "005, "999") can be moved and saved when creating "MARC authority" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C440077'] },
+        'C440077 Verify that all fields (except "LDR", "005, "999") can be moved and saved when creating "MARC authority" record (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C440077'] },
         () => {
           // Step 1: Open form; verify LDR/001/005/008/999 have no move arrows initially
           MarcAuthorities.clickActionsAndNewAuthorityButton();

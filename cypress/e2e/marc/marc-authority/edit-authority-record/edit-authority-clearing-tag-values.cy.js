@@ -95,8 +95,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375137 Tag value can be cleared for any field of "MARC authority" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C375137'] },
+        'C375137 Tag value can be cleared for any field of "MARC authority" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C375137'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);

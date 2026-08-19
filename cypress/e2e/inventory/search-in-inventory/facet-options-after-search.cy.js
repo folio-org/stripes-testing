@@ -98,8 +98,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C515007 Facet options display in expanded accordions when search has been performed and Instance/Holdings/Item tab is clicked (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C515007'] },
+      'C515007 Facet options display in expanded accordions when search has been performed and Instance/Holdings/Item tab is clicked (promin)',
+      { tags: ['criticalPath', 'promin', 'C515007'] },
       () => {
         InventoryInstances.searchByTitle(testData.searchQuery);
         InventorySearchAndFilter.switchToInstance();

@@ -75,8 +75,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C9301 Filter "Instance" records by "Suppress from discovery" filter in the "Holdings" segment (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C9301'] },
+        'C9301 Filter "Instance" records by "Suppress from discovery" filter in the "Holdings" segment (promin)',
+        { tags: ['extendedPath', 'promin', 'C9301'] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.login(user.username, user.password, {

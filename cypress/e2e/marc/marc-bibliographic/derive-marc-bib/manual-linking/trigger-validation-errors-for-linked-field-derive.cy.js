@@ -195,8 +195,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C566563 Trigger validation errors for linked field on "Derive a new MARC bib record" pane (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C566563'] },
+          'C566563 Trigger validation errors for linked field on "Derive a new MARC bib record" pane (promin)',
+          { tags: ['extendedPath', 'promin', 'nonParallel', 'C566563'] },
           () => {
             cy.then(() => {
               // Update validation rules to make $e and $q required in field 700

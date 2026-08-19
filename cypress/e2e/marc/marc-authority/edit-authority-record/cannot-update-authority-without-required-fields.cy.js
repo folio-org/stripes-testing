@@ -74,8 +74,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514971 Cannot update MARC authority record without required fields (Standard and Local) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514971'] },
+        'C514971 Cannot update MARC authority record without required fields (Standard and Local) (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514971'] },
         () => {
           cy.then(() => {
             toggleAllUndefinedValidationRules(authSpecId, { enable: false });

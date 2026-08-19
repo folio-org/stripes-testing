@@ -125,9 +125,9 @@ describe('Inventory', () => {
       });
 
       it(
-        'C812999 API MOD-RTAC | Verify "itemDisplayOrder" field exists in BATCH API which gets instances with items and holdings from inventory (spitfire)',
+        'C812999 API MOD-RTAC | Verify "itemDisplayOrder" field exists in BATCH API which gets instances with items and holdings from inventory (promin)',
         {
-          tags: ['extendedPath', 'spitfire', 'C812999'],
+          tags: ['extendedPath', 'promin', 'C812999'],
         },
         () => {
           cy.getToken(user.username, user.password);

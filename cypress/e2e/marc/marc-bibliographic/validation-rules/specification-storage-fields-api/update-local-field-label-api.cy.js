@@ -62,8 +62,8 @@ describe('MARC Bibliographic Validation Rules - Update Local Field Label API', (
   });
 
   it(
-    'C490944 Update Local Field "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C490944', 'spitfire'] },
+    'C490944 Update Local Field "label" for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C490944', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

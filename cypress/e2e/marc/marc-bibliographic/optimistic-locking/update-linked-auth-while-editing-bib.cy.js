@@ -149,8 +149,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C376995 Updating "MARC Authority" record when linked "MARC bib" record is being edited by a different user (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C376995'] },
+        'C376995 Updating "MARC Authority" record when linked "MARC bib" record is being edited by a different user (promin)',
+        { tags: ['criticalPath', 'promin', 'C376995'] },
         () => {
           // Steps 1-4: User A logs in, searches for MARC bib record, opens for editing
           cy.login(userA.username, userA.password, {

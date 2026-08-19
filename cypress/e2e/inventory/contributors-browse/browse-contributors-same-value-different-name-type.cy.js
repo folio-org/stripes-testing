@@ -69,8 +69,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C357548 Verify that when user clicks on a contributor\'s name at browse result list, search for contributor also considers "Name type" value. (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C357548'] },
+      'C357548 Verify that when user clicks on a contributor\'s name at browse result list, search for contributor also considers "Name type" value. (promin)',
+      { tags: ['extendedPath', 'promin', 'C357548'] },
       () => {
         instanceTitles.forEach((instanceTitle, index) => {
           InventoryInstances.searchByTitle(createdInstanceIds[index]);

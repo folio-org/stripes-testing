@@ -97,8 +97,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C449370 Authority file which had assigned Shared "MARC authority" records in the past cannot be deleted because of Retention policy (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C449370'] },
+          'C449370 Authority file which had assigned Shared "MARC authority" records in the past cannot be deleted because of Retention policy (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C449370'] },
           () => {
             cy.resetTenant();
             cy.waitForAuthRefresh(() => {

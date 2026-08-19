@@ -156,8 +156,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C397389 Add/Edit/Delete controlled subfield in linked "MARC Authority" record while "MARC Bib" record being derived (NOT saved link) (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C397389'] },
+          'C397389 Add/Edit/Delete controlled subfield in linked "MARC Authority" record while "MARC Bib" record being derived (NOT saved link) (promin)',
+          { tags: ['extendedPath', 'promin', 'C397389'] },
           () => {
             cy.then(() => {
               // Step 1: Derive new MARC bib

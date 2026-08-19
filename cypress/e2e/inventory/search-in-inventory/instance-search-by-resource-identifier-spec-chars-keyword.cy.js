@@ -139,8 +139,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C368042 Search for "Instance" by "Resource identifier" field with special characters using "Keyword" search option (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C368042'] },
+      'C368042 Search for "Instance" by "Resource identifier" field with special characters using "Keyword" search option (promin)',
+      { tags: ['extendedPath', 'promin', 'C368042'] },
       () => {
         searchData.forEach(({ query, expectedInstanceIndexes }) => {
           InventorySearchAndFilter.fillInSearchQuery(query);

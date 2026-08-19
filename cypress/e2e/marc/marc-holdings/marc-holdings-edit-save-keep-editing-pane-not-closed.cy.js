@@ -97,8 +97,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C360100 Verify that click on the "Save & keep editing" button doesn\'t close the editing window of "MARC Holdings" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C360100'] },
+        'C360100 Verify that click on the "Save & keep editing" button doesn\'t close the editing window of "MARC Holdings" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C360100'] },
         () => {
           InventoryInstances.searchByTitle(recordId);
           InventoryInstances.selectInstanceById(recordId);

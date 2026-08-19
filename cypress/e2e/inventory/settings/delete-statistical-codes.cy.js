@@ -116,9 +116,9 @@ describe('Inventory', () => {
       });
 
       it(
-        'C703328 Delete "Statistical codes" assigned/not assigned to the Instance/Holdings/Item (spitfire)',
+        'C703328 Delete "Statistical codes" assigned/not assigned to the Instance/Holdings/Item (promin)',
         {
-          tags: ['extendedPath', 'spitfire', 'C703328'],
+          tags: ['extendedPath', 'promin', 'C703328'],
         },
         () => {
           cy.login(user.username, user.password);

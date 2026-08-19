@@ -198,8 +198,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C405526 Updated Local "MARC authority" record via "Data import" from Member 1 tenant is not discoverable in Central and Member 2 tenants (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C405526'] },
+        'C405526 Updated Local "MARC authority" record via "Data import" from Member 1 tenant is not discoverable in Central and Member 2 tenants (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C405526'] },
         () => {
           // Step 1-2: Search for existing Local MARC authority record in Member 1
           cy.visit(TopMenu.marcAuthorities);

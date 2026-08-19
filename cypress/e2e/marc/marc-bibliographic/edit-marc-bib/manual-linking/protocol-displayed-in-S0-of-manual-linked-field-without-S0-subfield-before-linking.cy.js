@@ -209,8 +209,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C436826 Protocol is displayed in subfield "$0" of manually linked field when field has no subfield "$0" before linking (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C436826'] },
+          'C436826 Protocol is displayed in subfield "$0" of manually linked field when field has no subfield "$0" before linking (promin)',
+          { tags: ['criticalPath', 'promin', 'C436826'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

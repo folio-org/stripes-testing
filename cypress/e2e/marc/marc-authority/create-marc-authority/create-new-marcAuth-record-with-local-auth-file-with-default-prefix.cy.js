@@ -75,8 +75,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423559 Create a new MARC authority record with "Local" authority file selected which includes default prefix in it (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C423559'] },
+        'C423559 Create a new MARC authority record with "Local" authority file selected which includes default prefix in it (promin)',
+        { tags: ['criticalPath', 'promin', 'shiftLeft', 'C423559'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);

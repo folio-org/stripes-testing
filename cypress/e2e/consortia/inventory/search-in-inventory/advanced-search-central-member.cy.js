@@ -246,8 +246,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411748 Search for Shared/Local records by "Advanced search" search option from "Central" and "Member 1" tenant ("Call number, normalized" and "ISSN" search options) (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411748'] },
+        'C411748 Search for Shared/Local records by "Advanced search" search option from "Central" and "Member 1" tenant ("Call number, normalized" and "ISSN" search options) (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411748'] },
         () => {
           function verifyAdvancedSearch(expectedIndexes) {
             InventoryInstances.clickAdvSearchButton();

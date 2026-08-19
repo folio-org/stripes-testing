@@ -37,8 +37,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C359002 Verify that a loading indicator displays under "Titles" accordion when user changes the holdings status of "Package" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C359002'] },
+      'C359002 Verify that a loading indicator displays under "Titles" accordion when user changes the holdings status of "Package" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C359002'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();

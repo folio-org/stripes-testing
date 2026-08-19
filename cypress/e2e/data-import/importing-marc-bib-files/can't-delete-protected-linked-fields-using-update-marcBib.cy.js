@@ -295,8 +295,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C380519 Cant delete protected and linked fields using update MARC Bib profile (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C380519'] },
+      'C380519 Cant delete protected and linked fields using update MARC Bib profile (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C380519'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

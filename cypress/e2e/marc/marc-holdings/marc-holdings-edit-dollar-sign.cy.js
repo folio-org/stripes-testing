@@ -97,8 +97,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C451564 Edit "MARC holdings" record which has "$" sign ("{dollar}" code) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C451564'] },
+        'C451564 Edit "MARC holdings" record which has "$" sign ("{dollar}" code) (promin)',
+        { tags: ['extendedPath', 'promin', 'C451564'] },
         () => {
           InventoryInstances.searchByTitle(recordId);
           InventoryInstances.selectInstanceById(recordId);

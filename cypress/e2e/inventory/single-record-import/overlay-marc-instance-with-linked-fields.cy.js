@@ -132,8 +132,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C396384 Overlay created Instance record with source "MARC" and with linked fields. (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C396384'] },
+      'C396384 Overlay created Instance record with source "MARC" and with linked fields. (promin)',
+      { tags: ['extendedPath', 'promin', 'C396384'] },
       () => {
         InventoryInstance.newMarcBibRecord();
         QuickMarcEditor.waitLoading();

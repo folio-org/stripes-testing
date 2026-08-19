@@ -334,8 +334,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C1307993 Verify that Shared MARC authority record edits do not clear FOLIO fields in linked Shared, Local MARC bib records (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C1307993'] },
+          'C1307993 Verify that Shared MARC authority record edits do not clear FOLIO fields in linked Shared, Local MARC bib records (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C1307993'] },
           () => {
             // Step 1. Open Shared MARC authority record - click Actions > Edit
             MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading);

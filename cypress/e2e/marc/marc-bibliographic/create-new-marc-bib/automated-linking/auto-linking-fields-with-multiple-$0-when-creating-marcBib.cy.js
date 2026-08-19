@@ -117,8 +117,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422153 Auto-linking fields with multiple "$0" when creating new "MARC Bib" record (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C422153'] },
+          'C422153 Auto-linking fields with multiple "$0" when creating new "MARC Bib" record (promin)',
+          { tags: ['extendedPath', 'promin', 'C422153'] },
           () => {
             // Step 1: Click on "Actions" button in second pane → Select "+ New MARC bibliographic record" option
             InventoryInstances.createNewMarcBibRecord();

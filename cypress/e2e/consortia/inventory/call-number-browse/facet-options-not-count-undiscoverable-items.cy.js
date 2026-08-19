@@ -182,7 +182,7 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
 
   it(
     'C656327 "Shared" facet doesn\'t count Instances with "Call number" value on browse pane when "Call number" has not discoverable call number type',
-    { tags: ['criticalPathECS', 'spitfire', 'C656327'] },
+    { tags: ['criticalPathECS', 'promin', 'C656327'] },
     () => {
       // Step 1: Run a browse using "Library of Congress classification"
       InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(callNumberBrowseOptionMember);

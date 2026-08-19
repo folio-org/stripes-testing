@@ -73,8 +73,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C627240 Browse for subject which "Id" starts with "fff" (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C627240'] },
+      'C627240 Browse for subject which "Id" starts with "fff" (promin)',
+      { tags: ['criticalPath', 'promin', 'C627240'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

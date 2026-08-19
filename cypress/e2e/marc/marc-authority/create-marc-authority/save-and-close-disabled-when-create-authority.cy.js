@@ -39,8 +39,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423435 "Save & close" button is disabled by default in "Create a new MARC authority record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423435'] },
+        'C423435 "Save & close" button is disabled by default in "Create a new MARC authority record" window (promin)',
+        { tags: ['extendedPath', 'promin', 'C423435'] },
         () => {
           MarcAuthorities.clickActionsButton();
           MarcAuthorities.checkAuthorityActionsDropDownExpanded();

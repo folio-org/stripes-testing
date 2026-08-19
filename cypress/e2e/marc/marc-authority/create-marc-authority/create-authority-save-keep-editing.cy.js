@@ -68,8 +68,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C709271 Create MARC authority record using "Save & keep editing" button (spitfire)',
-        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C709271'] },
+        'C709271 Create MARC authority record using "Save & keep editing" button (promin)',
+        { tags: ['extendedPathFlaky', 'promin', 'nonParallel', 'C709271'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkButtonsDisabled();

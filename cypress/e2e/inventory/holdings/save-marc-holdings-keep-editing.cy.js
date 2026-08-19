@@ -57,8 +57,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C490889 Saving record using "Save & keep editing" button when editing a "Holdings" record with source "MARC" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C490889'] },
+      'C490889 Saving record using "Save & keep editing" button when editing a "Holdings" record with source "MARC" (promin)',
+      { tags: ['extendedPath', 'promin', 'C490889'] },
       () => {
         // Step 1: Find MARC Instance with MARC holdings
         // Filter Holdings by "Source" facet and search

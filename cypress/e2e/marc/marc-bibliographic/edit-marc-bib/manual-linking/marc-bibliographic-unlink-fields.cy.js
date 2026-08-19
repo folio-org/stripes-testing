@@ -117,8 +117,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C365598 Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in editing window. (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire', 'C365598'] },
+          'C365598 Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in editing window. (promin) (TaaS)',
+          { tags: ['criticalPath', 'promin', 'C365598'] },
           () => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[2]);
             InventoryInstances.selectInstance();

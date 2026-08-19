@@ -122,8 +122,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C360092 Verify that click on the "Save & keep editing" button doesnt close the editing window of "MARC Authority" record (spitfire) (TaaS)',
-        { tags: ['extendedPathBroken', 'spitfire', 'C360092'] },
+        'C360092 Verify that click on the "Save & keep editing" button doesnt close the editing window of "MARC Authority" record (promin) (TaaS)',
+        { tags: ['extendedPathBroken', 'promin', 'C360092'] },
         () => {
           MarcAuthorities.searchBy(
             testData.authorityC360092.searchOption,
@@ -224,8 +224,8 @@ describe('MARC', () => {
       );
 
       it(
-        'C360093 Verify that updates are saved after clicking "Save & keep editing" button in the editing window of "MARC Authority" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C360093'] },
+        'C360093 Verify that updates are saved after clicking "Save & keep editing" button in the editing window of "MARC Authority" (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C360093'] },
         () => {
           MarcAuthorities.searchBy(
             testData.authorityC360093.searchOption,

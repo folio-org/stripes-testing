@@ -103,8 +103,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514975 Edit MARC bib record with required / not required fields (Standard and Local) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C514975', 'nonParallel'] },
+        'C514975 Edit MARC bib record with required / not required fields (Standard and Local) (promin)',
+        { tags: ['criticalPath', 'promin', 'C514975', 'nonParallel'] },
         () => {
           cy.then(() => {
             // Create user and MARC bib FIRST (before setting up validation rules)

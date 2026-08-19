@@ -89,8 +89,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C895681 Edit MARC authority record when "Undefined" validation rules are disabled and verify no warnings on "Save & keep editing" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C895681'] },
+        'C895681 Edit MARC authority record when "Undefined" validation rules are disabled and verify no warnings on "Save & keep editing" (promin)',
+        { tags: ['extendedPath', 'promin', 'C895681'] },
         () => {
           // Step 1: Navigate to the authority record detail view and open editor
           MarcAuthorities.searchBeats(authorityHeading);

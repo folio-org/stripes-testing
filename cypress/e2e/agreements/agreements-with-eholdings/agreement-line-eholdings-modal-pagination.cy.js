@@ -40,8 +40,8 @@ describe('Agreements', () => {
     });
 
     it(
-      'C350959 [Titles] Previous / next pagination of search result list (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C350959'] },
+      'C350959 [Titles] Previous / next pagination of search result list (promin)',
+      { tags: ['extendedPath', 'promin', 'C350959'] },
       () => {
         // Step 1: Open agreement and navigate to Agreement Lines accordion
         SearchAndFilterAgreements.search(testData.agreementName);

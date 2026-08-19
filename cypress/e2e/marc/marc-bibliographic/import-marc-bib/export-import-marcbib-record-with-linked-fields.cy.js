@@ -102,8 +102,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C369080 Export and Import "MARC Bibliographic" record with linked fields (which have $9 with UUID) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C369080'] },
+        'C369080 Export and Import "MARC Bibliographic" record with linked fields (which have $9 with UUID) (promin)',
+        { tags: ['criticalPath', 'promin', 'C369080'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,

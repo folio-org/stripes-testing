@@ -56,8 +56,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C423410 "New local MARC authority record" pane is opened after clicking on "+ New" option at Member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C423410'] },
+          'C423410 "New local MARC authority record" pane is opened after clicking on "+ New" option at Member tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C423410'] },
           () => {
             // 1 Click on "Actions" button in second pane
             MarcAuthorities.clickActionsButton();

@@ -255,8 +255,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C1292048 Verify that MARC authority record edits do not clear FOLIO fields in linked MARC bib records (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C1292048'] },
+        'C1292048 Verify that MARC authority record edits do not clear FOLIO fields in linked MARC bib records (promin)',
+        { tags: ['criticalPath', 'promin', 'C1292048'] },
         () => {
           // Step 1. Open first linked authority record (Stelfreeze, Brian) and click Edit
           MarcAuthorities.searchBy('Keyword', testData.authorityHeading1);

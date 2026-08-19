@@ -32,8 +32,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C683 Search packages for [JSTOR]. Filter results to only show selected packages (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C683'] },
+      'C683 Search packages for [JSTOR]. Filter results to only show selected packages (promin)',
+      { tags: ['criticalPath', 'promin', 'C683'] },
       () => {
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.searchQuery);

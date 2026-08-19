@@ -74,8 +74,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C496204 Cannot save existing MARC holdings record with multiple LDR fields (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C496204'] },
+      'C496204 Cannot save existing MARC holdings record with multiple LDR fields (promin)',
+      { tags: ['extendedPath', 'promin', 'C496204'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventorySearchAndFilter.selectViewHoldings();

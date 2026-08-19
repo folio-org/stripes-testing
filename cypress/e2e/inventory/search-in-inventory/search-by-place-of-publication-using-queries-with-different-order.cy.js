@@ -116,8 +116,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C496179 Search for Instance by "Place of publication" field using queries with different order of search terms (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'C496179'] },
+      'C496179 Search for Instance by "Place of publication" field using queries with different order of search terms (promin)',
+      { tags: ['criticalPathFlaky', 'promin', 'C496179'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 

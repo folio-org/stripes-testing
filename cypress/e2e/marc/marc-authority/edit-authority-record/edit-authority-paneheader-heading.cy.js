@@ -66,8 +66,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423962 Heading of MARC authority record does NOT change in the pane header during editing 1XX field in quickmarc (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423962'] },
+        'C423962 Heading of MARC authority record does NOT change in the pane header during editing 1XX field in quickmarc (promin)',
+        { tags: ['extendedPath', 'promin', 'C423962'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);

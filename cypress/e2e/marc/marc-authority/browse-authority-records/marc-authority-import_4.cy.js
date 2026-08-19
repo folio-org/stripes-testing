@@ -52,8 +52,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C353997 Browse for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C353997'] },
+        'C353997 Browse for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (promin)',
+        { tags: ['criticalPath', 'promin', 'C353997'] },
         () => {
           DataImport.uploadFileViaApi('marcFileForC353997.mrc', fileName, jobProfileToRun).then(
             (response) => {

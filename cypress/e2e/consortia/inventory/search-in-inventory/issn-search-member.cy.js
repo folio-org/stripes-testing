@@ -244,8 +244,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411624 Search for Shared/Local records by "Identifier (all)" ("Instance" tab) and "ISSN" search options from "Member" tenant (Instance, Holdings, Item tabs) (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411624'] },
+        'C411624 Search for Shared/Local records by "Identifier (all)" ("Instance" tab) and "ISSN" search options from "Member" tenant (Instance, Holdings, Item tabs) (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411624'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter(helbyAccordionName);
 

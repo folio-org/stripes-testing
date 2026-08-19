@@ -57,8 +57,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C701 Add or edit coverage statement (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C701'] },
+      'C701 Add or edit coverage statement (promin)',
+      { tags: ['extendedPath', 'promin', 'C701'] },
       () => {
         EHoldingsSearch.switchToTitles();
 

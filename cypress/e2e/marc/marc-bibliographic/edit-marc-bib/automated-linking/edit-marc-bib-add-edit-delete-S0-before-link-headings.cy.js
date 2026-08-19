@@ -159,8 +159,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C388503 Add/Edit/Delete subfield "$0" in the field before clicking on "Link headings" button when edit "MARC bib" (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C388503'] },
+          'C388503 Add/Edit/Delete subfield "$0" in the field before clicking on "Link headings" button when edit "MARC bib" (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C388503'] },
           () => {
             InventoryInstances.searchByTitle(testData.searchQuery);
             InventoryInstances.selectInstance();

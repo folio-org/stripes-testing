@@ -127,8 +127,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569597 Link "240" field when MARC authority 110 has all subfields (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C569597'] },
+          'C569597 Link "240" field when MARC authority 110 has all subfields (promin)',
+          { tags: ['extendedPath', 'promin', 'C569597'] },
           () => {
             InventoryInstances.searchByTitle(createdInstanceIds[0]);
             InventoryInstances.selectInstanceById(createdInstanceIds[0]);

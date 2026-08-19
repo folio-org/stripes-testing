@@ -84,8 +84,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C409427 No "Edit" button for shared "MARC Authority" record in Member tenant when user does not have edit permissions in Central tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C409427'] },
+          'C409427 No "Edit" button for shared "MARC Authority" record in Member tenant when user does not have edit permissions in Central tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C409427'] },
           () => {
             // Step 1: Fill search input field with heading of shared MARC Authority record → Click Search button
             MarcAuthorities.searchBeats(testData.searchQuery);

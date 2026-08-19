@@ -39,8 +39,8 @@ describe('MARC Bibliographic Validation Rules - Standard Fields Cannot Update Su
   });
 
   it(
-    'C510695 Cannot update Subfield code of Standard field (except "required") for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C510695', 'spitfire'] },
+    'C510695 Cannot update Subfield code of Standard field (except "required") for MARC bib spec (API) (promin)',
+    { tags: ['criticalPath', 'C510695', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

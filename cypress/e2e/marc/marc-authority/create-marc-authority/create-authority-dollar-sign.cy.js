@@ -91,8 +91,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C451559 Create "MARC authority" record which has "$" sign ("{dollar}" code) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C451559'] },
+        'C451559 Create "MARC authority" record which has "$" sign ("{dollar}" code) (promin)',
+        { tags: ['extendedPath', 'promin', 'C451559'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           MarcAuthority.setValid008DropdownValues();

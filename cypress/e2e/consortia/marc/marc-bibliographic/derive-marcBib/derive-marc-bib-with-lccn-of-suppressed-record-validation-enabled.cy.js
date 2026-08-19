@@ -118,8 +118,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C589509 Cannot derive MARC bib record with value in "010 $a" subfield which matches to "Suppressed from discovery" record "LCCN" field when duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C589509'] },
+          'C589509 Cannot derive MARC bib record with value in "010 $a" subfield which matches to "Suppressed from discovery" record "LCCN" field when duplicate LCCN check is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C589509'] },
           () => {
             // Step 0: User is on the detail view pane of "MARC bibliographic" record
             InventoryInstances.searchByTitle(marcInstanceTitle);

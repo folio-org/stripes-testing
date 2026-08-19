@@ -103,8 +103,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C812851 Update multiple "Item" records of same "Holdings" via "Bulkedit" and check "order" field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C812851'] },
+        'C812851 Update multiple "Item" records of same "Holdings" via "Bulkedit" and check "order" field (promin)',
+        { tags: ['extendedPath', 'promin', 'C812851'] },
         () => {
           cy.getToken(user.username, user.password);
           // Step 2: Verify initial order field sequence is 1, 2, 3, 4, 5 via API

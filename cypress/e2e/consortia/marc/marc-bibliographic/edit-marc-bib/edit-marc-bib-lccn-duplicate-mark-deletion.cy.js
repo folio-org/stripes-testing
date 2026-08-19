@@ -49,8 +49,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569613 Edit MARC bib record with "010 $a" subfield matched to others, marked as deleted records (MARC and FOLIO) with "LCCN" field when duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C569613'] },
+          'C569613 Edit MARC bib record with "010 $a" subfield matched to others, marked as deleted records (MARC and FOLIO) with "LCCN" field when duplicate LCCN check is enabled (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C569613'] },
           () => {
             // Precondition moved to `it` block to make sure `after` hook will always be executed
             cy.then(() => {

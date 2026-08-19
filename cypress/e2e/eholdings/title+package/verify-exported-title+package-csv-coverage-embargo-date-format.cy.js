@@ -55,8 +55,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C378888 Verify that in exported Title+Package ".csv" "Managed Coverage; Embargo", "Custom Coverage; Embargo" fields are filled in same date format as displayed in "eHoldings" app (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C378888'] },
+      'C378888 Verify that in exported Title+Package ".csv" "Managed Coverage; Embargo", "Custom Coverage; Embargo" fields are filled in same date format as displayed in "eHoldings" app (promin)',
+      { tags: ['extendedPath', 'promin', 'C378888'] },
       () => {
         EHoldingsResourceView.openExportModal();
         ExportSettingsModal.clickExportButton();

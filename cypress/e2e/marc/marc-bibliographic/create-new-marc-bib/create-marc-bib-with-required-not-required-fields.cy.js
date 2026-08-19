@@ -181,8 +181,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514973 Create MARC bib record with required / not required fields (Standard and Local) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C514973', 'nonParallel'] },
+        'C514973 Create MARC bib record with required / not required fields (Standard and Local) (promin)',
+        { tags: ['criticalPath', 'promin', 'C514973', 'nonParallel'] },
         () => {
           // Step 1: Click on "Actions" button in second pane >> Select "New MARC bibliographic record" option
           InventoryInstance.newMarcBibRecord();

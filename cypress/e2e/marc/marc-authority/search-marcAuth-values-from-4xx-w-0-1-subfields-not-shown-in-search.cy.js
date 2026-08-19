@@ -75,8 +75,8 @@ describe('MARC', () => {
       });
 
       it(
-        "C350731 Values from $w, $0, $1 subfields of 4XX don't display in the search result pane (spitfire)",
-        { tags: ['extendedPath', 'spitfire', 'C350731'] },
+        "C350731 Values from $w, $0, $1 subfields of 4XX don't display in the search result pane (promin)",
+        { tags: ['extendedPath', 'promin', 'C350731'] },
         () => {
           // Steps 1-2: Search by the 4XX $a reference value → "Reference" records returned
           MarcAuthorities.searchBy(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD, testData.searchQuery);

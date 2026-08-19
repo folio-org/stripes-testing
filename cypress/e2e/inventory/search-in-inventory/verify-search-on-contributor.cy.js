@@ -68,8 +68,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C2322 Search: Verify search on Contributor (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C2322'] },
+      'C2322 Search: Verify search on Contributor (promin)',
+      { tags: ['extendedPath', 'promin', 'C2322'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password, {

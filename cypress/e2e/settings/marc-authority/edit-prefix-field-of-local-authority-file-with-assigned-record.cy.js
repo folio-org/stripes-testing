@@ -74,8 +74,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436851 Edit "Prefix" field of Local "Authority file" which has assigned "MARC authority" records (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C436851'] },
+        'C436851 Edit "Prefix" field of Local "Authority file" which has assigned "MARC authority" records (promin)',
+        { tags: ['extendedPath', 'promin', 'C436851'] },
         () => {
           // Forcing increased limit for UI to show more rows
           cy.intercept('GET', /\/authority-source-files\?.*limit=\d+/, (req) => {

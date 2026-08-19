@@ -156,8 +156,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C388537 Edit subfield "$0" in the unlinked fields before clicking on "Link headings" button when edit "MARC bib" (spitfire) (TaaS)',
-          { tags: ['criticalPathFlaky', 'spitfire', 'C388537'] },
+          'C388537 Edit subfield "$0" in the unlinked fields before clicking on "Link headings" button when edit "MARC bib" (promin) (TaaS)',
+          { tags: ['criticalPathFlaky', 'promin', 'C388537'] },
           () => {
             // #1 Find and open detail view of "MARC Bib" record from precondition, ex. of search query:
             InventoryInstances.searchByTitle(createdRecordIDs[0]);

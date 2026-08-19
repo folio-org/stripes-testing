@@ -41,8 +41,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422121 Search created "MARC bib" record by Title, OCLC number(spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire', 'C422121'] },
+        'C422121 Search created "MARC bib" record by Title, OCLC number(promin) (TaaS)',
+        { tags: ['criticalPath', 'promin', 'C422121'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.waitLoading();

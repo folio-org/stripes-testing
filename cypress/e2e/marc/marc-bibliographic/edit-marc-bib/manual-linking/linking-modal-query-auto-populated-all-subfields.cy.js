@@ -171,7 +171,7 @@ describe('MARC', () => {
 
         it(
           'C736762 Verify all linkable subfields are auto-populated in Select MARC authority modal',
-          { tags: ['criticalPath', 'spitfire', 'C736762'] },
+          { tags: ['criticalPath', 'promin', 'C736762'] },
           () => {
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,

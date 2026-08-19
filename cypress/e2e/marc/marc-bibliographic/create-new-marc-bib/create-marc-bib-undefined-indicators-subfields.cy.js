@@ -88,8 +88,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514908 Create MARC bib record with undefined Indicators / Subfield codes in Standard and Local fields when "Undefined" rules are "enabled" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C514908', 'nonParallel'] },
+        'C514908 Create MARC bib record with undefined Indicators / Subfield codes in Standard and Local fields when "Undefined" rules are "enabled" (promin)',
+        { tags: ['criticalPath', 'promin', 'C514908', 'nonParallel'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.checkPaneheaderContains(/New .*MARC bib record/);

@@ -216,8 +216,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C402368 Adding child or parent "Instance" in "Inventory" app: Use "Held by" facet in "Member" tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C402368'] },
+          'C402368 Adding child or parent "Instance" in "Inventory" app: Use "Held by" facet in "Member" tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C402368'] },
           () => {
             InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
             InventoryInstances.searchByTitle(testInstanceId);

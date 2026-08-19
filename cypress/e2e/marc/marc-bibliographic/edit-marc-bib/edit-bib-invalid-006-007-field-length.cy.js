@@ -170,8 +170,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C499623 Cannot save existing "MARC bib" record with invalid length of "006" and "007" fields (which are "system") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C499623'] },
+        'C499623 Cannot save existing "MARC bib" record with invalid length of "006" and "007" fields (which are "system") (promin)',
+        { tags: ['extendedPath', 'promin', 'C499623'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

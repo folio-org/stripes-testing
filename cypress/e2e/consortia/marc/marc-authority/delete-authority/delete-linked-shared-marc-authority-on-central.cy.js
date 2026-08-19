@@ -196,8 +196,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C407628 Delete linked Shared "MARC authority" record on Central tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C407628'] },
+          'C407628 Delete linked Shared "MARC authority" record on Central tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C407628'] },
           () => {
             // Login to Central (primary affiliation)
             cy.resetTenant();

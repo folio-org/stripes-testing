@@ -117,8 +117,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C367974 Search for two "Instance" records by "Authority UUID" value of linked "MARC Authority" record (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'C367974'] },
+      'C367974 Search for two "Instance" records by "Authority UUID" value of linked "MARC Authority" record (promin)',
+      { tags: ['criticalPathFlaky', 'promin', 'C367974'] },
       () => {
         InventoryInstances.verifyInstanceSearchOptions();
         InventoryInstances.searchInstancesWithOption(

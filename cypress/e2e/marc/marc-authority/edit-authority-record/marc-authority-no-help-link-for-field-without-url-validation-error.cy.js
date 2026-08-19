@@ -65,8 +65,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C523617 "Help" hyperlink doesn\'t display when error occurs for the field without "Help URL" in MARC authority validation rules (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C523617', 'nonParallel'] },
+        'C523617 "Help" hyperlink doesn\'t display when error occurs for the field without "Help URL" in MARC authority validation rules (promin)',
+        { tags: ['extendedPath', 'promin', 'C523617', 'nonParallel'] },
         () => {
           cy.then(() => {
             cy.createTempUser([

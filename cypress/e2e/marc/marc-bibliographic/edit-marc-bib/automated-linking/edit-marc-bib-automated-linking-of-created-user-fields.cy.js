@@ -175,8 +175,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C388519 Automated link of created by user fields when edit "MARC bib" (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C388519'] },
+          'C388519 Automated link of created by user fields when edit "MARC bib" (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C388519'] },
           () => {
             // #1 Find and open detail view of "MARC Bib" record record from precondition, ex. of search query:
             InventoryInstances.searchByTitle(createdRecordIDs[0]);

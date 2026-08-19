@@ -34,8 +34,8 @@ describe('Note creation', () => {
   });
 
   it(
-    'C359005 A user can view Notes that were edited by deleted user (spitfire)',
-    { tags: ['criticalPath', 'spitfire', 'C359005'] },
+    'C359005 A user can view Notes that were edited by deleted user (promin)',
+    { tags: ['criticalPath', 'promin', 'C359005'] },
     () => {
       const note = {
         title: `AT_C359005_Note ${getRandomPostfix()}`,
@@ -87,7 +87,7 @@ describe('Note creation', () => {
     },
   );
 
-  it('C1300 Delete a note (spitfire)', { tags: ['criticalPath', 'spitfire', 'C1300'] }, () => {
+  it('C1300 Delete a note (promin)', { tags: ['criticalPath', 'promin', 'C1300'] }, () => {
     const note = {
       title: `AT_C1300_Note ${getRandomPostfix()}`,
       addDetails: `AT_C1300_NoteDescription ${getRandomPostfix()}`,
@@ -105,8 +105,8 @@ describe('Note creation', () => {
   });
 
   it(
-    'C16993 Able to sort Notes accordion column headings (spitfire)',
-    { tags: ['criticalPath', 'spitfire', 'C16993'] },
+    'C16993 Able to sort Notes accordion column headings (promin)',
+    { tags: ['criticalPath', 'promin', 'C16993'] },
     () => {
       const note = {
         titleFirst: `AT_C16993_Note1_Title ${getRandomPostfix()}`,

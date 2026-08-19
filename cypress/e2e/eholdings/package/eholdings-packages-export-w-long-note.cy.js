@@ -62,8 +62,8 @@ describe.skip('eHoldings', () => {
     });
 
     it(
-      'C357529 Export all "Titles" (less than 10k) of "Package" record with large "Note" (around 4k symbols). (spitfire) (TaaS)',
-      { tags: ['criticalPathBroken', 'spitfire', 'C357529', 'obsolete'] },
+      'C357529 Export all "Titles" (less than 10k) of "Package" record with large "Note" (around 4k symbols). (promin) (TaaS)',
+      { tags: ['criticalPathBroken', 'promin', 'C357529', 'obsolete'] },
       () => {
         // Fill in the input field with the search query, Click on the "Search" button.
         EHoldingsPackagesSearch.byName('Cambridge');

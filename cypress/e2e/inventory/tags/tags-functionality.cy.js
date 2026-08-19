@@ -838,8 +838,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C490907 Verify that user can quickly add more than 1 tag to "Instance" record with source "MARC" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C490907'] },
+      'C490907 Verify that user can quickly add more than 1 tag to "Instance" record with source "MARC" (promin)',
+      { tags: ['extendedPath', 'promin', 'C490907'] },
       () => {
         // Search for and open the instance
         InventoryInstances.searchByTitle(instanceId);
@@ -953,8 +953,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C490906 Verify that user can quickly add more than 1 tag to "Instance" record with source "Folio" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C490906'] },
+      'C490906 Verify that user can quickly add more than 1 tag to "Instance" record with source "Folio" (promin)',
+      { tags: ['extendedPath', 'promin', 'C490906'] },
       () => {
         // Search for and open the instance
         InventoryInstances.searchByTitle(instanceId);
@@ -1061,8 +1061,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C490909 Verify that user can quickly add more than 1 tag to Item record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C490909'] },
+        'C490909 Verify that user can quickly add more than 1 tag to Item record (promin)',
+        { tags: ['extendedPath', 'promin', 'C490909'] },
         () => {
           // 1. Go to "Inventory" app → Search by title for the Instance created as precondition
           InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstanceTitle);

@@ -189,8 +189,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C410702 "Title look-up" plugin in "Requests" app: Use "Shared" facet in "Member" tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'C410702'] },
+      'C410702 "Title look-up" plugin in "Requests" app: Use "Shared" facet in "Member" tenant (consortia) (promin)',
+      { tags: ['criticalPathECS', 'promin', 'C410702'] },
       () => {
         // 1 Click on "Actions" button in second pane → Select "New" option
         NewRequest.openNewRequestPane();

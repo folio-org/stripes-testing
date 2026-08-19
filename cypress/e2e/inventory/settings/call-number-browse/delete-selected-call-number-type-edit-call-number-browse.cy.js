@@ -62,8 +62,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C627460 Delete already selected "Call number type" when edit "Call number browse" option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C627460'] },
+        'C627460 Delete already selected "Call number type" when edit "Call number browse" option (promin)',
+        { tags: ['extendedPath', 'promin', 'C627460'] },
         () => {
           // Verify that the browse option has pre-selected call number types
           CallNumberBrowseSettings.validateCallNumberBrowseRowInTable(

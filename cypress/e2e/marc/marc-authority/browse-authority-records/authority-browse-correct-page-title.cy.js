@@ -67,8 +67,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C442840 MARC authority | Use "Reset all" in "Advanced search" modal (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C442840'] },
+        'C442840 MARC authority | Use "Reset all" in "Advanced search" modal (promin)',
+        { tags: ['criticalPath', 'promin', 'C442840'] },
         () => {
           cy.wait(3000);
           MarcAuthoritiesSearch.fillSearchInput(testData.searchQuery);

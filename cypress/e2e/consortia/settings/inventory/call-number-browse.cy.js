@@ -56,8 +56,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C627461 Edit "Call number browse" option from Central/Member tenants (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C627461'] },
+          'C627461 Edit "Call number browse" option from Central/Member tenants (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C627461'] },
           () => {
             CallNumberBrowseSettings.clickEditButtonForItem(callNumberBrowseOptionCentral);
             CallNumberBrowseSettings.validateSaveButtonStatusForItem({

@@ -43,8 +43,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C698 Edit proxy selection for a title in a package (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C698'] },
+      'C698 Edit proxy selection for a title in a package (promin)',
+      { tags: ['extendedPath', 'promin', 'C698'] },
       () => {
         EHoldingsResourceView.addToHoldings();
         cy.wait(2000);

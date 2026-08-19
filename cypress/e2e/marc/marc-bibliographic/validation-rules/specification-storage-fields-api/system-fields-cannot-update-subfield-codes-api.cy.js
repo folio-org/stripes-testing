@@ -39,8 +39,8 @@ describe('MARC Bibliographic Validation Rules - System Fields Cannot Update Subf
   });
 
   it(
-    'C510264 Cannot update Subfield code of System field for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C510264', 'spitfire'] },
+    'C510264 Cannot update Subfield code of System field for MARC bib spec (API) (promin)',
+    { tags: ['criticalPath', 'C510264', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

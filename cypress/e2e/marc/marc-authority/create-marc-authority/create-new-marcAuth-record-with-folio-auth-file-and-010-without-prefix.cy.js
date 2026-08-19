@@ -52,8 +52,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423541 Create a new MARC authority record with "FOLIO" authority file selected and added "010" field without prefix (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C423541'] },
+        'C423541 Create a new MARC authority record with "FOLIO" authority file selected and added "010" field without prefix (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C423541'] },
         () => {
           // Step 1: Open new MARC authority record form
           MarcAuthorities.clickActionsAndNewAuthorityButton();

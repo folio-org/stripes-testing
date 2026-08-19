@@ -72,8 +72,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C436910 Edit all editable fields of FOLIO "Authority file" which has assigned "MARC authority" records at Central tenant, from Central tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C436910'] },
+          'C436910 Edit all editable fields of FOLIO "Authority file" which has assigned "MARC authority" records at Central tenant, from Central tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C436910'] },
           () => {
             cy.login(user.username, user.password);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, marcAuthorityTabName);

@@ -162,8 +162,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422169 MARC Authority plug-in | Apply "Authority source" facet to the browse result list (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C422169'] },
+        'C422169 MARC Authority plug-in | Apply "Authority source" facet to the browse result list (promin)',
+        { tags: ['extendedPath', 'promin', 'C422169'] },
         () => {
           // Steps 1-3: Browse by Subject
           MarcAuthorityBrowse.checkResultWithNoValue(`${testData.authorityPrefix} link target`);

@@ -73,8 +73,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466062 Verify that version of "Instance" record (source=MARC) was not updated after creation of "Holdings" and "Item" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C466062'] },
+      'C466062 Verify that version of "Instance" record (source=MARC) was not updated after creation of "Holdings" and "Item" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C466062'] },
       () => {
         const locationString = `${location.name} (${location.code}) `;
 

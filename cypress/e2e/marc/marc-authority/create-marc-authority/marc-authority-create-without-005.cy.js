@@ -55,8 +55,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C916259 Create MARC authority record without "005" field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C916259'] },
+        'C916259 Create MARC authority record without "005" field (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C916259'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkRecordStatusNew();
