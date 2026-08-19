@@ -16,7 +16,7 @@ import {
   Select,
   TextField,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import { DEFAULT_WAIT_TIME, ITEM_STATUS_NAMES } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
 import ExportSettingsModal from './modals/exportSettingsModal';
@@ -192,27 +192,6 @@ export default {
       Checkbox('Create item').click(),
       Button('Save & close').click(),
     ]);
-    InteractorsTools.checkCalloutMessage('The piece was successfully saved');
-  },
-
-  receiveDisplayOnHoldingPiece(displaySummary) {
-    cy.do([
-      pieceDetailsSection.find(TextField('Display summary')).fillIn(displaySummary),
-      pieceDetailsSection.find(Checkbox('Display on holding')).click(),
-    ]);
-    cy.expect(pieceDetailsSection.find(Checkbox('Display to public')).exists());
-    this.openDropDownInEditPieceModal();
-    cy.do(Button('Quick receive').click());
-    cy.wait(1000);
-    InteractorsTools.checkCalloutMessage('The piece  was successfully received');
-  },
-
-  editDisplayOnHoldingAndAddDisplayToPublicPiece() {
-    cy.do(pieceDetailsSection.find(Checkbox('Display on holding')).click());
-    cy.expect(pieceDetailsSection.find(Checkbox('Display to public')).exists());
-    cy.do(pieceDetailsSection.find(Checkbox('Display to public')).click());
-    cy.do(Button('Save & close').click());
-    cy.wait(1000);
     InteractorsTools.checkCalloutMessage('The piece was successfully saved');
   },
 
@@ -684,6 +663,23 @@ export default {
         },
         isDefaultSearchParamsRequired: false,
       });
+    });
+  },
+
+  unreceivePiecesViaApi({ poLineId, pieceIds }) {
+    const receivedItems = pieceIds.map((pieceId) => ({
+      pieceId,
+      itemStatus: ITEM_STATUS_NAMES.ON_ORDER,
+    }));
+
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'orders/receive',
+      body: {
+        toBeReceived: [{ poLineId, received: receivedItems.length, receivedItems }],
+        totalRecords: receivedItems.length,
+      },
+      isDefaultSearchParamsRequired: false,
     });
   },
 
