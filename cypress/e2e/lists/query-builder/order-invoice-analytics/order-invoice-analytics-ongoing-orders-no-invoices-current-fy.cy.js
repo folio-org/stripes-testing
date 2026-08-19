@@ -29,13 +29,14 @@ import { Lists } from '../../../../support/fragments/lists/lists';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import OrderLinesLimit from '../../../../support/fragments/settings/orders/orderLinesLimit';
-import SelectOrganizationModal from '../../../../support/fragments/orders/modals/selectOrganizationModal';
 import { getTestEntityValue } from '../../../../support/utils/stringTools';
 import DateTools from '../../../../support/utils/dateTools';
+import { CodeTools, StringTools } from '../../../../support/utils';
 
+const code = CodeTools(4);
+const todayDate = DateTools.getCurrentDate();
 const recordType = Lists.recordTypes.orderInvoiceAnalysis;
 const currentYear = new Date().getFullYear();
-
 const testData = {
   user: {},
   vendor: NewOrganization.getDefaultOrganization({ isVendor: true }),
@@ -45,10 +46,12 @@ const testData = {
   fiscalYear1: {
     ...FiscalYears.getDefaultFiscalYear(),
     ...DateTools.getFullFiscalYearStartAndEnd(0),
+    code: `${code}${StringTools.randomTwoDigitNumber()}01`,
   },
   fiscalYear2: {
     ...FiscalYears.getDefaultFiscalYear(),
     ...DateTools.getFullFiscalYearStartAndEnd(1),
+    code: `${code}${StringTools.randomTwoDigitNumber()}02`,
   },
   order1: {},
   order2: {},
@@ -125,7 +128,7 @@ describe('Lists', () => {
               ...Budgets.getDefaultBudget(),
               fiscalYearId: fy1.id,
               fundId: fundResp.fund.id,
-              allocated: 1000,
+              allocated: 100,
             };
             Budgets.createViaApi(budget).then((budgetResp) => {
               testData.budget = budgetResp;
@@ -217,7 +220,6 @@ describe('Lists', () => {
             Invoices.changeInvoiceStatusViaApi({ invoice: inv2, status: INVOICE_STATUSES.PAID });
           });
         });
-
         // ── Rollover: FY#1 → FY#2 (after Orders #1-3 and Invoices #1-2 are ready) ──
         cy.then(() => {
           const rollover = LedgerRollovers.generateLedgerRollover({
@@ -236,153 +238,146 @@ describe('Lists', () => {
           });
           LedgerRollovers.createLedgerRolloverViaApi(rollover);
 
-          // Re-fetch FYs after rollover to get current _version before updating dates
-          FiscalYears.getViaApi({ query: `id=="${testData.fiscalYear1.id}"` }).then(
-            ({ fiscalYears }) => {
-              FiscalYears.updateFiscalYearViaApi({
-                ...fiscalYears[0],
-                periodStart: new Date(currentYear - 1, 0, 1),
-                periodEnd: new Date(currentYear - 1, 11, 31),
+          cy.then(() => {
+            FiscalYears.getViaApi({ query: `id=="${testData.fiscalYear2.id}"` }).then(
+              ({ fiscalYears }) => {
+                FiscalYears.updateFiscalYearViaApi({
+                  ...fiscalYears[0],
+                  periodStart: `${currentYear}-01-01T00:00:00.000Z`,
+                });
+              },
+            );
+          }).then(() => {
+            // ── Post-rollover: Invoice #3 from Order #3 → Approved (FY#1, approved after rollover) ───────
+            Invoices.createInvoiceWithInvoiceLineViaApi({
+              vendorId: testData.vendor.id,
+              fiscalYearId: testData.fiscalYear2.id,
+              accountingCode: testData.vendor.erpCode,
+              poLineId: testData.pol3.id,
+              fundDistributions: testData.pol3.fundDistribution,
+              subTotal: 10,
+            }).then((inv3) => {
+              testData.invoice3 = inv3;
+              Invoices.changeInvoiceStatusViaApi({
+                invoice: inv3,
+                status: INVOICE_STATUSES.APPROVED,
               });
-            },
-          );
-          FiscalYears.getViaApi({ query: `id=="${testData.fiscalYear2.id}"` }).then(
-            ({ fiscalYears }) => {
-              FiscalYears.updateFiscalYearViaApi({
-                ...fiscalYears[0],
-                periodStart: new Date(currentYear, 0, 1),
-                periodEnd: new Date(currentYear, 11, 31),
+            });
+
+            // ── Order #4 (Ongoing, 1 POL, re-encumber=disabled) ──────────────────
+            const order4 = {
+              ...NewOrder.defaultOngoingTimeOrder,
+              id: uuid(),
+              vendor: testData.vendor.id,
+              reEncumber: false,
+            };
+            Orders.createOrderViaApi(order4).then((ord4) => {
+              testData.order4 = ord4;
+              const pol4 = BasicOrderLine.getDefaultOrderLine({
+                purchaseOrderId: ord4.id,
+                fundDistribution: [
+                  {
+                    code: testData.fund.code,
+                    fundId: testData.fund.id,
+                    distributionType: 'percentage',
+                    value: 100,
+                  },
+                ],
+                specialLocationId: testData.locationId,
+                specialMaterialTypeId: testData.materialTypeId,
+                acquisitionMethod: testData.acquisitionMethodId,
+                listUnitPrice: 10,
+                poLineEstimatedPrice: 10,
               });
-            },
-          );
-
-          // ── Post-rollover: Invoice #3 from Order #3 → Approved (FY#2) ───────
-          Invoices.createInvoiceWithInvoiceLineViaApi({
-            vendorId: testData.vendor.id,
-            fiscalYearId: testData.fiscalYear2.id,
-            accountingCode: testData.vendor.erpCode,
-            poLineId: testData.pol3.id,
-            fundDistributions: testData.pol3.fundDistribution,
-            subTotal: 10,
-          }).then((inv3) => {
-            testData.invoice3 = inv3;
-            Invoices.changeInvoiceStatusViaApi({
-              invoice: inv3,
-              status: INVOICE_STATUSES.APPROVED,
+              OrderLines.createOrderLineViaApi(pol4).then((pol4Resp) => {
+                testData.pol4 = pol4Resp;
+                Orders.updateOrderViaApi({ ...ord4, workflowStatus: ORDER_STATUSES.OPEN }).then(
+                  () => {
+                    // Invoice #4 from Order #4 → Open (FY#2 — leave at Open status)
+                    Invoices.createInvoiceWithInvoiceLineViaApi({
+                      vendorId: testData.vendor.id,
+                      fiscalYearId: testData.fiscalYear2.id,
+                      accountingCode: testData.vendor.erpCode,
+                      poLineId: pol4Resp.id,
+                      fundDistributions: pol4Resp.fundDistribution,
+                      subTotal: 10,
+                    }).then((inv4) => {
+                      testData.invoice4 = inv4;
+                      // Leave Invoice #4 in Open status
+                    });
+                  },
+                );
+              });
             });
-          });
 
-          // ── Order #4 (Ongoing, 1 POL, re-encumber=disabled) ──────────────────
-          const order4 = {
-            ...NewOrder.defaultOngoingTimeOrder,
-            id: uuid(),
-            vendor: testData.vendor.id,
-            reEncumber: false,
-          };
-          Orders.createOrderViaApi(order4).then((ord4) => {
-            testData.order4 = ord4;
-            const pol4 = BasicOrderLine.getDefaultOrderLine({
-              purchaseOrderId: ord4.id,
-              fundDistribution: [
-                {
-                  code: testData.fund.code,
-                  fundId: testData.fund.id,
-                  distributionType: 'percentage',
-                  value: 100,
-                },
-              ],
-              specialLocationId: testData.locationId,
-              specialMaterialTypeId: testData.materialTypeId,
-              acquisitionMethod: testData.acquisitionMethodId,
-              listUnitPrice: 10,
-              poLineEstimatedPrice: 10,
-            });
-            OrderLines.createOrderLineViaApi(pol4).then((pol4Resp) => {
-              testData.pol4 = pol4Resp;
-              Orders.updateOrderViaApi({ ...ord4, workflowStatus: ORDER_STATUSES.OPEN }).then(
+            // ── Order #5 (Ongoing, 2 POLs, re-encumber=disabled) ─────────────────
+            const order5 = {
+              ...NewOrder.defaultOngoingTimeOrder,
+              id: uuid(),
+              vendor: testData.vendor.id,
+              reEncumber: false,
+            };
+            Orders.createOrderViaApi(order5).then((ord5) => {
+              testData.order5 = ord5;
+              const pol5a = BasicOrderLine.getDefaultOrderLine({
+                purchaseOrderId: ord5.id,
+                fundDistribution: [
+                  {
+                    code: testData.fund.code,
+                    fundId: testData.fund.id,
+                    distributionType: 'percentage',
+                    value: 100,
+                  },
+                ],
+                specialLocationId: testData.locationId,
+                specialMaterialTypeId: testData.materialTypeId,
+                acquisitionMethod: testData.acquisitionMethodId,
+                listUnitPrice: 10,
+                poLineEstimatedPrice: 10,
+              });
+              const pol5b = BasicOrderLine.getDefaultOrderLine({
+                purchaseOrderId: ord5.id,
+                fundDistribution: [
+                  {
+                    code: testData.fund.code,
+                    fundId: testData.fund.id,
+                    distributionType: 'percentage',
+                    value: 100,
+                  },
+                ],
+                specialLocationId: testData.locationId,
+                specialMaterialTypeId: testData.materialTypeId,
+                acquisitionMethod: testData.acquisitionMethodId,
+                listUnitPrice: 10,
+                poLineEstimatedPrice: 10,
+              });
+              OrderLines.createOrderLineViaApi(pol5a).then((pol5aResp) => {
+                testData.pol5a = pol5aResp;
+              });
+              OrderLines.createOrderLineViaApi(pol5b).then((pol5bResp) => {
+                testData.pol5b = pol5bResp;
+              });
+              Orders.updateOrderViaApi({ ...ord5, workflowStatus: ORDER_STATUSES.OPEN }).then(
                 () => {
-                  // Invoice #4 from Order #4 → Open (FY#2 — leave at Open status)
-                  Invoices.createInvoiceWithInvoiceLineViaApi({
-                    vendorId: testData.vendor.id,
-                    fiscalYearId: testData.fiscalYear2.id,
-                    accountingCode: testData.vendor.erpCode,
-                    poLineId: pol4Resp.id,
-                    fundDistributions: pol4Resp.fundDistribution,
-                    subTotal: 10,
-                  }).then((inv4) => {
-                    testData.invoice4 = inv4;
-                    // Leave Invoice #4 in Open status
+                  cy.then(() => {
+                    // Invoice #5 from POL #1 of Order #5 → Paid (FY#2)
+                    Invoices.createInvoiceWithInvoiceLineViaApi({
+                      vendorId: testData.vendor.id,
+                      fiscalYearId: testData.fiscalYear2.id,
+                      accountingCode: testData.vendor.erpCode,
+                      poLineId: testData.pol5a.id,
+                      fundDistributions: testData.pol5a.fundDistribution,
+                      subTotal: 10,
+                    }).then((inv5) => {
+                      testData.invoice5 = inv5;
+                      Invoices.changeInvoiceStatusViaApi({
+                        invoice: inv5,
+                        status: INVOICE_STATUSES.PAID,
+                      });
+                    });
                   });
                 },
               );
-            });
-          });
-
-          // ── Order #5 (Ongoing, 2 POLs, re-encumber=disabled) ─────────────────
-          const order5 = {
-            ...NewOrder.defaultOngoingTimeOrder,
-            id: uuid(),
-            vendor: testData.vendor.id,
-            reEncumber: false,
-          };
-          Orders.createOrderViaApi(order5).then((ord5) => {
-            testData.order5 = ord5;
-            const pol5a = BasicOrderLine.getDefaultOrderLine({
-              purchaseOrderId: ord5.id,
-              fundDistribution: [
-                {
-                  code: testData.fund.code,
-                  fundId: testData.fund.id,
-                  distributionType: 'percentage',
-                  value: 100,
-                },
-              ],
-              specialLocationId: testData.locationId,
-              specialMaterialTypeId: testData.materialTypeId,
-              acquisitionMethod: testData.acquisitionMethodId,
-              listUnitPrice: 10,
-              poLineEstimatedPrice: 10,
-            });
-            const pol5b = BasicOrderLine.getDefaultOrderLine({
-              purchaseOrderId: ord5.id,
-              fundDistribution: [
-                {
-                  code: testData.fund.code,
-                  fundId: testData.fund.id,
-                  distributionType: 'percentage',
-                  value: 100,
-                },
-              ],
-              specialLocationId: testData.locationId,
-              specialMaterialTypeId: testData.materialTypeId,
-              acquisitionMethod: testData.acquisitionMethodId,
-              listUnitPrice: 10,
-              poLineEstimatedPrice: 10,
-            });
-            OrderLines.createOrderLineViaApi(pol5a).then((pol5aResp) => {
-              testData.pol5a = pol5aResp;
-            });
-            OrderLines.createOrderLineViaApi(pol5b).then((pol5bResp) => {
-              testData.pol5b = pol5bResp;
-            });
-            Orders.updateOrderViaApi({ ...ord5, workflowStatus: ORDER_STATUSES.OPEN }).then(() => {
-              cy.then(() => {
-                // Invoice #5 from POL #1 of Order #5 → Paid (FY#2)
-                Invoices.createInvoiceWithInvoiceLineViaApi({
-                  vendorId: testData.vendor.id,
-                  fiscalYearId: testData.fiscalYear2.id,
-                  accountingCode: testData.vendor.erpCode,
-                  poLineId: testData.pol5a.id,
-                  fundDistributions: testData.pol5a.fundDistribution,
-                  subTotal: 10,
-                }).then((inv5) => {
-                  testData.invoice5 = inv5;
-                  Invoices.changeInvoiceStatusViaApi({
-                    invoice: inv5,
-                    status: INVOICE_STATUSES.PAID,
-                  });
-                });
-              });
             });
           });
         });
@@ -468,17 +463,16 @@ describe('Lists', () => {
         QueryModal.addNewRow();
         QueryModal.selectField(ORDER_INVOICE_ANALYSIS_FIELDS.PO.RELATED_FISCAL_YEARS, 1);
         QueryModal.selectOperator(QUERY_OPERATIONS.NOT_IN, 1);
-        QueryModal.chooseValueSelect(testData.fiscalYear2.name, 1);
+        QueryModal.chooseFromValueMultiselect(testData.fiscalYear2.name, 1);
         QueryModal.verifyQueryTextboxReadOnly();
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled(true);
 
-        // Step 4: Narrow to test vendor for isolation, then test query
+        // Step 4: Narrow to orders created today for isolation, then test query
         QueryModal.addNewRow(1);
-        QueryModal.selectField(ORDER_INVOICE_ANALYSIS_FIELDS.ORGANIZATION.CODE, 2);
+        QueryModal.selectField(ORDER_INVOICE_ANALYSIS_FIELDS.PO.CREATED_AT, 2);
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 2);
-        QueryModal.clickOrganizationLookup(2);
-        SelectOrganizationModal.findOrganization(testData.vendor.name);
+        QueryModal.fillInValueTextfield(todayDate, 2);
         QueryModal.testQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();
@@ -498,7 +492,7 @@ describe('Lists', () => {
         // Row for Order #1: Ongoing | order1.poNumber | pol1.poLineNumber | fy1.code | fy1.code | Paid
         // (Invoice #1 was paid in FY#1; FY#1 is the related FY visible in this query)
         QueryModal.verifyPreviewTableContainsRowWithValuesInOrder(
-          `${ORDER_TYPES.ONGOING}\n${testData.order1.poNumber}\n${testData.pol1.poLineNumber}\n${testData.fiscalYear1.code}\n${testData.fiscalYear1.code}\n${INVOICE_STATUSES.PAID}`,
+          `${ORDER_TYPES.ONGOING}\n${testData.order1.poNumber}\n${testData.pol1.poLineNumber}\n${testData.fiscalYear1.code}\n${testData.fiscalYear1.name}\n${INVOICE_STATUSES.PAID}`,
         );
         // Row for Order #2: Ongoing | order2.poNumber | pol2.poLineNumber (no FY, no invoice — empty cells omitted)
         QueryModal.verifyPreviewTableContainsRowWithValuesInOrder(
@@ -513,9 +507,11 @@ describe('Lists', () => {
         QueryModal.clickRunQueryAndSave();
         QueryModal.verifyClosed();
         Lists.waitForCompilingToComplete(3000);
+
         columnsToSelect.forEach((col) => QueryModal.verifyColumnDisplayed(col));
+
         QueryModal.verifyPreviewTableContainsRowWithValuesInOrder(
-          `${ORDER_TYPES.ONGOING}\n${testData.order1.poNumber}\n${testData.pol1.poLineNumber}\n${testData.fiscalYear1.code}\n${testData.fiscalYear1.code}\n${INVOICE_STATUSES.PAID}`,
+          `${ORDER_TYPES.ONGOING}\n${testData.order1.poNumber}\n${testData.pol1.poLineNumber}\n${testData.fiscalYear1.code}\n${testData.fiscalYear1.name}\n${INVOICE_STATUSES.PAID}`,
         );
         QueryModal.verifyPreviewTableContainsRowWithValuesInOrder(
           `${ORDER_TYPES.ONGOING}\n${testData.order2.poNumber}\n${testData.pol2.poLineNumber}`,

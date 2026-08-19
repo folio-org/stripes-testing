@@ -16,6 +16,7 @@ export const ORDER_INVOICE_ANALYSIS_FIELDS = {
     ORDER_TYPE: 'PO — Order type',
     PO_NUMBER: 'PO — PO number',
     RELATED_FISCAL_YEARS: 'PO — Related fiscal years',
+    CREATED_AT: 'PO — Created at',
   },
   ORGANIZATION: {
     CODE: 'Organization — Code',
