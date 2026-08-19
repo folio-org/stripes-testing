@@ -302,7 +302,7 @@ const verifyAlternativeTitle = (indexRow, indexColumn, value) => {
   );
 };
 
-const verifySeriesStatement = (indexRow, value) => {
+const verifySeriesStatement = (indexRow, value = 'No value set-') => {
   cy.expect(
     titleDataAccordion
       .find(MultiColumnList({ id: 'list-series-statement' }))
