@@ -70,8 +70,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C421997 (CONSORTIA) Verify the field mapping profile options on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C421997'] },
+        'C421997 (CONSORTIA) Verify the field mapping profile options on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C421997'] },
         () => {
           SettingsFieldMappingProfiles.openNewMappingProfileForm();
           NewFieldMappingProfile.verifyFolioRecordTypeOptions(recordTypeOptions);

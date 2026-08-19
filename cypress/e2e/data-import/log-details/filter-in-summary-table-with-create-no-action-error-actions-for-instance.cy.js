@@ -40,8 +40,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C357015 Check the filter in summary table with "create + no action + error" actions for the Instance column (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C357015'] },
+      'C357015 Check the filter in summary table with "create + no action + error" actions for the Instance column (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C357015'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, marcFileName);

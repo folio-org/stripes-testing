@@ -113,8 +113,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C415267 Update MARC Bib via Data Import/incoming bib has invalid 005 (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C415267'] },
+      'C415267 Update MARC Bib via Data Import/incoming bib has invalid 005 (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C415267'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(testData.filePathForCreate, testData.fileNameForCreate);

@@ -159,8 +159,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C388506 Check the log result table for imported multiple items with errors in multiple holdings (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C388506'] },
+      'C388506 Check the log result table for imported multiple items with errors in multiple holdings (promin)',
+      { tags: ['criticalPath', 'promin', 'C388506'] },
       () => {
         let instanceHRID;
         const marcFileName = `C388506 multipleAutotestFileName${getRandomPostfix()}.mrc`;
@@ -222,8 +222,8 @@ describe('Data Import', () => {
     );
 
     it(
-      'C389502 Check the JSON screen for imported multiple items with error in multiple holdings (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C389502'] },
+      'C389502 Check the JSON screen for imported multiple items with error in multiple holdings (promin)',
+      { tags: ['criticalPath', 'promin', 'C389502'] },
       () => {
         let instanceHrid;
         const marcFileName = `C389502 multipleAutotestFileName${getRandomPostfix()}.mrc`;
@@ -308,8 +308,8 @@ describe('Data Import', () => {
     );
 
     it(
-      'C388505 Check the log result table for imported multiple items in multiple holdings (folijet)',
-      { tags: ['smoke', 'folijet', 'C388505'] },
+      'C388505 Check the log result table for imported multiple items in multiple holdings (promin)',
+      { tags: ['smoke', 'promin', 'C388505'] },
       () => {
         const arrayOfHoldingsStatuses = [
           'Created (KU/CC/DI/M)',
@@ -368,8 +368,8 @@ describe('Data Import', () => {
     );
 
     it(
-      'C389587 Check the JSON screen for imported multiple items in multiple holdings (folijet)',
-      { tags: ['smoke', 'folijet', 'C389587'] },
+      'C389587 Check the JSON screen for imported multiple items in multiple holdings (promin)',
+      { tags: ['smoke', 'promin', 'C389587'] },
       () => {
         let instanceHrid;
         const arrayOfHoldingsStatuses = [

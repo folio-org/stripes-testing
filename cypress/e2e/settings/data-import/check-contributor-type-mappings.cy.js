@@ -124,8 +124,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C376006 Order field mapping profile: Check Contributor type mappings (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C376006'] },
+      'C376006 Order field mapping profile: Check Contributor type mappings (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C376006'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);

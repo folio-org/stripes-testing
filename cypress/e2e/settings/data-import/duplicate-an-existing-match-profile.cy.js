@@ -53,8 +53,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C2340 Duplicate an existing match profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C2340'] },
+      'C2340 Duplicate an existing match profile (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C2340'] },
       () => {
         MatchProfileView.duplicate();
         NewMatchProfile.selectExistingRecordField(duplicatedMatchProfile.instanceOption);

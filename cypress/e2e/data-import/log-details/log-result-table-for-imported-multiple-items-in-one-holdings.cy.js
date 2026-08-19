@@ -109,8 +109,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C387490 Check the log result table for imported multiple items in one holdings (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C387490'] },
+      'C387490 Check the log result table for imported multiple items in one holdings (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C387490'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(

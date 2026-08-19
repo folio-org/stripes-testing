@@ -50,8 +50,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C844848 Import of file with 338 without $b will be mapped with code in $a (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C844848'] },
+      'C844848 Import of file with 338 without $b will be mapped with code in $a (promin)',
+      { tags: ['extendedPath', 'promin', 'C844848'] },
       () => {
         // Steps 1-4: File imported via API; navigate to instance in Inventory
         InventoryInstances.searchByTitle(instanceId);

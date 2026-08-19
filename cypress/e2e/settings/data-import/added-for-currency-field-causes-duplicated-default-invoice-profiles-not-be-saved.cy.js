@@ -50,8 +50,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C353959 Validation added for Currency field causes duplicated default invoice profiles not to be saved (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C353959'] },
+      'C353959 Validation added for Currency field causes duplicated default invoice profiles not to be saved (promin)',
+      { tags: ['extendedPath', 'promin', 'C353959'] },
       () => {
         const calloutMessage = `The field mapping profile "${mappingProfile.name}" was successfully created`;
         FieldMappingProfiles.search(profileForDuplicate);

@@ -83,8 +83,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C1045418 Item barcode does not gives error when user enter "%" in barcode (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C1045418'] },
+      'C1045418 Item barcode does not gives error when user enter "%" in barcode (promin)',
+      { tags: ['criticalPath', 'promin', 'C1045418'] },
       () => {
         // Step 1: Open instance and click "Add item" near Holding accordion
         InventoryInstances.searchByTitle(testData.instance.id);

@@ -49,8 +49,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651457 Check "Version history" after creating,editing and deleting non-repeatable fields in Instance (folijet)',
-        { tags: ['extendedPath', 'folijet', 'C651457'] },
+        'C651457 Check "Version history" after creating,editing and deleting non-repeatable fields in Instance (promin)',
+        { tags: ['extendedPath', 'promin', 'C651457'] },
         () => {
           // Create a new FOLIO instance
           InventoryInstances.addNewInventory();

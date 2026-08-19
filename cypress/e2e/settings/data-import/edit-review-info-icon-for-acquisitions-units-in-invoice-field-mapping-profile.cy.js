@@ -51,8 +51,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C380723 Invoice field mapping: review adjusted info icon to the "Acquisitions units" field in the editing page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C380723'] },
+      'C380723 Invoice field mapping: review adjusted info icon to the "Acquisitions units" field in the editing page (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C380723'] },
       () => {
         const message =
           'Invoice creation will error unless the importing user is a member of the specified acquisitions unit';

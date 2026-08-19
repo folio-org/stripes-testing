@@ -23,8 +23,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C350406 Change focus for Settings (folijet)',
-      { tags: ['extendedPathFlaky', 'folijet', 'C350406'] },
+      'C350406 Change focus for Settings (promin)',
+      { tags: ['extendedPathFlaky', 'promin', 'C350406'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsPane.waitLoading();

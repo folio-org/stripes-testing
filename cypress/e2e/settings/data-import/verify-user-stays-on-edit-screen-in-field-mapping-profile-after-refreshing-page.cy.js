@@ -47,8 +47,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C365591 Verify that user stays on edit screen in field mapping profile after refreshing page (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C365591'] },
+      'C365591 Verify that user stays on edit screen in field mapping profile after refreshing page (promin)',
+      { tags: ['extendedPath', 'promin', 'C365591'] },
       () => {
         // Steps 1-3: Navigate to Settings > Data Import > Field mapping profiles
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);

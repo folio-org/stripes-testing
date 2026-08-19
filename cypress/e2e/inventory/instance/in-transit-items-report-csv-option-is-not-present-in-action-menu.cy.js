@@ -90,8 +90,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466098 Check "In transit items report (CSV)" option is NOT present in Actions menu without permission (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C466098'] },
+      'C466098 Check "In transit items report (CSV)" option is NOT present in Actions menu without permission (promin)',
+      { tags: ['extendedPath', 'promin', 'C466098'] },
       () => {
         InventoryInstances.validateOptionInActionsMenu('In transit items report (CSV)', false);
       },

@@ -211,8 +211,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C389590 Verify the updated error message for multiple match on JSON screen for Instance: Case 2 (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C389590'] },
+      'C389590 Verify the updated error message for multiple match on JSON screen for Instance: Case 2 (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C389590'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.marcFilePath, testData.fileName);

@@ -24,8 +24,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C350008 Verify that "Data import" settings displays correctly with focus (folijet)',
-      { tags: ['extendedPathFlaky', 'folijet', 'C350008'] },
+      'C350008 Verify that "Data import" settings displays correctly with focus (promin)',
+      { tags: ['extendedPathFlaky', 'promin', 'C350008'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsPane.waitLoading();

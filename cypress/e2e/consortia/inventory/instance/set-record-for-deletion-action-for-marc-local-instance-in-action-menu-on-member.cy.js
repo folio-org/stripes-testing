@@ -70,8 +70,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446004 (CONSORTIA) Check "Set record for deletion" action for MARC Local Instance in Actions menu on Member tenant (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C446004'] },
+        'C446004 (CONSORTIA) Check "Set record for deletion" action for MARC Local Instance in Actions menu on Member tenant (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C446004'] },
         () => {
           InstanceRecordView.waitLoading();
           InstanceRecordView.clickActionsButton();

@@ -41,8 +41,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411688 (CONSORTIA) Verify the absence of the "New request" button on Instance details Action menu of Central Tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411688'] },
+        'C411688 (CONSORTIA) Verify the absence of the "New request" button on Instance details Action menu of Central Tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411688'] },
         () => {
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();

@@ -148,8 +148,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C358138 Matching on newly-created 035 does not work (regression) (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C358138'] },
+      'C358138 Matching on newly-created 035 does not work (regression) (promin)',
+      { tags: ['criticalPath', 'promin', 'C358138'] },
       () => {
         DataImport.verifyUploadState();
         // upload a marc file for creating of the new instance

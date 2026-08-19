@@ -102,8 +102,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C554639 Importing order with donor information using not existing donor code (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C554639'] },
+      'C554639 Importing order with donor information using not existing donor code (promin)',
+      { tags: ['criticalPath', 'promin', 'C554639'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
