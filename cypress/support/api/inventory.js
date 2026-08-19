@@ -993,3 +993,12 @@ Cypress.Commands.add('setInventoryNumberGeneratorOptions', (config) => {
 Cypress.Commands.add('setDefaultInventoryNumberGeneratorOptions', () => {
   cy.setInventoryNumberGeneratorOptions(defaultNumberGeneratorSettings);
 });
+
+Cypress.Commands.add('setInventoryOptimizeUpdatesSetting', (value) => {
+  return cy.okapiRequest({
+    method: 'PATCH',
+    path: 'inventory-settings/inventory.optimize-updates.enabled',
+    body: { value },
+    isDefaultSearchParamsRequired: false,
+  });
+});
