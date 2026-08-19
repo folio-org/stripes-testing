@@ -113,8 +113,8 @@ describe('Check out and Check in with End Session', () => {
   });
 
   it(
-    'C411866 Verify "Time returned" is displayed correctly in Check in app (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C411866'] },
+    'C411866 Verify "Time returned" is displayed correctly in Check in app (vega)',
+    { tags: ['extendedPath', 'vega', 'C411866'] },
     () => {
       cy.login(userData.personal.lastname, userData.password, {
         path: TopMenu.checkOutPath,

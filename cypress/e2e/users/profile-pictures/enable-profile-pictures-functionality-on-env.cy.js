@@ -20,8 +20,8 @@ describe('Users', () => {
     });
 
     it(
-      'C514930 Enable profile pictures functionality on environment (volaris)',
-      { tags: ['smoke', 'volaris', 'C514930'] },
+      'C514930 Enable profile pictures functionality on environment (vega)',
+      { tags: ['smoke', 'vega', 'C514930'] },
       () => {
         cy.getAdminToken();
         enableProfilePictures();

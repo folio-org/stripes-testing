@@ -69,8 +69,8 @@ describe('Users', () => {
   });
 
   it(
-    'C770460 The expiration date display differs by one day for a time zone that is in the next or previous day (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C770460'] },
+    'C770460 The expiration date display differs by one day for a time zone that is in the next or previous day (vega)',
+    { tags: ['extendedPath', 'vega', 'C770460'] },
     () => {
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
       Localization.changeTimezone(testData.westernTimezone);

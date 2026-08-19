@@ -42,7 +42,7 @@ describe('Users', () => {
     Users.deleteViaApi(testData.proxyUser.userId);
   });
 
-  it('C432 Add proxy user to user (volaris)', { tags: ['criticalPath', 'volaris', 'C432'] }, () => {
+  it('C432 Add proxy user to user (vega)', { tags: ['criticalPath', 'vega', 'C432'] }, () => {
     UsersSearchPane.searchByUsername(testData.testUser.username);
     UserEdit.openEdit();
 

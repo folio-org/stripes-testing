@@ -75,8 +75,8 @@ describe('Reading Room Access', () => {
   });
 
   it(
-    'C494062 No actions are available in Reading room access app if scanned barcode belongs to inactive user (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C494062'] },
+    'C494062 No actions are available in Reading room access app if scanned barcode belongs to inactive user (vega)',
+    { tags: ['extendedPath', 'vega', 'C494062'] },
     () => {
       const userInfo = {
         preferredFirstName: testData.inactiveUser.preferredFirstName,

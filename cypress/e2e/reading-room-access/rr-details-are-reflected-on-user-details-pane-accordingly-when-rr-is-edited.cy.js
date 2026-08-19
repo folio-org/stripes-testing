@@ -58,8 +58,8 @@ describe('Reading Room Access', () => {
   });
 
   it(
-    'C471502 Reading room details are reflected on user details pane accordingly when reading room is edited (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C471502'] },
+    'C471502 Reading room details are reflected on user details pane accordingly when reading room is edited (vega)',
+    { tags: ['criticalPath', 'vega', 'C471502'] },
     () => {
       const readingRoom = {
         name: `ReadingRoom${getRandomPostfix()}`,

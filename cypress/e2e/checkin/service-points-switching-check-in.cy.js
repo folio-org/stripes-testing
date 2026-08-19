@@ -96,8 +96,8 @@ describe('Service Points Switching for Check In', () => {
   });
 
   it(
-    'C425 Service Points: Test that service points switching working properly for check in (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C425'] },
+    'C425 Service Points: Test that service points switching working properly for check in (vega)',
+    { tags: ['extendedPath', 'vega', 'C425'] },
     () => {
       const firstItem = testData.folioInstances[0].items[0];
       const secondItem = testData.folioInstances[0].items[1];

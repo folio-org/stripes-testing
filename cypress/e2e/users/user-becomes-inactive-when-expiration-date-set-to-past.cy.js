@@ -39,8 +39,8 @@ describe('Users', () => {
   });
 
   it(
-    'C692247 User becomes inactive when expiration date is set to a date in the past (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C692247'] },
+    'C692247 User becomes inactive when expiration date is set to a date in the past (vega)',
+    { tags: ['extendedPath', 'vega', 'C692247'] },
     () => {
       // Step 1-2: search for active user and open details pane / open edit
       UsersSearchPane.searchByUsername(testData.user.username);

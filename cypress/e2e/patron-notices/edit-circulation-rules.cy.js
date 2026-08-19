@@ -258,8 +258,8 @@ describe('Patron notices', () => {
       );
 
       it(
-        'C2268 Add notice policy to circulation rules (volaris)',
-        { tags: ['smoke', 'volaris', 'system', 'shiftLeft', 'C2268'] },
+        'C2268 Add notice policy to circulation rules (vega)',
+        { tags: ['smoke', 'vega', 'system', 'shiftLeft', 'C2268'] },
         () => {
           CirculationRules.clearCirculationRules();
           CirculationRules.fillInPriority();

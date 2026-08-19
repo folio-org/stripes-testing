@@ -78,8 +78,8 @@ describe('Users', () => {
   });
 
   it(
-    'C692246 Correct date is shown on popup when expiration date is set from patron group using non-default locale (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C692246'] },
+    'C692246 Correct date is shown on popup when expiration date is set from patron group using non-default locale (vega)',
+    { tags: ['extendedPath', 'vega', 'C692246'] },
     () => {
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
       Localization.checkPaneContent();

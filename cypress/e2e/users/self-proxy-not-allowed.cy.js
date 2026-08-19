@@ -27,8 +27,8 @@ describe('Users', () => {
   });
 
   it(
-    'C436 Test that self-proxy is not allowed (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C436'] },
+    'C436 Test that self-proxy is not allowed (vega)',
+    { tags: ['extendedPath', 'vega', 'C436'] },
     () => {
       UsersSearchPane.searchByUsername(testData.user.username);
       UserEdit.openEdit();

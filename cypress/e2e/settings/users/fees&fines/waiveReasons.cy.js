@@ -10,8 +10,8 @@ describe('Fees&Fines', () => {
     });
 
     it(
-      'C446 Verify that you can create/edit/delete waive reasons (volaris)',
-      { tags: ['smoke', 'volaris', 'C446'] },
+      'C446 Verify that you can create/edit/delete waive reasons (vega)',
+      { tags: ['smoke', 'vega', 'C446'] },
       () => {
         WaiveReasons.startAdding();
         WaiveReasons.checkSaveButtonState({ isDisabled: true });
