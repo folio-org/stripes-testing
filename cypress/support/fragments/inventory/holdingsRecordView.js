@@ -2,6 +2,7 @@ import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
+  Checkbox,
   KeyValue,
   Link,
   Modal,
@@ -19,6 +20,7 @@ import InventoryViewSource from './inventoryViewSource';
 import SelectLocationModal from './modals/selectLocationModal';
 import InteractorsTools from '../../utils/interactorsTools';
 import Affiliations from '../../dictionary/affiliations';
+import { HOLDING_RECEIVING_HISTORY, THE_LIST_CONTAINS_NO_ITEMS } from '../../constants';
 
 const holdingsRecordViewSection = Section({ id: 'view-holdings-record-pane' });
 const actionsButton = Button('Actions');
@@ -34,6 +36,10 @@ const electronicAccessAccordion = Accordion('Electronic access');
 const acquisitionAccordion = Accordion('Acquisition');
 const numberOfItemsKeyValue = KeyValue('Number of items');
 const versionHistoryButton = Button({ icon: 'clock' });
+const receivingHistorySection = Section({ id: 'receiving-history-accordion' });
+const receivingHistoryAccordionButton = Button({
+  id: 'accordion-toggle-button-receiving-history-accordion',
+});
 
 function waitLoading() {
   cy.expect([holdingsRecordViewSection.exists()]);
@@ -359,10 +365,8 @@ export default {
     return checkboxElement.checked === expectedState;
   },
 
-  checkAbsentRecordInReceivingHistory(record) {
-    cy.expect(
-      Section({ id: 'receiving-history-accordion' }).find(MultiColumnListCell(record)).absent(),
-    );
+  checkAbsentRecordInReceivingHistory() {
+    cy.expect(receivingHistorySection.find(HTML(THE_LIST_CONTAINS_NO_ITEMS)).exists());
   },
 
   checkReceivingHistoryForTenant(tenantName, receiptDate, source) {
@@ -401,18 +405,45 @@ export default {
   checkReceivingHistoryAccordionForCentralTenant(receiptDate, source) {
     this.checkReceivingHistoryForTenant('central', receiptDate, source);
   },
-  checkReceivingHistoryValues: ({ enumeration, chronology }) => {
-    const receivingHistorySection = Section({ id: 'receiving-history-accordion' });
+
+  expandReceivingHistoryAccordion() {
+    cy.do(receivingHistoryAccordionButton.click());
+  },
+
+  checkReceivingHistoryValues: ({
+    enumeration,
+    chronology,
+    displaySummary,
+    copyNumber,
+    receiptDate,
+    comment,
+    publicDisplay,
+    source,
+  }) => {
     const list = receivingHistorySection.find(MultiColumnList());
 
-    if (enumeration) {
+    const cellValuesByColumn = {
+      [HOLDING_RECEIVING_HISTORY.DISPLAY_SUMMARY]: displaySummary,
+      [HOLDING_RECEIVING_HISTORY.COPY_NUMBER]: copyNumber,
+      [HOLDING_RECEIVING_HISTORY.ENUMERATION]: enumeration,
+      [HOLDING_RECEIVING_HISTORY.CHRONOLOGY]: chronology,
+      [HOLDING_RECEIVING_HISTORY.RECEIPT_DATE]: receiptDate,
+      [HOLDING_RECEIVING_HISTORY.COMMENT]: comment,
+      [HOLDING_RECEIVING_HISTORY.SOURCE]: source,
+    };
+
+    Object.entries(cellValuesByColumn).forEach(([column, content]) => {
+      if (content) {
+        cy.expect(list.find(MultiColumnListCell({ column, content })).exists());
+      }
+    });
+
+    if (publicDisplay !== undefined) {
       cy.expect(
-        list.find(MultiColumnListCell({ column: 'Enumeration', content: enumeration })).exists(),
-      );
-    }
-    if (chronology) {
-      cy.expect(
-        list.find(MultiColumnListCell({ column: 'Chronology', content: chronology })).exists(),
+        list
+          .find(MultiColumnListCell({ column: HOLDING_RECEIVING_HISTORY.PUBLIC_DISPLAY }))
+          .find(Checkbox())
+          .has({ checked: publicDisplay, disabled: true }),
       );
     }
   },
