@@ -48,8 +48,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C506687 Verify that the previously selected filters are still selected when we navigate to the other apps/lists details page and come back to the "Lists" (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C506687'] },
+      'C506687 Verify that the previously selected filters are still selected when we navigate to the other apps/lists details page and come back to the "Lists" (athena)',
+      { tags: ['criticalPath', 'athena', 'C506687'] },
       () => {
         // Step 1: Select filters
         Lists.clickOnCheckbox('Shared');

@@ -44,8 +44,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C736770 Verify that the "Affiliation name" is not displayed for the entity types other than Instances, Holdings, Items on Central tenant (consortia) (corsair)',
-      { tags: ['extendedPathECS', 'corsair', 'C736770'] },
+      'C736770 Verify that the "Affiliation name" is not displayed for the entity types other than Instances, Holdings, Items on Central tenant (consortia) (athena)',
+      { tags: ['extendedPathECS', 'athena', 'C736770'] },
       () => {
         // purchaseOrderLinesWithTitles embeds instance data, so Instance — Affiliation name appears
         const entityTypes = [

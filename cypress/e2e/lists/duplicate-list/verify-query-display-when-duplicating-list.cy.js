@@ -78,8 +78,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C451623 Verify that displays query when duplicating a list with and without a query (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C451623'] },
+      'C451623 Verify that displays query when duplicating a list with and without a query (athena)',
+      { tags: ['criticalPath', 'athena', 'C451623'] },
       () => {
         // Step 1: Navigate to the "Lists" landing page and select the active list (from Precondition1)
         Lists.verifyListIsPresent(listWithQuery.name);

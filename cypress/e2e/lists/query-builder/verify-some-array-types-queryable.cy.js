@@ -105,8 +105,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C594515 Verify that some array types are queryable again (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C594515'] },
+      'C594515 Verify that some array types are queryable again (athena)',
+      { tags: ['criticalPath', 'athena', 'C594515'] },
       () => {
         // Step 1: Users record type — verify "User — Department names" is queryable with results
         Lists.openNewListPane();

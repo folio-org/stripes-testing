@@ -40,8 +40,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C411705 Verify that created new list is visible on the "Lists" landing page (corsair)',
-        { tags: ['smoke', 'corsair', 'shiftLeft', 'C411705'] },
+        'C411705 Verify that created new list is visible on the "Lists" landing page (athena)',
+        { tags: ['smoke', 'athena', 'shiftLeft', 'C411705'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

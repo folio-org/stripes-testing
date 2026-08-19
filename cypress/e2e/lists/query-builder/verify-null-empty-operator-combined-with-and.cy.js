@@ -35,8 +35,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C451550 Verify the operator null/empty combined with AND (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C451550'] },
+      'C451550 Verify the operator null/empty combined with AND (athena)',
+      { tags: ['criticalPath', 'athena', 'C451550'] },
       () => {
         // Step 1: Navigate to Lists app and verify initial state
         Lists.openNewListPane();

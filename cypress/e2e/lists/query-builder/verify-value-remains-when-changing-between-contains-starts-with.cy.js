@@ -33,8 +33,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C651407 Verify that the value remains populated after changing the operator from contains to starts with and vice versa (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C651407'] },
+      'C651407 Verify that the value remains populated after changing the operator from contains to starts with and vice versa (athena)',
+      { tags: ['criticalPath', 'athena', 'C651407'] },
       () => {
         // Step 1: Create new list with Holdings record type and open Build query form
         Lists.openNewListPane();

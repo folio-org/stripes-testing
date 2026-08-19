@@ -78,8 +78,8 @@ describe('Lists', () => {
     });
 
     it(
-      "C740217 Null/Empty values are returned with the 'not equal to' operator for the date types (corsair)",
-      { tags: ['extendedPath', 'corsair', 'C740217'] },
+      "C740217 Null/Empty values are returned with the 'not equal to' operator for the date types (athena)",
+      { tags: ['extendedPath', 'athena', 'C740217'] },
       () => {
         // Step 1: Create new list and open query builder
         Lists.openNewListPane();

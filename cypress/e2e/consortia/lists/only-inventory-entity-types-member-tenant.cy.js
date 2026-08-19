@@ -48,8 +48,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C523638 Only Inventory related entity types are available in the member tenant, when the necessary capabilities are added (consortia) (corsair)',
-      { tags: ['criticalPathECS', 'corsair', 'C523638'] },
+      'C523638 Only Inventory related entity types are available in the member tenant, when the necessary capabilities are added (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C523638'] },
       () => {
         // Step 1: Switch affiliation to member tenant and open Lists app
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

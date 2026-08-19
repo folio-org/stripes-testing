@@ -53,8 +53,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C740213 Verify that it is possible to select organization codes and names using "Organization look-up" plugin (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C740213'] },
+      'C740213 Verify that it is possible to select organization codes and names using "Organization look-up" plugin (athena)',
+      { tags: ['criticalPath', 'athena', 'C740213'] },
       () => {
         const selectedOrganizationCodes = testData.organizations.map(({ code }) => code);
         const selectedOrganizationNames = testData.organizations.map(({ name }) => name);

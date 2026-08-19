@@ -46,11 +46,13 @@ describe('Lists', () => {
                 listData.fqlQuery = createdQuery.fqlQuery;
                 listData.fields = fields;
 
-                Lists.createViaApi(listData).then((body) => {
-                  listData.id = body.id;
-                }).then(() => {
-                  Lists.waitForListToCompleteRefreshViaApi(listData.id);
-                });
+                Lists.createViaApi(listData)
+                  .then((body) => {
+                    listData.id = body.id;
+                  })
+                  .then(() => {
+                    Lists.waitForListToCompleteRefreshViaApi(listData.id);
+                  });
               });
             });
           });
@@ -64,8 +66,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C418652 Lists (Export): Can create, edit, refresh, and export lists (corsair)',
-        { tags: ['smoke', 'corsair', 'shiftLeft', 'C418652'] },
+        'C418652 Lists (Export): Can create, edit, refresh, and export lists (athena)',
+        { tags: ['smoke', 'athena', 'shiftLeft', 'C418652'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

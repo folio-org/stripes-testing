@@ -72,8 +72,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C825294 Verify that the custom field with a type multi select dropdown is queryable (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C825294'] },
+        'C825294 Verify that the custom field with a type multi select dropdown is queryable (athena)',
+        { tags: ['criticalPath', 'athena', 'C825294'] },
         () => {
           listName = getTestEntityValue('C825294_List');
 

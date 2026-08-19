@@ -45,8 +45,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C506689 Verify that the selected filters return to the default state when we logout and log in again (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C506689'] },
+      'C506689 Verify that the selected filters return to the default state when we logout and log in again (athena)',
+      { tags: ['criticalPath', 'athena', 'C506689'] },
       () => {
         // Step 1: Select filters
         Lists.clickOnCheckbox('Inactive');
