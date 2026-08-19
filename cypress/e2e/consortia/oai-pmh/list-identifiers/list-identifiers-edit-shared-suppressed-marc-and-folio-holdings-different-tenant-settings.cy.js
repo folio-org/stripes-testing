@@ -258,7 +258,6 @@ describe('OAI-PMH', () => {
 
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.college.marcInstance.uuid);
-          InventoryInstance.waitInstanceRecordViewOpened(testData.college.marcInstance.title);
           InventoryInstance.openHoldingView();
           HoldingsRecordView.waitLoading();
           HoldingsRecordView.edit();
@@ -273,7 +272,6 @@ describe('OAI-PMH', () => {
           // Steps 8-10: Edit shared FOLIO instance holdings in Member-1 tenant (College)
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.college.folioInstance.uuid);
-          InventoryInstance.waitInstanceRecordViewOpened(testData.college.folioInstance.title);
           InventoryInstance.openHoldingView();
           HoldingsRecordView.waitLoading();
           HoldingsRecordView.edit();
@@ -291,7 +289,6 @@ describe('OAI-PMH', () => {
           // Edit holdings of shared MARC instance in Member-2 tenant (University)
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.college.marcInstance.uuid);
-          InventoryInstance.waitInstanceRecordViewOpened(testData.college.marcInstance.title);
           InventoryInstance.openHoldingView();
           HoldingsRecordView.waitLoading();
           HoldingsRecordView.edit();
@@ -306,7 +303,6 @@ describe('OAI-PMH', () => {
           // Edit holdings of shared FOLIO instance in Member-2 tenant (University)
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.college.folioInstance.uuid);
-          InventoryInstance.waitInstanceRecordViewOpened(testData.college.folioInstance.title);
           InventoryInstance.openHoldingView();
           HoldingsRecordView.waitLoading();
           HoldingsRecordView.edit();

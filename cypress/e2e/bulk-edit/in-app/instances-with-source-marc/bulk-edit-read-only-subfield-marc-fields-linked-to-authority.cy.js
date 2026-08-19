@@ -140,6 +140,7 @@ describe('Bulk-edit', () => {
 
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
+            cy.wait(10_000);
 
             cy.login(user.username, user.password, {
               path: TopMenu.bulkEditPath,

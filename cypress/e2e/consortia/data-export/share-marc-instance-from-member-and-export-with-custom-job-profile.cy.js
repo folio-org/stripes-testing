@@ -343,7 +343,7 @@ describe('Data Export', () => {
 
     after('delete test data', () => {
       cy.resetTenant();
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       cy.withinTenant(Affiliations.College, () => {
         [
           testData.localMarcInstance.items.id,
