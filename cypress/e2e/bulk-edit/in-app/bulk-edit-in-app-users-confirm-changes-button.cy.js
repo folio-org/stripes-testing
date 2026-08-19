@@ -34,8 +34,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C360536 Verify that the "Confirm changes" button is disabled until at least one update action is selected (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C360536'] },
+      'C360536 Verify that the "Confirm changes" button is disabled until at least one update action is selected (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C360536'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
@@ -55,8 +55,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C360538 Verify that the "Confirm changes" button stays disabled when "Actions" option is empty (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C360538'] },
+      'C360538 Verify that the "Confirm changes" button stays disabled when "Actions" option is empty (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C360538'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

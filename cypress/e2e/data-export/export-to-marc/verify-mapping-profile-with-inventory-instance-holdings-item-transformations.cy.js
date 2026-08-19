@@ -371,8 +371,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C11086 Verify a mapping profile with inventory instance, holdings and item transformations (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C11086'] },
+      'C11086 Verify a mapping profile with inventory instance, holdings and item transformations (athena)',
+      { tags: ['extendedPath', 'athena', 'C11086'] },
       () => {
         // Step 1: Trigger the data export by clicking on the "or choose file" button and submitting .csv file with Instances UUIDs
         ExportFileHelper.uploadFile(csvFileName);

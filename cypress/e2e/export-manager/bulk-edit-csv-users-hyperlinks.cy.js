@@ -43,7 +43,7 @@ describe.skip('Export Manager', () => {
   });
 
   it(
-    'C365102 Verify hyperlink on the "JobID" column -- Local approach (firebird) (TaaS)',
+    'C365102 Verify hyperlink on the "JobID" column -- Local approach (athena) (TaaS)',
     { tags: [] },
     () => {
       BulkEditSearchPane.checkUsersRadio();

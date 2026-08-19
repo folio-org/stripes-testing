@@ -173,8 +173,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C423501 Verify rendering Holdings electronic access properties while bulk edit more than 10 Holdings (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C423501'] },
+        'C423501 Verify rendering Holdings electronic access properties while bulk edit more than 10 Holdings (athena)',
+        { tags: ['criticalPath', 'athena', 'C423501'] },
         () => {
           // Step 1: Select "Inventory - holdings" radio button and "Instance HRIDs" identifier
           BulkEditSearchPane.checkHoldingsRadio();

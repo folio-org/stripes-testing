@@ -95,8 +95,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C410769 Consortia | Verify Data export local MARC authority records from Member tenant (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C410769'] },
+      'C410769 Consortia | Verify Data export local MARC authority records from Member tenant (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C410769'] },
       () => {
         // Step 1: Check checkboxes next to MARC Authority records
         MarcAuthorities.selectAllRecords();

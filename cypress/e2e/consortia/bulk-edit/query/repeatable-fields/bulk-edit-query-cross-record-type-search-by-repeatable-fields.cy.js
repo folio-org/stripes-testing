@@ -181,8 +181,8 @@ describe('Bulk-edit', () => {
         });
 
         it(
-          'C926163 Cross record type search by repeatable fields in ECS environment (consortia) (firebird)',
-          { tags: ['criticalPathECS', 'firebird', 'C926163'] },
+          'C926163 Cross record type search by repeatable fields in ECS environment (consortia) (athena)',
+          { tags: ['criticalPathECS', 'athena', 'C926163'] },
           () => {
             const holdingHrids = [sharedInstance.holdingHrid, localInstance.holdingHrid];
             const itemHrids = [sharedInstance.itemHrid, localInstance.itemHrid];

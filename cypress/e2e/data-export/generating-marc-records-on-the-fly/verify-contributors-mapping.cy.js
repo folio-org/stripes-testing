@@ -149,8 +149,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10964 Verify Contributors mapping (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C10964'] },
+      'C10964 Verify Contributors mapping (athena)',
+      { tags: ['extendedPath', 'athena', 'C10964'] },
       () => {
         // Step 1: Trigger the data export by submitting .csv file with UUIDs of inventory instances from Preconditions
         ExportFile.uploadFile(csvFileName);

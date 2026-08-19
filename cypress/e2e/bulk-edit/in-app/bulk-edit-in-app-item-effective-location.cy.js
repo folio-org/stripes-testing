@@ -48,8 +48,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C380559 Verify updating Item "Effective location" in case of clearing Item "Temporary location" and updating Item "Permanent location" (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C380559'] },
+      'C380559 Verify updating Item "Effective location" in case of clearing Item "Temporary location" and updating Item "Permanent location" (athena)',
+      { tags: ['criticalPath', 'athena', 'C380559'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

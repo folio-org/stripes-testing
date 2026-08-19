@@ -99,8 +99,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C432318 ECS | Verify different configured limit of exported file size on tenants (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C432318', 'nonParallel'] },
+      'C432318 ECS | Verify different configured limit of exported file size on tenants (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C432318', 'nonParallel'] },
       () => {
         // Configure different slice_size for each tenant
         cy.getAdminToken();

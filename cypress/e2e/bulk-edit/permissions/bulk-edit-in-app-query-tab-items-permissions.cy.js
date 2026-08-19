@@ -113,8 +113,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C376991 Verify Query tab capability sets (In app items) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C376991'] },
+      'C376991 Verify Query tab capability sets (In app items) (athena)',
+      { tags: ['criticalPath', 'athena', 'C376991'] },
       () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');

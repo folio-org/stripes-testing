@@ -27,8 +27,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C368011 Verify that the "Logs" tab is added (firebird)',
-      { tags: ['smoke', 'firebird', 'C368011'] },
+      'C368011 Verify that the "Logs" tab is added (athena)',
+      { tags: ['smoke', 'athena', 'C368011'] },
       () => {
         BulkEditSearchPane.verifyBulkEditPaneItems();
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs');

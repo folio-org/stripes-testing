@@ -44,8 +44,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C446048 Verify data export log could be deleted from "Logs" table (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C446048'] },
+    'C446048 Verify data export log could be deleted from "Logs" table (athena)',
+    { tags: ['extendedPath', 'athena', 'C446048'] },
     () => {
       // Step 1: Check "Logs" table for data export job from Preconditions
       DataExportResults.verifyFailedExportResultCells(

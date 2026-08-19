@@ -81,8 +81,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C651597 Verify correct display of Arabic characters in Instance editable text fields in EXCEL .csv files downloaded from Bulk edit (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C651597'] },
+      'C651597 Verify correct display of Arabic characters in Instance editable text fields in EXCEL .csv files downloaded from Bulk edit (athena)',
+      { tags: ['extendedPath', 'athena', 'C651597'] },
       () => {
         // Steps 1-3: Upload UUID file and verify matched results
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

@@ -61,8 +61,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C358984 Verify Bulk Edit barcodes with special characters --In app (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C358984'] },
+      'C358984 Verify Bulk Edit barcodes with special characters --In app (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C358984'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -80,8 +80,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C358978 Verify Bulk Edit Items that contains special characters in the title (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C358978'] },
+      'C358978 Verify Bulk Edit Items that contains special characters in the title (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C358978'] },
       () => {
         BulkEditSearchPane.uploadFile(secondItemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();

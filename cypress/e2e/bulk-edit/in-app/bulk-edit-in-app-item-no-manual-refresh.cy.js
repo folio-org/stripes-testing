@@ -65,8 +65,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C367983 Verify that confirmation screen DOES NOT require manual refresh (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C367983'] },
+      'C367983 Verify that confirmation screen DOES NOT require manual refresh (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C367983'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

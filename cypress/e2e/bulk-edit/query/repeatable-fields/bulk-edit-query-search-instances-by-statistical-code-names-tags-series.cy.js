@@ -166,8 +166,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C805789 Search instances by Statistical code names, Tags, Series (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C805789'] },
+        'C805789 Search instances by Statistical code names, Tags, Series (athena)',
+        { tags: ['criticalPath', 'athena', 'C805789'] },
         () => {
           // Step 1: Search instances by "Instance — Statistical codes" field using "equals" operator
           BulkEditSearchPane.openQuerySearch();

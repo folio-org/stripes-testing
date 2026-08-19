@@ -50,8 +50,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C357053 Negative: Verify enable type ahead in location look-up (firebird)',
-      { tags: ['smoke', 'firebird', 'C357053'] },
+      'C357053 Negative: Verify enable type ahead in location look-up (athena)',
+      { tags: ['smoke', 'athena', 'C357053'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
 
@@ -69,8 +69,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C356787 Verify enable type ahead in location look-up (firebird)',
-      { tags: ['smoke', 'firebird', 'C356787'] },
+      'C356787 Verify enable type ahead in location look-up (athena)',
+      { tags: ['smoke', 'athena', 'C356787'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
 

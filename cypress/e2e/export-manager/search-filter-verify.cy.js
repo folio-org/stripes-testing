@@ -136,8 +136,8 @@ describe(
     });
 
     it(
-      'C350727 Verify search filter options Export Manager (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C350727'] },
+      'C350727 Verify search filter options Export Manager (athena)',
+      { tags: ['criticalPath', 'athena', 'C350727'] },
       () => {
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchBySuccessful();

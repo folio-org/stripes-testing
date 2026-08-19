@@ -310,8 +310,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C196759 Verify a mapping profile with SRS record, inventory holdings and item transformations (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C196759'] },
+      'C196759 Verify a mapping profile with SRS record, inventory holdings and item transformations (athena)',
+      { tags: ['extendedPath', 'athena', 'C196759'] },
       () => {
         // Step 1: Upload CSV with instance UUIDs
         ExportFileHelper.uploadFile(csvFileName);

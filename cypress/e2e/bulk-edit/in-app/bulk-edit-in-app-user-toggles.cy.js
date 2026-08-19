@@ -41,8 +41,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C388541 Verify preview of records switching between toggles (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C388541'] },
+      'C388541 Verify preview of records switching between toggles (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C388541'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

@@ -83,8 +83,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C740232 Editing Holdings bulk edit profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C740232'] },
+      'C740232 Editing Holdings bulk edit profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C740232'] },
       () => {
         // Step 1: Click on the row with holdings bulk edit profile from Preconditions
         HoldingsBulkEditProfilesPane.clickProfileRow(testData.originalProfileName);

@@ -201,8 +201,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566147 Verify "Find & replace" action for Holdings notes in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566147'] },
+        'C566147 Verify "Find & replace" action for Holdings notes in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566147'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
           BulkEditSearchPane.uploadFile(holdingHRIDsFileName);

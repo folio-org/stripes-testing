@@ -59,8 +59,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C367977 Verify Bulk edit Holdings records with non-existent Electronic access Relationship type ID (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C367977'] },
+      'C367977 Verify Bulk edit Holdings records with non-existent Electronic access Relationship type ID (athena)',
+      { tags: ['criticalPath', 'athena', 'C367977'] },
       () => {
         UrlRelationship.createNewRelationship(newRelationshipName);
         UrlRelationship.verifyElectronicAccessNameOnTable(newRelationshipName);

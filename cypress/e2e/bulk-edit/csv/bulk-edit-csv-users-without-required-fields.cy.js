@@ -63,8 +63,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C359008 Verify that no errors appeared when uploading file with Users without required fields in Bulk Edit (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C359008'] },
+      'C359008 Verify that no errors appeared when uploading file with Users without required fields in Bulk Edit (athena)',
+      { tags: ['extendedPath', 'athena', 'C359008'] },
       () => {
         // Step 1: Select "Users" option from "Record types" accordion => Select "User UUIDs" from "Record Identifier" dropdown
         BulkEditSearchPane.checkUsersRadio();

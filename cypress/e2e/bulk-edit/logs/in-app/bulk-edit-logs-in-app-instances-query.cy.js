@@ -98,8 +98,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C446085 Verify generated Logs files for Instances (Query) (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C446085'] },
+        'C446085 Verify generated Logs files for Instances (Query) (athena)',
+        { tags: ['extendedPath', 'athena', 'C446085'] },
         () => {
           const allInstances = [instances.folio, instances.marc];
 

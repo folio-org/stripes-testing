@@ -343,8 +343,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C405558 Consortia | Verify exporting instance records with Custom job profile FOLIO - member tenant (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C405558'] },
+      'C405558 Consortia | Verify exporting instance records with Custom job profile FOLIO - member tenant (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C405558'] },
       () => {
         // Step 1: Go to the "Data export" app
         DataExportViewAllLogs.verifyLogsTable();

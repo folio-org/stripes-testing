@@ -192,8 +192,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C965838 Verify "Errors" when uploading invalid Instance identifiers in Member tenant (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C965838'] },
+        'C965838 Verify "Errors" when uploading invalid Instance identifiers in Member tenant (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C965838'] },
         () => {
           // Step 1: Select "Inventory - instances" radio button and "Instance UUIDs" identifier
           BulkEditSearchPane.checkInstanceRadio();

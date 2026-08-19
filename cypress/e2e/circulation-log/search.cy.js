@@ -204,8 +204,8 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C16975 Check the Actions button from filtering Circulation log by description (User details) (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C16975'] },
+    'C16975 Check the Actions button from filtering Circulation log by description (User details) (athena)',
+    { tags: ['criticalPath', 'athena', 'C16975'] },
     () => {
       SearchPane.goToUserDetails();
       SearchPane.userDetailIsOpen();

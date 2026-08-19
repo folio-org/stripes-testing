@@ -28,8 +28,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C368033 Filters section: Statuses (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C368033'] },
+      'C368033 Filters section: Statuses (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C368033'] },
       () => {
         BulkEditSearchPane.openLogsSearch();
         BulkEditSearchPane.verifySetCriteriaPaneExists();
@@ -62,8 +62,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C368034 Filters section: Record types (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C368034'] },
+      'C368034 Filters section: Record types (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C368034'] },
       () => {
         BulkEditSearchPane.openLogsSearch();
         BulkEditSearchPane.verifySetCriteriaPaneExists();

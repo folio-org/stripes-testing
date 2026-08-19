@@ -229,8 +229,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C422180 Consortia | ListRecord: Shared Instances and local instances are retrieved in the response according source for each tenant (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C422180', 'nonParallel'] },
+        'C422180 Consortia | ListRecord: Shared Instances and local instances are retrieved in the response according source for each tenant (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C422180', 'nonParallel'] },
         () => {
           // Step 1: Cross-tenant ListRecords marc21 request
           cy.resetTenant();

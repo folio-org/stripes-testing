@@ -52,8 +52,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C409437 Verify progressbar starting bulk edit by changed identifiers _ Inventory (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C409437'] },
+      'C409437 Verify progressbar starting bulk edit by changed identifiers _ Inventory (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C409437'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
         BulkEditSearchPane.uploadFile(itemUUIDsFileName);

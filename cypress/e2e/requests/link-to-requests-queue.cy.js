@@ -138,7 +138,7 @@ describe('Requests', () => {
   });
 
   it(
-    'C749 Link to requests queue (filtered view of requests app) (firebird) (vega)',
+    'C749 Link to requests queue (filtered view of requests app) (athena) (vega)',
     { tags: ['extendedPath', 'vega', 'C749'] },
     () => {
       const itemBarcode = testData.folioInstances[0].barcodes[0];

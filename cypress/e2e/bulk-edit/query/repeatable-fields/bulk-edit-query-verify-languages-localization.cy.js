@@ -132,8 +132,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C965840 Verify localized language names when search instances by Languages (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C965840'] },
+        'C965840 Verify localized language names when search instances by Languages (athena)',
+        { tags: ['extendedPath', 'athena', 'C965840'] },
         () => {
           // Step 1: Verify language dropdown displays localized names
           BulkEditSearchPane.openQuerySearch();

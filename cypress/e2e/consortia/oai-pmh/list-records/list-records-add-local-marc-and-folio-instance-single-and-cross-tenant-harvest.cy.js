@@ -121,8 +121,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C409414 Consortia | SRS+Inventory | ListRecords | ListIdentifiers: Add local MARC and FOLIO instances to Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C409414', 'nonParallel'] },
+        'C409414 Consortia | SRS+Inventory | ListRecords | ListIdentifiers: Add local MARC and FOLIO instances to Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C409414', 'nonParallel'] },
         () => {
           // Step 1: Upload MARC file
           DataImport.verifyUploadState();

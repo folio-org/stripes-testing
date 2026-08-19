@@ -96,8 +96,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C965839 Query - Verify "Errors" when querying by invalid Instance identifiers in Member tenant (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C965839'] },
+        'C965839 Query - Verify "Errors" when querying by invalid Instance identifiers in Member tenant (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C965839'] },
         () => {
           // Step 1: Select "Inventory - instances" radio button, click "Build query"
           BulkEditSearchPane.checkInstanceRadio();

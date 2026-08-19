@@ -218,8 +218,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C477643 Verify "Suppress from discovery" action for Instances in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C477643'] },
+        'C477643 Verify "Suppress from discovery" action for Instances in Central tenant (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C477643'] },
         () => {
           // Helper function: Verify instances in CSV files
           const verifyInstancesInCSV = (fileName, suppressValue) => {

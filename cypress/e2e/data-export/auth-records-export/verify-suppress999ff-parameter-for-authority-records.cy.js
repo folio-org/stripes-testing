@@ -77,8 +77,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C895649 Verify suppress999ff parameter of /data-export/download-record/{recordId} endpoint for Authority records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C895649'] },
+      'C895649 Verify suppress999ff parameter of /data-export/download-record/{recordId} endpoint for Authority records (athena)',
+      { tags: ['extendedPath', 'athena', 'C895649'] },
       () => {
         // Step 1: Send GET request /data-export/download-record/{recordId} with idType=AUTHORITY and suppress999ff=true
         cy.getAdminToken();

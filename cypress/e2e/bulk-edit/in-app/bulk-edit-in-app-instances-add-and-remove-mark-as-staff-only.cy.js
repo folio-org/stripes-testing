@@ -200,8 +200,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C466313 Bulk edit Instance fields - mark as staff only and remove mark as staff only (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C466313'] },
+      'C466313 Bulk edit Instance fields - mark as staff only and remove mark as staff only (athena)',
+      { tags: ['criticalPath', 'athena', 'C466313'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkInstanceRadio();

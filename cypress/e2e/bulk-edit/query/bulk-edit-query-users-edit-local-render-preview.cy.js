@@ -38,8 +38,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C440078 Render preview after query executed (Users - Edit Local) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C440078'] },
+      'C440078 Render preview after query executed (Users - Edit Local) (athena)',
+      { tags: ['extendedPath', 'athena', 'C440078'] },
       () => {
         // Step 1: Select "Users" radio button and click "Build query" button
         BulkEditSearchPane.openQuerySearch();

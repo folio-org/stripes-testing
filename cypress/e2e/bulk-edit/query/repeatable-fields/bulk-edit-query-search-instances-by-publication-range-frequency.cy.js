@@ -106,8 +106,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C825251 Search instances by Publication range, Publication frequency (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C825251'] },
+        'C825251 Search instances by Publication range, Publication frequency (athena)',
+        { tags: ['extendedPath', 'athena', 'C825251'] },
         () => {
           // Step 1: Search instances by "Instance — Publication range" field using "starts with" operator
           BulkEditSearchPane.openQuerySearch();

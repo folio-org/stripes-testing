@@ -210,8 +210,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C656334 Bulk edit administrative data and marc fields (656, 691) for part of the records (MARC & FOLIO) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C656334'] },
+      'C656334 Bulk edit administrative data and marc fields (656, 691) for part of the records (MARC & FOLIO) (athena)',
+      { tags: ['criticalPath', 'athena', 'C656334'] },
       () => {
         // Step 1: Check "Subject" column
         BulkEditActions.openActions();

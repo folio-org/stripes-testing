@@ -63,8 +63,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C423452 "Inventory" app - User is NOT able to do quick export without "data - UI-Data-Export - edit" capability set (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C423452'] },
+    'C423452 "Inventory" app - User is NOT able to do quick export without "data - UI-Data-Export - edit" capability set (athena)',
+    { tags: ['extendedPath', 'athena', 'C423452'] },
     () => {
       // Step 1: Go to "Inventory" app
       InventorySearchAndFilter.waitLoading();

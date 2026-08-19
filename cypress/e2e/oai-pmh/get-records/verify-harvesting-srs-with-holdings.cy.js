@@ -94,8 +94,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375964 GetRecord: Verify harvesting SRS with holdings (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375964'] },
+      'C375964 GetRecord: Verify harvesting SRS with holdings (athena)',
+      { tags: ['extendedPath', 'athena', 'C375964'] },
       () => {
         cy.getAdminToken();
         OaiPmh.getRecordRequest(marcInstance.id, 'marc21_withholdings').then((response) => {

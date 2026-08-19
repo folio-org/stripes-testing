@@ -55,8 +55,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C477624 Verify correct formatting of "in" and "not in" operators in query string when “Value“ column contains text box (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C477624'] },
+      'C477624 Verify correct formatting of "in" and "not in" operators in query string when “Value“ column contains text box (athena)',
+      { tags: ['criticalPath', 'athena', 'C477624'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkItemsRadio();

@@ -74,8 +74,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C15825 User with "Settings - UI-Data-Export Settings - Edit" capability set is NOT able to delete unlocked mapping profile until it is referenced in job profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C15825'] },
+      'C15825 User with "Settings - UI-Data-Export Settings - Edit" capability set is NOT able to delete unlocked mapping profile until it is referenced in job profile (athena)',
+      { tags: ['criticalPath', 'athena', 'shiftLeft', 'C15825'] },
       () => {
         // Step 1: Attempt to delete - verify modal appears with both job profiles
         SingleFieldMappingProfilePane.openActions();

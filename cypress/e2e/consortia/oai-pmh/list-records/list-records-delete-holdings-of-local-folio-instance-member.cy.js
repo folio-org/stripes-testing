@@ -115,8 +115,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C422196 Consortium| ListRecords: Local FOLIO instances with deleted Holdings are harvested with start and end date from Member (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C422196', 'nonParallel'] },
+        'C422196 Consortium| ListRecords: Local FOLIO instances with deleted Holdings are harvested with start and end date from Member (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C422196', 'nonParallel'] },
         () => {
           const fromDate = DateTools.getCurrentDateForOaiPmh();
 

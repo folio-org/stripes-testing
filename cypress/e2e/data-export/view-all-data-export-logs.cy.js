@@ -131,8 +131,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C15848 View All data export logs (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C15848'] },
+    'C15848 View All data export logs (athena)',
+    { tags: ['criticalPath', 'athena', 'C15848'] },
     () => {
       // Step 1: Click "View all" button in the "Logs" main pane
       DataExportViewAllLogs.openAllJobLogs();

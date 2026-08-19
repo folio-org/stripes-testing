@@ -111,8 +111,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C651537 Verify Instances with source LINKED_DATA are displayed under "Errors & warnings" accordion in Bulk edit (Logs) (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C651537'] },
+        'C651537 Verify Instances with source LINKED_DATA are displayed under "Errors & warnings" accordion in Bulk edit (Logs) (athena)',
+        { tags: ['extendedPath', 'athena', 'C651537'] },
         () => {
           // Step 1: Select "Inventory - instances" and "Instance UUIDs" identifier
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

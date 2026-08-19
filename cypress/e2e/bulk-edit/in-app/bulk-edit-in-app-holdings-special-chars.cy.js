@@ -121,8 +121,8 @@ describe(
       });
 
       it(
-        'C366548 Verify that Holdings with special characters in title can be bulk edited (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C366548'] },
+        'C366548 Verify that Holdings with special characters in title can be bulk edited (athena)',
+        { tags: ['criticalPath', 'athena', 'C366548'] },
         () => {
           BulkEditSearchPane.checkHoldingsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
@@ -146,8 +146,8 @@ describe(
       );
 
       it(
-        'C368481 Verify that there no errors during bulk editing Holdings with special characters (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird', 'C368481'] },
+        'C368481 Verify that there no errors during bulk editing Holdings with special characters (athena) (TaaS)',
+        { tags: ['extendedPath', 'athena', 'C368481'] },
         () => {
           TopMenuNavigation.navigateToApp('Bulk edit');
           BulkEditSearchPane.checkHoldingsRadio();

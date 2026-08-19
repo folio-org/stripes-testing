@@ -80,8 +80,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C389473 Verify "UI-Data-Export Settings - settings/view" capability set (firebird) (Taas)',
-    { tags: ['firebird', 'extendedPath', 'C389473'] },
+    'C389473 Verify "UI-Data-Export Settings - settings/view" capability set (athena) (Taas)',
+    { tags: ['athena', 'extendedPath', 'C389473'] },
     () => {
       cy.login(user.username, user.password);
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Authorization roles');

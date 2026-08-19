@@ -92,8 +92,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C405542 Verify Bulk Edit actions for Items notes - preserve the "Staff only" flag when change note type to other group (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C405542'] },
+      'C405542 Verify Bulk Edit actions for Items notes - preserve the "Staff only" flag when change note type to other group (athena)',
+      { tags: ['criticalPath', 'athena', 'C405542'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

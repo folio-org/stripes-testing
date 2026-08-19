@@ -28,8 +28,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C368037 Verify that after clicking on "Reset all" button, all filters resets (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C368037'] },
+      'C368037 Verify that after clicking on "Reset all" button, all filters resets (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C368037'] },
       () => {
         BulkEditSearchPane.openLogsSearch();
         BulkEditSearchPane.verifySetCriteriaPaneExists();

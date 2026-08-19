@@ -67,7 +67,7 @@ describe('Bulk-edit', () => {
 
       // Obsolete from Trillium
       it.skip(
-        'C375215 Verify generated Logs files for Users CSV - with errors (firebird)',
+        'C375215 Verify generated Logs files for Users CSV - with errors (athena)',
         { tags: [] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
