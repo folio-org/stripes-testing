@@ -29,6 +29,12 @@ const freezeProfile = (profile) => {
     ...profile,
     filters: Object.freeze([...(profile.filters || [])]),
     results: Object.freeze([...(profile.results || [])]),
+    resultVariants: Object.freeze(
+      (profile.resultVariants || []).map((variant) => Object.freeze({
+        ...variant,
+        routes: Object.freeze([...variant.routes]),
+      })),
+    ),
     responseDependencies: Object.freeze(
       (profile.responseDependencies || []).map((dependency) => {
         return Object.freeze({

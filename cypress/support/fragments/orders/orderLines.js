@@ -2821,6 +2821,10 @@ export default {
     this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.FUND_CODE, codes);
   },
 
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, tags);
+  },
+
   removeMultiSelectChips(filterLabel, values = []) {
     FiltersPaneHelper.removeMultiSelectChips(filtersPane, filterLabel, values);
   },
@@ -2841,17 +2845,28 @@ export default {
   },
 
   assertResultsCount(expectedCount) {
-    searchResultsPane
-      .find(
-        PaneHeader({ subtitle: `${expectedCount} record${expectedCount === 1 ? '' : 's'} found` }),
-      )
-      .exists();
+    cy.expect(
+      searchResultsPane
+        .find(
+          PaneHeader({
+            subtitle: `${expectedCount} record${expectedCount === 1 ? '' : 's'} found`,
+          }),
+        )
+        .exists(),
+    );
   },
 
   assertOrderLinesResults(rowsConfig) {
     cy.expect(searchResultsPane.exists());
     MultiColumnListHelper.assertRowsCellsContent(searchResultsPane, rowsConfig);
     this.assertResultsCount(rowsConfig.length);
+  },
+
+  assertTitlesInResults(titles = []) {
+    titles.forEach((title) => {
+      cy.expect(searchResultsPane.find(MultiColumnListCell({ content: title })).exists());
+    });
+    this.assertResultsCount(titles.length);
   },
 
   assertResultsActionIsDisabled(actionButtonName, expectedDisabledState = true) {

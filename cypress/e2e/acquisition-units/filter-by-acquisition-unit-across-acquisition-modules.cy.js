@@ -43,7 +43,7 @@ const FILTER_PANES = {
   INVOICES: 'invoice-filters-pane',
 };
 
-const { PANE_REQUEST_PROFILE_NAMES } = PaneRequestWaiter;
+const { PANE_REQUEST_PHASES, PANE_REQUEST_PROFILE_NAMES } = PaneRequestWaiter;
 
 const PANE_PROFILES = {
   [FILTER_PANES.CLAIMING]: PANE_REQUEST_PROFILE_NAMES.CLAIMING,
@@ -296,7 +296,7 @@ describe('Acquisition units', () => {
 
   const openPaneAndWaitForFilters = (pane, trigger) => PaneRequestWaiter.waitForPaneRequests({
     pane,
-    phase: 'filters',
+    phase: PANE_REQUEST_PHASES.FILTERS,
     trigger,
   });
 

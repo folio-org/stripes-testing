@@ -365,6 +365,7 @@ export default {
     const filterMultiSelect = filterSection.find(MultiSelect());
 
     cy.expect(filterMultiSelect.exists());
+    cy.do(filterMultiSelect.perform((el) => el.scrollIntoView({ block: 'center' })));
     cy.do(filterMultiSelect.choose(selectOptions));
   },
 
@@ -531,6 +532,7 @@ export default {
 
     cy.get(`[${FILTER_ACCORDION_SELECTOR_ATTRIBUTE}="${filterLabel}"]`)
       .should('exist')
+      .scrollIntoView()
       .then(($btn) => {
         if (JSON.parse($btn.attr('aria-expanded')) !== desiredExpanded) {
           cy.wrap($btn).click().should('have.attr', 'aria-expanded', desiredExpanded.toString());

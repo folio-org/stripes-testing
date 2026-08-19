@@ -9,7 +9,6 @@ import {
   orderLines,
   orders,
   receivingTitles,
-  settingsEntries,
 } from '../routes';
 import { batchCount, rawBatchCount } from '../utils/batching';
 import {
@@ -20,7 +19,7 @@ import {
   orderLineRecords,
   responseRecords,
 } from '../utils/responses';
-import { tagsDependency } from './common';
+import { tagFilterRoutes } from './common';
 
 const localLocationIds = (responses) => [
   ...orderLineRecords(responses).flatMap(({ locations: lineLocations = [] }) => {
@@ -31,6 +30,12 @@ const localLocationIds = (responses) => [
   ),
 ];
 
+/**
+ * Receiving's title response contains PO-line IDs rather than all table data.
+ * The UI expands those IDs into PO lines, then resolves holdings, locations,
+ * and parent orders. Holdings use different endpoints in local and consortium
+ * modes, which is the one fact callers must provide through `crossTenant`.
+ */
 export const receivingProfile = {
   filters: [
     acquisitionUnits,
@@ -38,11 +43,10 @@ export const receivingProfile = {
     materialTypes,
     centralOrderingSettings,
     defaultReceivingSearchSettings,
-    settingsEntries,
+    ...tagFilterRoutes,
   ],
   results: [receivingTitles],
   responseDependencies: [
-    tagsDependency,
     {
       route: orderLines,
       dependsOn: [receivingTitles.id],
@@ -79,6 +83,9 @@ export const receivingProfile = {
     {
       route: locations,
       dependsOn: [orderLines.id],
+      // This dependency intentionally follows both holdings branches above.
+      // In local mode its predicate also examines the holdings response; in
+      // consortium mode the UI makes one tenant-aware locations request.
       when: ({ conditions, responses }) => {
         if (conditions.crossTenant) return orderLineRecords(responses).length > 0;
 

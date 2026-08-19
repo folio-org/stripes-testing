@@ -3,6 +3,7 @@ import {
   Checkbox,
   HTML,
   Modal,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
   SearchField,
@@ -12,6 +13,7 @@ import {
 } from '../../../../../interactors';
 import { SEARCH_AND_FILTER_PANE_TITLE } from '../../../constants';
 import FiltersPane from '../../filtersPane';
+import MultiColumnListHelper from '../../multiColumnList';
 
 const selectOrderLinesModal = Modal('Select order lines');
 const closeButton = selectOrderLinesModal.find(Button('Close'));
@@ -20,16 +22,20 @@ const searchField = selectOrderLinesModal.find(SearchField({ id: 'input-record-s
 const searchButton = selectOrderLinesModal.find(Button('Search'));
 const resetButton = selectOrderLinesModal.find(Button({ id: 'reset-find-records-filters' }));
 const filtersPane = selectOrderLinesModal.find(Section({ title: SEARCH_AND_FILTER_PANE_TITLE }));
+const resultsList = selectOrderLinesModal.find(MultiColumnList());
 
 const ACQUISITION_UNIT_FILTER_LABEL = 'Acquisition unit';
 
 export default {
-  verifyModalView() {
+  verifyModalView({ multiselect = true } = {}) {
     cy.expect([
       selectOrderLinesModal.exists(),
       closeButton.has({ disabled: false, visible: true }),
-      saveButton.has({ disabled: true, visible: true }),
     ]);
+
+    if (multiselect) {
+      cy.expect(saveButton.has({ disabled: true, visible: true }));
+    }
   },
   selectOrderLine(poNumber) {
     this.searchByName(poNumber);
@@ -63,6 +69,17 @@ export default {
         .has({ content: titleOrPackage }),
     );
   },
+  assertSearchResults(titles = []) {
+    cy.expect(selectOrderLinesModal.exists());
+    if (!titles.length) {
+      cy.expect(selectOrderLinesModal.find(HTML(including('No results found'))).exists());
+      return;
+    }
+    titles.forEach((title) => {
+      cy.expect(resultsList.find(MultiColumnListCell({ content: title })).exists());
+    });
+    MultiColumnListHelper.assertRowCount(resultsList, titles.length);
+  },
   selectFromSearchResults(index = 0) {
     cy.do(selectOrderLinesModal.find(MultiColumnListRow({ index })).find(Checkbox()).click());
   },
@@ -93,6 +110,10 @@ export default {
 
   clearAllFilters(options) {
     FiltersPane.clearAllFilters(filtersPane, options);
+  },
+
+  filterByMultiSelectOptions(filterLabel, values, options) {
+    FiltersPane.filterByMultiSelectOptions(filtersPane, filterLabel, values, options);
   },
 
   filterBySelection(filterLabel, value, options) {

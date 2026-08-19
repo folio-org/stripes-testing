@@ -11,6 +11,8 @@ const uncachedFundLedgerIds = (responses, state) => {
   return fundLedgerIds(responses).filter((ledgerId) => ledgerId && !state.ledgerIds?.has(ledgerId));
 };
 
+// These list panes have no response-derived references; their only render-time
+// filter resource is the acquisition-unit list.
 export const fiscalYearsProfile = {
   filters: [acquisitionUnits],
   results: [fiscalYears],
@@ -39,6 +41,11 @@ export const fundsProfile = {
   ],
 };
 
+/**
+ * Find Fund keeps ledger records in the mounted plugin's client cache. Runtime
+ * state mirrors that behavior so a second result action does not wait for a
+ * ledger request the UI correctly omits. Opening the filter pane resets it.
+ */
 export const findFundLedgerDependency = {
   route: ledgers,
   dependsOn: [funds.id],

@@ -18,12 +18,15 @@ import {
 } from '../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
+import FiltersPaneHelper from '../filtersPane';
 import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
+import MultiColumnListHelper from '../multiColumnList';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import deleteHoldingsModalReceivingFullScreen from './modals/deleteHoldingsModaReceivinglFullScreen';
 import ReceivingDetails from './receivingDetails';
 
 const receivingResultsSection = Section({ id: 'receiving-results-pane' });
+const filtersPane = Pane({ id: 'receiving-filters-pane' });
 const rootsection = PaneContent({ id: 'pane-title-details-content' });
 const actionsButton = Button('Actions');
 const receivingSuccessful = 'Receiving successful';
@@ -48,6 +51,8 @@ const routingListSection = rootsection.find(Section({ id: 'routing-list' }));
 const addRoutingListButton = routingListSection.find(Button('Add routing list'));
 const titleLookUpButton = Button('Title look-up');
 const receivingResultsList = MultiColumnList({ id: 'receivings-list' });
+
+const POL_LOOKUP_TRIGGER = 'POL number look-up';
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -178,6 +183,21 @@ export default {
 
   checkTitleInReceivingList: (title) => {
     cy.expect(receivingResultsSection.find(MultiColumnListCell(title)).exists());
+  },
+
+  assertReceivingResults(titles = []) {
+    if (!titles.length) {
+      cy.expect(receivingResultsSection.find(HTML(including('No results found'))).exists());
+      return;
+    }
+    titles.forEach((title) => {
+      cy.expect(receivingResultsList.find(MultiColumnListCell({ content: title })).exists());
+    });
+    MultiColumnListHelper.assertRowCount(receivingResultsList, titles.length);
+  },
+
+  filterByMultiSelectOptions(filterLabel, values, options) {
+    FiltersPaneHelper.filterByMultiSelectOptions(filtersPane, filterLabel, values, options);
   },
 
   addPiece: (displaySummary, copyNumber, enumeration, chronology) => {
@@ -748,6 +768,10 @@ export default {
     cy.do(titleLookUpButton.click());
   },
 
+  clickPOLNumberLookUpButton() {
+    cy.do(Button(POL_LOOKUP_TRIGGER).click());
+  },
+
   fillTitleLookup(titleName) {
     cy.do([
       titleLookUpButton.click(),
@@ -765,7 +789,7 @@ export default {
   },
 
   fillPOLNumberLookup(polNumber) {
-    cy.do(Button('POL number look-up').click());
+    cy.do(Button(POL_LOOKUP_TRIGGER).click());
     cy.wait(1000);
     SelectOrderLinesModal.searchByName(polNumber);
     cy.wait(2000);

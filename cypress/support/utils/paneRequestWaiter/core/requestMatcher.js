@@ -17,7 +17,7 @@ export const matchesRequest = (request, routeMatcher, customMatcher, baseUrl) =>
 };
 
 /** Returns the first route matching method, pathname, and optional predicates. */
-export const findMatchingRoute = ({ request, routes, matchers, baseUrl }) => {
+export const findMatchingRoute = ({ request, routes, matchers = {}, baseUrl }) => {
   const details = requestDetails(request, baseUrl);
 
   return routes.find((candidate) => {

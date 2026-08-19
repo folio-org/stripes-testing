@@ -19,21 +19,21 @@ const { PANE_REQUEST_PHASES, PANE_REQUEST_PROFILE_NAMES } = PaneRequestWaiter;
 
 ## Supported profiles
 
-| Constant | Profile | UI |
+| Constant | Profile | Result/reference behavior |
 | --- | --- | --- |
-| `ORDERS` | `orders` | Orders |
-| `ORDER_LINES` | `orderLines` | Order lines |
-| `ORGANIZATIONS` | `organizations` | Organizations |
-| `RECEIVING` | `receiving` | Receiving |
-| `INVOICES` | `invoices` | Invoices |
-| `CLAIMING` | `claiming` | Claiming |
-| `FISCAL_YEARS` | `fiscalYears` | Finance fiscal years |
-| `LEDGERS` | `ledgers` | Finance ledgers |
-| `GROUPS` | `groups` | Finance groups |
-| `FUNDS` | `funds` | Finance funds |
-| `FIND_PO_LINE` | `findPoLine` | Find PO line plugin |
-| `FIND_ORGANIZATION` | `findOrganization` | Find organization plugin |
-| `FIND_FUND` | `findFund` | Find fund plugin |
+| `ORDERS` | `orders` | Composite orders → vendors, acquisition units, users |
+| `ORDER_LINES` | `orderLines` | Order lines → orders → acquisition units; optional ISBN conversion first |
+| `ORGANIZATIONS` | `organizations` | Organization list |
+| `RECEIVING` | `receiving` | Titles → PO lines → holdings/locations and orders |
+| `INVOICES` | `invoices` | Invoices → vendor organizations |
+| `CLAIMING` | `claiming` | Wrapper pieces → vendor organizations |
+| `FISCAL_YEARS` | `fiscalYears` | Fiscal-year list |
+| `LEDGERS` | `ledgers` | Ledger list |
+| `GROUPS` | `groups` | Group list |
+| `FUNDS` | `funds` | Funds → ledgers |
+| `FIND_PO_LINE` | `findPoLine` | Order lines; optional ISBN conversion first |
+| `FIND_ORGANIZATION` | `findOrganization` | Organization list |
+| `FIND_FUND` | `findFund` | Funds → uncached ledgers |
 
 Use these constants instead of profile-name string literals in tests.
 
@@ -57,9 +57,10 @@ Consequently, adding or changing an application normally affects only its file
 under `profiles/` and, when needed, a shared definition in `routes.js`.
 
 Profiles are validated and frozen when the module loads. Validation rejects
-invalid HTTP methods and matchers, duplicate route IDs, missing callbacks,
-dependency cycles or incorrect dependency order, and invalid optional
-callbacks. Runtime validation also rejects non-positive batch counts.
+invalid HTTP methods, accepted statuses and matchers; duplicate route IDs;
+empty result variants; missing callbacks; dependency cycles or incorrect
+dependency order; and invalid optional callbacks. Runtime validation also
+rejects non-positive batch counts and unknown caller-supplied matcher IDs.
 
 ## Waiting for an action
 
@@ -98,11 +99,13 @@ Filter resources are requested when their components render. Some resources
 may not be sent because React Query already cached them, a setting disabled the
 filter, the filter is hidden, or the current tenant mode does not use it.
 
-For `phase: PANE_REQUEST_PHASES.FILTERS`, the utility temporarily tracks matching `fetch` calls in
-the application window. It waits until every matching call that was actually
-sent has completed and the profile has remained quiet for a short interval. It
-then restores the original `fetch` function. This avoids waiting for aliases
-that correctly never occur.
+For `phase: PANE_REQUEST_PHASES.FILTERS`, the utility observes matching requests
+through Cypress's network layer. It waits until every matching request that was
+actually sent has completed and the profile has remained quiet for a short
+interval. Because tracking is outside the application window, it continues
+across `cy.visit()` navigation and covers both `fetch` and XHR. It also leaves
+later test intercepts free to inspect or stub the same requests. This avoids
+waiting for aliases that correctly never occur.
 
 ```js
 PaneRequestWaiter.waitForPaneRequests({
@@ -112,8 +115,10 @@ PaneRequestWaiter.waitForPaneRequests({
 });
 ```
 
-Tag data is conditional on the tags setting. Central-ordering and default
-Receiving-search settings are also tracked only when the UI requests them.
+Tag settings and tag data are both registered as possible filter routes; tag
+data is awaited only when the enabled setting causes the UI to request it.
+Central-ordering and default Receiving-search settings are likewise tracked
+only when the UI requests them.
 
 ## Result dependencies
 
@@ -132,15 +137,26 @@ Examples include:
 The application batches ID lookups in groups of 25. Profiles calculate the
 number of batches from the returned IDs and wait for every batch.
 
+All responses must be below HTTP 400 unless their route explicitly declares an
+accepted validation status. Requests canceled during a query-state replacement
+are skipped, and the waiter awaits the replacement request with the same alias.
+
 Find Fund caches fetched ledgers while its plugin instance remains open. The
 profile remembers those ledger IDs and does not wait for a repeated lookup. Its
 cache is reset when a new filter phase opens the plugin.
 
+Order lines and Find PO line also support an ISBN-conversion result variant.
+With `conditions.isbnConversion`, the waiter first awaits
+`/isbn/convertTo13`. A successful conversion is followed by the order-line
+request; the expected 400 response for an invalid ISBN completes the chain
+without waiting for an order-line request the application will not send.
+
 ## Runtime conditions
 
 Conditions are necessary only when the request choice cannot be determined
-from a preceding response. Receiving currently needs the tenant mode to choose
-between local and consortium holdings endpoints:
+from a preceding response. They are also used to select a primary result
+variant before the first response exists. Receiving needs the tenant mode to
+choose between local and consortium holdings endpoints:
 
 ```js
 PaneRequestWaiter.waitForPaneRequests({
@@ -152,6 +168,10 @@ PaneRequestWaiter.waitForPaneRequests({
 
 Do not add conditions for IDs visible in response bodies; model those as
 `responseDependencies` in the profile instead.
+
+Order Line and Find PO Line callers set `isbnConversion: true` only when the
+selected search index is Product ID ISBN. The conversion response itself then
+decides whether the order-line request is expected.
 
 ## Matchers
 
@@ -196,17 +216,27 @@ Prefer `waitForPaneRequests` for normal tests because it also resolves linked
 requests, validates HTTP statuses, handles batching, and supports cached filter
 resources.
 
+When registering a conditional result separately, pass the same `conditions`
+that `waitForPaneRequests` would receive so the correct primary aliases are
+created.
+
 ## Extending a profile
 
 Each route has a stable `id`, exact `pathname`, HTTP `method`, and optional
-built-in matcher. A response dependency defines:
+built-in matcher. A route may also declare `acceptedErrorStatuses` when a
+validation endpoint intentionally uses an HTTP error as a terminal result.
+Do not use that option to tolerate ordinary backend failures.
+
+A `resultVariant` contains a `when` predicate over runtime conditions and the
+replacement primary `routes`. Variants are checked in declaration order; the
+first match wins, otherwise the profile's normal `results` routes are used.
+
+A response dependency defines:
 
 - `route` — the linked endpoint.
 - `dependsOn` — response route IDs required before evaluation.
 - `when` — whether prior responses require the request.
 - `requestCount` — optional number of requests, normally used for batching.
-- `phase` — optional `PANE_REQUEST_PHASES.FILTERS`; dependencies otherwise
-  belong to `PANE_REQUEST_PHASES.RESULTS`.
 - `remember` — optional UI-cache bookkeeping after a successful request.
 
 Register all dependency endpoints before `trigger` runs. Keep dependency order

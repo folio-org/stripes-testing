@@ -36,6 +36,9 @@ export { PANE_REQUEST_PROFILES } from './profiles';
  * @param {string} [options.phase=PANE_REQUEST_PHASES.RESULTS] - A value from
  * `PANE_REQUEST_PHASES`: filter resources loaded while rendering, or result
  * resources loaded by search, filter, sort, and pagination actions.
+ * @param {Object.<string, boolean>} [options.conditions={}] - Runtime facts
+ * used to select a result variant. This matters when aliases are registered
+ * separately for a conditional action such as ISBN conversion.
  * @param {Object.<string, PaneRequestMatcher>} [options.matchers={}] - Custom
  * predicates keyed by route ID for excluding unrelated endpoint traffic.
  * @returns {Object.<string, string>} Route IDs mapped to Cypress aliases.
@@ -43,8 +46,9 @@ export { PANE_REQUEST_PROFILES } from './profiles';
 export const interceptPaneRequests = ({
   pane,
   phase = PANE_REQUEST_PHASES.RESULTS,
+  conditions = {},
   matchers = {},
-}) => registerPaneRequests({ pane, phase, matchers }).aliases;
+}) => registerPaneRequests({ pane, phase, conditions, matchers }).aliases;
 
 /**
  * Runs a UI action and waits for its pane requests.
@@ -79,6 +83,7 @@ export const waitForPaneRequests = ({
   const { aliases, routes, tracker } = registerPaneRequests({
     pane,
     phase,
+    conditions,
     matchers,
     trackFilters: true,
   });

@@ -76,8 +76,16 @@ export default {
   },
 
   searchByTitle(title) {
-    cy.do([searchField.fillIn(title), Button('Search').click()]);
+    cy.do([searchField.fillIn(title), Button(COMMON_BUTTON_LABELS.SEARCH).click()]);
     cy.wait(2000);
+  },
+
+  searchByParameter(parameter, value) {
+    cy.do([
+      searchField.selectIndex(parameter),
+      searchField.fillIn(value),
+      Button(COMMON_BUTTON_LABELS.SEARCH).click(),
+    ]);
   },
 
   sortResultsBy(columnName) {
@@ -129,6 +137,17 @@ export default {
         `Expected ${expectedCount} pieces after searching for "${title}", but found ${actualCount}`,
       );
     });
+  },
+
+  assertPiecesWithTitlesDisplayed(titles = []) {
+    if (!titles.length) {
+      cy.expect(claimingPane.find(HTML(including('No results found'))).exists());
+      return;
+    }
+    titles.forEach((title) => {
+      cy.expect(claimingList.find(HTML(including(title))).exists());
+    });
+    MultiColumnListHelper.assertRowCount(claimingList, titles.length);
   },
 
   verifyMessageDisplayed(message) {

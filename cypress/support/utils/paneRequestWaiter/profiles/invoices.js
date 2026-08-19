@@ -6,17 +6,16 @@ import {
   funds,
   invoices,
   organizations,
-  settingsEntries,
 } from '../routes';
 import { batchCount } from '../utils/batching';
 import { responseRecords } from '../utils/responses';
-import { tagsDependency } from './common';
+import { tagFilterRoutes } from './common';
 
+/** Invoices resolves vendor organizations referenced by returned invoices. */
 export const invoicesProfile = {
-  filters: [acquisitionUnits, expenseClasses, fiscalYears, funds, batchGroups, settingsEntries],
+  filters: [acquisitionUnits, expenseClasses, fiscalYears, funds, batchGroups, ...tagFilterRoutes],
   results: [invoices],
   responseDependencies: [
-    tagsDependency,
     {
       route: organizations,
       dependsOn: [invoices.id],
