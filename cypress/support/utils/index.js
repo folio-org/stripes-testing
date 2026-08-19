@@ -5,4 +5,5 @@ export { default as CodeTools } from './generateTextCode';
 export { ExecutionFlowManager } from './ExecutionFlowManager';
 export * as NumberTools from './numberTools';
 export * as PollingUtils from './polling';
+export * as PaneRequestWaiter from './paneRequestWaiter';
 export { default as parseEdiFile } from './parseEdiFile';

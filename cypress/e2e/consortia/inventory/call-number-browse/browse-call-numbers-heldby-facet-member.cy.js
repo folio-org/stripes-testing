@@ -454,12 +454,9 @@ describe('Inventory', () => {
         { tags: ['criticalPathECS', 'spitfire', 'C404353'] },
         () => {
           cy.resetTenant();
-          cy.waitForAuthRefresh(() => {
-            cy.login(testData.userProperties.username, testData.userProperties.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-            cy.reload();
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
           }).then(() => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
@@ -469,6 +466,9 @@ describe('Inventory', () => {
           });
           cy.wait(2_000);
           cy.setTenant(Affiliations.College);
+          allVisibleCNs.forEach((callNumber) => {
+            BrowseCallNumber.waitForCallNumberToAppear(callNumber);
+          });
           BrowseSubjects.browse(callNumberPrefix);
           BrowseCallNumber.checkNonExactSearchResult(callNumberPrefix);
           InventorySearchAndFilter.clickAccordionByName(Dropdowns.HELDBY);

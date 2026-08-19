@@ -18,7 +18,7 @@ describe('Lists', () => {
     });
 
     afterEach('Delete test data', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Lists.deleteListByNameViaApi(listData.name);
       Users.deleteViaApi(userData.userId);
     });

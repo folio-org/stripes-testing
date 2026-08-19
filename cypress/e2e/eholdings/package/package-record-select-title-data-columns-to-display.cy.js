@@ -13,7 +13,7 @@ describe('eHoldings', () => {
       'Custom embargo period',
       'Publication type',
       'Access status type',
-      'Tag(s)',
+      'Tags',
     ];
     const testData = {
       packageId: '19-160',

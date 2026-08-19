@@ -4,6 +4,7 @@ import {
   Button,
   Checkbox,
   FieldSet,
+  Icon,
   KeyValue,
   Modal,
   Pane,
@@ -20,6 +21,7 @@ import { INSTANCE_DATE_TYPES } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import InstanceStates from './instanceStates';
 import InventoryInstanceModal from './modals/inventoryInstanceSelectInstanceModal';
+import DateTools from '../../utils/dateTools';
 
 const closeButton = Button({ icon: 'times' });
 const saveAndCloseButton = Button('Save & close');
@@ -928,5 +930,36 @@ export default {
 
   closeSelectInstanceModal() {
     InventoryInstanceModal.close();
+  },
+
+  checkDefaultScrollFocusState: () => {
+    cy.expect(titleField.exists());
+    cy.wait(2000); // wait for potential auto-scrolling
+    cy.get('#instance-form-content').should(($el) => {
+      expect($el[0].scrollTop).to.equal(0);
+    });
+    cy.expect(Button({ id: 'find-instance-trigger', focused: true }).absent());
+  },
+
+  verifyInstancePaneheader({
+    title,
+    publisher,
+    dateOfPublication,
+    hrid,
+    updatedDate = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY'),
+  } = {}) {
+    const headerParts = ['Edit instance', title];
+    if (publisher) headerParts.push(publisher);
+    if (dateOfPublication) headerParts.push(dateOfPublication);
+    const firstLine = ` ${headerParts.join(' • ')}`;
+    const secondLine = `${hrid} • Last updated: ${updatedDate}`;
+
+    cy.expect([
+      PaneHeader(firstLine, { subtitle: secondLine }).exists(),
+      PaneHeader(firstLine)
+        .find(Icon({ src: including('/instance') }))
+        .exists(),
+    ]);
+    cy.get('#paneHeaderinstance-form-pane-title > h2').should('have.text', firstLine);
   },
 };

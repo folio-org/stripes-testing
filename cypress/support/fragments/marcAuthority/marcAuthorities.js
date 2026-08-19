@@ -953,9 +953,17 @@ export default {
 
   fillAdvancedSearchField(rowIndex, value, searchOption, booleanOption, matchOption) {
     cy.do(AdvancedSearchRow({ index: rowIndex }).fillQuery(value));
-    cy.do(AdvancedSearchRow({ index: rowIndex }).selectSearchOption(rowIndex, searchOption));
+    this.selectSearchOptionInAdvancedSearchModal(rowIndex, searchOption);
     if (booleanOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectBoolean(rowIndex, booleanOption));
-    if (matchOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectMatchOption(rowIndex, matchOption));
+    if (matchOption) this.selectMatchOptionInAdvancedSearchModal(rowIndex, matchOption);
+  },
+
+  selectSearchOptionInAdvancedSearchModal(rowIndex, searchOption) {
+    cy.do(AdvancedSearchRow({ index: rowIndex }).selectSearchOption(rowIndex, searchOption));
+  },
+
+  selectMatchOptionInAdvancedSearchModal(rowIndex, matchOption) {
+    cy.do(AdvancedSearchRow({ index: rowIndex }).selectMatchOption(rowIndex, matchOption));
   },
 
   focusOnAdvancedSearchField(rowIndex) {
@@ -1066,6 +1074,10 @@ export default {
         .find(Select({ label: 'Search options*' }))
         .has({ content: including('Genre') }),
     ]);
+  },
+
+  verifyAdvancedSarchInputFieldFocused(rowIndex) {
+    cy.expect(AdvancedSearchRow({ index: rowIndex }).find(TextArea()).has({ focused: true }));
   },
 
   checkAuthoritySourceDropdownHasOption(optionName, isShown = true) {
@@ -1941,6 +1953,19 @@ export default {
           if (record.authRefType === authRefType) {
             this.deleteViaAPI(record.id, true);
           }
+        });
+      }
+    });
+  },
+
+  deleteMarcAuthorityByIdentifierViaAPI(identifier) {
+    this.getMarcAuthoritiesViaApi({
+      limit: 100,
+      query: `((identifiers.value=="${identifier}" or naturalId=="${identifier}") and authRefType=="Authorized")`,
+    }).then((records) => {
+      if (records && records.length > 0) {
+        records.forEach((record) => {
+          this.deleteViaAPI(record.id, true);
         });
       }
     });
