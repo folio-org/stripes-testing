@@ -184,7 +184,7 @@ describe('Circulation log', () => {
           name: testData.templateData.name,
           description: testData.templateData.description,
           category: { requestId: testData.templateData.category },
-          subject: 'Subject_Test',
+          noticeFormat: 'Email',
           body: 'Test_email_body{{item.title}}',
         });
       });

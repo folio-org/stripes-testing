@@ -220,8 +220,6 @@ describe('Patron notices', () => {
       () => {
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();
-        NewNoticePolicyTemplate.addToken(testData.noticePolicyTemplateToken);
-        noticePolicyTemplate.body += '{{item.title}}';
         NewNoticePolicyTemplate.create(noticePolicyTemplate);
         NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
         NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
