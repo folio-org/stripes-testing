@@ -599,7 +599,7 @@ describe('Orders', () => {
     { tags: ['extendedPath', 'thunderjet', 'C1375887'] },
     () => {
       const [fundA, fundB] = flow.get(R.FUNDS);
-      const [tag1, tag2, tag3, isolationTag] = flow.get(R.TAGS);
+      const [tag1, tag2, tag3] = flow.get(R.TAGS);
       const [line1, line2] = flow.get(R.LINES);
       const invoice = flow.get(R.INVOICE);
       const [expenseClass1, expenseClass2] = flow.get(R.EXPENSE_CLASSES);
@@ -985,7 +985,7 @@ describe('Orders', () => {
         pane: PANE_REQUEST_PROFILE_NAMES.INVOICES,
         waiter: Invoices.waitLoading,
       });
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.INVOICES, () => Invoices.filterByTags([isolationTag.label]));
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.INVOICES, () => Invoices.searchByNumber(invoice.vendorInvoiceNo));
       Invoices.selectInvoice(invoice.vendorInvoiceNo);
       PaneRequestWaiter.waitForPaneRequests({
         pane: PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE,
