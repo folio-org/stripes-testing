@@ -7,6 +7,7 @@ import {
 } from '../../../../support/constants';
 
 import Permissions from '../../../../support/dictionary/permissions';
+import FileManager from '../../../../support/utils/fileManager';
 import TopMenu from '../../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
@@ -33,14 +34,16 @@ import {
 
 const testData = {
   createdAuthorityID: null,
-  otherCreatedAuthorityIDs: [],
   createdBibID: null,
   userProperties: null,
-  firstAuthFileName: 'marcAuthFileForC605928-1.mrc',
+  firstAuthFileName: 'marcAuthFileForC605928-1-2.mrc',
+  firstAuthEditedFileName: `marcAuthFileForC605928-1.${getRandomPostfix()}.mrc`,
   firstAuthUpdatedFileName: `testMarcFileUpd.${getRandomPostfix()}.mrc`,
-  secondAuthFileName: 'marcAuthFileForC605928-2.mrc',
+  secondAuthFileName: 'marcAuthFileForC605928-2-2.mrc',
+  secondAuthEditedFileName: `marcAuthFileForC605928-2.${getRandomPostfix()}.mrc`,
   secondAuthUpdatedFileName: `testMarcFileUpd.${getRandomPostfix()}.mrc`,
-  bibFileName: 'marcBibFileForC605928.mrc',
+  bibFileName: 'marcBibFileForC605928-2.mrc',
+  bibEditedFileName: `marcBibFileForC605928.${getRandomPostfix()}mrc`,
   bibUpdatedFileName: `testMarcFileUpd.${getRandomPostfix()}.mrc`,
   jobStatusCompleted: 'Completed',
   keywordOption: 'Keyword',
@@ -51,12 +54,12 @@ const testData = {
   field651Index: 28,
   field651Ind1: '\\',
   field651Ind2: '0',
-  field651Initial: '$a United States of America $x History $e Country $b States $e USA $y Civil War, 1861-1865 $x Cavalry operations.',
-  field651Uri: 'http://id.loc.gov/authorities/subjects/sh85140220',
+  field651Initial: '$a AT_C605928 United States of America $x History $e Country $b States $e USA $y Civil War, 1861-1865 $x Cavalry operations.',
+  field651Uri: 'http://id.loc.gov/authorities/subjects/sh85140220605928',
   field651Uncontrolled2: '$8 number801 $1 URI1 $8 number802',
-  updatedAuthTitle: 'United States of America USA Independence war History Civil War, 1861-1865 Cavalry operations',
-  updatedAuth151: '$a United States of America $z USA $y Independence war $x History $y Civil War, 1861-1865 $x Cavalry operations',
-  field651ControlledUpdated: '$a United States of America $z USA $y Independence war $x History $y Civil War, 1861-1865 $x Cavalry operations',
+  updatedAuthTitle: 'AT_C605928 United States of America USA Independence war History Civil War, 1861-1865 Cavalry operations',
+  updatedAuth151: '$a AT_C605928 United States of America $z USA $y Independence war $x History $y Civil War, 1861-1865 $x Cavalry operations',
+  field651ControlledUpdated: '$a AT_C605928 United States of America $z USA $y Independence war $x History $y Civil War, 1861-1865 $x Cavalry operations',
   field651Uncontrolled1Updated: '$e Country $b States $e USA',
 };
 const authoritySubfields = [
@@ -110,6 +113,27 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     describe('Edit linked Authority record from Data Import', () => {
       before('Creating data', () => {
+        // Make data unique to test run
+        DataImport.editMarcFile(
+          testData.firstAuthFileName,
+          testData.firstAuthEditedFileName,
+          ['United States', '4788734', '85140220'],
+          ['AT_C605928 United States', '4788734', '85140220605928'],
+        );
+
+        DataImport.editMarcFile(
+          testData.bibFileName,
+          testData.bibEditedFileName,
+          ['The 6th United States Cavalry', 'sh85140220'],
+          ['AT_C605928 The 6th United States Cavalry', 'sh85140220605928'],
+        );
+
+        DataImport.editMarcFile(
+          testData.secondAuthFileName,
+          testData.secondAuthEditedFileName,
+          ['United States of America', '4788734', '85140220'],
+          ['AT_C605928 United States of America', '4788734605928', '85140220605928'],
+        );
         cy.getAdminToken();
 
         NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile)
@@ -138,16 +162,15 @@ describe('MARC', () => {
 
         // Upload authority
         DataImport.uploadFileViaApi(
-          testData.firstAuthFileName,
+          testData.firstAuthEditedFileName,
           testData.firstAuthUpdatedFileName,
           DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
         ).then((response) => {
           testData.createdAuthorityID = response[0].authority.id;
-          testData.otherCreatedAuthorityIDs = [response[1].authority.id, response[2].authority.id];
 
           // Upload instance
           DataImport.uploadFileViaApi(
-            testData.bibFileName,
+            testData.bibEditedFileName,
             testData.bibUpdatedFileName,
             DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
           ).then((bibResponse) => {
@@ -185,6 +208,9 @@ describe('MARC', () => {
       });
 
       after('Deleting data', () => {
+        FileManager.deleteFile(`cypress/fixtures/${testData.firstAuthEditedFileName}`);
+        FileManager.deleteFile(`cypress/fixtures/${testData.secondAuthEditedFileName}`);
+        FileManager.deleteFile(`cypress/fixtures/${testData.bibEditedFileName}`);
         cy.getAdminToken();
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
@@ -192,11 +218,6 @@ describe('MARC', () => {
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         QuickMarcEditor.setAuthoritySubfieldsDefault();
         if (testData.createdAuthorityID) MarcAuthority.deleteViaAPI(testData.createdAuthorityID);
-        if (testData.otherCreatedAuthorityIDs.length > 0) {
-          testData.otherCreatedAuthorityIDs.forEach((id) => {
-            MarcAuthority.deleteViaAPI(id);
-          });
-        }
         if (testData.createdBibID) InventoryInstance.deleteInstanceViaApi(testData.createdBibID);
         if (testData.userProperties) Users.deleteViaApi(testData.userProperties.userId);
       });
@@ -207,7 +228,7 @@ describe('MARC', () => {
         () => {
           // Upload authority update
           DataImport.verifyUploadState();
-          DataImport.uploadFile(testData.secondAuthFileName, testData.secondAuthUpdatedFileName);
+          DataImport.uploadFile(testData.secondAuthEditedFileName, testData.secondAuthUpdatedFileName);
           JobProfiles.waitLoadingList();
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
