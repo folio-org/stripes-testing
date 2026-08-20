@@ -80,8 +80,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C407736 Verify that all fields (except "LDR", "005", "999") can be moved and saved when deriving "MARC bibliographic" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C407736'] },
+        'C407736 Verify that all fields (except "LDR", "005", "999") can be moved and saved when deriving "MARC bibliographic" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C407736'] },
         () => {
           // Step 1: Navigate to imported record and click "Derive new MARC bibliographic record"
           InventoryInstances.searchByTitle(testData.searchQuery);

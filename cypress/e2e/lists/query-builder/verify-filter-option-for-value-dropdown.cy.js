@@ -50,8 +50,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1312673 Verify that the "Filter" option exists for "Value" dropdown when building a query (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C1312673'] },
+        'C1312673 Verify that the "Filter" option exists for "Value" dropdown when building a query (athena)',
+        { tags: ['criticalPath', 'athena', 'C1312673'] },
         () => {
           // Step 1: Create new list with Item record type
           openQueryBuilderForRecordType(listName, Lists.recordTypes.items);
@@ -145,8 +145,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C540398 Verify that the "Value" dropdown has prepopulated values for "Holdings — Statistical codes" field (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C540398'] },
+        'C540398 Verify that the "Value" dropdown has prepopulated values for "Holdings — Statistical codes" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C540398'] },
         () => {
           // Step 1: Create new list with Holdings record type
           openQueryBuilderForRecordType(listName, Lists.recordTypes.holdings);

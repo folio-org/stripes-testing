@@ -65,8 +65,8 @@ describe('Consortia', () => {
         });
 
         it(
-          'C594427 User with "Consortium manager: Can share settings to all members" permission is able to add/delete subject source shared to all affiliated tenants in "Consortium manager" app (consortia) (folijet)',
-          { tags: ['criticalPathECS', 'folijet', 'C594427'] },
+          'C594427 User with "Consortium manager: Can share settings to all members" permission is able to add/delete subject source shared to all affiliated tenants in "Consortium manager" app (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C594427'] },
           () => {
             SelectMembersModal.selectAllMembers();
             ConsortiumManager.verifyStatusOfConsortiumManager(3);

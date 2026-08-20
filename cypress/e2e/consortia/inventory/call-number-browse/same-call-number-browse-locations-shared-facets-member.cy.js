@@ -190,8 +190,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C722363 Filter call number browse result list using "Effective location (item)" and “Shared” facets when same call number exist in different Member tenants (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C722363'] },
+        'C722363 Filter call number browse result list using "Effective location (item)" and “Shared” facets when same call number exist in different Member tenants (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C722363'] },
         () => {
           BrowseCallNumber.waitForCallNumberToAppear(callNumberValue, undefined, undefined, 2);
           // wait to make sure same call number is indexed for all items in instances:

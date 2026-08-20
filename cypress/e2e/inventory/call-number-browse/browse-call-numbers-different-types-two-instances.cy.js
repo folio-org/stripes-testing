@@ -164,8 +164,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C656308 Browse for call numbers of different types when they belong to 2 Instances (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C656308'] },
+        'C656308 Browse for call numbers of different types when they belong to 2 Instances (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C656308'] },
         () => {
           // Wait for all call numbers to be indexed
           callNumberEntries.forEach((entry) => {

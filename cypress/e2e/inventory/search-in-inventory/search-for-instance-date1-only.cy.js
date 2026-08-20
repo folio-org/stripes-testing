@@ -162,8 +162,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C552488 Check "Date" column in the result list, and instance detail view for each date type when only Date 1 is specified in MARC bib record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C552488'] },
+      'C552488 Check "Date" column in the result list, and instance detail view for each date type when only Date 1 is specified in MARC bib record (promin)',
+      { tags: ['criticalPath', 'promin', 'C552488'] },
       () => {
         InventoryInstances.searchByTitle(testData.searchQuery);
         testData.instances.forEach((instance) => {

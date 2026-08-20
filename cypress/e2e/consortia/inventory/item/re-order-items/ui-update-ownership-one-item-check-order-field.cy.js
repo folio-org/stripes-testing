@@ -163,8 +163,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C916234 Update ownership of 1 "Item" record to "Holdings" without items (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C916234'] },
+          'C916234 Update ownership of 1 "Item" record to "Holdings" without items (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C916234'] },
           () => {
             cy.resetTenant();
             cy.login(user.username, user.password, {

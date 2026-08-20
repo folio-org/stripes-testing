@@ -229,8 +229,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C402360 "Select instance" plugin | "Orders" app: Use "Held by" facet in "Member" tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C402360'] },
+          'C402360 "Select instance" plugin | "Orders" app: Use "Held by" facet in "Member" tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C402360'] },
           () => {
             Orders.selectOrderByPONumber(order.poNumber);
             OrderDetails.selectAddPOLine();

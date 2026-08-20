@@ -143,8 +143,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C466084 Search by "Electronic access" field of "Item" record is case-insensitive (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C466084'] },
+        'C466084 Search by "Electronic access" field of "Item" record is case-insensitive (promin)',
+        { tags: ['extendedPath', 'promin', 'C466084'] },
         () => {
           executeSearchAndVerifyResults('uri', testData.allOption);
           executeSearchAndVerifyResults('linkText', testData.allOption);

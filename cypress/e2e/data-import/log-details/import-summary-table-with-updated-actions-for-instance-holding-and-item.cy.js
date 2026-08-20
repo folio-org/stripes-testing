@@ -333,8 +333,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C430253 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C430253'] },
+      'C430253 Check import summary table with "Updated" actions for instance, holding and item (promin)',
+      { tags: ['criticalPath', 'promin', 'C430253'] },
       () => {
         const columnNumbers = {
           summary: '1',

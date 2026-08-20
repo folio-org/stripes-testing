@@ -112,8 +112,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C729186 Verify bulk edit of deleted Instances via FOLIO flow (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C729186'] },
+      'C729186 Verify bulk edit of deleted Instances via FOLIO flow (athena)',
+      { tags: ['criticalPath', 'athena', 'C729186'] },
       () => {
         const instances = [folioInstance, marcInstance];
 

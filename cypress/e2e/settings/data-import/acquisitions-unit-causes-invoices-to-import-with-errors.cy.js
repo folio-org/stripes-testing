@@ -106,8 +106,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C345356 Acquisitions unit causes Invoices to Import with errors (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C345356'] },
+      'C345356 Acquisitions unit causes Invoices to Import with errors (promin)',
+      { tags: ['extendedPath', 'promin', 'C345356'] },
       () => {
         AcquisitionUnits.newAcquisitionUnit();
         AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);

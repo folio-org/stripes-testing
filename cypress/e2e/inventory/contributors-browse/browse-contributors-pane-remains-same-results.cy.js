@@ -90,8 +90,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C380402 Browse contributors pane remains same results when user switches to search pane and back (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C380402'] },
+      'C380402 Browse contributors pane remains same results when user switches to search pane and back (promin)',
+      { tags: ['extendedPath', 'promin', 'C380402'] },
       () => {
         // Step 1-2: Switch to browse, select Contributors, browse for contributor
         InventorySearchAndFilter.switchToBrowseTab();

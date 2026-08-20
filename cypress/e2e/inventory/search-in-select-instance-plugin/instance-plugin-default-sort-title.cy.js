@@ -96,8 +96,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C543876 Select Instance plugin | Default sort is applied to search result list in "Inventory" app according to selected option in settings ("Title" case) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C543876'] },
+      'C543876 Select Instance plugin | Default sort is applied to search result list in "Inventory" app according to selected option in settings ("Title" case) (promin)',
+      { tags: ['extendedPath', 'promin', 'C543876'] },
       () => {
         SelectInstanceModal.searchByName(titlePrefix);
         InventorySearchAndFilter.verifySearchResult(instancesData[0].title);

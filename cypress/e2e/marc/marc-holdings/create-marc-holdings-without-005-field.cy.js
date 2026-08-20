@@ -57,8 +57,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C916266 Create MARC holdings record without "005" field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C916266'] },
+        'C916266 Create MARC holdings record without "005" field (promin)',
+        { tags: ['extendedPath', 'promin', 'C916266'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

@@ -297,8 +297,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C410759 Call numbers from "Shared" Instance records are shown in the browse result list on Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C410759'] },
+        'C410759 Call numbers from "Shared" Instance records are shown in the browse result list on Central tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C410759'] },
         () => {
           cy.resetTenant();
           allVisibleCNs.forEach((callNumber) => {

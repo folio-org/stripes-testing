@@ -67,8 +67,8 @@ describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field
   });
 
   it(
-    'C499650 Create Indicators of Local field for MARC bib spec (API) (spitfire)',
-    { tags: ['C499650', 'extendedPath', 'spitfire'] },
+    'C499650 Create Indicators of Local field for MARC bib spec (API) (promin)',
+    { tags: ['C499650', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 
@@ -131,8 +131,8 @@ describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field
   );
 
   it(
-    'C499651 Cannot create Indicators of Local field with empty "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['C499651', 'extendedPath', 'spitfire'] },
+    'C499651 Cannot create Indicators of Local field with empty "label" for MARC bib spec (API) (promin)',
+    { tags: ['C499651', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 
@@ -193,8 +193,8 @@ describe('MARC Bibliographic Validation Rules - Create Indicators of Local Field
   );
 
   it(
-    'C499656 Cannot create Indicators of Local field with invalid value in "order" field for MARC bib spec (API) (spitfire)',
-    { tags: ['C499656', 'extendedPath', 'spitfire'] },
+    'C499656 Cannot create Indicators of Local field with invalid value in "order" field for MARC bib spec (API) (promin)',
+    { tags: ['C499656', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

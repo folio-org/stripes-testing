@@ -205,8 +205,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C477563 Local call numbers are sorted alphabetically using "Call numbers (all)" browse option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C477563'] },
+        'C477563 Local call numbers are sorted alphabetically using "Call numbers (all)" browse option (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C477563'] },
         () => {
           cy.login(tempUser.username, tempUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

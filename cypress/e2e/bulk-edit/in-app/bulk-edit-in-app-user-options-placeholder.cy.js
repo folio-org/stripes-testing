@@ -32,8 +32,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C365615 Verify that Options dropdown contains placeholder--Users in app (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C365615'] },
+      'C365615 Verify that Options dropdown contains placeholder--Users in app (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C365615'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);

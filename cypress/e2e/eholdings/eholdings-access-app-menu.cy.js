@@ -29,8 +29,8 @@ describe('eHoldings', () => {
   });
 
   it(
-    'C343241 Access eholdings app menu (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C343241'] },
+    'C343241 Access eholdings app menu (promin)',
+    { tags: ['extendedPath', 'promin', 'C343241'] },
     () => {
       AppContextDropdown.toggleAppContextDropdown();
       AppContextDropdown.checkAppContextDropdownMenuShown();

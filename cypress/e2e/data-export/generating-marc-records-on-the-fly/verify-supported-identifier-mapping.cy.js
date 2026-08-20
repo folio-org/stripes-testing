@@ -88,8 +88,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10963 Verify supported Identifier mapping (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C10963'] },
+      'C10963 Verify supported Identifier mapping (athena)',
+      { tags: ['extendedPath', 'athena', 'C10963'] },
       () => {
         // Step 1: Trigger the data export by submitting .csv file with UUIDs of inventory instances from Preconditions
         ExportFile.uploadFile(csvFileName);

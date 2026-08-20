@@ -137,8 +137,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C831961 Verify that the field "Instance — Notes — Note type" return values (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C831961'] },
+        'C831961 Verify that the field "Instance — Notes — Note type" return values (athena)',
+        { tags: ['extendedPath', 'athena', 'C831961'] },
         () => {
           // Step 1: Create new list with Instances record type and open Build query form
           Lists.openNewListPane();

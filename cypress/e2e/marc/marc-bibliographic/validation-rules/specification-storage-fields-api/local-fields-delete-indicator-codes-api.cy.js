@@ -82,8 +82,8 @@ describe('MARC Bibliographic Validation Rules - Local Fields Delete Indicator Co
   });
 
   it(
-    'C503100 Delete Indicator Code of Local Field for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C503100', 'spitfire'] },
+    'C503100 Delete Indicator Code of Local Field for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C503100', 'promin'] },
     () => {
       let localFieldIndicator;
       let indicatorCode1;

@@ -80,8 +80,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C619 Instance Relationship --> Type of Relation (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C619'] },
+      'C619 Instance Relationship --> Type of Relation (promin)',
+      { tags: ['extendedPath', 'promin', 'C619'] },
       () => {
         // Step 1-2: Open Inventory and edit the main instance record
         InventoryInstances.searchByTitle(testData.mainInstanceId);

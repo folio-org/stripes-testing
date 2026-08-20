@@ -343,8 +343,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C404367 Apply "Shared" facet when Browse for different call numbers existing in different tenants (not exact match) (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C404367'] },
+        'C404367 Apply "Shared" facet when Browse for different call numbers existing in different tenants (not exact match) (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C404367'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
           InventorySearchAndFilter.clickAccordionByName(heldbyAccordionName);

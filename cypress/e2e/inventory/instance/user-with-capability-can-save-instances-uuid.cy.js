@@ -49,8 +49,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C844181 User with "UI-Inventory-Instance-edit" capability can save instances UUID (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C844181'] },
+      'C844181 User with "UI-Inventory-Instance-edit" capability can save instances UUID (promin)',
+      { tags: ['extendedPath', 'promin', 'C844181'] },
       () => {
         InventoryInstances.searchByTitle(testData.searchTerm);
 

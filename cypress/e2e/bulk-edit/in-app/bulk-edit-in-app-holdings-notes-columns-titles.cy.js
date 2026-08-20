@@ -150,8 +150,8 @@ describe(
       });
 
       it(
-        'C430210 Verify Bulk Edit actions for Holdings notes - columns titles (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C430210'] },
+        'C430210 Verify Bulk Edit actions for Holdings notes - columns titles (athena)',
+        { tags: ['criticalPath', 'athena', 'C430210'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);

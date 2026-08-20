@@ -251,8 +251,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C503022 Query - Verify "Preview of record matched" when querying by valid Items identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C503022'] },
+        'C503022 Query - Verify "Preview of record matched" when querying by valid Items identifiers in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C503022'] },
         () => {
           // Step 1-4: Query by Item Barcode (starts with)
           cy.intercept('GET', '/query/**').as('query');

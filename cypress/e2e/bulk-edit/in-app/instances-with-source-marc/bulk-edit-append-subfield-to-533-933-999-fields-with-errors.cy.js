@@ -117,8 +117,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C543785 Append subfield to MARC field (533, 933, 999) with errors (MARC & FOLIO) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C543785'] },
+      'C543785 Append subfield to MARC field (533, 933, 999) with errors (MARC & FOLIO) (athena)',
+      { tags: ['criticalPath', 'athena', 'C543785'] },
       () => {
         // Step 1: Show Source column
         BulkEditActions.openActions();

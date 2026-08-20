@@ -177,8 +177,8 @@ describe(
       });
 
       it(
-        'C543809 Find and remove subfield from MARC field (525, 925, 533, 999) with errors (MARC & FOLIO, Logs) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C543809'] },
+        'C543809 Find and remove subfield from MARC field (525, 925, 533, 999) with errors (MARC & FOLIO, Logs) (athena)',
+        { tags: ['criticalPath', 'athena', 'C543809'] },
         () => {
           // Step 1: Show Source column
           BulkEditActions.openActions();

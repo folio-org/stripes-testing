@@ -113,8 +113,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422141 Link Shared MARC bib with Shared MARC auth on Central tenant in Create screen (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C422141'] },
+          'C422141 Link Shared MARC bib with Shared MARC auth on Central tenant in Create screen (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C422141'] },
           () => {
             cy.resetTenant();
             cy.login(users.userAProperties.username, users.userAProperties.password, {

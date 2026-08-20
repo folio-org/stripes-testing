@@ -121,8 +121,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C825322 API | Update multiple holdings using POST /holdings-storage/batch/synchronous and check items fields (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C825322'] },
+      'C825322 API | Update multiple holdings using POST /holdings-storage/batch/synchronous and check items fields (promin)',
+      { tags: ['extendedPath', 'promin', 'C825322'] },
       () => {
         const holdingsRecords1 = [
           {

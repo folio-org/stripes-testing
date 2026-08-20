@@ -56,8 +56,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C655266 Check "Version history" after updating instance via ISRI (folijet)',
-        { tags: ['extendedPath', 'folijet', 'C655266'] },
+        'C655266 Check "Version history" after updating instance via ISRI (promin)',
+        { tags: ['extendedPath', 'promin', 'C655266'] },
         () => {
           InventoryInstance.startOverlaySourceBibRecord();
           InventoryInstance.overlayWithOclc(testData.oclcNumber);

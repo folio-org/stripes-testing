@@ -53,8 +53,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C366594 Export of "Title+Package" record with more than 255 characters in the "Title name" field (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C366594'] },
+      'C366594 Export of "Title+Package" record with more than 255 characters in the "Title name" field (promin)',
+      { tags: ['extendedPath', 'promin', 'C366594'] },
       () => {
         eHoldingsResourceView.openExportModal();
         ExportSettingsModal.clickExportButton();

@@ -125,8 +125,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C773229 Select Instance plugin | Check what columns display in three segments: Instance, Holdings, Item (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C773229'] },
+      'C773229 Select Instance plugin | Check what columns display in three segments: Instance, Holdings, Item (promin)',
+      { tags: ['extendedPath', 'promin', 'C773229'] },
       () => {
         function searchAndVerifyColumns() {
           SelectInstanceModal.searchByName(instanceTitles[0]);

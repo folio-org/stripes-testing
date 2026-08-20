@@ -36,8 +36,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C375128 App context dropdown menu closes when navigating to another app (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C375128'] },
+      'C375128 App context dropdown menu closes when navigating to another app (promin)',
+      { tags: ['extendedPath', 'promin', 'C375128'] },
       () => {
         AppContextDropdown.toggleAppContextDropdown();
         AppContextDropdown.checkAppContextDropdownMenuShown();

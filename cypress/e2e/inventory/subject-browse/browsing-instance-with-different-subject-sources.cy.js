@@ -87,8 +87,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584543 Browsing the instance with different subject sources (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C584543'] },
+      'C584543 Browsing the instance with different subject sources (promin)',
+      { tags: ['extendedPath', 'promin', 'C584543'] },
       () => {
         // Step 1-3: Navigate to Inventory, switch to Browse, select Subject option
         InventorySearchAndFilter.validateSearchTabIsDefault();

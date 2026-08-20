@@ -69,8 +69,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C491305 Meaningful error message appears when user without "MARC Authority: View MARC authority record" permission opens "Select MARC authority" plugin (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C491305'] },
+      'C491305 Meaningful error message appears when user without "MARC Authority: View MARC authority record" permission opens "Select MARC authority" plugin (promin)',
+      { tags: ['extendedPath', 'promin', 'C491305'] },
       () => {
         InventoryInstance.verifySelectMarcAuthorityModal();
         MarcAuthorities.verifyBrowseTabIsOpened();

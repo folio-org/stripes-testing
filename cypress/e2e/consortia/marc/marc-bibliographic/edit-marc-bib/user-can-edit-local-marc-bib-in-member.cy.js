@@ -89,8 +89,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C405549 User can edit local "MARC Bib" in member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C405549'] },
+        'C405549 User can edit local "MARC Bib" in member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C405549'] },
         () => {
           cy.resetTenant();
           cy.login(users.userProperties.username, users.userProperties.password, {

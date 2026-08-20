@@ -44,8 +44,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C9291 Export fails - view error log (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C9291'] },
+      'C9291 Export fails - view error log (athena)',
+      { tags: ['extendedPath', 'athena', 'C9291'] },
       () => {
         // Step 1: Trigger the data export by submitting .csv file with invalid Instances UUIDs
         ExportFileHelper.uploadFile(csvFileName);

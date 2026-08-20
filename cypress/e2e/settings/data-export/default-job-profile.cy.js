@@ -24,8 +24,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C380470 Verify that Default Data export profiles are present (firebird)',
-    { tags: ['smoke', 'firebird', 'shiftLeft', 'C380470'] },
+    'C380470 Verify that Default Data export profiles are present (athena)',
+    { tags: ['smoke', 'athena', 'shiftLeft', 'C380470'] },
     () => {
       ExportJobProfiles.goToJobProfilesTab();
       ExportJobProfiles.verifyDefaultProfiles();

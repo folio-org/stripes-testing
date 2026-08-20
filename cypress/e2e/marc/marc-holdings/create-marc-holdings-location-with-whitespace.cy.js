@@ -67,8 +67,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C805766 Create "MARC holdings" record with location which has "whitespace" in it\'s code (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C805766'] },
+        'C805766 Create "MARC holdings" record with location which has "whitespace" in it\'s code (promin)',
+        { tags: ['extendedPath', 'promin', 'C805766'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

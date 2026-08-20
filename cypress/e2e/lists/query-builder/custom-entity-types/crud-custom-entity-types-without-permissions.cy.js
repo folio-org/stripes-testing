@@ -46,8 +46,8 @@ describe('Lists', () => {
       }
 
       it(
-        'C825335 Verify the CRUD operations for Custom Entity Types without the appropriate permissions (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C825335'] },
+        'C825335 Verify the CRUD operations for Custom Entity Types without the appropriate permissions (athena)',
+        { tags: ['criticalPath', 'athena', 'C825335'] },
         () => {
           Lists.createCustomEntityType(newCustomEntityType).then((response) => {
             verifyResponse(response);

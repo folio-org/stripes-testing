@@ -94,8 +94,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C423567 Export of imported MARC Authority record (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C423567'] },
+      'C423567 Export of imported MARC Authority record (athena)',
+      { tags: ['criticalPath', 'athena', 'C423567'] },
       () => {
         ExportFileHelper.uploadFile(marcAuthorityUUIDFileName);
         ExportFileHelper.exportWithDefaultJobProfile(

@@ -152,8 +152,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C519982 Cannot update MARC authority record with multiple 1XX fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C519982'] },
+        'C519982 Cannot update MARC authority record with multiple 1XX fields (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C519982'] },
         () => {
           cy.then(() => {
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C519982_');

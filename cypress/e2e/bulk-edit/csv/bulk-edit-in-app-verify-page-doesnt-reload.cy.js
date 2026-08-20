@@ -33,8 +33,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C365136 Verify that page does not reload selecting  other Identifier type (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C365136'] },
+      'C365136 Verify that page does not reload selecting  other Identifier type (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C365136'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
 

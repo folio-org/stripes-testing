@@ -124,8 +124,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C402373 Consortia | SRS | GetRecord: Edit shared MARC instance (with associated Holdings) from Member tenant is retrieved in the response of single tenant harvest (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C402373', 'nonParallel'] },
+        'C402373 Consortia | SRS | GetRecord: Edit shared MARC instance (with associated Holdings) from Member tenant is retrieved in the response of single tenant harvest (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C402373', 'nonParallel'] },
         () => {
           // Step 1: Search for shared MARC instance in College tenant
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

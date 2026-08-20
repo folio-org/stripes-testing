@@ -139,8 +139,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C407685 Delete linked field from Shared MARC bib linked with Shared MARC authority in Member tenant (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C407685'] },
+            'C407685 Delete linked field from Shared MARC bib linked with Shared MARC authority in Member tenant (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C407685'] },
             () => {
               InventorySearchAndFilter.clearDefaultHeldbyFilter();
               InventoryInstances.searchByTitle(createdInstanceId);

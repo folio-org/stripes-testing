@@ -44,8 +44,8 @@ describe('Permissions', () => {
     });
 
     it(
-      'C350967 quickMARC: View MARC bibliographic record (spitfire)',
-      { tags: ['smoke', 'spitfire', 'C350967'] },
+      'C350967 quickMARC: View MARC bibliographic record (promin)',
+      { tags: ['smoke', 'promin', 'C350967'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(userData.name, userData.password, {

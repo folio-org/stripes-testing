@@ -75,7 +75,7 @@ describe.skip('Bulk-edit', () => {
     });
 
     it(
-      'C353972 Verify that user can view data in Export Manager(Local and In-app approach) (firebird)',
+      'C353972 Verify that user can view data in Export Manager(Local and In-app approach) (athena)',
       { tags: [] },
       () => {
         ExportManagerSearchPane.waitLoading();

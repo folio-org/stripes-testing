@@ -65,8 +65,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422246 Verify that "Authority file look-up" hyperlink doesn\'t display in "Edit MARC authority record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C422246'] },
+        'C422246 Verify that "Authority file look-up" hyperlink doesn\'t display in "Edit MARC authority record" window (promin)',
+        { tags: ['extendedPath', 'promin', 'C422246'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);

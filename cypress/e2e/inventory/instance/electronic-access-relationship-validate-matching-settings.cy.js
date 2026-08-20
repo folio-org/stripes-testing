@@ -62,8 +62,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C616 Electronic Access --> Relationship --> (Validate matching settings) (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C616'] },
+      'C616 Electronic Access --> Relationship --> (Validate matching settings) (promin)',
+      { tags: ['extendedPath', 'promin', 'C616'] },
       () => {
         // Step 1: Open the created FOLIO instance and edit it
         InventoryInstances.searchByTitle(testData.instanceId);

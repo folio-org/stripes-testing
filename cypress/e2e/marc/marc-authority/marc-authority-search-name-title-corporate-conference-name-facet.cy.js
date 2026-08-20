@@ -99,8 +99,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C409444 Searching MARC authority records using "Corporate/Conference name", "Name-title" search options and "Type of heading" facet (spitfire)',
-      { tags: ['criticalPath', 'C409444', 'spitfire'] },
+      'C409444 Searching MARC authority records using "Corporate/Conference name", "Name-title" search options and "Type of heading" facet (promin)',
+      { tags: ['criticalPath', 'C409444', 'promin'] },
       () => {
         // Step 1-3: Search with "Corporate/Conference name"
         MarcAuthorities.selectSearchOptionInDropdown(corpConfOptionName);

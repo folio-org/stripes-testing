@@ -37,8 +37,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C15851 Make sure the file extension settings are in alphabetical order when a new one is added (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C15851'] },
+      'C15851 Make sure the file extension settings are in alphabetical order when a new one is added (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C15851'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);

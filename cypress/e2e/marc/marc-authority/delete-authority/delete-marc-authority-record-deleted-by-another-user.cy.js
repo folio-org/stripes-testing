@@ -69,8 +69,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C358943 Delete the "MARC Authority" record deleted by another user (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C358943'] },
+        'C358943 Delete the "MARC Authority" record deleted by another user (promin)',
+        { tags: ['extendedPath', 'promin', 'C358943'] },
         () => {
           // Steps 1-3: User A navigates to MARC Authority, searches for record, opens detail view
           cy.login(userA.username, userA.password, {

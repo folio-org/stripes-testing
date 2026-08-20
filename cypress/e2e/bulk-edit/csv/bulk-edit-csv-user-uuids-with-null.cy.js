@@ -53,8 +53,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C380590 Verify bulk edit of User record that contains NULL values in reference data - CSV (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C380590'] },
+      'C380590 Verify bulk edit of User record that contains NULL values in reference data - CSV (athena)',
+      { tags: ['criticalPath', 'athena', 'C380590'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

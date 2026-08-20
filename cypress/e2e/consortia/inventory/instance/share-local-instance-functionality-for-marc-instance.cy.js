@@ -66,8 +66,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411292 (CONSORTIA) Check the action of the "Share local instance" button on Source = MARC Instance on Member tenant (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C411292'] },
+        'C411292 (CONSORTIA) Check the action of the "Share local instance" button on Source = MARC Instance on Member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C411292'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instanceId);

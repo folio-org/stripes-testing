@@ -287,8 +287,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C404362 Correct "Number of titles" shown when browsing Call numbers in Consortia tenants using "Held by" facet (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C404362'] },
+        'C404362 Correct "Number of titles" shown when browsing Call numbers in Consortia tenants using "Held by" facet (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C404362'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
           InventorySearchAndFilter.clickAccordionByName(heldbyAccordionName);

@@ -117,8 +117,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C380399 Navigation shortcut-keys are supported in editable boxes of linked field when edit "MARC bib" record (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C380399'] },
+          'C380399 Navigation shortcut-keys are supported in editable boxes of linked field when edit "MARC bib" record (promin)',
+          { tags: ['extendedPath', 'promin', 'C380399'] },
           () => {
             function verifyShortcuts() {
               QuickMarcEditor.focusOnBoxInLinkedField(testData.tag600, 5);

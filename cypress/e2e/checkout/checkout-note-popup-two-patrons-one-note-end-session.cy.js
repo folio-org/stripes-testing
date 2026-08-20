@@ -94,8 +94,8 @@ describe('Check out', () => {
   });
 
   it(
-    'C380718 Verify that note of second user will pop-up when first check outed user didn\'t have notes (using "End session" button) (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C380718'] },
+    'C380718 Verify that note of second user will pop-up when first check outed user didn\'t have notes (using "End session" button) (promin)',
+    { tags: ['extendedPath', 'promin', 'C380718'] },
     () => {
       const itemBarcode1 = testData.folioInstances[0].barcodes[0];
       const itemBarcode2 = testData.folioInstances[0].barcodes[1];

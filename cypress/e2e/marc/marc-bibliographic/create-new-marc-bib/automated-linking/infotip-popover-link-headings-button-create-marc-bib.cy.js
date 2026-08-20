@@ -35,8 +35,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422143 Verify that the infotip popover is displayed next to the "Link headings" button on the New MARC bib record pane. (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C422143'] },
+          'C422143 Verify that the infotip popover is displayed next to the "Link headings" button on the New MARC bib record pane. (promin)',
+          { tags: ['extendedPath', 'promin', 'C422143'] },
           () => {
             // Step 1: Open new MARC bib record pane
             InventoryInstance.newMarcBibRecord();

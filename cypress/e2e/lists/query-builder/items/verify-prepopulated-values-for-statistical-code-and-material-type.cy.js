@@ -51,8 +51,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C540400 The field "Items — Statistical code" has prepopulated values in the "Value" dropdown (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C540400'] },
+        'C540400 The field "Items — Statistical code" has prepopulated values in the "Value" dropdown (athena)',
+        { tags: ['extendedPath', 'athena', 'C540400'] },
         () => {
           // Step 1: Click "New" button, add list name, select "Items" record type
           Lists.openNewListPane();

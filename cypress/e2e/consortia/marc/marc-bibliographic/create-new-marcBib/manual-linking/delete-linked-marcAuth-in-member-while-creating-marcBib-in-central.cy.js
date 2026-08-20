@@ -118,8 +118,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422125 Delete linked "MARC Authority" record in Member tenant while "MARC Bib" record being created in Central tenant (NOT saved link) (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C422125'] },
+          'C422125 Delete linked "MARC Authority" record in Member tenant while "MARC Bib" record being created in Central tenant (NOT saved link) (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C422125'] },
           () => {
             cy.resetTenant();
             cy.login(user.username, user.password, {

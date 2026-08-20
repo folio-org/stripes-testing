@@ -161,8 +161,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C376954 Add "$a" with valid prefix to "010" with "$z" in linked "MARC Authority" record when "001" = "$0" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C376954'] },
+      'C376954 Add "$a" with valid prefix to "010" with "$z" in linked "MARC Authority" record when "001" = "$0" (promin)',
+      { tags: ['extendedPath', 'promin', 'C376954'] },
       () => {
         ExportFileHelper.uploadFile(authorityUUIDsFileName);
         ExportFileHelper.exportWithDefaultJobProfile(

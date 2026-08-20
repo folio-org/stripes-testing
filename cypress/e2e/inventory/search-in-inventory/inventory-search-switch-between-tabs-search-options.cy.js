@@ -68,8 +68,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C380421 Switch between searching Instances, Holdings, Items using search options exclusive to each type (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C380421'] },
+      'C380421 Switch between searching Instances, Holdings, Items using search options exclusive to each type (promin)',
+      { tags: ['extendedPath', 'promin', 'C380421'] },
       () => {
         InventorySearchAndFilter.selectSearchOption(testData.searchOptions.titleAll);
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(testData.searchOptions.titleAll);

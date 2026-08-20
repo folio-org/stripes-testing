@@ -116,8 +116,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C553011 Search for Instances by "Date" field using "All" search option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C553011'] },
+      'C553011 Search for Instances by "Date" field using "All" search option (promin)',
+      { tags: ['criticalPath', 'promin', 'C553011'] },
       () => {
         testData.searchQueries.forEach((query, index) => {
           InventorySearchAndFilter.searchByParameter(testData.searchOption, query);

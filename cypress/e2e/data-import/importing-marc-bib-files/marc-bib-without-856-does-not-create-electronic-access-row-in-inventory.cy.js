@@ -109,8 +109,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C11122 Check that MARC Bib without 856 does NOT create electronic access row in Inventory Instance, Holdings, Item records (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C11122'] },
+      'C11122 Check that MARC Bib without 856 does NOT create electronic access row in Inventory Instance, Holdings, Item records (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C11122'] },
       () => {
         // create field mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

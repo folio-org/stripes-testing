@@ -43,8 +43,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C552527 Edit Instance with selected Date type and fields Date 1, Date 2 filled by digits (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C552527'] },
+      'C552527 Edit Instance with selected Date type and fields Date 1, Date 2 filled by digits (promin)',
+      { tags: ['criticalPath', 'promin', 'C552527'] },
       () => {
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.edit();

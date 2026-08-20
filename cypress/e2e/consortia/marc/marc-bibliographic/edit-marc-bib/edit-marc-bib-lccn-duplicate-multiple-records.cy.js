@@ -49,8 +49,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C514876 Cannot save existing MARC bib record with value in "010 $a" subfield which matches to Multiple records "LCCN", "Canceled LCCN" fields when duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C514876'] },
+          'C514876 Cannot save existing MARC bib record with value in "010 $a" subfield which matches to Multiple records "LCCN", "Canceled LCCN" fields when duplicate LCCN check is enabled (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C514876'] },
           () => {
             // Precondition moved to `before` hook to make sure `after` hook will always be executed
             cy.then(() => {

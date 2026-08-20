@@ -309,6 +309,11 @@ export default {
     resource: 'UI-Quick-Marc Quick-Marc-Holdings-Editor',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiQuickMarcQuickMarcEditorView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Quick-Marc Quick-Marc-Editor',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiQuickMarcQuickMarcEditor: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Quick-Marc Quick-Marc-Editor',

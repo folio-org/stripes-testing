@@ -120,8 +120,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C385659 GetRecord: SRS - Verify that Item fields are properly included in "952" field of response (subfields "i", "j", "k", "l", "m", "n", "p") (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C385659'] },
+      'C385659 GetRecord: SRS - Verify that Item fields are properly included in "952" field of response (subfields "i", "j", "k", "l", "m", "n", "p") (athena)',
+      { tags: ['extendedPath', 'athena', 'C385659'] },
       () => {
         // Step 1: Get Instance UUID from the address bar
         InventoryInstances.searchByTitle(marcInstance.title);

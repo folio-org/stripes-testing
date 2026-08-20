@@ -71,8 +71,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C196838 Overlay record created by using Fast add template (instance source = FOLIO) by import of single MARC record from LC (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C196838'] },
+      'C196838 Overlay record created by using Fast add template (instance source = FOLIO) by import of single MARC record from LC (promin)',
+      { tags: ['extendedPath', 'promin', 'C196838'] },
       () => {
         InventoryActions.openNewFastAddRecordForm();
         FastAddNewRecord.waitLoading();

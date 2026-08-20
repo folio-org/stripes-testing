@@ -99,8 +99,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C446170 Verify reporting "duplicate" errors of exported instances for "Quick export" (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C446170'] },
+    'C446170 Verify reporting "duplicate" errors of exported instances for "Quick export" (athena)',
+    { tags: ['extendedPath', 'athena', 'C446170'] },
     () => {
       // Step 1: Select instance in Inventory
       InventorySearchAndFilter.searchInstanceByTitle(testData.duplicateInstance.title);

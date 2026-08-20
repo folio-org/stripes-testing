@@ -131,8 +131,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514980 Create MARC bib record with not-repeatable / multiple repeatable fields (Standard and Local) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C514980', 'nonParallel'] },
+        'C514980 Create MARC bib record with not-repeatable / multiple repeatable fields (Standard and Local) (promin)',
+        { tags: ['criticalPath', 'promin', 'C514980', 'nonParallel'] },
         () => {
           // Step 1: Click on "Actions" button >> Select "New MARC bibliographic record"
           InventoryInstance.newMarcBibRecord();

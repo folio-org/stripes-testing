@@ -93,8 +93,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1322606 Build query to find MARC authority records by UUIDs (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1322606'] },
+        'C1322606 Build query to find MARC authority records by UUIDs (promin)',
+        { tags: ['extendedPath', 'promin', 'C1322606'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

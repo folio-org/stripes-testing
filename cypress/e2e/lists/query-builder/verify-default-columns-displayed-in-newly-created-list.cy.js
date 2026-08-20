@@ -35,8 +35,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C436809 Verify that default columns for entity type are displayed in newly created list (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C436809'] },
+      'C436809 Verify that default columns for entity type are displayed in newly created list (athena)',
+      { tags: ['extendedPath', 'athena', 'C436809'] },
       () => {
         // Step 1: Create new list
         Lists.openNewListPane();

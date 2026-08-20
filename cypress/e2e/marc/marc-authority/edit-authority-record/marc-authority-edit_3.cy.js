@@ -70,8 +70,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C387460 Add multiple 001s when editing "MARC Authority" record (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C387460'] },
+        'C387460 Add multiple 001s when editing "MARC Authority" record (promin)',
+        { tags: ['criticalPath', 'promin', 'C387460'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectTitle(testData.authority.title);

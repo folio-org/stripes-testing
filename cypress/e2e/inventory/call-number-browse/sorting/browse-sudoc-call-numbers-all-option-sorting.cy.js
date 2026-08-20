@@ -235,8 +235,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C477559 SuDoc call numbers are sorted alphabetically when used "Call numbers (all)" browse option (spitfire)',
-        { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C477559'] },
+        'C477559 SuDoc call numbers are sorted alphabetically when used "Call numbers (all)" browse option (promin)',
+        { tags: ['criticalPathFlaky', 'promin', 'nonParallel', 'C477559'] },
         () => {
           cy.login(tempUser.username, tempUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

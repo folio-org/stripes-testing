@@ -200,8 +200,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411718 Search for Shared/Local records by "Call number, not normalized" and "Call number, normalized" search options from "Member" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411718'] },
+        'C411718 Search for Shared/Local records by "Call number, not normalized" and "Call number, normalized" search options from "Member" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411718'] },
         () => {
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.holdingsTabIsDefault();

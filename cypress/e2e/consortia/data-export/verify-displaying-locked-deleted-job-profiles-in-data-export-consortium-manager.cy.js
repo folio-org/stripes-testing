@@ -170,8 +170,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C1045408 ECS | Verify displaying locked and deleted job profiles in "Data export" and "Consortium manager" apps (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C1045408'] },
+      'C1045408 ECS | Verify displaying locked and deleted job profiles in "Data export" and "Consortium manager" apps (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C1045408'] },
       () => {
         // Step 1: Click "or choose file" button at "Jobs" pane and upload .csv file from Preconditions
         ExportFile.uploadFile(csvFileNameCompletedWithErrors);

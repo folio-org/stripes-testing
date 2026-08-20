@@ -63,8 +63,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C752 Add an "Agreement" and attach a title in a package (spitfire) (TaaS)',
-      { tags: ['extendedPathBroken', 'spitfire', 'C752'] },
+      'C752 Add an "Agreement" and attach a title in a package (promin) (TaaS)',
+      { tags: ['extendedPathBroken', 'promin', 'C752'] },
       () => {
         // Fill in the search box with the title of any "Title" record, Click on the "Search" button.
         EHoldingsTitlesSearch.byTitle(testData.title);

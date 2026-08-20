@@ -244,8 +244,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C655279 Check "Version history" after updating Item via Data import (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C655279'] },
+        'C655279 Check "Version history" after updating Item via Data import (promin)',
+        { tags: ['criticalPath', 'promin', 'C655279'] },
         () => {
           InstanceRecordView.exportInstanceMarc();
           cy.intercept('/data-export/quick-export').as('getIds');

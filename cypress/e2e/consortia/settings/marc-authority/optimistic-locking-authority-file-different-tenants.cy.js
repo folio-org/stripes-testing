@@ -71,8 +71,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C436918 Optimistic locking error appears when 2 different users edit the same "Authority file" from different tenants (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C436918'] },
+          'C436918 Optimistic locking error appears when 2 different users edit the same "Authority file" from different tenants (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C436918'] },
           () => {
             cy.resetTenant();
             cy.login(userA.username, userA.password, {

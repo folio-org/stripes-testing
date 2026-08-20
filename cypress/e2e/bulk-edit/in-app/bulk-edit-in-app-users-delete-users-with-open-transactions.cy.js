@@ -120,8 +120,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C1385659 Verify bulk deletion of User records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C1385659'] },
+      'C1385659 Verify bulk deletion of User records (athena)',
+      { tags: ['extendedPath', 'athena', 'C1385659'] },
       () => {
         // Step 1: Check the Preview of records matched
         BulkEditSearchPane.verifyPaneRecordsCount('2 user');

@@ -169,8 +169,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476717 Check Acquisition accordion for shared MARC instance with linked central and member tenants (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C476717'] },
+        'C476717 Check Acquisition accordion for shared MARC instance with linked central and member tenants (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C476717'] },
         () => {
           const memberPolNumber = `${testData.memberOrder.poNumber}-1`;
           const centralPolNumber = `${testData.centralOrder.poNumber}-1`;

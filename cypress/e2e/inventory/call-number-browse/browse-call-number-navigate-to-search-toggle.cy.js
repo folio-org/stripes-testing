@@ -61,8 +61,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C350598 Verify navigation to "Search" toggle (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C350598'] },
+      'C350598 Verify navigation to "Search" toggle (promin)',
+      { tags: ['extendedPath', 'promin', 'C350598'] },
       () => {
         // Step 1: Select "Call numbers (all)" option
         InventorySearchAndFilter.switchToBrowseTab();

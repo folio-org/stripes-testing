@@ -30,8 +30,8 @@ describe('Tenant', () => {
     });
 
     it(
-      'C515 Permissions: Settings (tenant): Can maintain preferred plugins (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C515'] },
+      'C515 Permissions: Settings (tenant): Can maintain preferred plugins (athena)',
+      { tags: ['extendedPath', 'athena', 'C515'] },
       () => {
         // Step 6: Open Settings App and navigate to Tenant settings -> Preferred plugins
         TenantPane.goToTenantTab();

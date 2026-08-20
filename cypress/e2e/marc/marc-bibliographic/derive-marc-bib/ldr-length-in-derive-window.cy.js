@@ -57,8 +57,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C353612 Verify "LDR" length in Derive window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C353612'] },
+        'C353612 Verify "LDR" length in Derive window (promin)',
+        { tags: ['extendedPath', 'promin', 'C353612'] },
         () => {
           InventoryInstance.checkExpectedMARCSource();
           InventoryInstance.deriveNewMarcBibRecord();

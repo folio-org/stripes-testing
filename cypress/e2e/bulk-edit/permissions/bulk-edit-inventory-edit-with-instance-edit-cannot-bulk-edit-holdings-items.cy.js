@@ -66,8 +66,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C423648 User with "data - UI-Bulk-Edit Inventory - edit" and "data - UI-Inventory Instance - edit" permissions is NOT able to start bulk edit of Holdings, Items (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C423648'] },
+      'C423648 User with "data - UI-Bulk-Edit Inventory - edit" and "data - UI-Inventory Instance - edit" permissions is NOT able to start bulk edit of Holdings, Items (athena)',
+      { tags: ['extendedPath', 'athena', 'C423648'] },
       () => {
         // Step 1: Select "Inventory - holdings" radio button and "Holding UUIDs" identifier
         BulkEditSearchPane.checkHoldingsRadio();

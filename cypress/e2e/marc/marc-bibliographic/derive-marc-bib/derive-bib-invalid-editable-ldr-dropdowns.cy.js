@@ -107,8 +107,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C357569 Verify "LDR" validation rules with invalid data for editable positions "05", "07", "08", "18", "19" when deriving record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C357569'] },
+        'C357569 Verify "LDR" validation rules with invalid data for editable positions "05", "07", "08", "18", "19" when deriving record (promin)',
+        { tags: ['extendedPath', 'promin', 'C357569'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceIds[0]);
           InventoryInstances.selectInstanceById(createdInstanceIds[0]);

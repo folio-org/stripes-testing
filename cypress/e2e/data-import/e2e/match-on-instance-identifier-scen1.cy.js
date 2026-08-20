@@ -123,8 +123,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C347828 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 1 (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C347828'] },
+      'C347828 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 1 (promin)',
+      { tags: ['criticalPath', 'promin', 'C347828'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);

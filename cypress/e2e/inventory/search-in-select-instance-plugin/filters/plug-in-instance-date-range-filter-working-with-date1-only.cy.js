@@ -100,8 +100,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C553059 "Select Instance" plugin | Verify that "Date range" filter is working on "Date 1" field only (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C553059'] },
+        'C553059 "Select Instance" plugin | Verify that "Date range" filter is working on "Date 1" field only (promin)',
+        { tags: ['extendedPath', 'promin', 'C553059'] },
         () => {
           SelectInstanceModal.searchByName(instanceTitlePrefix);
           date1Values.forEach((date) => {

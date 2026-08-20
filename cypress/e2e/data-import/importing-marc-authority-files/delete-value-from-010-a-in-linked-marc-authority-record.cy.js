@@ -159,8 +159,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C376943 Delete value from "010 $a" in linked "MARC Authority" record when "010" = "$0" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C376943'] },
+      'C376943 Delete value from "010 $a" in linked "MARC Authority" record when "010" = "$0" (promin)',
+      { tags: ['extendedPath', 'promin', 'C376943'] },
       () => {
         ExportFileHelper.uploadFile(authorityUUIDsFileName);
         ExportFileHelper.exportWithDefaultJobProfile(

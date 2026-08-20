@@ -231,8 +231,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C478266 Verify "Remove all" action for Holdings notes in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C478266'] },
+        'C478266 Verify "Remove all" action for Holdings notes in Central tenant (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C478266'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);

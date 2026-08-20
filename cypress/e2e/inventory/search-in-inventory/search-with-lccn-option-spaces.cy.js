@@ -77,8 +77,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C440126 Search for "MARC bibliographic" by "LCCN, normalized" option when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C440126', 'eurekaPhase1'] },
+      'C440126 Search for "MARC bibliographic" by "LCCN, normalized" option when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (promin)',
+      { tags: ['criticalPath', 'promin', 'C440126', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.selectSearchOptions(testData.lccnOption, '');

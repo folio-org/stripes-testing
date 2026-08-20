@@ -92,8 +92,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C347926 Check EDIFACT invoice import when Invoice line description is incorrectly constructed (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C347926'] },
+      'C347926 Check EDIFACT invoice import when Invoice line description is incorrectly constructed (promin)',
+      { tags: ['extendedPath', 'promin', 'C347926'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();

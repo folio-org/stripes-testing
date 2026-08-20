@@ -71,8 +71,8 @@ describe('MARC Bibliographic Validation Rules - Create Indicators with Duplicate
   });
 
   it(
-    'C499659 Create Indicators of Local field with duplicate "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['C499659', 'extendedPath', 'spitfire'] },
+    'C499659 Create Indicators of Local field with duplicate "label" for MARC bib spec (API) (promin)',
+    { tags: ['C499659', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

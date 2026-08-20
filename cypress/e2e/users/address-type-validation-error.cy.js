@@ -54,8 +54,8 @@ describe('Users', () => {
   });
 
   it(
-    'C366100 Verify that notification is shown when address types field is empty (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C366100'] },
+    'C366100 Verify that notification is shown when address types field is empty (vega)',
+    { tags: ['extendedPath', 'vega', 'C366100'] },
     () => {
       // Step 1: Navigate to Users app and open Create User mode
       UsersSearchResultsPane.openNewUser();

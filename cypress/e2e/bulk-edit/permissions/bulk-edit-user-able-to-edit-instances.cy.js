@@ -39,8 +39,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C423647 User with "Bulk Edit: In app - Edit inventory records" and "Inventory: View, create, edit instances" permissions is able to start bulk edit of Instances (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C423647'] },
+      'C423647 User with "Bulk Edit: In app - Edit inventory records" and "Inventory: View, create, edit instances" permissions is able to start bulk edit of Instances (athena)',
+      { tags: ['criticalPath', 'athena', 'C423647'] },
       () => {
         BulkEditSearchPane.verifyBulkEditImage();
         BulkEditSearchPane.verifyPanesBeforeImport();

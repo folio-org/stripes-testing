@@ -125,8 +125,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466150 Search for Instance which has each classification type using "Classification, normalized" search option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466150'] },
+      'C466150 Search for Instance which has each classification type using "Classification, normalized" search option (promin)',
+      { tags: ['criticalPath', 'promin', 'C466150'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectSearchOption(testData.classificationOption);

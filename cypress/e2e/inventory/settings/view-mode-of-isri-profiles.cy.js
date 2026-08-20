@@ -227,8 +227,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C374176 Verify the view mode of ISRI profiles (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C374176'] },
+      'C374176 Verify the view mode of ISRI profiles (promin)',
+      { tags: ['criticalPath', 'promin', 'C374176'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsInventory.goToSettingsInventory();

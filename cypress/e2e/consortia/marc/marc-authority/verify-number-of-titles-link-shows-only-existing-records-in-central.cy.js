@@ -203,8 +203,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C404463 Verify that "Number of titles" link shows only existing records for Central tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C404463'] },
+          'C404463 Verify that "Number of titles" link shows only existing records for Central tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C404463'] },
           () => {
             // Step 1: Search for DiCaprio authority by Keyword → open detail view
             MarcAuthorities.searchBeats(testData.diCaprioHeading);

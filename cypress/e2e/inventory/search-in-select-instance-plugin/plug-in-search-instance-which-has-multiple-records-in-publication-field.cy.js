@@ -93,8 +93,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C496184 Select Instance plugin | Search for Instance which has multiple records in "Place of publication" field (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C496184'] },
+      'C496184 Select Instance plugin | Search for Instance which has multiple records in "Place of publication" field (promin)',
+      { tags: ['extendedPath', 'promin', 'C496184'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 

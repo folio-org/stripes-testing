@@ -171,8 +171,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C409445 Search for MARC authority records using "Corporate/Conference name" search option (spitfire)',
-      { tags: ['criticalPath', 'C409445', 'spitfire'] },
+      'C409445 Search for MARC authority records using "Corporate/Conference name" search option (promin)',
+      { tags: ['criticalPath', 'C409445', 'promin'] },
       () => {
         // Step 1: Select Corporate/Conference name search option
         MarcAuthorities.selectSearchOptionInDropdown(searchOption);

@@ -49,8 +49,8 @@ describe('Settings', () => {
     });
 
     it(
-      'C503131 Verify that you can associate service points with Fee/fine owners (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C503131'] },
+      'C503131 Verify that you can associate service points with Fee/fine owners (vega)',
+      { tags: ['extendedPath', 'vega', 'C503131'] },
       () => {
         UsersOwners.startNewLineAdding();
         const newOwnerName = 'autotest_owner_' + new Date().getTime();

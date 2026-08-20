@@ -55,8 +55,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436921 Cancel deletion of local "Authority file" from "<Authority file name> will be deleted" pop-up modal (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C436921'] },
+        'C436921 Cancel deletion of local "Authority file" from "<Authority file name> will be deleted" pop-up modal (promin)',
+        { tags: ['extendedPath', 'promin', 'C436921'] },
         () => {
           ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
           ManageAuthorityFiles.checkAuthorityFilesTableExists();

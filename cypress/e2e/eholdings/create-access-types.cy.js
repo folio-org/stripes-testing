@@ -60,7 +60,7 @@ describe('eHoldings', () => {
     });
   });
 
-  it.skip('C590791 Create access status types (spitfire)', { tags: [] }, () => {
+  it.skip('C590791 Create access status types (promin)', { tags: [] }, () => {
     SettingsPane.selectSettingsTab(APPLICATION_NAMES.EHOLDINGS);
     AccessStatusTypes.openTab();
     AccessStatusTypes.checkTableHeaders();

@@ -256,8 +256,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C788742 ECS | Executing bulk edit job using MARC Instances bulk edit profile in Central tenant (611, 583) (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C788742'] },
+        'C788742 ECS | Executing bulk edit job using MARC Instances bulk edit profile in Central tenant (611, 583) (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C788742'] },
         () => {
           // Step 1: Click "Actions" menu
           BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false, true);

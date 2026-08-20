@@ -86,8 +86,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423554 Create 2 new MARC authority records with "Local" authority file selected at the same time (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423554'] },
+        'C423554 Create 2 new MARC authority records with "Local" authority file selected at the same time (promin)',
+        { tags: ['extendedPath', 'promin', 'C423554'] },
         () => {
           // Steps 1-2: User A opens new record form, sets valid 008 values
           MarcAuthorities.clickActionsAndNewAuthorityButton();

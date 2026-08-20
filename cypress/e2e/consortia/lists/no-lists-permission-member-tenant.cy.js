@@ -53,8 +53,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C523641 No lists app permission in the member tenant - Consortium (consortia) (corsair)',
-      { tags: ['criticalPathECS', 'corsair', 'C523641'] },
+      'C523641 No lists app permission in the member tenant - Consortium (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C523641'] },
       () => {
         // Step 1: Switch affiliation to member tenant
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

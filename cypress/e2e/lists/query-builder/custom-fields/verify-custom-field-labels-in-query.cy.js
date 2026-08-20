@@ -62,8 +62,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C651464 Verify that the custom field labels are displaying in the user-friendly query (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C651464'] },
+        'C651464 Verify that the custom field labels are displaying in the user-friendly query (athena)',
+        { tags: ['criticalPath', 'athena', 'C651464'] },
         () => {
           listName = getTestEntityValue('C651464_List');
 

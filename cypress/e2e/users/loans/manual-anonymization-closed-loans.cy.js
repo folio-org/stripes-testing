@@ -179,8 +179,8 @@ describe('Loans', () => {
     });
 
     it(
-      'C9217 Manual anonymization in closed loans (volaris)',
-      { tags: ['smoke', 'volaris', 'C9217', 'eurekaPhase1'] },
+      'C9217 Manual anonymization in closed loans (vega)',
+      { tags: ['smoke', 'vega', 'C9217', 'eurekaPhase1'] },
       () => {
         LoanDetails.anonymizeAllLoans();
         LoanDetails.checkAnonymizeAllLoansModalOpen();
@@ -195,8 +195,8 @@ describe('Loans', () => {
     );
 
     it(
-      'C17136 Filter circulation log by Anonymized (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C17136', 'eurekaPhase1'] },
+      'C17136 Filter circulation log by Anonymized (vega)',
+      { tags: ['criticalPath', 'vega', 'C17136', 'eurekaPhase1'] },
       () => {
         const searchResultsData = {
           userBarcode: '-',

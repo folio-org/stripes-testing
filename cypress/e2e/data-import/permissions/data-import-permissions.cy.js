@@ -52,8 +52,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C492 Data Import permissions (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C492'] },
+      'C492 Data Import permissions (promin)',
+      { tags: ['extendedPath', 'promin', 'C492'] },
       () => {
         DataImport.waitLoading();
         Logs.openFileDetails(fileName);

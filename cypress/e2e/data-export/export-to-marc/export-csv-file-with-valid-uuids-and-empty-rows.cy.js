@@ -79,8 +79,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C446176 Export .csv file with valid UUIDs and empty rows in the file (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C446176'] },
+      'C446176 Export .csv file with valid UUIDs and empty rows in the file (athena)',
+      { tags: ['extendedPath', 'athena', 'C446176'] },
       () => {
         // Step 1: Trigger the data export by clicking on the "or choose file" button and submitting .csv file with Instance UUIDs + empty rows
         ExportFileHelper.uploadFile(csvFileName);

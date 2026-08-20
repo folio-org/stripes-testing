@@ -241,8 +241,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C805770 Search holdings by Holdings — Notes — Note (all operators for free text field) (firebird)',
-        { tags: ['smoke', 'firebird', 'C805770'] },
+        'C805770 Search holdings by Holdings — Notes — Note (all operators for free text field) (athena)',
+        { tags: ['smoke', 'athena', 'C805770'] },
         () => {
           // Create expected holdings for verification
           const expectedHoldings = createExpectedHoldings(folioInstance.holdingHrids);

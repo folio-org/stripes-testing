@@ -123,8 +123,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C360551 MARC Authority plug-in | Search: Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C360551'] },
+        'C360551 MARC Authority plug-in | Search: Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C360551'] },
         () => {
           MarcAuthorities.checkAuthoritySourceOptionsInPlugInModal();
           MarcAuthorities.chooseAuthoritySourceOption(testData.authSourceOptions.NOT_SPECIFIED);

@@ -112,9 +112,9 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808497 Create "Item" with empty "order" field (default state) when Instance has multiple Holdings with Items (spitfire)',
+        'C808497 Create "Item" with empty "order" field (default state) when Instance has multiple Holdings with Items (promin)',
         {
-          tags: ['criticalPath', 'spitfire', 'C808497'],
+          tags: ['criticalPath', 'promin', 'C808497'],
         },
         () => {
           cy.waitForAuthRefresh(() => {

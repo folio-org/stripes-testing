@@ -13,6 +13,7 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
+import OrderStates from '../../support/fragments/orders/orderStates';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
@@ -201,9 +202,7 @@ describe('Orders', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();
       Orders.unOpenOrder();
-      InteractorsTools.checkCalloutMessage(
-        `The Purchase order - ${orderNumber} has been successfully unopened`,
-      );
+      InteractorsTools.checkCalloutMessage(OrderStates.orderUnopenedSuccessfully(orderNumber));
       Orders.checkOrderStatus(ORDER_STATUSES.PENDING);
       OrderLines.selectPOLInOrder();
       OrderLines.openPageCurrentEncumbranceInFund(`${firstFund.name}(${firstFund.code})`, '$0.00');

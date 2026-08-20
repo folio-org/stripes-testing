@@ -62,8 +62,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C389503 Verify that "Call number type" is correctly mapped when create new "MARC Holdings" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C389503'] },
+        'C389503 Verify that "Call number type" is correctly mapped when create new "MARC Holdings" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C389503'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

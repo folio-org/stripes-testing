@@ -83,8 +83,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C446121 Check page title (browser tab) when opening 1XX, 4XX, 5XX headings (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C446121'] },
+      'C446121 Check page title (browser tab) when opening 1XX, 4XX, 5XX headings (promin)',
+      { tags: ['criticalPath', 'promin', 'C446121'] },
       () => {
         testData.searchOptions.forEach((searchOption, index) => {
           MarcAuthoritiesSearch.selectSearchOption(searchOption);

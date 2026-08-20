@@ -196,8 +196,8 @@ describe(
       });
 
       it(
-        'C15849 Verify Instance electronic access (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C15849'] },
+        'C15849 Verify Instance electronic access (athena)',
+        { tags: ['extendedPath', 'athena', 'C15849'] },
         () => {
           // Step 1: Go to the "Data export" app
           DataExportLogs.verifyDragAndDropAreaExists();

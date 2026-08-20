@@ -373,8 +373,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422109 Creating a new "MARC bib" record with valid LDR 06, 07 values. (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C422109'] },
+        'C422109 Creating a new "MARC bib" record with valid LDR 06, 07 values. (promin)',
+        { tags: ['criticalPath', 'promin', 'C422109'] },
         () => {
           cy.login(
             userData.C380704UserProperties.username,
@@ -618,8 +618,8 @@ describe('MARC', () => {
       );
 
       it(
-        'C422114 Add all possible "245" subfields when creating a new "MARC bib" record (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C422114'] },
+        'C422114 Add all possible "245" subfields when creating a new "MARC bib" record (promin)',
+        { tags: ['criticalPath', 'promin', 'C422114'] },
         () => {
           cy.login(
             userData.C380704UserProperties.username,
@@ -652,8 +652,8 @@ describe('MARC', () => {
       );
 
       it(
-        'C422116 "008" field updated when valid LDR 06-07 combinations entered upon creation of "MARC bib" record (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C422116'] },
+        'C422116 "008" field updated when valid LDR 06-07 combinations entered upon creation of "MARC bib" record (promin)',
+        { tags: ['criticalPath', 'promin', 'C422116'] },
         () => {
           cy.login(
             userData.C380704UserProperties.username,

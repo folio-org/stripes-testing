@@ -116,8 +116,8 @@ describe('Data Import', () => {
     }
 
     it(
-      'C378900 Verify no errors when importing orders with multiple product ID types mapped: Case 2 (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C378900'] },
+      'C378900 Verify no errors when importing orders with multiple product ID types mapped: Case 2 (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C378900'] },
       () => {
         // create mapping profile
         createMappingProfile(mappingProfile, additionalProduct);

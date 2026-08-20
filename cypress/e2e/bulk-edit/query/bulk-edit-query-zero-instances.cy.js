@@ -34,8 +34,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C446073 Verify the "Run query" button, when the query returns 0 - instances (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C446073'] },
+      'C446073 Verify the "Run query" button, when the query returns 0 - instances (athena)',
+      { tags: ['criticalPath', 'athena', 'shiftLeft', 'C446073'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkInstanceRadio();
@@ -45,7 +45,7 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(instanceFieldValues.instanceHrid);
         QueryModal.verifySelectedField(instanceFieldValues.instanceHrid);
-        QueryModal.verifyQueryAreaContent('(instance.hrid  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(instance.hrid == )');

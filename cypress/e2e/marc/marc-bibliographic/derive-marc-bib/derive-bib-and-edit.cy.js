@@ -93,8 +93,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C345388 Derive a MARC bib record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'C345388'] },
+        'C345388 Derive a MARC bib record (promin)',
+        { tags: ['smoke', 'promin', 'C345388'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

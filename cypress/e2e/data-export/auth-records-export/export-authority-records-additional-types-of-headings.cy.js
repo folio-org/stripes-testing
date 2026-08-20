@@ -114,8 +114,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C409503 Export "MARC Authority" records with additional types of headings (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C409503'] },
+      'C409503 Export "MARC Authority" records with additional types of headings (promin)',
+      { tags: ['extendedPath', 'promin', 'C409503'] },
       () => {
         MarcAuthorities.searchBeats(authorityHeadingPrefix);
         authorityRecordsData.forEach((recordData, index) => {

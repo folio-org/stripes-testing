@@ -56,8 +56,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C356413 Export all selected titles in a "Package". User chooses "Package" and "Title" fields to export (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C356413'] },
+      'C356413 Export all selected titles in a "Package". User chooses "Package" and "Title" fields to export (promin)',
+      { tags: ['extendedPath', 'promin', 'C356413'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.searchQuery);
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();

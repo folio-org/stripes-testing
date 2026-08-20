@@ -154,8 +154,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375955 Add controllable subfields to multiple linked fields in "MARC bib" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C375955'] },
+        'C375955 Add controllable subfields to multiple linked fields in "MARC bib" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C375955'] },
         () => {
           function checkAfterSaveAttempt() {
             QuickMarcEditor.verifyValidationCallout(0, 5);

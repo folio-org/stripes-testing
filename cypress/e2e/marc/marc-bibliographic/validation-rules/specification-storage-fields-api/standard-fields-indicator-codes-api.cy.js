@@ -107,8 +107,8 @@ describe('MARC Bibliographic Validation Rules - Standard Fields Indicator Codes 
   });
 
   it(
-    'C502958 Cannot update Indicator code of Standard field for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C502958', 'spitfire'] },
+    'C502958 Cannot update Indicator code of Standard field for MARC bib spec (API) (promin)',
+    { tags: ['criticalPath', 'C502958', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

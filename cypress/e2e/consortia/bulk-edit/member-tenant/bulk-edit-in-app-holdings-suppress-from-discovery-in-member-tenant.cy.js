@@ -164,8 +164,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566163 Verify "Suppress from discovery" action for Holdings in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566163'] },
+        'C566163 Verify "Suppress from discovery" action for Holdings in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566163'] },
         () => {
           // Step 1: Select record type and identifier
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');

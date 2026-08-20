@@ -117,8 +117,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476821 "Select Instance" plugin | Filter "Instance" records by "Holdings type" facet on "Holdings" tab (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476821'] },
+        'C476821 "Select Instance" plugin | Filter "Instance" records by "Holdings type" facet on "Holdings" tab (promin)',
+        { tags: ['extendedPath', 'promin', 'C476821'] },
         () => {
           InventorySearchAndFilter.verifyAccordionExistance(holdingsTypeAccordionName);
           InventorySearchAndFilter.toggleAccordionByName(holdingsTypeAccordionName);

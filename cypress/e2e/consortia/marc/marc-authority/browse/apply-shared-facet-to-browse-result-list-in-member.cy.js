@@ -175,8 +175,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C404449 Apply "Shared" facet to the browse result list in "Member" tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C404449'] },
+        'C404449 Apply "Shared" facet to the browse result list in "Member" tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C404449'] },
         () => {
           // 1 Check the "Search & filter" pane.
           MarcAuthorities.verifyExistanceOfSharedAccordion();

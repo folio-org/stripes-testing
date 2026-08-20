@@ -52,8 +52,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C553068 Create MARC bib with selected "Date type" and empty "Date 1" and "Date 2" fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C553068'] },
+        'C553068 Create MARC bib with selected "Date type" and empty "Date 1" and "Date 2" fields (promin)',
+        { tags: ['criticalPath', 'promin', 'C553068'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateRecord);

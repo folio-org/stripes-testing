@@ -46,8 +46,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C1301738 Consortia | GetRecord: Verify that DCB Instance is NOT retrieved in response of single tenant harvest (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C1301738', 'nonParallel'] },
+        'C1301738 Consortia | GetRecord: Verify that DCB Instance is NOT retrieved in response of single tenant harvest (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C1301738', 'nonParallel'] },
         () => {
           cy.resetTenant();
           cy.getAdminToken();

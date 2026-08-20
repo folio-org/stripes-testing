@@ -148,8 +148,8 @@ describe(
       });
 
       it(
-        'C432297 Verify only updated properties columns appear on "Are you sure?" form and on Confirmation screen - holdings (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C432297'] },
+        'C432297 Verify only updated properties columns appear on "Are you sure?" form and on Confirmation screen - holdings (athena)',
+        { tags: ['criticalPath', 'athena', 'C432297'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);

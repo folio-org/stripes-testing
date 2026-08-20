@@ -76,8 +76,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C9284 Export small number of Instance UUIDs (30 or fewer) (firebird)',
-      { tags: ['smoke', 'firebird', 'C9284'] },
+      'C9284 Export small number of Instance UUIDs (30 or fewer) (athena)',
+      { tags: ['smoke', 'athena', 'C9284'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', item.instanceName);
         InventorySearchAndFilter.saveUUIDs();
@@ -97,8 +97,8 @@ describe('Data Export', () => {
     );
 
     it(
-      'C9287 Export CQL query (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C9287'] },
+      'C9287 Export CQL query (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C9287'] },
       () => {
         InventorySearchAndFilter.byLanguage();
         InventorySearchAndFilter.searchByParameter(
@@ -118,8 +118,8 @@ describe('Data Export', () => {
     );
 
     it(
-      'C196757 Export selected records (MARC) (firebird)',
-      { tags: ['smoke', 'firebird', 'C196757'] },
+      'C196757 Export selected records (MARC) (athena)',
+      { tags: ['smoke', 'athena', 'C196757'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', item.instanceName);
         cy.do(InventorySearchAndFilter.getSearchResult().find(Checkbox()).click());

@@ -171,8 +171,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C476807 Run search for "Instance" records by "010" field values from "Edit MARC record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476807'] },
+        'C476807 Run search for "Instance" records by "010" field values from "Edit MARC record" window (promin)',
+        { tags: ['extendedPath', 'promin', 'C476807'] },
         () => {
           function goToEditBib(field010Content) {
             InventorySearchAndFilter.selectSearchOption(testData.keywordSearchOption);

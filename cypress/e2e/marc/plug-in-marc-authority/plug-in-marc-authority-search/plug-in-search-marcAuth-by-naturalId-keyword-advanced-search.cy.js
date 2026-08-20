@@ -157,8 +157,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422177 MARC Authority plug-in | Support search for "naturalId" field using "Advanced search" search option (Keyword search option) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C422177'] },
+        'C422177 MARC Authority plug-in | Support search for "naturalId" field using "Advanced search" search option (Keyword search option) (promin)',
+        { tags: ['extendedPath', 'promin', 'C422177'] },
         () => {
           InventoryInstances.searchByTitle(createdBibId);
           InventoryInstances.selectInstanceById(createdBibId);

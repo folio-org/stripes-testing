@@ -36,8 +36,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C375963 Verify "Export instances (JSON)" option is hidden in "Actions" menu of "Inventory" pane (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C375963'] },
+      'C375963 Verify "Export instances (JSON)" option is hidden in "Actions" menu of "Inventory" pane (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C375963'] },
       () => {
         InventorySearchAndFilter.verifyNoExportJsonOption();
         InventorySearchAndFilter.searchByParameter('Title (all)', item.instanceName);

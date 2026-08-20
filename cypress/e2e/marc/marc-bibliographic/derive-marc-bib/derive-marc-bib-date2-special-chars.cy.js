@@ -55,8 +55,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C554634 Derive MARC bib with "Date 2" field in "008" filled by value with special characters (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C554634'] },
+        'C554634 Derive MARC bib with "Date 2" field in "008" filled by value with special characters (promin)',
+        { tags: ['criticalPath', 'promin', 'C554634'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstanceById(createdRecordIDs[0]);

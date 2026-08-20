@@ -54,8 +54,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C365124 Verify that preview of records matched is populated if Items call number contains semicolon (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C365124'] },
+      'C365124 Verify that preview of records matched is populated if Items call number contains semicolon (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C365124'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

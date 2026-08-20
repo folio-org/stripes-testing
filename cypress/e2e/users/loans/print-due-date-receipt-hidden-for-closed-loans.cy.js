@@ -58,8 +58,8 @@ describe('Users', () => {
     });
 
     it(
-      'C566597 "Print Due Date Receipt" option is hidden for closed loans (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C566597'] },
+      'C566597 "Print Due Date Receipt" option is hidden for closed loans (vega)',
+      { tags: ['extendedPath', 'vega', 'C566597'] },
       () => {
         // Step 1: Expand Loans accordion and click on closed loans link
         UsersSearchPane.searchByBarcode(testData.user.barcode);

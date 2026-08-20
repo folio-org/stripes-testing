@@ -66,8 +66,8 @@ describe('Citation: duplicate work', () => {
   });
 
   it(
-    'C552501 Marigold - Duplicate work (citation)',
-    { tags: ['criticalPath', 'citation', 'C552501', 'marigold'] },
+    'C552501 Marigold - Duplicate work (promin)',
+    { tags: ['criticalPath', 'promin', 'C552501', 'marigold'] },
     () => {
       // Create first work
       Marigold.openNewResourceForm();
@@ -92,7 +92,10 @@ describe('Citation: duplicate work', () => {
 
       // Verify duplicate action results
       EditResource.waitLoading(EDIT_RESOURCE_HEADINGS.DUPLICATE_WORK);
-      EditResource.checkTextValueOnField(resourceData.firstDefaultDuplicateTitle, 'Preferred Title for Work');
+      EditResource.checkTextValueOnField(
+        resourceData.firstDefaultDuplicateTitle,
+        'Preferred Title for Work',
+      );
       EditResource.checkLabelOnSectionSimpleField('music (mus)', 'Illustrative content');
       EditResource.checkCloseAndCancelEnabled();
       EditResource.checkSaveButtonsEnabled();

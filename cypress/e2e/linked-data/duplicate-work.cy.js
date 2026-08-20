@@ -107,8 +107,8 @@ describe('Citation: duplicate work', () => {
   });
 
   it(
-    'C624234 [User journey] Marigold - Duplicate existing work (citation)',
-    { tags: ['smoke', 'citation', 'C624234', 'marigold', 'shiftLeft'] },
+    'C624234 [User journey] Marigold - Duplicate existing work (promin)',
+    { tags: ['smoke', 'promin', 'C624234', 'marigold', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);

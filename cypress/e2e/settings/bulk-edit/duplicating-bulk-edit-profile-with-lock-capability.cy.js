@@ -112,8 +112,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C889724 Duplicating bulk edit profile by User with "UI-Bulk-Edit Settings Lock" capability set (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C889724'] },
+      'C889724 Duplicating bulk edit profile by User with "UI-Bulk-Edit Settings Lock" capability set (athena)',
+      { tags: ['extendedPath', 'athena', 'C889724'] },
       () => {
         // Step 1: Click "Actions" menu button on unlocked profile
         InstancesBulkEditProfilesPane.clickProfileRow(testData.unlockedProfileName);

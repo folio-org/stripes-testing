@@ -58,8 +58,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C877078 Create/Edit MARC holdings record with backslash ("\\") character in some fields and check detail view pane (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C877078'] },
+      'C877078 Create/Edit MARC holdings record with backslash ("\\") character in some fields and check detail view pane (promin)',
+      { tags: ['extendedPath', 'promin', 'C877078'] },
       () => {
         // Step 0. User is on the detail view pane of "MARC bibliographic" record opened via "Inventory" app
         InventoryInstances.searchByTitle(createdInstanceId);

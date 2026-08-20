@@ -58,8 +58,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C648459 Verify "Administrative Data" and "Instance notes" dividers are present in a list of options for Instances Bulk edit (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C648459'] },
+      'C648459 Verify "Administrative Data" and "Instance notes" dividers are present in a list of options for Instances Bulk edit (athena)',
+      { tags: ['extendedPath', 'athena', 'C648459'] },
       () => {
         BulkEditSearchPane.checkInstanceRadio();
         BulkEditSearchPane.verifyRecordTypeIdentifiers('Instances');

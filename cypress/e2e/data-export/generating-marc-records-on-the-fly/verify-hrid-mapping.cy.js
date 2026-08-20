@@ -70,8 +70,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10961 Verify HRID mapping (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C10961'] },
+      'C10961 Verify HRID mapping (athena)',
+      { tags: ['extendedPath', 'athena', 'C10961'] },
       () => {
         // Step 1: Go to "Inventory" app
         InventorySearchAndFilter.verifySearchAndFilterPane();

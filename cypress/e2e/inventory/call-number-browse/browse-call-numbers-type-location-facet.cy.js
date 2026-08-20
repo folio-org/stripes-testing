@@ -141,8 +141,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C411749 Correct counters in "Effective location (item)" accordion when browsing call numbers with different browse options selected (spitfire)',
-      { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C411749'] },
+      'C411749 Correct counters in "Effective location (item)" accordion when browsing call numbers with different browse options selected (promin)',
+      { tags: ['extendedPathFlaky', 'promin', 'nonParallel', 'C411749'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
           BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,

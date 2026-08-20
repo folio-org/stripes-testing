@@ -121,8 +121,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C409506 Consortia | SRS | GetRecord: Add item to local MARC instance in Member tenant is retrieved in the response of single tenant harvest (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C409506', 'nonParallel'] },
+        'C409506 Consortia | SRS | GetRecord: Add item to local MARC instance in Member tenant is retrieved in the response of single tenant harvest (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C409506', 'nonParallel'] },
         () => {
           // Step 1: Navigate to Inventory and search for local MARC instance
           InventorySearchAndFilter.clearDefaultHeldbyFilter();

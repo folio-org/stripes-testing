@@ -100,8 +100,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651531 Check "Version History" card is filled on Item record created via Inventory (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C651531'] },
+        'C651531 Check "Version History" card is filled on Item record created via Inventory (promin)',
+        { tags: ['criticalPath', 'promin', 'C651531'] },
         () => {
           InventorySearchAndFilter.searchByParameter('Title (all)', testData.instance.title);
           InventoryInstances.selectInstance();

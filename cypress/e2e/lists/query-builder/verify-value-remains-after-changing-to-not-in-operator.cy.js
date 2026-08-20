@@ -36,8 +36,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C651429 Verify that value remains the same after changing from "equals" to "not in" in case of uuid fields (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C651429'] },
+      'C651429 Verify that value remains the same after changing from "equals" to "not in" in case of uuid fields (athena)',
+      { tags: ['extendedPath', 'athena', 'C651429'] },
       () => {
         // Step 1: Create new list with Instances record type and open Build query form
         Lists.openNewListPane();

@@ -41,8 +41,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C9241 Selected Title+Package: Remove a value from a custom label (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C9241'] },
+      'C9241 Selected Title+Package: Remove a value from a custom label (promin)',
+      { tags: ['extendedPath', 'promin', 'C9241'] },
       () => {
         EHoldingsResourceView.verifyCustomLabelValue(testData.labelA, testData.labelAValue);
         EHoldingsResourceView.goToEdit();

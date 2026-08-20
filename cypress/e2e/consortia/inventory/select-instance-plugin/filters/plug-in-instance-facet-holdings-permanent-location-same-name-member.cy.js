@@ -209,8 +209,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C436894 Locations with same names could be found using "Holdings permanent location" facet of "Select instance" plug-in opened from "Member" tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C436894'] },
+          'C436894 Locations with same names could be found using "Holdings permanent location" facet of "Select instance" plug-in opened from "Member" tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C436894'] },
           () => {
             cy.setTenant(tenants.member1);
             cy.login(testData.user.username, testData.user.password, {

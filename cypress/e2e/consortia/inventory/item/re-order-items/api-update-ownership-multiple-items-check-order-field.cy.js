@@ -175,8 +175,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C812992 API Update ownership of multiple "Item" records and check "order" field (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C812992'] },
+          'C812992 API Update ownership of multiple "Item" records and check "order" field (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C812992'] },
           () => {
             cy.resetTenant();
             cy.getToken(user.username, user.password);

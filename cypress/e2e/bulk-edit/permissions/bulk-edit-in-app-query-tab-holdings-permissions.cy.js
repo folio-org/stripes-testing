@@ -112,8 +112,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C413373 Verify Query tab capability sets (In app holdings) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C413373'] },
+      'C413373 Verify Query tab capability sets (In app holdings) (athena)',
+      { tags: ['extendedPath', 'athena', 'C413373'] },
       () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');

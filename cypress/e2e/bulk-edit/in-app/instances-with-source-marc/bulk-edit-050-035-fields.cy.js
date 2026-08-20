@@ -104,8 +104,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C663270 Bulk edit marc fields (050, 035) for all records (MARC) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C663270'] },
+      'C663270 Bulk edit marc fields (050, 035) for all records (MARC) (athena)',
+      { tags: ['criticalPath', 'athena', 'C663270'] },
       () => {
         // Step 1: Show Classification column
         BulkEditActions.openActions();

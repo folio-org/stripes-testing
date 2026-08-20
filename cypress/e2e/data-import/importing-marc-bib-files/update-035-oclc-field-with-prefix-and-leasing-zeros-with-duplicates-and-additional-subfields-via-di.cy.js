@@ -131,8 +131,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C468186 Update of file with 035 OCLC field with prefix and leading zeros with duplicates and additional subfields via DI (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C468186'] },
+      'C468186 Update of file with 035 OCLC field with prefix and leading zeros with duplicates and additional subfields via DI (promin)',
+      { tags: ['criticalPath', 'promin', 'C468186'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyInstancePaneExists();

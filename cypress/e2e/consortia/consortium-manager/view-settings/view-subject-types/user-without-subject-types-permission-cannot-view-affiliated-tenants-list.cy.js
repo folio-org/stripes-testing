@@ -126,8 +126,8 @@ describe('Consortia', () => {
         };
 
         it(
-          'C594399 User without "inventory-storage.subject-types.collection.get" permission is NOT able to view the list of subject types of affiliated tenants in "Consortium manager" app (consortia) (folijet)',
-          { tags: ['extendedPathECS', 'folijet', 'C594399'] },
+          'C594399 User without "inventory-storage.subject-types.collection.get" permission is NOT able to view the list of subject types of affiliated tenants in "Consortium manager" app (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C594399'] },
           () => {
             SelectMembersModal.selectAllMembers();
             ConsortiumManager.verifyStatusOfConsortiumManager(2);

@@ -145,8 +145,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C397341 Unlink Shared MARC bib from Shared MARC auth on Central tenant (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C397341'] },
+            'C397341 Unlink Shared MARC bib from Shared MARC auth on Central tenant (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C397341'] },
             () => {
               InventoryInstances.searchByTitle(createdInstanceId);
               InventoryInstances.selectInstanceById(createdInstanceId);

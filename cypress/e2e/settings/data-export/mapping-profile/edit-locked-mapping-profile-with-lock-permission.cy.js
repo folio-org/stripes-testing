@@ -110,8 +110,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C1046003 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to edit locked mapping profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C1046003'] },
+      'C1046003 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to edit locked mapping profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C1046003'] },
       () => {
         // Step 1: Select existing unlocked mapping profile from Preconditions: mapping profile not referenced in job profile
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(unlockedMappingProfile.name);

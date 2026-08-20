@@ -118,8 +118,8 @@ describe('Consortia', () => {
         });
 
         it(
-          'C594437 Add local subject source via "Consortium manager" app with permissions and affiliations restrictions (consortia) (folijet)',
-          { tags: ['extendedPathECS', 'folijet', 'C594437'] },
+          'C594437 Add local subject source via "Consortium manager" app with permissions and affiliations restrictions (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C594437'] },
           () => {
             // Step 1: Navigate to Consortium manager app and select all members
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);

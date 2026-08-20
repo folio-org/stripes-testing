@@ -40,8 +40,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C356811 Users | Verify Download matched records (CSV) using Query search (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C356811'] },
+      'C356811 Users | Verify Download matched records (CSV) using Query search (athena)',
+      { tags: ['extendedPath', 'athena', 'C356811'] },
       () => {
         let iterationNumber = 1;
 

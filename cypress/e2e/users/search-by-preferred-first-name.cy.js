@@ -51,8 +51,8 @@ describe('Users', () => {
     });
 
     it(
-      'C11097 Search by preferred first name (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C11097'] },
+      'C11097 Search by preferred first name (vega)',
+      { tags: ['extendedPath', 'vega', 'C11097'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.usersPath,

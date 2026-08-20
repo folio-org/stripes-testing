@@ -118,8 +118,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C663275 Record becomes "Set for deletion" after updating Leader 05 to "d" (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C663275'] },
+      'C663275 Record becomes "Set for deletion" after updating Leader 05 to "d" (promin)',
+      { tags: ['criticalPath', 'promin', 'C663275'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();

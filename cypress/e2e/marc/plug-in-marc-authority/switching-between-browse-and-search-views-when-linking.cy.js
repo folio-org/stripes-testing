@@ -127,8 +127,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C385656 Switching between "Browse" and "Search" views when linking "MARC bib" field (updating query, resetting values) (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C385656'] },
+      'C385656 Switching between "Browse" and "Search" views when linking "MARC bib" field (updating query, resetting values) (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C385656'] },
       () => {
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag240);

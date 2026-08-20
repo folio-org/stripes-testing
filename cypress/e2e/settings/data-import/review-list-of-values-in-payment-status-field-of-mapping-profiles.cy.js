@@ -50,8 +50,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C378898 Order field mapping profile: fix the values in the "Payment status" field (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C378898'] },
+      'C378898 Order field mapping profile: fix the values in the "Payment status" field (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C378898'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);

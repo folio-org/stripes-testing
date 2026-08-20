@@ -28,8 +28,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C694 Search providers for [Gale | Cengage]. Then Search list of packages on Provider detail record for all selected packages (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C694'] },
+      'C694 Search providers for [Gale | Cengage]. Then Search list of packages on Provider detail record for all selected packages (promin)',
+      { tags: ['criticalPath', 'promin', 'shiftLeft', 'C694'] },
       () => {
         EHoldingsProvidersSearch.byProvider('Gale Cengage');
         EHoldingsProviders.viewProvider();
@@ -40,8 +40,8 @@ describe('eHoldings', () => {
     );
 
     it(
-      'C682 Search providers for [Sage] (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C682'] },
+      'C682 Search providers for [Sage] (promin)',
+      { tags: ['criticalPath', 'promin', 'shiftLeft', 'C682'] },
       () => {
         const providerTitle = 'SAGE';
         EHoldingsProvidersSearch.byProvider(providerTitle);
@@ -51,8 +51,8 @@ describe('eHoldings', () => {
     );
 
     it(
-      'C367967 Verify that "Packages" accordion will return records after collapsing/expanding in "Provider" detail record. (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C367967'] },
+      'C367967 Verify that "Packages" accordion will return records after collapsing/expanding in "Provider" detail record. (promin)',
+      { tags: ['extendedPath', 'promin', 'C367967'] },
       () => {
         const providerTitle = 'Wiley';
         const expanded = 'true';

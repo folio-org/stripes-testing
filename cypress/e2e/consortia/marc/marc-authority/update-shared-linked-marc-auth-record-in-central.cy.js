@@ -207,8 +207,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C405927 Update shared linked "MARC Authority" record in Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C405927'] },
+        'C405927 Update shared linked "MARC Authority" record in Central tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C405927'] },
         () => {
           cy.resetTenant();
           cy.login(users.userProperties.username, users.userProperties.password, {

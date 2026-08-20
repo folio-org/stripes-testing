@@ -49,8 +49,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C523570 Save existing MARC bib record with value in "010 $a" subfield which matches to other FOLIO records "LCCN", "Canceled LCCN" fields when duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C523570'] },
+          'C523570 Save existing MARC bib record with value in "010 $a" subfield which matches to other FOLIO records "LCCN", "Canceled LCCN" fields when duplicate LCCN check is enabled (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C523570'] },
           () => {
             // Precondition moved to `before` hook to make sure `after` hook will always be executed
             cy.then(() => {

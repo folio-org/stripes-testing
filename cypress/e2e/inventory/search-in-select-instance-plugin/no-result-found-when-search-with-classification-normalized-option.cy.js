@@ -65,8 +65,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466163 Find Instance plugin | No results found when searching by "Classification, normalized" search option (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C466163'] },
+      'C466163 Find Instance plugin | No results found when searching by "Classification, normalized" search option (promin)',
+      { tags: ['extendedPath', 'promin', 'C466163'] },
       () => {
         SelectInstanceModal.clickSearchOptionSelect();
         SelectInstanceModal.chooseSearchOption(testData.classificationOption);

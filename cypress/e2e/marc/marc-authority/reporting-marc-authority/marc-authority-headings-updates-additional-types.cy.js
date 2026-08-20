@@ -166,8 +166,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C409511 "MARC authority headings updates (CSV)" report is generated for additional types of headings (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C409511'] },
+        'C409511 "MARC authority headings updates (CSV)" report is generated for additional types of headings (promin)',
+        { tags: ['extendedPath', 'promin', 'C409511'] },
         () => {
           // Export all C409511 authority records as MARC file
           MarcAuthorities.searchBy(testData.searchOption, testData.searchValue);

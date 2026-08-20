@@ -114,8 +114,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476831 "Select Instance" plugin | Filter "Instance" records by Item status in "Item" segment (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476831'] },
+        'C476831 "Select Instance" plugin | Filter "Instance" records by Item status in "Item" segment (promin)',
+        { tags: ['extendedPath', 'promin', 'C476831'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(itemStatusAccordionName);
           SelectInstanceModal.checkOptionsWithCountersExistInAccordion(itemStatusAccordionName);

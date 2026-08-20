@@ -76,8 +76,8 @@ describe('MARC', () => {
       });
 
       it(
-        "C365114 Verify that applied filters and facets don't reset when user switching between search result pages and export UUIDs (spitfire)",
-        { tags: ['extendedPath', 'spitfire', 'C365114'] },
+        "C365114 Verify that applied filters and facets don't reset when user switching between search result pages and export UUIDs (promin)",
+        { tags: ['extendedPath', 'promin', 'C365114'] },
         () => {
           MarcAuthorities.verifySearchTabIsOpened();
 

@@ -53,8 +53,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C523591 "MARC validation rules check" modal appears during derive of MARC bib record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C523591'] },
+        'C523591 "MARC validation rules check" modal appears during derive of MARC bib record (promin)',
+        { tags: ['extendedPath', 'promin', 'C523591'] },
         () => {
           InventoryInstances.searchByTitle(instanceId);
           InventoryInstances.selectInstanceById(instanceId);

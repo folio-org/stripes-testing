@@ -127,8 +127,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C358936 Items | Verify the preview of matched records uploading more than 100 Identifiers (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C358936'] },
+      'C358936 Items | Verify the preview of matched records uploading more than 100 Identifiers (athena)',
+      { tags: ['extendedPath', 'athena', 'C358936'] },
       () => {
         // Step 1: Select "Inventory-items" option from "Record types" accordion => Select "Item UUIDs" from "Record Identifier" dropdown
         BulkEditSearchPane.checkItemsRadio();

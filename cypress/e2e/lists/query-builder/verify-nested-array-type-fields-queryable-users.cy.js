@@ -55,8 +55,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C451492 [Users] Verify that nested array type fields are queryable (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C451492'] },
+      'C451492 [Users] Verify that nested array type fields are queryable (athena)',
+      { tags: ['criticalPath', 'athena', 'C451492'] },
       () => {
         // Step 1: Create new list with Users record type and build query
         Lists.openNewListPane();

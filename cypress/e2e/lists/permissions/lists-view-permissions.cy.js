@@ -53,8 +53,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C418651 Lists (Enable): Can view lists (corsair)',
-      { tags: ['smoke', 'corsair', 'C418651'] },
+      'C418651 Lists (Enable): Can view lists (athena)',
+      { tags: ['smoke', 'athena', 'C418651'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

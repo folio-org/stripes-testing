@@ -154,8 +154,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C357986 [MARC] Verify that when user clicks on a contributor\'s name at browse result list, search for contributor also considers "Name type" value. (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C357986'] },
+      'C357986 [MARC] Verify that when user clicks on a contributor\'s name at browse result list, search for contributor also considers "Name type" value. (promin)',
+      { tags: ['extendedPath', 'promin', 'C357986'] },
       () => {
         searchData.forEach(({ contributor, nameTypes, nameTypeToSelect, recordIndexes }, index) => {
           BrowseContributors.waitForContributorToAppear(contributor, true, false, nameTypes.length);

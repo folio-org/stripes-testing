@@ -77,8 +77,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C345393 Cannot save existing MARC holdings with not valid length of MARC tag (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C345393'] },
+      'C345393 Cannot save existing MARC holdings with not valid length of MARC tag (promin)',
+      { tags: ['extendedPath', 'promin', 'C345393'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventorySearchAndFilter.selectViewHoldings();

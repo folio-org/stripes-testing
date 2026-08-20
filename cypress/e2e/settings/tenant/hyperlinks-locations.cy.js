@@ -134,8 +134,8 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C399079 Verify that hyperlink  "# of Locations"  navigates to a list of Locations (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird', 'C399079', 'eurekaPhase1'] },
+    'C399079 Verify that hyperlink  "# of Locations"  navigates to a list of Locations (athena) (TaaS)',
+    { tags: ['extendedPath', 'athena', 'C399079', 'eurekaPhase1'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);

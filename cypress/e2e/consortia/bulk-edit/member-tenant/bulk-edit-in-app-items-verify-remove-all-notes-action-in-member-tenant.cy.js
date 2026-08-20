@@ -196,8 +196,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566169 Verify "Remove all" action for Items notes in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566169'] },
+        'C566169 Verify "Remove all" action for Items notes in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566169'] },
         () => {
           // Step 1: Select record type and identifier
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcodes');

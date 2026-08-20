@@ -92,8 +92,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C958450 Search holdings in the Query Builder using "Holdings type — Type" field (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C958450'] },
+        'C958450 Search holdings in the Query Builder using "Holdings type — Type" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C958450'] },
         () => {
           // Step 1: Create new list with Holdings record type
           Lists.openNewListPane();

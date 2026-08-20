@@ -28,8 +28,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C468271 Check what facets are displayed in the browse Classifications pane on Central tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C468271'] },
+        'C468271 Check what facets are displayed in the browse Classifications pane on Central tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C468271'] },
         () => {
           // Navigate to Browse tab
           InventorySearchAndFilter.switchToBrowseTab();

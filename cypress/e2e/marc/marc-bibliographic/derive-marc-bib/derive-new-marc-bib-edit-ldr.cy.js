@@ -317,8 +317,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C388652 "008" field updated when valid LDR 06-07 combinations entered when deriving "MARC bib" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C388652'] },
+        'C388652 "008" field updated when valid LDR 06-07 combinations entered when deriving "MARC bib" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C388652'] },
         () => {
           valid0607ValuesSets.forEach((set, index) => {
             cy.visit(`${TopMenu.inventoryPath}/view/${testData.createdRecordIDs[0]}`);

@@ -75,8 +75,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C405143 "MARC authority" record deleted on Central tenant is deleted in Member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C405143'] },
+          'C405143 "MARC authority" record deleted on Central tenant is deleted in Member tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C405143'] },
           () => {
             // Steps 1-3: User B (Member tenant) searches for the record, verifies it exists, resets
             cy.setTenant(Affiliations.College);

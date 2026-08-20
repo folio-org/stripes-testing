@@ -66,8 +66,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Indicator Code Inv
   });
 
   it(
-    'C499677 Cannot create Indicator code of Standard field with invalid "label" length for MARC bib spec (API) (spitfire)',
-    { tags: ['C499677', 'extendedPath', 'spitfire'] },
+    'C499677 Cannot create Indicator code of Standard field with invalid "label" length for MARC bib spec (API) (promin)',
+    { tags: ['C499677', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

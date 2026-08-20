@@ -54,8 +54,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C350666 Create a MARC authority record via data import (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C350666'] },
+      'C350666 Create a MARC authority record via data import (promin)',
+      { tags: ['criticalPath', 'promin', 'C350666'] },
       () => {
         DataImport.uploadFileViaApi(
           marcFile.marc,

@@ -50,8 +50,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C1322892 Import "MARC authority" record with empty "001" field (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1322892'] },
+      'C1322892 Import "MARC authority" record with empty "001" field (promin)',
+      { tags: ['extendedPath', 'promin', 'C1322892'] },
       () => {
         // Step 1: Import .mrc file with empty 001 field using Create Authority profile
         DataImport.verifyUploadState();

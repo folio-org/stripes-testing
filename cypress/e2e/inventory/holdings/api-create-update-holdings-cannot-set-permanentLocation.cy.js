@@ -52,8 +52,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C423393 Verify that "permanentLocation" field cannot be added to new/exising Holdings record (spitfire)',
-      { tags: ['extendedPath', 'backend', 'spitfire', 'C423393'] },
+      'C423393 Verify that "permanentLocation" field cannot be added to new/exising Holdings record (promin)',
+      { tags: ['extendedPath', 'backend', 'promin', 'C423393'] },
       () => {
         cy.then(() => {
           cy.getAdminToken();

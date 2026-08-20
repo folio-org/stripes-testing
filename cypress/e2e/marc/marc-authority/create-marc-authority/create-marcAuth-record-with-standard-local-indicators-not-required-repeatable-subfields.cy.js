@@ -75,8 +75,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514933 Create MARC authority record with Standard / Local fields which has standard and local: indicators; not required, repeatable and not repeatable subfields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514933'] },
+        'C514933 Create MARC authority record with Standard / Local fields which has standard and local: indicators; not required, repeatable and not repeatable subfields (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514933'] },
         () => {
           cy.then(() => {
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C514933_');

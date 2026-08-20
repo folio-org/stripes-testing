@@ -64,8 +64,8 @@ describe('Permissions', () => {
     });
 
     it(
-      'C350966 quickMARC: View MARC holdings record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C350966'] },
+      'C350966 quickMARC: View MARC holdings record (promin)',
+      { tags: ['extendedPath', 'promin', 'C350966'] },
       () => {
         InventoryInstances.searchByTitle(recordId);
         InventoryInstances.selectInstanceById(recordId);

@@ -70,8 +70,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C9313 Filter title results by an access status type (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C9313'] },
+      'C9313 Filter title results by an access status type (promin)',
+      { tags: ['extendedPath', 'promin', 'C9313'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.customPackageName);
         EHoldingsPackages.openPackageWithExpectedName(testData.customPackageName);

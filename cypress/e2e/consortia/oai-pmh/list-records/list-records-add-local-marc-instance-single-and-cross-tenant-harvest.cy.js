@@ -112,8 +112,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C402370 Consortia | SRS | ListRecords | ListIdentifiers: Add local MARC instance to Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C402370', 'nonParallel'] },
+        'C402370 Consortia | SRS | ListRecords | ListIdentifiers: Add local MARC instance to Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C402370', 'nonParallel'] },
         () => {
           // Step 1: Upload MARC file
           DataImport.verifyUploadState();
