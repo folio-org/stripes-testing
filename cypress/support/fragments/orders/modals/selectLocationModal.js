@@ -5,6 +5,7 @@ import {
   Modal,
   MultiColumnListCell,
   MultiColumnListRow,
+  SearchField,
   TextField,
 } from '../../../../../interactors';
 import { COMMON_BUTTON_LABELS, DEFAULT_WAIT_TIME } from '../../../constants';
@@ -20,10 +21,23 @@ export default {
     cy.wait(ms);
     cy.expect(selectLocationModal.exists());
   },
+
   verifyModalView() {
     cy.expect(selectLocationModal.exists());
   },
-  selectLocation(locationSearchValue, { multiselect = false } = {}) {
+
+  clearSearchField() {
+    cy.do(
+      selectLocationModal
+        .find(SearchField({ id: 'input-record-search' }))
+        .find(TextField())
+        .perform(($el) => {
+          cy.wrap($el).get('input#input-record-search').clear();
+        }),
+    );
+  },
+
+  searchLocation(locationSearchValue) {
     cy.do([searchInput.fillIn(locationSearchValue), searchButton.click()]);
 
     cy.expect(resetAllButton.has({ disabled: !locationSearchValue }));
@@ -37,6 +51,10 @@ export default {
         )
         .exists(),
     );
+  },
+
+  selectLocation(locationSearchValue, { multiselect = false } = {}) {
+    this.searchLocation(locationSearchValue);
 
     if (multiselect) {
       cy.expect(saveButton.has({ disabled: false, visible: true }));
@@ -54,5 +72,19 @@ export default {
           .click(),
       );
     }
+  },
+
+  selectMultipleLocations(locationSearchValues = []) {
+    locationSearchValues.forEach((locationSearchValue) => {
+      this.searchLocation(locationSearchValue);
+
+      cy.do(
+        selectLocationModal
+          .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
+          .find(Checkbox())
+          .checkIfNotSelected(),
+      );
+    });
+    cy.do(saveButton.click());
   },
 };

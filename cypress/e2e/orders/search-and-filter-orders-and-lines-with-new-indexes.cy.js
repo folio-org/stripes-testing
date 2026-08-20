@@ -363,17 +363,6 @@ describe('Orders', () => {
     });
   };
 
-  const searchOrders = (step, index, value, expected) => {
-    cy.log(`<--- STEP ${step}: Search Orders by ${index}: ${value} --->`);
-    Orders.resetFiltersIfActive();
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDERS, () => Orders.filterByTags([flow.get(R.TAGS)[3].label]));
-    PaneRequestWaiter.waitForPaneRequests({
-      pane: PANE_REQUEST_PROFILE_NAMES.ORDERS,
-      trigger: () => Orders.searchByParameter(index, value),
-    });
-    verifyOrders(expected);
-  };
-
   const verifyLines = (expected = []) => {
     cy.get('#order-line-list').should(($list) => {
       flow.get(R.LINES).forEach((line, index) => {
@@ -384,39 +373,96 @@ describe('Orders', () => {
     });
   };
 
+  function verifyClaiming(expected = []) {
+    const expectedPieceCount = expected.reduce(
+      (count, lineIndex) => count + (lineIndex === 0 ? 2 : 1),
+      0,
+    );
+
+    cy.get('#claiming-list').should(($list) => {
+      receivingTitles.forEach((title, lineIndex) => {
+        const assertion = expect($list.text());
+        if (expected.includes(lineIndex)) assertion.to.include(title);
+        else assertion.not.to.include(title);
+      });
+    });
+    Claiming.verifyPiecesCount(expectedPieceCount);
+  }
+
+  const searchOrders = (step, index, value, expected) => {
+    cy.log(`<--- STEP ${step}: Search Orders by ${index}: ${value} --->`);
+    Orders.assertResetAllButtonState({ disabled: false });
+    PaneRequestWaiter.waitForPaneRequests({
+      pane: PANE_REQUEST_PROFILE_NAMES.ORDERS,
+      trigger: () => Orders.searchByParameter(index, value),
+    });
+    Orders.assertResetAllButtonState({ disabled: false });
+    verifyOrders(expected);
+    PaneRequestWaiter.waitForPaneRequests({
+      pane: PANE_REQUEST_PROFILE_NAMES.ORDERS,
+      trigger: () => Orders.clearSearchField(),
+    });
+  };
+
   const searchLines = (step, index, value, expected) => {
     cy.log(`<--- STEP ${step}: Search Order lines by ${index}: ${value} --->`);
-    OrderLines.clearAllFilters();
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.filterByTags([flow.get(R.TAGS)[3].label]));
+    OrderLines.assertResetAllButtonState({ disabled: false });
+
     PaneRequestWaiter.waitForPaneRequests({
       pane: PANE_REQUEST_PROFILE_NAMES.ORDER_LINES,
       trigger: () => OrderLines.searchByParameter(index, value),
       conditions: { invalidQuery: /^\*.*/.test(value) },
     });
+
+    OrderLines.assertResetAllButtonState({ disabled: false });
     verifyLines(expected);
+
+    PaneRequestWaiter.waitForPaneRequests({
+      pane: PANE_REQUEST_PROFILE_NAMES.ORDER_LINES,
+      trigger: () => OrderLines.clearSearchField(),
+    });
   };
 
   const searchReceiving = (step, index, value, expected) => {
     cy.log(`<--- STEP ${step}: Search Receiving by ${index}: ${value} --->`);
-    Receiving.resetFilters();
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.RECEIVING, () => Receiving.filterByTags([flow.get(R.TAGS)[3].label]));
+    Receiving.assertResetAllButtonState({ disabled: false });
     PaneRequestWaiter.waitForPaneRequests({
       pane: PANE_REQUEST_PROFILE_NAMES.RECEIVING,
       trigger: () => Receiving.searchByParameter({ parameter: index, value }),
     });
+    Receiving.assertResetAllButtonState({ disabled: false });
     Receiving.assertReceivingResults(expected.map((lineIndex) => receivingTitles[lineIndex]));
+    PaneRequestWaiter.waitForPaneRequests({
+      pane: PANE_REQUEST_PROFILE_NAMES.RECEIVING,
+      trigger: () => Receiving.clearSearchField(),
+    });
   };
 
   const searchPlugin = (step, index, value, expected) => {
     cy.log(`<--- STEP ${step}: Search Select order lines by ${index}: ${value} --->`);
-    SelectOrderLinesModal.clearAllFilters();
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () => SelectOrderLinesModal.filterByTags([flow.get(R.TAGS)[3].label]));
+    SelectOrderLinesModal.assertResetAllButtonState({ disabled: false });
     PaneRequestWaiter.waitForPaneRequests({
       pane: PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE,
       trigger: () => SelectOrderLinesModal.searchByParameter(index, value),
       conditions: { invalidQuery: /^\*.*/.test(value) },
     });
+    SelectOrderLinesModal.assertResetAllButtonState({ disabled: false });
     SelectOrderLinesModal.assertSearchResults(expected.map((lineIndex) => titles[lineIndex]));
+  };
+
+  const searchClaiming = (index, value, expected) => {
+    cy.log(`<--- STEP 29: Search Claiming by ${index}: ${value} --->`);
+    Claiming.assertResetAllButtonState({ disabled: false });
+    PaneRequestWaiter.waitForPaneRequests({
+      pane: PANE_REQUEST_PROFILE_NAMES.CLAIMING,
+      trigger: () => Claiming.searchByParameter(index, value),
+    });
+    Claiming.assertResetAllButtonState({ disabled: false });
+    verifyClaiming(expected);
+    PaneRequestWaiter.waitForPaneRequests({
+      pane: PANE_REQUEST_PROFILE_NAMES.CLAIMING,
+      trigger: () => Claiming.clearSearchField(),
+    });
   };
 
   // Every filter assertion must remain scoped to records created by this run. Tags are an
@@ -438,18 +484,20 @@ describe('Orders', () => {
       label,
       values,
     );
+    Orders.assertResetAllButtonState({ disabled: false });
     verifyOrders(expected);
   };
 
   const filterLinesAndVerify = (step, label, values, expected) => {
     cy.log(`<--- STEP ${step}: Filter Order lines by ${label}: ${values.join(', ')} --->`);
-    OrderLines.resetFilters();
+    OrderLines.clearAllFilters();
     filterWithIsolation(
       PANE_REQUEST_PROFILE_NAMES.ORDER_LINES,
       OrderLines.filterByMultiSelectOptions,
       label,
       values,
     );
+    OrderLines.assertResetAllButtonState({ disabled: false });
     verifyLines(expected);
   };
 
@@ -457,14 +505,15 @@ describe('Orders', () => {
     const locationNames = locationIndexes.map((index) => flow.get(R.LOCATIONS)[index].name);
 
     cy.log(`<--- STEP ${step}: Filter Order lines by Location: ${locationNames.join(', ')} --->`);
-    OrderLines.resetFilters();
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => {
-      locationNames.forEach((locationName) => OrderLines.selectLocationInFilters(locationName));
-    });
+    OrderLines.clearAllFilters();
     // Apply isolation last because some location modals rebuild the filter form on Save.
     filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, [
       flow.get(R.TAGS)[3].label,
     ]));
+    OrderLines.assertResetAllButtonState({ disabled: false });
+
+    filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.selectMultipleLocationsInFilters(locationNames));
+    OrderLines.assertResetAllButtonState({ disabled: false });
     verifyLines(expected);
   };
 
@@ -477,6 +526,7 @@ describe('Orders', () => {
       label,
       values,
     );
+    SelectOrderLinesModal.assertResetAllButtonState({ disabled: false });
     SelectOrderLinesModal.assertSearchResults(expected.map((lineIndex) => titles[lineIndex]));
   };
 
@@ -485,24 +535,26 @@ describe('Orders', () => {
 
     cy.log(`<--- STEP 34: Filter Select order lines by Location: ${locationNames.join(', ')} --->`);
     SelectOrderLinesModal.clearAllFilters();
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () => {
-      locationNames.forEach((locationName) => SelectOrderLinesModal.selectLocationInFilters(locationName, { multiselect: true }));
-    });
     filterAndWait(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () => SelectOrderLinesModal.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, [
       flow.get(R.TAGS)[3].label,
     ]));
+    SelectOrderLinesModal.assertResetAllButtonState({ disabled: false });
+
+    filterAndWait(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () => SelectOrderLinesModal.selectMultipleLocationsInFilters(locationNames));
+    SelectOrderLinesModal.assertResetAllButtonState({ disabled: false });
     SelectOrderLinesModal.assertSearchResults(expected.map((lineIndex) => titles[lineIndex]));
   };
 
   const filterReceivingAndVerify = (label, values, expected) => {
     cy.log(`<--- STEP 27: Filter Receiving by ${label}: ${values.join(', ')} --->`);
-    Receiving.resetFilters();
+    Receiving.clearAllFilters();
     filterWithIsolation(
       PANE_REQUEST_PROFILE_NAMES.RECEIVING,
       Receiving.filterByMultiSelectOptions,
       label,
       values,
     );
+    Receiving.assertResetAllButtonState({ disabled: false });
     Receiving.assertReceivingResults(expected.map((lineIndex) => receivingTitles[lineIndex]));
   };
 
@@ -510,47 +562,21 @@ describe('Orders', () => {
     const locationNames = locationIndexes.map((index) => flow.get(R.LOCATIONS)[index].name);
 
     cy.log(`<--- STEPS 27-28: Filter Receiving by Location: ${locationNames.join(', ')} --->`);
-    Receiving.resetFilters();
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.RECEIVING, () => {
-      locationNames.forEach((locationName) => Receiving.selectLocationInFilters(locationName));
-    });
-    // Saving selected locations can restore stale form state, so isolation must be final.
+    Receiving.clearAllFilters();
     filterAndWait(PANE_REQUEST_PROFILE_NAMES.RECEIVING, () => Receiving.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, [
       flow.get(R.TAGS)[3].label,
     ]));
+    Receiving.assertResetAllButtonState({ disabled: false });
+
+    filterAndWait(PANE_REQUEST_PROFILE_NAMES.RECEIVING, () => Receiving.selectMultipleLocationsInFilters(locationNames));
+    Receiving.assertResetAllButtonState({ disabled: false });
     Receiving.assertReceivingResults(expected.map((lineIndex) => receivingTitles[lineIndex]));
 
     if (receivingStatus) {
       filterAndWait(PANE_REQUEST_PROFILE_NAMES.RECEIVING, () => Receiving.filterByCheckboxes(CLAIMING_FILTER_LABELS.RECEIVING_STATUS, [receivingStatus]));
+      Receiving.assertResetAllButtonState({ disabled: false });
       Receiving.assertReceivingResults([]);
     }
-  };
-
-  function verifyClaiming(expected = []) {
-    const expectedPieceCount = expected.reduce(
-      (count, lineIndex) => count + (lineIndex === 0 ? 2 : 1),
-      0,
-    );
-
-    cy.get('#claiming-list').should(($list) => {
-      receivingTitles.forEach((title, lineIndex) => {
-        const assertion = expect($list.text());
-        if (expected.includes(lineIndex)) assertion.to.include(title);
-        else assertion.not.to.include(title);
-      });
-    });
-    Claiming.verifyPiecesCount(expectedPieceCount);
-  }
-
-  const searchClaiming = (index, value, expected) => {
-    cy.log(`<--- STEP 29: Search Claiming by ${index}: ${value} --->`);
-    Claiming.clearAllFilters();
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () => Claiming.filterByTags([flow.get(R.TAGS)[3].label]));
-    PaneRequestWaiter.waitForPaneRequests({
-      pane: PANE_REQUEST_PROFILE_NAMES.CLAIMING,
-      trigger: () => Claiming.searchByParameter(index, value),
-    });
-    verifyClaiming(expected);
   };
 
   const filterClaimingAndVerify = (label, values, expected) => {
@@ -562,6 +588,7 @@ describe('Orders', () => {
       label,
       values,
     );
+    Claiming.assertResetAllButtonState({ disabled: false });
     verifyClaiming(expected);
   };
 
@@ -570,15 +597,16 @@ describe('Orders', () => {
 
     cy.log(`<--- STEP 29: Filter Claiming by Location: ${locationNames.join(', ')} --->`);
     Claiming.clearAllFilters();
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () => {
-      locationNames.forEach((locationName) => Claiming.selectLocationInFilters(locationName));
-    });
-    // Apply isolation after the lookup modal saves its location selection.
     filterAndWait(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () => Claiming.filterByMultiSelectOptions(CLAIMING_FILTER_LABELS.TAGS, [flow.get(R.TAGS)[3].label]));
+    Claiming.assertResetAllButtonState({ disabled: false });
+
+    filterAndWait(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () => Claiming.selectMultipleLocationsInFilters(locationNames));
+    Claiming.assertResetAllButtonState({ disabled: false });
     verifyClaiming(expected);
 
     if (receivingStatus) {
       filterAndWait(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () => Claiming.filterByCheckboxes(CLAIMING_FILTER_LABELS.RECEIVING_STATUS, [receivingStatus]));
+      Claiming.assertResetAllButtonState({ disabled: false });
       verifyClaiming([]);
     }
   };
@@ -599,10 +627,11 @@ describe('Orders', () => {
     { tags: ['extendedPath', 'thunderjet', 'C1375887'] },
     () => {
       const [fundA, fundB] = flow.get(R.FUNDS);
-      const [tag1, tag2, tag3] = flow.get(R.TAGS);
+      const [tag1, tag2, tag3, isolationTag] = flow.get(R.TAGS);
       const [line1, line2] = flow.get(R.LINES);
       const invoice = flow.get(R.INVOICE);
       const [expenseClass1, expenseClass2] = flow.get(R.EXPENSE_CLASSES);
+
       const poLineTextSamples = [
         {
           index: CONTRIBUTOR,
@@ -760,6 +789,9 @@ describe('Orders', () => {
         [RECEIVING_TITLE_SEARCH_INDEX_LABELS.VENDOR_REF_NUMBER, '*', [0, 1]],
       ];
 
+      /* ORDERS */
+      Orders.resetAllFilters();
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDERS, () => Orders.filterByTags([isolationTag.label]));
       cy.log('<--- STEP 1: Exact PO-number keyword search is case-insensitive --->');
       [poNumbers[0], poNumbers[0].toLowerCase()].forEach((value) => searchOrders(1, ORDER_SEARCH_OPTIONS.KEYWORD, value, [0]));
       searchOrders(2, ORDER_SEARCH_OPTIONS.KEYWORD, poNumbers[1], [1]);
@@ -816,6 +848,7 @@ describe('Orders', () => {
       });
       Orders.resetAllFilters();
 
+      /* ORDERS LINES */
       cy.log('<--- STEPS 11-16: Search PO lines by POL number and Vendor account --->');
       PaneRequestWaiter.waitForPaneRequests({
         pane: PANE_REQUEST_PROFILE_NAMES.ORDER_LINES,
@@ -825,6 +858,9 @@ describe('Orders', () => {
           OrderLines.waitLoading();
         },
       });
+
+      OrderLines.clearAllFilters();
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.filterByTags([isolationTag.label])); // Isolate test data
 
       [line1.poLineNumber, line1.poLineNumber.toLowerCase()].forEach((value) => searchLines(11, KEYWORD, value, [0]));
       searchLines(12, KEYWORD, line2.poLineNumber, [1]);
@@ -846,7 +882,7 @@ describe('Orders', () => {
         ['*', [0, 1]],
         [`${poNumberPrefix}*`, [0, 1]],
         [`${poNumbers[1].slice(0, 3)}*B-1`, [0]],
-        [`*${poNumbers[0].slice(-5)}-1`, [0, 1]],
+        [`*${poNumbers[0].slice(-5)}-1`, [0]],
         [`*${poNumbers[1].slice(-3)}*`, [1]],
       ].forEach(([value, expected]) => searchLines(16, POL_NUMBER, value, expected));
       [
@@ -866,14 +902,15 @@ describe('Orders', () => {
         search: searchLines,
         dedicated: false,
       });
+      InteractorsTools.closeAllVisibleCallouts();
       cy.log('<--- STEP 18: Repeat every text-field matrix on its dedicated index --->');
       runPoLineTextSearchMatrix({
         step: 18,
         search: searchLines,
         dedicated: true,
       });
-      searchLines(18, TITLE_OR_PACKAGE, 'Osterreich', [0]);
       InteractorsTools.closeAllVisibleCallouts();
+      searchLines(18, TITLE_OR_PACKAGE, 'Osterreich', [0]);
 
       cy.log('<--- STEPS 19-23: Apply Tags, Fund, Expense class and Location filters --->');
       filterLinesAndVerify(19, ORDER_LINE_FILTER_LABELS.TAGS, [tag1.label], []);
@@ -920,8 +957,9 @@ describe('Orders', () => {
       filterLinesByLocationsAndVerify({ step: 23, locationIndexes: [0, 1], expected: [0] });
       filterLinesByLocationsAndVerify({ step: 23, locationIndexes: [0, 1, 2], expected: [0, 1] });
       filterLinesByLocationsAndVerify({ step: 23, locationIndexes: [2], expected: [1] });
-      OrderLines.resetFilters();
+      OrderLines.clearAllFilters();
 
+      /* RECEIVING */
       cy.log('<--- STEPS 24-28: Repeat searches and filters in Receiving --->');
       navigateAndWaitForFilters({
         application: APPLICATION_NAMES.RECEIVING,
@@ -929,10 +967,13 @@ describe('Orders', () => {
         waiter: Receiving.waitLoading,
       });
 
-      Receiving.resetFilters();
+      Receiving.clearAllFilters();
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => Receiving.filterByTags([isolationTag.label])); // Isolate test data
+
       receivingSearchCases.forEach(([index, value, expected]) => searchReceiving(24, index, value, expected));
       receivingKeywordTextCases.forEach(([value, expected]) => searchReceiving(25, RECEIVING_TITLE_SEARCH_INDEX_LABELS.KEYWORD, value, expected));
       receivingDedicatedTextCases.forEach(([index, value, expected]) => searchReceiving(26, index, value, expected));
+      Receiving.assertResetAllButtonState({ disabled: false });
 
       filterReceivingAndVerify(ORDER_LINE_FILTER_LABELS.TAGS, [tag1.label], []);
       filterReceivingAndVerify(ORDER_LINE_FILTER_LABELS.TAGS, [tag2.label], []);
@@ -950,6 +991,7 @@ describe('Orders', () => {
       filterReceivingByLocationsAndVerify([2], [1]);
       filterReceivingByLocationsAndVerify([0], [0], RECEIVING_PIECE_STATUSES.LATE);
 
+      /* CLAIMING */
       cy.log(
         '<--- STEP 29: Repeat searches in Claiming and verify index change waits for Search --->',
       );
@@ -958,6 +1000,9 @@ describe('Orders', () => {
         pane: PANE_REQUEST_PROFILE_NAMES.CLAIMING,
         waiter: Claiming.waitLoading,
       });
+
+      Claiming.clearAllFilters();
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () => Claiming.filterByTags([isolationTag.label]));
 
       receivingSearchCases.forEach(([index, value, expected]) => searchClaiming(index, value, expected));
       receivingKeywordTextCases.forEach(([value, expected]) => searchClaiming(RECEIVING_TITLE_SEARCH_INDEX_LABELS.KEYWORD, value, expected));
@@ -979,6 +1024,7 @@ describe('Orders', () => {
       filterClaimingByLocationsAndVerify([2], [1]);
       filterClaimingByLocationsAndVerify([0], [0], RECEIVING_PIECE_STATUSES.LATE);
 
+      /* INVOICES */
       cy.log('<--- STEPS 30-34: Reuse the same PO-line search matrix in Select order lines --->');
       navigateAndWaitForFilters({
         application: APPLICATION_NAMES.INVOICES,
@@ -993,6 +1039,7 @@ describe('Orders', () => {
         trigger: () => InvoiceView.openSelectOrderLineModal(),
       });
       SelectOrderLinesModal.verifyModalView();
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () => SelectOrderLinesModal.filterByTags([isolationTag.label]));
 
       [
         [KEYWORD, line1.poLineNumber, [0]],

@@ -2698,6 +2698,13 @@ export default {
     SelectLocationModal.selectLocation(locationName, { multiselect: true, ...options });
   },
 
+  selectMultipleLocationsInFilters(locationNames) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(locationLookUpButton.click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectMultipleLocations(locationNames);
+  },
+
   selectOrders: () => {
     cy.do(Section({ id: 'order-lines-filters-pane' }).find(Button('Orders')).click());
   },
@@ -2792,8 +2799,17 @@ export default {
     MultiColumnListHelper.sortListBy(searchResultsPane.find(orderLineList), columnName);
   },
 
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(filtersPane, { disabled });
+  },
+
+  clearSearchField() {
+    cy.get('#order-lines-filters-pane-content').find('#input-record-search').clear();
+  },
+
   clearAllFilters(filterLabel) {
     FiltersPaneHelper.clearAllFilters(filtersPane, filterLabel);
+    this.assertResetAllButtonState({ disabled: true });
   },
 
   clearFilter(filterLabel) {

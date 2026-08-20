@@ -118,8 +118,24 @@ export default {
     cy.expect(selectOrderLinesModal.absent());
   },
 
+  assertResetAllButtonState({ disabled }) {
+    FiltersPane.assertResetAllButtonState(filtersPane, { disabled });
+  },
+
+  clearSearchField() {
+    cy.do(
+      selectOrderLinesModal
+        .find(SearchField({ id: 'input-record-search' }))
+        .find(TextField())
+        .perform(($el) => {
+          cy.wrap($el).get('input#input-record-search').clear();
+        }),
+    );
+  },
+
   clearAllFilters(options) {
     FiltersPane.clearAllFilters(filtersPane, options);
+    this.assertResetAllButtonState({ disabled: true });
   },
 
   filterByMultiSelectOptions(filterLabel, values, options) {
@@ -143,5 +159,12 @@ export default {
     cy.do(filtersPane.find(Button(LOCATIONS_LOOKUP_TRIGGER_LABEL)).click());
     SelectLocationModal.waitLoading();
     SelectLocationModal.selectLocation(locationName, options);
+  },
+
+  selectMultipleLocationsInFilters(locationNames) {
+    FiltersPane.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(filtersPane.find(Button(LOCATIONS_LOOKUP_TRIGGER_LABEL)).click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectMultipleLocations(locationNames);
   },
 };

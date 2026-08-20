@@ -22,6 +22,8 @@ import FiltersPaneHelper from '../filtersPane';
 import MultiColumnListHelper from '../multiColumnList';
 import SelectLocationModal from '../orders/modals/selectLocationModal';
 
+const LOCATIONS_LOOKUP_TRIGGER = 'Location look-up';
+
 const claimingPane = Pane('Claiming');
 const filtersPane = Pane({ id: 'claiming-filters-pane' });
 const actionsButton = Button('Actions');
@@ -112,8 +114,17 @@ export default {
     });
   },
 
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(filtersPane, { disabled });
+  },
+
+  clearSearchField() {
+    cy.get('#claiming-filters-pane-content').find('#input-record-search').clear();
+  },
+
   clearAllFilters() {
     FiltersPaneHelper.clearAllFilters(filtersPane);
+    this.assertResetAllButtonState({ disabled: true });
   },
 
   clearFilter(filterLabel) {
@@ -134,9 +145,16 @@ export default {
 
   selectLocationInFilters(locationName, options = {}) {
     FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
-    cy.do(filtersPane.find(Button('Location look-up')).click());
+    cy.do(filtersPane.find(Button(LOCATIONS_LOOKUP_TRIGGER)).click());
     SelectLocationModal.waitLoading();
     SelectLocationModal.selectLocation(locationName, { multiselect: true, ...options });
+  },
+
+  selectMultipleLocationsInFilters(locationNames) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(filtersPane.find(Button(LOCATIONS_LOOKUP_TRIGGER)).click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectMultipleLocations(locationNames);
   },
 
   /* Assertions */

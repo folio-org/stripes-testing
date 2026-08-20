@@ -53,6 +53,7 @@ const titleLookUpButton = Button('Title look-up');
 const receivingResultsList = MultiColumnList({ id: 'receivings-list' });
 
 const POL_LOOKUP_TRIGGER = 'POL number look-up';
+const LOCATION_LOOKUP_TRIGGER = 'Location look-up';
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -77,7 +78,7 @@ export default {
     cy.expect(actionsButton.exists());
   },
   clearSearchField() {
-    cy.do(TextField({ id: 'input-record-search' }).fillIn(''));
+    cy.get('#receiving-filters-pane-content').find('#input-record-search').clear();
   },
   searchByParameter({ parameter = 'Keyword', value } = {}) {
     cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
@@ -163,9 +164,16 @@ export default {
 
   selectLocationInFilters(locationName, options = {}) {
     FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
-    cy.do(filtersPane.find(Button('Location look-up')).click());
+    cy.do(filtersPane.find(Button(LOCATION_LOOKUP_TRIGGER)).click());
     SelectLocationModal.waitLoading();
     SelectLocationModal.selectLocation(locationName, { multiselect: true, ...options });
+  },
+
+  selectMultipleLocationsInFilters(locationNames) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(filtersPane.find(Button(LOCATION_LOOKUP_TRIGGER)).click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectMultipleLocations(locationNames);
   },
 
   checkExistingPOLInReceivingList: (POL) => {
@@ -186,6 +194,15 @@ export default {
       cy.expect(receivingResultsList.find(MultiColumnListCell({ content: title })).exists());
     });
     MultiColumnListHelper.assertRowCount(receivingResultsList, titles.length);
+  },
+
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(filtersPane, { disabled });
+  },
+
+  clearAllFilters() {
+    FiltersPaneHelper.clearAllFilters(filtersPane);
+    this.assertResetAllButtonState({ disabled: true });
   },
 
   filterByMultiSelectOptions(filterLabel, values, options) {

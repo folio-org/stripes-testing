@@ -1068,8 +1068,13 @@ export default {
     this.assertMultiSelectFilterOptions(ORDER_FILTER_LABELS.FUND_CODE, expectedOptions, options);
   },
 
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(ordersFiltersPane, { disabled });
+  },
+
   resetAllFilters() {
     FiltersPaneHelper.clearAllFilters(ordersFiltersPane);
+    this.assertResetAllButtonState({ disabled: true });
   },
 
   clearFilter(filterLabel) {
