@@ -63,8 +63,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503109 Add multiple 852s when editing "MARC Holdings" record (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C503109'] },
+        'C503109 Add multiple 852s when editing "MARC Holdings" record (promin)',
+        { tags: ['criticalPath', 'promin', 'C503109'] },
         () => {
           InventoryInstances.searchByTitle(recordId);
           InventoryInstances.selectInstanceById(recordId);

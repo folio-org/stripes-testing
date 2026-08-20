@@ -147,8 +147,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569552 Special characters, spaces, letters existing validation in LCCN body on "Edit MARC authority record" pane when LCCN structure validation is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C569552'] },
+          'C569552 Special characters, spaces, letters existing validation in LCCN body on "Edit MARC authority record" pane when LCCN structure validation is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C569552'] },
           () => {
             cy.resetTenant();
             cy.login(userProperties.username, userProperties.password, {

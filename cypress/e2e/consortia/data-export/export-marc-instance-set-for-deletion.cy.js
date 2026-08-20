@@ -122,8 +122,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C958465 ECS | Verify export MARC Instance set for deletion (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C958465'] },
+      'C958465 ECS | Verify export MARC Instance set for deletion (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C958465'] },
       () => {
         // Step 1: Click on the "Action" menu, Click "Save instances UUIDs" option
         InventoryInstances.clickSelectAllInstancesCheckbox();

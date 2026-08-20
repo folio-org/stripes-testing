@@ -101,8 +101,8 @@ describe('MARC Bibliographic Validation Rules - Create Indicator Code of Local F
   });
 
   it(
-    'C499653 Create Indicator code of Local field for MARC bib spec (API) (spitfire)',
-    { tags: ['C499653', 'extendedPath', 'spitfire'] },
+    'C499653 Create Indicator code of Local field for MARC bib spec (API) (promin)',
+    { tags: ['C499653', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

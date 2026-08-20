@@ -87,8 +87,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C466302 Only opened "MARC authority" record exported from search result pane when other records checkboxes are checked (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C466302'] },
+          'C466302 Only opened "MARC authority" record exported from search result pane when other records checkboxes are checked (promin)',
+          { tags: ['extendedPath', 'promin', 'C466302'] },
           () => {
             // Step 1: Search with prefix → all created records found
             MarcAuthorities.searchBeats(authorityHeadingPrefix);

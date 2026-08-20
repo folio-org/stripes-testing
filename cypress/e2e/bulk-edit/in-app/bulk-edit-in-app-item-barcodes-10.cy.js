@@ -87,7 +87,7 @@ describe.skip('bulk-edit', () => {
     });
 
     it(
-      'C358976 Verify preview after updating less than 10 records (firebird) (TaaS)',
+      'C358976 Verify preview after updating less than 10 records (athena) (TaaS)',
       { tags: [] },
       () => {
         BulkEditSearchPane.checkItemsRadio();

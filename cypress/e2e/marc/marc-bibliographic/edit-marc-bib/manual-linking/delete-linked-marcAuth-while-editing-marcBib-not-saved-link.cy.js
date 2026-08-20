@@ -103,8 +103,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C397391 Delete linked "MARC Authority" record while "MARC Bib" record being edited (NOT saved link) (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C397391'] },
+          'C397391 Delete linked "MARC Authority" record while "MARC Bib" record being edited (NOT saved link) (promin)',
+          { tags: ['extendedPath', 'promin', 'C397391'] },
           () => {
             // Step 1: Open existing MARC bib for editing
             InventoryInstances.searchByTitle(createdInstanceId);

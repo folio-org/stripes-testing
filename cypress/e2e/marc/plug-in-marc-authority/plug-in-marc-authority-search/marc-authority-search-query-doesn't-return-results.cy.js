@@ -60,8 +60,8 @@ describe('MARC', () => {
       });
 
       it(
-        "C359180 MARC Authority plug-in | Use search query that doesn't return results (spitfire) (TaaS)",
-        { tags: ['extendedPath', 'spitfire', 'C359180'] },
+        "C359180 MARC Authority plug-in | Use search query that doesn't return results (promin) (TaaS)",
+        { tags: ['extendedPath', 'promin', 'C359180'] },
         () => {
           InventoryInstances.searchByTitle(recordID);
           InventoryInstances.selectInstance();

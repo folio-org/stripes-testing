@@ -61,8 +61,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C543826 MARC tag validation on "Derive a new MARC bib record" pane (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C543826'] },
+        'C543826 MARC tag validation on "Derive a new MARC bib record" pane (promin)',
+        { tags: ['criticalPath', 'promin', 'C543826'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceID);
           InventoryInstances.selectInstance();

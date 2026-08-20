@@ -106,8 +106,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C877109 Verify that MARC bib record could be successfully created with empty subfield code in linked field (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C877109'] },
+          'C877109 Verify that MARC bib record could be successfully created with empty subfield code in linked field (promin)',
+          { tags: ['extendedPath', 'promin', 'C877109'] },
           () => {
             // Step 1: Click on "Actions" button >> Select "New MARC bibliographic record" option
             InventoryInstances.createNewMarcBibRecord();

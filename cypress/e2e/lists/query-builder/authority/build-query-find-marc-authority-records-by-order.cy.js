@@ -105,8 +105,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1322615 Build query to find MARC authority records by MARC Authority — Order (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1322615'] },
+        'C1322615 Build query to find MARC authority records by MARC Authority — Order (promin)',
+        { tags: ['extendedPath', 'promin', 'C1322615'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

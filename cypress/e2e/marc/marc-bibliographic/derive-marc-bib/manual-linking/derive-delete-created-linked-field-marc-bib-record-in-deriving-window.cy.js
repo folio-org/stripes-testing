@@ -98,8 +98,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C380760 Derive | Delete created linked field of "MARC Bib" record in deriving window (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C380760'] },
+          'C380760 Derive | Delete created linked field of "MARC Bib" record in deriving window (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C380760'] },
           () => {
             InventoryInstance.deriveNewMarcBib();
             QuickMarcEditor.addNewField(testData.tag700, '', 21);

@@ -162,8 +162,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C376939 Add "$z" to "010" in linked "MARC Authority" record when "010" = "$0" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C376939'] },
+      'C376939 Add "$z" to "010" in linked "MARC Authority" record when "010" = "$0" (promin)',
+      { tags: ['extendedPath', 'promin', 'C376939'] },
       () => {
         ExportFileHelper.uploadFile(authorityUUIDsFileName);
         ExportFileHelper.exportWithDefaultJobProfile(

@@ -112,8 +112,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422166 MARC Authority plug-in | Apply "Authority source" facet to the search result list (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C422166'] },
+        'C422166 MARC Authority plug-in | Apply "Authority source" facet to the search result list (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C422166'] },
         () => {
           // #1 - #3 Fill in the input field placed at the "Search & filter" pane with " * ", select search option: "Keyword", click on the "Search" button
           MarcAuthorities.searchByParameter('Keyword', testData.searchQuery);

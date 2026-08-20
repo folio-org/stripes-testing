@@ -75,8 +75,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514939 Cannot update MARC authority record with multiple not-repeatable standard / local subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514939'] },
+        'C514939 Cannot update MARC authority record with multiple not-repeatable standard / local subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514939'] },
         () => {
           cy.then(() => {
             toggleAllUndefinedValidationRules(authSpecId, { enable: false });

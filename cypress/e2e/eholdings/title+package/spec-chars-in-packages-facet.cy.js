@@ -30,8 +30,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C387488 Enter special characters into "Packages" facet single select element (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C387488'] },
+      'C387488 Enter special characters into "Packages" facet single select element (promin)',
+      { tags: ['extendedPath', 'promin', 'C387488'] },
       () => {
         EHoldingsTitlesSearch.byTitle('Wiley');
         EHoldingsTitlesSearch.waitLoading();

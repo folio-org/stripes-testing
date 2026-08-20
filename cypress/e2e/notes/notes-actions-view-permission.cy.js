@@ -177,8 +177,8 @@ describe('Notes', () => {
   });
 
   it(
-    'C380416 "Actions" menu not shown if user only has "Notes: Can view a note" permission (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C380416'] },
+    'C380416 "Actions" menu not shown if user only has "Notes: Can view a note" permission (promin)',
+    { tags: ['extendedPath', 'promin', 'C380416'] },
     () => {
       cy.login(testData.user.username, testData.user.password, {
         path: '/users',

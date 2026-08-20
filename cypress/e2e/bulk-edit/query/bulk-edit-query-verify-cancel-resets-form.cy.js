@@ -36,8 +36,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C389572 Verify the Built query form reset to its original state clicking on Cancel (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C389572'] },
+      'C389572 Verify the Built query form reset to its original state clicking on Cancel (athena)',
+      { tags: ['extendedPath', 'athena', 'C389572'] },
       () => {
         // Step 1: Select "Users" radio button under "Record types" accordion => Click on the "Build query" button
         BulkEditSearchPane.openQuerySearch();

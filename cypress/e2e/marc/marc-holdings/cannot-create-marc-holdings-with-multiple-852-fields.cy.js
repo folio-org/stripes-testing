@@ -55,8 +55,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C350721 Cannot create MARC Holdings record with multiple "852" fields (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C350721'] },
+      'C350721 Cannot create MARC Holdings record with multiple "852" fields (promin)',
+      { tags: ['extendedPath', 'promin', 'C350721'] },
       () => {
         InventoryInstances.searchByTitle(instanceID);
         InventoryInstances.selectInstance();

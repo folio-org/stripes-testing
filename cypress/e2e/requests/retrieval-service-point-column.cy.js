@@ -130,8 +130,8 @@ describe('Retrieval service point', () => {
   });
 
   it(
-    'C627236 Adding and hiding "Retrieval service point" column in "Requests" app (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C627236'] },
+    'C627236 Adding and hiding "Retrieval service point" column in "Requests" app (vega)',
+    { tags: ['criticalPath', 'vega', 'C627236'] },
     () => {
       Requests.findCreatedRequest(itemData.barcode);
 

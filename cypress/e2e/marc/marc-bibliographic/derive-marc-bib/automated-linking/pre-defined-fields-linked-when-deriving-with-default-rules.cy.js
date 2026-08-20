@@ -216,8 +216,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C389488 Pre-defined fields are linked after clicking on the "Link headings" button in derive "MARC bib" when only default fields enabled for autolinking (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C389488'] },
+          'C389488 Pre-defined fields are linked after clicking on the "Link headings" button in derive "MARC bib" when only default fields enabled for autolinking (promin)',
+          { tags: ['extendedPath', 'promin', 'C389488'] },
           () => {
             // Step 1: Find and open detail view of MARC Bib record
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);

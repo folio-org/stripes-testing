@@ -127,8 +127,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C402330 Use "Shared" facet when Search was not executed in "Member" tenant ("Instance" tab) (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'C402330'] },
+      'C402330 Use "Shared" facet when Search was not executed in "Member" tenant ("Instance" tab) (consortia) (promin)',
+      { tags: ['criticalPathECS', 'promin', 'C402330'] },
       () => {
         // 1 Expand the "Shared" accordion button by clicking on it.
         InventorySearchAndFilter.clearDefaultHeldbyFilter();

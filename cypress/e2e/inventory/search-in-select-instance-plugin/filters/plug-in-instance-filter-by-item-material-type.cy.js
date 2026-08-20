@@ -130,8 +130,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476832 "Select Instance" plugin | Filter "Instance" records by "Material type" facet on "Item" tab (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476832'] },
+        'C476832 "Select Instance" plugin | Filter "Instance" records by "Material type" facet on "Item" tab (promin)',
+        { tags: ['extendedPath', 'promin', 'C476832'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(materialTypeAccordionName);
           SelectInstanceModal.checkOptionsWithCountersExistInAccordion(materialTypeAccordionName);

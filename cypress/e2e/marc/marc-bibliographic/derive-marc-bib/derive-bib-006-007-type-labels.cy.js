@@ -115,8 +115,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C380611 Label is shown for "Type" boxes in fields "006", "007" of "MARC bib" record when deriving (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C380611'] },
+        'C380611 Label is shown for "Type" boxes in fields "006", "007" of "MARC bib" record when deriving (promin)',
+        { tags: ['extendedPath', 'promin', 'C380611'] },
         () => {
           InventoryInstances.searchByTitle(instanceIdWith006007);
           InventoryInstances.selectInstanceById(instanceIdWith006007);

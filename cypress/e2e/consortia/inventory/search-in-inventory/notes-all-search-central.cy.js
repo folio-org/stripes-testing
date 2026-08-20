@@ -191,8 +191,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411627 Search for Shared/Local records by "Instance notes (all)" search option from "Central" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411627'] },
+        'C411627 Search for Shared/Local records by "Instance notes (all)" search option from "Central" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411627'] },
         () => {
           InventorySearchAndFilter.fillInSearchQuery(notePrefix);
           InventorySearchAndFilter.clickSearch();

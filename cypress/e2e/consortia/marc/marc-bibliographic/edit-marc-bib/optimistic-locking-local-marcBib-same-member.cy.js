@@ -83,8 +83,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C410828 Optimistic locking in Member tenant when local "MARC Bib" record updated by another user in the same Member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C410828'] },
+          'C410828 Optimistic locking in Member tenant when local "MARC Bib" record updated by another user in the same Member tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C410828'] },
           () => {
             // Steps 1-2: User A logs in to Member tenant, opens record for editing
             cy.setTenant(Affiliations.College);

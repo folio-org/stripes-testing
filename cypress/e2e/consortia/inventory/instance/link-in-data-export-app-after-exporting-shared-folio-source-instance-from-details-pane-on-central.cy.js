@@ -46,8 +46,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C422085 (CONSORTIA) Verify the link in Data export app after exporting shared FOLIO Source Instance from Instance details pane on Central tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C422085'] },
+        'C422085 (CONSORTIA) Verify the link in Data export app after exporting shared FOLIO Source Instance from Instance details pane on Central tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C422085'] },
         () => {
           InventoryInstances.searchByTitle(testData.instance.instanceTitle);
           InstanceRecordView.exportInstanceMarc();

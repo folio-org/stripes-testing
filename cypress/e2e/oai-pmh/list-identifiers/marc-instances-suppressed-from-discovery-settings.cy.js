@@ -68,8 +68,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375302 ListIdentifiers: Verify MARC instances suppressed from discovery settings (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375302', 'nonParallel'] },
+      'C375302 ListIdentifiers: Verify MARC instances suppressed from discovery settings (athena)',
+      { tags: ['extendedPath', 'athena', 'C375302', 'nonParallel'] },
       () => {
         // Step 1-5: Search for imported instance
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.id);

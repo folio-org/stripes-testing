@@ -68,8 +68,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C959218 API | Create multiple Holdings using POST /holdings-storage/batch/synchronous with empty fields (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C959218'] },
+      'C959218 API | Create multiple Holdings using POST /holdings-storage/batch/synchronous with empty fields (promin)',
+      { tags: ['criticalPath', 'promin', 'C959218'] },
       () => {
         // Step 1. Send POST ‘/holdings-storage/batch/synchronous?upsert=true’ with following body (with empty fields)
         const holdingsRecordWithoutIds = [

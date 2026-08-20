@@ -49,8 +49,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C466253 Import of file with 035 OCLC field with non-match prefix and leading zeros (folijet)',
-      { tags: ['edgeCases', 'folijet', 'C466253'] },
+      'C466253 Import of file with 035 OCLC field with non-match prefix and leading zeros (promin)',
+      { tags: ['edgeCases', 'promin', 'C466253'] },
       () => {
         // Step 1-2: Upload MARC Bib file and run job profile
         DataImport.verifyUploadState();

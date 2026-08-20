@@ -51,8 +51,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422254 "New" option is not displayed in "Actions" menu when user doesn\'t have required permissions - Central tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C422254'] },
+          'C422254 "New" option is not displayed in "Actions" menu when user doesn\'t have required permissions - Central tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C422254'] },
           () => {
             // Step 1: Click Actions
             MarcAuthorities.clickActionsButton();

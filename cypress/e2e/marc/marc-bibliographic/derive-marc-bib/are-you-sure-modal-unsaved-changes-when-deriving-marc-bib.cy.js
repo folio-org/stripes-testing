@@ -58,8 +58,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C434153 "Are you sure?" modal is displayed after user pressed "ESC" button when record has unsaved changes - Derive a new MARC bib record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C434153'] },
+        'C434153 "Are you sure?" modal is displayed after user pressed "ESC" button when record has unsaved changes - Derive a new MARC bib record (promin)',
+        { tags: ['extendedPath', 'promin', 'C434153'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs);
           cy.ifConsortia(true, () => {

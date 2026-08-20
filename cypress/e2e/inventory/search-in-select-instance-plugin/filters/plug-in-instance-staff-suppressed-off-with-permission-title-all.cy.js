@@ -108,8 +108,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446103 Find Instance plugin | Staff suppress facet is off by default when user has permission to use facet (search by "Title (all)") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C446103'] },
+        'C446103 Find Instance plugin | Staff suppress facet is off by default when user has permission to use facet (search by "Title (all)") (promin)',
+        { tags: ['extendedPath', 'promin', 'C446103'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(staffSuppressAccordionName);
           InventorySearchAndFilter.verifyCheckboxInAccordion(

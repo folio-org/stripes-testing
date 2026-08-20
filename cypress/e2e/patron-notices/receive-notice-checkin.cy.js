@@ -215,8 +215,8 @@ describe('Patron notices', () => {
     });
 
     it(
-      'C347625 Check that user can receive notice with multiple items after finishing the session "Check in" by automatic session end (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C347625'] },
+      'C347625 Check that user can receive notice with multiple items after finishing the session "Check in" by automatic session end (vega)',
+      { tags: ['extendedPath', 'vega', 'C347625'] },
       () => {
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();

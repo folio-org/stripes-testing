@@ -171,8 +171,8 @@ describe(
       });
 
       it(
-        'C648456 Bulk edit administrative data for all records (MARC, Query, Logs) (firebird)',
-        { tags: ['smoke', 'firebird', 'C648456'] },
+        'C648456 Bulk edit administrative data for all records (MARC, Query, Logs) (athena)',
+        { tags: ['smoke', 'athena', 'C648456'] },
         () => {
           BulkEditActions.openActions();
           BulkEditActions.verifyStartBulkEditOptions();

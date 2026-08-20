@@ -40,8 +40,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C359001 Error after typing non existing item location form in Bulk Edit (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C359001'] },
+      'C359001 Error after typing non existing item location form in Bulk Edit (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C359001'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcodes');
 

@@ -70,8 +70,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C552533 "Date type" and "Date 1", "Date 2" fields are read-only on "Edit instance" pane opened for MARC bib (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C552533'] },
+        'C552533 "Date type" and "Date 1", "Date 2" fields are read-only on "Edit instance" pane opened for MARC bib (promin)',
+        { tags: ['extendedPath', 'promin', 'C552533'] },
         () => {
           InventoryInstances.searchByTitle(instanceId);
           InventoryInstances.selectInstanceById(instanceId);

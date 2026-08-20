@@ -166,8 +166,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C515001 Derive MARC bib record which has multiple repeatable standard / local subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'C515001', 'spitfire', 'nonParallel'] },
+        'C515001 Derive MARC bib record which has multiple repeatable standard / local subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'C515001', 'promin', 'nonParallel'] },
         () => {
           // Step 1: Click on "Actions" button >> Select "Derive new MARC bibliographic record" option
           InventoryInstances.searchByTitle(importedInstanceId);

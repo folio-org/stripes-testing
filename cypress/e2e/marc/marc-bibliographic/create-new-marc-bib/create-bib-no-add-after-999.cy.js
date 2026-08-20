@@ -67,8 +67,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422122 User cannot add a new field below "999 ff" field on "Create a new MARC bib record" pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C422122'] },
+        'C422122 User cannot add a new field below "999 ff" field on "Create a new MARC bib record" pane (promin)',
+        { tags: ['extendedPath', 'promin', 'C422122'] },
         () => {
           // Step 1: Click on "Actions" button → Select "+ New MARC bibliographic record" option
           InventoryInstance.newMarcBibRecord();

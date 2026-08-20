@@ -80,8 +80,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C446077 Staff suppressed records can NOT be found using Advanced search when user doesn\'t have "Inventory: Enable staff suppress facet" permission (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C446077'] },
+      'C446077 Staff suppressed records can NOT be found using Advanced search when user doesn\'t have "Inventory: Enable staff suppress facet" permission (promin)',
+      { tags: ['extendedPath', 'promin', 'C446077'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.validateSearchTabIsDefault();

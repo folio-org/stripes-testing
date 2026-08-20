@@ -88,8 +88,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C386498 Switching between Search and Browse in "MARC authority" app (advanced search) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C386498'] },
+        'C386498 Switching between Search and Browse in "MARC authority" app (advanced search) (promin)',
+        { tags: ['extendedPath', 'promin', 'C386498'] },
         () => {
           // Step 1: Select "Advanced search" option, fill query and apply filters
           MarcAuthorities.selectSearchOptionInDropdown(testData.advancedSearchOption);

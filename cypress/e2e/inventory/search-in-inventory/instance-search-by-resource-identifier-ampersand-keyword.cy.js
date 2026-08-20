@@ -138,8 +138,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C368023 Search for "Instance" by "Resource identifier" field having "&" character" using "Keyword" search option (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C368023'] },
+      'C368023 Search for "Instance" by "Resource identifier" field having "&" character" using "Keyword" search option (promin)',
+      { tags: ['extendedPath', 'promin', 'C368023'] },
       () => {
         searchData.forEach(({ query, expectedInstanceIndexes }) => {
           InventorySearchAndFilter.fillInSearchQuery(query);

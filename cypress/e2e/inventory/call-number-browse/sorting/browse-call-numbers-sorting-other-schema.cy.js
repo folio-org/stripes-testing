@@ -123,8 +123,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C388549 Browse call numbers - Correct sorting for Other scheme type call numbers (spitfire) (TaaS)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C388549', 'eurekaPhase1'] },
+      'C388549 Browse call numbers - Correct sorting for Other scheme type call numbers (promin) (TaaS)',
+      { tags: ['criticalPathFlaky', 'promin', 'nonParallel', 'C388549', 'eurekaPhase1'] },
       () => {
         const exactMatchQuery = 'B JORDAN DVD';
         const requiredRowsOrder = [

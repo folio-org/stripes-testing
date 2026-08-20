@@ -350,8 +350,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C411578 Search for Shared/Local records by "Contributor" search option from "Member" tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'C411578'] },
+      'C411578 Search for Shared/Local records by "Contributor" search option from "Member" tenant (consortia) (promin)',
+      { tags: ['criticalPathECS', 'promin', 'C411578'] },
       () => {
         InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
         InventorySearchAndFilter.selectSearchOptions('Contributor', searchValue);

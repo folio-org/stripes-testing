@@ -63,8 +63,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C358135 Verify that user can bulk edit item status and temporary location at once (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C358135'] },
+      'C358135 Verify that user can bulk edit item status and temporary location at once (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C358135'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

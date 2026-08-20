@@ -86,8 +86,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C519984 Edit MARC authority record with undefined 1XX field and check "Version history" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C519984'] },
+        'C519984 Edit MARC authority record with undefined 1XX field and check "Version history" (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C519984'] },
         () => {
           // Step 1: Search for the authority record and open it
           MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading);

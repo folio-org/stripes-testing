@@ -41,8 +41,8 @@ describe('Notes', () => {
   });
 
   it(
-    'C16985 Settings | Set up a note type (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C16985'] },
+    'C16985 Settings | Set up a note type (promin)',
+    { tags: ['extendedPath', 'promin', 'C16985'] },
     () => {
       cy.login(user.username, user.password, {
         path: TopMenu.notesPath,

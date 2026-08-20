@@ -114,8 +114,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C651497 Apply “Effective location (item)” to browse result list and check "Number of titles" count (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C651497'] },
+      'C651497 Apply “Effective location (item)” to browse result list and check "Number of titles" count (promin)',
+      { tags: ['criticalPath', 'promin', 'C651497'] },
       () => {
         BrowseCallNumber.waitForCallNumberToAppear(testData.callNumber, undefined, undefined, 2);
         BrowseContributors.waitForContributorToAppear(testData.contributor);

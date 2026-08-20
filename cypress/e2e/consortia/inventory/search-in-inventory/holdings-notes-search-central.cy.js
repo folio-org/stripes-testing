@@ -210,8 +210,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411722 Search for Shared/Local records by "Holdings notes (all)" and "Holdings administrative notes" search options from "Central" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411722'] },
+        'C411722 Search for Shared/Local records by "Holdings notes (all)" and "Holdings administrative notes" search options from "Central" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411722'] },
         () => {
           InventorySearchAndFilter.selectSearchOption(notesSearchOption);
 

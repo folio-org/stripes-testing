@@ -362,8 +362,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C407651 Consortia | Add shared MARC instance from central and export with Custom job profile (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C407651'] },
+      'C407651 Consortia | Add shared MARC instance from central and export with Custom job profile (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C407651'] },
       () => {
         // Step 1-9: Implemented via API calls in the "before" hook
         // Create CSV file with all three instance UUIDs

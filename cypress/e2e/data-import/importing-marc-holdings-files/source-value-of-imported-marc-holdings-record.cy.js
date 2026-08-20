@@ -76,8 +76,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C356820 Check the "Source" value of imported "MARC Holdings" record. (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C356820'] },
+      'C356820 Check the "Source" value of imported "MARC Holdings" record. (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C356820'] },
       () => {
         InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);

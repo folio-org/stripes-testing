@@ -40,8 +40,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C422097 Inventory search: verify that clicking on "Reset all" button will return focus and cursor to the Search box (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C422097'] },
+      'C422097 Inventory search: verify that clicking on "Reset all" button will return focus and cursor to the Search box (promin)',
+      { tags: ['extendedPath', 'promin', 'C422097'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

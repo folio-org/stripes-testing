@@ -101,7 +101,7 @@ describe('Reading Room Access', () => {
 
     it(
       'C476798 - Verify Combined Sorting and Filtering of Reading rooms on user details pane',
-      { tags: ['extendedPath', 'volaris', 'C476798'] },
+      { tags: ['extendedPath', 'vega', 'C476798'] },
       () => {
         // Step 1: Apply a filter by entering partial text of "Room Name" and sort the filtered
         // results by clicking on the Room Name column header

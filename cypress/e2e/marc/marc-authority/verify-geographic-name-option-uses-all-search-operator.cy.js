@@ -78,8 +78,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C584445 Verify that "Geographic name" search option uses "all" search operator ("Greenwich Village (New York, N.Y.) Maps" case) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C584445'] },
+      'C584445 Verify that "Geographic name" search option uses "all" search operator ("Greenwich Village (New York, N.Y.) Maps" case) (promin)',
+      { tags: ['criticalPath', 'promin', 'C584445'] },
       () => {
         // execute search by "Keyword" option
         MarcAuthorities.switchToSearch();

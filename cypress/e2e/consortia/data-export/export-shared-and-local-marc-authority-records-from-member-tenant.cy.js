@@ -122,8 +122,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C410770 Consortia | Verify that only Shared and Local (for current tenant) "MARC authority" records will be exported by Data export (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C410770'] },
+      'C410770 Consortia | Verify that only Shared and Local (for current tenant) "MARC authority" records will be exported by Data export (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C410770'] },
       () => {
         // Step 1: Check checkboxes next to MARC Authority records
         MarcAuthorities.selectAllRecords();

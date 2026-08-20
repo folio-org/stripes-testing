@@ -107,8 +107,8 @@ describe('MARC', () => {
       });
 
       it(
-        "C436858 User can view on UI 'Delete MARC authority records' Job, Match, Action, Field mapping profiles created via API (spitfire)",
-        { tags: ['extendedPath', 'spitfire', 'C436858'] },
+        "C436858 User can view on UI 'Delete MARC authority records' Job, Match, Action, Field mapping profiles created via API (promin)",
+        { tags: ['extendedPath', 'promin', 'C436858'] },
         () => {
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
           JobProfiles.checkListOfExistingProfilesIsDisplayed();

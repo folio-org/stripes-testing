@@ -45,8 +45,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C436765 Query builder - Search items with a given status ("Enum" property type) (firebird)',
-      { tags: ['smoke', 'firebird', 'C436765'] },
+      'C436765 Query builder - Search items with a given status ("Enum" property type) (athena)',
+      { tags: ['smoke', 'athena', 'C436765'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkItemsRadio();

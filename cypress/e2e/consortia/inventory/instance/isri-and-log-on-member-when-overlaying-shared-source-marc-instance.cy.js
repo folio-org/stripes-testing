@@ -93,8 +93,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C418582 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when overlaying Shared Source = MARC Instance (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C418582'] },
+        'C418582 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when overlaying Shared Source = MARC Instance (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C418582'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.waitContentLoading();

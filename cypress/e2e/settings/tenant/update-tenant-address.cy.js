@@ -39,8 +39,8 @@ describe('Tenant', () => {
     });
 
     it(
-      'C6732 Update Tenant address (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C6732'] },
+      'C6732 Update Tenant address (athena)',
+      { tags: ['extendedPath', 'athena', 'C6732'] },
       () => {
         // Go to Settings/Tenant/Addresses
         TenantPane.selectTenant(TENANTS.ADDRESSES);

@@ -181,8 +181,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C773246 ECS | Executing bulk edit job using FOLIO Instance bulk edit profile in Member tenant (Logs) (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C773246'] },
+        'C773246 ECS | Executing bulk edit job using FOLIO Instance bulk edit profile in Member tenant (Logs) (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C773246'] },
         () => {
           // Step 1: Click "Actions" menu
           BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false, true);

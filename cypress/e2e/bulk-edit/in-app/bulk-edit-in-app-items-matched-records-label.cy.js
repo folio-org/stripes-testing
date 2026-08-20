@@ -66,8 +66,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C357030 Verify Matched records label cleanup -- In -app approach (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C357030'] },
+      'C357030 Verify Matched records label cleanup -- In -app approach (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C357030'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

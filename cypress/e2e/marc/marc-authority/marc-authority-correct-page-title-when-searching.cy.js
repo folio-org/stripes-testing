@@ -116,8 +116,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C442844 Check page title (browser tab) when searching in "MARC authority" app (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C442844'] },
+      'C442844 Check page title (browser tab) when searching in "MARC authority" app (promin)',
+      { tags: ['criticalPath', 'promin', 'C442844'] },
       () => {
         MarcAuthoritiesSearch.fillSearchInput(testData.searchQueries.basic);
         cy.title().should('eq', testData.expectedTitles.default);

@@ -90,8 +90,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C494105 Verify that data from all valid subfields displays in "heading" column of "MARC authority headings updates (CSV)" report (spitfire)',
-        { tags: ['criticalPath', 'C494105', 'spitfire'] },
+        'C494105 Verify that data from all valid subfields displays in "heading" column of "MARC authority headings updates (CSV)" report (promin)',
+        { tags: ['criticalPath', 'C494105', 'promin'] },
         () => {
           const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
           const tomorrow = DateTools.getTomorrowDayDateForFiscalYear();

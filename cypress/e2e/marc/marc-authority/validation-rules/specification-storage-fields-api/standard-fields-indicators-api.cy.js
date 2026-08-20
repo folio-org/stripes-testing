@@ -41,8 +41,8 @@ describe('MARC Authority Validation Rules - Standard Fields Indicators API', () 
   });
 
   it(
-    'C502992 Cannot update Indicator of Standard Field for MARC auth spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C502992', 'spitfire'] },
+    'C502992 Cannot update Indicator of Standard Field for MARC auth spec (API) (promin)',
+    { tags: ['criticalPath', 'C502992', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

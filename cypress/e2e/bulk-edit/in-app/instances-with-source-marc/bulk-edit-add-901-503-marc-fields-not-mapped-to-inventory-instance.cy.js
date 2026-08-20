@@ -85,8 +85,8 @@ describe(
       });
 
       it(
-        'C503084 Add MARC field (901, 503) not mapped to Inventory Instance (MARC) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C503084'] },
+        'C503084 Add MARC field (901, 503) not mapped to Inventory Instance (MARC) (athena)',
+        { tags: ['criticalPath', 'athena', 'C503084'] },
         () => {
           // Step 1: Check columns for Source and General note
           BulkEditActions.openActions();

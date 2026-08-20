@@ -178,8 +178,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C825328 Create Holdings bulk edit profile in Central tenant and use it to execute bulk edit job with errors (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C825328'] },
+        'C825328 Create Holdings bulk edit profile in Central tenant and use it to execute bulk edit job with errors (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C825328'] },
         () => {
           // Step 1: Navigate to Holdings bulk edit profiles and create new profile
           SettingsPane.selectSettingsTab(APPLICATION_NAMES.BULK_EDIT);

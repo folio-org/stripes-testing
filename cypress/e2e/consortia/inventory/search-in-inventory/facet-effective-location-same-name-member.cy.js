@@ -428,8 +428,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C491303 Verify Tenant name displays next to location in "Effective location" facet during searching in Member tenant (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C491303'] },
+          'C491303 Verify Tenant name displays next to location in "Effective location" facet during searching in Member tenant (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C491303'] },
           () => {
             // Login and switch affiliation to Member 1
             cy.waitForAuthRefresh(() => {

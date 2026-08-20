@@ -55,8 +55,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C398004 Verify that "Number of titles" column value matches with "Records found" counter when browsing for subjects (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C398004'] },
+      'C398004 Verify that "Number of titles" column value matches with "Records found" counter when browsing for subjects (promin)',
+      { tags: ['extendedPath', 'promin', 'C398004'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

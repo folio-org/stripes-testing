@@ -50,8 +50,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C389577 Verify that previews contains renamed "Instance (Title, Publisher, Publication date)" column (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C389577'] },
+      'C389577 Verify that previews contains renamed "Instance (Title, Publisher, Publication date)" column (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C389577'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

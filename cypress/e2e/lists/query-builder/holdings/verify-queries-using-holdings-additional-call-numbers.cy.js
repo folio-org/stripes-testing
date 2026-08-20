@@ -146,8 +146,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C844260 Query Builder - Additional holdings call numbers (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C844260'] },
+        'C844260 Query Builder - Additional holdings call numbers (athena)',
+        { tags: ['criticalPath', 'athena', 'C844260'] },
         () => {
           // Step 1: Create new list with Holdings record type and build query
           Lists.openNewListPane();

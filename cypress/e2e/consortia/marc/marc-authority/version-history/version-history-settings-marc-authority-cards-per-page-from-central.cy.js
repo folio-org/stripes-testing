@@ -132,8 +132,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C655284 Edit "Cards to display per page on Version history" on "Settings >> MARC authority >> Version history" page from Central tenant (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C655284'] },
+            'C655284 Edit "Cards to display per page on Version history" on "Settings >> MARC authority >> Version history" page from Central tenant (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C655284'] },
             () => {
               cy.resetTenant();
               cy.login(testUser.username, testUser.password, {

@@ -151,8 +151,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C388639 Link certain fields manually and then use auto-linking when deriving new "MARC Bib" record ("$0" in linkable fields) (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C388639'] },
+          'C388639 Link certain fields manually and then use auto-linking when deriving new "MARC Bib" record ("$0" in linkable fields) (promin)',
+          { tags: ['extendedPath', 'promin', 'C388639'] },
           () => {
             // Step 1: Find and open detail view of imported record
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);

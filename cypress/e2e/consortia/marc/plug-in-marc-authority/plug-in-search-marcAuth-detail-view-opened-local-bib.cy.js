@@ -118,8 +118,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C410882 "MARC authority" record is opened automatically in "Select MARC authority" plug-in on Member tenant (from Local "MARC bib") (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C410882'] },
+        'C410882 "MARC authority" record is opened automatically in "Select MARC authority" plug-in on Member tenant (from Local "MARC bib") (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C410882'] },
         () => {
           cy.setTenant(Affiliations.College);
           cy.login(testData.user.username, testData.user.password, {

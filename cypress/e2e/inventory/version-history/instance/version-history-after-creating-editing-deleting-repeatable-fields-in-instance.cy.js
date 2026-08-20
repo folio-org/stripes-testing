@@ -50,8 +50,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651552 Check "Version history" after creating,editing and deleting repeatable fields in Instance (folijet)',
-        { tags: ['extendedPath', 'folijet', 'C651552'] },
+        'C651552 Check "Version history" after creating,editing and deleting repeatable fields in Instance (promin)',
+        { tags: ['extendedPath', 'promin', 'C651552'] },
         () => {
           InventoryInstances.addNewInventory();
           InventoryNewInstance.fillResourceTitle(testData.instance.title);

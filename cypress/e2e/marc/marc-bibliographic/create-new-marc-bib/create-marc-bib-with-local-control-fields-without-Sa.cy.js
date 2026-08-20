@@ -107,8 +107,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503157 Create "MARC bib" record with multiple Local control fields (002, 004, 009) which don\'t have subfield "$a" (Not required; repeatable) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C503157'] },
+        'C503157 Create "MARC bib" record with multiple Local control fields (002, 004, 009) which don\'t have subfield "$a" (Not required; repeatable) (promin)',
+        { tags: ['extendedPath', 'promin', 'C503157'] },
         () => {
           // Step 1: Click on "Actions" button in second pane >> Select "+ New MARC bibliographic record" option
           InventoryInstance.newMarcBibRecord();

@@ -159,8 +159,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C496114 Verify "Clear" action for Holdings location in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C496114'] },
+        'C496114 Verify "Clear" action for Holdings location in Central tenant (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C496114'] },
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();

@@ -69,8 +69,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C350734 Search for MARC authority record with " & " symbol in the title (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C350734'] },
+        'C350734 Search for MARC authority record with " & " symbol in the title (promin)',
+        { tags: ['extendedPath', 'promin', 'C350734'] },
         () => {
           MarcAuthorities.selectSearchOptionInDropdown(testData.searchOption);
           MarcAuthorities.checkSelectOptionFieldContent(testData.searchOption);

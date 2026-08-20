@@ -34,8 +34,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10982 "Settings" > "Data export" > "Field mapping profiles" page (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C10982'] },
+      'C10982 "Settings" > "Data export" > "Field mapping profiles" page (athena)',
+      { tags: ['criticalPath', 'athena', 'shiftLeft', 'C10982'] },
       () => {
         ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
         ExportFieldMappingProfiles.verifyDefaultProfiles();
@@ -44,8 +44,8 @@ describe('Data Export', () => {
     );
 
     it(
-      'C15822 Preventing changes to the default instance mapping profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C15822'] },
+      'C15822 Preventing changes to the default instance mapping profile (athena)',
+      { tags: ['criticalPath', 'athena', 'shiftLeft', 'C15822'] },
       () => {
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(
           'Default instance mapping profile',

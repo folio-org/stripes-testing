@@ -42,8 +42,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C844855 Verify that `id` is not required in the request body of POST /entity-types/custom API (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C844855'] },
+        'C844855 Verify that `id` is not required in the request body of POST /entity-types/custom API (athena)',
+        { tags: ['extendedPath', 'athena', 'C844855'] },
         () => {
           cy.getUserToken(userData.username, userData.password);
 

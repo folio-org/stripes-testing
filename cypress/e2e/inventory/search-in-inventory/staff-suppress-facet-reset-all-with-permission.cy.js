@@ -83,8 +83,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446091 Staff suppress facet resets when user with permission clicks "Reset all" button (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C446091'] },
+        'C446091 Staff suppress facet resets when user with permission clicks "Reset all" button (promin)',
+        { tags: ['extendedPath', 'promin', 'C446091'] },
         () => {
           InventorySearchAndFilter.verifyAccordionExistance(accordionName);
 

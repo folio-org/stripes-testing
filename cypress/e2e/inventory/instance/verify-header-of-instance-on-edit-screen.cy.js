@@ -78,8 +78,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C399082 Verify the header of the Instance on Edit screen (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C399082'] },
+      'C399082 Verify the header of the Instance on Edit screen (promin)',
+      { tags: ['extendedPath', 'promin', 'C399082'] },
       () => {
         InventoryInstances.searchByTitle(titlePrefix);
         [`${titlePrefix}_A`, `${titlePrefix}_B`, `${titlePrefix}_C`].forEach((title) => {

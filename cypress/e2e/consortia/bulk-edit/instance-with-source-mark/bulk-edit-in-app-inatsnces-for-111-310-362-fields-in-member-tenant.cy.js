@@ -219,8 +219,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C651595 ECS | Bulk edit marc fields (111, 310, 362) for part of the records in Member tenant (MARC & FOLIO) (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C651595'] },
+        'C651595 ECS | Bulk edit marc fields (111, 310, 362) for part of the records in Member tenant (MARC & FOLIO) (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C651595'] },
         () => {
           const columnsToShow = [
             BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CONTRIBUTORS,

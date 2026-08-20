@@ -56,8 +56,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C357531 Verify exact match for subjects selected on the browse form (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C357531'] },
+      'C357531 Verify exact match for subjects selected on the browse form (promin)',
+      { tags: ['extendedPath', 'promin', 'C357531'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password, {

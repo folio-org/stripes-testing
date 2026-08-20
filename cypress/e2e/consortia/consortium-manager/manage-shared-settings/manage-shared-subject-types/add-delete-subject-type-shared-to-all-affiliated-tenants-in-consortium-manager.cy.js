@@ -68,8 +68,8 @@ describe('Consortia', () => {
         });
 
         it(
-          'C594404 User with "Consortium manager: Can share settings to all members" permission is able to add/delete subject type shared to all affiliated tenants in "Consortium manager" app (consortia) (folijet)',
-          { tags: ['criticalPathECS', 'folijet', 'C594404'] },
+          'C594404 User with "Consortium manager: Can share settings to all members" permission is able to add/delete subject type shared to all affiliated tenants in "Consortium manager" app (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C594404'] },
           () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManager.waitLoading();

@@ -86,8 +86,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423538 Generated "001" field of created MARC authority record doesn\'t change when "010" field is added from edit window and check "Version history" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C423538'] },
+        'C423538 Generated "001" field of created MARC authority record doesn\'t change when "010" field is added from edit window and check "Version history" (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C423538'] },
         () => {
           // Step 1: Open new MARC authority record form
           MarcAuthorities.clickActionsAndNewAuthorityButton();

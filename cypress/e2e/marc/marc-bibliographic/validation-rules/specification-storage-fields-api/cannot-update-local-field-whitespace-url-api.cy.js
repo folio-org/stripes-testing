@@ -65,8 +65,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Local Field Whites
   });
 
   it(
-    'C490947 Cannot update Local Field with whitespace in "url" field for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C490947', 'spitfire'] },
+    'C490947 Cannot update Local Field with whitespace in "url" field for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C490947', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
       const updatePayloadTemplate = {

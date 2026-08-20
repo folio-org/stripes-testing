@@ -69,8 +69,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446001 (CONSORTIA) Check "Set record for deletion" action for FOLIO Shared Instance in Actions menu on Member tenant (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C446001'] },
+        'C446001 (CONSORTIA) Check "Set record for deletion" action for FOLIO Shared Instance in Actions menu on Member tenant (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C446001'] },
         () => {
           InstanceRecordView.waitLoading();
           InstanceRecordView.clickActionsButton();

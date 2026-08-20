@@ -116,8 +116,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C369050 Verify that Errors accordion displays correct identifier on the confirmation screen (instance HRIDs) (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C369050'] },
+      'C369050 Verify that Errors accordion displays correct identifier on the confirmation screen (instance HRIDs) (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C369050'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Instance HRIDs');
 

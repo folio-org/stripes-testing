@@ -182,8 +182,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566143 Verify "Add note" action for Holdings in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566143'] },
+        'C566143 Verify "Add note" action for Holdings in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566143'] },
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();

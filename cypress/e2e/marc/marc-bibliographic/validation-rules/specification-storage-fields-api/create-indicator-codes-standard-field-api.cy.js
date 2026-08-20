@@ -53,8 +53,8 @@ describe('MARC Bibliographic Validation Rules - Create Indicator Code of Standar
   });
 
   it(
-    'C499672 Create Indicator code of Standard field for MARC bib spec (API) (spitfire)',
-    { tags: ['C499672', 'extendedPath', 'spitfire'] },
+    'C499672 Create Indicator code of Standard field for MARC bib spec (API) (promin)',
+    { tags: ['C499672', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

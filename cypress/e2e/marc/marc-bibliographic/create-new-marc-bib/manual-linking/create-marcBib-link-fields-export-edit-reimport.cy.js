@@ -194,8 +194,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422135 Create "MARC Bib" record - link fields - export and edit - update upon import (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C422135'] },
+          'C422135 Create "MARC Bib" record - link fields - export and edit - update upon import (promin)',
+          { tags: ['extendedPath', 'promin', 'C422135'] },
           () => {
             // Step 1-3: Create new MARC Bib record and fill required fields
             InventoryInstances.createNewMarcBibRecord();

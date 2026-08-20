@@ -57,8 +57,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C353956 Verify uploading file with User UUIDs (firebird)',
-        { tags: ['smoke', 'firebird', 'C353956'] },
+        'C353956 Verify uploading file with User UUIDs (athena)',
+        { tags: ['smoke', 'athena', 'C353956'] },
         () => {
           BulkEditSearchPane.checkUsersRadio();
           BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

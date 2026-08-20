@@ -75,8 +75,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C411682 (NON-CONSORTIA) Verify Item barcode hyperlink closing on Non-consortia tenant (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C411682'] },
+      'C411682 (NON-CONSORTIA) Verify Item barcode hyperlink closing on Non-consortia tenant (promin)',
+      { tags: ['extendedPath', 'promin', 'C411682'] },
       () => {
         InventoryInstances.searchByTitle(testData.testInstanceIds.instanceId);
         InventoryInstances.selectInstance();

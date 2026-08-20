@@ -111,8 +111,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C825266 Search items by Year, caption (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C825266'] },
+        'C825266 Search items by Year, caption (athena)',
+        { tags: ['extendedPath', 'athena', 'C825266'] },
         () => {
           // Step 1-2: Search items by "Items — Year, caption" field using "contains" operator
           BulkEditSearchPane.openQuerySearch();

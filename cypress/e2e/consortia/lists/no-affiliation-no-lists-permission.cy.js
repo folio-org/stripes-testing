@@ -38,8 +38,8 @@ describe('Lists', () => {
     });
 
     it(
-      "C523642 User does not have tenant affiliation in member tenant, and doesn't have a list app and content permission - Consortium (consortia) (corsair)",
-      { tags: ['criticalPathECS', 'corsair', 'C523642'] },
+      "C523642 User does not have tenant affiliation in member tenant, and doesn't have a list app and content permission - Consortium (consortia) (athena)",
+      { tags: ['criticalPathECS', 'athena', 'C523642'] },
       () => {
         // Step 1: Login
         cy.login(testData.user.username, testData.user.password);

@@ -105,8 +105,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C523598 Find and remove subfield from MARC field (514) mapped to Inventory Instance (MARC) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C523598'] },
+        'C523598 Find and remove subfield from MARC field (514) mapped to Inventory Instance (MARC) (athena)',
+        { tags: ['criticalPath', 'athena', 'C523598'] },
         () => {
           // Step 1: Show Source and Data quality note columns
           BulkEditActions.openActions();

@@ -48,8 +48,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C825347 Verify that when private sets to "False", the custom entity type appears in the Lists app (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C825347'] },
+        'C825347 Verify that when private sets to "False", the custom entity type appears in the Lists app (athena)',
+        { tags: ['criticalPath', 'athena', 'C825347'] },
         () => {
           // Step 2: Login to Lists app and verify the public ET appears in record type dropdowns
           cy.login(userData.username, userData.password, {

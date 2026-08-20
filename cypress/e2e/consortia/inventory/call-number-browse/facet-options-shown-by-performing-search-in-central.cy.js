@@ -109,8 +109,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C414980 Facet options shown after clicking "Reset all" in Browse and performing search in Central tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'C414980'] },
+      'C414980 Facet options shown after clicking "Reset all" in Browse and performing search in Central tenant (consortia) (promin)',
+      { tags: ['criticalPathECS', 'promin', 'C414980'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();

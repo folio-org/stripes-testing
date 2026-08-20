@@ -99,8 +99,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C369043 Search for "Instance" with "diacritic - Korean" symbol in the "Resource title" field using "Title (all)" search option (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C369043'] },
+      'C369043 Search for "Instance" with "diacritic - Korean" symbol in the "Resource title" field using "Title (all)" search option (promin)',
+      { tags: ['extendedPath', 'promin', 'C369043'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(keywordOption);

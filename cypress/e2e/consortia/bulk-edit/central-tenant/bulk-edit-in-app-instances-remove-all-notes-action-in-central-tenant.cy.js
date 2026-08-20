@@ -156,8 +156,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C478265 Verify "Remove all" action for Instances notes in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C478265'] },
+        'C478265 Verify "Remove all" action for Instances notes in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C478265'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
           BulkEditSearchPane.uploadFile(instanceUUIDsFileName);

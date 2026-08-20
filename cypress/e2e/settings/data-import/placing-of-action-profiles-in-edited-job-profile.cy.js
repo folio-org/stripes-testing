@@ -108,8 +108,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C423385 Check the placing of action profiles in edited Job profile (folijet)',
-      { tags: ['smoke', 'folijet', 'C423385', 'shiftLeft'] },
+      'C423385 Check the placing of action profiles in edited Job profile (promin)',
+      { tags: ['smoke', 'promin', 'C423385', 'shiftLeft'] },
       () => {
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
         JobProfiles.createJobProfile(jobProfile);

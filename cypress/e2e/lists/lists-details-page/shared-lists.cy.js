@@ -87,71 +87,67 @@ describe('Lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it(
-      'C411841 Shared lists (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C411841'] },
-      () => {
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.listsPath,
-          waiter: Lists.waitLoading,
-        });
+    it('C411841 Shared lists (athena)', { tags: ['extendedPath', 'athena', 'C411841'] }, () => {
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
 
-        // Scenario 1: Active list with more than 2 records
-        Lists.openList(listWithRecordsData.name);
-        Lists.verifyRecordsNumber(listWithRecordsData.recordsCount);
-        Lists.openActions();
-        Lists.verifyRefreshListButtonIsActive();
-        Lists.verifyEditListButtonIsActive();
-        Lists.verifyDuplicateListButtonIsActive();
-        Lists.verifyDeleteListButtonIsActive();
-        Lists.verifyExportListVisibleColumnsButtonIsActive();
-        Lists.verifyExportListButtonIsActive();
-        Lists.expandListInformationAccordion();
-        Lists.verifyListNameLabel(listWithRecordsData.name);
-        Lists.verifyListDescriptionLabel(listWithRecordsData.description);
-        Lists.verifyVisibilityLabel('Shared');
-        Lists.verifyStatusLabel('Active');
-        Lists.closeListDetailsPane();
+      // Scenario 1: Active list with more than 2 records
+      Lists.openList(listWithRecordsData.name);
+      Lists.verifyRecordsNumber(listWithRecordsData.recordsCount);
+      Lists.openActions();
+      Lists.verifyRefreshListButtonIsActive();
+      Lists.verifyEditListButtonIsActive();
+      Lists.verifyDuplicateListButtonIsActive();
+      Lists.verifyDeleteListButtonIsActive();
+      Lists.verifyExportListVisibleColumnsButtonIsActive();
+      Lists.verifyExportListButtonIsActive();
+      Lists.expandListInformationAccordion();
+      Lists.verifyListNameLabel(listWithRecordsData.name);
+      Lists.verifyListDescriptionLabel(listWithRecordsData.description);
+      Lists.verifyVisibilityLabel('Shared');
+      Lists.verifyStatusLabel('Active');
+      Lists.closeListDetailsPane();
 
-        cy.wait(3000); // to avoid issues with opening the list details pane in the next step
+      cy.wait(3000); // to avoid issues with opening the list details pane in the next step
 
-        // Scenario 2: Active list with query but 0 records
-        Lists.openList(listWithZeroRecordsData.name);
-        Lists.verifyRecordsNumber('No');
-        Lists.openActions();
-        Lists.verifyRefreshListButtonIsActive();
-        Lists.verifyEditListButtonIsActive();
-        Lists.verifyDuplicateListButtonIsActive();
-        Lists.verifyDeleteListButtonIsActive();
-        Lists.verifyExportListVisibleColumnsButtonIsDisabled();
-        Lists.verifyExportListButtonIsDisabled();
-        Lists.expandListInformationAccordion();
-        Lists.verifyListNameLabel(listWithZeroRecordsData.name);
-        Lists.verifyListDescriptionLabel(listWithZeroRecordsData.description);
-        Lists.verifyVisibilityLabel('Shared');
-        Lists.verifyStatusLabel('Active');
-        Lists.closeListDetailsPane();
+      // Scenario 2: Active list with query but 0 records
+      Lists.openList(listWithZeroRecordsData.name);
+      Lists.verifyRecordsNumber('No');
+      Lists.openActions();
+      Lists.verifyRefreshListButtonIsActive();
+      Lists.verifyEditListButtonIsActive();
+      Lists.verifyDuplicateListButtonIsActive();
+      Lists.verifyDeleteListButtonIsActive();
+      Lists.verifyExportListVisibleColumnsButtonIsDisabled();
+      Lists.verifyExportListButtonIsDisabled();
+      Lists.expandListInformationAccordion();
+      Lists.verifyListNameLabel(listWithZeroRecordsData.name);
+      Lists.verifyListDescriptionLabel(listWithZeroRecordsData.description);
+      Lists.verifyVisibilityLabel('Shared');
+      Lists.verifyStatusLabel('Active');
+      Lists.closeListDetailsPane();
 
-        cy.wait(3000); // to avoid issues with opening the list details pane in the next step
+      cy.wait(3000); // to avoid issues with opening the list details pane in the next step
 
-        // Scenario 3: Active list without query
-        Lists.openList(listWithoutQueryData.name);
-        Lists.verifyRecordsNumber('No');
-        Lists.openActions();
-        Lists.verifyRefreshListButtonIsDisabled();
-        Lists.verifyEditListButtonIsActive();
-        Lists.verifyDuplicateListButtonIsActive();
-        Lists.verifyDeleteListButtonIsActive();
-        Lists.verifyExportListVisibleColumnsButtonIsDisabled();
-        Lists.verifyExportListButtonIsDisabled();
-        Lists.expandListInformationAccordion();
-        Lists.verifyListNameLabel(listWithoutQueryData.name);
-        Lists.verifyListDescriptionLabel(listWithoutQueryData.description);
-        Lists.verifyVisibilityLabel('Shared');
-        Lists.verifyStatusLabel('Active');
-        Lists.clickOnQueryAccordion();
-        Lists.closeListDetailsPane();
-      },
-    );
+      // Scenario 3: Active list without query
+      Lists.openList(listWithoutQueryData.name);
+      Lists.verifyRecordsNumber('No');
+      Lists.openActions();
+      Lists.verifyRefreshListButtonIsDisabled();
+      Lists.verifyEditListButtonIsActive();
+      Lists.verifyDuplicateListButtonIsActive();
+      Lists.verifyDeleteListButtonIsActive();
+      Lists.verifyExportListVisibleColumnsButtonIsDisabled();
+      Lists.verifyExportListButtonIsDisabled();
+      Lists.expandListInformationAccordion();
+      Lists.verifyListNameLabel(listWithoutQueryData.name);
+      Lists.verifyListDescriptionLabel(listWithoutQueryData.description);
+      Lists.verifyVisibilityLabel('Shared');
+      Lists.verifyStatusLabel('Active');
+      Lists.clickOnQueryAccordion();
+      Lists.closeListDetailsPane();
+    });
   });
 });

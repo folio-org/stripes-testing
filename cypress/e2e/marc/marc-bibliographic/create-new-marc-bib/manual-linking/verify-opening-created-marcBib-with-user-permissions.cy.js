@@ -93,8 +93,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422140 Create | Verify that created MARC bib with linked field by user without "Edit" permissions can be opened (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C422140'] },
+          'C422140 Create | Verify that created MARC bib with linked field by user without "Edit" permissions can be opened (promin)',
+          { tags: ['criticalPath', 'promin', 'C422140'] },
           () => {
             cy.login(testData.userAData.username, testData.userAData.password, {
               path: TopMenu.inventoryPath,

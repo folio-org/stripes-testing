@@ -18,8 +18,8 @@ describe('Users', () => {
     });
 
     it(
-      'C503132 User information is displayed in profile info after page refresh (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C503132'] },
+      'C503132 User information is displayed in profile info after page refresh (vega)',
+      { tags: ['extendedPath', 'vega', 'C503132'] },
       () => {
         // Step 1 Click on "Profile info" icon in top-right corner of the page
         ProfileInfo.openAndVerify(testData.user.firstName, testData.user.lastName);

@@ -69,8 +69,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Subfield without P
   });
 
   it(
-    'C499706 Cannot create Subfield code of Local field for MARC bib spec without required permission (API) (spitfire)',
-    { tags: ['C499706', 'extendedPath', 'spitfire'] },
+    'C499706 Cannot create Subfield code of Local field for MARC bib spec without required permission (API) (promin)',
+    { tags: ['C499706', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

@@ -101,8 +101,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C385649 verb=ListIdentifiers: SRS & Inventory - Verify that Instance MARC is retrieved in case its suppressed from discovery Item and Holdings are deleted (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C385649', 'nonParallel'] },
+      'C385649 verb=ListIdentifiers: SRS & Inventory - Verify that Instance MARC is retrieved in case its suppressed from discovery Item and Holdings are deleted (athena)',
+      { tags: ['extendedPath', 'athena', 'C385649', 'nonParallel'] },
       () => {
         afterItemCreatedTimestamp = DateTools.getCurrentDateForOaiPmh();
 

@@ -127,8 +127,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514910 Derive MARC bib record with undefined Indicators / Subfield codes in Standard and Local fields when "Undefined" rules are enabled (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C514910', 'nonParallel'] },
+        'C514910 Derive MARC bib record with undefined Indicators / Subfield codes in Standard and Local fields when "Undefined" rules are enabled (promin)',
+        { tags: ['criticalPath', 'promin', 'C514910', 'nonParallel'] },
         () => {
           // Step 1: Open derive window
           InventoryInstances.searchByTitle(createdInstanceId);

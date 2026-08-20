@@ -114,8 +114,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375173 Save linked "MARC authority" record with deleted fields and edited "1XX" field (spitfire)',
-        { tags: ['criticalPathBroken', 'spitfire', 'C375173'] },
+        'C375173 Save linked "MARC authority" record with deleted fields and edited "1XX" field (promin)',
+        { tags: ['criticalPathBroken', 'promin', 'C375173'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);

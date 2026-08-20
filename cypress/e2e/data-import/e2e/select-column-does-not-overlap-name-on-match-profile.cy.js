@@ -33,8 +33,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C466234 Check that "select" is not overlaps "Name" field on Match profile (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C466234'] },
+      'C466234 Check that "select" is not overlaps "Name" field on Match profile (promin)',
+      { tags: ['extendedPath', 'promin', 'C466234'] },
       () => {
         // Step 1: Open default match profile
         MatchProfiles.search(matchProfileName);

@@ -41,8 +41,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375189 GetRecord: Verify FOLIO instances suppressed from discovery in case Skip suppressed from discovery records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375189', 'nonParallel'] },
+      'C375189 GetRecord: Verify FOLIO instances suppressed from discovery in case Skip suppressed from discovery records (athena)',
+      { tags: ['extendedPath', 'athena', 'C375189', 'nonParallel'] },
       () => {
         OaiPmh.getRecordRequest(folioInstanceId).then((response) => {
           OaiPmh.verifyIdDoesNotExistError(response);

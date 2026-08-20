@@ -65,8 +65,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436949 "HRID starts with" field length validation during creation of new "Authority file" at "Settings >> MARC authority>>Manage authority files" pane (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C436949'] },
+        'C436949 "HRID starts with" field length validation during creation of new "Authority file" at "Settings >> MARC authority>>Manage authority files" pane (promin)',
+        { tags: ['criticalPath', 'promin', 'C436949'] },
         () => {
           // 1 Click on the "+New" button
           // Fill in editable text boxes with unique valid values, but fill "HRID starts with" field with "11-digit valid value"

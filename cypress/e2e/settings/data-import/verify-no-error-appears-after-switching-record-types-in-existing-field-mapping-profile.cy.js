@@ -41,8 +41,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C366111 Verify no error appears after switching record types when editing existing field mapping profile (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C366111'] },
+      'C366111 Verify no error appears after switching record types when editing existing field mapping profile (promin)',
+      { tags: ['extendedPath', 'promin', 'C366111'] },
       () => {
         // Step 1: Open field mapping profile view; click Edit
         const FieldMappingProfileView = FieldMappingProfiles.openFieldMappingProfileView({

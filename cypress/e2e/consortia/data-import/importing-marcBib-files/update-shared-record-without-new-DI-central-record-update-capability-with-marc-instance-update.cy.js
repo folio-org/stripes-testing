@@ -140,8 +140,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C805769 Update shared record without new "Data-Import Central-Record-Update" capability with MARC-Instance update (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C805769'] },
+        'C805769 Update shared record without new "Data-Import Central-Record-Update" capability with MARC-Instance update (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C805769'] },
         () => {
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.verifySelectedRecords(1);

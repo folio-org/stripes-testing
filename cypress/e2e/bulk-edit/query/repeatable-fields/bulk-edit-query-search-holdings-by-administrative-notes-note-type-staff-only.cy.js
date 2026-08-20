@@ -207,8 +207,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C813611 Search holdings by Administrative notes, Note type, Staff only (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C813611'] },
+        'C813611 Search holdings by Administrative notes, Note type, Staff only (athena)',
+        { tags: ['criticalPath', 'athena', 'C813611'] },
         () => {
           // Create expected holdings for verification
           const expectedHoldings = createExpectedHoldings(folioInstance.holdingHrids);

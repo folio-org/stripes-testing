@@ -54,8 +54,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C740214 Creating Items bulk edit profile (firebird)',
-      { tags: ['smoke', 'firebird', 'C740214'] },
+      'C740214 Creating Items bulk edit profile (athena)',
+      { tags: ['smoke', 'athena', 'C740214'] },
       () => {
         // Step 1: Navigate to Settings > Bulk edit and click "Items bulk edit profiles"
         SettingsPane.selectSettingsTab(APPLICATION_NAMES.BULK_EDIT);

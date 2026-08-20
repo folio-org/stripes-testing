@@ -115,8 +115,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C594483 Suppress from discovery = TRUE in JSON after update import (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C594483'] },
+      'C594483 Suppress from discovery = TRUE in JSON after update import (promin)',
+      { tags: ['criticalPath', 'promin', 'C594483'] },
       () => {
         // export instance
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

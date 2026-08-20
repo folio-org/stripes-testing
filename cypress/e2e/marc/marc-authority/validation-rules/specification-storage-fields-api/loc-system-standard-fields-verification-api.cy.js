@@ -121,8 +121,8 @@ describe('MARC Authority Validation Rules - LOC System and Standard Fields Verif
   });
 
   it(
-    "C494348 Check System and Standard validation rules for MARC authority's Fields from LOC (API) (spitfire)",
-    { tags: ['C494348', 'extendedPath', 'spitfire'] },
+    "C494348 Check System and Standard validation rules for MARC authority's Fields from LOC (API) (promin)",
+    { tags: ['C494348', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

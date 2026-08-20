@@ -171,8 +171,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C627522 Browse for call number which has the same value but different types (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C627522'] },
+        'C627522 Browse for call number which has the same value but different types (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C627522'] },
         () => {
           // Wait for call number to be indexed
           BrowseCallNumber.waitForCallNumberToAppear(

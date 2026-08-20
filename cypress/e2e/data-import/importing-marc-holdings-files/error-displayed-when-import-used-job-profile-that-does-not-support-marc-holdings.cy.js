@@ -67,8 +67,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C359245 Checking the error displayed when the import used a "Job Profile" that does not support the "MARC Holding" record type (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C359245'] },
+      'C359245 Checking the error displayed when the import used a "Job Profile" that does not support the "MARC Holding" record type (promin)',
+      { tags: ['extendedPath', 'promin', 'C359245'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameForImportForMarcAuthority);

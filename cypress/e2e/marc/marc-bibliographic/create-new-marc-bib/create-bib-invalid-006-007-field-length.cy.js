@@ -167,8 +167,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C499621 Cannot create "MARC bib" record with invalid length of "006" and "007" fields (which are "system") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C499621'] },
+        'C499621 Cannot create "MARC bib" record with invalid length of "006" and "007" fields (which are "system") (promin)',
+        { tags: ['extendedPath', 'promin', 'C499621'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateLDR06And07Positions();

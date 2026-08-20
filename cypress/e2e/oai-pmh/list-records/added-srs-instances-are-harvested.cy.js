@@ -29,8 +29,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375970 ListRecords: Added SRS instances are harvested (marc21 and marc21_withholdings) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C375970'] },
+      'C375970 ListRecords: Added SRS instances are harvested (marc21 and marc21_withholdings) (athena)',
+      { tags: ['criticalPath', 'athena', 'C375970'] },
       () => {
         OaiPmh.listRecordsRequest('marc21_withholdings').then((response) => {
           OaiPmh.verifyOaiPmhRecordHeader(response, marcInstanceId, false, true);

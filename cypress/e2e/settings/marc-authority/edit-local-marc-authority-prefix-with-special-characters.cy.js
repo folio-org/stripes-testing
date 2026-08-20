@@ -52,8 +52,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C440099 "Prefix" field alpha and special characters validation during editing of Local "Authority file" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C440099'] },
+        'C440099 "Prefix" field alpha and special characters validation during editing of Local "Authority file" (promin)',
+        { tags: ['extendedPath', 'promin', 'C440099'] },
         () => {
           invalidPrefixes.forEach((prefix) => {
             // Edit Local authority file

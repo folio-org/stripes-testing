@@ -158,8 +158,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C405926 Automated linking of Local MARC bib to Local MARC Authority in Member tenant (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C405926'] },
+            'C405926 Automated linking of Local MARC bib to Local MARC Authority in Member tenant (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C405926'] },
             () => {
               // Step 1: Edit local MARC bib in Member 1
               InventorySearchAndFilter.clearDefaultHeldbyFilter();

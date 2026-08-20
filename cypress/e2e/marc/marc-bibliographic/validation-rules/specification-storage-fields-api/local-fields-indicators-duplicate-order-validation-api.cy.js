@@ -69,8 +69,8 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Duplicat
   });
 
   it(
-    'C499657 Cannot create Indicators of Local field with duplicate "order" for MARC bib spec (spitfire)',
-    { tags: ['C499657', 'extendedPath', 'spitfire'] },
+    'C499657 Cannot create Indicators of Local field with duplicate "order" for MARC bib spec (promin)',
+    { tags: ['C499657', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

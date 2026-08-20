@@ -72,8 +72,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C374147 Edit 1XX tag value in the "MARC authority" record which doesn\'t control "MARC Bib(s)" and check "Version history" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C374147'] },
+        'C374147 Edit 1XX tag value in the "MARC authority" record which doesn\'t control "MARC Bib(s)" and check "Version history" (promin)',
+        { tags: ['extendedPath', 'promin', 'C374147'] },
         () => {
           // Steps 1-2: Search for the authority record
           MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading);

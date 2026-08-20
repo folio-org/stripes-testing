@@ -31,8 +31,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C357984 Confirm that the logs are in default sort order on the View all page when "Reset all" button is pressed (folijet)',
-      { tags: ['extendedPathBroken', 'folijet', 'C357984'] },
+      'C357984 Confirm that the logs are in default sort order on the View all page when "Reset all" button is pressed (promin)',
+      { tags: ['extendedPathBroken', 'promin', 'C357984'] },
       () => {
         const jobProfileColumn = 'Job profile';
         Logs.openViewAllLogs();

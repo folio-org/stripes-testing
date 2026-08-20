@@ -358,8 +358,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C624340 Update 20 linked MARC authority records which are linked to the same MARC bibliographic record using 010 $a for match (10 links are retained, 11 links are deleted) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C624340'] },
+      'C624340 Update 20 linked MARC authority records which are linked to the same MARC bibliographic record using 010 $a for match (10 links are retained, 11 links are deleted) (promin)',
+      { tags: ['criticalPath', 'promin', 'C624340'] },
       () => {
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.searchValue);
         cy.wait(1000);

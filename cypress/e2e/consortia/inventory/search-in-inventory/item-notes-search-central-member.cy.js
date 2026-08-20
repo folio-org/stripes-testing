@@ -248,8 +248,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411753 Search for Shared/Local records by Item\'s "Item notes (all)","Item administrative notes" and "Circulation notes" search options from "Central" and "Member 1" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411753'] },
+        'C411753 Search for Shared/Local records by Item\'s "Item notes (all)","Item administrative notes" and "Circulation notes" search options from "Central" and "Member 1" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411753'] },
         () => {
           function searchAndVerify(query, expectedIndexes) {
             InventorySearchAndFilter.fillInSearchQuery(query);

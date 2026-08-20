@@ -95,8 +95,8 @@ describe(
         });
 
         it(
-          'C402321 Verify "Suppress from discovery" option is set True in when Holdings are suppressed and associated Items are not (firebird)',
-          { tags: ['criticalPath', 'firebird', 'C402321'] },
+          'C402321 Verify "Suppress from discovery" option is set True in when Holdings are suppressed and associated Items are not (athena)',
+          { tags: ['criticalPath', 'athena', 'C402321'] },
           () => {
             BulkEditSearchPane.checkHoldingsRadio();
             BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');

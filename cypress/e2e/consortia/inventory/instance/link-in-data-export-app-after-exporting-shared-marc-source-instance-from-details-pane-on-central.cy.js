@@ -59,8 +59,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C422086 (CONSORTIA) Verify the link in Data export app after exporting shared MARC Source Instance from Instance details pane on Central tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C422086'] },
+        'C422086 (CONSORTIA) Verify the link in Data export app after exporting shared MARC Source Instance from Instance details pane on Central tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C422086'] },
         () => {
           InventoryInstances.searchByTitle(testData.instanceId);
           InstanceRecordView.exportInstanceMarc();

@@ -85,8 +85,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C1273176 Check name of the User triggered data export displayed under “Running“ accordion, "Run by" column - User without first name (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C1273176'] },
+      'C1273176 Check name of the User triggered data export displayed under “Running“ accordion, "Run by" column - User without first name (athena)',
+      { tags: ['extendedPath', 'athena', 'C1273176'] },
       () => {
         // Step 1: Go to Data Export app (already landed via login) - verify Jobs pane visible
         DataExportLogs.waitLoading();

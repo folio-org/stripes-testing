@@ -176,8 +176,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C402366 Apply "Shared" facet when Browse for same contributor existing in different tenants (exact match) (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C402366'] },
+        'C402366 Apply "Shared" facet when Browse for same contributor existing in different tenants (exact match) (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C402366'] },
         () => {
           cy.resetTenant();
           cy.login(user.username, user.password);

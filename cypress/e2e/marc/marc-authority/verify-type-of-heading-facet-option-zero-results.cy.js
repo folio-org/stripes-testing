@@ -59,8 +59,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C365629 Search | Verify that the "Type of heading" facet option will display the name of facet option when zero results are returned (spitfire)',
-          { tags: ['extendedPath', 'C365629', 'spitfire'] },
+          'C365629 Search | Verify that the "Type of heading" facet option will display the name of facet option when zero results are returned (promin)',
+          { tags: ['extendedPath', 'C365629', 'promin'] },
           () => {
             MarcAuthorities.verifyTypeOfHeadingAccordionAndClick();
             MarcAuthorities.checkOptionsWithCountersExistInAccordion(

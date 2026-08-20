@@ -73,8 +73,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C366531 Verify that user without permission can\'t link "MARC Bib" field to "MARC Authority" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C366531'] },
+        'C366531 Verify that user without permission can\'t link "MARC Bib" field to "MARC Authority" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C366531'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

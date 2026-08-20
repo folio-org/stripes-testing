@@ -68,8 +68,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1322595 Build query to find MARC authority records which have Leader status = Deleted (d) but are not marked as Deleted in SRS (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1322595'] },
+        'C1322595 Build query to find MARC authority records which have Leader status = Deleted (d) but are not marked as Deleted in SRS (promin)',
+        { tags: ['extendedPath', 'promin', 'C1322595'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

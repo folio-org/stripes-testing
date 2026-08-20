@@ -80,8 +80,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C569606 Check "Subject type" facet on "Browse" page (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C569606'] },
+      'C569606 Check "Subject type" facet on "Browse" page (promin)',
+      { tags: ['extendedPath', 'promin', 'C569606'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseSubjects.select();

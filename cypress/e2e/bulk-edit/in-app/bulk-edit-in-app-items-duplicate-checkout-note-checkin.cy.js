@@ -67,8 +67,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C405535 Verify Bulk Edit actions for Items notes - duplicate check out note to check in note (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C405535'] },
+      'C405535 Verify Bulk Edit actions for Items notes - duplicate check out note to check in note (athena)',
+      { tags: ['criticalPath', 'athena', 'C405535'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

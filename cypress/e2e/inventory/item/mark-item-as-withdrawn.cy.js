@@ -89,8 +89,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C10930 Mark items as withdrawn (folijet)',
-      { tags: ['smoke', 'folijet', 'C10930', 'shiftLeft'] },
+      'C10930 Mark items as withdrawn (promin)',
+      { tags: ['smoke', 'promin', 'C10930', 'shiftLeft'] },
       () => {
         markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
         markItemAsMissing.getItemsToMarkAsMissing

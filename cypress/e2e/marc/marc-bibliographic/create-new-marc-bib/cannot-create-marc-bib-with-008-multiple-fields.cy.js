@@ -44,8 +44,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C499625 Cannot create "MARC bib" record with multiple "008" fields ("system", not repeatable) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C499625'] },
+        'C499625 Cannot create "MARC bib" record with multiple "008" fields ("system", not repeatable) (promin)',
+        { tags: ['extendedPath', 'promin', 'C499625'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.waitLoading();

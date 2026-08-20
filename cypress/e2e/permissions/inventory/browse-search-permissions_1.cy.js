@@ -50,8 +50,8 @@ describe('Permissions', () => {
     });
 
     it(
-      'C375077 User with "Inventory: All permissions" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (spitfire)',
-      { tags: ['smoke', 'spitfire', 'C375077'] },
+      'C375077 User with "Inventory: All permissions" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (promin)',
+      { tags: ['smoke', 'promin', 'C375077'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseCallNumbers();

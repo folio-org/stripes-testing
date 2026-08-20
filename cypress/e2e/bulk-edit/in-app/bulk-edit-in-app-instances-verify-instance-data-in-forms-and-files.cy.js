@@ -131,8 +131,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C423676 Verify rendering Instance record data in bulk edit forms and files (fields with single value) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C423676'] },
+      'C423676 Verify rendering Instance record data in bulk edit forms and files (fields with single value) (athena)',
+      { tags: ['criticalPath', 'athena', 'C423676'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance HRIDs');
         BulkEditSearchPane.verifyRecordIdentifiers(instanceIdentifiers);

@@ -67,8 +67,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C387521 User without permission "quickMARC: Can Link/unlink authority records to bib records" cant see "Link headings" button when edit "MARC bib" (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C387521'] },
+          'C387521 User without permission "quickMARC: Can Link/unlink authority records to bib records" cant see "Link headings" button when edit "MARC bib" (promin)',
+          { tags: ['criticalPath', 'promin', 'C387521'] },
           () => {
             cy.login(
               testData.userPropertiesC387521.username,
@@ -96,8 +96,8 @@ describe('MARC', () => {
         );
 
         it(
-          'C387523 User without permission "quickMARC: Can Link/unlink authority records to bib records" cant see "Link headings" button when derive "MARC bib" (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C387523'] },
+          'C387523 User without permission "quickMARC: Can Link/unlink authority records to bib records" cant see "Link headings" button when derive "MARC bib" (promin)',
+          { tags: ['criticalPath', 'promin', 'C387523'] },
           () => {
             cy.login(
               testData.userPropertiesC387523.username,

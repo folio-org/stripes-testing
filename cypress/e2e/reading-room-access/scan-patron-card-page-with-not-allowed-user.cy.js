@@ -77,8 +77,8 @@ describe('Reading Room Access', () => {
   });
 
   it(
-    'C494088 Validate Functionality of scan patron card page with not allowed user (volaris)',
-    { tags: ['smoke', 'volaris', 'C494088'] },
+    'C494088 Validate Functionality of scan patron card page with not allowed user (vega)',
+    { tags: ['smoke', 'vega', 'C494088'] },
     () => {
       const userInfo = {
         preferredFirstName: userNotAllowedInReadingRoom.user.preferredFirstName,

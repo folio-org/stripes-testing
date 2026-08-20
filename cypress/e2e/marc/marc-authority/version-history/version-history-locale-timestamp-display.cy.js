@@ -91,8 +91,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C663327 Verify that "Updated date/time stamp" is displayed based on current locale in "Version history" pane of "MARC authority" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C663327'] },
+        'C663327 Verify that "Updated date/time stamp" is displayed based on current locale in "Version history" pane of "MARC authority" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C663327'] },
         () => {
           // Step 1: Click on the 'Version history' icon and note format of Updated date/time stamp
           MarcAuthority.verifyVersionHistoryButtonShown();

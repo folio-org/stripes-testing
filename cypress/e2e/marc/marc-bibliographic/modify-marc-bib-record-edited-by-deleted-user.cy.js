@@ -79,8 +79,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C358964 Verify that user has access to "quickMARC" when user who edited MARC record has been deleted (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C358964'] },
+      'C358964 Verify that user has access to "quickMARC" when user who edited MARC record has been deleted (promin)',
+      { tags: ['criticalPath', 'promin', 'C358964'] },
       () => {
         InventoryInstances.searchBySource(testData.source);
         InventoryInstances.searchByTitle(createdRecordID);

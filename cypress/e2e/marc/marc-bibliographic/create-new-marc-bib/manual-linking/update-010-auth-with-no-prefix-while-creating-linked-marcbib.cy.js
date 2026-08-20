@@ -86,8 +86,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422136 Update "010" value without valid prefix in "MARC authority" record while "MARC Bib" record being created and linked (NOT saved link; "$0" = "001" with valid prefix) (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C422136'] },
+          'C422136 Update "010" value without valid prefix in "MARC authority" record while "MARC Bib" record being created and linked (NOT saved link; "$0" = "001" with valid prefix) (promin)',
+          { tags: ['extendedPath', 'promin', 'C422136'] },
           () => {
             // Steps 1-2 (Inventory tab): Create new MARC bib, fill 245
             InventoryInstance.newMarcBibRecord();

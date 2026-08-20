@@ -59,8 +59,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C784465 The user is redirected to the Lists detail page and gets a successful save toast notification when editing the query during duplication (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C784465'] },
+      'C784465 The user is redirected to the Lists detail page and gets a successful save toast notification when editing the query during duplication (athena)',
+      { tags: ['extendedPath', 'athena', 'C784465'] },
       () => {
         // Step 1: Open the list from the pre-condition
         Lists.verifyListIsPresent(listData.name);

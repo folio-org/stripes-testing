@@ -47,8 +47,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C376979 verb=ListIdentifiers: Verify that added Instance FOLIO is retrieved (oai_dc) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C376979', 'nonParallel'] },
+      'C376979 verb=ListIdentifiers: Verify that added Instance FOLIO is retrieved (oai_dc) (athena)',
+      { tags: ['extendedPath', 'athena', 'C376979', 'nonParallel'] },
       () => {
         // Step 1: Go to Inventory app → Select Actions → Select "+New" button
         InventoryInstances.addNewInventory();

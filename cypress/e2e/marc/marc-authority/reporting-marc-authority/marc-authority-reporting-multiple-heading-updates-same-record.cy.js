@@ -130,8 +130,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375233 "MARC authority headings updates (CSV)" report includes data on several heading updates for the same "MARC authority" record (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C375233'] },
+        'C375233 "MARC authority headings updates (CSV)" report includes data on several heading updates for the same "MARC authority" record (promin)',
+        { tags: ['criticalPath', 'promin', 'C375233'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.marcAuthorities,

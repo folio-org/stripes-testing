@@ -105,8 +105,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C377015 Correct data for "MARC authority headings updates (CSV)" report shown in "Export manager" (minimal permissions) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C377015'] },
+        'C377015 Correct data for "MARC authority headings updates (CSV)" report shown in "Export manager" (minimal permissions) (promin)',
+        { tags: ['extendedPath', 'promin', 'C377015'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.marcAuthorities,

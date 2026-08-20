@@ -43,8 +43,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C353954 Verify uploading file with External IDs (firebird)',
-      { tags: ['smoke', 'firebird', 'C353954'] },
+      'C353954 Verify uploading file with External IDs (athena)',
+      { tags: ['smoke', 'athena', 'C353954'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('External IDs');

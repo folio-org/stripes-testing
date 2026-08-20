@@ -44,8 +44,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C446043 Verify filtering by User in the "Search & filter" pane on the "View all" screen ("Choose user" dropdown) (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C446043'] },
+    'C446043 Verify filtering by User in the "Search & filter" pane on the "View all" screen ("Choose user" dropdown) (athena)',
+    { tags: ['extendedPath', 'athena', 'C446043'] },
     () => {
       // Step 1: Click "View all" button in the "Logs" main pane
       DataExportViewAllLogs.openAllJobLogs();

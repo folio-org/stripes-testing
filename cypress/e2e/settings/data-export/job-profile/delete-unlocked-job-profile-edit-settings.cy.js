@@ -110,8 +110,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C1030053 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to delete unlocked job profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C1030053'] },
+      'C1030053 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to delete unlocked job profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C1030053'] },
       () => {
         // Step 1: Select existing unlocked job profile from Preconditions: job profile not referenced in an existing export job
         SettingsDataExport.goToSettingsDataExport();

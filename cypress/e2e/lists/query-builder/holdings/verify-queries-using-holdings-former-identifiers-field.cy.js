@@ -118,8 +118,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C844255 Verify that it\'s possible to run queries using the field "Holdings — Former identifiers" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C844255'] },
+        'C844255 Verify that it\'s possible to run queries using the field "Holdings — Former identifiers" (athena)',
+        { tags: ['criticalPath', 'athena', 'C844255'] },
         () => {
           // Step 1: Create new list with Holdings record type and build query
           Lists.openNewListPane();

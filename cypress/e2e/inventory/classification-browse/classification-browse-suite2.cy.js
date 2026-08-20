@@ -210,8 +210,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468150 Each Classification identifier type could be found in the browse result list by "Classification (all)" browse option when all identifier types are selected in settings (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468150'] },
+      'C468150 Each Classification identifier type could be found in the browse result list by "Classification (all)" browse option when all identifier types are selected in settings (promin)',
+      { tags: ['criticalPath', 'promin', 'C468150'] },
       () => {
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue, folioInstance.classificationValue);
@@ -414,8 +414,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468155 Only one Classification identifier type could be found in the browse result list by "Classification (all)" browse option when only one Classification identifier type is selected in settings (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'C468155'] },
+      'C468155 Only one Classification identifier type could be found in the browse result list by "Classification (all)" browse option when only one Classification identifier type is selected in settings (promin)',
+      { tags: ['criticalPathFlaky', 'promin', 'C468155'] },
       () => {
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue);
@@ -613,8 +613,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468156 Only one Classification identifier type could be found in the browse result list by "Dewey Decimal classification" browse option when only one Classification identifier type is selected in settings (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468156'] },
+      'C468156 Only one Classification identifier type could be found in the browse result list by "Dewey Decimal classification" browse option when only one Classification identifier type is selected in settings (promin)',
+      { tags: ['criticalPath', 'promin', 'C468156'] },
       () => {
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue);
@@ -823,8 +823,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468157 Only one Classification identifier type could be found in the browse result list by "Library of Congress classification" browse option when only one Classification identifier type is selected in settings (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468157'] },
+      'C468157 Only one Classification identifier type could be found in the browse result list by "Library of Congress classification" browse option when only one Classification identifier type is selected in settings (promin)',
+      { tags: ['criticalPath', 'promin', 'C468157'] },
       () => {
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue);
@@ -925,8 +925,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466323 Select exact match result in Classification browse result list by "Classification (all)" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466323'] },
+      'C466323 Select exact match result in Classification browse result list by "Classification (all)" browse option (promin)',
+      { tags: ['criticalPath', 'promin', 'C466323'] },
       () => {
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
         InventorySearchAndFilter.browseSearch(testData.searchQuery);
@@ -1049,8 +1049,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468142 Select non-exact match result in Classification browse result list by "Classification (all)" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468142'] },
+      'C468142 Select non-exact match result in Classification browse result list by "Classification (all)" browse option (promin)',
+      { tags: ['criticalPath', 'promin', 'C468142'] },
       () => {
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
         InventorySearchAndFilter.browseSearch(testData.negativeSearchQuery);
@@ -1167,8 +1167,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468141 Select exact match result in Classification browse result list by "Dewey Decimal classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468141'] },
+      'C468141 Select exact match result in Classification browse result list by "Dewey Decimal classification" browse option (promin)',
+      { tags: ['criticalPath', 'promin', 'C468141'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
@@ -1283,8 +1283,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468145 Select non-exact match result in Classification browse result list by "Dewey Decimal classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468145'] },
+      'C468145 Select non-exact match result in Classification browse result list by "Dewey Decimal classification" browse option (promin)',
+      { tags: ['criticalPath', 'promin', 'C468145'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
@@ -1399,8 +1399,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468140 Select exact match result in Classification browse result list by "Library of Congress classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468140'] },
+      'C468140 Select exact match result in Classification browse result list by "Library of Congress classification" browse option (promin)',
+      { tags: ['criticalPath', 'promin', 'C468140'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
@@ -1518,8 +1518,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468146 Select non-exact match result in Classification browse result list by "Library of Congress classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468146'] },
+      'C468146 Select non-exact match result in Classification browse result list by "Library of Congress classification" browse option (promin)',
+      { tags: ['criticalPath', 'promin', 'C468146'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
@@ -1635,8 +1635,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468182 Browse for classifications of the same type which exist in 1 Instance using all browse options (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468182'] },
+      'C468182 Browse for classifications of the same type which exist in 1 Instance using all browse options (promin)',
+      { tags: ['criticalPath', 'promin', 'C468182'] },
       () => {
         InventorySearchAndFilter.selectBrowseOption(defaultClassificationBrowseNames[0]);
         InventorySearchAndFilter.browseSearch(testData.classificationValue1);
@@ -1792,8 +1792,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468181 Browse for classification which exists in more than 1 Instances using all browse options (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468181'] },
+      'C468181 Browse for classification which exists in more than 1 Instances using all browse options (promin)',
+      { tags: ['criticalPath', 'promin', 'C468181'] },
       () => {
         InventorySearchAndFilter.selectBrowseOption(defaultClassificationBrowseNames[0]);
         InventorySearchAndFilter.browseSearch(testData.classificationValueDewey);

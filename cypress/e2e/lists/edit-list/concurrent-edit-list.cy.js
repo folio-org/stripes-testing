@@ -75,8 +75,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411740 (Multiple users): Make the list INACTIVE (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411740'] },
+      'C411740 (Multiple users): Make the list INACTIVE (athena)',
+      { tags: ['criticalPath', 'athena', 'C411740'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -112,8 +112,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411741 (Multiple users): Make the list Private (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411741'] },
+      'C411741 (Multiple users): Make the list Private (athena)',
+      { tags: ['criticalPath', 'athena', 'C411741'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -142,8 +142,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411766 (Multiple users) Edit list when refresh is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411766'] },
+      'C411766 (Multiple users) Edit list when refresh is in progress (athena)',
+      { tags: ['criticalPath', 'athena', 'C411766'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -171,8 +171,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411765 C411776 (Multiple users) Edit deleted list (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411765', 'C411776'] },
+      'C411765 C411776 (Multiple users) Edit deleted list (athena)',
+      { tags: ['criticalPath', 'athena', 'C411765', 'C411776'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

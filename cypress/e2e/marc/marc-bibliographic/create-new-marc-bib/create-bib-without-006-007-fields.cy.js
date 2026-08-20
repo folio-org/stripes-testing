@@ -43,8 +43,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C496227 Create "MARC bib" record without "006" and "007" fields (which are "system" and not required) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C496227'] },
+        'C496227 Create "MARC bib" record without "006" and "007" fields (which are "system" and not required) (promin)',
+        { tags: ['extendedPath', 'promin', 'C496227'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateLDR06And07Positions();

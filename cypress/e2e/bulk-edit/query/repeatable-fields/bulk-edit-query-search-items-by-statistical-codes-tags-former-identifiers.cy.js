@@ -173,8 +173,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C813673 Search items by Statistical code names, Tags, Former identifiers (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C813673'] },
+        'C813673 Search items by Statistical code names, Tags, Former identifiers (athena)',
+        { tags: ['criticalPath', 'athena', 'C813673'] },
         () => {
           // Step 1: Search items by "Item — Statistical codes" field using "equals" operator
           BulkEditSearchPane.openQuerySearch();

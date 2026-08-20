@@ -139,8 +139,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C406998 Consortia | SRS+Inventory | ListRecords | ListIdentifiers: Add shared MARC instance to Central tenant and enrich it with local FOLIO Holdings in Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C406998', 'nonParallel'] },
+        'C406998 Consortia | SRS+Inventory | ListRecords | ListIdentifiers: Add shared MARC instance to Central tenant and enrich it with local FOLIO Holdings in Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C406998', 'nonParallel'] },
         () => {
           // Step 1: Upload MARC file
           DataImport.verifyUploadState();

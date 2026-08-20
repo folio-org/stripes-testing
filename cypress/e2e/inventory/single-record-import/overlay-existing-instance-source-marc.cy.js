@@ -59,8 +59,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C193953 Overlay existing Source = MARC Instance by import of single MARC Bib record from OCLC (folijet)',
-      { tags: ['smoke', 'folijet', 'C193953'] },
+      'C193953 Overlay existing Source = MARC Instance by import of single MARC Bib record from OCLC (promin)',
+      { tags: ['smoke', 'promin', 'C193953'] },
       () => {
         InventorySearchAndFilter.byKeywords(testData.instanceId);
         InstanceRecordView.waitLoading();

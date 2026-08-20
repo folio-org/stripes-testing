@@ -74,8 +74,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C624269 Edit Shared MARC bibliographic record from Member tenant by user with granted permissions via Permission set (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C624269'] },
+          'C624269 Edit Shared MARC bibliographic record from Member tenant by user with granted permissions via Permission set (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C624269'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

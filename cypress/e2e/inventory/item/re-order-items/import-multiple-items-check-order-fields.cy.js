@@ -109,8 +109,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C831984 Import multiple items in one holding to check "Order" fields (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C831984'] },
+        'C831984 Import multiple items in one holding to check "Order" fields (promin)',
+        { tags: ['criticalPath', 'promin', 'C831984'] },
         () => {
           // Step 1-3: Create Holdings field mapping profile
           FieldMappingProfiles.openNewMappingProfileForm();

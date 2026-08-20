@@ -53,8 +53,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C503115 Add multiple MARC 004s when creating MARC Holdings record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C503115'] },
+      'C503115 Add multiple MARC 004s when creating MARC Holdings record (promin)',
+      { tags: ['criticalPath', 'promin', 'C503115'] },
       () => {
         // Add MARC holdings
         InventoryInstance.goToMarcHoldingRecordAdding();

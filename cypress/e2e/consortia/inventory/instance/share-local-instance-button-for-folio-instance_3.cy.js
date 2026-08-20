@@ -64,8 +64,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411329 (CONSORTIA) Check the "Share local instance" button on a shared Source = FOLIO Instance on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411329'] },
+        'C411329 (CONSORTIA) Check the "Share local instance" button on a shared Source = FOLIO Instance on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411329'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instance.instanceTitle);

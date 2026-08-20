@@ -115,9 +115,9 @@ describe('Inventory', () => {
     });
 
     it(
-      'C411512 Verify that "Move items within an instance" option works as expected when opening record from Browse (spitfire)',
+      'C411512 Verify that "Move items within an instance" option works as expected when opening record from Browse (promin)',
       {
-        tags: ['extendedPath', 'spitfire', 'C411512'],
+        tags: ['extendedPath', 'promin', 'C411512'],
       },
       () => {
         cy.login(user.username, user.password, {

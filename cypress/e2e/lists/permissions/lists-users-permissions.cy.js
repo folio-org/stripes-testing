@@ -39,8 +39,8 @@ describe('Lists', () => {
     };
 
     it(
-      'C476845 C477582 Verify that it\'s possible to access the entity type using "Users: Can view user profile" permission when Lists app permissions assigned (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C476845', 'C477582'] },
+      'C476845 C477582 Verify that it\'s possible to access the entity type using "Users: Can view user profile" permission when Lists app permissions assigned (athena)',
+      { tags: ['criticalPath', 'athena', 'C476845', 'C477582'] },
       () => {
         createNewUser([Permissions.listsAll.gui, Permissions.uiUsersView.gui]);
         Lists.openNewListPane();
@@ -62,8 +62,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C476846 Verify that it\'s possible to access the entity type using "Users: View requests" permission when Lists app permissions assigned (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C476846'] },
+      'C476846 Verify that it\'s possible to access the entity type using "Users: View requests" permission when Lists app permissions assigned (athena)',
+      { tags: ['extendedPath', 'athena', 'C476846'] },
       () => {
         createNewUser([Permissions.listsAll.gui, Permissions.usersViewRequests.gui]);
         Lists.openNewListPane();
@@ -85,8 +85,8 @@ describe('Lists', () => {
     );
 
     it(
-      "C476851 C476847 Verify that it's not possible to access the entity type when Lists app permissions are assigned, but the user no longer has that permission (corsair)",
-      { tags: ['criticalPath', 'corsair', 'C476851', 'C476847'] },
+      "C476851 C476847 Verify that it's not possible to access the entity type when Lists app permissions are assigned, but the user no longer has that permission (athena)",
+      { tags: ['criticalPath', 'athena', 'C476851', 'C476847'] },
       () => {
         createNewUser([
           Permissions.listsAll.gui,

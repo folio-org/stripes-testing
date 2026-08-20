@@ -100,8 +100,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C451461 Find Instance plugin | Search for "Instance" record by "ISSN" value with "X" at the end using "ISSN" search option (Holdings tab) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C451461'] },
+      'C451461 Find Instance plugin | Search for "Instance" record by "ISSN" value with "X" at the end using "ISSN" search option (Holdings tab) (promin)',
+      { tags: ['extendedPath', 'promin', 'C451461'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

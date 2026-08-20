@@ -155,8 +155,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476709 (CONSORTIA) Check Acquisition accordion for shared FOLIO instance with linked central and member tenants (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C476709'] },
+        'C476709 (CONSORTIA) Check Acquisition accordion for shared FOLIO instance with linked central and member tenants (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C476709'] },
         () => {
           const memberPolNumber = `${testData.memberOrder.poNumber}-1`;
           const centralPolNumber = `${testData.centralOrder.poNumber}-1`;

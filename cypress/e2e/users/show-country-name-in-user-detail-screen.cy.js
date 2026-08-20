@@ -58,8 +58,8 @@ describe('Users', () => {
   });
 
   it(
-    'C434139 Show country name in user detail screen (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C434139'] },
+    'C434139 Show country name in user detail screen (vega)',
+    { tags: ['extendedPath', 'vega', 'C434139'] },
     () => {
       UsersSearchResultsPane.openNewUser();
       UserEdit.fillLastFirstNames(testData.newUser.personal.lastName);

@@ -95,8 +95,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C476710 Windows | Permission error is shown when user without edit permission uses shortcut "Ctrl + Shift + E" on the the detail view pane of "MARC Holdings" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C476710'] },
+      'C476710 Windows | Permission error is shown when user without edit permission uses shortcut "Ctrl + Shift + E" on the the detail view pane of "MARC Holdings" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C476710'] },
       () => {
         cy.login(userC476710.username, userC476710.password, {
           path: TopMenu.inventoryPath,
@@ -120,8 +120,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C476711 Windows | Permission error is shown when user without edit permission uses shortcut "Ctrl + Shift + E" on the view source pane of "MARC holdings" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C476711'] },
+      'C476711 Windows | Permission error is shown when user without edit permission uses shortcut "Ctrl + Shift + E" on the view source pane of "MARC holdings" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C476711'] },
       () => {
         cy.login(userC476711.username, userC476711.password, {
           path: TopMenu.inventoryPath,

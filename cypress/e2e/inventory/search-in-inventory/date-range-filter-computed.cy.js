@@ -104,8 +104,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C553056 Verify that "Date range" filter is working on computed field from "Date 1" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C553056'] },
+        'C553056 Verify that "Date range" filter is working on computed field from "Date 1" field (promin)',
+        { tags: ['criticalPath', 'promin', 'C553056'] },
         () => {
           InventoryInstances.searchByTitle(testData.searchQuery);
           testData.allDates1Sorted.forEach((date) => {

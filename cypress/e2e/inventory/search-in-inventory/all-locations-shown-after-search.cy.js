@@ -97,8 +97,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C196762 All Locations for a given search result are displayed in "Effective location (item)" facet when some Location is selected (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C196762'] },
+        'C196762 All Locations for a given search result are displayed in "Effective location (item)" facet when some Location is selected (promin)',
+        { tags: ['criticalPath', 'promin', 'C196762'] },
         () => {
           function searchAndVerifyLocations() {
             InventoryInstances.waitContentLoading();

@@ -74,8 +74,8 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C517 Settings - UI-Tenant-Settings Settings Location - Manage (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C517'] },
+    'C517 Settings - UI-Tenant-Settings Settings Location - Manage (athena)',
+    { tags: ['extendedPath', 'athena', 'C517'] },
     () => {
       // Navigate to Settings > Tenant > Locations
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);

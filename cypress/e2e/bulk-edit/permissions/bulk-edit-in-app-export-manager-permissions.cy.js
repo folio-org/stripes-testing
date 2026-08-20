@@ -63,7 +63,7 @@ describe.skip('Bulk-edit', () => {
     });
 
     it(
-      'C353971 Verify that user can view data in Export Manager based on permissions (In-app approach) (firebird)',
+      'C353971 Verify that user can view data in Export Manager based on permissions (In-app approach) (athena)',
       { tags: [] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);

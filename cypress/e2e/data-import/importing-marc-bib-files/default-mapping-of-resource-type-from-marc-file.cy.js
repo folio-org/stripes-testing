@@ -50,8 +50,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C6694 Check the default mapping of Resource type from the MARC record to the Inventory Instance record (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C6694'] },
+      'C6694 Check the default mapping of Resource type from the MARC record to the Inventory Instance record (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C6694'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);

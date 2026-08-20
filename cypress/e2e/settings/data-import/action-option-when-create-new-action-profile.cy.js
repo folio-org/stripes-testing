@@ -47,8 +47,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C358979 Checking "Action" option when create a new action profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C358979'] },
+      'C358979 Checking "Action" option when create a new action profile (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C358979'] },
       () => {
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
         SettingsActionProfiles.openNewActionProfileForm();

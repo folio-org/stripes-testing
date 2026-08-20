@@ -67,8 +67,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C709270 Derive MARC bib record with using "Save & keep editing" button (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C709270'] },
+        'C709270 Derive MARC bib record with using "Save & keep editing" button (promin)',
+        { tags: ['extendedPath', 'promin', 'C709270'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

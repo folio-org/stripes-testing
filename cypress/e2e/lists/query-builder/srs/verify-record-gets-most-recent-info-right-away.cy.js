@@ -49,8 +49,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C869998 Verify that each record should be able to get the most recent information right away (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C869998'] },
+      'C869998 Verify that each record should be able to get the most recent information right away (athena)',
+      { tags: ['criticalPath', 'athena', 'C869998'] },
       () => {
         // Step 1: Open Lists, create new list, select record type, open query builder
         Lists.openNewListPane();

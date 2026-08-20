@@ -97,8 +97,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C2315 Search: Verify that the "Reset all button" works (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C2315'] },
+      'C2315 Search: Verify that the "Reset all button" works (promin)',
+      { tags: ['extendedPath', 'promin', 'C2315'] },
       () => {
         // Step 1: Open the Inventory app - Instance segment is selected by default
         InventorySearchAndFilter.instanceTabIsDefault();

@@ -45,8 +45,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C196799 Import MARC record using the default job profile (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C196799'] },
+      'C196799 Import MARC record using the default job profile (promin)',
+      { tags: ['extendedPath', 'promin', 'C196799'] },
       () => {
         const todaysDate = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
         // Step 1: Open Data Import app — verify Jobs and Logs panes displayed

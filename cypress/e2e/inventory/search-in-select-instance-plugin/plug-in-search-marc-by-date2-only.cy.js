@@ -109,8 +109,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C552986 Select Instance plugin | Check "Date" column in the result list for each date type when only Date 2 is specified in MARC bib record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C552986'] },
+      'C552986 Select Instance plugin | Check "Date" column in the result list for each date type when only Date 2 is specified in MARC bib record (promin)',
+      { tags: ['extendedPath', 'promin', 'C552986'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.ordersPath,

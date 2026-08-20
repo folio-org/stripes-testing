@@ -81,8 +81,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C927744 API | Create multiple holdings using POST /holdings-storage/batch/synchronous with upsert=true (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C927744'] },
+      'C927744 API | Create multiple holdings using POST /holdings-storage/batch/synchronous with upsert=true (promin)',
+      { tags: ['criticalPath', 'promin', 'C927744'] },
       () => {
         // Step 1. Send POST ‘/holdings-storage/batch/synchronous?upsert=true’ with following body (without holdings “id”)
         const holdingsRecordWithoutIds = [

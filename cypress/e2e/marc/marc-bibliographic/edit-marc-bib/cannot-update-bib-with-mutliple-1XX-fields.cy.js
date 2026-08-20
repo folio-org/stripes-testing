@@ -142,8 +142,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C515005 Cannot update MARC bib record with multiple 1XX fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C515005'] },
+        'C515005 Cannot update MARC bib record with multiple 1XX fields (promin)',
+        { tags: ['extendedPath', 'promin', 'C515005'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

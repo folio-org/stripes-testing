@@ -67,8 +67,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423710 Using Advanced search with search query with not supported search option "Advanced search" in MARC authority app (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423710'] },
+        'C423710 Using Advanced search with search query with not supported search option "Advanced search" in MARC authority app (promin)',
+        { tags: ['extendedPath', 'promin', 'C423710'] },
         () => {
           // Precondition: select "Advanced search" search option
           MarcAuthorities.selectSearchOptionInDropdown(

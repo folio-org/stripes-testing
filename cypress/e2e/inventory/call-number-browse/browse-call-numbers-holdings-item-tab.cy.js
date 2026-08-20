@@ -13,7 +13,7 @@ describe('Inventory', () => {
 
     it.skip(
       // test case obsolete
-      'C347903 Verify "Browse call numbers" option on Holdings tab (firebird)',
+      'C347903 Verify "Browse call numbers" option on Holdings tab (athena)',
       { tags: [] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
@@ -25,7 +25,7 @@ describe('Inventory', () => {
 
     it.skip(
       // test case obsolete
-      'C347923 Verify "Browse call numbers" option on Item tab (firebird)',
+      'C347923 Verify "Browse call numbers" option on Item tab (athena)',
       { tags: [] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();

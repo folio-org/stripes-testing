@@ -102,8 +102,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C409433 Advanced search of "MARC authority" records when facets were applied to the search result list (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C409433'] },
+        'C409433 Advanced search of "MARC authority" records when facets were applied to the search result list (promin)',
+        { tags: ['extendedPath', 'promin', 'C409433'] },
         () => {
           MarcAuthorities.searchByParameter('Keyword', '*');
           MarcAuthorities.chooseAuthoritySourceOption('LC Name Authority file (LCNAF)');

@@ -61,8 +61,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C773218 Save authority UUIDs (1 record) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C773218'] },
+      'C773218 Save authority UUIDs (1 record) (promin)',
+      { tags: ['criticalPath', 'promin', 'C773218'] },
       () => {
         MarcAuthoritiesSearch.searchBy(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD, testData.searchQuery);
         MarcAuthorities.checkResultsListRecordsCount();

@@ -47,8 +47,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C360543 Check the content of "Title information" accordion in "Title" detail record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C360543'] },
+      'C360543 Check the content of "Title information" accordion in "Title" detail record (promin)',
+      { tags: ['extendedPath', 'promin', 'C360543'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.C9240UserProperties.username, testData.C9240UserProperties.password, {

@@ -83,8 +83,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375090 No additional records appear after user edits "1XX" MARC tag in MARC authority record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C375090'] },
+        'C375090 No additional records appear after user edits "1XX" MARC tag in MARC authority record (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C375090'] },
         () => {
           MarcAuthorities.searchByParameter(
             testData.authority.searchOption,
@@ -105,8 +105,8 @@ describe('MARC', () => {
       );
 
       it(
-        'C375099 Unable to add multiple "010" fields to "MARC authority" record which is NOT linked to "MARC Bib" record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C375099'] },
+        'C375099 Unable to add multiple "010" fields to "MARC authority" record which is NOT linked to "MARC Bib" record (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C375099'] },
         () => {
           MarcAuthorities.searchByParameter(
             testData.authority2.searchOption,

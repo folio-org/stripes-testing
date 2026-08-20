@@ -63,8 +63,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C358966 Verify that operator "==/string" is used when user clicks on the "Contributor name" at the browse result list (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C358966'] },
+      'C358966 Verify that operator "==/string" is used when user clicks on the "Contributor name" at the browse result list (promin)',
+      { tags: ['extendedPath', 'promin', 'C358966'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

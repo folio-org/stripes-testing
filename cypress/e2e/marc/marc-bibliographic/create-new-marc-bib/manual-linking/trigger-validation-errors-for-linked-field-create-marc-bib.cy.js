@@ -203,8 +203,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C566547 Trigger validation errors for linked field on "Create a new MARC bib record" pane (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C566547', 'nonParallel'] },
+          'C566547 Trigger validation errors for linked field on "Create a new MARC bib record" pane (promin)',
+          { tags: ['criticalPath', 'promin', 'C566547', 'nonParallel'] },
           () => {
             // Step 1: Click on "Actions" button >> Select "New MARC bibliographic record" option
             InventoryInstance.newMarcBibRecord();

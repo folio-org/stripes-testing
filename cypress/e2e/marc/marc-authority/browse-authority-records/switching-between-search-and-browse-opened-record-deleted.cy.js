@@ -66,8 +66,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C386511 Switching between Search and Browse in "MARC authority" app (opened record deleted) (spitfire)',
-        { tags: ['extendedPath', 'C386511', 'spitfire'] },
+        'C386511 Switching between Search and Browse in "MARC authority" app (opened record deleted) (promin)',
+        { tags: ['extendedPath', 'C386511', 'promin'] },
         () => {
           // Step 1: Select filter options that will return existing records
           MarcAuthorities.selectSearchOptionInDropdown(testData.searchOption);

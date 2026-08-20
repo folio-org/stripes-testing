@@ -63,8 +63,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514970 Cannot create MARC authority record without required fields (Standard and Local) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514970'] },
+        'C514970 Cannot create MARC authority record without required fields (Standard and Local) (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514970'] },
         () => {
           cy.then(() => {
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C514970_');

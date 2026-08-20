@@ -41,8 +41,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C436834 Check "Set record for deletion" option in Actions menu (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C436834'] },
+      'C436834 Check "Set record for deletion" option in Actions menu (promin)',
+      { tags: ['extendedPath', 'promin', 'C436834'] },
       () => {
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.validateOptionInActionsMenu(

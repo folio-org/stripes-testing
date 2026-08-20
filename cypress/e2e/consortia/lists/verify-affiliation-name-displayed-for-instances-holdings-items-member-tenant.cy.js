@@ -64,8 +64,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C736769 Verify that the "Affiliation name" is displayed for Instances, Holdings, Items on Member tenant (consortia) (corsair)',
-      { tags: ['criticalPathECS', 'corsair', 'C736769'] },
+      'C736769 Verify that the "Affiliation name" is displayed for Instances, Holdings, Items on Member tenant (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C736769'] },
       () => {
         // Step 1: Switch to College member tenant, create new list, select Instances, open query builder
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

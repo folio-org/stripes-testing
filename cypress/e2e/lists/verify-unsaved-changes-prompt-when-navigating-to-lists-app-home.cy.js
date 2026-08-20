@@ -26,8 +26,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C566575 Verify that users are prompted about unsaved changes when creating a list when they click on "Lists app home" from the app context menu (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C566575'] },
+      'C566575 Verify that users are prompted about unsaved changes when creating a list when they click on "Lists app home" from the app context menu (athena)',
+      { tags: ['extendedPath', 'athena', 'C566575'] },
       () => {
         // Step 1: Click on the "New" button on the top-right of the page
         cy.login(userData.username, userData.password, {

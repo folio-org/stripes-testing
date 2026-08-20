@@ -31,8 +31,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C367988 Check that "Run" button is disabled after clicking it one time (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C367988'] },
+      'C367988 Check that "Run" button is disabled after clicking it one time (promin)',
+      { tags: ['extendedPath', 'promin', 'C367988'] },
       () => {
         // Step 1: Upload file; verify redirected to Choose jobs page
         DataImport.verifyUploadState();

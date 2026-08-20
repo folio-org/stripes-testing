@@ -160,8 +160,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C422155 Verify that fields of Shared MARC bib will be linked only with Shared MARC authority records automatically when linking on Central tenant from Create screen (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C422155'] },
+            'C422155 Verify that fields of Shared MARC bib will be linked only with Shared MARC authority records automatically when linking on Central tenant from Create screen (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C422155'] },
             () => {
               InventoryInstance.newMarcBibRecord();
               QuickMarcEditor.updateLDR06And07Positions();

@@ -73,8 +73,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C584507 Check filtering by local Subject Source (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C584507'] },
+        'C584507 Check filtering by local Subject Source (promin)',
+        { tags: ['criticalPath', 'promin', 'C584507'] },
         () => {
           InventorySearchAndFilter.verifySearchAndFilterPane();
           InventorySearchAndFilter.switchToBrowseTab();

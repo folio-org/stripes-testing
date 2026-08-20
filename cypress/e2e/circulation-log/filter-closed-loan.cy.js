@@ -62,8 +62,8 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C16999 Filter circulation log by Closed loan (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C16999'] },
+    'C16999 Filter circulation log by Closed loan (vega)',
+    { tags: ['criticalPath', 'vega', 'C16999'] },
     () => {
       const searchResultsData = {
         userBarcode: user.barcode,

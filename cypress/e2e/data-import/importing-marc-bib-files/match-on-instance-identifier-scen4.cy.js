@@ -145,8 +145,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C347831 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 4 (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C347831'] },
+      'C347831 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 4 (promin)',
+      { tags: ['criticalPath', 'promin', 'C347831'] },
       () => {
         // change files for create and update instance using random identifier code
         DataImport.editMarcFile(

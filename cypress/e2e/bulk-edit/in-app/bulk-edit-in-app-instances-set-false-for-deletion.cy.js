@@ -176,8 +176,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C831958 Verify Set false for deletion of Instances via FOLIO flow (Query) (firebird)',
-      { tags: ['smoke', 'firebird', 'C831958'] },
+      'C831958 Verify Set false for deletion of Instances via FOLIO flow (Query) (athena)',
+      { tags: ['smoke', 'athena', 'C831958'] },
       () => {
         // Step 1: Show Set for deletion and Staff suppress columns
         BulkEditSearchPane.verifyBulkEditQueryPaneExists();

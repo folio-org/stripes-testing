@@ -55,8 +55,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C409464 Browse for "MARC authority" records using "Personal name" browse option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C409464'] },
+        'C409464 Browse for "MARC authority" records using "Personal name" browse option (promin)',
+        { tags: ['criticalPath', 'promin', 'C409464'] },
         () => {
           const personalNameOption = 'Personal name';
           const personalNameValueInList = 'Personal Name';
@@ -110,8 +110,8 @@ describe('MARC', () => {
       );
 
       it(
-        'C409476 Browse for "MARC authority" records using "Corporate/Conference name" browse option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C409476'] },
+        'C409476 Browse for "MARC authority" records using "Corporate/Conference name" browse option (promin)',
+        { tags: ['criticalPath', 'promin', 'C409476'] },
         () => {
           const corporateConferenceNameOption = 'Corporate/Conference name';
           const corporateOrConferenceTypes = ['Corporate Name', 'Conference Name'];
@@ -255,8 +255,8 @@ describe('MARC', () => {
       );
 
       it(
-        'C409477 Browse for "MARC authority" records using "Geographic name" browse option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C409477'] },
+        'C409477 Browse for "MARC authority" records using "Geographic name" browse option (promin)',
+        { tags: ['extendedPath', 'promin', 'C409477'] },
         () => {
           const geographicNameOption = 'Geographic name';
           const authorizedGeographic =
@@ -307,8 +307,8 @@ describe('MARC', () => {
       );
 
       it(
-        'C409479 Browse for "MARC authority" records using "Name-title" browse option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C409479'] },
+        'C409479 Browse for "MARC authority" records using "Name-title" browse option (promin)',
+        { tags: ['criticalPath', 'promin', 'C409479'] },
         () => {
           const nameTitleNameOption = 'Name-title';
           const personalOrCorporateOrConferenceTypes = [
@@ -455,8 +455,8 @@ describe('MARC', () => {
       );
 
       it(
-        'C409480 Browse for "MARC authority" records using "Uniform title" browse option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C409480'] },
+        'C409480 Browse for "MARC authority" records using "Uniform title" browse option (promin)',
+        { tags: ['extendedPath', 'promin', 'C409480'] },
         () => {
           const uniformTitleOption = 'Uniform title';
           const authorizedUniform =
@@ -507,8 +507,8 @@ describe('MARC', () => {
       );
 
       it(
-        'C409484 Browse for "MARC authority" records using "Subject" browse option (spitfire)',
-        { tags: ['ExtendedPath', 'spitfire', 'C409484'] },
+        'C409484 Browse for "MARC authority" records using "Subject" browse option (promin)',
+        { tags: ['ExtendedPath', 'promin', 'C409484'] },
         () => {
           const subjectOption = 'Subject';
           const subjectTypes = [
@@ -813,8 +813,8 @@ describe('MARC', () => {
       );
 
       it(
-        'C409485 Browse for "MARC authority" records using "Genre" browse option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C409485'] },
+        'C409485 Browse for "MARC authority" records using "Genre" browse option (promin)',
+        { tags: ['extendedPath', 'promin', 'C409485'] },
         () => {
           const genreOption = 'Genre';
           const authorizedGenre = 'UXPROD-4394 Genre 155 Peplum films subv subx suby subz';

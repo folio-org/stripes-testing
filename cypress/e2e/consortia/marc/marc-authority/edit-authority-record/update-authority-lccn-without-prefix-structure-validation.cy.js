@@ -152,8 +152,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569539 Update "MARC authority" record without prefix in LCCN when "LCCN structure validation" is enabled (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C569539'] },
+          'C569539 Update "MARC authority" record without prefix in LCCN when "LCCN structure validation" is enabled (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C569539'] },
           () => {
             // Step 1: Click Edit → "Edit MARC authority record" pane opens
             MarcAuthority.edit();

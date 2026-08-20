@@ -97,8 +97,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C359178 MARC Holdings | Verify that deleted MARC Field will display at the same position after restoring (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C359178'] },
+        'C359178 MARC Holdings | Verify that deleted MARC Field will display at the same position after restoring (promin)',
+        { tags: ['extendedPath', 'promin', 'C359178'] },
         () => {
           InventoryInstances.searchByTitle(recordId);
           InventoryInstances.selectInstanceById(recordId);

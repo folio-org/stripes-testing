@@ -113,8 +113,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C367926 MARC Authority plug-in | Search: Verify that pagination buttons are visible after changing screen scale (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C367926'] },
+        'C367926 MARC Authority plug-in | Search: Verify that pagination buttons are visible after changing screen scale (promin)',
+        { tags: ['extendedPath', 'promin', 'C367926'] },
         () => {
           const defaultWidth = Cypress.config('viewportWidth');
           const defaultHeight = Cypress.config('viewportHeight');

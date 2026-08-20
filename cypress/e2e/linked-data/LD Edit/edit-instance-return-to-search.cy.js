@@ -55,8 +55,8 @@ describe('Citation: return to search results - Instance', () => {
   });
 
   it(
-    'C468225 Marigold - Returning to search results after closing/canceling/saving Instance (citation)',
-    { tags: ['criticalPath', 'citation', 'C468225', 'marigold'] },
+    'C468225 Marigold - Returning to search results after closing/canceling/saving Instance (promin)',
+    { tags: ['criticalPath', 'promin', 'C468225', 'marigold'] },
     () => {
       // Precondition: create Work and Instance via UI
       Marigold.openNewResourceForm();

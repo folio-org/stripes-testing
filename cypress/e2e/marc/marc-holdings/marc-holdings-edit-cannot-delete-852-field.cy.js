@@ -66,8 +66,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375123 User unable to delete "852" field for "MARC holdings" record when editing record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C375123'] },
+        'C375123 User unable to delete "852" field for "MARC holdings" record when editing record (promin)',
+        { tags: ['extendedPath', 'promin', 'C375123'] },
         () => {
           InventoryInstances.searchByTitle(recordId);
           InventoryInstances.selectInstanceById(recordId);

@@ -180,8 +180,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C831962 ECS | Verify Set true for deletion of Instances via MARC flow using Bulk edit profile in Member tenant (Query) (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C831962'] },
+        'C831962 ECS | Verify Set true for deletion of Instances via MARC flow using Bulk edit profile in Member tenant (Query) (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C831962'] },
         () => {
           // Step 1: Click "Actions" menu and uncheck columns that will be edited
           BulkEditActions.openActions();

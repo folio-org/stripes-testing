@@ -115,8 +115,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C610248 Check that controlled fields of 200 MARC bibs are updated after edit of "MARC authority" 1XX field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C610248'] },
+        'C610248 Check that controlled fields of 200 MARC bibs are updated after edit of "MARC authority" 1XX field (promin)',
+        { tags: ['extendedPath', 'promin', 'C610248'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.marcAuthorities,

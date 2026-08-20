@@ -156,8 +156,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C3506 Catalog a new title which has been ordered and received in Orders (folijet)',
-        { tags: ['smoke', 'folijet', 'C3506', 'shiftLeft'] },
+        'C3506 Catalog a new title which has been ordered and received in Orders (promin)',
+        { tags: ['smoke', 'promin', 'C3506', 'shiftLeft'] },
         () => {
           InventoryInstances.selectInstance();
           InventoryInstances.verifyInstanceDetailsView();

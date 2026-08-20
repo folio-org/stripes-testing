@@ -21,8 +21,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C9292 Negative test - invalid file extension (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C9292'] },
+      'C9292 Negative test - invalid file extension (athena)',
+      { tags: ['extendedPath', 'athena', 'C9292'] },
       () => {
         ExportFileHelper.uploadFile('example.json');
         ExportFileHelper.verifyWarningWithInvalidFileExtension();

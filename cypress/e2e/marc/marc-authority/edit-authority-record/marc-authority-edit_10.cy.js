@@ -71,8 +71,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375172 Save "MARC authority" record with deleted field and updated fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C375172'] },
+        'C375172 Save "MARC authority" record with deleted field and updated fields (promin)',
+        { tags: ['criticalPath', 'promin', 'C375172'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectTitle(testData.authority.title);

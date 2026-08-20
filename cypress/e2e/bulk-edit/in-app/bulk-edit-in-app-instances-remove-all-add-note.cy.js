@@ -132,8 +132,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C468192 Verify Bulk Edit actions for Instance notes - remove all and add note (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C468192'] },
+      'C468192 Verify Bulk Edit actions for Instance notes - remove all and add note (athena)',
+      { tags: ['criticalPath', 'athena', 'C468192'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.uploadFile(instanceUUIDsFileName);

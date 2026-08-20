@@ -161,8 +161,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C374180 Update "010 $a" with valid value in linked "MARC Authority" record when "010" = "$0" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C374180'] },
+      'C374180 Update "010 $a" with valid value in linked "MARC Authority" record when "010" = "$0" (promin)',
+      { tags: ['extendedPath', 'promin', 'C374180'] },
       () => {
         ExportFileHelper.uploadFile(authorityUUIDsFileName);
         ExportFileHelper.exportWithDefaultJobProfile(

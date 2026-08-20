@@ -315,7 +315,7 @@ describe('Inventory', () => {
           // Create all instances
           cy.then(() => {
             instanceTitles.forEach((title, index) => {
-              if (recordsData.find(el => el.instanceIndex === index && el.isMarcInstance)) {
+              if (recordsData.find((el) => el.instanceIndex === index && el.isMarcInstance)) {
                 cy.createSimpleMarcBibViaAPI(title).then((instanceId) => {
                   instanceIds[index] = instanceId;
                 });
@@ -481,8 +481,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C398024 Call numbers are sorted by "NLM" type when using "National Library of Medicine classification" browse option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C398024'] },
+        'C398024 Call numbers are sorted by "NLM" type when using "National Library of Medicine classification" browse option (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C398024'] },
         () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.validateBrowseToggleIsSelected();

@@ -71,8 +71,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C415265 Optimistic locking when editing 6XX field of "MARC authority" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C415265'] },
+        'C415265 Optimistic locking when editing 6XX field of "MARC authority" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C415265'] },
         () => {
           // Steps 1-4: User A logs in, searches for and opens the authority record for editing
           cy.login(userA.username, userA.password, {

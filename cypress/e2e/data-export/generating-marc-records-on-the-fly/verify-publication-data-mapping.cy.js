@@ -73,8 +73,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10967 Verify Publication data mapping (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C10967'] },
+      'C10967 Verify Publication data mapping (athena)',
+      { tags: ['extendedPath', 'athena', 'C10967'] },
       () => {
         // Step 1: Trigger the data export by submitting .csv file with UUIDs of inventory instances
         ExportFile.uploadFile(nameForCSVFile);

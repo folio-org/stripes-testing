@@ -116,8 +116,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C543872 Default sort changed on Central tenant does not impact Member tenant search result list (consortia) (spitfire)',
-        { tags: ['criticalPathECSFlaky', 'spitfire', 'nonParallel', 'C543872'] },
+        'C543872 Default sort changed on Central tenant does not impact Member tenant search result list (consortia) (promin)',
+        { tags: ['criticalPathECSFlaky', 'promin', 'nonParallel', 'C543872'] },
         () => {
           cy.resetTenant();
           cy.login(testData.userProperties.username, testData.userProperties.password, {

@@ -78,8 +78,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C584448 Verify that "Name-title" search option uses "all" search operator ("Twain, Mark" case) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C584448'] },
+      'C584448 Verify that "Name-title" search option uses "all" search operator ("Twain, Mark" case) (promin)',
+      { tags: ['criticalPath', 'promin', 'C584448'] },
       () => {
         // execute search by "Keyword" option
         testData.searchOptions.forEach((option) => {

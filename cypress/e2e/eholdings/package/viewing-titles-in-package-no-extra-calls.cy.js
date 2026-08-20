@@ -58,8 +58,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C350627 Verify multiple requests to /resources sent when viewing Titles list on Package Show page (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C350627'] },
+      'C350627 Verify multiple requests to /resources sent when viewing Titles list on Package Show page (promin)',
+      { tags: ['extendedPath', 'promin', 'C350627'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.customPackageName);
         cy.intercept('/eholdings/packages/*/resources*').as('getResources');

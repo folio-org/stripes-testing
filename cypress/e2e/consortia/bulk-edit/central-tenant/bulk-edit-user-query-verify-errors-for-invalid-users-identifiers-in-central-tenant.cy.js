@@ -83,8 +83,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C503034 Query - Verify "Errors" when querying by invalid Users identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C503034'] },
+        'C503034 Query - Verify "Errors" when querying by invalid Users identifiers in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C503034'] },
         () => {
           // Step 1: Select "Users" radio button, click "Build query" button
           BulkEditSearchPane.checkUsersRadio();

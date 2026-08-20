@@ -136,8 +136,8 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C965837 Verify case sensitivity and uniqueness validation for location name and code (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C965837'] },
+    'C965837 Verify case sensitivity and uniqueness validation for location name and code (athena)',
+    { tags: ['extendedPath', 'athena', 'C965837'] },
     () => {
       // Step 1: Navigate to Settings > Tenant > Locations
       cy.log('=== Step 1: Navigate to Settings > Tenant > Locations ===');

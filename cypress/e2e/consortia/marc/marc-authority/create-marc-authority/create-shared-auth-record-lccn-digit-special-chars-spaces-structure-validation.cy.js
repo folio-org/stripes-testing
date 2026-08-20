@@ -115,8 +115,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569549 Digit, special characters, space existing validation in LCCN prefix on "Create a new MARC authority record" pane when LCCN structure validation is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C569549'] },
+          'C569549 Digit, special characters, space existing validation in LCCN prefix on "Create a new MARC authority record" pane when LCCN structure validation is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C569549'] },
           () => {
             // Step 1: Click on "Actions" button in second pane >> Select "+ New" option
             MarcAuthorities.clickActionsAndNewAuthorityButton();
