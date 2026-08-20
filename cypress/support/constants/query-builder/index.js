@@ -3,6 +3,7 @@ export * from './fundWithLedgerFields';
 export * from './invoiceLinesFields';
 export * from './invoicesFields';
 export * from './lostItemsRequiringActualCostFields';
+export * from './orderInvoiceAnalysisFields';
 export * from './organizationsFields';
 export * from './purchaseOrderLinesFields';
 export * from './receivingPiecesFields';
