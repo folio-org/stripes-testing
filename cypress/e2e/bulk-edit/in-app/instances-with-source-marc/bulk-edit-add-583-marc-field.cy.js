@@ -85,8 +85,8 @@ describe(
       });
 
       it(
-        'C503070 Add MARC field (583) mapped to Inventory Instance (MARC, Logs) (firebird)',
-        { tags: ['smoke', 'firebird', 'C503070'] },
+        'C503070 Add MARC field (583) mapped to Inventory Instance (MARC, Logs) (athena)',
+        { tags: ['smoke', 'athena', 'C503070'] },
         () => {
           BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(

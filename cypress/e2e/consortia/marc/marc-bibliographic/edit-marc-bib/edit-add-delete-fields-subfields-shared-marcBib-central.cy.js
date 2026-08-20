@@ -126,8 +126,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C405521 Adding/deleting fields and subfields when editing shared "MARC Bib" in Central tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C405521'] },
+          'C405521 Adding/deleting fields and subfields when editing shared "MARC Bib" in Central tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C405521'] },
           () => {
             // Step 1-2: Search for shared instance and edit MARC bib
             InventoryInstances.searchByTitle(createdRecordIDs[0]);

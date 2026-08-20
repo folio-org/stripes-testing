@@ -33,8 +33,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C434154 "Are you sure?" modal is displayed after user pressed "ESC" button when record has unsaved changes - Create a new MARC bib record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C434154'] },
+        'C434154 "Are you sure?" modal is displayed after user pressed "ESC" button when record has unsaved changes - Create a new MARC bib record (promin)',
+        { tags: ['extendedPath', 'promin', 'C434154'] },
         () => {
           // #1 Click on "Actions" button in second pane → Select "New MARC bibliographic record" option
           InventoryInstance.newMarcBibRecord();

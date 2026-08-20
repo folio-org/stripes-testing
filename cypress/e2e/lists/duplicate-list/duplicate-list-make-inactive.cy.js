@@ -56,8 +56,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C423605 Duplicate lists - make the list inactive (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C423605'] },
+      'C423605 Duplicate lists - make the list inactive (athena)',
+      { tags: ['criticalPath', 'athena', 'C423605'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

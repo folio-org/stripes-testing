@@ -171,8 +171,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C808446 Search instances by Electronic access fields (firebird)',
-        { tags: ['smoke', 'firebird', 'C808446'] },
+        'C808446 Search instances by Electronic access fields (athena)',
+        { tags: ['smoke', 'athena', 'C808446'] },
         () => {
           // Step 1: Verify Electronic access fields are queryable under "Select options" dropdown
           BulkEditSearchPane.openQuerySearch();

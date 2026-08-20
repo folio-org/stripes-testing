@@ -69,8 +69,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C409483 Apply "Authority source" facet to the search result list (including additional authority headings) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C409483'] },
+        'C409483 Apply "Authority source" facet to the search result list (including additional authority headings) (promin)',
+        { tags: ['extendedPath', 'promin', 'C409483'] },
         () => {
           // Step 1-2: Search with keyword and verify results are displayed
           MarcAuthoritiesSearch.searchBy('Keyword', testData.searchQuery);

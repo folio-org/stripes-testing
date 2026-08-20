@@ -161,8 +161,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C552455 Verify that derived MARC bib record is checked against the last version of MARC validation rules (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C552455', 'nonParallel'] },
+        'C552455 Verify that derived MARC bib record is checked against the last version of MARC validation rules (promin)',
+        { tags: ['extendedPath', 'promin', 'C552455', 'nonParallel'] },
         () => {
           // Step 1: Navigate to derive window
           InventoryInstances.searchByTitle(createdInstanceId);

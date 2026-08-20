@@ -203,8 +203,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C468276 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Library of Congress classification" option when LC, LC (local), NLM and local (shared) are selected in settings, from Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C468276'] },
+        'C468276 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Library of Congress classification" option when LC, LC (local), NLM and local (shared) are selected in settings, from Central tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C468276'] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.resetTenant();

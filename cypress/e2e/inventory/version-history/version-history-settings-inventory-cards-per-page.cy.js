@@ -94,8 +94,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C655274 Edit "Cards to display per page on Version history" on "Settings >> Inventory >> Version history" page (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C655274'] },
+        'C655274 Edit "Cards to display per page on Version history" on "Settings >> Inventory >> Version history" page (promin)',
+        { tags: ['criticalPath', 'promin', 'C655274'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.settingsPath,

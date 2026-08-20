@@ -86,8 +86,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C11116 Unlinking a match or action profile from a job profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C11116'] },
+      'C11116 Unlinking a match or action profile from a job profile (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C11116'] },
       () => {
         // create 3 action profiles
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);

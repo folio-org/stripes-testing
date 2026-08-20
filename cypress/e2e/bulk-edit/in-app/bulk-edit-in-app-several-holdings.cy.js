@@ -98,8 +98,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C365126 Verify confirmation page after bulk editing holdings locations (firebird)',
-      { tags: ['smoke', 'firebird', 'C365126'] },
+      'C365126 Verify confirmation page after bulk editing holdings locations (athena)',
+      { tags: ['smoke', 'athena', 'C365126'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

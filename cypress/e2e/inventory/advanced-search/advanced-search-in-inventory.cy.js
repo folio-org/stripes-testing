@@ -104,8 +104,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466156 Search Instances using advanced search with "AND" operator (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466156'] },
+      'C466156 Search Instances using advanced search with "AND" operator (promin)',
+      { tags: ['criticalPath', 'promin', 'C466156'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -157,8 +157,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C400616 Search Instances using advanced search with a combination of operators (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C400616', 'eurekaPhase1'] },
+      'C400616 Search Instances using advanced search with a combination of operators (promin)',
+      { tags: ['criticalPath', 'promin', 'C400616', 'eurekaPhase1'] },
       () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
@@ -228,8 +228,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C414977 Searching Instances using advanced search with "Exact phrase" option returns correct results (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C414977', 'eurekaPhase1'] },
+      'C414977 Searching Instances using advanced search with "Exact phrase" option returns correct results (promin)',
+      { tags: ['criticalPath', 'promin', 'C414977', 'eurekaPhase1'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {

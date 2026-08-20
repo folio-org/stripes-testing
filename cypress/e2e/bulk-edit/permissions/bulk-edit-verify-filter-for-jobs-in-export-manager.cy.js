@@ -52,7 +52,7 @@ describe.skip('Bulk-edit', () => {
     });
 
     it(
-      'C366546 Verify filter for bulk edit jobs in Export Manager (firebird) (TaaS)',
+      'C366546 Verify filter for bulk edit jobs in Export Manager (athena) (TaaS)',
       { tags: [] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);

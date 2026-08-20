@@ -134,8 +134,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C402371 Consortia | SRS | ListIdentifiers | Suppressed with flag | Skip suppressed | Edit shared MARC instance (with associated Holdings in Member tenant) from Central tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C402371', 'nonParallel'] },
+        'C402371 Consortia | SRS | ListIdentifiers | Suppressed with flag | Skip suppressed | Edit shared MARC instance (with associated Holdings in Member tenant) from Central tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C402371', 'nonParallel'] },
         () => {
           const fromDate = DateTools.getCurrentDateForOaiPmh();
 

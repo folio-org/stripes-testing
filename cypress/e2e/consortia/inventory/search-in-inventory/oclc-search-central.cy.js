@@ -202,8 +202,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411625 Search for Shared/Local records by "Identifier (all)" and "OCLC number, normalized" search options from "Central" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411625'] },
+        'C411625 Search for Shared/Local records by "Identifier (all)" and "OCLC number, normalized" search options from "Central" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411625'] },
         () => {
           InventorySearchAndFilter.fillInSearchQuery(identifierValue);
           InventorySearchAndFilter.clickSearch();

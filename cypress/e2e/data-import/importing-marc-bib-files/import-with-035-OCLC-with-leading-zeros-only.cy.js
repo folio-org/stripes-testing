@@ -49,8 +49,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C466254 Import of file with 035 OCLC field with leading zeros only (folijet)',
-      { tags: ['edgeCases', 'folijet', 'C466254'] },
+      'C466254 Import of file with 035 OCLC field with leading zeros only (promin)',
+      { tags: ['edgeCases', 'promin', 'C466254'] },
       () => {
         // Step 1-2: Upload MARC Bib file and run job profile
         DataImport.verifyUploadState();

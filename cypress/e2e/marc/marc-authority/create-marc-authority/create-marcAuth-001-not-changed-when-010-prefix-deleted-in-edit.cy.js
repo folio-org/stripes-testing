@@ -59,8 +59,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423544 Copied "001" field value of created MARC authority record doesn\'t change when prefix in "010 $a" subfield is deleted from edit window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C423544'] },
+        'C423544 Copied "001" field value of created MARC authority record doesn\'t change when prefix in "010 $a" subfield is deleted from edit window (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C423544'] },
         () => {
           // Step 1: Open new MARC authority record form
           MarcAuthorities.clickActionsAndNewAuthorityButton();

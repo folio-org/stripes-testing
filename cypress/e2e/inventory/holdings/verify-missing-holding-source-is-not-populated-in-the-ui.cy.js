@@ -68,7 +68,7 @@ describe.skip('Inventory', () => {
     });
 
     it(
-      'C367931 Verify that missing holdings source is not populated in the UI with instances source (firebird) (TaaS)',
+      'C367931 Verify that missing holdings source is not populated in the UI with instances source (athena) (TaaS)',
       { tags: [] },
       () => {
         InventorySearchAndFilter.switchToHoldings();

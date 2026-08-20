@@ -34,8 +34,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C387486 Retain entered search query in "Inventory >> Browse" during browse options switching (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C387486', 'eurekaPhase1'] },
+      'C387486 Retain entered search query in "Inventory >> Browse" during browse options switching (promin)',
+      { tags: ['extendedPath', 'promin', 'C387486', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.fillInBrowseSearch(query);
         InventorySearchAndFilter.checkBrowseSearchInputFieldContent(query);

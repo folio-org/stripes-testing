@@ -424,8 +424,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C491302 Verify Tenant name displays next to location in "Effective location" facet during searching in Central tenant (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C491302'] },
+          'C491302 Verify Tenant name displays next to location in "Effective location" facet during searching in Central tenant (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C491302'] },
           () => {
             cy.login(testData.user.username, testData.user.password);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

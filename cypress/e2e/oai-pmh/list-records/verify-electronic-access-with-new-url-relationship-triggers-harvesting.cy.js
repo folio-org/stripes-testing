@@ -148,8 +148,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C378100 ListRecords: SRS & Inventory - Verify that add to Holdings and Item "Electronic access" with recently created URL relationship type triggers harvesting records with marc21_withholdings (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C378100', 'nonParallel'] },
+      'C378100 ListRecords: SRS & Inventory - Verify that add to Holdings and Item "Electronic access" with recently created URL relationship type triggers harvesting records with marc21_withholdings (athena)',
+      { tags: ['extendedPath', 'athena', 'C378100', 'nonParallel'] },
       () => {
         // Step 1-2: Navigate to Settings → Inventory → URL relationship
         UrlRelationship.openTabFromInventorySettingsList();

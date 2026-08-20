@@ -56,8 +56,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C440063 Render preview after query executed (Items - Edit) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C440063'] },
+      'C440063 Render preview after query executed (Items - Edit) (athena)',
+      { tags: ['criticalPath', 'athena', 'C440063'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkItemsRadio();
@@ -67,7 +67,7 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(itemFieldValues.temporaryLocation);
         QueryModal.verifySelectedField(itemFieldValues.temporaryLocation);
-        QueryModal.verifyQueryAreaContent('(temporary_location.name  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(temporary_location.name == )');

@@ -155,8 +155,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C423697 Verify rendering Instance record Contributors in bulk edit forms and files (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C423697'] },
+      'C423697 Verify rendering Instance record Contributors in bulk edit forms and files (athena)',
+      { tags: ['extendedPath', 'athena', 'C423697'] },
       () => {
         // Expected Contributors display format (names only, semicolon-separated)
         const expectedContributorsDisplay = testInstance.contributors

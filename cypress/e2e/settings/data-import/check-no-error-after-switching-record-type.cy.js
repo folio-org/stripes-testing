@@ -51,8 +51,8 @@ describe('Data Import', () => {
 
     describe('Settings', () => {
       it(
-        'C376001 Verify no error appears after switching record types when duplicating existing field mapping profile (folijet) (TaaS)',
-        { tags: ['extendedPath', 'folijet', 'C376001'] },
+        'C376001 Verify no error appears after switching record types when duplicating existing field mapping profile (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C376001'] },
         () => {
           // Go to Settings application-> Data import-> Field mapping profiles
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
@@ -91,8 +91,8 @@ describe('Data Import', () => {
       );
 
       it(
-        'C376002 Verify no error appears after switching record types when viewing a field mapping profile, then editing a different one (folijet) (TaaS)',
-        { tags: ['extendedPath', 'folijet', 'C376002'] },
+        'C376002 Verify no error appears after switching record types when viewing a field mapping profile, then editing a different one (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C376002'] },
         () => {
           // Go to Settings application-> Data import-> Field mapping profiles
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
@@ -165,8 +165,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C376004 Verify no error appears after switching record types when starting duplicate an invoice field mapping profile, then a different one (folijet) (TaaS)',
-        { tags: ['extendedPath', 'folijet', 'C376004'] },
+        'C376004 Verify no error appears after switching record types when starting duplicate an invoice field mapping profile, then a different one (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C376004'] },
         () => {
           // Go to Settings application-> Data import-> Field mapping profiles
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);

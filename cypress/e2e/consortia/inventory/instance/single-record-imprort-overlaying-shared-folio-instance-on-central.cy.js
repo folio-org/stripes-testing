@@ -53,8 +53,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C418589 (CONSORTIA) Verify Inventory Single Record Import and log on central tenant when overlaying Shared Source = FOLIO Instance (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C418589'] },
+        'C418589 (CONSORTIA) Verify Inventory Single Record Import and log on central tenant when overlaying Shared Source = FOLIO Instance (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C418589'] },
         () => {
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();

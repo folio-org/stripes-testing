@@ -28,8 +28,8 @@ describe('Users', () => {
   });
 
   it(
-    'C9318 Add and remove tags from a user (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C9318', 'eurekaPhase1'] },
+    'C9318 Add and remove tags from a user (vega)',
+    { tags: ['criticalPath', 'vega', 'C9318', 'eurekaPhase1'] },
     () => {
       TagsGeneral.changeEnableTagsStatus('enable');
       cy.visit(TopMenu.usersPath);

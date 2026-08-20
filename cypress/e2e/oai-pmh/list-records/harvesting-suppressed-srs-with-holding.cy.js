@@ -92,8 +92,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375966 ListRecords: Verify harvesting suppressed SRS with holdings -- Transfer flag (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C375966'] },
+      'C375966 ListRecords: Verify harvesting suppressed SRS with holdings -- Transfer flag (athena)',
+      { tags: ['criticalPath', 'athena', 'C375966'] },
       () => {
         // Step 1-3: Search for the instance by title
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.id);

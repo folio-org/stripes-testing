@@ -89,8 +89,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C367992 Delete duplicate "Default - Create SRS MARC Authority" job profile (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C367992'] },
+      'C367992 Delete duplicate "Default - Create SRS MARC Authority" job profile (promin)',
+      { tags: ['extendedPath', 'promin', 'C367992'] },
       () => {
         // #1 Navigate to Settings > Data import > Job profiles
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);

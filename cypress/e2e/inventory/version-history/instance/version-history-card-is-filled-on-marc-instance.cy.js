@@ -55,8 +55,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651525 Check "Version History" card is filled on MARC Instance (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C651525'] },
+        'C651525 Check "Version History" card is filled on MARC Instance (promin)',
+        { tags: ['criticalPath', 'promin', 'C651525'] },
         () => {
           InstanceRecordView.clickVersionHistoryButton();
           VersionHistorySection.waitLoading();

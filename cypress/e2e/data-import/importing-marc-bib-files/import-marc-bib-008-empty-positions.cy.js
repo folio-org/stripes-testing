@@ -102,8 +102,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C1332477 Import MARC bib record with empty positions 00-05 of 008 MARC field (spitfire)',
-      { tags: ['extendedPathECS', 'spitfire', 'C1332477'] },
+      'C1332477 Import MARC bib record with empty positions 00-05 of 008 MARC field (promin)',
+      { tags: ['extendedPathECS', 'promin', 'C1332477'] },
       () => {
         const todayDateYYMMDD = DateTools.getCurrentDateYYMMDD();
 

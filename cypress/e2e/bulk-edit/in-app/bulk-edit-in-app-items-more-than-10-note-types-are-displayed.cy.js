@@ -111,8 +111,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C440087 Verify more than 10 note types are displayed - items (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C440087'] },
+      'C440087 Verify more than 10 note types are displayed - items (athena)',
+      { tags: ['extendedPath', 'athena', 'C440087'] },
       () => {
         // Step 1: Select the "Inventory - items" radio button => Select "Item barcode" option from the "Record identifier" dropdown
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcodes');

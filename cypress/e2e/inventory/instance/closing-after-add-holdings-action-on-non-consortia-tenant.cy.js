@@ -36,8 +36,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C411680 (NON-CONSORTIA) Verify the closing after Add holdings action on Non-consortia tenant (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C411680'] },
+      'C411680 (NON-CONSORTIA) Verify the closing after Add holdings action on Non-consortia tenant (promin)',
+      { tags: ['extendedPath', 'promin', 'C411680'] },
       () => {
         InventoryInstances.searchByTitle(testData.instance.instanceId);
         InventoryInstances.selectInstance();

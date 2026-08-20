@@ -188,8 +188,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C387476 User can edit updated "MARC authority" file without required number (40) of "008" positions (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C387476'] },
+        'C387476 User can edit updated "MARC authority" file without required number (40) of "008" positions (promin)',
+        { tags: ['extendedPath', 'promin', 'C387476'] },
         () => {
           // Steps 5-6: Verify import completed; open file details; both records show Updated
           Logs.checkJobStatus(combinedFile, JOB_STATUS_NAMES.COMPLETED);

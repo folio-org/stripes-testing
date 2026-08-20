@@ -137,8 +137,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C402378 Apply "Shared" facet when Browse for same contributors without executed search (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C402378'] },
+        'C402378 Apply "Shared" facet when Browse for same contributors without executed search (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C402378'] },
         () => {
           cy.getToken(user.username, user.password);
           contributors.forEach((contributor) => {

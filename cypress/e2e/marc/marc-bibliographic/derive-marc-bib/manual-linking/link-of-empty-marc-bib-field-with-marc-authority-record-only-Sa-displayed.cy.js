@@ -97,8 +97,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C380758 Derive | Link of empty MARC Bib field with "MARC Authority" record (only $a is displayed) (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C380758'] },
+          'C380758 Derive | Link of empty MARC Bib field with "MARC Authority" record (only $a is displayed) (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C380758'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordsIDs[0]);
             InventoryInstances.selectInstance();

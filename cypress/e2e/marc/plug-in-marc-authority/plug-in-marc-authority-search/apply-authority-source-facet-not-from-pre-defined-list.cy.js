@@ -158,8 +158,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422167 API: MARC Authority plug-in | Apply "Authority source" facet not from pre-defined list to the search result list (spitfire)',
-        { tags: ['backend', 'extendedPath', 'spitfire', 'C422167'] },
+        'C422167 API: MARC Authority plug-in | Apply "Authority source" facet not from pre-defined list to the search result list (promin)',
+        { tags: ['backend', 'extendedPath', 'promin', 'C422167'] },
         () => {
           // Steps 7-8: Search for all created authority records
           MarcAuthorities.searchByParameter(searchOption, testData.authorityPrefix);

@@ -174,8 +174,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411635 Search for Shared/Local records by "Instance HRID" search option from "Central" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411635'] },
+        'C411635 Search for Shared/Local records by "Instance HRID" search option from "Central" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411635'] },
         () => {
           sharedInstanceIndexes.forEach((instanceIndex) => {
             InventorySearchAndFilter.fillInSearchQuery(instancesData[instanceIndex].instanceHrid);

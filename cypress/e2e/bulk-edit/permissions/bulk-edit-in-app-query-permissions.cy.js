@@ -36,8 +36,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C366073 Verify Bulk edit elements in the left pane --In app (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C366073'] },
+      'C366073 Verify Bulk edit elements in the left pane --In app (athena)',
+      { tags: ['criticalPath', 'athena', 'C366073'] },
       () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
         BulkEditSearchPane.verifyRecordTypesEmpty();

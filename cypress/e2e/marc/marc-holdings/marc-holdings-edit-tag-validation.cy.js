@@ -90,8 +90,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C360102 MARC Holdings | MARC tag validation checks when clicks on the "Save & keep editing" button (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C360102'] },
+        'C360102 MARC Holdings | MARC tag validation checks when clicks on the "Save & keep editing" button (promin)',
+        { tags: ['extendedPath', 'promin', 'C360102'] },
         () => {
           InventoryInstances.searchByTitle(recordId);
           InventoryInstances.selectInstanceById(recordId);

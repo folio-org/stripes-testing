@@ -64,8 +64,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C552517 Create a duplicate instance with Date 2 field only (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C552517'] },
+      'C552517 Create a duplicate instance with Date 2 field only (promin)',
+      { tags: ['extendedPath', 'promin', 'C552517'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstanceById(testData.instanceId);

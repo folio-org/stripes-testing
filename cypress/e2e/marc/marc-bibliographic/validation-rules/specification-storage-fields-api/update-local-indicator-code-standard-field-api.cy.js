@@ -105,8 +105,8 @@ describe('MARC Bibliographic Validation Rules - Update Local Indicator Code of S
   });
 
   it(
-    'C502961 Update Local Indicator Code of Standard field for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C502961', 'spitfire'] },
+    'C502961 Update Local Indicator Code of Standard field for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C502961', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

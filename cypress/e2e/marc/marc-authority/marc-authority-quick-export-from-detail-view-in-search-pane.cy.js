@@ -71,8 +71,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C466299 Quick export of "MARC authority" record from authority detail view opened in the search pane (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C466299'] },
+          'C466299 Quick export of "MARC authority" record from authority detail view opened in the search pane (promin)',
+          { tags: ['extendedPath', 'promin', 'C466299'] },
           () => {
             // Step 1: Search returns records
             MarcAuthorities.searchBeats(testData.authorityHeading);

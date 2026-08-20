@@ -132,8 +132,8 @@ describe('Consortia', () => {
         };
 
         it(
-          'C594400 User with "Consortium manager: Can share settings to all members" permission is able to view the list of subject types of affiliated tenants in "Consortium manager" app (consortia) (folijet)',
-          { tags: ['criticalPathECS', 'folijet', 'C594400'] },
+          'C594400 User with "Consortium manager: Can share settings to all members" permission is able to view the list of subject types of affiliated tenants in "Consortium manager" app (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C594400'] },
           () => {
             SelectMembersModal.selectAllMembers();
             ConsortiumManager.verifyStatusOfConsortiumManager(3);

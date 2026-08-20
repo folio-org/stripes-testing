@@ -46,8 +46,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C430235 Verify that the "Confirm changes" button is disabled until at least one update action is selected (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C430235'] },
+      'C430235 Verify that the "Confirm changes" button is disabled until at least one update action is selected (athena)',
+      { tags: ['extendedPath', 'athena', 'C430235'] },
       () => {
         // Step 1: Select the "Inventory - items" radio button and "Item barcode" option
         BulkEditSearchPane.checkItemsRadio();

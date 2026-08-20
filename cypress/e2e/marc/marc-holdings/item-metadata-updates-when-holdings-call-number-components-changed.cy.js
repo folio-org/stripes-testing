@@ -121,8 +121,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C388510 Item metadata updates when Holdings call number components changed (MARC record) (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C388510'] },
+      'C388510 Item metadata updates when Holdings call number components changed (MARC record) (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C388510'] },
       () => {
         InventoryInstance.openHoldingView();
         HoldingsRecordView.editInQuickMarc();

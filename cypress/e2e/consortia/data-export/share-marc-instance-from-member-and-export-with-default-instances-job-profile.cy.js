@@ -93,8 +93,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C407646 Consortia | Share MARC instance from member and export with Default instances job profile (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C407646'] },
+      'C407646 Consortia | Share MARC instance from member and export with Default instances job profile (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C407646'] },
       () => {
         // Step 1-5: Implemented via API calls in the "before" hook
         // Step 6: Find the imported MARC instance from preconditions

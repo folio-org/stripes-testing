@@ -66,8 +66,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375988 C375131 verb=ListIdentifiers: Verify that added Instances MARC and FOLIO are retrieved (marc21) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375988', 'C375131', 'nonParallel'] },
+      'C375988 C375131 verb=ListIdentifiers: Verify that added Instances MARC and FOLIO are retrieved (marc21) (athena)',
+      { tags: ['extendedPath', 'athena', 'C375988', 'C375131', 'nonParallel'] },
       () => {
         // Step 8: Go to Inventory app → Select Actions → Select "+New" button
         const InventoryNewInstance = InventoryInstances.addNewInventory();

@@ -248,8 +248,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C377005 Delete linked field which is controlled by "MARC Authority" record (when field mapping profile allows updating all subfields) (spitfire) (TaaS)',
-      { tags: ['extendedPathBroken', 'spitfire', 'C377005'] },
+      'C377005 Delete linked field which is controlled by "MARC Authority" record (when field mapping profile allows updating all subfields) (promin) (TaaS)',
+      { tags: ['extendedPathBroken', 'promin', 'C377005'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

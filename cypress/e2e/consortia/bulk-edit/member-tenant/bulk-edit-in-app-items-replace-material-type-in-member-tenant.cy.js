@@ -191,8 +191,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C1348706 Verify "Replace with" action for Items material type in Member tenant (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C1348706'] },
+        'C1348706 Verify "Replace with" action for Items material type in Member tenant (athena)',
+        { tags: ['smokeECS', 'athena', 'C1348706'] },
         () => {
           // Precondition: upload .csv file with valid Item barcodes
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(

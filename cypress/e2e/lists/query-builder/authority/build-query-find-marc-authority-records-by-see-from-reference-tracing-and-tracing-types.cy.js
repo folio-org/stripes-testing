@@ -137,8 +137,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1322604 Build query to find MARC authority records by See from reference - Tracing and Tracing types (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1322604'] },
+        'C1322604 Build query to find MARC authority records by See from reference - Tracing and Tracing types (promin)',
+        { tags: ['extendedPath', 'promin', 'C1322604'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

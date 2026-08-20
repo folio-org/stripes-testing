@@ -19,8 +19,8 @@ describe('Export Manager', () => {
   });
 
   it(
-    'C350764 Verify that user without Export Manager permissions: cannot view Export Manager (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C350764'] },
+    'C350764 Verify that user without Export Manager permissions: cannot view Export Manager (athena)',
+    { tags: ['criticalPath', 'athena', 'C350764'] },
     () => {
       TopMenuNavigation.isAbsent();
       cy.visit(TopMenu.exportManagerPath);

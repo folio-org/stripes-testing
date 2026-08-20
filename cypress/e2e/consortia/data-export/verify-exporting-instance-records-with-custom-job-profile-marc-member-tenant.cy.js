@@ -414,8 +414,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C405557 Consortia | Verify exporting instance records with Custom job profile MARC - member tenant (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C405557'] },
+      'C405557 Consortia | Verify exporting instance records with Custom job profile MARC - member tenant (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C405557'] },
       () => {
         // Step 1: Go to the "Data export" app
         DataExportViewAllLogs.verifyLogsTable();

@@ -95,8 +95,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C663348 Check local record deletion on Central tenant (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C663348'] },
+        'C663348 Check local record deletion on Central tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C663348'] },
         () => {
           InventoryInstance.shareInstance();
           InventoryInstance.waitLoading();

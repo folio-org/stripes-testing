@@ -60,8 +60,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C9208 Search for Item by HRID field using "Keyword" and "Item HRID" search options (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C9208'] },
+      'C9208 Search for Item by HRID field using "Keyword" and "Item HRID" search options (promin)',
+      { tags: ['extendedPath', 'promin', 'C9208'] },
       () => {
         // Step 1: Open Inventory app and select item segment
         InventorySearchAndFilter.switchToItem();

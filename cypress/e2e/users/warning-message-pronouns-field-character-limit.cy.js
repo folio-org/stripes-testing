@@ -69,8 +69,8 @@ describe('Users', () => {
   });
 
   it(
-    'C345421 Warning message is shown when "Pronouns" field character limit is reached (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C345421'] },
+    'C345421 Warning message is shown when "Pronouns" field character limit is reached (vega)',
+    { tags: ['extendedPath', 'vega', 'C345421'] },
     () => {
       // Step 1 Click "Actions" -> "New" on "Users" app main page
       Users.clickNewButton();

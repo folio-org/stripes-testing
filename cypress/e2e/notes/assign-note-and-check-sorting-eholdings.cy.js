@@ -75,8 +75,8 @@ describe('Assign note and check sorting', () => {
   });
 
   it(
-    'C1297 Assign a note and check sorting in "Assign / Unassign note" modal (spitfire) (TaaS)',
-    { tags: ['criticalPath', 'spitfire', 'C1297'] },
+    'C1297 Assign a note and check sorting in "Assign / Unassign note" modal (promin) (TaaS)',
+    { tags: ['criticalPath', 'promin', 'C1297'] },
     () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: `/eholdings/providers/${testData.providerId}`,

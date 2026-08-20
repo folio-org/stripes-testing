@@ -176,8 +176,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C402356 Verify Bulk Edit actions for Items notes - edit note of new note type and containing 31999 characters (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C402356'] },
+        'C402356 Verify Bulk Edit actions for Items notes - edit note of new note type and containing 31999 characters (athena)',
+        { tags: ['extendedPath', 'athena', 'C402356'] },
         () => {
           // Step 1: Select the "Inventory - items" radio button on the "Record types" accordion => Select "Item barcode" option from the "Record identifier" dropdown
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcodes');

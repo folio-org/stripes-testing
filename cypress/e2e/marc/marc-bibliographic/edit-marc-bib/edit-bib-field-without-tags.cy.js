@@ -126,8 +126,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423481 Fields without tag and subfield values are deleted during saving (edit MARC bibliographic) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423481'] },
+        'C423481 Fields without tag and subfield values are deleted during saving (edit MARC bibliographic) (promin)',
+        { tags: ['extendedPath', 'promin', 'C423481'] },
         () => {
           // Step 1: Navigate to instance and open MARC bib editor
           InventoryInstances.searchByTitle(createdInstanceId);

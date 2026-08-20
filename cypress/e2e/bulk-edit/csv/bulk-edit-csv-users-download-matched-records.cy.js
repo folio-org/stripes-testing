@@ -42,8 +42,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C353571 Verify "Download matched records (CSV)" option (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C353571'] },
+      'C353571 Verify "Download matched records (CSV)" option (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C353571'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);

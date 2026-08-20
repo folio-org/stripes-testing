@@ -73,8 +73,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C503030 Query - Verify "Errors" when querying by invalid Holdings identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C503030'] },
+        'C503030 Query - Verify "Errors" when querying by invalid Holdings identifiers in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C503030'] },
         () => {
           // Step 1: Select "Inventory - holdings" radio button under "Record types" accordion
           BulkEditSearchPane.checkHoldingsRadio();

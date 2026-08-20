@@ -36,8 +36,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C389572 Verify the Built query form reset to its original state clicking on Cancel (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C389572'] },
+      'C389572 Verify the Built query form reset to its original state clicking on Cancel (athena)',
+      { tags: ['extendedPath', 'athena', 'C389572'] },
       () => {
         // Step 1: Select "Users" radio button under "Record types" accordion => Click on the "Build query" button
         BulkEditSearchPane.openQuerySearch();
@@ -129,7 +129,7 @@ describe('Bulk-edit', () => {
         // Step 11: Click "Select field" dropdown => Select "Patron group - Name" option
         QueryModal.selectField(usersFieldValues.patronGroup);
         QueryModal.verifySelectedField(usersFieldValues.patronGroup);
-        QueryModal.verifyQueryAreaContent('(groups.group  )');
+        QueryModal.verifyQueryAreaContent('');
 
         // Step 12: Click "Select operator" dropdown => Select "equals" option
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);

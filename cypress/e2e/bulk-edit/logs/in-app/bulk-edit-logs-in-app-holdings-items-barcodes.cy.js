@@ -109,8 +109,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C375300 Verify generated Logs files for Holdings In app -- only valid Item barcodes (firebird)',
-        { tags: ['smoke', 'firebird', 'C375300'] },
+        'C375300 Verify generated Logs files for Holdings In app -- only valid Item barcodes (athena)',
+        { tags: ['smoke', 'athena', 'C375300'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Item barcodes');
           BulkEditSearchPane.uploadFile(itemBarcodesFileName);

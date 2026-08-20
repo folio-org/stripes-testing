@@ -42,8 +42,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C424002 User without permission "Settings (MARC authority): View authority files" at Central and Member tenants cannot see "Settings >> MARC authority" page on both tenants (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C424002'] },
+          'C424002 User without permission "Settings (MARC authority): View authority files" at Central and Member tenants cannot see "Settings >> MARC authority" page on both tenants (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C424002'] },
           () => {
             cy.login(user.username, user.password, {
               path: TopMenu.settingsPath,

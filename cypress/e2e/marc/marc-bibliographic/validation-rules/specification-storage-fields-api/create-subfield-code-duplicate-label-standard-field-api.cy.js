@@ -54,8 +54,8 @@ describe('MARC Bibliographic Validation Rules - Create Subfield Code Duplicate L
   });
 
   it(
-    'C499737 Create Subfield code of Standard field with duplicate "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['C499737', 'extendedPath', 'spitfire'] },
+    'C499737 Create Subfield code of Standard field with duplicate "label" for MARC bib spec (API) (promin)',
+    { tags: ['C499737', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

@@ -19,8 +19,8 @@ describe('remote-storage-configuration', () => {
   });
 
   it(
-    'C343219 Check “Accession tables” page without configurations with CaiaSoft provider (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C343219'] },
+    'C343219 Check “Accession tables” page without configurations with CaiaSoft provider (vega)',
+    { tags: ['criticalPath', 'vega', 'C343219'] },
     () => {
       Configurations.ensureRemoteStorageExists('RS2');
       Configurations.deleteAllRemoteStoragesViaAPIExceptOf('RS2');
@@ -36,8 +36,8 @@ describe('remote-storage-configuration', () => {
   );
 
   it(
-    'C343220 Configure remote storage and open “Accession tables” using the “Remote storage” pane (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C343220'] },
+    'C343220 Configure remote storage and open “Accession tables” using the “Remote storage” pane (vega)',
+    { tags: ['criticalPath', 'vega', 'C343220'] },
     () => {
       const testName = getRandomPostfix();
       rs.create(testName);

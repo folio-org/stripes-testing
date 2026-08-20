@@ -177,8 +177,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C663255 Bulk edit editable subfields (e, 2, 4) of marc fields (100, 700) linked to authority record (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C663255'] },
+      'C663255 Bulk edit editable subfields (e, 2, 4) of marc fields (100, 700) linked to authority record (athena)',
+      { tags: ['criticalPath', 'athena', 'C663255'] },
       () => {
         // Step 1: Check "Contributors" checkbox to show column
         BulkEditActions.openActions();

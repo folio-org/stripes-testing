@@ -78,8 +78,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476823 "Update ownership" option is not displayed on Local Instance Holdings menu (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C476823'] },
+        'C476823 "Update ownership" option is not displayed on Local Instance Holdings menu (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C476823'] },
         () => {
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();

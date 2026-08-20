@@ -236,8 +236,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C367929 Verify that correct number of linked records are displayed in the "Number of titles" column when searching for linked "MARC Authority" records (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C367929'] },
+        'C367929 Verify that correct number of linked records are displayed in the "Number of titles" column when searching for linked "MARC Authority" records (promin)',
+        { tags: ['extendedPath', 'promin', 'C367929'] },
         () => {
           // Steps 1-2: Search Dugmore authorized heading → 1 title
           MarcAuthorities.searchBeats(testData.dugmoreHeading);

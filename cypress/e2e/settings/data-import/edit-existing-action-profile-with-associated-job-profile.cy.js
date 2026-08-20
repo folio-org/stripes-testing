@@ -68,8 +68,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C367994 Edit an existing action profile with associated job profile (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C367994'] },
+      'C367994 Edit an existing action profile with associated job profile (promin)',
+      { tags: ['criticalPath', 'promin', 'C367994'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);

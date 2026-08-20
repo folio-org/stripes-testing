@@ -100,8 +100,8 @@ describe(
       });
 
       it(
-        'C389485 In app | Verify that column names are sticky for previews (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C389485'] },
+        'C389485 In app | Verify that column names are sticky for previews (athena)',
+        { tags: ['criticalPath', 'athena', 'C389485'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
           BulkEditSearchPane.uploadFile(userUUIDsFileName);

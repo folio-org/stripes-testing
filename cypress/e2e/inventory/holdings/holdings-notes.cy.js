@@ -43,7 +43,7 @@ describe('Inventory', () => {
       Users.deleteViaApi(testData.user.userId);
     });
 
-    it('C624 Holdings notes (folijet)', { tags: ['extendedPath', 'folijet', 'C624'] }, () => {
+    it('C624 Holdings notes (promin)', { tags: ['extendedPath', 'promin', 'C624'] }, () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.item.instanceName);
       InventorySearchAndFilter.selectViewHoldings();
       HoldingsRecordView.edit();

@@ -39,8 +39,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C380521 Verify that Organization look-up is active on creating new and existing Invoice field mapping profile (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C380521'] },
+      'C380521 Verify that Organization look-up is active on creating new and existing Invoice field mapping profile (promin)',
+      { tags: ['extendedPath', 'promin', 'C380521'] },
       () => {
         const calloutMessage = `The field mapping profile "${mappingProfile.name}" was successfully updated`;
 

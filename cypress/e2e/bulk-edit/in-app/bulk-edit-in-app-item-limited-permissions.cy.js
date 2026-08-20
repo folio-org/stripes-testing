@@ -42,8 +42,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C359006 Verify populating Item records in "Preview of records matched" using limited permissions(firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C359006'] },
+      'C359006 Verify populating Item records in "Preview of records matched" using limited permissions(athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C359006'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
           'Items',

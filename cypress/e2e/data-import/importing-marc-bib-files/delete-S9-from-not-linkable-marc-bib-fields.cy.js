@@ -190,8 +190,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C380495 Delete "$9" from "MARC bib" fields not eligible for linking (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C380495'] },
+      'C380495 Delete "$9" from "MARC bib" fields not eligible for linking (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C380495'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

@@ -268,8 +268,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C788754 ECS | Executing bulk edit job using MARC Instances bulk edit profile in Member tenant (Logs) (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C788754'] },
+        'C788754 ECS | Executing bulk edit job using MARC Instances bulk edit profile in Member tenant (Logs) (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C788754'] },
         () => {
           // Step 1: Click "Actions" menu
           BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false, true);

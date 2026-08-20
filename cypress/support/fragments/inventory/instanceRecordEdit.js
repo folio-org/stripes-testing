@@ -932,6 +932,15 @@ export default {
     InventoryInstanceModal.close();
   },
 
+  checkDefaultScrollFocusState: () => {
+    cy.expect(titleField.exists());
+    cy.wait(2000); // wait for potential auto-scrolling
+    cy.get('#instance-form-content').should(($el) => {
+      expect($el[0].scrollTop).to.equal(0);
+    });
+    cy.expect(Button({ id: 'find-instance-trigger', focused: true }).absent());
+  },
+
   verifyInstancePaneheader({
     title,
     publisher,

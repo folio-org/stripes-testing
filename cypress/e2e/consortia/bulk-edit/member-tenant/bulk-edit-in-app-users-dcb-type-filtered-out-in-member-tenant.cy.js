@@ -128,8 +128,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C1273151 Verify DCB type Users are filtered out in Bulk edit (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C1273151'] },
+        'C1273151 Verify DCB type Users are filtered out in Bulk edit (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C1273151'] },
         () => {
           cy.resetTenant();
           cy.login(user.username, user.password, {

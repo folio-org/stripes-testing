@@ -58,8 +58,8 @@ describe('Notes', () => {
   });
 
   it(
-    'C360558 Check that GET request to the "/notes" endpoint with limit parameter will succeed (spitfire)',
-    { tags: ['extendedPath', 'backend', 'spitfire', 'C360558'] },
+    'C360558 Check that GET request to the "/notes" endpoint with limit parameter will succeed (promin)',
+    { tags: ['extendedPath', 'backend', 'promin', 'C360558'] },
     () => {
       cy.then(() => {
         cy.getToken(user.username, user.password);

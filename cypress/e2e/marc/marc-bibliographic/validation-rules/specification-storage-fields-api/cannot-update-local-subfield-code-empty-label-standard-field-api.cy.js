@@ -116,8 +116,8 @@ describe('MARC Bibliographic Validation Rules - Cannot update Local Subfield Cod
   });
 
   it(
-    'C511220 Cannot update Local Subfield Code of Standard Field with empty "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C511220', 'spitfire'] },
+    'C511220 Cannot update Local Subfield Code of Standard Field with empty "label" for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C511220', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

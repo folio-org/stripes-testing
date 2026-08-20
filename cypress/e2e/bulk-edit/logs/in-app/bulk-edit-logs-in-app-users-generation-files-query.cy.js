@@ -135,8 +135,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C436762 Verify generated Logs files for Users (Query - In app) (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C436762'] },
+        'C436762 Verify generated Logs files for Users (Query - In app) (athena)',
+        { tags: ['extendedPath', 'athena', 'C436762'] },
         () => {
           // Step 1: Check "Users" checkbox on "Record types" filter accordion
           BulkEditSearchPane.openLogsSearch();

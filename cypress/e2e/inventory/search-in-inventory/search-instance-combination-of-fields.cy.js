@@ -88,8 +88,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C369044 Search for "Instance" using combined search by fields: "Resource title", "Alternative title", "Index title", "Series statement", "Resource identifier", "Contributor name" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C369044'] },
+      'C369044 Search for "Instance" using combined search by fields: "Resource title", "Alternative title", "Index title", "Series statement", "Resource identifier", "Contributor name" (promin)',
+      { tags: ['extendedPath', 'promin', 'C369044'] },
       () => {
         queries.forEach((query, index) => {
           if (index) InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();

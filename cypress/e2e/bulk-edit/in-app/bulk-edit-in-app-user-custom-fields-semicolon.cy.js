@@ -78,8 +78,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      "C389568 In app | Verify that User's Custom fields with semicolons are updated correctly (firebird)",
-      { tags: ['criticalPath', 'firebird', 'C389568'] },
+      "C389568 In app | Verify that User's Custom fields with semicolons are updated correctly (athena)",
+      { tags: ['criticalPath', 'athena', 'C389568'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
@@ -114,8 +114,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C380731 Verify that User\'s Custom fields with special characters are displayed consistently through "Previews" and downloaded Bulk edit files (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C380731'] },
+      'C380731 Verify that User\'s Custom fields with special characters are displayed consistently through "Previews" and downloaded Bulk edit files (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C380731'] },
       () => {
         const today = new Date();
         cy.login(secondUser.username, secondUser.password, {

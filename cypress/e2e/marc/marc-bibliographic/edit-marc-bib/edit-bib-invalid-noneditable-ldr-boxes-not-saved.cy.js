@@ -61,8 +61,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C353982 Verify that invalid values at 10, 11, 20-23 positions of "LDR" field change to valid when user edit "MARC Bibliographic" record. (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C353982'] },
+        'C353982 Verify that invalid values at 10, 11, 20-23 positions of "LDR" field change to valid when user edit "MARC Bibliographic" record. (promin)',
+        { tags: ['extendedPath', 'promin', 'C353982'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

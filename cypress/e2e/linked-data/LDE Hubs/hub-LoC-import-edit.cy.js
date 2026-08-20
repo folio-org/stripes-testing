@@ -52,8 +52,8 @@ describe('MG Hubs: Import and edit LoC hub', () => {
   });
 
   it(
-    'C1030061 Import and edit LoC hub (citation)',
-    { tags: ['C1030061', 'criticalPath', 'citation', 'shiftLeft'] },
+    'C1030061 Import and edit LoC hub (promin)',
+    { tags: ['C1030061', 'criticalPath', 'promin', 'shiftLeft'] },
     () => {
       // Switch to Hubs tab
       SearchAndFilter.switchToHubsTab();

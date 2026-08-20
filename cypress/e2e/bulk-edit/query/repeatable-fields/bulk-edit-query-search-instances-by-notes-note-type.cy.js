@@ -244,8 +244,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C805773 Search instances by Instance — Notes — Note type (all operators for field with predefined values) (firebird)',
-        { tags: ['smoke', 'firebird', 'C805773'] },
+        'C805773 Search instances by Instance — Notes — Note type (all operators for field with predefined values) (athena)',
+        { tags: ['smoke', 'athena', 'C805773'] },
         () => {
           // Get note type names for verification
           const noteTypeNames = {

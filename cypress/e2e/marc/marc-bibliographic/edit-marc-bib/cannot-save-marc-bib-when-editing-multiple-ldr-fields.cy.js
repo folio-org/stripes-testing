@@ -53,8 +53,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C496200 Cannot save "MARC bibliographic" record with multiple "LDR" fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C496200'] },
+        'C496200 Cannot save "MARC bibliographic" record with multiple "LDR" fields (promin)',
+        { tags: ['extendedPath', 'promin', 'C496200'] },
         () => {
           InventoryInstances.searchByTitle(instanceId[0]);
           InventoryInstances.selectInstance();

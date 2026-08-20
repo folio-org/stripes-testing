@@ -383,8 +383,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C692244 Search for additional headings (147, 148, 162, 180, 181, 182, 185) using "Advanced search" option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C692244'] },
+        'C692244 Search for additional headings (147, 148, 162, 180, 181, 182, 185) using "Advanced search" option (promin)',
+        { tags: ['extendedPath', 'promin', 'C692244'] },
         () => {
           // Step 1: Click on the search option dropdown and select "Advanced search"
           MarcAuthorities.clickAdvancedSearchButton();

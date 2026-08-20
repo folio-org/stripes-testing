@@ -85,8 +85,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514968 Cannot update MARC bib record without required fields (Standard and Local) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514968'] },
+        'C514968 Cannot update MARC bib record without required fields (Standard and Local) (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514968'] },
         () => {
           cy.then(() => {
             // Create user and MARC bib FIRST (before setting up validation rules)

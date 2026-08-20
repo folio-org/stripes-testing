@@ -188,8 +188,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C388649 Auto-link fields having "$9" when deriving new "MARC Bib" record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C388649'] },
+          'C388649 Auto-link fields having "$9" when deriving new "MARC Bib" record (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C388649'] },
           () => {
             // Step 1: Find and open detail view of record from precondition
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);

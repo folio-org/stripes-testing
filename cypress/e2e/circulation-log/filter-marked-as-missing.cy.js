@@ -63,9 +63,9 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C17001 Filter circulation log by marked as missing (volaris)',
+    'C17001 Filter circulation log by marked as missing (vega)',
     {
-      tags: ['criticalPath', 'volaris', 'C17001'],
+      tags: ['criticalPath', 'vega', 'C17001'],
       retries: 2,
     },
     () => {
@@ -94,8 +94,8 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C17002 Check the Actions button from filtering Circulation log by marked as missing (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C17002'] },
+    'C17002 Check the Actions button from filtering Circulation log by marked as missing (vega)',
+    { tags: ['criticalPath', 'vega', 'C17002'] },
     () => {
       loans.loans.forEach(({ id }) => {
         UserLoans.declareClaimedReturnedItemMissingViaApi({ loanId: id });

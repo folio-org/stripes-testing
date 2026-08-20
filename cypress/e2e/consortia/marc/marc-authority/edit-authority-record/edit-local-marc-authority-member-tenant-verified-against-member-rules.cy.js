@@ -105,8 +105,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C552479 Edited Local MARC authority record on Member tenant is verified against Member tenant rules (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C552479', 'nonParallel'] },
+          'C552479 Edited Local MARC authority record on Member tenant is verified against Member tenant rules (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C552479', 'nonParallel'] },
           () => {
             cy.then(() => {
               cy.getAdminToken();

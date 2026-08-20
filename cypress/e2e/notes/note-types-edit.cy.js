@@ -63,8 +63,8 @@ describe('Notes', () => {
   });
 
   it(
-    'C1304 Settings | Edit a note type (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C1304'] },
+    'C1304 Settings | Edit a note type (promin)',
+    { tags: ['extendedPath', 'promin', 'C1304'] },
     () => {
       cy.login(testData.userC1304Properties.username, testData.userC1304Properties.password).then(
         () => {

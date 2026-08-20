@@ -129,8 +129,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569544 LCCN\'s prefix case validation on "Edit MARC authority record" pane when "LCCN structure validation" rule is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C569544'] },
+          'C569544 LCCN\'s prefix case validation on "Edit MARC authority record" pane when "LCCN structure validation" rule is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C569544'] },
           () => {
             // Step 1: Click Edit → "Edit MARC authority record" pane opens
             MarcAuthority.edit();

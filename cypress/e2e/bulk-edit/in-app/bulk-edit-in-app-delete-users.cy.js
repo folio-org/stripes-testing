@@ -49,8 +49,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C1385648 Verify bulk delete Users (firebird)',
-      { tags: ['smoke', 'firebird', 'C1385648'] },
+      'C1385648 Verify bulk delete Users (athena)',
+      { tags: ['smoke', 'athena', 'C1385648'] },
       () => {
         // Preconditions (step 5): select Users, User UUIDs and upload file
         BulkEditSearchPane.checkUsersRadio();

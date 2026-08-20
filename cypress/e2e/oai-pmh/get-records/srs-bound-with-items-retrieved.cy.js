@@ -117,8 +117,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C411640 GetRecord: SRS - Verify that bounded-with items retrieved in response (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C411640'] },
+      'C411640 GetRecord: SRS - Verify that bounded-with items retrieved in response (athena)',
+      { tags: ['extendedPath', 'athena', 'C411640'] },
       () => {
         // Step 1-2: Send GetRecord request for first instance and verify
         OaiPmh.getRecordRequest(firstMarcInstance.id, 'marc21_withholdings').then((response) => {

@@ -13,8 +13,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C347902 Verify Browse call numbers form (spitfire)',
-      { tags: ['smoke', 'spitfire', 'C347902'] },
+      'C347902 Verify Browse call numbers form (promin)',
+      { tags: ['smoke', 'promin', 'C347902'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.validateBrowseToggleIsSelected();
@@ -41,8 +41,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C350377 Verify the "Browse subjects" search option on the Instances tab (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350377'] },
+      'C350377 Verify the "Browse subjects" search option on the Instances tab (promin)',
+      { tags: ['smoke', 'promin', 'shiftLeft', 'C350377'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.switchToBrowseTab();
@@ -59,8 +59,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C350378 Verify the "Browse subjects" search option on the Holdings tab (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350378'] },
+      'C350378 Verify the "Browse subjects" search option on the Holdings tab (promin)',
+      { tags: ['smoke', 'promin', 'shiftLeft', 'C350378'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.switchToHoldings();
@@ -71,8 +71,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C350379 Verify the "Browse subjects" search option on the Item tab (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C350379'] },
+      'C350379 Verify the "Browse subjects" search option on the Item tab (promin)',
+      { tags: ['smoke', 'promin', 'shiftLeft', 'C350379'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.switchToItem();

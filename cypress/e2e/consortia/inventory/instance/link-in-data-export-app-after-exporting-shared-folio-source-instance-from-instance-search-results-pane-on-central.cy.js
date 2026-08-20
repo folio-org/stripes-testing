@@ -48,8 +48,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C422083 (CONSORTIA) Verify the link in Data export app after exporting shared FOLIO Source Instance from Instance search results pane on Central tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C422083'] },
+        'C422083 (CONSORTIA) Verify the link in Data export app after exporting shared FOLIO Source Instance from Instance search results pane on Central tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C422083'] },
         () => {
           InventoryInstances.searchByTitle(testData.instance.instanceTitle);
           InventorySearchAndFilter.closeInstanceDetailPane();

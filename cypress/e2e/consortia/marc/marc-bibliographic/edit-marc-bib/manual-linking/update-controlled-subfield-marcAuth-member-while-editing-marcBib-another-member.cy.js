@@ -162,8 +162,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C407668 Update controlled subfields in linked "MARC Authority" record in Member tenant while "MARC Bib" record being edited in another Member tenant (NOT saved link) (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C407668'] },
+            'C407668 Update controlled subfields in linked "MARC Authority" record in Member tenant while "MARC Bib" record being edited in another Member tenant (NOT saved link) (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C407668'] },
             () => {
               cy.then(() => {
                 // Step 1: Edit MARC bib record in Member 1

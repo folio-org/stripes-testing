@@ -63,8 +63,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C813589 Verify that user must have "edit" permissions to edit "Display settings" on current tenant (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C813589', 'nonParallel'] },
+          'C813589 Verify that user must have "edit" permissions to edit "Display settings" on current tenant (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C813589', 'nonParallel'] },
           () => {
             // Precondition: Log in as User A from Member tenant context
             cy.login(userA.username, userA.password, {

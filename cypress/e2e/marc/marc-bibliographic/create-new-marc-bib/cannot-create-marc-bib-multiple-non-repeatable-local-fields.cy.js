@@ -90,8 +90,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C552354 Cannot create MARC bib record with multiple not-repeatable "Local" fields (spitfire)',
-        { tags: ['criticalPath', 'C552354', 'spitfire', 'nonParallel'] },
+        'C552354 Cannot create MARC bib record with multiple not-repeatable "Local" fields (promin)',
+        { tags: ['criticalPath', 'C552354', 'promin', 'nonParallel'] },
         () => {
           // Step 1: Click on "Actions" button >> Select "New MARC bibliographic record"
           InventoryInstance.newMarcBibRecord();

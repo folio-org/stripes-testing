@@ -1801,7 +1801,9 @@ export const COMMON_BUTTON_LABELS = {
   CLOSE: 'Close',
   COLLAPSE_ALL: 'Collapse all',
   CONFIRM: 'Confirm',
+  CREATE: 'Create',
   DELETE: 'Delete',
+  EDIT: 'Edit',
   NEXT: 'Next',
   NEW: 'New',
   PREVIOUS: 'Previous',
@@ -1867,4 +1869,21 @@ export const INSTANCE_RELATIONSHIP_TYPES = {
 export const TIMER_TYPES = {
   USER: 'USER',
   SYSTEM: 'SYSTEM',
+};
+
+export const SEARCH_AND_FILTER_PANE_TITLE = 'Search & filter';
+
+export const THE_LIST_CONTAINS_NO_ITEMS = 'The list contains no items';
+
+export const HOLDING_RECEIVING_HISTORY = {
+  DISPLAY_SUMMARY: 'Display summary',
+  COPY_NUMBER: 'Copy number',
+  ENUMERATION: 'Enumeration',
+  CHRONOLOGY: 'Chronology',
+  RECEIPT_DATE: 'Receipt date',
+  COMMENT: 'Comment',
+  PUBLIC_DISPLAY: 'Public display',
+  SOURCE: 'Source',
+  USER: 'User',
+  RECEIVING: 'Receiving',
 };

@@ -87,8 +87,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C380405 Browse subjects pane remains same results when user switches to search pane and back (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C380405', 'eurekaPhase1'] },
+      'C380405 Browse subjects pane remains same results when user switches to search pane and back (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C380405', 'eurekaPhase1'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password, {

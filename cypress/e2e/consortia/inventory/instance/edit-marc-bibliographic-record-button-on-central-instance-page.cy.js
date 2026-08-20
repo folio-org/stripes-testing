@@ -55,8 +55,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C409474 (CONSORTIA) Verify the " Edit MARC bibliographic record" button on Central tenant Instance page (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C409474'] },
+        'C409474 (CONSORTIA) Verify the " Edit MARC bibliographic record" button on Central tenant Instance page (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C409474'] },
         () => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(testData.instanceId);

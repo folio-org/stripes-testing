@@ -163,8 +163,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C350642 Search MARC: support searching Library of Congress Control Number - 010 field $z subfield (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C350642'] },
+        'C350642 Search MARC: support searching Library of Congress Control Number - 010 field $z subfield (promin)',
+        { tags: ['extendedPath', 'promin', 'C350642'] },
         () => {
           MarcAuthorities.checkSearchOptions();
           MarcAuthorities.selectSearchOptionInDropdown(testData.identifierAllSearchOption);

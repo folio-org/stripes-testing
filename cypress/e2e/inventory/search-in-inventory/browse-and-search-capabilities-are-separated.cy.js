@@ -39,8 +39,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C368482 Browse and Search capabilities are separated\n (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C368482', 'eurekaPhase1'] },
+      'C368482 Browse and Search capabilities are separated\n (promin) (TaaS)',
+      { tags: ['criticalPath', 'promin', 'C368482', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.switchToSearchTab();

@@ -60,8 +60,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C494367 Search for Instance which has multiple records in "Place of publication" field (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C494367'] },
+      'C494367 Search for Instance which has multiple records in "Place of publication" field (promin)',
+      { tags: ['criticalPath', 'promin', 'C494367'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 

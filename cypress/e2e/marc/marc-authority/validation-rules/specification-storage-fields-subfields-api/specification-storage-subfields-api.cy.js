@@ -69,8 +69,8 @@ describe('Specification Storage - Subfield API for MARC Authority', () => {
   });
 
   it(
-    'C499711 Create Subfield Code of Local Field (not repeatable, not required, not deprecated) for MARC authority spec (API) (spitfire)',
-    { tags: ['C499711', 'criticalPath', 'spitfire'] },
+    'C499711 Create Subfield Code of Local Field (not repeatable, not required, not deprecated) for MARC authority spec (API) (promin)',
+    { tags: ['C499711', 'criticalPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
       const subfieldPayload = {
@@ -118,8 +118,8 @@ describe('Specification Storage - Subfield API for MARC Authority', () => {
   );
 
   it(
-    'C499712 Create Subfield Code of Local Field (repeatable, not required, not deprecated selected by default) for MARC authority spec (API) (spitfire)',
-    { tags: ['C499712', 'criticalPath', 'spitfire'] },
+    'C499712 Create Subfield Code of Local Field (repeatable, not required, not deprecated selected by default) for MARC authority spec (API) (promin)',
+    { tags: ['C499712', 'criticalPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
       const subfieldPayload = {
@@ -164,8 +164,8 @@ describe('Specification Storage - Subfield API for MARC Authority', () => {
   );
 
   it(
-    'C499710 Create Subfield Code of Local Field (repeatable, required, deprecated) for MARC authority spec (API) (spitfire)',
-    { tags: ['C499710', 'extendedPath', 'spitfire'] },
+    'C499710 Create Subfield Code of Local Field (repeatable, required, deprecated) for MARC authority spec (API) (promin)',
+    { tags: ['C499710', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
       const subfieldPayload = {
@@ -212,8 +212,8 @@ describe('Specification Storage - Subfield API for MARC Authority', () => {
   );
 
   it(
-    'C506706 Cannot create Subfields for Local Field 002, 004, 009 of MARC authority spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C506706', 'spitfire'] },
+    'C506706 Cannot create Subfields for Local Field 002, 004, 009 of MARC authority spec (API) (promin)',
+    { tags: ['extendedPath', 'C506706', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
       const controlFieldIds = {};

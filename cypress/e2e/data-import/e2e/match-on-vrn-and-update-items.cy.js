@@ -180,8 +180,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
-      { tags: ['smoke', 'folijet', 'C350591'] },
+      'C350591 Match on VRN and update related Instance, Holdings, Item (promin)',
+      { tags: ['smoke', 'promin', 'C350591'] },
       () => {
         // create order with POL
         Orders.createOrderWithOrderLineViaApi(

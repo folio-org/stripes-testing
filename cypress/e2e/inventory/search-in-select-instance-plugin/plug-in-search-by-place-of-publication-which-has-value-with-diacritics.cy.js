@@ -95,8 +95,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C496187 Select Instance plugin | Search for Instance by "Place of publication" field which has value with diacritics (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C496187'] },
+      'C496187 Select Instance plugin | Search for Instance by "Place of publication" field which has value with diacritics (promin)',
+      { tags: ['extendedPath', 'promin', 'C496187'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 

@@ -45,8 +45,8 @@ describe('Users', () => {
     });
 
     it(
-      'C416 Search: Verify search by Email (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C416'] },
+      'C416 Search: Verify search by Email (vega)',
+      { tags: ['criticalPath', 'vega', 'C416'] },
       () => {
         UsersSearchPane.searchByKeywords(testData.searchUser1.personal.email);
         UsersSearchResultsPane.verifyUserIsPresentInTheList(
@@ -76,8 +76,8 @@ describe('Users', () => {
     );
 
     it(
-      'C417 Search: Verify search by barcode (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C417'] },
+      'C417 Search: Verify search by barcode (vega)',
+      { tags: ['criticalPath', 'vega', 'C417'] },
       () => {
         UsersSearchPane.searchByKeywords(testData.searchUser1.barcode);
         UsersSearchResultsPane.verifyUserIsPresentInTheList(

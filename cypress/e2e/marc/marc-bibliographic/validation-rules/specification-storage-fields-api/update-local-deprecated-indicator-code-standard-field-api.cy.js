@@ -97,8 +97,8 @@ describe('MARC Bibliographic Validation Rules - Update Local Deprecated Indicato
   });
 
   it(
-    'C502975 Update Local Deprecated Indicator Code of Standard Field for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C502975', 'spitfire'] },
+    'C502975 Update Local Deprecated Indicator Code of Standard Field for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C502975', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

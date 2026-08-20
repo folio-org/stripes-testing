@@ -105,8 +105,8 @@ describe('MARC', () => {
     });
     describe('Edit MARC bib', () => {
       it(
-        "C552449 MARC validation doesn't start on deleted field during deriving of MARC bib record (spitfire)",
-        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C552449'] },
+        "C552449 MARC validation doesn't start on deleted field during deriving of MARC bib record (promin)",
+        { tags: ['extendedPathFlaky', 'promin', 'nonParallel', 'C552449'] },
         () => {
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
           InventoryInstances.selectInstance();

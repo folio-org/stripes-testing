@@ -84,8 +84,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C380755 Link of empty MARC Bib field with "MARC Authority" record (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C380755'] },
+          'C380755 Link of empty MARC Bib field with "MARC Authority" record (promin)',
+          { tags: ['extendedPath', 'promin', 'C380755'] },
           () => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();

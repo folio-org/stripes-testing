@@ -281,8 +281,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C356802 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C356802'] },
+      'C356802 Check import summary table with "Updated" actions for instance, holding and item (promin)',
+      { tags: ['criticalPath', 'promin', 'C356802'] },
       () => {
         NewFieldMappingProfile.createModifyMarcBibMappingProfileViaApi(
           marcBibMappingProfileForCreate,

@@ -103,8 +103,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C552477 Edited MARC authority record on Central tenant is verified against Central tenant rules (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C552477', 'nonParallel'] },
+          'C552477 Edited MARC authority record on Central tenant is verified against Central tenant rules (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C552477', 'nonParallel'] },
           () => {
             cy.then(() => {
               cy.resetTenant();

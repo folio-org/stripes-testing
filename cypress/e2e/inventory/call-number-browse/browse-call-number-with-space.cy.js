@@ -136,8 +136,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C358140'] },
+      'C358140 Verify that browsing for "call number" with "space" value will get the correct result (promin)',
+      { tags: ['smoke', 'promin', 'shiftLeft', 'C358140'] },
       () => {
         BrowseCallNumber.waitForCallNumberToAppear(testData.exactSearch);
         search(testData.exactSearch);
@@ -152,8 +152,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C359589 Verify that "Browse call numbers" result list displays all unique call numbers from one “Instance” record (spitfire)',
-      { tags: ['spitfire', 'criticalPath', 'C359589', 'eurekaPhase1'] },
+      'C359589 Verify that "Browse call numbers" result list displays all unique call numbers from one “Instance” record (promin)',
+      { tags: ['promin', 'criticalPath', 'C359589', 'eurekaPhase1'] },
       () => {
         BrowseCallNumber.clickBrowseBtn();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
@@ -167,8 +167,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C347910 Verify that "Actions" menu is displayed when searching by any search option except "Call numbers" (spitfire)',
-      { tags: ['spitfire', 'criticalPath', 'C347910', 'eurekaPhase1'] },
+      'C347910 Verify that "Actions" menu is displayed when searching by any search option except "Call numbers" (promin)',
+      { tags: ['promin', 'criticalPath', 'C347910', 'eurekaPhase1'] },
       () => {
         BrowseCallNumber.clickBrowseBtn();
         InventorySearchAndFilter.selectBrowseCallNumbers();
@@ -183,8 +183,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C347916 Verify Browse with non-existent call number (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C347916', 'eurekaPhase1'] },
+      'C347916 Verify Browse with non-existent call number (promin)',
+      { tags: ['criticalPath', 'promin', 'C347916', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
@@ -197,8 +197,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C347918 Verify selecting row from browse result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C347918', 'eurekaPhase1'] },
+      'C347918 Verify selecting row from browse result list (promin)',
+      { tags: ['criticalPath', 'promin', 'C347918', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();

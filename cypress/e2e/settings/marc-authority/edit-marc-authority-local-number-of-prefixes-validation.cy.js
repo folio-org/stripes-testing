@@ -54,8 +54,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C440100 "Prefix" field number of prefixes validation during editing of Local "Authority file" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C440100'] },
+        'C440100 "Prefix" field number of prefixes validation during editing of Local "Authority file" (promin)',
+        { tags: ['extendedPath', 'promin', 'C440100'] },
         () => {
           ManageAuthorityFiles.clickEditButton(localAuthFile.name);
           ManageAuthorityFiles.editField(

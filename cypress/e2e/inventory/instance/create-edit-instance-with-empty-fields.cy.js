@@ -32,8 +32,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C959215 Create/Edit Instance with empty fields (instanceFormatIds, physicalDescriptions, administrativeNotes, editions, publicationRange, publicationFrequency, natureOfContentTermIds) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C959215'] },
+      'C959215 Create/Edit Instance with empty fields (instanceFormatIds, physicalDescriptions, administrativeNotes, editions, publicationRange, publicationFrequency, natureOfContentTermIds) (promin)',
+      { tags: ['extendedPath', 'promin', 'C959215'] },
       () => {
         // Step 1. Click on the "Actions" button on the second pane >> Select "New" option
         const InventoryNewInstance = InventoryInstances.addNewInventory();

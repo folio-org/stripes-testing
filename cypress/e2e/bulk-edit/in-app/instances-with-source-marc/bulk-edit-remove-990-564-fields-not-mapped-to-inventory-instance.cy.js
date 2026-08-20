@@ -107,8 +107,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C1373184 Remove MARC field (990, 564) not mapped to Inventory Instance (MARC) (firebird)',
-      { tags: ['smoke', 'firebird', 'C1373184'] },
+      'C1373184 Remove MARC field (990, 564) not mapped to Inventory Instance (MARC) (athena)',
+      { tags: ['smoke', 'athena', 'C1373184'] },
       () => {
         // Step 1: Show Source, hide General note
         BulkEditActions.openActions();

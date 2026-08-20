@@ -121,8 +121,8 @@ describe('Loans', () => {
       });
 
       it(
-        'C566 Loan: Change due date warnings and alerts (volaris)',
-        { tags: ['smokeFlaky', 'volaris', 'shiftLeft', 'C566'] },
+        'C566 Loan: Change due date warnings and alerts (vega)',
+        { tags: ['smokeFlaky', 'vega', 'shiftLeft', 'C566'] },
         () => {
           // show open loans
           UsersSearchPane.searchByKeywords(checkOutUser.username);

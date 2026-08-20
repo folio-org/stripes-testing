@@ -121,8 +121,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C366585 MARC Authority plug-in | Search: Verify that the "Type of heading" facet option will display the name of facet option when zero results are returned (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C366585'] },
+        'C366585 MARC Authority plug-in | Search: Verify that the "Type of heading" facet option will display the name of facet option when zero results are returned (promin)',
+        { tags: ['extendedPath', 'promin', 'C366585'] },
         () => {
           // Step 1: Click on the "Type of heading" accordion button
           MarcAuthorities.verifyTypeOfHeadingAccordionAndClick();

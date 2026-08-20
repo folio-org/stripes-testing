@@ -145,8 +145,8 @@ describe('Requests', () => {
     });
 
     it(
-      'C553064 Sort requests by "# Copies" and "Printed" columns (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C553064'] },
+      'C553064 Sort requests by "# Copies" and "Printed" columns (vega)',
+      { tags: ['extendedPath', 'vega', 'C553064'] },
       () => {
         // Step 1: Click on the "# Copies" column name
         Requests.clickCopiesColumnHeader();

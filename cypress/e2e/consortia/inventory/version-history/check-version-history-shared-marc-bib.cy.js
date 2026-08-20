@@ -69,8 +69,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C692169 Verify version history after sharing a local MARC instance (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C692169'] },
+        'C692169 Verify version history after sharing a local MARC instance (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C692169'] },
         () => {
           // Step 1: Search and select the instance
           InventorySearchAndFilter.clearDefaultHeldbyFilter();

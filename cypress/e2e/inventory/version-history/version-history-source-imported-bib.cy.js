@@ -35,12 +35,10 @@ describe('Inventory', () => {
         cy.createTempUser(permissions).then((userProperties) => {
           testData.userProperties = userProperties;
 
-          cy.getAdminUserDetails().then(
-            (user) => {
-              testData.lastName = user.personal.lastName;
-              testData.firstName = user.personal.firstName;
-            },
-          );
+          cy.getAdminUserDetails().then((user) => {
+            testData.lastName = user.personal.lastName;
+            testData.firstName = user.personal.firstName;
+          });
 
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -70,8 +68,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C692070 "Version history" pane is displayed on "View source" pane of "MARC bibliographic" record created via "Data import" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C692070'] },
+        'C692070 "Version history" pane is displayed on "View source" pane of "MARC bibliographic" record created via "Data import" (promin)',
+        { tags: ['criticalPath', 'promin', 'C692070'] },
         () => {
           InventoryInstance.viewSource();
           InventoryViewSource.verifyVersionHistoryButtonShown();

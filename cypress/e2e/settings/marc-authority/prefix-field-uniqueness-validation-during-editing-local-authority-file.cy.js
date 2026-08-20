@@ -71,8 +71,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436865 "Prefix" field uniqueness validation during editing of Local "Authority file" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C436865'] },
+        'C436865 "Prefix" field uniqueness validation during editing of Local "Authority file" (promin)',
+        { tags: ['criticalPath', 'promin', 'C436865'] },
         () => {
           // 1 Click on the "Edit" (pencil) icon of "Local" authority file.
           ManageAuthorityFiles.clickEditButton(localAuthFiles[0].name);

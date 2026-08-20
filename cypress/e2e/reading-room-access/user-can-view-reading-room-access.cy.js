@@ -72,8 +72,8 @@ describe('Reading Room Access', () => {
   });
 
   it(
-    'C466319 User can view reading room access (volaris)',
-    { tags: ['smoke', 'volaris', 'C466319'] },
+    'C466319 User can view reading room access (vega)',
+    { tags: ['smoke', 'vega', 'C466319'] },
     () => {
       SettingsReadingRoom.loadReadingRoomRecord();
       SettingsReadingRoom.verifyColumns();

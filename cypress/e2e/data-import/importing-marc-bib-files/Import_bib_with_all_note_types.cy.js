@@ -359,8 +359,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C934322 Import MARC bib record with all Instance note types (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C934322'] },
+      'C934322 Import MARC bib record with all Instance note types (promin)',
+      { tags: ['extendedPath', 'promin', 'C934322'] },
       () => {
         // Step 3. Find and open detail view of imported Instance:
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);

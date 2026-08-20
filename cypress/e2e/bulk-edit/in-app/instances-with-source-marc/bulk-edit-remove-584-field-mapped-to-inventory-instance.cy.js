@@ -121,8 +121,8 @@ describe(
       });
 
       it(
-        'C506685 Remove subfield of MARC field (584) mapped to Inventory Instance (MARC) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C506685'] },
+        'C506685 Remove subfield of MARC field (584) mapped to Inventory Instance (MARC) (athena)',
+        { tags: ['criticalPath', 'athena', 'C506685'] },
         () => {
           // Step 1: Check columns for Source and Accumulation and Frequency of Use note
           BulkEditActions.openActions();

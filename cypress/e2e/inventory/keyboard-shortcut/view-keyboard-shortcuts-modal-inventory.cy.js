@@ -29,8 +29,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C456114 View "Keyboard shortcut" pop-up modal window in "Inventory" app (Windows) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C456114'] },
+      'C456114 View "Keyboard shortcut" pop-up modal window in "Inventory" app (Windows) (promin)',
+      { tags: ['extendedPath', 'promin', 'C456114'] },
       () => {
         InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
         AppContextDropdown.toggleAppContextDropdown();

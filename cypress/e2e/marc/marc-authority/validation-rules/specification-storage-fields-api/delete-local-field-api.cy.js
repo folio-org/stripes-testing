@@ -71,8 +71,8 @@ describe('MARC Authority Validation Rules - Delete Local Field API', () => {
   });
 
   it(
-    'C494364 Delete Local Field of MARC authority spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C494364', 'spitfire'] },
+    'C494364 Delete Local Field of MARC authority spec (API) (promin)',
+    { tags: ['extendedPath', 'C494364', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

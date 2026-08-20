@@ -88,8 +88,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476824 "Update ownership" option is not displayed on Holdings menu if user don\'t have permissions (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C476824'] },
+        'C476824 "Update ownership" option is not displayed on Holdings menu if user don\'t have permissions (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C476824'] },
         () => {
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();

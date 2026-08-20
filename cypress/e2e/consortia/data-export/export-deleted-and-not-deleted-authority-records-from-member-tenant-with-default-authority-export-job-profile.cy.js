@@ -117,8 +117,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C558412 ECS | Export deleted and not deleted Authority records from Member tenant with Default authority export job profile (consortia) (firebird)',
-      { tags: ['extendedPathECS', 'firebird', 'C558412'] },
+      'C558412 ECS | Export deleted and not deleted Authority records from Member tenant with Default authority export job profile (consortia) (athena)',
+      { tags: ['extendedPathECS', 'athena', 'C558412'] },
       () => {
         // Step 1: Upload .csv file with UUIDs
         ExportFile.uploadFile(authorityUUIDsFileName);

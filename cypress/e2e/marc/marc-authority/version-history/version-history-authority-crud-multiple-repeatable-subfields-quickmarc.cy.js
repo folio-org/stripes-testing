@@ -74,8 +74,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C663318 Check "Version history" pane after Create, Update, Delete multiple repeatable subfields in "MARC authority" record via "quickmarc" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C663318'] },
+        'C663318 Check "Version history" pane after Create, Update, Delete multiple repeatable subfields in "MARC authority" record via "quickmarc" (promin)',
+        { tags: ['extendedPath', 'promin', 'C663318'] },
         () => {
           // Step 1: Open Edit MARC authority record pane
           MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading);

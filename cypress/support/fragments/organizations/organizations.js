@@ -1995,14 +1995,6 @@ export default {
       .then((t) => expect(t.trim()).to.eq(expected));
   },
 
-  interceptGetOrganizations() {
-    cy.intercept('GET', '/organizations/organizations*').as('waiterForOrganizationsQueryCompleted');
-  },
-
-  waitForOrganizationsQueryCompleted() {
-    cy.wait('@waiterForOrganizationsQueryCompleted');
-  },
-
   addAU(acqUnits = []) {
     cy.wait(4000);
     cy.do([
@@ -2021,5 +2013,22 @@ export default {
 
   verifyAcqUnitSelected(auName) {
     cy.expect(orgAcqUnitsMultiSelect.find(ValueChipRoot(auName)).exists());
+  },
+
+  /* Request interceptors */
+  interceptGetOrganizations() {
+    cy.intercept('GET', '/organizations/organizations*').as('waiterForOrganizationsQueryCompleted');
+  },
+  waitForOrganizationsQueryCompleted() {
+    cy.wait('@waiterForOrganizationsQueryCompleted');
+  },
+
+  interceptGetOrganizationTypes() {
+    cy.intercept('GET', '/organizations-storage/organization-types*').as(
+      'waiterForOrganizationTypesQueryCompleted',
+    );
+  },
+  waitForOrganizationTypesQueryCompleted() {
+    cy.wait('@waiterForOrganizationTypesQueryCompleted');
   },
 };

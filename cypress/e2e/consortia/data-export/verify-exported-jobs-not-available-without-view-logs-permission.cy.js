@@ -123,8 +123,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C552503 ECS | Verify that the list of exported jobs is not available for the user with "Settings (Data export): Can view only" and "Settings (Data export): Can view, add, update profiles" permissions in "Consortium manager" app (consortia) (firebird)',
-      { tags: ['extendedPathECS', 'firebird', 'C552503'] },
+      'C552503 ECS | Verify that the list of exported jobs is not available for the user with "Settings (Data export): Can view only" and "Settings (Data export): Can view, add, update profiles" permissions in "Consortium manager" app (consortia) (athena)',
+      { tags: ['extendedPathECS', 'athena', 'C552503'] },
       () => {
         // Step 1: Click "Data export" in "Management" pane under "Logs & Reports" section
         ConsortiumManagerApp.chooseSettingsItem(settingsItems.dataExport);

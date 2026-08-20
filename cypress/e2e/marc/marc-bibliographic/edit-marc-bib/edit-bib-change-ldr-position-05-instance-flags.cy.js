@@ -68,8 +68,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C1307997 Change "LDR" position 05 to "d" and check folio instance (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C1307997'] },
+        'C1307997 Change "LDR" position 05 to "d" and check folio instance (promin)',
+        { tags: ['criticalPath', 'promin', 'C1307997'] },
         () => {
           // Navigate to instance
           InventoryInstances.searchByTitle(instanceId);

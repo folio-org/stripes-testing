@@ -66,8 +66,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C350938 Verify "Are you sure?" form in the in-app Items bulk edit form (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C350938'] },
+      'C350938 Verify "Are you sure?" form in the in-app Items bulk edit form (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C350938'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

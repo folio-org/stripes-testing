@@ -108,8 +108,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C398011 Verify that "Reset all" button clicked at "Browse inventory" pane does not affect the "Inventory" pane. (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C398011'] },
+      'C398011 Verify that "Reset all" button clicked at "Browse inventory" pane does not affect the "Inventory" pane. (promin)',
+      { tags: ['extendedPath', 'promin', 'C398011'] },
       () => {
         InventorySearchAndFilter.executeSearch(instanceTitlePrefix);
         InventorySearchAndFilter.verifyResultListExists();

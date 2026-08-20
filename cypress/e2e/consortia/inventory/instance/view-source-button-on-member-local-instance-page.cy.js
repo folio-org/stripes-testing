@@ -66,8 +66,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C409518 (CONSORTIA) Verify the "View source" button on Member tenant local Instance page (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C409518'] },
+        'C409518 (CONSORTIA) Verify the "View source" button on Member tenant local Instance page (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C409518'] },
         () => {
           InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.clearDefaultHeldbyFilter();

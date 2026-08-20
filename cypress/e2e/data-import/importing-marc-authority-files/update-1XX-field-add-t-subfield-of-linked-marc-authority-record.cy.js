@@ -216,8 +216,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C374170 Update "1XX" field value (add "$t") of linked "MARC authority" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C374170'] },
+      'C374170 Update "1XX" field value (add "$t") of linked "MARC authority" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C374170'] },
       () => {
         // Precondition: User is on "MARC authority" pane with search results for "MARC Authority" record
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);

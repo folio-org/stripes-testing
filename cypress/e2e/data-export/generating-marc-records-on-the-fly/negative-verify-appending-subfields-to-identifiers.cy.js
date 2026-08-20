@@ -69,8 +69,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350444 Negative: Verify appending subfields to Identifiers (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C350444'] },
+      'C350444 Negative: Verify appending subfields to Identifiers (athena)',
+      { tags: ['extendedPath', 'athena', 'C350444'] },
       () => {
         // Step 1: Go to the "Data Export" app (already there from before hook)
         DataExportLogs.verifyDragAndDropAreaExists();

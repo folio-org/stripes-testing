@@ -67,8 +67,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C430207 View "Manage authority files" pane in "Settings >> MARC authority" with view permissions in Central and Member tenants (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C430207'] },
+          'C430207 View "Manage authority files" pane in "Settings >> MARC authority" with view permissions in Central and Member tenants (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C430207'] },
           () => {
             cy.login(testData.userA.username, testData.userA.password, {
               path: TopMenu.settingsAuthorityFilesPath,
@@ -96,8 +96,8 @@ describe('MARC', () => {
         );
 
         it(
-          'C430209 View "Manage authority files" pane in "Settings >> MARC authority" with CRUD permissions in Member tenant and no permissions in Central tenant (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C430209'] },
+          'C430209 View "Manage authority files" pane in "Settings >> MARC authority" with CRUD permissions in Member tenant and no permissions in Central tenant (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C430209'] },
           () => {
             cy.login(testData.userB.username, testData.userB.password).then(() => {
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);

@@ -58,8 +58,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C552481 Check the subject type and source settings on Create Instance page (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C552481'] },
+      'C552481 Check the subject type and source settings on Create Instance page (promin)',
+      { tags: ['extendedPath', 'promin', 'C552481'] },
       () => {
         // Step 1: Click Actions > + New; verify New instance page opened
         InventoryInstances.addNewInventory();

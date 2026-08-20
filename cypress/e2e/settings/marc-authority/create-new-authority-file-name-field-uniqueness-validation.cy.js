@@ -55,8 +55,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423974 Create new "Authority file" with already existing value in "Name" field at "Settings >> MARC authority >> Manage authority files" pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423974'] },
+        'C423974 Create new "Authority file" with already existing value in "Name" field at "Settings >> MARC authority >> Manage authority files" pane (promin)',
+        { tags: ['extendedPath', 'promin', 'C423974'] },
         () => {
           // Steps 1-3: Try to save with a name that exists in a FOLIO authority file
           ManageAuthorityFiles.clickNewButton();

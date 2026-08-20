@@ -109,8 +109,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C451501 [Items] Verify that Non-Queryable array type fields are part of exported .csv files and column selection (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C451501'] },
+      'C451501 [Items] Verify that Non-Queryable array type fields are part of exported .csv files and column selection (athena)',
+      { tags: ['extendedPath', 'athena', 'C451501'] },
       () => {
         // Step 1: Create new list with Items record type and open Build query form
         Lists.openNewListPane();

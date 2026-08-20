@@ -59,8 +59,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C360948 Browse subject which has double quotes (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C360948'] },
+      'C360948 Browse subject which has double quotes (promin)',
+      { tags: ['extendedPath', 'promin', 'C360948'] },
       () => {
         BrowseSubjects.waitForSubjectToAppear(expectedSubject.subjectHeadings);
 

@@ -107,8 +107,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503162 Create "MARC authority" record with multiple control fields (002, 003, 004, 009) which have subfield "$a" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C503162'] },
+        'C503162 Create "MARC authority" record with multiple control fields (002, 003, 004, 009) which have subfield "$a" (promin)',
+        { tags: ['extendedPath', 'promin', 'C503162'] },
         () => {
           // 1. Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();

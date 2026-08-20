@@ -130,8 +130,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C380529 Data for "MARC authority headings updates (CSV)" report includes data on several heading updates for the same "MARC authority" record (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C380529'] },
+        'C380529 Data for "MARC authority headings updates (CSV)" report includes data on several heading updates for the same "MARC authority" record (promin)',
+        { tags: ['criticalPath', 'promin', 'C380529'] },
         () => {
           const expectedFirstUpdateData = {
             naturalIdOld: marcFiles[1].authority010FieldValue,

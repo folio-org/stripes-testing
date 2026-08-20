@@ -219,8 +219,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514974 Derive MARC bib record with required / not required fields (Standard and Local) (spitfire)',
-        { tags: ['criticalPath', 'C514974', 'spitfire', 'nonParallel'] },
+        'C514974 Derive MARC bib record with required / not required fields (Standard and Local) (promin)',
+        { tags: ['criticalPath', 'C514974', 'promin', 'nonParallel'] },
         () => {
           // Step 1: Click on "Actions" button >> Select "Derive new MARC bibliographic record" option
           InventoryInstances.searchByTitle(importedInstanceId);

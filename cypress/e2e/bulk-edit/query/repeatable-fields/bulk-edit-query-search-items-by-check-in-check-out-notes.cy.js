@@ -208,8 +208,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C805788 Search items by Check in notes fields, Check out notes fields using AND operator (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C805788'] },
+        'C805788 Search items by Check in notes fields, Check out notes fields using AND operator (athena)',
+        { tags: ['criticalPath', 'athena', 'C805788'] },
         () => {
           // Step 1: Verify Check out notes fields are queryable under "Select options" dropdown
           BulkEditSearchPane.openQuerySearch();

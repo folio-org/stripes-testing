@@ -110,8 +110,8 @@ describe(
         });
 
         it(
-          'C375288 Verify generated Logs files for Items In app -- only valid Holdings UUIDs (firebird)',
-          { tags: ['smoke', 'firebird', 'C375288'] },
+          'C375288 Verify generated Logs files for Items In app -- only valid Holdings UUIDs (athena)',
+          { tags: ['smoke', 'athena', 'C375288'] },
           () => {
             BulkEditSearchPane.checkItemsRadio();
             BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

@@ -154,8 +154,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C496185 Select Instance plugin | Search for Instance by "Place of publication" field using queries with different order of search terms (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C496185'] },
+      'C496185 Select Instance plugin | Search for Instance by "Place of publication" field using queries with different order of search terms (promin)',
+      { tags: ['extendedPath', 'promin', 'C496185'] },
       () => {
         testData.searchItem.forEach((item) => {
           SelectInstanceModal.chooseSearchOption(item.searchOption);

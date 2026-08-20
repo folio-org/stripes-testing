@@ -122,8 +122,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C423378 API | Unlink Shared MARC bib from Shared MARC auth on Central tenant and check "/links/instances/" endpoint (consortia) (spitfire)',
-            { tags: ['criticalPathECS', 'spitfire', 'C423378'] },
+            'C423378 API | Unlink Shared MARC bib from Shared MARC auth on Central tenant and check "/links/instances/" endpoint (consortia) (promin)',
+            { tags: ['criticalPathECS', 'promin', 'C423378'] },
             () => {
               cy.then(() => {
                 cy.resetTenant();

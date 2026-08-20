@@ -112,8 +112,8 @@ describe(
       });
 
       it(
-        'C523599 Find and remove subfield from MARC field (914, 570) not mapped to Inventory Instance (MARC) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C523599'] },
+        'C523599 Find and remove subfield from MARC field (914, 570) not mapped to Inventory Instance (MARC) (athena)',
+        { tags: ['criticalPath', 'athena', 'C523599'] },
         () => {
           // Step 1: Show Source, hide General note
           BulkEditActions.openActions();

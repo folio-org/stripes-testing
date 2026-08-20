@@ -88,8 +88,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350408 Verify NOTEs types that are NOT marked as "StaffOnly" (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C350408'] },
+      'C350408 Verify NOTEs types that are NOT marked as "StaffOnly" (athena)',
+      { tags: ['criticalPath', 'athena', 'C350408'] },
       () => {
         // Step 1: Go to the "Data Export" app (already logged in from before block)
         DataExportLogs.verifyDragAndDropAreaExists();

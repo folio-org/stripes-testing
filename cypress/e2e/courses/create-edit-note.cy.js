@@ -57,8 +57,8 @@ describe('Course Reserves', () => {
     });
 
     it(
-      'C421983 Courses > Create and edit  a note (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C421983'] },
+      'C421983 Courses > Create and edit  a note (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C421983'] },
       () => {
         Courses.verifyExistingCourseIsDisplayed(testData.course.name);
         // #1 Open any "Course" record in second pane by clicking on it

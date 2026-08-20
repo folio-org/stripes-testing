@@ -103,8 +103,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C446171 Verify the behaviour of modify action before create action (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C446171'] },
+      'C446171 Verify the behaviour of modify action before create action (promin)',
+      { tags: ['criticalPath', 'promin', 'C446171'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfileFieldsForModify);

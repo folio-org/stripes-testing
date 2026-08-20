@@ -102,8 +102,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet)',
-      { tags: ['smoke', 'folijet', 'C3501', 'shiftLeft'] },
+      'C3501 An item is being moved from one library location to another. Update the effective location for the item (promin)',
+      { tags: ['smoke', 'promin', 'C3501', 'shiftLeft'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventoryInstance.waitInstanceRecordViewOpened(itemData.instanceTitle);

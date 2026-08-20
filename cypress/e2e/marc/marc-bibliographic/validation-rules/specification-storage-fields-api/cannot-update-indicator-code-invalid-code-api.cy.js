@@ -105,8 +105,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Indicator Code Inv
   });
 
   it(
-    'C502983 Cannot update Indicator code of Local field with invalid "code" for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C502983', 'spitfire'] },
+    'C502983 Cannot update Indicator code of Local field with invalid "code" for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C502983', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

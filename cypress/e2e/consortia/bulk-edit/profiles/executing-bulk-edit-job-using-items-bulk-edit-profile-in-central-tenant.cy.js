@@ -259,8 +259,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C770421 ECS | Executing bulk edit job using Items bulk edit profile in Central tenant (Query) (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C770421'] },
+        'C770421 ECS | Executing bulk edit job using Items bulk edit profile in Central tenant (Query) (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C770421'] },
         () => {
           // Step 1: Click "Actions" menu
           BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);

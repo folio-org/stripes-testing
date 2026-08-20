@@ -48,8 +48,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C566517 Duplicate Instance with empty "Date type" dropdown and empty "Date 1", "Date 2" fields (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C566517'] },
+      'C566517 Duplicate Instance with empty "Date type" dropdown and empty "Date 1", "Date 2" fields (promin)',
+      { tags: ['extendedPath', 'promin', 'C566517'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstanceById(testData.instanceId);

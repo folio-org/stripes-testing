@@ -41,8 +41,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C353638 Verify proper system behavior for canceled import (folijet) (TaaS)',
-        { tags: ['extendedPath', 'folijet', 'C353638'] },
+        'C353638 Verify proper system behavior for canceled import (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C353638'] },
         () => {
           DataImport.verifyUploadState();
           DataImport.uploadFile(filePathForUpload, firstMarcFileName);

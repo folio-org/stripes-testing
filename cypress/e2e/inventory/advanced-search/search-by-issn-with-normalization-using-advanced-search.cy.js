@@ -190,8 +190,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C831999 Advanced search | Verify ISSN search normalization - Case 1 (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C831999'] },
+      'C831999 Advanced search | Verify ISSN search normalization - Case 1 (promin)',
+      { tags: ['extendedPath', 'promin', 'C831999'] },
       () => {
         // Run searches on Instance tab
         InventorySearchAndFilter.instanceTabIsDefault();

@@ -34,8 +34,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C423466 Cancel changes made in saved Title+Package via Cancel button (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423466'] },
+      'C423466 Cancel changes made in saved Title+Package via Cancel button (promin)',
+      { tags: ['extendedPath', 'promin', 'C423466'] },
       () => {
         EHoldingsTitle.searchTitle(testData.existingTitle);
         EHoldingsTitles.openTitle(0);

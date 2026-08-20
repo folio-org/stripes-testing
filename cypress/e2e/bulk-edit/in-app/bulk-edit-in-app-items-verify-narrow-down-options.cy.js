@@ -50,8 +50,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C356778 Verify narrow down options dropdown choices on Items in-app bulk edit form (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C356778'] },
+      'C356778 Verify narrow down options dropdown choices on Items in-app bulk edit form (athena)',
+      { tags: ['extendedPath', 'athena', 'C356778'] },
       () => {
         const allOptions = [
           'Administrative note',

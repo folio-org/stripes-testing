@@ -72,9 +72,9 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808494 API | Create multiple "Item" records with empty "order" field using batch endpoint (spitfire)',
+        'C808494 API | Create multiple "Item" records with empty "order" field using batch endpoint (promin)',
         {
-          tags: ['criticalPath', 'spitfire', 'C808494'],
+          tags: ['criticalPath', 'promin', 'C808494'],
         },
         () => {
           cy.getToken(user.username, user.password);

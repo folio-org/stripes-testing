@@ -30,8 +30,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C655286 User without permission "Settings (MARC authority): Configure Version history" cannot see "Settings >> MARC authority >> Version history" page (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C655286'] },
+          'C655286 User without permission "Settings (MARC authority): Configure Version history" cannot see "Settings >> MARC authority >> Version history" page (promin)',
+          { tags: ['extendedPath', 'promin', 'C655286'] },
           () => {
             cy.login(testUser.username, testUser.password, {
               path: TopMenu.settingsPath,

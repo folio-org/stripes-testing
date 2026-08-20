@@ -41,8 +41,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C399089 Verify the menu option for creating requests on Item detail page (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C399089'] },
+      'C399089 Verify the menu option for creating requests on Item detail page (promin)',
+      { tags: ['extendedPath', 'promin', 'C399089'] },
       () => {
         // Step 1: Find instance, open item detail page
         InventoryInstances.searchByTitle(testData.instanceId);

@@ -40,8 +40,8 @@ describe('Lists', () => {
     };
 
     it(
-      'C477578 Verify that it\'s possible to access the entity type using "Organizations: View" permission when Lists app permissions assigned (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C477578'] },
+      'C477578 Verify that it\'s possible to access the entity type using "Organizations: View" permission when Lists app permissions assigned (athena)',
+      { tags: ['criticalPath', 'athena', 'C477578'] },
       () => {
         createNewUser([Permissions.listsAll.gui, Permissions.uiOrganizationsView.gui]);
         Lists.openNewListPane();
@@ -63,8 +63,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C477579 Verify that it\'s possible to access the entity type using "Organizations: View, edit" permission when Lists app permissions assigned (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C477579'] },
+      'C477579 Verify that it\'s possible to access the entity type using "Organizations: View, edit" permission when Lists app permissions assigned (athena)',
+      { tags: ['extendedPath', 'athena', 'C477579'] },
       () => {
         createNewUser([Permissions.listsAll.gui, Permissions.uiOrganizationsViewEdit.gui]);
         Lists.openNewListPane();
@@ -86,8 +86,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C477580 Verify that it\'s possible to access the entity type using "Organizations: View, edit, create" permission when Lists app permissions assigned (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C477580'] },
+      'C477580 Verify that it\'s possible to access the entity type using "Organizations: View, edit, create" permission when Lists app permissions assigned (athena)',
+      { tags: ['extendedPath', 'athena', 'C477580'] },
       () => {
         createNewUser([Permissions.listsAll.gui, Permissions.uiOrganizationsViewEditCreate.gui]);
         Lists.openNewListPane();
@@ -109,8 +109,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C477581 Verify that it\'s possible to access the entity type using "Organizations: View, edit, delete" permission when Lists app permissions assigned (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C477581'] },
+      'C477581 Verify that it\'s possible to access the entity type using "Organizations: View, edit, delete" permission when Lists app permissions assigned (athena)',
+      { tags: ['extendedPath', 'athena', 'C477581'] },
       () => {
         createNewUser([Permissions.listsAll.gui, Permissions.uiOrganizationsViewEditDelete.gui]);
         Lists.openNewListPane();
@@ -132,8 +132,8 @@ describe('Lists', () => {
     );
 
     it(
-      "C477587 Verify that it's not possible to access the entity type when Lists app permissions are assigned, but the user no longer has that permission (corsair)",
-      { tags: ['extendedPath', 'corsair', 'C477587'] },
+      "C477587 Verify that it's not possible to access the entity type when Lists app permissions are assigned, but the user no longer has that permission (athena)",
+      { tags: ['extendedPath', 'athena', 'C477587'] },
       () => {
         createNewUser([
           Permissions.listsAll.gui,

@@ -96,8 +96,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C1373183 Remove MARC field (590) mapped to Inventory Instance (MARC) (firebird)',
-      { tags: ['smoke', 'firebird', 'C1373183'] },
+      'C1373183 Remove MARC field (590) mapped to Inventory Instance (MARC) (athena)',
+      { tags: ['smoke', 'athena', 'C1373183'] },
       () => {
         // Step 1: Show Source and Local notes columns
         BulkEditActions.openActions();

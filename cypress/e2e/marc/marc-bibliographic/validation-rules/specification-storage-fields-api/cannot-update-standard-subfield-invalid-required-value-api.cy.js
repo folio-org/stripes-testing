@@ -57,8 +57,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Standard Subfield 
   });
 
   it(
-    'C510696 Cannot update Standard Subfield with invalid value in "required" field for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C510696', 'spitfire'] },
+    'C510696 Cannot update Standard Subfield with invalid value in "required" field for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C510696', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

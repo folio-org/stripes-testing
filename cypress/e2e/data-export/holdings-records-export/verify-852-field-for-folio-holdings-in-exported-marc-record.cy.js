@@ -99,8 +99,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C423587 Verify 852 field for FOLIO Holdings in exported MARC record generated on the fly (firebird)',
-      { tags: ['smoke', 'firebird', 'C423587'] },
+      'C423587 Verify 852 field for FOLIO Holdings in exported MARC record generated on the fly (athena)',
+      { tags: ['smoke', 'athena', 'C423587'] },
       () => {
         ExportFile.uploadFile(fileName);
         SelectJobProfile.verifySelectJobPane();

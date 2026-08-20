@@ -89,8 +89,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C515009 Select Instance plugin | Facet options display in expanded accordions when search has been performed and Instance/Holdings/Item tab is clicked (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C515009'] },
+      'C515009 Select Instance plugin | Facet options display in expanded accordions when search has been performed and Instance/Holdings/Item tab is clicked (promin)',
+      { tags: ['extendedPath', 'promin', 'C515009'] },
       () => {
         function searchAndVerifyFacets(data) {
           SelectInstanceModal.checkResultsListEmpty();

@@ -235,8 +235,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C411611 Search for Shared/Local records by "Title (all)" search option from "Central" tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'C411611'] },
+      'C411611 Search for Shared/Local records by "Title (all)" search option from "Central" tenant (consortia) (promin)',
+      { tags: ['criticalPathECS', 'promin', 'C411611'] },
       () => {
         InventorySearchAndFilter.selectSearchOptions('Title (all)', searchValue);
         InventorySearchAndFilter.verifySelectedSearchOption('title');

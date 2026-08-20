@@ -94,8 +94,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C663253 Bulk edit administrative data and marc fields is not supported for Instances with source other than MARC (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C663253'] },
+      'C663253 Bulk edit administrative data and marc fields is not supported for Instances with source other than MARC (athena)',
+      { tags: ['criticalPath', 'athena', 'C663253'] },
       () => {
         // Step 1: Click "Actions" menu and verify options under "Start bulk edit"
         BulkEditActions.openActions();

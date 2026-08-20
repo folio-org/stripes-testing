@@ -61,8 +61,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436832 Edit "Name" field of Local "Authority file" which doesn\'t have assigned "MARC authority" records (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C436832'] },
+        'C436832 Edit "Name" field of Local "Authority file" which doesn\'t have assigned "MARC authority" records (promin)',
+        { tags: ['extendedPath', 'promin', 'C436832'] },
         () => {
           cy.login(testUser.username, testUser.password, {
             path: TopMenu.settingsAuthorityFilesPath,

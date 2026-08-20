@@ -48,8 +48,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423525 Detail view of created "MARC authority" record is open automatically after creation when user is on search result list with one result (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423525'] },
+        'C423525 Detail view of created "MARC authority" record is open automatically after creation when user is on search result list with one result (promin)',
+        { tags: ['extendedPath', 'promin', 'C423525'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tag008);

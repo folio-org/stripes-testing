@@ -99,8 +99,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C380574 MARC Authority plug-in | Collapse and expand "Search & filter" pane when searching for "MARC Authority" records (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C380574'] },
+        'C380574 MARC Authority plug-in | Collapse and expand "Search & filter" pane when searching for "MARC Authority" records (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C380574'] },
         () => {
           MarcAuthoritiesSearch.collapseSearchPane();
           MarcAuthoritiesSearch.verifySearchPaneIsCollapsed(true);

@@ -78,8 +78,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C15187 Move some items with in a holdings record to another holdings associated with another instance (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C15187'] },
+      'C15187 Move some items with in a holdings record to another holdings associated with another instance (athena)',
+      { tags: ['criticalPath', 'athena', 'C15187'] },
       () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);

@@ -72,8 +72,8 @@ describe('Citation: duplicate instance', () => {
   });
 
   it(
-    'C552492 Marigold - Duplicate instance (citation)',
-    { tags: ['criticalPath', 'citation', 'C552492', 'marigold'] },
+    'C552492 Marigold - Duplicate instance (promin)',
+    { tags: ['criticalPath', 'promin', 'C552492', 'marigold'] },
     () => {
       // Create work
       Marigold.openNewResourceForm();

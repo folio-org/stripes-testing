@@ -53,8 +53,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C380394 Verify that bulk edit jobs run by correct user in case deleting one of them (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C380394'] },
+      'C380394 Verify that bulk edit jobs run by correct user in case deleting one of them (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C380394'] },
       () => {
         cy.login(user1.username, user1.password, {
           path: TopMenu.bulkEditPath,

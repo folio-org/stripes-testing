@@ -76,8 +76,8 @@ describe('Consortia', () => {
         });
 
         it(
-          'C594406 Subject type can be shared to all tenants in "Consortium manager" app regardless permission and affiliation (consortia) (folijet)',
-          { tags: ['criticalPathECS', 'folijet', 'C594406'] },
+          'C594406 Subject type can be shared to all tenants in "Consortium manager" app regardless permission and affiliation (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C594406'] },
           () => {
             cy.login(userA.username, userA.password);
             ConsortiumManagerSettings.checkCurrentTenantInTopMenu(tenantNames.central);

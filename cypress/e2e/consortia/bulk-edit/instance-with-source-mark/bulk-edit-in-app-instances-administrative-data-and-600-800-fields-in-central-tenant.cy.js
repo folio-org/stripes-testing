@@ -134,8 +134,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C651486 ECS | Bulk edit administrative data and marc fields (600, 800) for all records in Central tenant (MARC, Logs) (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C651486'] },
+        'C651486 ECS | Bulk edit administrative data and marc fields (600, 800) for all records in Central tenant (MARC, Logs) (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C651486'] },
         () => {
           BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(

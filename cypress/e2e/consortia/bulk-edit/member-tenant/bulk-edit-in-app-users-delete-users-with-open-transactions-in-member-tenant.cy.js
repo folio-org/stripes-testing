@@ -161,8 +161,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C1385660 Verify bulk delete Users in Member tenant (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C1385660'] },
+        'C1385660 Verify bulk delete Users in Member tenant (athena)',
+        { tags: ['smokeECS', 'athena', 'C1385660'] },
         () => {
           // Step 1: Check the Preview of records matched
           BulkEditSearchPane.verifyPaneRecordsCount('2 user');

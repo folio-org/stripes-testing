@@ -135,8 +135,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411810 Export list: Canned lists (corsair)',
-      { tags: ['smoke', 'corsair', 'C411810', 'eurekaPhase1'] },
+      'C411810 Export list: Canned lists (athena)',
+      { tags: ['smoke', 'athena', 'C411810', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

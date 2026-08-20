@@ -213,8 +213,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C794530 Edit "MARC authority" record with invalid values in "008" field and verify dropdowns (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C794530'] },
+        'C794530 Edit "MARC authority" record with invalid values in "008" field and verify dropdowns (promin)',
+        { tags: ['extendedPath', 'promin', 'C794530'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);

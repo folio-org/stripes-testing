@@ -67,8 +67,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10968 Verify Physical description mapping (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C10968'] },
+      'C10968 Verify Physical description mapping (athena)',
+      { tags: ['extendedPath', 'athena', 'C10968'] },
       () => {
         // Step 1: Go to the "Data export" app
         DataExportLogs.verifyDragAndDropAreaExists();

@@ -183,8 +183,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C496118 Verify "Suppress from discovery" action for Holdings in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C496118'] },
+        'C496118 Verify "Suppress from discovery" action for Holdings in Central tenant (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C496118'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);

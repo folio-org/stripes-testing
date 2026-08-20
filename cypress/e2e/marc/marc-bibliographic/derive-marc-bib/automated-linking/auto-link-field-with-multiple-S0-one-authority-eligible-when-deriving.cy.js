@@ -134,8 +134,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C389496 Auto-linking of field with multiple "$0" and one "MARC authority" eligible for linking ("MARC Authority" records with same "naturalIds" but different heading tags) (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C389496'] },
+          'C389496 Auto-linking of field with multiple "$0" and one "MARC authority" eligible for linking ("MARC Authority" records with same "naturalIds" but different heading tags) (promin)',
+          { tags: ['extendedPath', 'promin', 'C389496'] },
           () => {
             // Step 1: Find and open detail view
             InventoryInstances.searchByTitle(createdInstanceId);

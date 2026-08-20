@@ -29,7 +29,7 @@ import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
-    const unique010$a = `5003${randomFourDigitNumber()}`;
+    const unique010$a = `yyy423578${randomFourDigitNumber()}`;
     const filePathToUpload = 'marcAuthFileC423578.mrc';
     const modifiedMarcFile = `C423578 autotestEditedFile${getRandomPostfix()}.mrc`;
     const firstFileName = `C423578 autotestFile${getRandomPostfix()}.mrc`;
@@ -56,7 +56,7 @@ describe('Data Import', () => {
 
     before('Create test user and login', () => {
       // change 010$a to unique
-      DataImport.editMarcFile(filePathToUpload, modifiedMarcFile, ['50033023'], [unique010$a]);
+      DataImport.editMarcFile(filePathToUpload, modifiedMarcFile, ['yyy50033023'], [unique010$a]);
 
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
@@ -90,8 +90,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C423578 Verify the creation of Authority record with non-matches create (folijet)',
-      { tags: ['smoke', 'folijet', 'C423578', 'shiftLeft'] },
+      'C423578 Verify the creation of Authority record with non-matches create (promin)',
+      { tags: ['smoke', 'promin', 'C423578', 'shiftLeft'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);

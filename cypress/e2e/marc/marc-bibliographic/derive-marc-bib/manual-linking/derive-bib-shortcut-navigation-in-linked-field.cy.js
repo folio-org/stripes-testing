@@ -116,8 +116,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C380400 Navigation shortcut-keys are supported in editable boxes of linked field when derive "MARC bib" record (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C380400'] },
+          'C380400 Navigation shortcut-keys are supported in editable boxes of linked field when derive "MARC bib" record (promin)',
+          { tags: ['extendedPath', 'promin', 'C380400'] },
           () => {
             InventoryInstances.searchByTitle(createdInstanceId);
             InventoryInstances.selectInstanceById(createdInstanceId);

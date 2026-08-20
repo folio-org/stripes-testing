@@ -81,8 +81,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411388 (CONSORTIA) Check member shadow instance and central consortial instance when member holdings are added to a shared instance (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411388'] },
+        'C411388 (CONSORTIA) Check member shadow instance and central consortial instance when member holdings are added to a shared instance (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411388'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instance.instanceId);

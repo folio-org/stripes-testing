@@ -46,8 +46,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C380748 Item Create screen: trashcan is aligned with the corresponding data row (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C380748'] },
+      'C380748 Item Create screen: trashcan is aligned with the corresponding data row (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C380748'] },
       () => {
         InventoryInstances.searchByTitle(testData.item.instanceName);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.item.instanceName);

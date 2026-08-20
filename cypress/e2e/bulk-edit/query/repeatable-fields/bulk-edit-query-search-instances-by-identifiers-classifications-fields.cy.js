@@ -205,8 +205,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C808447 Search instances by Identifiers fields, Classifications fields (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C808447'] },
+        'C808447 Search instances by Identifiers fields, Classifications fields (athena)',
+        { tags: ['criticalPath', 'athena', 'C808447'] },
         () => {
           // Map identifiers and classifications data for UI display format
           const mappedInstancesDataToUIView = testInstancesData.map((instance) => ({

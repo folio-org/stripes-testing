@@ -35,8 +35,8 @@ describe('Users', () => {
   });
 
   it(
-    'C350611 User filters persist after a record is edited (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C350611'] },
+    'C350611 User filters persist after a record is edited (vega)',
+    { tags: ['extendedPath', 'vega', 'C350611'] },
     () => {
       // Step 1: Perform a search to retrieve some user records
       UsersSearchPane.searchByUsername(testData.testUser.username);

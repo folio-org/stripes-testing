@@ -46,8 +46,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C411737 Edit list: Refresh is in progress (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C411737', 'eurekaPhase1'] },
+        'C411737 Edit list: Refresh is in progress (athena)',
+        { tags: ['criticalPath', 'athena', 'C411737', 'eurekaPhase1'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,
@@ -70,8 +70,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C411738 Edit list: Export is in progress (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C411738', 'eurekaPhase1'] },
+        'C411738 Edit list: Export is in progress (athena)',
+        { tags: ['criticalPath', 'athena', 'C411738', 'eurekaPhase1'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,
@@ -96,8 +96,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C411734 Edit list: Make the list Inactive (corsair)',
-        { tags: ['smoke', 'corsair', 'shiftLeft', 'C411734', 'eurekaPhase1'] },
+        'C411734 Edit list: Make the list Inactive (athena)',
+        { tags: ['smoke', 'athena', 'shiftLeft', 'C411734', 'eurekaPhase1'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,
@@ -128,8 +128,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C411735 Edit list: Make the list Active (corsair)',
-        { tags: ['smoke', 'corsair', 'shiftLeft', 'C411735', 'eurekaPhase1'] },
+        'C411735 Edit list: Make the list Active (athena)',
+        { tags: ['smoke', 'athena', 'shiftLeft', 'C411735', 'eurekaPhase1'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

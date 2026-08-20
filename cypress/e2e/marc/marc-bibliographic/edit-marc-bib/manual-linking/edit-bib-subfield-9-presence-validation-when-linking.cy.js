@@ -169,8 +169,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375114 Subfield "$9" presence validation when linking "MARC Bibliographic" record in editing window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C375114'] },
+        'C375114 Subfield "$9" presence validation when linking "MARC Bibliographic" record in editing window (promin)',
+        { tags: ['extendedPath', 'promin', 'C375114'] },
         () => {
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.updateLDR06And07Positions();

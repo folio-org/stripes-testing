@@ -28,8 +28,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C740198 Verify "Bulk edit" option is present in Settings (firebird)',
-      { tags: ['smoke', 'firebird', 'C740198'] },
+      'C740198 Verify "Bulk edit" option is present in Settings (athena)',
+      { tags: ['smoke', 'athena', 'C740198'] },
       () => {
         // Step 1: Navigate to Settings
         TopMenuNavigation.verifyNavigationItemAbsentOnTheBar(APPLICATION_NAMES.BULK_EDIT);

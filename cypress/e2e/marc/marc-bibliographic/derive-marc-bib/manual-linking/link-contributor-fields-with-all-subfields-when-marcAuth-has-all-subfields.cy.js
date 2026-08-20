@@ -223,8 +223,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569601 Link "Contributors" fields (with all subfields) when MARC authority 1XXs have all subfields (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C569601'] },
+          'C569601 Link "Contributors" fields (with all subfields) when MARC authority 1XXs have all subfields (promin)',
+          { tags: ['extendedPath', 'promin', 'C569601'] },
           () => {
             InventoryInstances.searchByTitle(createdInstanceIds[0]);
             InventoryInstances.selectInstanceById(createdInstanceIds[0]);

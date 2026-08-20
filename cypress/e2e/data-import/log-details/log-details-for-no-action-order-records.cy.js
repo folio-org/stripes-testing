@@ -142,8 +142,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C375179 Verify the log details for no action order records (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C375179'] },
+      'C375179 Verify the log details for no action order records (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C375179'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);

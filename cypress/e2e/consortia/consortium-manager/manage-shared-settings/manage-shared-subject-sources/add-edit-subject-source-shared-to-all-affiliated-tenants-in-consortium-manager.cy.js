@@ -60,8 +60,8 @@ describe('Consortia', () => {
         });
 
         it(
-          'C594428 User with "Consortium manager: Can share settings to all members" permission is able to add/edit subject source shared to all affiliated tenants in "Consortium manager" app (consortia) (folijet)',
-          { tags: ['criticalPathECS', 'folijet', 'C594428'] },
+          'C594428 User with "Consortium manager: Can share settings to all members" permission is able to add/edit subject source shared to all affiliated tenants in "Consortium manager" app (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C594428'] },
           () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManager.waitLoading();

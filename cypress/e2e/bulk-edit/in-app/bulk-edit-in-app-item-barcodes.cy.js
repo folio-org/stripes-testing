@@ -75,8 +75,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C358939 Verify that 10 records returned in preview of matched records after editing (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C358939'] },
+      'C358939 Verify that 10 records returned in preview of matched records after editing (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C358939'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -94,8 +94,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C359210 Verify the in-app bulk edit permanent loan type (firebird)',
-      { tags: ['smoke', 'firebird', 'C359210'] },
+      'C359210 Verify the in-app bulk edit permanent loan type (athena)',
+      { tags: ['smoke', 'athena', 'C359210'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -126,8 +126,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C359225 Verify the in-app bulk edit temporary loan type (firebird)',
-      { tags: ['smoke', 'firebird', 'C359225'] },
+      'C359225 Verify the in-app bulk edit temporary loan type (athena)',
+      { tags: ['smoke', 'athena', 'C359225'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -156,8 +156,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C359226 Verify user can clear temporary loan type value (firebird)',
-      { tags: ['smoke', 'firebird', 'C359226'] },
+      'C359226 Verify user can clear temporary loan type value (athena)',
+      { tags: ['smoke', 'athena', 'C359226'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -187,8 +187,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C360530 Verify that User cannot clear permanent loan type (firebird)',
-      { tags: ['smoke', 'firebird', 'C360530'] },
+      'C360530 Verify that User cannot clear permanent loan type (athena)',
+      { tags: ['smoke', 'athena', 'C360530'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -201,8 +201,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C359208 Verify Loan types options in Bulk Edit (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C359208'] },
+      'C359208 Verify Loan types options in Bulk Edit (athena)',
+      { tags: ['criticalPath', 'athena', 'C359208'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();

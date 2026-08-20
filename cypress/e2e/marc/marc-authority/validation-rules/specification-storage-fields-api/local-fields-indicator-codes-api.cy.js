@@ -88,8 +88,8 @@ describe('MARC Authority Validation Rules - Local Fields Indicator Codes API', (
   });
 
   it(
-    'C499697 Create Indicator Code of Local Field for MARC authority spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C499697', 'spitfire'] },
+    'C499697 Create Indicator Code of Local Field for MARC authority spec (API) (promin)',
+    { tags: ['extendedPath', 'C499697', 'promin'] },
     () => {
       let firstIndicatorId;
       let secondIndicatorId;
@@ -224,8 +224,8 @@ describe('MARC Authority Validation Rules - Local Fields Indicator Codes API', (
   );
 
   it(
-    'C502996 Update Indicator Code of Local Field for MARC authority spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C502996', 'spitfire'] },
+    'C502996 Update Indicator Code of Local Field for MARC authority spec (API) (promin)',
+    { tags: ['extendedPath', 'C502996', 'promin'] },
     () => {
       let localFieldIndicator;
       let indicatorCode;
@@ -307,8 +307,8 @@ describe('MARC Authority Validation Rules - Local Fields Indicator Codes API', (
   );
 
   it(
-    'C503104 Delete Indicator Code of Local Field for MARC authority spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C503104', 'spitfire'] },
+    'C503104 Delete Indicator Code of Local Field for MARC authority spec (API) (promin)',
+    { tags: ['criticalPath', 'C503104', 'promin'] },
     () => {
       let localFieldIndicator;
       let indicatorCode1;

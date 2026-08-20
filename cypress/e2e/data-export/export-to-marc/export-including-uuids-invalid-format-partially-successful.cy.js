@@ -75,8 +75,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C11082 Export including UUIDs in invalid format is partially successful (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C11082'] },
+      'C11082 Export including UUIDs in invalid format is partially successful (athena)',
+      { tags: ['extendedPath', 'athena', 'C11082'] },
       () => {
         // Step 1: Trigger the data export by clicking on the "or choose file" button at jobs panel and submitting .csv file with Instance UUIDs
         ExportFileHelper.uploadFile(csvFileName);
