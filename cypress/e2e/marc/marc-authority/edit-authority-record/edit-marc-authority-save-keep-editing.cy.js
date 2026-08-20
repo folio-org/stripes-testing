@@ -143,6 +143,10 @@ describe('MARC', () => {
             testData.editedFieldsC360092[0].tag,
             `${subfieldPrefix}${testData.editedFieldsC360092[0].content}`,
           );
+          QuickMarcEditor.checkContentByTag(
+            testData.editedFieldsC360092[0].tag,
+            `${subfieldPrefix}${testData.editedFieldsC360092[0].content}`,
+          );
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save edits and verify view updated
@@ -156,6 +160,7 @@ describe('MARC', () => {
 
           // Add field and verify button states updated
           MarcAuthority.addNewField(4, testData.newField.tag, testData.newField.content);
+          QuickMarcEditor.checkContentByTag(testData.newField.tag, testData.newField.content);
           QuickMarcEditor.checkButtonsEnabled();
 
           // Save added field and verify view updated
@@ -179,7 +184,7 @@ describe('MARC', () => {
           QuickMarcEditor.closeAllCallouts();
 
           // // Confirm deletion and verify view updated
-          QuickMarcEditor.checkFieldAbsense();
+          QuickMarcEditor.checkFieldAbsense(testData.newField.tag);
           QuickMarcEditor.checkButtonsDisabled();
           QuickMarcEditor.checkHeaderFirstLine(
             headerContent.editedHeaderContent.marcData,
@@ -209,6 +214,10 @@ describe('MARC', () => {
           // Edit 010 field and verify states updated
           cy.wait(2000);
           MarcAuthority.changeField(
+            testData.editedFieldsC360092[1].tag,
+            `${subfieldPrefix} ${testData.editedFieldsC360092[1].content}`,
+          );
+          QuickMarcEditor.checkContentByTag(
             testData.editedFieldsC360092[1].tag,
             `${subfieldPrefix} ${testData.editedFieldsC360092[1].content}`,
           );

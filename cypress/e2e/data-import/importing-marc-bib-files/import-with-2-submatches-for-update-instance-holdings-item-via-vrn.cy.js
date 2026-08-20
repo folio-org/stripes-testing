@@ -285,7 +285,7 @@ describe('Data Import', () => {
 
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${testData.editedMarcFileName}`);
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         Users.deleteViaApi(preconditionUserId);
         InstanceStatusTypes.getViaApi({ query: '"name"=="Electronic Resource"' }).then((type) => {
           if (type.length !== 0) {

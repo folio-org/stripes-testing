@@ -162,6 +162,8 @@ describe('Data Import', () => {
           });
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.clickLinkIconInTagFieldByTag(linkingTagAndValues.tag);
           MarcAuthorities.switchToSearch();
@@ -212,11 +214,11 @@ describe('Data Import', () => {
     });
 
     after('Delete user and test data', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Users.deleteViaApi(testData.userProperties.userId);
       if (createdAuthorityIDs[0]) InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
       createdAuthorityIDs.forEach((id, index) => {
-        if (index) MarcAuthority.deleteViaAPI(id);
+        if (index) MarcAuthority.deleteViaAPI(id, true);
       });
       // clean up generated profiles
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -254,10 +256,11 @@ describe('Data Import', () => {
           nameForUpdatedMarcFile,
         );
 
-        // in case in Settings - Data import - MARC field protection we have these fields as protected
-        // for this test case purpose they should be removed
-        fields.forEach((field) => {
-          cy.getAdminToken().then(() => {
+        cy.then(() => {
+          // in case in Settings - Data import - MARC field protection we have these fields as protected
+          // for this test case purpose they should be removed
+          cy.getAdminToken(false);
+          fields.forEach((field) => {
             MarcFieldProtection.getListViaApi({
               query: `"field"=="${field}"`,
             }).then((list) => {
@@ -266,30 +269,32 @@ describe('Data Import', () => {
               }
             });
           });
+        }).then(() => {
+          // upload the exported marc file with 999.f.f.s fields
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+          DataImport.waitLoading();
+          DataImport.verifyUploadState();
+          DataImport.uploadFileAndRetry(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
+          JobProfiles.waitLoadingList();
+          JobProfiles.search(jobProfile.profileName);
+          JobProfiles.runImportFile();
+          Logs.waitFileIsImported(nameForUpdatedMarcFile);
+          Logs.checkJobStatus(nameForUpdatedMarcFile, 'Completed');
+          Logs.openFileDetails(nameForUpdatedMarcFile);
+          Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
+
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+          cy.wait(1000);
+          InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+          InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
+          InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
+          InventoryInstance.editMarcBibliographicRecord();
+          QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...testData.updated100Field);
+          QuickMarcEditor.verifyTagFieldAfterUnlinkingByTag(...testData.updated245Field);
+          QuickMarcEditor.checkFieldAbsense(testData.tag250);
         });
-
-        // upload the exported marc file with 999.f.f.s fields
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        DataImport.waitLoading();
-        DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(jobProfile.profileName);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(nameForUpdatedMarcFile);
-        Logs.checkJobStatus(nameForUpdatedMarcFile, 'Completed');
-        Logs.openFileDetails(nameForUpdatedMarcFile);
-        Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-        cy.wait(1000);
-        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
-        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
-        InventoryInstances.selectInstance();
-        InventoryInstance.editMarcBibliographicRecord();
-        QuickMarcEditor.verifyTagFieldAfterLinkingByTag(...testData.updated100Field);
-        QuickMarcEditor.verifyTagFieldAfterUnlinkingByTag(...testData.updated245Field);
-        QuickMarcEditor.checkFieldAbsense(testData.tag250);
       },
     );
   });

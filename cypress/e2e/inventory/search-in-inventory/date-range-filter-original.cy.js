@@ -33,16 +33,7 @@ describe('Inventory', () => {
         cy.then(() => {
           cy.getAdminToken();
           // delete existing related instances
-          InventoryInstances.getInstancesViaApi({
-            limit: 200,
-            query: `title="${testData.searchQuery}"`,
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          });
+          InventoryInstances.deleteInstanceByTitleViaApi('C553014 ');
         }).then(() => {
           DataImport.uploadFileViaApi(
             marcFile.marc,

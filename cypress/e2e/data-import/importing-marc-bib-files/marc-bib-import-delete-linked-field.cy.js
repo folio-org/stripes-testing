@@ -154,6 +154,8 @@ describe('Data Import', () => {
         }).then(() => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon(testData.tag100);
           MarcAuthorities.switchToSearch();
@@ -178,7 +180,7 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Users.deleteViaApi(testData.userProperties.userId);
       // clean up generated profiles
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
@@ -236,6 +238,8 @@ describe('Data Import', () => {
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         InventoryInstance.checkValueAbsenceInDetailView(
           testData.contributorAccordion,
           marcFiles[1].authorityHeading,

@@ -792,15 +792,12 @@ describe('Inventory', () => {
             }).then((instance) => {
               createdRecordIDs.push(instance.instanceId);
             });
+
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
           });
-        cy.waitForAuthRefresh(() => {
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
         InventorySearchAndFilter.verifyCallNumberBrowsePane();

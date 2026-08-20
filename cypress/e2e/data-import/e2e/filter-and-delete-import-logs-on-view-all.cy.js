@@ -64,7 +64,7 @@ describe('Data Import', () => {
         }
       });
 
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.dataImportDeleteLogs.gui,
