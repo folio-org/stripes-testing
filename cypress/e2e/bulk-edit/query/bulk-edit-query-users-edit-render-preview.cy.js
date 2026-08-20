@@ -60,7 +60,7 @@ describe(
           QueryModal.clickSelectFieldButton();
           QueryModal.selectField(usersFieldValues.patronGroup);
           QueryModal.verifySelectedField(usersFieldValues.patronGroup);
-          QueryModal.verifyQueryAreaContent('(groups.group  )');
+          QueryModal.verifyQueryAreaContent('');
           QueryModal.verifyOperatorColumn();
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
           QueryModal.verifyQueryAreaContent('(groups.group == )');
