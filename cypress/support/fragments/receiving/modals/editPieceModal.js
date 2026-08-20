@@ -67,6 +67,13 @@ const editPieceFields = {
   [RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_TO_PUBLIC]: editPieceModal.find(
     Checkbox({ name: 'displayToPublic' }),
   ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.BARCODE]: editPieceModal.find(TextField({ name: 'barcode' })),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.CALL_NUMBER]: editPieceModal.find(
+    TextField({ name: 'callNumber' }),
+  ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.ACCESSION_NUMBER]: editPieceModal.find(
+    TextField({ name: 'accessionNumber' }),
+  ),
 };
 
 const displayOnHoldingCheckbox =
