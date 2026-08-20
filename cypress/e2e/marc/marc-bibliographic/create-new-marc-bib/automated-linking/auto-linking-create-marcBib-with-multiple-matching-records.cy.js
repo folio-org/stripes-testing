@@ -98,8 +98,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422152 Auto-linking fields when multiple "MARC Authority" records match "$0" but cannot be linked when creating new "MARC Bib" record (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C422152'] },
+          'C422152 Auto-linking fields when multiple "MARC Authority" records match "$0" but cannot be linked when creating new "MARC Bib" record (promin)',
+          { tags: ['criticalPath', 'promin', 'C422152'] },
           () => {
             // Step 1: Click on "Actions" button in second pane → Select "+ New MARC bibliographic record" option
             InventoryInstances.createNewMarcBibRecord();

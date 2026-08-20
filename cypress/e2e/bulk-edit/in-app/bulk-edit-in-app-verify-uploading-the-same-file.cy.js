@@ -52,8 +52,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C366592 Verify uploading the same file twice  but  selecting  different record identifiers (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C366592'] },
+      'C366592 Verify uploading the same file twice  but  selecting  different record identifiers (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C366592'] },
       () => {
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToHoldings();

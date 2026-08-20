@@ -170,8 +170,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C499624 Cannot derive "MARC bib" record with invalid length "006" and "007" fields (which are "system") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C499624'] },
+        'C499624 Cannot derive "MARC bib" record with invalid length "006" and "007" fields (which are "system") (promin)',
+        { tags: ['extendedPath', 'promin', 'C499624'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

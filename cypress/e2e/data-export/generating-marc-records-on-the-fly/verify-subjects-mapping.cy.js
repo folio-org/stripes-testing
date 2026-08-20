@@ -67,8 +67,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10970 Verify Subjects mapping (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C10970'] },
+      'C10970 Verify Subjects mapping (athena)',
+      { tags: ['extendedPath', 'athena', 'C10970'] },
       () => {
         // Step 1: Go to the "Data export" app
         DataExportLogs.verifyDragAndDropAreaExists();

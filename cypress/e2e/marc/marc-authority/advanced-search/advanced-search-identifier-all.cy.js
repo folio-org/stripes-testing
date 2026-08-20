@@ -111,8 +111,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C409431 Advanced search of "MARC authority" records "Identifier (all)" search option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C409431'] },
+        'C409431 Advanced search of "MARC authority" records "Identifier (all)" search option (promin)',
+        { tags: ['extendedPath', 'promin', 'C409431'] },
         () => {
           MarcAuthorities.clickAdvancedSearchButton();
 

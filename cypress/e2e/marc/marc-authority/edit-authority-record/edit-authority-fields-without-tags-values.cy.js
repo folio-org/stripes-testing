@@ -124,8 +124,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423479 Fields without tag and subfield values are deleted during saving (edit MARC authority) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423479'] },
+        'C423479 Fields without tag and subfield values are deleted during saving (edit MARC authority) (promin)',
+        { tags: ['extendedPath', 'promin', 'C423479'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);

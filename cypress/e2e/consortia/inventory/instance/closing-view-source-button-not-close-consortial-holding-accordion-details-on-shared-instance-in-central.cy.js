@@ -95,8 +95,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411662 (CONSORTIA) Verify closing the View source button does not close Consortial holdings accordion details on shared Instance in Central Tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411662'] },
+        'C411662 (CONSORTIA) Verify closing the View source button does not close Consortial holdings accordion details on shared Instance in Central Tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411662'] },
         () => {
           InventoryInstances.searchByTitle(testData.shadowInstance.id);
           InventoryInstances.selectInstance();

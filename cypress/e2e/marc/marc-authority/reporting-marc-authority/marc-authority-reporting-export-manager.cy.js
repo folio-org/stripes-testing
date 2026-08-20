@@ -139,8 +139,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375996 Correct data for "MARC authority headings updates (CSV)" report shown in "Export manager" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C375996'] },
+        'C375996 Correct data for "MARC authority headings updates (CSV)" report shown in "Export manager" (promin)',
+        { tags: ['criticalPath', 'promin', 'C375996'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);

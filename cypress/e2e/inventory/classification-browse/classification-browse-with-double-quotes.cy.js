@@ -73,8 +73,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C916258 Browse for Classification with double quotes (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C916258'] },
+      'C916258 Browse for Classification with double quotes (promin)',
+      { tags: ['extendedPath', 'promin', 'C916258'] },
       () => {
         InventorySearchAndFilter.selectBrowseOption('Classification (all)');
         BrowseClassifications.waitForClassificationNumberToAppear(

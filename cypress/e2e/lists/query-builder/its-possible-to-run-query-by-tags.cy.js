@@ -302,8 +302,8 @@ describe('Lists', () => {
     });
 
     it(
-      "C1259785 It's possible to run query by tags (corsair)",
-      { tags: ['extendedPath', 'corsair', 'C1259785'] },
+      "C1259785 It's possible to run query by tags (athena)",
+      { tags: ['extendedPath', 'athena', 'C1259785'] },
       () => {
         const currentDate = DateTools.getCurrentDate();
 

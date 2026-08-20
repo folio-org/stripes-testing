@@ -51,8 +51,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C436837 (CONSORTIA) Check "Set record for deletion" option in Actions menu for Shared instance on Member tenant (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C436837'] },
+        'C436837 (CONSORTIA) Check "Set record for deletion" option in Actions menu for Shared instance on Member tenant (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C436837'] },
         () => {
           InstanceRecordView.waitLoading();
           InstanceRecordView.clickActionsButton();

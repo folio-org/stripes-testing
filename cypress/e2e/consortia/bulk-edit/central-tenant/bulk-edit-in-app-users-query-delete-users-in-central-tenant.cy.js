@@ -116,8 +116,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C1385650 Verify bulk delete Users in Central tenant (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C1385650'] },
+        'C1385650 Verify bulk delete Users in Central tenant (athena)',
+        { tags: ['smokeECS', 'athena', 'C1385650'] },
         () => {
           const userUUIDs = `${userToDelete.userId},${userWithOpenTransaction.userId}`;
 

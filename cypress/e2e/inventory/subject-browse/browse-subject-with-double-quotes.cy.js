@@ -55,8 +55,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C397322 Browse subject which has double quotes (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C397322'] },
+      'C397322 Browse subject which has double quotes (promin)',
+      { tags: ['extendedPath', 'promin', 'C397322'] },
       () => {
         // Step 1: Select "Browse" toggle
         InventorySearchAndFilter.switchToBrowseTab();

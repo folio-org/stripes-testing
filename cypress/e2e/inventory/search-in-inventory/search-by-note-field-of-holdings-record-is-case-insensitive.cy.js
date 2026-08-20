@@ -210,8 +210,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C466079 Search by "Note" fields of "Holdings" record is case-insensitive (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C466079'] },
+        'C466079 Search by "Note" fields of "Holdings" record is case-insensitive (promin)',
+        { tags: ['extendedPath', 'promin', 'C466079'] },
         () => {
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.holdingsTabIsDefault();

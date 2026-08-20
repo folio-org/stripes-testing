@@ -51,8 +51,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C359586 Negative --Verify populating "Errors" accordion (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C359586'] },
+      'C359586 Negative --Verify populating "Errors" accordion (athena)',
+      { tags: ['criticalPath', 'athena', 'C359586'] },
       () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();

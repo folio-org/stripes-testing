@@ -76,8 +76,8 @@ describe('Fees&Fines', () => {
     });
 
     it(
-      'C407703 User with "Settings (Users): View all settings" permission only can view "Manual Charges" page on "Users > Settings" - when system has at leaset 2 Fee/Fine owners (only one owner has configured "Fee/Fine Manual Charge") (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C407703'] },
+      'C407703 User with "Settings (Users): View all settings" permission only can view "Manual Charges" page on "Users > Settings" - when system has at leaset 2 Fee/Fine owners (only one owner has configured "Fee/Fine Manual Charge") (vega)',
+      { tags: ['extendedPath', 'vega', 'C407703'] },
       () => {
         ManualCharges.selectOwner(ownerOne);
         ManualCharges.checkDefaultEditButtonIsDisabled();

@@ -29,8 +29,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446060 User without "Inventory: Enable staff suppress facet" permission is not able to see the "Staff suppress" facet (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C446060'] },
+        'C446060 User without "Inventory: Enable staff suppress facet" permission is not able to see the "Staff suppress" facet (promin)',
+        { tags: ['extendedPath', 'promin', 'C446060'] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.login(userC446060.username, userC446060.password, {
@@ -46,8 +46,8 @@ describe('Inventory', () => {
       );
 
       it(
-        'C451536 User with "Inventory: All permissions" permission is not able to see the "Staff suppress" facet (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C451536'] },
+        'C451536 User with "Inventory: All permissions" permission is not able to see the "Staff suppress" facet (promin)',
+        { tags: ['extendedPath', 'promin', 'C451536'] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.login(userC451536.username, userC451536.password, {

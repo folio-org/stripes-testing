@@ -2,7 +2,7 @@ import { Checkbox, Section, NavListItem, TextArea, Button } from '../../../../..
 import { CONDITION_AND_LIMIT_TYPES } from '../../../constants';
 import Condition from './condition';
 
-const rootPaneset = Section({ id: 'app-settings-nav-pane' });
+const rootPaneset = Section({ title: 'Conditions' });
 const conditionTypes = Object.values(CONDITION_AND_LIMIT_TYPES);
 const messageToBeDisplayed = TextArea({ id: 'message' });
 

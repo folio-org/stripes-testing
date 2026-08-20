@@ -75,8 +75,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C350933 Verify Errors accordion with repeated records (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C350933'] },
+      'C350933 Verify Errors accordion with repeated records (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C350933'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
@@ -106,8 +106,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C347883 Error messages in submitted identifiers (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C347883'] },
+      'C347883 Error messages in submitted identifiers (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C347883'] },
       () => {
         cy.login(viewUser.username, viewUser.password, {
           path: TopMenu.bulkEditPath,

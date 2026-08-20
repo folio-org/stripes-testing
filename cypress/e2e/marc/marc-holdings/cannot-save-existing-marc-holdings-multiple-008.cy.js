@@ -76,8 +76,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C499630 Cannot save existing MARC holdings record with multiple 008 fields (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C499630'] },
+      'C499630 Cannot save existing MARC holdings record with multiple 008 fields (promin)',
+      { tags: ['extendedPath', 'promin', 'C499630'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventorySearchAndFilter.selectViewHoldings();

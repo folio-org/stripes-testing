@@ -81,8 +81,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C451512 Verify that newly selected columns are populated with data (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C451512'] },
+      'C451512 Verify that newly selected columns are populated with data (athena)',
+      { tags: ['criticalPath', 'athena', 'C451512'] },
       () => {
         // Step 1: Create new list with Holdings record type and open Build query form
         Lists.openNewListPane();

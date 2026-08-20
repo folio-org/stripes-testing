@@ -63,8 +63,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C490900 Generated "035" field displays in ascending fields order in imported via single record import "MARC bibliographic" record which has multiple existing "035" fields (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C490900'] },
+      'C490900 Generated "035" field displays in ascending fields order in imported via single record import "MARC bibliographic" record which has multiple existing "035" fields (promin)',
+      { tags: ['criticalPath', 'promin', 'C490900'] },
       () => {
         InventoryActions.importLoc(locC490900);
         InventoryInstance.waitInventoryLoading();
@@ -78,8 +78,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C490901 Generated "035" field displays in ascending fields order in imported via single record import "MARC bibliographic" record which doesn\'t have existing "035" fields (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C490901'] },
+      'C490901 Generated "035" field displays in ascending fields order in imported via single record import "MARC bibliographic" record which doesn\'t have existing "035" fields (promin)',
+      { tags: ['extendedPath', 'promin', 'C490901'] },
       () => {
         InventoryActions.importLoc(locC490901);
         InventoryInstance.waitInventoryLoading();
@@ -92,8 +92,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C490902 Generated "035" field displays in ascending fields order in imported via single record import "MARC bibliographic" record which has one existing "035" field (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C490902'] },
+      'C490902 Generated "035" field displays in ascending fields order in imported via single record import "MARC bibliographic" record which has one existing "035" field (promin)',
+      { tags: ['criticalPath', 'promin', 'C490902'] },
       () => {
         InventoryActions.importLoc(locC490902);
         InventoryInstance.checkInstanceTitle(instanceTitlePartC490902);

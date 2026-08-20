@@ -182,8 +182,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C651599 ECS | Bulk edit administrative data and marc fields (110, 336, 338) for part of the records in Central tenant (MARC) (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C651599'] },
+        'C651599 ECS | Bulk edit administrative data and marc fields (110, 336, 338) for part of the records in Central tenant (MARC) (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C651599'] },
         () => {
           // Step 1: Show columns Contributors, Resource type, Formats
           BulkEditActions.openActions();

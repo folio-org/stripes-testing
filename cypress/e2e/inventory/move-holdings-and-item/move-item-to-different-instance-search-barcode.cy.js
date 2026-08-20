@@ -81,9 +81,9 @@ describe('Inventory', () => {
     });
 
     it(
-      'C365635 Verify that search by "Barcode" for "Item" which moved from one "Instance" (source "Folio") to another (source "Folio") will return only one record. (spitfire)',
+      'C365635 Verify that search by "Barcode" for "Item" which moved from one "Instance" (source "Folio") to another (source "Folio") will return only one record. (promin)',
       {
-        tags: ['extendedPath', 'spitfire', 'C365635'],
+        tags: ['extendedPath', 'promin', 'C365635'],
       },
       () => {
         cy.login(user.username, user.password, {

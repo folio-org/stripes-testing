@@ -93,8 +93,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C503029 Query - Verify "Errors" when querying by invalid Instance identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C503029'] },
+        'C503029 Query - Verify "Errors" when querying by invalid Instance identifiers in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C503029'] },
         () => {
           // Step 1: Select Inventory - instances radio, click Build query
           BulkEditSearchPane.checkInstanceRadio();

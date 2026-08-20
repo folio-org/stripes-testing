@@ -36,8 +36,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584410 Check the subject type and source fields are not required on Instance Create page (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C584410'] },
+      'C584410 Check the subject type and source fields are not required on Instance Create page (promin)',
+      { tags: ['extendedPath', 'promin', 'C584410'] },
       () => {
         // Step 1: Click Actions > + New; verify New instance page opened
         InventoryInstances.addNewInventory();

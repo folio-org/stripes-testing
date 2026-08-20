@@ -56,8 +56,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375205 Error notification shown before confirmation modal when saving "MARC bib" record with invalid LDR (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C375205'] },
+        'C375205 Error notification shown before confirmation modal when saving "MARC bib" record with invalid LDR (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C375205'] },
         () => {
           InventorySearchAndFilter.selectSearchOptions(
             testData.searchOption,

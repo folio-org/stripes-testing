@@ -69,8 +69,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476721 Filter "Instance" records by "Resource Type" filter/facet (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C476721'] },
+        'C476721 Filter "Instance" records by "Resource Type" filter/facet (promin)',
+        { tags: ['criticalPath', 'promin', 'C476721'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(testData.resourceTypeAccordionName);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(

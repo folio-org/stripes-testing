@@ -224,8 +224,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411751 Search for Shared/Local records by Item\'s "Call number, not normalized" and "Effective call number (item), normalized" search options from "Central" and "Member 1" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411751'] },
+        'C411751 Search for Shared/Local records by Item\'s "Call number, not normalized" and "Effective call number (item), normalized" search options from "Central" and "Member 1" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411751'] },
         () => {
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.itemTabIsDefault();

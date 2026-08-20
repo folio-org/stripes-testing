@@ -191,8 +191,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C409440 Search for "MARC authority" records using "Keyword", "Identifier (all)", "LCCN" search options using identifiers (spitfire)',
-      { tags: ['extendedPath', 'C409440', 'spitfire'] },
+      'C409440 Search for "MARC authority" records using "Keyword", "Identifier (all)", "LCCN" search options using identifiers (promin)',
+      { tags: ['extendedPath', 'C409440', 'promin'] },
       () => {
         searchCases.forEach(({ searchOption, query, expected }) => {
           MarcAuthorities.selectSearchOptionInDropdown(searchOption);

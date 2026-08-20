@@ -89,8 +89,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C378890 "MARC authority headings updates (CSV)" report includes correct "Authority source file name" when Authority source type "Not specified" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C378890'] },
+        'C378890 "MARC authority headings updates (CSV)" report includes correct "Authority source file name" when Authority source type "Not specified" (promin)',
+        { tags: ['extendedPath', 'promin', 'C378890'] },
         () => {
           // Link the bibliographic record to the authority record
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

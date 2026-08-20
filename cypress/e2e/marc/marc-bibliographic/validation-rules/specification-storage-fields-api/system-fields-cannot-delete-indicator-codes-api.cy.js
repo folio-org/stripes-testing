@@ -41,8 +41,8 @@ describe('MARC Bibliographic Validation Rules - System Fields Cannot Delete Indi
   });
 
   it(
-    'C503101 Cannot delete Indicator code of System Field for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C503101', 'spitfire'] },
+    'C503101 Cannot delete Indicator code of System Field for MARC bib spec (API) (promin)',
+    { tags: ['criticalPath', 'C503101', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

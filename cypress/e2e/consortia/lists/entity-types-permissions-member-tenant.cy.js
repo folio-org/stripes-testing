@@ -53,8 +53,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C523639 Only entity types for which the user has all required permissions in member tenant are available - Consortium (consortia) (corsair)',
-      { tags: ['criticalPathECS', 'corsair', 'C523639'] },
+      'C523639 Only entity types for which the user has all required permissions in member tenant are available - Consortium (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C523639'] },
       () => {
         // Step 1: Switch affiliation to member tenant
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

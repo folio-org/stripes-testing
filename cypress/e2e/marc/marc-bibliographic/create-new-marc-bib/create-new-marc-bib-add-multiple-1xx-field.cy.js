@@ -47,8 +47,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C515003 Cannot create MARC bib record with multiple 1XX fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C515003'] },
+        'C515003 Cannot create MARC bib record with multiple 1XX fields (promin)',
+        { tags: ['extendedPath', 'promin', 'C515003'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.waitLoading();

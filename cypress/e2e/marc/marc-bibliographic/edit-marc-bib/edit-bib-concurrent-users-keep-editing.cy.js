@@ -89,8 +89,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C360099 Editing same "MARC Bibliographic" record by 2 different users (use "Save & keep editing" button) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C360099'] },
+        'C360099 Editing same "MARC Bibliographic" record by 2 different users (use "Save & keep editing" button) (promin)',
+        { tags: ['criticalPath', 'promin', 'C360099'] },
         () => {
           // Step 1: User A opens the MARC bib record for editing
           InventoryInstances.searchByTitle(createdInstanceId);

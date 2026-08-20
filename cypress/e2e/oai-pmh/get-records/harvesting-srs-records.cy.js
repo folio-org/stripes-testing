@@ -41,8 +41,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375965 GetRecord: Verify harvesting SRS records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375965'] },
+      'C375965 GetRecord: Verify harvesting SRS records (athena)',
+      { tags: ['extendedPath', 'athena', 'C375965'] },
       () => {
         OaiPmh.getRecordRequest(marcInstance.id).then((response) => {
           OaiPmh.verifyMarcField(

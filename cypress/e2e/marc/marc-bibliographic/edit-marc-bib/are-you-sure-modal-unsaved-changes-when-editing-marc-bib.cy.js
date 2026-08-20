@@ -61,8 +61,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C434152 "Are you sure?" modal is displayed after user pressed "ESC" button when record has unsaved changes - Edit MARC bibliographic record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C434152'] },
+        'C434152 "Are you sure?" modal is displayed after user pressed "ESC" button when record has unsaved changes - Edit MARC bibliographic record (promin)',
+        { tags: ['extendedPath', 'promin', 'C434152'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.verifyInstanceResultListIsAbsent(false);

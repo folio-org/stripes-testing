@@ -78,8 +78,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C451563 Create "MARC bibliographic" record which has "$" sign ("{dollar}" code) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C451563'] },
+        'C451563 Create "MARC bibliographic" record which has "$" sign ("{dollar}" code) (promin)',
+        { tags: ['extendedPath', 'promin', 'C451563'] },
         () => {
           // Step 1: Click on "Actions" button → Select "+ New MARC bibliographic record" option
           InventoryInstances.createNewMarcBibRecord();

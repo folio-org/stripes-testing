@@ -89,8 +89,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C543803 Edit FOLIO Holdings record with typed call number and trailing spaces (LC case) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C543803'] },
+      'C543803 Edit FOLIO Holdings record with typed call number and trailing spaces (LC case) (promin)',
+      { tags: ['extendedPath', 'promin', 'C543803'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

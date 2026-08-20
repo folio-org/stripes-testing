@@ -52,8 +52,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C6689 Check the default mapping of control/product numbers from the MARC record to the Inventory Instance Identifier fields (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C6689'] },
+      'C6689 Check the default mapping of control/product numbers from the MARC record to the Inventory Instance Identifier fields (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C6689'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);

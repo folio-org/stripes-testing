@@ -78,8 +78,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C436915 Edit all editable fields of FOLIO "Authority file" which has assigned "MARC authority" records at Member tenant, from Member tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C436915'] },
+          'C436915 Edit all editable fields of FOLIO "Authority file" which has assigned "MARC authority" records at Member tenant, from Member tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C436915'] },
           () => {
             // Step 1: Login as user and go to Settings > MARC authority > Manage authority files from Member tenant
             cy.resetTenant();

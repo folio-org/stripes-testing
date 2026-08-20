@@ -44,8 +44,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C411809 Export list: Not canned lists (corsair)',
-        { tags: ['smoke', 'corsair', 'shiftLeft', 'C411809', 'eurekaPhase1'] },
+        'C411809 Export list: Not canned lists (athena)',
+        { tags: ['smoke', 'athena', 'shiftLeft', 'C411809', 'eurekaPhase1'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,
@@ -72,8 +72,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C411811 Export list: Inactive lists (corsair)',
-        { tags: ['smoke', 'corsair', 'shiftLeft', 'C411811', 'eurekaPhase1'] },
+        'C411811 Export list: Inactive lists (athena)',
+        { tags: ['smoke', 'athena', 'shiftLeft', 'C411811', 'eurekaPhase1'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,
@@ -93,8 +93,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C411812 Export list: Refresh is in progress (corsair)',
-        { tags: ['smoke', 'corsair', 'shiftLeft', 'C411812'] },
+        'C411812 Export list: Refresh is in progress (athena)',
+        { tags: ['smoke', 'athena', 'shiftLeft', 'C411812'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,
@@ -114,8 +114,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C411813 Export list: Edit is in progress, when the list contains records (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C411813', 'eurekaPhase1'] },
+        'C411813 Export list: Edit is in progress, when the list contains records (athena)',
+        { tags: ['criticalPath', 'athena', 'C411813', 'eurekaPhase1'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,
@@ -136,8 +136,8 @@ describe('Lists', () => {
       );
 
       it(
-        "C411830 Export list: Edit is in progress, when the list doesn't have query (corsair)",
-        { tags: ['criticalPath', 'corsair', 'C411830', 'eurekaPhase1'] },
+        "C411830 Export list: Edit is in progress, when the list doesn't have query (athena)",
+        { tags: ['criticalPath', 'athena', 'C411830', 'eurekaPhase1'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,
@@ -156,8 +156,8 @@ describe('Lists', () => {
       );
 
       it(
-        "C411819 Export list: The list doesn't contain query (corsair)",
-        { tags: ['smoke', 'corsair', 'C411819', 'eurekaPhase1'] },
+        "C411819 Export list: The list doesn't contain query (athena)",
+        { tags: ['smoke', 'athena', 'C411819', 'eurekaPhase1'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,
@@ -175,8 +175,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C411837 Export list: Edit is in progress, when the list has active query with 0 records (corsair)',
-        { tags: ['obsolete', 'corsair', 'C411837'] },
+        'C411837 Export list: Edit is in progress, when the list has active query with 0 records (athena)',
+        { tags: ['obsolete', 'athena', 'C411837'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

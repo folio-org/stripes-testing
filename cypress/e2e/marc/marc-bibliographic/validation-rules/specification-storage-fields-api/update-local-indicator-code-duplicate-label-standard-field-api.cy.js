@@ -136,8 +136,8 @@ describe('MARC Bibliographic Validation Rules - Update Local Indicator Code Dupl
   });
 
   it(
-    'C502974 Update Local Indicator Code of Standard field with duplicate "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C502974', 'spitfire'] },
+    'C502974 Update Local Indicator Code of Standard field with duplicate "label" for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C502974', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

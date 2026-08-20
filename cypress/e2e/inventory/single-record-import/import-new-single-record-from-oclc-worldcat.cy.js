@@ -48,8 +48,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C343235 Import New single record from OCLC WorldCat (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C343235'] },
+      'C343235 Import New single record from OCLC WorldCat (promin)',
+      { tags: ['extendedPath', 'promin', 'C343235'] },
       () => {
         InventoryInstances.importWithOclc(oclcNumbers.validOclc);
         InventoryInstance.waitLoading();

@@ -92,8 +92,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C663346 Check shared record deletion on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C663346'] },
+        'C663346 Check shared record deletion on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C663346'] },
         () => {
           InventoryInstance.waitLoading();
           InventoryInstance.shareInstance();

@@ -112,8 +112,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C523573 Save exisitng MARC bib record with value in "010 $a" subfield which matches to other records "LCCN", "Canceled LCCN" fields when duplicate LCCN check is disabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C523573'] },
+          'C523573 Save exisitng MARC bib record with value in "010 $a" subfield which matches to other records "LCCN", "Canceled LCCN" fields when duplicate LCCN check is disabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C523573'] },
           () => {
             InventoryInstances.searchByTitle(`${marcInstanceTitle} Test`);
             InventoryInstances.selectInstanceByTitle(`${marcInstanceTitle} Test`);

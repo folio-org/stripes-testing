@@ -60,8 +60,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C496201 Cannot derive "MARC bibliographic" record with multiple "LDR" fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C496201'] },
+        'C496201 Cannot derive "MARC bibliographic" record with multiple "LDR" fields (promin)',
+        { tags: ['extendedPath', 'promin', 'C496201'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();

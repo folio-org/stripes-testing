@@ -82,8 +82,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584544 Browsing the instance with different subject types (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C584544'] },
+      'C584544 Browsing the instance with different subject types (promin)',
+      { tags: ['extendedPath', 'promin', 'C584544'] },
       () => {
         // Step 1: Navigate to Inventory; verify Search tab, Instance tab, and Keyword option are defaults
         InventorySearchAndFilter.validateSearchTabIsDefault();

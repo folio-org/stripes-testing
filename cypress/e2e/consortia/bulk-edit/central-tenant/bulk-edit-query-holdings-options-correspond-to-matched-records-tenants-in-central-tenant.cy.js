@@ -210,8 +210,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C895648 In Central tenant options on Holdings bulk edit form correspond to the tenant(s) of matched records (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C895648'] },
+        'C895648 In Central tenant options on Holdings bulk edit form correspond to the tenant(s) of matched records (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C895648'] },
         () => {
           // Step 1: Check "Member" column checkbox and verify both tenants are present
           BulkEditActions.openActions();

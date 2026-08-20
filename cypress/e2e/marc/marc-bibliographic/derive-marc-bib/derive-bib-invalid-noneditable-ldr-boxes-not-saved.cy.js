@@ -62,8 +62,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C354283 Verify that invalid values at 10, 11, 20-23 positions of "LDR" field change to valid when user derive "MARC Bibliographic" record. (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C354283'] },
+        'C354283 Verify that invalid values at 10, 11, 20-23 positions of "LDR" field change to valid when user derive "MARC Bibliographic" record. (promin)',
+        { tags: ['extendedPath', 'promin', 'C354283'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceIds[0]);
           InventoryInstances.selectInstanceById(createdInstanceIds[0]);

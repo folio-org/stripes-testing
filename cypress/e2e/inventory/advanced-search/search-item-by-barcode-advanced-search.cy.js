@@ -94,8 +94,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C729567 Advanced search | Search for Item by barcode field using "Barcode" search option (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C729567'] },
+      'C729567 Advanced search | Search for Item by barcode field using "Barcode" search option (promin)',
+      { tags: ['extendedPath', 'promin', 'C729567'] },
       () => {
         // Switch to Item tab
         InventorySearchAndFilter.switchToItem();

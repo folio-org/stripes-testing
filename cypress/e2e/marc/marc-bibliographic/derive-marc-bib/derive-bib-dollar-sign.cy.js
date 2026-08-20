@@ -108,8 +108,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C451562 Derive "MARC bibliographic" record which has "$" sign ("{dollar}" code) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C451562'] },
+        'C451562 Derive "MARC bibliographic" record which has "$" sign ("{dollar}" code) (promin)',
+        { tags: ['extendedPath', 'promin', 'C451562'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

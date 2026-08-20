@@ -128,8 +128,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C387479 User can edit imported "MARC Holdings" file without required number (32) of "008" positions (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C387479'] },
+        'C387479 User can edit imported "MARC Holdings" file without required number (32) of "008" positions (promin)',
+        { tags: ['extendedPath', 'promin', 'C387479'] },
         () => {
           InventoryInstances.searchByTitle(recordId);
           InventoryInstances.selectInstanceById(recordId);

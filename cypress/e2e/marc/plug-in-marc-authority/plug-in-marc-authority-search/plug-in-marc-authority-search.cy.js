@@ -76,8 +76,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C380565 MARC Authority plug-in | Search for MARC authority records when the user clicks on the "Link" icon (spitfire)',
-        { tags: ['smoke', 'spitfire', 'C380565'] },
+        'C380565 MARC Authority plug-in | Search for MARC authority records when the user clicks on the "Link" icon (promin)',
+        { tags: ['smoke', 'promin', 'C380565'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -184,8 +184,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C359206 MARC Authority plug-in | Search using "Identifier (all)" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C359206'] },
+        'C359206 MARC Authority plug-in | Search using "Identifier (all)" option (promin)',
+        { tags: ['criticalPath', 'promin', 'C359206'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -298,8 +298,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C380567 MARC Authority plug-in | Search using "Corporate/Conference name" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C380567'] },
+        'C380567 MARC Authority plug-in | Search using "Corporate/Conference name" option (promin)',
+        { tags: ['criticalPath', 'promin', 'C380567'] },
         () => {
           const validSearchResults = [
             'UXPROD-4394C380567 Corporate name 110',
@@ -435,8 +435,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C380568 MARC Authority plug-in | Search using "Geographic name" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C380568'] },
+        'C380568 MARC Authority plug-in | Search using "Geographic name" option (promin)',
+        { tags: ['criticalPath', 'promin', 'C380568'] },
         () => {
           cy.login(testData.userProperties.username, testData.userProperties.password, {
             path: TopMenu.inventoryPath,
@@ -551,8 +551,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C380569 MARC Authority plug-in | Search using "Name-title" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C380569'] },
+        'C380569 MARC Authority plug-in | Search using "Name-title" option (promin)',
+        { tags: ['criticalPath', 'promin', 'C380569'] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -667,8 +667,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C380566 MARC Authority plug-in | Search using "Personal name" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C380566'] },
+        'C380566 MARC Authority plug-in | Search using "Personal name" option (promin)',
+        { tags: ['criticalPath', 'promin', 'C380566'] },
         () => {
           cy.then(() => {
             const validSearchResults = [
@@ -794,8 +794,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C380570 MARC Authority plug-in | Search using "Uniform title" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C380570'] },
+        'C380570 MARC Authority plug-in | Search using "Uniform title" option (promin)',
+        { tags: ['criticalPath', 'promin', 'C380570'] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {

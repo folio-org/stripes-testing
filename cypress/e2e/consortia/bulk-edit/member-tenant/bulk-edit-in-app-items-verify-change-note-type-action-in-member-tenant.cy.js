@@ -193,8 +193,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566166 Verify "Change note type" action for Items in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566166'] },
+        'C566166 Verify "Change note type" action for Items in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566166'] },
         () => {
           // Step 1: Select record type and identifier
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcodes');

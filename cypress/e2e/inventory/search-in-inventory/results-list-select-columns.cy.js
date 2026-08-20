@@ -48,8 +48,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C196760 Results List Column Chooser (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C196760'] },
+        'C196760 Results List Column Chooser (promin)',
+        { tags: ['extendedPath', 'promin', 'C196760'] },
         () => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(instanceTitlePrefix);

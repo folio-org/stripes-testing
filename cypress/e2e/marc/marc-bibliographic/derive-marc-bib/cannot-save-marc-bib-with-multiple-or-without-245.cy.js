@@ -64,8 +64,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375125 Cannot save derived "MARC bibliographic" record without or with multiple "245" fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C375125'] },
+        'C375125 Cannot save derived "MARC bibliographic" record without or with multiple "245" fields (promin)',
+        { tags: ['extendedPath', 'promin', 'C375125'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();

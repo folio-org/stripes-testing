@@ -98,8 +98,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C496188 Select Instance plugin | Search for Instance by "Place of publication" field is case insensitive (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C496188'] },
+      'C496188 Select Instance plugin | Search for Instance by "Place of publication" field is case insensitive (promin)',
+      { tags: ['extendedPath', 'promin', 'C496188'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 

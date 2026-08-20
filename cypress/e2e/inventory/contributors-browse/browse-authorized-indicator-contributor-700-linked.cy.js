@@ -98,8 +98,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C375252 Browse | Authorized indicator is shown for "Contributor" from "700" "MARC Bib" field controlled by "MARC authority" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C375252'] },
+      'C375252 Browse | Authorized indicator is shown for "Contributor" from "700" "MARC Bib" field controlled by "MARC authority" record (promin)',
+      { tags: ['criticalPath', 'promin', 'C375252'] },
       () => {
         // Step 1: Select "Contributors" in browse options dropdown
         BrowseContributors.select();

@@ -82,8 +82,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566179 Verify bulk edit actions for Users in Member tenant - Query (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566179'] },
+        'C566179 Verify bulk edit actions for Users in Member tenant - Query (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566179'] },
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();

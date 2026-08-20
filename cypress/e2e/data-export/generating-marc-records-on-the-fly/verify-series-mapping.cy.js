@@ -67,8 +67,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10969 Verify Series mapping (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C10969'] },
+      'C10969 Verify Series mapping (athena)',
+      { tags: ['extendedPath', 'athena', 'C10969'] },
       () => {
         // Step 1: Go to the "Data export" app
         DataExportLogs.verifyDragAndDropAreaExists();

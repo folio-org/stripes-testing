@@ -47,6 +47,7 @@ describe('Lists', () => {
         })
         .then(() => {
           itemData.barcode = generateItemBarcode();
+          itemData.barcode2 = generateItemBarcode();
           InventoryInstances.createFolioInstanceViaApi({
             instance: {
               instanceTypeId: itemData.instanceTypeId,
@@ -65,6 +66,12 @@ describe('Lists', () => {
                 permanentLoanType: { id: itemData.loanTypeId },
                 materialType: { id: itemData.materialTypeId },
               },
+              {
+                barcode: itemData.barcode2,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: itemData.loanTypeId },
+                materialType: { id: itemData.materialTypeId },
+              },
             ],
           });
         });
@@ -79,6 +86,13 @@ describe('Lists', () => {
           Checkout.checkoutItemViaApi({
             id: uuid(),
             itemBarcode: itemData.barcode,
+            loanDate: moment.utc().format(),
+            servicePointId: servicePoint.id,
+            userBarcode: patronData.barcode,
+          });
+          Checkout.checkoutItemViaApi({
+            id: uuid(),
+            itemBarcode: itemData.barcode2,
             loanDate: moment.utc().format(),
             servicePointId: servicePoint.id,
             userBarcode: patronData.barcode,
@@ -122,8 +136,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411820 Refresh list: Canned lists (corsair)',
-      { tags: ['smoke', 'corsair', 'C411820'] },
+      'C411820 Refresh list: Canned lists (athena)',
+      { tags: ['smoke', 'athena', 'C411820'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -138,7 +152,8 @@ describe('Lists', () => {
             Lists.openActions();
             Lists.refreshList();
             Lists.viewUpdatedList();
-            Lists.verifyResultCellByIdentifier(patronData.userId, 'User — Active', 'False');
+            Lists.verifyResultCellByIdentifier(itemData.barcode, 'User — Active', 'False');
+            Lists.verifyResultCellByIdentifier(itemData.barcode2, 'User — Active', 'False');
             Lists.getNumberOfFoundRecordsFromPaneHeader('Inactive patrons with open loans').then(
               (recordsAfterRefresh) => {
                 const numberOfRecordsAfterRefresh = recordsAfterRefresh;

@@ -142,8 +142,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C17039 Test 001/003/035 handling for New and Updated SRS records (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C17039'] },
+      'C17039 Test 001/003/035 handling for New and Updated SRS records (promin)',
+      { tags: ['criticalPath', 'promin', 'C17039'] },
       () => {
         // upload a marc file
         DataImport.verifyUploadState();

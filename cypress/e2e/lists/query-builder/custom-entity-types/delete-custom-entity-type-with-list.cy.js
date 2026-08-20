@@ -62,8 +62,8 @@ describe('Lists', () => {
       });
 
       it(
-        "C825342 Verify that it's NOT possible to DELETE the existing custom entity type when the permission is assigned and list is created (corsair)",
-        { tags: ['extendedPath', 'corsair', 'C825342'] },
+        "C825342 Verify that it's NOT possible to DELETE the existing custom entity type when the permission is assigned and list is created (athena)",
+        { tags: ['extendedPath', 'athena', 'C825342'] },
         () => {
           cy.getUserToken(userData.username, userData.password);
 

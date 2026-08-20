@@ -113,8 +113,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C378103 Query builder: Verify "Viewer - preview top 100 records" elements (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C378103'] },
+      'C378103 Query builder: Verify "Viewer - preview top 100 records" elements (athena)',
+      { tags: ['extendedPath', 'athena', 'C378103'] },
       () => {
         // Step 1: Select "Items" radio button under "Record types" accordion => Click "Build query" button
         BulkEditSearchPane.openQuerySearch();

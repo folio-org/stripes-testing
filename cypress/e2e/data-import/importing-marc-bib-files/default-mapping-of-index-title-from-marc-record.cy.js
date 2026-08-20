@@ -76,8 +76,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C6690 Check the default mapping of the Index title from the MARC record to the Inventory Instance Index title field (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C6690'] },
+      'C6690 Check the default mapping of the Index title from the MARC record to the Inventory Instance Index title field (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C6690'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedFileForUpload, fileName);

@@ -105,8 +105,8 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C397997 Verify that selected settings remain for "Campuses" (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird', 'C397997', 'eurekaPhase1'] },
+    'C397997 Verify that selected settings remain for "Campuses" (athena) (TaaS)',
+    { tags: ['extendedPath', 'athena', 'C397997', 'eurekaPhase1'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
       cy.visit(SettingsMenu.tenantLocationsPath);

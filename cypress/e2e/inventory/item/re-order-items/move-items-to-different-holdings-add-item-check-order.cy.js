@@ -100,9 +100,9 @@ describe('Inventory', () => {
       });
 
       it(
-        'C916227 Create 2nd Item in Holdings after 1st Item was moved to another Holdings (spitfire)',
+        'C916227 Create 2nd Item in Holdings after 1st Item was moved to another Holdings (promin)',
         {
-          tags: ['extendedPath', 'spitfire', 'C916227'],
+          tags: ['extendedPath', 'promin', 'C916227'],
         },
         () => {
           cy.login(user.username, user.password, {

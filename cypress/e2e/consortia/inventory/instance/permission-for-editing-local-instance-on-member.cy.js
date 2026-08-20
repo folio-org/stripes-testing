@@ -53,8 +53,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C407749 (CONSORTIA) Verify the permission for editing local instances on Member tenant (consortia) (folijet)',
-        { tags: ['smokeECS', 'folijet', 'C407749'] },
+        'C407749 (CONSORTIA) Verify the permission for editing local instances on Member tenant (consortia) (promin)',
+        { tags: ['smokeECS', 'promin', 'C407749'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);

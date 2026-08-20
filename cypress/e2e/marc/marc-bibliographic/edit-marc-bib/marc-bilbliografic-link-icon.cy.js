@@ -77,8 +77,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C360541 Verify that "Link to MARC Authority record" icon displays next to MARC fields when editing Bib record (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire', 'C360541'] },
+        'C360541 Verify that "Link to MARC Authority record" icon displays next to MARC fields when editing Bib record (promin) (TaaS)',
+        { tags: ['criticalPath', 'promin', 'C360541'] },
         () => {
           InventoryInstance.editMarcBibliographicRecord();
           tagArray.forEach((tag) => {
@@ -89,8 +89,8 @@ describe('MARC', () => {
       );
 
       it(
-        'C360542 Verify that "Link to MARC Authority record" icon displays next to MARC fields when deriving Bib record (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C360542'] },
+        'C360542 Verify that "Link to MARC Authority record" icon displays next to MARC fields when deriving Bib record (promin)',
+        { tags: ['smoke', 'promin', 'shiftLeftBroken', 'C360542'] },
         () => {
           InventoryInstance.deriveNewMarcBib();
           tagArray.forEach((tag) => {

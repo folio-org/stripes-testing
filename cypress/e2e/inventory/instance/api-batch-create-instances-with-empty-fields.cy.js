@@ -34,8 +34,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C959216 API | Create multiple Instances using POST instance-storage/batch/synchronous with empty fields (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C959216'] },
+      'C959216 API | Create multiple Instances using POST instance-storage/batch/synchronous with empty fields (promin)',
+      { tags: ['criticalPath', 'promin', 'C959216'] },
       () => {
         // Step 1. Send POST ‘instance-storage/batch/synchronous’ with following body (with empty fields):
         const instanceRecordsWithEmptyFields = [

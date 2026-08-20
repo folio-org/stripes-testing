@@ -63,8 +63,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C398020 Verify that Item data and Material type are displayed in lower case on Items detail page (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C398020'] },
+      'C398020 Verify that Item data and Material type are displayed in lower case on Items detail page (promin)',
+      { tags: ['extendedPath', 'promin', 'C398020'] },
       () => {
         // Step 1: Find instance, open item detail page via barcode
         InventoryInstances.searchByTitle(testData.instanceId);

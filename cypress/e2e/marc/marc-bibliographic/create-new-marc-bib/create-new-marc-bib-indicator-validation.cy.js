@@ -98,8 +98,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422108 Indicator boxes validation during creation of MARC bib record (spitfire)',
-        { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C422108'] },
+        'C422108 Indicator boxes validation during creation of MARC bib record (promin)',
+        { tags: ['criticalPathFlaky', 'promin', 'nonParallel', 'C422108'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.checkPaneheaderContains(testData.paneHeaderCreateRecordText);

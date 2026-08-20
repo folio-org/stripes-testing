@@ -43,8 +43,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C409473 (CONSORTIA) Verify the "Add MARC holdings record" button on Central tenant Instance page (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C409473'] },
+        'C409473 (CONSORTIA) Verify the "Add MARC holdings record" button on Central tenant Instance page (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C409473'] },
         () => {
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();

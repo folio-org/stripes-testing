@@ -97,8 +97,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Local Field Duplic
   });
 
   it(
-    'C490940 Cannot update Local Field with duplicate "tag" for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C490940', 'spitfire'] },
+    'C490940 Cannot update Local Field with duplicate "tag" for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C490940', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

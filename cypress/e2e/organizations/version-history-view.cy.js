@@ -9,8 +9,10 @@ import OrganizationsSearchAndFilter from '../../support/fragments/organizations/
 import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
+import { formatDateTime } from '../../support/utils/acquisitions';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { getFullName } from '../../support/utils/users';
 
 describe('Organizations', () => {
   const organization = {
@@ -29,13 +31,14 @@ describe('Organizations', () => {
   const calloutMessage = `Agreement created: ${defaultAgreement.name}`;
   const colloutMessage2 = `Agreement updated: ${defaultAgreement.name}`;
   let user;
-  let preUpdated;
-  let afterUpdated;
-  let lastUpdate;
   let adminUser;
+  let locale;
 
   before(() => {
     cy.getAdminToken();
+    cy.getTenantLocaleApi().then((localeObj) => {
+      locale = localeObj;
+    });
     cy.getAdminUserDetails().then((userDetails) => {
       adminUser = userDetails.personal;
     });
@@ -59,15 +62,11 @@ describe('Organizations', () => {
     });
     OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
     Organizations.selectOrganizationInCurrentPage(organization.name);
-    Organizations.getLastUpdateTime().then((time) => {
-      preUpdated = time.replace(' ', ', ');
-    });
+
     Organizations.editOrganization();
     Organizations.addContactToOrganizationWithoutSaving(contactPeople);
     Organizations.addIntrefaceToOrganization(organizationInterface);
-    Organizations.getLastUpdateTime().then((time) => {
-      afterUpdated = time.replace(' ', ', ');
-    });
+
     TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.AGREEMENTS);
     Agreements.createAndCheckFields(defaultAgreement);
     cy.wait(4000);
@@ -106,56 +105,74 @@ describe('Organizations', () => {
     'C663330 Version history view for Organizations (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C663330'] },
     () => {
+      cy.intercept('GET', `/audit-data/acquisition/organization/${organization.id}*`).as(
+        'versionHistory',
+      );
+
       OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
       Organizations.openVersionHistory();
-      OrganizationVersionHistorySection.selectVersionHistoryCard(preUpdated);
-      VersionHistorySection.verifyVersionHistoryCardWithTime(
-        1,
-        preUpdated,
-        adminUser.firstName,
-        adminUser.lastName,
-        true,
-        false,
-      );
-      OrganizationVersionHistorySection.selectVersionHistoryCard(afterUpdated);
-      VersionHistorySection.verifyVersionHistoryCardWithTime(
-        0,
-        afterUpdated,
-        adminUser.firstName,
-        adminUser.lastName,
-        false,
-        true,
-      );
-      Organizations.checkInterfaceIsAddInOrganizationDetailsPage(organizationInterface.name);
-      Organizations.checkContactIsAddToContactPeopleSection(contactPeople);
-      VersionHistorySection.clickCloseButton();
-      Organizations.editOrganization();
-      Organizations.openContactPeopleSectionInEditPage();
-      Organizations.deleteContactFromContactPeople();
-      Organizations.openInterfaceSection();
-      Organizations.deleteInterfaceFromInterfaces();
-      Organizations.selectVendor();
-      Organizations.saveOrganization();
-      Organizations.getLastUpdateTime().then((time) => {
-        lastUpdate = time.replace(' ', ', ');
+
+      cy.wait('@versionHistory').then(({ response }) => {
+        const [event1, event2] = response.body.organizationAuditEvents;
+
+        const eventDates = [event1.eventDate, event2.eventDate].map((date) => formatDateTime(locale, date));
+
+        OrganizationVersionHistorySection.selectVersionHistoryCard({ index: 1 });
+        OrganizationVersionHistorySection.assertVersionHistoryCard({
+          eventDate: eventDates[1],
+          index: 1,
+          isOriginal: true,
+          source: getFullName(adminUser),
+        });
+
+        OrganizationVersionHistorySection.selectVersionHistoryCard({ index: 0 });
+        OrganizationVersionHistorySection.assertVersionHistoryCard('organization', {
+          changedFields: ['Contact people', 'Interface'],
+          eventDate: eventDates[0],
+          index: 0,
+          isCurrent: true,
+          source: getFullName(adminUser),
+        });
       });
-      Organizations.openVersionHistory();
-      VersionHistorySection.verifyVersionsCount(3);
-      VersionHistorySection.verifyListOfChanges(['Vendor', 'Contact people', 'Interface']);
-      VersionHistorySection.verifyVersionHistoryCardWithTime(
-        0,
-        lastUpdate,
-        'testPermFirst',
-        user.username,
-        false,
-        true,
-      );
-      Organizations.checkIsaVendor(organization);
-      Organizations.openContactPeopleSection();
-      Organizations.checkContactSectionIsEmpty();
-      Organizations.openInterfaceSection();
-      Organizations.checkInterfaceInformationIsEmpty();
+
+      cy.then(() => {
+        Organizations.checkInterfaceIsAddInOrganizationDetailsPage(organizationInterface.name);
+        Organizations.checkContactIsAddToContactPeopleSection(contactPeople);
+        VersionHistorySection.clickCloseButton();
+        Organizations.editOrganization();
+        Organizations.openContactPeopleSectionInEditPage();
+        Organizations.deleteContactFromContactPeople();
+        Organizations.openInterfaceSection();
+        Organizations.deleteInterfaceFromInterfaces();
+        Organizations.selectVendor();
+        Organizations.saveOrganization();
+        Organizations.openVersionHistory();
+        VersionHistorySection.verifyVersionsCount(3);
+      });
+
+      cy.wait('@versionHistory').then(({ response }) => {
+        const eventDate = formatDateTime(
+          locale,
+          response.body.organizationAuditEvents[0].eventDate,
+        );
+
+        OrganizationVersionHistorySection.assertVersionHistoryCard({
+          changedFields: ['Vendor', 'Contact people', 'Interface'],
+          eventDate,
+          index: 0,
+          isCurrent: true,
+          source: user.username,
+        });
+      });
+
+      cy.then(() => {
+        Organizations.checkIsaVendor(organization);
+        Organizations.openContactPeopleSection();
+        Organizations.checkContactSectionIsEmpty();
+        Organizations.openInterfaceSection();
+        Organizations.checkInterfaceInformationIsEmpty();
+      });
     },
   );
 });

@@ -51,8 +51,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423515 MARC tag box validation in Create a new MARC Authority record window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423515'] },
+        'C423515 MARC tag box validation in Create a new MARC Authority record window (promin)',
+        { tags: ['extendedPath', 'promin', 'C423515'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           MarcAuthority.setValid008DropdownValues();

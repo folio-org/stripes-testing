@@ -24,8 +24,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411698 Verify the pagination, when the user has less than 100 records (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C411698'] },
+      'C411698 Verify the pagination, when the user has less than 100 records (athena)',
+      { tags: ['extendedPath', 'athena', 'C411698'] },
       () => {
         // Step 1: Click on "Lists" in app navigation bar
         cy.login(userData.username, userData.password, {

@@ -53,8 +53,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C2339 Edit an existing match profile (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C2339'] },
+      'C2339 Edit an existing match profile (promin)',
+      { tags: ['criticalPath', 'promin', 'C2339'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);

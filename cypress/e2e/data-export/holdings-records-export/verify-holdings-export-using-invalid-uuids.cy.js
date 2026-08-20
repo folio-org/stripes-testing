@@ -44,8 +44,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350538 Negative: Verify Holdings export using Invalid Holdings UUIDs (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C350538'] },
+      'C350538 Negative: Verify Holdings export using Invalid Holdings UUIDs (athena)',
+      { tags: ['extendedPath', 'athena', 'C350538'] },
       () => {
         // Step 1: Go to the "Data Export" app (already navigated in before hook)
         DataExportViewAllLogs.verifyLogsTable();

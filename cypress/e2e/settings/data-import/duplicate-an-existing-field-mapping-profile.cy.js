@@ -48,8 +48,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C2352 Duplicate an existing field mapping profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C2352'] },
+      'C2352 Duplicate an existing field mapping profile (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C2352'] },
       () => {
         const calloutMessage = `The field mapping profile "${duplicatedMappingProfile.name}" was successfully created`;
 

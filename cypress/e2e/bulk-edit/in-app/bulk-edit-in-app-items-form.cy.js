@@ -42,8 +42,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C350907 Verify Bulk Edit form -- In app approach (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C350907'] },
+      'C350907 Verify Bulk Edit form -- In app approach (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C350907'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

@@ -10,8 +10,11 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('eHoldings', () => {
   describe('Package', () => {
+    const randomPostfix = getRandomPostfix();
     const testData = {
-      customPackageName: `C692_package_${getRandomPostfix()}`,
+      customPackageName: `C692_package_${randomPostfix}`,
+      customPackageAlternateName: `C692_package_alternate_${randomPostfix}`,
+      nonexistentPackageName: `C692_package_nonexistent_${randomPostfix}`,
     };
 
     before('Creating user, logging in', () => {
@@ -44,12 +47,17 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C692 Create a custom package (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C692'] },
+      'C692 Create a custom package (promin)',
+      { tags: ['criticalPath', 'promin', 'C692'] },
       () => {
         EHoldingSearch.switchToPackages();
         cy.intercept('eholdings/packages').as('createPackage');
-        EHoldingsPackages.verifyCustomPackage(testData.customPackageName);
+        EHoldingsPackages.verifyCustomPackage(
+          testData.customPackageName,
+          undefined,
+          undefined,
+          testData.customPackageAlternateName,
+        );
         cy.wait('@createPackage').then(() => {
           EHoldingsPackageView.waitLoading();
           EHoldingsPackageView.verifyPackageName(testData.customPackageName);
@@ -58,6 +66,10 @@ describe('eHoldings', () => {
           EHoldingSearch.switchToPackages();
           EHoldingsPackages.verifyPackageExistsViaAPI(testData.customPackageName, true, 60);
           EHoldingsPackagesSearch.byName(testData.customPackageName);
+          EHoldingsPackages.verifyPackageInResults(testData.customPackageName);
+          EHoldingsPackagesSearch.byName(testData.nonexistentPackageName);
+          EHoldingsPackages.checkNoResultsFound(testData.nonexistentPackageName);
+          EHoldingsPackagesSearch.byName(testData.customPackageAlternateName);
           EHoldingsPackages.verifyPackageInResults(testData.customPackageName);
         });
       },

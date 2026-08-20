@@ -97,8 +97,8 @@ describe(
       });
 
       it(
-        'C368480 Verify that there no errors during bulk editing if ITEMS body has special characters (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird', 'C368480'] },
+        'C368480 Verify that there no errors during bulk editing if ITEMS body has special characters (athena) (TaaS)',
+        { tags: ['extendedPath', 'athena', 'C368480'] },
         () => {
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');

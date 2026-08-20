@@ -299,8 +299,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C491283 Check Receiving history accordion for shared Holdings with linked central and member tenants (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C491283'] },
+        'C491283 Check Receiving history accordion for shared Holdings with linked central and member tenants (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C491283'] },
         () => {
           const todayDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
 

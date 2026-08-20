@@ -192,8 +192,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C407686 Delete linked fields from Local MARC bib linked with Shared/Local MARC authorities in Member tenant (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C407686'] },
+            'C407686 Delete linked fields from Local MARC bib linked with Shared/Local MARC authorities in Member tenant (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C407686'] },
             () => {
               InventorySearchAndFilter.clearDefaultHeldbyFilter();
               InventoryInstances.searchByTitle(createdInstanceId);

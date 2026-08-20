@@ -155,8 +155,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C388514 GetRecord: Inventory - Verify populated "856" field for FOLIO during harvesting (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C388514', 'nonParallel'] },
+      'C388514 GetRecord: Inventory - Verify populated "856" field for FOLIO during harvesting (athena)',
+      { tags: ['extendedPath', 'athena', 'C388514', 'nonParallel'] },
       () => {
         // Step 1: Click "Actions" menu button in "Inventory" pane => click "New"
         InventoryInstances.addNewInventory();

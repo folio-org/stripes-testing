@@ -69,8 +69,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C436737 Render preview after query executed (Items - View) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C436737'] },
+      'C436737 Render preview after query executed (Items - View) (athena)',
+      { tags: ['criticalPath', 'athena', 'shiftLeft', 'C436737'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkItemsRadio();
@@ -80,7 +80,7 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(itemFieldValues.itemStatus);
         QueryModal.verifySelectedField(itemFieldValues.itemStatus);
-        QueryModal.verifyQueryAreaContent('(items.status_name  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(QUERY_OPERATIONS.IN);
         QueryModal.verifyQueryAreaContent('(items.status_name in ())');

@@ -103,8 +103,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C356850 Verify that "Source" value displays only the Last name of user, which edited record, when First name of user is not populated (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C356850'] },
+      'C356850 Verify that "Source" value displays only the Last name of user, which edited record, when First name of user is not populated (promin)',
+      { tags: ['extendedPath', 'promin', 'C356850'] },
       () => {
         InventoryInstances.searchByTitle(recordId);
         InventoryInstances.selectInstanceById(recordId);

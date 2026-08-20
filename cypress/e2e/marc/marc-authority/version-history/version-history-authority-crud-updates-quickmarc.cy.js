@@ -244,8 +244,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C663309 Check "Version history" pane after Create, Update, Delete field in "MARC authority" record via "quickmarc" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C663309'] },
+        'C663309 Check "Version history" pane after Create, Update, Delete field in "MARC authority" record via "quickmarc" (promin)',
+        { tags: ['criticalPath', 'promin', 'C663309'] },
         () => {
           MarcAuthority.verifyVersionHistoryButtonShown();
           MarcAuthority.edit();

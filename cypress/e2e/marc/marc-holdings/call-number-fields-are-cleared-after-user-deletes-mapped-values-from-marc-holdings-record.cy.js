@@ -86,8 +86,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C375188 Verify that "Call number" fields are cleared after user deletes mapped values from "MARC Holdings" record. (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C375188'] },
+      'C375188 Verify that "Call number" fields are cleared after user deletes mapped values from "MARC Holdings" record. (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C375188'] },
       () => {
         InventoryInstance.waitInventoryLoading();
         InventoryInstance.goToMarcHoldingRecordAdding();

@@ -43,8 +43,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C375284 Verify generated Logs files for Items In app -- only invalid records (firebird)',
-        { tags: ['smoke', 'firebird', 'C375284'] },
+        'C375284 Verify generated Logs files for Items In app -- only invalid records (athena)',
+        { tags: ['smoke', 'athena', 'C375284'] },
         () => {
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

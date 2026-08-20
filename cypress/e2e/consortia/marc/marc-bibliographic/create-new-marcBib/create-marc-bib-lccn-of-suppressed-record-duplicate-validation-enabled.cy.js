@@ -85,8 +85,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C589507 Cannot create a MARC bib record when the "010 $a" value matches the "LCCN" of a staff-suppressed record while duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C589507'] },
+          'C589507 Cannot create a MARC bib record when the "010 $a" value matches the "LCCN" of a staff-suppressed record while duplicate LCCN check is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C589507'] },
           () => {
             // Step 1: Click on "Actions" - "+ New MARC bibliographic record" option
             InventoryInstance.newMarcBibRecord();

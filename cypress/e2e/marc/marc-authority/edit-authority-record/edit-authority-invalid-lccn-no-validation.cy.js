@@ -84,8 +84,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C569560 Edit MARC authority" record with invalid LCCN when "LCCN structure validation" is disabled (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C569560'] },
+        'C569560 Edit MARC authority" record with invalid LCCN when "LCCN structure validation" is disabled (promin)',
+        { tags: ['extendedPath', 'promin', 'C569560'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);

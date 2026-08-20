@@ -41,8 +41,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C404509 (CONSORTIA) Verify the capability for sharing local instances on Central tenant (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C404509'] },
+        'C404509 (CONSORTIA) Verify the capability for sharing local instances on Central tenant (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C404509'] },
         () => {
           // Step 1-2: Navigate to Settings → Authorization roles (done via login path)
           cy.login(testData.user.username, testData.user.password, {

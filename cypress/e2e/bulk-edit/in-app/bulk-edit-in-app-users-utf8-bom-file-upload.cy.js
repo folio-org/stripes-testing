@@ -52,8 +52,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C651414 Verify uploading file with User UUIDs formated in .csv UTF-8 with BOM does not result in error for the first record from the uploaded file (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C651414'] },
+      'C651414 Verify uploading file with User UUIDs formated in .csv UTF-8 with BOM does not result in error for the first record from the uploaded file (athena)',
+      { tags: ['extendedPath', 'athena', 'C651414'] },
       () => {
         // Step 1: Click on "Users" radio button under "Record types" accordion.
         BulkEditSearchPane.checkUsersRadio();

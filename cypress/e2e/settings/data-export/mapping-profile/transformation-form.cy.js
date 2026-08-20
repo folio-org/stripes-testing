@@ -39,8 +39,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C15819 Transformation form (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C15819'] },
+      'C15819 Transformation form (athena)',
+      { tags: ['criticalPath', 'athena', 'C15819'] },
       () => {
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, [

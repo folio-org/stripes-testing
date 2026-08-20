@@ -123,8 +123,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C402369 Consortia | SRS | GetRecord: Edit shared MARC instance (with associated Holdings in Member tenant) from Central tenant is retrieved in the response of single tenant harvest (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C402369', 'nonParallel'] },
+        'C402369 Consortia | SRS | GetRecord: Edit shared MARC instance (with associated Holdings in Member tenant) from Central tenant is retrieved in the response of single tenant harvest (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C402369', 'nonParallel'] },
         () => {
           // Step 1: Search for shared MARC instance in Central tenant
           InventoryInstances.searchByTitle(testData.marcInstance.uuid);

@@ -76,8 +76,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C434156 "Are you sure?" modal is displayed after user pressed "ESC" button when record has unsaved changes - Edit MARC Holdings record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C434156'] },
+      'C434156 "Are you sure?" modal is displayed after user pressed "ESC" button when record has unsaved changes - Edit MARC Holdings record (promin)',
+      { tags: ['extendedPath', 'promin', 'C434156'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventorySearchAndFilter.selectViewHoldings();

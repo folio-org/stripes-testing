@@ -31,8 +31,8 @@ describe('OAI-PMH', () => {
   });
 
   it(
-    'C1273159 OAI-PMH settings when service is disabled (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C1273159', 'nonParallel'] },
+    'C1273159 OAI-PMH settings when service is disabled (athena)',
+    { tags: ['extendedPath', 'athena', 'C1273159', 'nonParallel'] },
     () => {
       // Step 1: Click "General" option on the "OAI-PMH" pane
       OaiPmh.selectSection(SECTIONS.GENERAL);

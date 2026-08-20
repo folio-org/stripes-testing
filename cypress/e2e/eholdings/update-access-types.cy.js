@@ -50,8 +50,8 @@ describe('eHoldings', () => {
   });
 
   it(
-    'C590792 Update access status types (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C590792'] },
+    'C590792 Update access status types (promin)',
+    { tags: ['extendedPath', 'promin', 'C590792'] },
     () => {
       SettingsPane.selectSettingsTab(APPLICATION_NAMES.EHOLDINGS);
       AccessStatusTypes.openTab();

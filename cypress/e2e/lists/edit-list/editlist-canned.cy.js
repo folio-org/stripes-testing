@@ -29,8 +29,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411731 Edit list: Canned reports (corsair)',
-      { tags: ['smoke', 'corsair', 'C411731'] },
+      'C411731 Edit list: Canned reports (athena)',
+      { tags: ['smoke', 'athena', 'C411731'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

@@ -80,8 +80,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C934321 Verify default Instance note types in Settings (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C934321'] },
+      'C934321 Verify default Instance note types in Settings (promin)',
+      { tags: ['extendedPath', 'promin', 'C934321'] },
       () => {
         cy.visit(SettingsMenu.inventoryPath);
         InstanceNoteTypes.choose();

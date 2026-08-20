@@ -59,8 +59,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411844 Verify that displays a UI indicator when a List utilizes a cross-tenant query (consortia) (corsair)',
-      { tags: ['criticalPathECS', 'corsair', 'C411844'] },
+      'C411844 Verify that displays a UI indicator when a List utilizes a cross-tenant query (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C411844'] },
       () => {
         cy.setTenant(Affiliations.Consortia);
         cy.login(testData.user.username, testData.user.password, {

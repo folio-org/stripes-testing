@@ -101,11 +101,11 @@ describe('MARC', () => {
 
     testData.forEach((test) => {
       it(
-        `${test.id} Search/Browse by "${test.searchOption}" field is case-insensitive (spitfire)`,
+        `${test.id} Search/Browse by "${test.searchOption}" field is case-insensitive (promin)`,
         {
           tags: [
             'criticalPath',
-            'spitfire',
+            'promin',
             'C466086',
             'C466087',
             'C466088',

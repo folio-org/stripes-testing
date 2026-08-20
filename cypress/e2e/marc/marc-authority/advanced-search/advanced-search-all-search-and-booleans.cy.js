@@ -144,8 +144,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C350577 Advanced search of "MARC authority" records with boolean operators and search options (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C350577'] },
+        'C350577 Advanced search of "MARC authority" records with boolean operators and search options (promin)',
+        { tags: ['extendedPath', 'promin', 'C350577'] },
         () => {
           MarcAuthorities.clickAdvancedSearchButton();
 

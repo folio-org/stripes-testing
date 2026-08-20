@@ -101,8 +101,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C503086 Verify while in the Central tenant, the "Instance — Tenant ID" values include consortium + all tenant affiliations (consortia) (corsair)',
-        { tags: ['smokeECS', 'corsair', 'C503086'] },
+        'C503086 Verify while in the Central tenant, the "Instance — Tenant ID" values include consortium + all tenant affiliations (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C503086'] },
         () => {
           // Step 1: Create new list with Instances record type and open Query builder
           Lists.openNewListPane();

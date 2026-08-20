@@ -85,8 +85,8 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C410829 Verify "Tenant -> Location setup" settings HTML page title format (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird', 'C410829'] },
+    'C410829 Verify "Tenant -> Location setup" settings HTML page title format (athena) (TaaS)',
+    { tags: ['extendedPath', 'athena', 'C410829'] },
     () => {
       TopMenuNavigation.navigateToApp('Settings');
       TenantPane.verifyPageTitle('Settings - FOLIO');

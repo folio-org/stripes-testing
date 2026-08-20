@@ -258,8 +258,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C496152 Verify "Suppress from discovery" action (with errors) for Instances in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C496152'] },
+        'C496152 Verify "Suppress from discovery" action (with errors) for Instances in Central tenant (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C496152'] },
         () => {
           // Step 1: Select "Inventory - instances" radio button => Select "Instance UUIDs" from "Record identifier" dropdown
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

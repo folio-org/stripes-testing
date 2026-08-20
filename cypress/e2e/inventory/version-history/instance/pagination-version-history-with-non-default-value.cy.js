@@ -70,8 +70,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651546 Pagination of "Version history" with Non-default value in Instance (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C651546'] },
+        'C651546 Pagination of "Version history" with Non-default value in Instance (promin)',
+        { tags: ['criticalPath', 'promin', 'C651546'] },
         () => {
           // Step 1: Open Instance details from Inventory.
           InventoryInstances.searchByTitle(testData.instanceId);

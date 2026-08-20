@@ -85,8 +85,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C434155 "Are you sure?" modal is displayed after user pressed "ESC" button when record has unsaved changes - Create a new MARC Holdings record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C434155'] },
+      'C434155 "Are you sure?" modal is displayed after user pressed "ESC" button when record has unsaved changes - Create a new MARC Holdings record (promin)',
+      { tags: ['extendedPath', 'promin', 'C434155'] },
       () => {
         InventoryInstances.searchByTitle(instanceID);
         InventoryInstances.selectInstance();

@@ -27,8 +27,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C350903 Verify "Bulk Edit: Local - View user records" permissions (firebird)',
-      { tags: ['smoke', 'firebird', 'C350903'] },
+      'C350903 Verify "Bulk Edit: Local - View user records" permissions (athena)',
+      { tags: ['smoke', 'athena', 'C350903'] },
       () => {
         cy.login(userWithCsvViewPermission.username, userWithCsvViewPermission.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
@@ -39,8 +39,8 @@ describe('Bulk-edit', () => {
 
     // TODO: think about dragging file without dropping
     it(
-      'C353537 Verify label to the Drag and drop area -- Local approach (firebird)',
-      { tags: ['smoke', 'firebird', 'C353537'] },
+      'C353537 Verify label to the Drag and drop area -- Local approach (athena)',
+      { tags: ['smoke', 'athena', 'C353537'] },
       () => {
         cy.login(userWithCsvPermissions.username, userWithCsvPermissions.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);

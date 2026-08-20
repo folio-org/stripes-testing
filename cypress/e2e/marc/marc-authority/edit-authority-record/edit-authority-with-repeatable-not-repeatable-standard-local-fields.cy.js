@@ -60,8 +60,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514985 Edit MARC authority record with not-repeatable / multiple repeatable fields (Standard and Local) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514985'] },
+        'C514985 Edit MARC authority record with not-repeatable / multiple repeatable fields (Standard and Local) (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514985'] },
         () => {
           cy.then(() => {
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C514985_');

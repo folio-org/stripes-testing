@@ -48,8 +48,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C523737 Check that "Save & keep editing" button disabled after clicking it one time (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C523737'] },
+      'C523737 Check that "Save & keep editing" button disabled after clicking it one time (promin)',
+      { tags: ['extendedPath', 'promin', 'C523737'] },
       () => {
         const updatedTitle = `${testData.instanceTitle} Test`;
 

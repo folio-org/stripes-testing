@@ -30,8 +30,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C375213 Verify that "Actions" are hidden if user has NO permissions to see the specified record type (firebird)',
-      { tags: ['smoke', 'firebird', 'C375213'] },
+      'C375213 Verify that "Actions" are hidden if user has NO permissions to see the specified record type (athena)',
+      { tags: ['smoke', 'athena', 'C375213'] },
       () => {
         BulkEditSearchPane.openLogsSearch();
         BulkEditLogs.verifyLogsPane();

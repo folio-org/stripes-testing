@@ -139,8 +139,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C365599 Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & keep editing" button in editing window (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C365599'] },
+          'C365599 Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & keep editing" button in editing window (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C365599'] },
           () => {
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();

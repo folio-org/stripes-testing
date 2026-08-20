@@ -43,8 +43,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C552531 Cannot update Instance with more or less than 4 characters in "Date 1" and "Date 2" fields (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C552531'] },
+      'C552531 Cannot update Instance with more or less than 4 characters in "Date 1" and "Date 2" fields (promin)',
+      { tags: ['criticalPath', 'promin', 'C552531'] },
       () => {
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.edit();

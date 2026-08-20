@@ -60,8 +60,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422110 Detail view of created "MARC bibliographic" record is open automatically after creation when user is on search result list with one result (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C422110'] },
+        'C422110 Detail view of created "MARC bibliographic" record is open automatically after creation when user is on search result list with one result (promin)',
+        { tags: ['extendedPath', 'promin', 'C422110'] },
         () => {
           // Step 1: Run search which will return only one existing MARC bibliographic record
           InventoryInstances.searchByTitle(testData.createdInstanceIds[0]);

@@ -183,8 +183,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C410698 "Title look-up" plugin in "Receiving" app: Use "Shared" facet in "Member" tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C410698'] },
+          'C410698 "Title look-up" plugin in "Receiving" app: Use "Shared" facet in "Member" tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C410698'] },
           () => {
             Receiving.clickNewTitleOption();
             ReceivingEditForm.waitLoading();

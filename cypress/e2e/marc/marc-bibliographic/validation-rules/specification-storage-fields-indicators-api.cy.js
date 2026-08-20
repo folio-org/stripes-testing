@@ -64,8 +64,8 @@ describe('Specification Storage - Field Indicators API', () => {
   });
 
   it(
-    'C499649 Cannot create indicator of Local field for MARC bib spec without required permission (API) (spitfire)',
-    { tags: ['C499649', 'criticalPath', 'spitfire'] },
+    'C499649 Cannot create indicator of Local field for MARC bib spec without required permission (API) (promin)',
+    { tags: ['C499649', 'criticalPath', 'promin'] },
     () => {
       // Use the pre-created user with limited permissions
       cy.getUserToken(limitedUser.username, limitedUser.password);

@@ -151,8 +151,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C869997 Verify that call number is browsable after ownership update of "Item" without call number to "Holdings" with call number (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C869997'] },
+        'C869997 Verify that call number is browsable after ownership update of "Item" without call number to "Holdings" with call number (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C869997'] },
         () => {
           BrowseCallNumber.waitForCallNumberToAppear(callNumbers[0]);
 

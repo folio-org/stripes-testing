@@ -962,10 +962,17 @@ export default {
     );
   },
 
-  verifyLastUpdatedDateAndTime(updatedDate) {
-    cy.expect(
-      adminDataAccordion.find(HTML(including(`Record last updated: ${updatedDate}`))).exists(),
-    );
+  verifyLastUpdatedDateAndTime(updatedDate, { matches = true } = {}) {
+    if (matches) {
+      cy.expect(
+        adminDataAccordion.find(HTML(including(`Record last updated: ${updatedDate}`))).exists(),
+      );
+    } else {
+      cy.expect([
+        adminDataAccordion.find(HTML(including('Record last updated:'))).exists(),
+        adminDataAccordion.find(HTML(including(`Record last updated: ${updatedDate}`))).absent(),
+      ]);
+    }
   },
 
   verifyNoteTextAbsentInInstanceAccordion(noteText) {

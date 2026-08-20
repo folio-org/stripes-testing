@@ -72,8 +72,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C466301 Quick export of "MARC authority" record from authority detail view opened in the browse pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C466301'] },
+        'C466301 Quick export of "MARC authority" record from authority detail view opened in the browse pane (promin)',
+        { tags: ['extendedPath', 'promin', 'C466301'] },
         () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorityBrowse.searchBy(testData.browseOption, testData.authorityHeading);

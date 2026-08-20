@@ -123,8 +123,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C345416 Missing holding statement does not impact permanent location during the export (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C345416'] },
+      'C345416 Missing holding statement does not impact permanent location during the export (athena)',
+      { tags: ['extendedPath', 'athena', 'C345416'] },
       () => {
         // Step 1: Upload CSV with instance UUID
         ExportFileHelper.uploadFile(csvFileName);

@@ -43,8 +43,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10985 View existing mapping profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C10985'] },
+      'C10985 View existing mapping profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C10985'] },
       () => {
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileDetails.name);

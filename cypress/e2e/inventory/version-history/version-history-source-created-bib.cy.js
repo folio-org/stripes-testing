@@ -67,8 +67,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C663247 "Version history" pane is displayed on "View source" pane of "MARC bibliographic" records created via "quickmarc" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C663247'] },
+        'C663247 "Version history" pane is displayed on "View source" pane of "MARC bibliographic" records created via "quickmarc" (promin)',
+        { tags: ['criticalPath', 'promin', 'C663247'] },
         () => {
           InventoryInstance.viewSource();
           InventoryViewSource.verifyVersionHistoryButtonShown();

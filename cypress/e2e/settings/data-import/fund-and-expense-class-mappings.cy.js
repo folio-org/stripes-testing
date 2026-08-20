@@ -136,8 +136,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C376975 Order field mapping profile: Check fund and expense class mappings (folijet)',
-      { tags: ['criticalPathFlaky', 'folijet', 'C376975'] },
+      'C376975 Order field mapping profile: Check fund and expense class mappings (promin)',
+      { tags: ['criticalPathFlaky', 'promin', 'C376975'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);

@@ -125,8 +125,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C358977 Verify that 100 records returned in errors preview after updating records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C358977'] },
+      'C358977 Verify that 100 records returned in errors preview after updating records (athena)',
+      { tags: ['extendedPath', 'athena', 'C358977'] },
       () => {
         // Step 1: Select "Inventory-Items" option from "Record types" accordion => Select "Item barcode" from "Record Identifier" dropdown
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(

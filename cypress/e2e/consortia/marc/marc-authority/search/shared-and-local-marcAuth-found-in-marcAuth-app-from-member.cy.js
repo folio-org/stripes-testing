@@ -126,8 +126,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C410744 Shared and Local (for current tenant) "MARC authority" records are found in "MARC authority" app from Member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C410744'] },
+        'C410744 Shared and Local (for current tenant) "MARC authority" records are found in "MARC authority" app from Member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C410744'] },
         () => {
           MarcAuthorities.searchBy(testData.authoritySearchOption, testData.marcValueShared);
           MarcAuthorities.checkAfterSearch(

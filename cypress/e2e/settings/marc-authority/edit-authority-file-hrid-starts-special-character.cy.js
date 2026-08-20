@@ -70,8 +70,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436955 "HRID starts with" field alpha and special characters validation during editing of Local "Authority file" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C436955'] },
+        'C436955 "HRID starts with" field alpha and special characters validation during editing of Local "Authority file" (promin)',
+        { tags: ['extendedPath', 'promin', 'C436955'] },
         () => {
           hridValuesWithInvalidChars.forEach((value) => {
             ManageAuthorityFiles.clickEditButton(localAuthorityFile.name);

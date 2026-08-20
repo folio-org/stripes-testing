@@ -137,8 +137,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C553005 Select Instance plugin | Apply "Date" sort option to the Instance/Holdings/Item search result list in "Inventory" app" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C553005'] },
+      'C553005 Select Instance plugin | Apply "Date" sort option to the Instance/Holdings/Item search result list in "Inventory" app" (promin)',
+      { tags: ['extendedPath', 'promin', 'C553005'] },
       () => {
         function sortDatesAndCheck(isAscending) {
           const datesArray = isAscending ? testData.datesSorted : testData.datesSorted.toReversed();

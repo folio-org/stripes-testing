@@ -151,8 +151,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C435917 Verify Holdings with source MARC are NOT modified by the "Suppress from discovery" option (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C435917'] },
+      'C435917 Verify Holdings with source MARC are NOT modified by the "Suppress from discovery" option (athena)',
+      { tags: ['criticalPath', 'athena', 'C435917'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instances', 'Instance UUIDs');
         BulkEditSearchPane.uploadFile(validInstanceUUIDsFileName);

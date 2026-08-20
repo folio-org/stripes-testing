@@ -205,8 +205,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C402350 Use "Held by" facet when Search was executed in "Member" tenant ("Instance" tab) (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C402350'] },
+          'C402350 Use "Held by" facet when Search was executed in "Member" tenant ("Instance" tab) (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C402350'] },
           () => {
             InventorySearchAndFilter.verifyAccordionExistance(heldbyAccordionName);
             InventorySearchAndFilter.clickAccordionByName(heldbyAccordionName);

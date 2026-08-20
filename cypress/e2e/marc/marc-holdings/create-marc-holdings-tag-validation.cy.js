@@ -53,8 +53,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C543827 MARC tag validation when creating "MARC holdings" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C543827'] },
+        'C543827 MARC tag validation when creating "MARC holdings" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C543827'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

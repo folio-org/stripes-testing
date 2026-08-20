@@ -51,8 +51,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C17016 Create, edit, and delete field protection settings (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C17016'] },
+      'C17016 Create, edit, and delete field protection settings (promin)',
+      { tags: ['extendedPath', 'promin', 'C17016'] },
       () => {
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);
         SettingsDataImport.goToSettingsDataImport();

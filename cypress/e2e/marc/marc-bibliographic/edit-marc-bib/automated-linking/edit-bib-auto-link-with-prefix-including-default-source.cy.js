@@ -426,8 +426,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C440066 "Base URL" doesn\'t show in MARC bib\'s field linked with "MARC authority" record which has prefix, which includes prefix of default "Authority file" (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C440066'] },
+          'C440066 "Base URL" doesn\'t show in MARC bib\'s field linked with "MARC authority" record which has prefix, which includes prefix of default "Authority file" (promin)',
+          { tags: ['extendedPath', 'promin', 'C440066'] },
           () => {
             // Step 1: Open edit window
             InventoryInstances.searchByTitle(createdInstanceId);

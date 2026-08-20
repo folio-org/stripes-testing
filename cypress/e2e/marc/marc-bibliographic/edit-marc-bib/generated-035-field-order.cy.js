@@ -80,8 +80,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C490898 Generated "035" field displays in ascending fields order in imported "MARC bibliographic" record which doesn\'t have existing "035" fields (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C490898'] },
+      'C490898 Generated "035" field displays in ascending fields order in imported "MARC bibliographic" record which doesn\'t have existing "035" fields (promin)',
+      { tags: ['criticalPath', 'promin', 'C490898'] },
       () => {
         InventoryInstances.searchByTitle(createdRecordsIDs[0]);
         InventoryInstances.selectInstance();
@@ -94,8 +94,8 @@ describe('Data Import', () => {
     );
 
     it(
-      'C490899 Generated "035" field displays in ascending fields order in imported "MARC bibliographic" record which has multiple existing "035" fields (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C490899'] },
+      'C490899 Generated "035" field displays in ascending fields order in imported "MARC bibliographic" record which has multiple existing "035" fields (promin)',
+      { tags: ['criticalPath', 'promin', 'C490899'] },
       () => {
         InventoryInstances.searchByTitle(createdRecordsIDs[1]);
         InventoryInstances.selectInstance();

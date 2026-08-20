@@ -38,8 +38,8 @@ describe('eHoldings', () => {
   });
 
   it(
-    'C423384 Verify that "Settings>>eHoldings" HTML page title follows "<<App name>> settings - <<selected page name>> - FOLIO" format (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C423384'] },
+    'C423384 Verify that "Settings>>eHoldings" HTML page title follows "<<App name>> settings - <<selected page name>> - FOLIO" format (promin)',
+    { tags: ['extendedPath', 'promin', 'C423384'] },
     () => {
       SettingsPane.selectSettingsTab(APPLICATION_NAMES.EHOLDINGS);
       SettingsPane.checkPaneIsOpened(APPLICATION_NAMES.EHOLDINGS);

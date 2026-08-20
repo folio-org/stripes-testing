@@ -117,8 +117,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C423585 Browse call numbers | Verify reset of search query in Inventory when affiliation is switched to Member (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C423585'] },
+        'C423585 Browse call numbers | Verify reset of search query in Inventory when affiliation is switched to Member (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C423585'] },
         () => {
           BrowseCallNumber.waitForCallNumberToAppear(callNumberValue);
 

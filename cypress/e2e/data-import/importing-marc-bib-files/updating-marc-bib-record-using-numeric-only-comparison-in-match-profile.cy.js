@@ -142,8 +142,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C651587 Check updating MARC Bib record using "Numeric only" comparison in match profile (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C651587'] },
+      'C651587 Check updating MARC Bib record using "Numeric only" comparison in match profile (promin)',
+      { tags: ['criticalPath', 'promin', 'C651587'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();

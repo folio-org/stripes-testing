@@ -153,8 +153,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C409438 Searching "MARC authority" records using "Keyword" search option and "Type of heading" facet (spitfire)',
-          { tags: ['extendedPath', 'C409438', 'spitfire'] },
+          'C409438 Searching "MARC authority" records using "Keyword" search option and "Type of heading" facet (promin)',
+          { tags: ['extendedPath', 'C409438', 'promin'] },
           () => {
             // Step 1-2: Select "Keyword" search option
             MarcAuthorities.selectSearchOptionInDropdown(testData.searchOption);

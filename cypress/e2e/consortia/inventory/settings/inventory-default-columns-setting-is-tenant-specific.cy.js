@@ -81,8 +81,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C813588 Verify that Inventory "Default columns" setting is tenant specific (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C813588', 'nonParallel'] },
+          'C813588 Verify that Inventory "Default columns" setting is tenant specific (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C813588', 'nonParallel'] },
           () => {
             // Go to Settings > Inventory > Display settings on Central tenant
             SettingsInventory.goToSettingsInventory();

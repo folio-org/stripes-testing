@@ -75,8 +75,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C405539 "MARC authority" record deleted on Member 1 tenant is deleted in Central and Member 2 tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C405539'] },
+          'C405539 "MARC authority" record deleted on Member 1 tenant is deleted in Central and Member 2 tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C405539'] },
           () => {
             // Login directly into Member 1 (College) - primary affiliation
             cy.setTenant(Affiliations.College);

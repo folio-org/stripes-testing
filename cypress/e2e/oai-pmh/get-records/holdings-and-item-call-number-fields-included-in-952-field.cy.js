@@ -106,8 +106,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C386509 GetRecord: SRS - Verify that Holdings and Item "Call number" fields are properly included in "952" field of response (subfields "e", "f", "g", "h", "n") (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C386509'] },
+      'C386509 GetRecord: SRS - Verify that Holdings and Item "Call number" fields are properly included in "952" field of response (subfields "e", "f", "g", "h", "n") (athena)',
+      { tags: ['extendedPath', 'athena', 'C386509'] },
       () => {
         // Step 1-3: Send OAI-PMH GetRecord request and verify 952 field with Holdings call number
         cy.getAdminToken();

@@ -60,8 +60,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C376980 ListRecords: FOLIO edited instances are harvested with start and end date (oai_dc) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C376980', 'nonParallel'] },
+      'C376980 ListRecords: FOLIO edited instances are harvested with start and end date (oai_dc) (athena)',
+      { tags: ['extendedPath', 'athena', 'C376980', 'nonParallel'] },
       () => {
         // Step 1: Search for FOLIO instance by Source filter
         InventoryInstances.searchByTitle(testData.instanceTitle);

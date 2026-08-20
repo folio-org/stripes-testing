@@ -119,8 +119,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651459 Check "Version history" after load testing on Item (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C651459'] },
+        'C651459 Check "Version history" after load testing on Item (promin)',
+        { tags: ['criticalPath', 'promin', 'C651459'] },
         () => {
           InventorySearchAndFilter.searchByParameter('Title (all)', testData.instance.title);
           InventoryInstances.selectInstance();

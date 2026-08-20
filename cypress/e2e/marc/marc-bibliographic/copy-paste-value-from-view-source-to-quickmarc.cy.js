@@ -86,8 +86,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C422157 Copy and paste from the MARC source view of the record to editing window of "MARC bibliographic" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C422157'] },
+      'C422157 Copy and paste from the MARC source view of the record to editing window of "MARC bibliographic" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C422157'] },
       () => {
         let textFromSource;
 

@@ -355,8 +355,8 @@ describe('Data Import', () => {
     };
 
     it(
-      'C343335 MARC file upload with the update of instance, holding, and items (folijet)',
-      { tags: ['smoke', 'folijet', 'C343335'] },
+      'C343335 MARC file upload with the update of instance, holding, and items (promin)',
+      { tags: ['smoke', 'promin', 'C343335'] },
       () => {
         DataImport.verifyUploadState();
         // upload a marc file for creating of the new instance, holding and item

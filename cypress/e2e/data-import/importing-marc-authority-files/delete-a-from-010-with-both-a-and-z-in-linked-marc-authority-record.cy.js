@@ -162,8 +162,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C376942 Delete "$a" from "010" in linked "MARC Authority" record when "010" has both "$a" and "$z" and "010" = "$0" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C376942'] },
+      'C376942 Delete "$a" from "010" in linked "MARC Authority" record when "010" has both "$a" and "$z" and "010" = "$0" (promin)',
+      { tags: ['extendedPath', 'promin', 'C376942'] },
       () => {
         ExportFileHelper.uploadFile(authorityUUIDsFileName);
         ExportFileHelper.exportWithDefaultJobProfile(

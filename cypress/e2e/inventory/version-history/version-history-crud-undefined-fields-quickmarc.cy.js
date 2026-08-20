@@ -96,8 +96,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C692116 Check "Version history" panes of MARC and FOLIO records after CRUD of Undefined fields and subfield in "MARC bibliographic" record via "quickmarc" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C692116'] },
+        'C692116 Check "Version history" panes of MARC and FOLIO records after CRUD of Undefined fields and subfield in "MARC bibliographic" record via "quickmarc" (promin)',
+        { tags: ['extendedPath', 'promin', 'C692116'] },
         () => {
           // Step 1: Open QuickMarcEditor
           InventoryInstance.editMarcBibliographicRecord();

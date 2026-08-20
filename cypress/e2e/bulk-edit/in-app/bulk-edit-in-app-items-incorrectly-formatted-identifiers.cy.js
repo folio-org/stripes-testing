@@ -68,8 +68,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C440083 Verify Error while uploading file with incorrectly formatted identifiers - Items (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C440083'] },
+      'C440083 Verify Error while uploading file with incorrectly formatted identifiers - Items (athena)',
+      { tags: ['criticalPath', 'athena', 'C440083'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');

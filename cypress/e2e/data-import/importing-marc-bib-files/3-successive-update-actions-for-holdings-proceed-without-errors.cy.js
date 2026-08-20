@@ -172,8 +172,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C401727 Verify that 3 successive update actions for Holdings proceed without errors (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C401727'] },
+      'C401727 Verify that 3 successive update actions for Holdings proceed without errors (promin)',
+      { tags: ['criticalPath', 'promin', 'C401727'] },
       () => {
         // create field mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();

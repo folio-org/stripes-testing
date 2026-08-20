@@ -61,8 +61,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C611 Contributor --> Type --> (Validate matching settings) (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C611'] },
+      'C611 Contributor --> Type --> (Validate matching settings) (promin)',
+      { tags: ['extendedPath', 'promin', 'C611'] },
       () => {
         // Step 1: Navigate to Settings > Inventory > Contributor types and verify the list
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);

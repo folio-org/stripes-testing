@@ -1097,7 +1097,7 @@ export default {
   getSearchParamsMap(orderNumber, orderLine) {
     const searchParamsMap = new Map();
     searchParamsMap
-      .set('Keyword', orderNumber)
+      .set('Keyword', `${orderNumber}*`)
       .set('Contributor', orderLine.contributors[0].contributor)
       .set('PO line number', orderNumber.toString().concat('-1'))
       .set('Requester', orderLine.requester)
@@ -1729,8 +1729,21 @@ export default {
   interceptPostInvoices() {
     cy.intercept('POST', '/invoice/invoices*').as('waiterForInvoicesPostQueryCompleted');
   },
-
   waitForInvoicesPostQueryCompleted() {
     return cy.wait('@waiterForInvoicesPostQueryCompleted');
+  },
+
+  interceptGetInvoices() {
+    cy.intercept('GET', '/invoice/invoices*').as('waiterForInvoicesQueryCompleted');
+  },
+  waitForInvoiceQueryCompleted() {
+    cy.wait('@waiterForInvoicesQueryCompleted');
+  },
+
+  interceptGetBatchGroups() {
+    cy.intercept('GET', '/batch-groups*').as('waiterForBatchGroupsQueryCompleted');
+  },
+  waitForBatchGroupsQueryCompleted() {
+    cy.wait('@waiterForBatchGroupsQueryCompleted');
   },
 };

@@ -28,8 +28,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C376982 verb=ListIdentifiers: Verify that added Instance MARC is retrieved (oai_dc) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C376982'] },
+      'C376982 verb=ListIdentifiers: Verify that added Instance MARC is retrieved (oai_dc) (athena)',
+      { tags: ['extendedPath', 'athena', 'C376982'] },
       () => {
         OaiPmh.listIdentifiersRequest('oai_dc').then((response) => {
           OaiPmh.verifyIdentifierInListResponse(response, marcInstanceId);

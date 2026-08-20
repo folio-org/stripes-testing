@@ -38,8 +38,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field withou
   });
 
   it(
-    'C490911 Cannot create Local field for MARC bib spec without required permission (API) (spitfire)',
-    { tags: ['C490911', 'extendedPath', 'spitfire'] },
+    'C490911 Cannot create Local field for MARC bib spec without required permission (API) (promin)',
+    { tags: ['C490911', 'extendedPath', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

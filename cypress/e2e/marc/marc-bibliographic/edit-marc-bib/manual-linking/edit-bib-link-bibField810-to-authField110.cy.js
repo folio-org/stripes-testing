@@ -136,8 +136,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C375085 Link the "810" of "MARC Bib" field with "110" field of "MARC Authority" record. (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C375085'] },
+          'C375085 Link the "810" of "MARC Bib" field with "110" field of "MARC Authority" record. (promin)',
+          { tags: ['extendedPath', 'promin', 'C375085'] },
           () => {
             InventoryInstances.searchByTitle(createdInstanceId);
             InventoryInstances.selectInstanceById(createdInstanceId);

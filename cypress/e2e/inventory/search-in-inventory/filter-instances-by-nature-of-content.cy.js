@@ -91,8 +91,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476726 Filter "Instance" records by "Nature of content" filter/facet (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C476726'] },
+        'C476726 Filter "Instance" records by "Nature of content" filter/facet (promin)',
+        { tags: ['criticalPath', 'promin', 'C476726'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(testData.natureOfContentAccordionName);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(

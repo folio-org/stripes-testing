@@ -230,8 +230,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C407722 Advanced search of "MARC authority" records using "Contains all" search operator (Personal name and Name-title) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C407722'] },
+        'C407722 Advanced search of "MARC authority" records using "Contains all" search operator (Personal name and Name-title) (promin)',
+        { tags: ['criticalPath', 'promin', 'C407722'] },
         () => {
           cy.ifConsortia(true, () => {
             MarcAuthorities.clickAccordionByName('Shared');

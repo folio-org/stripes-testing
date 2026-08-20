@@ -49,8 +49,8 @@ describe('Inventory', () => {
       });
 
       it(
-        "C543863 Check that Subject type can't be created with already existed local subject type name (folijet)",
-        { tags: ['extendedPath', 'folijet', 'C543863'] },
+        "C543863 Check that Subject type can't be created with already existed local subject type name (promin)",
+        { tags: ['extendedPath', 'promin', 'C543863'] },
         () => {
           SubjectTypes.createSubjectType(localSubjectType.name);
           SubjectTypes.validateNameFieldWithError(testData.errorMessage);

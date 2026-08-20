@@ -417,8 +417,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C404375 "MARC authority headings updates (CSV)" report contains correct data when triggered from Consortia tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C404375'] },
+          'C404375 "MARC authority headings updates (CSV)" report contains correct data when triggered from Consortia tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C404375'] },
           () => {
             // === USER C (Central): Edit Auth Shared 2 and Auth Shared 5 ===
             cy.resetTenant();

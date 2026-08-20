@@ -50,8 +50,8 @@ describe('Users', () => {
   });
 
   it(
-    'C503168 Verify "Email Communication Preferences" field on user creation page (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C503168'] },
+    'C503168 Verify "Email Communication Preferences" field on user creation page (vega)',
+    { tags: ['extendedPath', 'vega', 'C503168'] },
     () => {
       // Step 1: On top right corner click "Action" button ==> select "New" option
       Users.clickNewButton();

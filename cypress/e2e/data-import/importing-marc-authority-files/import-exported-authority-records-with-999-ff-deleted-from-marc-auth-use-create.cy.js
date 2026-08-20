@@ -92,8 +92,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C407008 Import of exported records with kept "999" field value, which have been deleted from "MARC Authority" app - Use Create action (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C407008'] },
+      'C407008 Import of exported records with kept "999" field value, which have been deleted from "MARC Authority" app - Use Create action (promin)',
+      { tags: ['extendedPath', 'promin', 'C407008'] },
       () => {
         // Steps 4-9: Export selected authority records via Data Export
         ExportFileHelper.uploadFile(authorityUUIDsFileName);

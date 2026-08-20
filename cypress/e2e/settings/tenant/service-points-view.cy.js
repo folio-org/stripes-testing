@@ -115,8 +115,8 @@ describe(
     });
 
     it(
-      'C359588 Verify view of services points on the view page (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C359588', 'eurekaPhase1'] },
+      'C359588 Verify view of services points on the view page (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C359588', 'eurekaPhase1'] },
       () => {
         Locations.viewLocations(testData.locations[0]);
 

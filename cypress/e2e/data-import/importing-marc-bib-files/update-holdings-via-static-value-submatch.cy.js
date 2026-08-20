@@ -183,8 +183,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C11110 Update a holdings via a static value submatch (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C11110'] },
+      'C11110 Update a holdings via a static value submatch (promin)',
+      { tags: ['criticalPath', 'promin', 'C11110'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

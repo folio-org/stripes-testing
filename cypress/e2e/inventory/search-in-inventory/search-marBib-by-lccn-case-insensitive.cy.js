@@ -61,8 +61,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C466072 Search by "LCCN" field is case-insensitive (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C466072'] },
+        'C466072 Search by "LCCN" field is case-insensitive (promin)',
+        { tags: ['extendedPath', 'promin', 'C466072'] },
         () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,

@@ -34,8 +34,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C423478 Cancel changes made in not saved custom "Title" record using "X" icon (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423478'] },
+      'C423478 Cancel changes made in not saved custom "Title" record using "X" icon (promin)',
+      { tags: ['extendedPath', 'promin', 'C423478'] },
       () => {
         EHoldingSearch.switchToTitles();
         EHoldingsTitlesSearch.waitLoading();

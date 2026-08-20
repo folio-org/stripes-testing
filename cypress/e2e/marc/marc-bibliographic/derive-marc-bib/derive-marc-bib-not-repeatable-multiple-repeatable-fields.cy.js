@@ -147,8 +147,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514981 Derive MARC bib record with not-repeatable / multiple repeatable fields (Standard and Local) (spitfire)',
-        { tags: ['extendedPath', 'C514981', 'spitfire', 'nonParallel'] },
+        'C514981 Derive MARC bib record with not-repeatable / multiple repeatable fields (Standard and Local) (promin)',
+        { tags: ['extendedPath', 'C514981', 'promin', 'nonParallel'] },
         () => {
           // Step 1: Click on "Actions" button >> Select "Derive new MARC bibliographic record" option
           InventoryInstances.searchByTitle(importedInstanceId);

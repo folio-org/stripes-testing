@@ -22,8 +22,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C1045964 Verify that the fields "Bill to — Address" and "Bill to — Name" are queryable in the ETs "Invoice lines", "Order — Invoice Analysis" and "Voucher lines with invoice, fund, organization" (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C1045964'] },
+      'C1045964 Verify that the fields "Bill to — Address" and "Bill to — Name" are queryable in the ETs "Invoice lines", "Order — Invoice Analysis" and "Voucher lines with invoice, fund, organization" (athena)',
+      { tags: ['extendedPath', 'athena', 'C1045964'] },
       () => {
         Lists.setName(listName);
         // Test each record type

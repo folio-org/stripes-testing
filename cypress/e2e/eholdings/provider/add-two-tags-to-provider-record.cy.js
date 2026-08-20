@@ -35,8 +35,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C754 Add two tags to a provider record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C754'] },
+      'C754 Add two tags to a provider record (promin)',
+      { tags: ['extendedPath', 'promin', 'C754'] },
       () => {
         EHoldingsSearch.waitLoading();
         EHoldingsProvidersSearch.byProvider(testData.providerName);

@@ -63,8 +63,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C895675 Create MARC bib record with undefined Fields / Indicators / Subfields when "Undefined" rules are disabled (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C895675'] },
+        'C895675 Create MARC bib record with undefined Fields / Indicators / Subfields when "Undefined" rules are disabled (promin)',
+        { tags: ['extendedPath', 'promin', 'C895675'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateLDR06And07Positions();

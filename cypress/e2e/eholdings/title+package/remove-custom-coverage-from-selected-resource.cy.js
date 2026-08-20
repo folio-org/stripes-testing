@@ -58,8 +58,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C422015 Remove "Date range" under "Coverage settings" when editing Selected Resource (Title+Package) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C422015'] },
+      'C422015 Remove "Date range" under "Coverage settings" when editing Selected Resource (Title+Package) (promin)',
+      { tags: ['extendedPath', 'promin', 'C422015'] },
       () => {
         EHoldingsTitle.searchTitle(testData.titleName);
         EHoldingsTitlesSearch.openTitle(testData.titleName);

@@ -78,8 +78,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C451616 Select Instance plugin | "Reset all" button returns search option to default (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C451616'] },
+      'C451616 Select Instance plugin | "Reset all" button returns search option to default (promin)',
+      { tags: ['extendedPath', 'promin', 'C451616'] },
       () => {
         function searchResetAndCheck(searchOption, defaultOption) {
           SelectInstanceModal.checkTableContent();

@@ -86,9 +86,9 @@ describe('Inventory', () => {
       });
 
       it(
-        'C812846 API | Edit multiple "Item" records (empty "order" field) using batch endpoint (spitfire)',
+        'C812846 API | Edit multiple "Item" records (empty "order" field) using batch endpoint (promin)',
         {
-          tags: ['extendedPath', 'spitfire', 'C812846'],
+          tags: ['extendedPath', 'promin', 'C812846'],
         },
         () => {
           cy.getToken(user.username, user.password);

@@ -66,8 +66,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C663325 Check "Version history" pane after Update of subfield indicator in "MARC authority" record via "quickmarc" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C663325'] },
+        'C663325 Check "Version history" pane after Update of subfield indicator in "MARC authority" record via "quickmarc" (promin)',
+        { tags: ['extendedPath', 'promin', 'C663325'] },
         () => {
           // Step 1: Search for the authority record
           MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading);

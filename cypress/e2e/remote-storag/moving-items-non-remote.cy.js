@@ -104,8 +104,8 @@ describe('Remote Storage', () => {
   });
 
   it(
-    'C191169 Move item with non remote effective location to a non remote holding (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C191169'] },
+    'C191169 Move item with non remote effective location to a non remote holding (vega)',
+    { tags: ['criticalPath', 'vega', 'C191169'] },
     () => {
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);

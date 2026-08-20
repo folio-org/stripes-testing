@@ -215,8 +215,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C407647 Consortia | Add shared MARC instance from central tenant and export with Default instances job profile (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C407647'] },
+      'C407647 Consortia | Add shared MARC instance from central tenant and export with Default instances job profile (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C407647'] },
       () => {
         // Step 1-6: Implemented via API calls in the "before" hook
         // Step 7: Find the shared MARC instance from central tenant

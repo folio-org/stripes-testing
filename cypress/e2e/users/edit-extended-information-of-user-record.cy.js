@@ -82,7 +82,7 @@ describe('Users', () => {
 
     it(
       'C15861 - Edit Extended information of User record',
-      { tags: ['extendedPath', 'volaris', 'C15861'] },
+      { tags: ['extendedPath', 'vega', 'C15861'] },
       () => {
         // Step 0: Search for User 1 and open details
         UsersSearchPane.searchByUsername(testData.testUser.username);

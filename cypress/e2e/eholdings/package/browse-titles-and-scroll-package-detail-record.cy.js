@@ -29,8 +29,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C1540 Package detail record: Browse titles AND scroll detail record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1540'] },
+      'C1540 Package detail record: Browse titles AND scroll detail record (promin)',
+      { tags: ['extendedPath', 'promin', 'C1540'] },
       () => {
         EHoldingsPackageView.verifyTitlesTableColumns([
           'Status',
@@ -41,7 +41,7 @@ describe('eHoldings', () => {
           'Custom embargo period',
           'Publication type',
           'Access status type',
-          'Tag',
+          'Tags',
         ]);
         EHoldingsPackageView.verifyTitlesSearchElements();
         EHoldingsPackageView.findTitleInList(testData.titleName);

@@ -56,8 +56,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422258 View "Manage authority files" pane in "Settings >> MARC authority" with view permissions in Central tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C422258'] },
+          'C422258 View "Manage authority files" pane in "Settings >> MARC authority" with view permissions in Central tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C422258'] },
           () => {
             cy.login(testUser.username, testUser.password, {
               path: TopMenu.settingsAuthorityFilesPath,

@@ -64,8 +64,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C543780 Check the "Delete" action in "Settings (Inventory): Create, edit, delete subject sources" permission for linked to Instance subject source (folijet)',
-        { tags: ['extendedPath', 'folijet', 'C543780'] },
+        'C543780 Check the "Delete" action in "Settings (Inventory): Create, edit, delete subject sources" permission for linked to Instance subject source (promin)',
+        { tags: ['extendedPath', 'promin', 'C543780'] },
         () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
           SettingsInventory.goToSettingsInventory();

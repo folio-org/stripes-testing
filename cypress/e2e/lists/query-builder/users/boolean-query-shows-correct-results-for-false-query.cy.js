@@ -48,8 +48,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C627548 Boolean query shows correct results for false query (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C627548'] },
+        'C627548 Boolean query shows correct results for false query (athena)',
+        { tags: ['criticalPath', 'athena', 'C627548'] },
         () => {
           // Step 1: Open new list pane and fill in list details
           Lists.openNewListPane();

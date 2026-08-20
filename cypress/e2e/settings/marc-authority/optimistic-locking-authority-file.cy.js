@@ -59,8 +59,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436868 Optimistic locking error appears when 2 different users edit the same "Authority file" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C436868'] },
+        'C436868 Optimistic locking error appears when 2 different users edit the same "Authority file" (promin)',
+        { tags: ['extendedPath', 'promin', 'C436868'] },
         () => {
           cy.login(userA.username, userA.password, {
             path: TopMenu.settingsAuthorityFilesPath,

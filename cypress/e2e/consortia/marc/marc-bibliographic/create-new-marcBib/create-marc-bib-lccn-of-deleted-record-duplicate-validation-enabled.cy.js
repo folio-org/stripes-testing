@@ -84,8 +84,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569611 Verify that a MARC bib record can be created with a LCCN matching a marked as deleted record when duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C569611'] },
+          'C569611 Verify that a MARC bib record can be created with a LCCN matching a marked as deleted record when duplicate LCCN check is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C569611'] },
           () => {
             // Step 1: Click on "Actions" - "+ New MARC bibliographic record" option
             InventoryInstance.newMarcBibRecord();

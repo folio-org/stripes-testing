@@ -70,8 +70,8 @@ describe('Inventory', () => {
       });
 
       it(
-        "C1322684 Verify that FOLIO UI doesn't freeze when the Instance Detail View pane is closed while it is still loading and then opened again (spitfire)",
-        { tags: ['criticalPathECS', 'spitfire', 'C1322684'] },
+        "C1322684 Verify that FOLIO UI doesn't freeze when the Instance Detail View pane is closed while it is still loading and then opened again (promin)",
+        { tags: ['criticalPathECS', 'promin', 'C1322684'] },
         () => {
           function openAndReopenInstance(instanceTitle) {
             InventoryInstances.selectInstanceByTitle(instanceTitle);

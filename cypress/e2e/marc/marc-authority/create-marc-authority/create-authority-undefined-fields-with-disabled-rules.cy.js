@@ -67,8 +67,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C895680 Create MARC authority record with undefined field, indicator, and subfield codes when "Undefined" validation rules are disabled (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C895680'] },
+        'C895680 Create MARC authority record with undefined field, indicator, and subfield codes when "Undefined" validation rules are disabled (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C895680'] },
         () => {
           // Step 1: Open "Create a new MARC authority record" window
           MarcAuthorities.clickActionsAndNewAuthorityButton();

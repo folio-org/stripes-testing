@@ -39,8 +39,8 @@ describe('MARC Bibliographic Validation Rules - Standard Fields Indicators API',
   });
 
   it(
-    'C502957 Cannot update Indicator of Standard Field for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C502957', 'spitfire'] },
+    'C502957 Cannot update Indicator of Standard Field for MARC bib spec (API) (promin)',
+    { tags: ['criticalPath', 'C502957', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

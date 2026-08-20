@@ -247,8 +247,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C1292052 Verify that MARC bib record Data import updates do not clear FOLIO fields in Instance record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C1292052'] },
+      'C1292052 Verify that MARC bib record Data import updates do not clear FOLIO fields in Instance record (promin)',
+      { tags: ['criticalPath', 'promin', 'C1292052'] },
       () => {
         // Step 1. Click Actions > Export instance (MARC) on the detail view pane
         cy.intercept('/data-export/quick-export').as('quickExport');

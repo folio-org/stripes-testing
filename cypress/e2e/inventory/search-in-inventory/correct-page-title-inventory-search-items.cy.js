@@ -86,8 +86,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C423412 Correct page title in Inventory Search ("Items" tab) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423412'] },
+      'C423412 Correct page title in Inventory Search ("Items" tab) (promin)',
+      { tags: ['extendedPath', 'promin', 'C423412'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(user.username, user.password, {

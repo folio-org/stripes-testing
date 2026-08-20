@@ -131,8 +131,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C366584 MARC Authority plug-in | Search: Verify that the "Thesaurus" facet option will display the name of facet option when zero results are returned (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C366584'] },
+        'C366584 MARC Authority plug-in | Search: Verify that the "Thesaurus" facet option will display the name of facet option when zero results are returned (promin)',
+        { tags: ['extendedPath', 'promin', 'C366584'] },
         () => {
           // Step 1: Click on the "Thesaurus" accordion button
           MarcAuthorities.verifyThesaurusAccordionAndClick();

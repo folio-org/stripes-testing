@@ -177,8 +177,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C410711 Link Shared MARC bib with Shared MARC auth on Central tenant in Derive screen (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C410711'] },
+            'C410711 Link Shared MARC bib with Shared MARC auth on Central tenant in Derive screen (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C410711'] },
             () => {
               InventoryInstances.searchByTitle(createdInstanceId);
               InventoryInstances.selectInstanceById(createdInstanceId);

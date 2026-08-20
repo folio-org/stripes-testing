@@ -139,8 +139,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C503094 Verify number of errors counted on the Confirmation screen is the same as in .csv file (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C503094'] },
+      'C503094 Verify number of errors counted on the Confirmation screen is the same as in .csv file (athena)',
+      { tags: ['criticalPath', 'athena', 'C503094'] },
       () => {
         // Step 1: Select the "Inventory - instances" radio button and "Instance UUIDs" option
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

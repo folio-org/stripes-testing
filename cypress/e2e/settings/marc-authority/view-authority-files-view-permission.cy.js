@@ -54,8 +54,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422256 View "Manage authority files" pane in "Settings >> MARC authority" with view permissions (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C422256'] },
+        'C422256 View "Manage authority files" pane in "Settings >> MARC authority" with view permissions (promin)',
+        { tags: ['extendedPath', 'promin', 'C422256'] },
         () => {
           cy.login(testUser.username, testUser.password, {
             path: TopMenu.settingsAuthorityFilesPath,

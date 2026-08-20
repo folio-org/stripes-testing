@@ -91,8 +91,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C353645 Checking the Data import UI permission for only viewing settings (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C353645'] },
+      'C353645 Checking the Data import UI permission for only viewing settings (promin)',
+      { tags: ['criticalPath', 'promin', 'C353645'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);

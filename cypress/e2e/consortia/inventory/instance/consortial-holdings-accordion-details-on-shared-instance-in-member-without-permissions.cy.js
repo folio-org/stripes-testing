@@ -87,8 +87,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411619 (CONSORTIA) Verify the Consortial holdings accordion details on shared Instance in Member Tenant without permissions (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411619'] },
+        'C411619 (CONSORTIA) Verify the Consortial holdings accordion details on shared Instance in Member Tenant without permissions (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411619'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceId);

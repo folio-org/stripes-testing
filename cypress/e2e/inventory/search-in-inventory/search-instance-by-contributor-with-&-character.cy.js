@@ -129,7 +129,7 @@ describe('Inventory', () => {
 
     it(
       'C368025 Search for an Instance by the Contributor name field containing the “&” character using the Keyword search option',
-      { tags: ['extendedPath', 'spitfire', 'C368025'] },
+      { tags: ['extendedPath', 'promin', 'C368025'] },
       () => {
         // Ensure we're on the Instance tab with Keyword search selected
         InventorySearchAndFilter.instanceTabIsDefault();

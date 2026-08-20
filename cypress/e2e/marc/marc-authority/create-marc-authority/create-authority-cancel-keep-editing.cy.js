@@ -47,8 +47,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423524 Select "Keep editing" in "Are you sure" modal and save the record in "Create a new MARC authority record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423524'] },
+        'C423524 Select "Keep editing" in "Are you sure" modal and save the record in "Create a new MARC authority record" window (promin)',
+        { tags: ['extendedPath', 'promin', 'C423524'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           MarcAuthority.setValid008DropdownValues();

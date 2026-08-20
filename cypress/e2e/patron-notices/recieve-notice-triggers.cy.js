@@ -258,8 +258,8 @@ describe('Patron notices', () => {
       });
 
       it(
-        'C347862 Check out + Loan due date change + Check in triggers (volaris)',
-        { tags: ['smoke', 'volaris', 'shiftLeft', 'C347862'] },
+        'C347862 Check out + Loan due date change + Check in triggers (vega)',
+        { tags: ['smoke', 'vega', 'shiftLeft', 'C347862'] },
         () => {
           noticeTemplates.forEach((template) => {
             NewNoticePolicyTemplate.createPatronNoticeTemplate(template);

@@ -171,8 +171,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C476806 Run search for "Instance" records by "010" field values from "Derive a new MARC bib record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476806'] },
+        'C476806 Run search for "Instance" records by "010" field values from "Derive a new MARC bib record" window (promin)',
+        { tags: ['extendedPath', 'promin', 'C476806'] },
         () => {
           function goToDeriveBib(field010Content) {
             InventorySearchAndFilter.selectSearchOption(testData.keywordSearchOption);

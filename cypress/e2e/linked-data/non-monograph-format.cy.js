@@ -71,8 +71,8 @@ describe('Citation: Non-monograph format', () => {
   });
 
   it(
-    'C651426 [User journey] Marigold - non-monograph format (citation)',
-    { tags: ['criticalPath', 'citation', 'C651426', 'marigold', 'shiftLeft'] },
+    'C651426 [User journey] Marigold - non-monograph format (promin)',
+    { tags: ['criticalPath', 'promin', 'C651426', 'marigold', 'shiftLeft'] },
     () => {
       // search inventory instance and limit search to MARC type
       InventorySearchAndFilter.bySource(INSTANCE_SOURCE_NAMES.MARC);

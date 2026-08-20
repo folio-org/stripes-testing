@@ -170,8 +170,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566139 Verify "Staff only" action for Instances notes in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566139'] },
+        'C566139 Verify "Staff only" action for Instances notes in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566139'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
           BulkEditSearchPane.uploadFile(instanceUUIDsFileName);

@@ -81,8 +81,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C451648 Edit "Classification browse" option from Central tenant when user doesn\'t have permission on Member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C451648'] },
+          'C451648 Edit "Classification browse" option from Central tenant when user doesn\'t have permission on Member tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C451648'] },
           () => {
             // Step 1: Click on the "Edit" (pencil) icon next to Classification browse option
             ClassificationBrowse.checkClassificationBrowseInTable(

@@ -118,8 +118,8 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C17047 Filter circulation log by staff information only added (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C17047'] },
+    'C17047 Filter circulation log by staff information only added (vega)',
+    { tags: ['criticalPath', 'vega', 'C17047'] },
     () => {
       const searchResultsData = {
         userBarcode: userData.barcode,
@@ -140,8 +140,8 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C17048 Check the Actions button from filtering Circulation log by Staff only information added (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C17048'] },
+    'C17048 Check the Actions button from filtering Circulation log by Staff only information added (vega)',
+    { tags: ['criticalPath', 'vega', 'C17048'] },
     () => {
       cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
       SearchPane.setFilterOptionFromAccordion('fee', 'Staff information only added');

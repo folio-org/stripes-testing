@@ -41,8 +41,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C376984 GetRecords: SRS instances are harvested (oai_dc) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C376984'] },
+      'C376984 GetRecords: SRS instances are harvested (oai_dc) (athena)',
+      { tags: ['extendedPath', 'athena', 'C376984'] },
       () => {
         OaiPmh.getRecordRequest(marcInstance.id, 'oai_dc').then((response) => {
           OaiPmh.verifyDublinCoreField(response, marcInstance.id, {

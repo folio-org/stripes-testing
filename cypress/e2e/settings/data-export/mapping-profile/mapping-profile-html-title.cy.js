@@ -34,8 +34,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C410768 Verify "Data export -> Field mapping profiles" settings HTML page title format (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C410768'] },
+      'C410768 Verify "Data export -> Field mapping profiles" settings HTML page title format (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C410768'] },
       () => {
         TopMenuNavigation.navigateToApp('Settings');
         SettingsDataExport.verifyPageTitle('Settings - FOLIO');

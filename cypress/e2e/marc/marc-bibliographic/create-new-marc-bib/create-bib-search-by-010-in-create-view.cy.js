@@ -145,8 +145,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C476805 Run search for "Instance" records by "010" field values from "Create a new MARC bib record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476805'] },
+        'C476805 Run search for "Instance" records by "010" field values from "Create a new MARC bib record" window (promin)',
+        { tags: ['extendedPath', 'promin', 'C476805'] },
         () => {
           function goToCreateBib(field010Content) {
             InventoryInstances.waitContentLoading();
