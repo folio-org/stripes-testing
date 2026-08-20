@@ -16,6 +16,7 @@ import {
   suffixes,
   tenantAddresses,
   users,
+  invalidOrderLinesQuery,
 } from '../routes';
 import { batchCount } from '../utils/batching';
 import { hasOrderLineProperty, orderLineRecords, orderRecords } from '../utils/responses';
@@ -90,6 +91,10 @@ export const orderLinesProfile = {
     {
       when: ({ conditions }) => Boolean(conditions.isbnConversion),
       routes: [isbnConversion],
+    },
+    {
+      when: ({ conditions }) => Boolean(conditions.invalidQuery),
+      routes: [invalidOrderLinesQuery],
     },
   ],
   responseDependencies: [

@@ -127,7 +127,6 @@ const lineDetails = Section({ id: 'lineDetails' });
 const poLineDetails = {
   receiptStatus: lineDetails.find(Select('Receipt status')),
 };
-const selectLocationsModal = Modal('Select locations');
 const submitOrderLine = () => {
   cy.wait(4000);
   const submitButton = Button('Submit');
@@ -2692,19 +2691,11 @@ export default {
     submitOrderLine();
   },
 
-  selectLocationInFilters: (locationName) => {
-    cy.wait(4000);
-    cy.do([
-      Button({ id: 'accordion-toggle-button-pol-location-filter' }).click(),
-      locationLookUpButton.click(),
-      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
-      Button('Search').click(),
-    ]);
-    cy.wait(2000);
-    cy.do([
-      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
-      selectLocationsModal.find(Button('Save')).click(),
-    ]);
+  selectLocationInFilters(locationName, options = {}) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(locationLookUpButton.click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectLocation(locationName, { multiselect: true, ...options });
   },
 
   selectOrders: () => {
@@ -2799,6 +2790,10 @@ export default {
 
   sortOrderLinesBy(columnName) {
     MultiColumnListHelper.sortListBy(searchResultsPane.find(orderLineList), columnName);
+  },
+
+  clearAllFilters(filterLabel) {
+    FiltersPaneHelper.clearAllFilters(filtersPane, filterLabel);
   },
 
   clearFilter(filterLabel) {

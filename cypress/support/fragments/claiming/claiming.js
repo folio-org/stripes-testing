@@ -12,10 +12,15 @@ import {
   SearchField,
   TextArea,
 } from '../../../../interactors';
-import { COMMON_BUTTON_LABELS, RESULTS_PANE_NOT_FOUND_MESSAGE } from '../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  ORDER_LINE_FILTER_LABELS,
+  RESULTS_PANE_NOT_FOUND_MESSAGE,
+} from '../../constants';
 import DateTools from '../../utils/dateTools';
 import FiltersPaneHelper from '../filtersPane';
 import MultiColumnListHelper from '../multiColumnList';
+import SelectLocationModal from '../orders/modals/selectLocationModal';
 
 const claimingPane = Pane('Claiming');
 const filtersPane = Pane({ id: 'claiming-filters-pane' });
@@ -88,6 +93,10 @@ export default {
     ]);
   },
 
+  selectSearchIndex(parameter) {
+    cy.do(searchField.selectIndex(parameter));
+  },
+
   sortResultsBy(columnName) {
     MultiColumnListHelper.sortListBy(claimingList, columnName);
   },
@@ -113,6 +122,21 @@ export default {
 
   filterByMultiSelectOptions(filterLabel, options) {
     FiltersPaneHelper.filterByMultiSelectOptions(filtersPane, filterLabel, options);
+  },
+
+  filterByCheckboxes(filterLabel, values, options) {
+    FiltersPaneHelper.filterByCheckboxes(filtersPane, filterLabel, values, options);
+  },
+
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, tags);
+  },
+
+  selectLocationInFilters(locationName, options = {}) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(filtersPane.find(Button('Location look-up')).click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectLocation(locationName, { multiselect: true, ...options });
   },
 
   /* Assertions */

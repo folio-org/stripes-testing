@@ -11,9 +11,10 @@ import {
   TextField,
   including,
 } from '../../../../../interactors';
-import { SEARCH_AND_FILTER_PANE_TITLE } from '../../../constants';
+import { ORDER_LINE_FILTER_LABELS, SEARCH_AND_FILTER_PANE_TITLE } from '../../../constants';
 import FiltersPane from '../../filtersPane';
 import MultiColumnListHelper from '../../multiColumnList';
+import SelectLocationModal from '../../orders/modals/selectLocationModal';
 
 const selectOrderLinesModal = Modal('Select order lines');
 const closeButton = selectOrderLinesModal.find(Button('Close'));
@@ -25,6 +26,7 @@ const filtersPane = selectOrderLinesModal.find(Section({ title: SEARCH_AND_FILTE
 const resultsList = selectOrderLinesModal.find(MultiColumnList());
 
 const ACQUISITION_UNIT_FILTER_LABEL = 'Acquisition unit';
+const LOCATIONS_LOOKUP_TRIGGER_LABEL = 'Location look-up';
 
 export default {
   verifyModalView({ multiselect = true } = {}) {
@@ -57,6 +59,9 @@ export default {
       selectOrderLinesModal.find(HTML(including('Enter search criteria to start search'))).absent(),
     );
   },
+  selectSearchIndex(searchOption) {
+    cy.do(searchField.selectIndex(searchOption));
+  },
   resetFilters() {
     cy.do(resetButton.click());
     cy.wait(1000);
@@ -79,6 +84,11 @@ export default {
       cy.expect(resultsList.find(MultiColumnListCell({ content: title })).exists());
     });
     MultiColumnListHelper.assertRowCount(resultsList, titles.length);
+  },
+  assertSearchResultTitlesAbsent(titles = []) {
+    titles.forEach((title) => {
+      cy.expect(resultsList.find(MultiColumnListCell({ content: title })).absent());
+    });
   },
   selectFromSearchResults(index = 0) {
     cy.do(selectOrderLinesModal.find(MultiColumnListRow({ index })).find(Checkbox()).click());
@@ -122,5 +132,16 @@ export default {
 
   filterByAcqUnit(value, options) {
     this.filterBySelection(ACQUISITION_UNIT_FILTER_LABEL, value, options);
+  },
+
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, tags);
+  },
+
+  selectLocationInFilters(locationName, options) {
+    FiltersPane.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(filtersPane.find(Button(LOCATIONS_LOOKUP_TRIGGER_LABEL)).click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectLocation(locationName, options);
   },
 };

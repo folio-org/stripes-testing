@@ -18,6 +18,7 @@ import Users from '../../support/fragments/users/users';
 import { ExecutionFlowManager, PaneRequestWaiter } from '../../support/utils';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { OrderLinesLimit } from '../../support/fragments/settings/orders';
 
 const { PANE_REQUEST_PHASES, PANE_REQUEST_PROFILE_NAMES } = PaneRequestWaiter;
 const { KEYWORD, PRODUCT_ID, PRODUCT_ID_ISBN } = ORDER_LINE_SEARCH_INDEX_LABELS;
@@ -92,6 +93,9 @@ describe('Orders', () => {
     cy.clearAllLocalStorage();
 
     flow
+      .step(() => {
+        OrderLinesLimit.setPOLLimitViaApi(2);
+      })
       .step((currentFlow) => {
         const label = `AT_C1385305_${postfix}`;
 
@@ -316,7 +320,7 @@ describe('Orders', () => {
         },
       });
       Receiving.clickNewTitleOption();
-      ReceivingEditForm.waitLoading(60_000);
+      ReceivingEditForm.waitLoading({ timeout: 60_000 });
       PaneRequestWaiter.waitForPaneRequests({
         pane: PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE,
         phase: PANE_REQUEST_PHASES.FILTERS,

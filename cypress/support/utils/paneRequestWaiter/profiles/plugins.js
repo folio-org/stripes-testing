@@ -6,6 +6,7 @@ import {
   funds,
   fundTypes,
   groups,
+  invalidOrderLinesQuery,
   isbnConversion,
   ledgers,
   locations,
@@ -41,6 +42,10 @@ export const findPoLineProfile = {
     {
       when: ({ conditions }) => Boolean(conditions.isbnConversion),
       routes: [isbnConversion],
+    },
+    {
+      when: ({ conditions }) => Boolean(conditions.invalidQuery),
+      routes: [invalidOrderLinesQuery],
     },
   ],
   responseDependencies: [

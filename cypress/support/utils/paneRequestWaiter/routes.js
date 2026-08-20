@@ -47,6 +47,13 @@ export const organizationTypes = route(
   '/organizations-storage/organization-types',
 );
 export const orderLines = route('orderLines', '/orders/order-lines');
+export const invalidOrderLinesQuery = route(
+  'invalidOrderLinesQuery',
+  '/orders/order-lines',
+  'GET',
+  null,
+  [400],
+);
 export const orders = route('orders', '/orders/composite-orders');
 export const prefixes = route('prefixes', '/orders/configuration/prefixes');
 export const receivingTitles = route('receivingTitles', '/orders/titles');

@@ -11,16 +11,16 @@ import {
   MultiColumnListRow,
   Pane,
   PaneContent,
-  SearchField,
   Section,
   Select,
   TextField,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import { DEFAULT_WAIT_TIME, ORDER_LINE_FILTER_LABELS } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import FiltersPaneHelper from '../filtersPane';
 import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
 import MultiColumnListHelper from '../multiColumnList';
+import SelectLocationModal from '../orders/modals/selectLocationModal';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import deleteHoldingsModalReceivingFullScreen from './modals/deleteHoldingsModaReceivinglFullScreen';
 import ReceivingDetails from './receivingDetails';
@@ -161,19 +161,11 @@ export default {
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
-  selectLocationInFilters: (locationName) => {
-    cy.wait(4000);
-    cy.do([
-      Button({ id: 'accordion-toggle-button-filter-poLine.locations' }).click(),
-      Button('Location look-up').click(),
-      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
-      Button('Search').click(),
-    ]);
-    cy.wait(2000);
-    cy.do([
-      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
-      selectLocationsModal.find(Button('Save')).click(),
-    ]);
+  selectLocationInFilters(locationName, options = {}) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(filtersPane.find(Button('Location look-up')).click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectLocation(locationName, { multiselect: true, ...options });
   },
 
   checkExistingPOLInReceivingList: (POL) => {
@@ -198,6 +190,14 @@ export default {
 
   filterByMultiSelectOptions(filterLabel, values, options) {
     FiltersPaneHelper.filterByMultiSelectOptions(filtersPane, filterLabel, values, options);
+  },
+
+  filterByCheckboxes(filterLabel, values, options) {
+    FiltersPaneHelper.filterByCheckboxes(filtersPane, filterLabel, values, options);
+  },
+
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, tags);
   },
 
   addPiece: (displaySummary, copyNumber, enumeration, chronology) => {

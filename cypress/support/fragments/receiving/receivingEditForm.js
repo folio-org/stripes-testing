@@ -40,7 +40,8 @@ const acqUnitsToggleButton = itemDetailsFields.acquisitionUnits.find(
 );
 
 export default {
-  waitLoading(timeout = DEFAULT_WAIT_TIME) {
+  waitLoading({ timeout, waitMs = DEFAULT_WAIT_TIME } = {}) {
+    cy.wait(waitMs);
     cy.get('#pane-title-form', { timeout }).should('be.visible');
     cy.expect(receivingEditForm.exists());
   },

@@ -32,6 +32,7 @@ import {
   INVOICE_RESULTS_LIST_COLUMNS,
   INVOICE_SEARCH_INDEX_LABELS,
   INVOICE_STATUSES,
+  ORDER_LINE_FILTER_LABELS,
   RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -190,6 +191,7 @@ export default {
     adjustments,
     acqUnitIds,
     currency,
+    tags,
   }) {
     const create = (invoice) => {
       cy.okapiRequest({
@@ -217,6 +219,10 @@ export default {
 
     if (acqUnitIds && acqUnitIds.length > 0) {
       invoice.acqUnitIds = acqUnitIds;
+    }
+
+    if (tags?.length > 0) {
+      invoice.tags = { tagList: tags };
     }
 
     if (batchGroupId) {
@@ -1215,6 +1221,18 @@ export default {
     cy.expect(
       invoiceResultsPane.find(HTML(including(RESULTS_PANE_CHOOSE_FILTER_MESSAGE))).exists(),
     );
+  },
+
+  clearAllFilters() {
+    FiltersPane.clearAllFilters(invoiceFiltersSection);
+  },
+
+  filterByMultiSelectOptions(filterLabel, options) {
+    FiltersPane.filterByMultiSelectOptions(invoiceFiltersSection, filterLabel, options);
+  },
+
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, tags);
   },
 
   editInvoiceLine: () => {

@@ -90,7 +90,10 @@ describe('Acquisition units', () => {
     flow
       .step((currentFlow) => {
         return AcquisitionUnits.createAcquisitionUnitViaApi(
-          AcquisitionUnits.getDefaultAcquisitionUnit({ protectRead: false }),
+          AcquisitionUnits.getDefaultAcquisitionUnit({
+            name: `AT_C1385303_AU_${postfix}`,
+            protectRead: false,
+          }),
         )
           .then((unit) => currentFlow.set(R.ACQUISITION_UNIT, unit, () => AcquisitionUnits.deleteAcquisitionUnitViaApi(unit.id, false)))
           .then(() => {
