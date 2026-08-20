@@ -92,8 +92,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C357032 Return back to "Browse inventory" pane via the web-browser "Back" button (not-exact match query) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C357032', 'eurekaPhase1'] },
+      'C357032 Return back to "Browse inventory" pane via the web-browser "Back" button (not-exact match query) (promin)',
+      { tags: ['criticalPath', 'promin', 'C357032', 'eurekaPhase1'] },
       () => {
         InventoryInstances.waitContentLoading();
         InventorySearchAndFilter.switchToBrowseTab();

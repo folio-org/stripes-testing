@@ -72,8 +72,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514951 Edit MARC authority record with required standard / local subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514951'] },
+        'C514951 Edit MARC authority record with required standard / local subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514951'] },
         () => {
           cy.then(() => {
             toggleAllUndefinedValidationRules(authSpecId, { enable: false });

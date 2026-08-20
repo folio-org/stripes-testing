@@ -109,8 +109,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C380389 Creating an open order with Receipt not required (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C380389'] },
+      'C380389 Creating an open order with Receipt not required (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C380389'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);

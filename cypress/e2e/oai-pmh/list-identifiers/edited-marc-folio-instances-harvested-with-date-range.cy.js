@@ -78,8 +78,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C376997 ListIdentifiers: SRS & Inventory - MARC and FOLIO edited instances are harvested with start and end date (oai_dc) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C376997', 'nonParallel'] },
+      'C376997 ListIdentifiers: SRS & Inventory - MARC and FOLIO edited instances are harvested with start and end date (oai_dc) (athena)',
+      { tags: ['extendedPath', 'athena', 'C376997', 'nonParallel'] },
       () => {
         currentDate = DateTools.getCurrentDateForOaiPmh();
 

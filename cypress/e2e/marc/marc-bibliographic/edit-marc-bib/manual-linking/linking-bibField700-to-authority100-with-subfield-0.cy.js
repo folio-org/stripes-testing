@@ -129,8 +129,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C380742 Link "MARC Bib" field with "$0" subfield matched to "MARC Authority" record. "Authority source file" value from the pre-defined list (700 field to 100) (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C380742'] },
+          'C380742 Link "MARC Bib" field with "$0" subfield matched to "MARC Authority" record. "Authority source file" value from the pre-defined list (700 field to 100) (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C380742'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();

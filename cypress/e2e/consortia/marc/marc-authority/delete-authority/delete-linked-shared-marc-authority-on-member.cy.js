@@ -276,8 +276,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C407656 Delete shared linked "MARC Authority" record in member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C407656'] },
+          'C407656 Delete shared linked "MARC Authority" record in member tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C407656'] },
           () => {
             // Login into Member 1 (College) - primary affiliation
             cy.setTenant(Affiliations.College);

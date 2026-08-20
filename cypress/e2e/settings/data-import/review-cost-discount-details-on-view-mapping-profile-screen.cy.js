@@ -55,8 +55,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C380564 Order field mapping: verify the cost discount details on the view screen (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C380564'] },
+      'C380564 Order field mapping: verify the cost discount details on the view screen (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C380564'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);

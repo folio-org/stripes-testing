@@ -32,8 +32,8 @@ describe('Users', () => {
   });
 
   it(
-    'C511 User is able to change password locally (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C511'] },
+    'C511 User is able to change password locally (vega)',
+    { tags: ['extendedPath', 'vega', 'C511'] },
     () => {
       cy.waitForAuthRefresh(() => {
         ChangePassword.openChangePasswordViaUserProfile();

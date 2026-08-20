@@ -81,8 +81,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C729188 Verify bulk edit of deleted Instances via MARC flow (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C729188'] },
+      'C729188 Verify bulk edit of deleted Instances via MARC flow (athena)',
+      { tags: ['criticalPath', 'athena', 'C729188'] },
       () => {
         // Step 1: Click "Actions" menu and select "Instances with source MARC" option
         BulkEditActions.openActions();

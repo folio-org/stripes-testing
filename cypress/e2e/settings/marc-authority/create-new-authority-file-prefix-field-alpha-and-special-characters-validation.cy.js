@@ -40,8 +40,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C440095 "Prefix" field alpha and special characters validation during creation of new "Authority file" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C440095'] },
+        'C440095 "Prefix" field alpha and special characters validation during creation of new "Authority file" (promin)',
+        { tags: ['criticalPath', 'promin', 'C440095'] },
         () => {
           ManageAuthorityFiles.clickNewButton();
           ManageAuthorityFiles.fillAllFields(

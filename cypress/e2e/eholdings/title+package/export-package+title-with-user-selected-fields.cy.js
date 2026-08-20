@@ -66,8 +66,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C356760 Export of selected “Package+title” with user selected fields of “Package” and “Title” (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C356760'] },
+      'C356760 Export of selected “Package+title” with user selected fields of “Package” and “Title” (promin) (TaaS)',
+      { tags: ['criticalPath', 'promin', 'C356760'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackagesSearch.bySelectionStatus(testData.selectedStatus);

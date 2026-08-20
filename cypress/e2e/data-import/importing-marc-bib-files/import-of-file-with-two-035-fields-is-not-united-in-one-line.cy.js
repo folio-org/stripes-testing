@@ -62,8 +62,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C594484 Import of file with two 035 fields is not united in one line (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C594484'] },
+      'C594484 Import of file with two 035 fields is not united in one line (promin)',
+      { tags: ['criticalPath', 'promin', 'C594484'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();

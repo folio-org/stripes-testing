@@ -66,8 +66,8 @@ describe('Users', () => {
     });
 
     it(
-      'C415 Search: Verify search by Name (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C415'] },
+      'C415 Search: Verify search by Name (vega)',
+      { tags: ['criticalPath', 'vega', 'C415'] },
       () => {
         UsersSearchPane.searchByKeywords(sameName);
         UsersSearchResultsPane.checkSearchResultsCount(

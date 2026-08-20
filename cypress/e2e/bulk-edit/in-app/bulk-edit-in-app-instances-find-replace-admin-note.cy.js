@@ -87,8 +87,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C466310 Bulk edit Instance fields - find and replace administrative note (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C466310'] },
+      'C466310 Bulk edit Instance fields - find and replace administrative note (athena)',
+      { tags: ['criticalPath', 'athena', 'C466310'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.uploadFile(instanceUUIDsFileName);

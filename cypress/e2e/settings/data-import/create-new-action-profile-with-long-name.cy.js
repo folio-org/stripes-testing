@@ -34,8 +34,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C2343 Create a new action profile with name longer than 160 symbols (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C2343'] },
+      'C2343 Create a new action profile with name longer than 160 symbols (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C2343'] },
       () => {
         SettingsActionProfiles.createWithoutLinkedMappingProfile(actionProfile);
         SettingsActionProfiles.verifyActionProfileOpened(actionProfile.name);

@@ -49,8 +49,8 @@ describe('INN-Reach Integration', () => {
     });
 
     it(
-      'C411863 Verify that record meta data is present on staff slips (volaris)',
-      { tags: ['extendedPathFlaky', 'volaris', 'C411863'] },
+      'C411863 Verify that record meta data is present on staff slips (vega)',
+      { tags: ['extendedPathFlaky', 'vega', 'C411863'] },
       () => {
         StaffSlips.chooseStaffClip(staffSlip);
         StaffSlip.edit(staffSlip);

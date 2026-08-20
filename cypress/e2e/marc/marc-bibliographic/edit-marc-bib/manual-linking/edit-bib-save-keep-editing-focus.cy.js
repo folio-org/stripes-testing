@@ -139,8 +139,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C605894 Keep user\'s focus on last edited (selected) field when user clicks on the "Save & keep editing" on "Edit MARC record" pane (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C605894'] },
+          'C605894 Keep user\'s focus on last edited (selected) field when user clicks on the "Save & keep editing" on "Edit MARC record" pane (promin)',
+          { tags: ['extendedPath', 'promin', 'C605894'] },
           () => {
             InventoryInstances.searchByTitle(createdInstanceId);
             InventoryInstances.selectInstanceById(createdInstanceId);

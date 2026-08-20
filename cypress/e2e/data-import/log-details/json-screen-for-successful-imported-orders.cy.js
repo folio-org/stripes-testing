@@ -141,8 +141,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C375197 Verify the JSON screen for successful imported orders (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C375197'] },
+      'C375197 Verify the JSON screen for successful imported orders (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C375197'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.filePath, testData.fileName);

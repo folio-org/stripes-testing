@@ -35,8 +35,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C2349 Create a new field mapping profile with a long name (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C2349'] },
+      'C2349 Create a new field mapping profile with a long name (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C2349'] },
       () => {
         const calloutMessage = `The field mapping profile "${mappingProfile.name}" was successfully created`;
 

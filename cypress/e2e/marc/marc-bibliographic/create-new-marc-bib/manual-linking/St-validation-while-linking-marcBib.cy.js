@@ -99,8 +99,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422130 "$t" validation when linking "MARC Bibliographic" record\'s fields upon record creation (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire', 'C422130'] },
+          'C422130 "$t" validation when linking "MARC Bibliographic" record\'s fields upon record creation (promin) (TaaS)',
+          { tags: ['criticalPath', 'promin', 'C422130'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();

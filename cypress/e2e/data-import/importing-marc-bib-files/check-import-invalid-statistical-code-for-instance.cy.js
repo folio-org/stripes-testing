@@ -296,8 +296,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C1395026 Check the import of invalid statistical code for instance (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C1395026'] },
+      'C1395026 Check the import of invalid statistical code for instance (promin)',
+      { tags: ['extendedPath', 'promin', 'C1395026'] },
       () => {
         // Steps 1-10: All profiles created via API in before() hook
 

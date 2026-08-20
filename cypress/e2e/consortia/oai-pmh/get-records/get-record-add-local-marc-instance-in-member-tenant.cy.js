@@ -87,8 +87,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C402367 Consortia | SRS | GetRecord: Add local MARC instance to Member tenant is retrieved in the response of single tenant harvest (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C402367', 'nonParallel'] },
+        'C402367 Consortia | SRS | GetRecord: Add local MARC instance to Member tenant is retrieved in the response of single tenant harvest (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C402367', 'nonParallel'] },
         () => {
           // Step 1: Go to Data import app and upload MARC file
           DataImport.verifyUploadState();

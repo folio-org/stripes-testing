@@ -49,8 +49,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C422014 Remove "Date range" under "Coverage settings" when editing Selected managed Package (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C422014'] },
+      'C422014 Remove "Date range" under "Coverage settings" when editing Selected managed Package (promin)',
+      { tags: ['extendedPath', 'promin', 'C422014'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.managedPackageName);
         EHoldingsPackages.openPackageWithExpectedName(testData.managedPackageName);

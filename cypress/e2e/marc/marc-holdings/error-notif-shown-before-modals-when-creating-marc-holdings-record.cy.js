@@ -77,8 +77,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C375206 Error notifications shown before modals when creating "MARC holdings" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C375206'] },
+      'C375206 Error notifications shown before modals when creating "MARC holdings" record (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C375206'] },
       () => {
         const calloutTagMessage =
           'Record cannot be saved. A MARC tag must contain three characters.';

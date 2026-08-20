@@ -160,8 +160,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C11109 Update an instance based on an OCLC number match (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C11109'] },
+      'C11109 Update an instance based on an OCLC number match (promin)',
+      { tags: ['criticalPath', 'promin', 'C11109'] },
       () => {
         // create mapping profile for creating instance
         FieldMappingProfiles.openNewMappingProfileForm();

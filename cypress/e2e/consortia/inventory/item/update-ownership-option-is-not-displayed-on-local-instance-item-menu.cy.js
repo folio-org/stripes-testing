@@ -108,8 +108,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C477590 "Update ownership" option is not displayed on Local Instance Item menu (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C477590'] },
+        'C477590 "Update ownership" option is not displayed on Local Instance Item menu (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C477590'] },
         () => {
           InstanceRecordView.openHoldingItem({
             name: testData.locationName,

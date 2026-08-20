@@ -40,8 +40,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C503245 Error message is displayed when search query URI request exceeds character limit (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C503245'] },
+      'C503245 Error message is displayed when search query URI request exceeds character limit (promin)',
+      { tags: ['extendedPath', 'promin', 'C503245'] },
       () => {
         InventorySearchAndFilter.selectSearchOption(searchOptions.query);
         InventorySearchAndFilter.fillInSearchQuery(queries.tooLong, {

@@ -51,8 +51,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C411856 Match profile: update options for MARC Bibliographic "Incoming records" in edited one (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C411856'] },
+      'C411856 Match profile: update options for MARC Bibliographic "Incoming records" in edited one (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C411856'] },
       () => {
         // Go to "Settings" application-> "Data import" section-> "Match profiles" section
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);

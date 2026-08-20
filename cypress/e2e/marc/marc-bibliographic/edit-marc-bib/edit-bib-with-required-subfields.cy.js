@@ -85,8 +85,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514948 Edit MARC bib record with required standard / local subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514948'] },
+        'C514948 Edit MARC bib record with required standard / local subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514948'] },
         () => {
           cy.then(() => {
             // Setup 245 standard field: mark standard subfield 'a' as required + create appended required subfield 'l'

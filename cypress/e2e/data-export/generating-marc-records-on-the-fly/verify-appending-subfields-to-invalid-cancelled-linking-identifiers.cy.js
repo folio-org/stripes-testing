@@ -159,8 +159,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C430245 Verify appending subfields to invalid, cancelled, linking Identifiers without according valid identifiers (ISBN, ISSN, GPO, UPC) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C430245'] },
+      'C430245 Verify appending subfields to invalid, cancelled, linking Identifiers without according valid identifiers (ISBN, ISSN, GPO, UPC) (athena)',
+      { tags: ['extendedPath', 'athena', 'C430245'] },
       () => {
         // Step 1: Trigger the data export by submitting .csv file with UUIDs of inventory instances
         ExportFile.uploadFile(csvFileName);

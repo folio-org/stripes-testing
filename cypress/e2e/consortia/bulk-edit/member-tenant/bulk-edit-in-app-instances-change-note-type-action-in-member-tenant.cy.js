@@ -182,8 +182,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566126 Verify "Change note type" action for Instances in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566126'] },
+        'C566126 Verify "Change note type" action for Instances in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566126'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance HRIDs');
           BulkEditSearchPane.uploadFile(instanceHRIDsFileName);

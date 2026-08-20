@@ -115,8 +115,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C359199 MARC Authority plug-in | Apply "Type of heading" facet to the search result list (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C359199'] },
+        'C359199 MARC Authority plug-in | Apply "Type of heading" facet to the search result list (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C359199'] },
         () => {
           MarcAuthorities.searchByParameter(testData.authSearchOption.CORPORATE_NAME, '*');
           MarcAuthorities.verifyColumnValuesOnlyExist({

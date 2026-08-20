@@ -45,8 +45,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C523640 User has a tenant affiliation for member tenant, list app permission in member tenant, but no content permissions - Consortium (consortia) (corsair)',
-      { tags: ['criticalPathECS', 'corsair', 'C523640'] },
+      'C523640 User has a tenant affiliation for member tenant, list app permission in member tenant, but no content permissions - Consortium (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C523640'] },
       () => {
         // Step 1: Switch affiliation to member tenant
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

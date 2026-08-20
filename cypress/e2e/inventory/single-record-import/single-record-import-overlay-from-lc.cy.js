@@ -79,8 +79,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C397982 Overlay existing record by import of single MARC record from LC (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C397982'] },
+      'C397982 Overlay existing record by import of single MARC record from LC (promin)',
+      { tags: ['extendedPath', 'promin', 'C397982'] },
       () => {
         InventoryInstances.searchByTitle(instanceId);
         InventoryInstance.waitLoading();

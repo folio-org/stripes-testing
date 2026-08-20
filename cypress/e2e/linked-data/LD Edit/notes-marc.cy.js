@@ -114,8 +114,8 @@ describe('Citation: check notes MARC codes', () => {
   });
 
   it(
-    'C436879 Marigold - Notes about the Work create/edit / Fields duplication / View MARC (citation)',
-    { tags: ['criticalPath', 'citation', 'C436879', 'marigold'] },
+    'C436879 Marigold - Notes about the Work create/edit / Fields duplication / View MARC (promin)',
+    { tags: ['criticalPath', 'promin', 'C436879', 'marigold'] },
     () => {
       // Import inventory work into Marigold
       InventoryInstances.searchByTitle(testData.uniqueInventoryTitle);

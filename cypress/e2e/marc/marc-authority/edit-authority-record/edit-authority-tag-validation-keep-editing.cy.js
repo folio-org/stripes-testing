@@ -68,8 +68,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C360094 MARC tag validation checks when clicks on the "Save & keep editing" button in "Edit MARC authority record" pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C360094'] },
+        'C360094 MARC tag validation checks when clicks on the "Save & keep editing" button in "Edit MARC authority record" pane (promin)',
+        { tags: ['extendedPath', 'promin', 'C360094'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);

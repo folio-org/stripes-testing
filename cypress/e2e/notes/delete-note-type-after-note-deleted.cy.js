@@ -64,8 +64,8 @@ describe('Notes', () => {
   });
 
   it(
-    'C357557 Verify that user can delete the "Note type" if the last "Note" with this "Note type" was deleted (spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire', 'C357557'] },
+    'C357557 Verify that user can delete the "Note type" if the last "Note" with this "Note type" was deleted (promin) (TaaS)',
+    { tags: ['extendedPath', 'promin', 'C357557'] },
     () => {
       cy.login(user.username, user.password, {
         path: `/eholdings/providers/${providerId}`,

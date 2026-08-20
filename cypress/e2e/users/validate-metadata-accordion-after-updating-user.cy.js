@@ -44,8 +44,8 @@ describe('Users', () => {
   });
 
   it(
-    'C428 Validate metadata accordion after updating a user (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C428'] },
+    'C428 Validate metadata accordion after updating a user (vega)',
+    { tags: ['extendedPath', 'vega', 'C428'] },
     () => {
       UsersSearchPane.searchByUsername(userData.username);
       UsersCard.openLastUpdatedInfo();

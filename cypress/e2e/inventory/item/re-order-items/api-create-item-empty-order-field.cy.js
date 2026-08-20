@@ -70,8 +70,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808479 API | Create "Item" with empty "order" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C808479'] },
+        'C808479 API | Create "Item" with empty "order" field (promin)',
+        { tags: ['criticalPath', 'promin', 'C808479'] },
         () => {
           cy.getToken(user.username, user.password);
 

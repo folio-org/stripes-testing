@@ -60,7 +60,7 @@ describe.skip('Bulk-edit', () => {
       });
 
       it(
-        'C353969 Export manager -- Verify that user can view data in Export Manager based on permissions (Local approach) (firebird)',
+        'C353969 Export manager -- Verify that user can view data in Export Manager based on permissions (Local approach) (athena)',
         { tags: [] },
         () => {
           ExportManagerSearchPane.waitLoading();

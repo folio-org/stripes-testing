@@ -67,8 +67,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C496209 Add multiple 005s when editing "MARC Bibliographic" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C496209'] },
+        'C496209 Add multiple 005s when editing "MARC Bibliographic" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C496209'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.verifyInstanceResultListIsAbsent(false);

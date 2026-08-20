@@ -98,8 +98,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C405544 Edit Local "MARC authority" record on Member 1 tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C405544'] },
+          'C405544 Edit Local "MARC authority" record on Member 1 tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C405544'] },
           () => {
             MarcAuthorities.searchBeats(testData.title);
             MarcAuthorities.select(createdAuthorityID);

@@ -192,8 +192,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411577 Search for Shared/Local records by "Contributor" search option from "Central" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411577'] },
+        'C411577 Search for Shared/Local records by "Contributor" search option from "Central" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411577'] },
         () => {
           InventorySearchAndFilter.fillInSearchQuery(contributorPrefix);
           InventorySearchAndFilter.clickSearch();

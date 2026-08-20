@@ -39,8 +39,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C651411 Verify that changing operator from "comparison array" to "comparison" keeps the first value (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C651411'] },
+      'C651411 Verify that changing operator from "comparison array" to "comparison" keeps the first value (athena)',
+      { tags: ['criticalPath', 'athena', 'C651411'] },
       () => {
         // Step 1: Create new list with Users record type and open Build query form
         Lists.openNewListPane();

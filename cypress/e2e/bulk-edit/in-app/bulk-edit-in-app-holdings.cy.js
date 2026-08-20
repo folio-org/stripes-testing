@@ -66,8 +66,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C360089 Verify "Inventory - holdings" option on "Bulk edit" app (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C360089'] },
+      'C360089 Verify "Inventory - holdings" option on "Bulk edit" app (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C360089'] },
       () => {
         BulkEditSearchPane.verifyRecordTypeIdentifiers('Holdings');
         holdingsIdentifiers.forEach((identifier) => {
@@ -77,8 +77,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C356810 Verify uploading file with holdings UUIDs (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C356810'] },
+      'C356810 Verify uploading file with holdings UUIDs (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C356810'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
@@ -99,8 +99,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C360120 Verify that User can trigger bulk of holdings with file containing Holdings identifiers (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C360120'] },
+      'C360120 Verify that User can trigger bulk of holdings with file containing Holdings identifiers (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C360120'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
@@ -136,8 +136,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C367975 Verify Bulk edit Holdings records with empty Electronic access Relationship type (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C367975'] },
+      'C367975 Verify Bulk edit Holdings records with empty Electronic access Relationship type (athena)',
+      { tags: ['criticalPath', 'athena', 'shiftLeft', 'C367975'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);

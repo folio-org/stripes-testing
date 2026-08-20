@@ -78,8 +78,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569554 Derive a new MARC bib record with valid LCCN when "LCCN structure validation" is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C569554'] },
+          'C569554 Derive a new MARC bib record with valid LCCN when "LCCN structure validation" is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C569554'] },
           () => {
             // Step 0: User is on the detail view pane of "MARC bibliographic" record
             InventoryInstances.searchByTitle(marcInstanceTitle);

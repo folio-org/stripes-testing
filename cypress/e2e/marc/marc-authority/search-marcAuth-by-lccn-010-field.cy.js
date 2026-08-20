@@ -149,8 +149,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422024 "MARC authority" app | Verify that "LCCN" search option searches by "$a" and "$z" subfields of "010" field only (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C422024'] },
+        'C422024 "MARC authority" app | Verify that "LCCN" search option searches by "$a" and "$z" subfields of "010" field only (promin)',
+        { tags: ['extendedPath', 'promin', 'C422024'] },
         () => {
           // Step 1: Run search by LCCN match based on "010 $a"
           MarcAuthorities.selectSearchOptionInDropdown(testData.lccnSearchOption);

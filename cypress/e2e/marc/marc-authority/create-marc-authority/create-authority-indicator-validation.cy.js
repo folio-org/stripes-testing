@@ -118,8 +118,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C543844 Indicator boxes validation during creation of MARC authority record (spitfire)',
-        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C543844'] },
+        'C543844 Indicator boxes validation during creation of MARC authority record (promin)',
+        { tags: ['extendedPathFlaky', 'promin', 'nonParallel', 'C543844'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tag008);

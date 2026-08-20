@@ -158,8 +158,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C407714 Update 010, 1XX in linked Local "MARC authority" record in Member tenant while Local "MARC Bib" record being edited in the same Member tenant (NOT saved link) (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C407714'] },
+            'C407714 Update 010, 1XX in linked Local "MARC authority" record in Member tenant while Local "MARC Bib" record being edited in the same Member tenant (NOT saved link) (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C407714'] },
             () => {
               cy.then(() => {
                 // Steps 1-2: Edit local MARC bib and start linking

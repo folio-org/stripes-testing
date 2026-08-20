@@ -117,8 +117,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476753 Filter "Instance" records by "Holdings type" facet (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C476753'] },
+        'C476753 Filter "Instance" records by "Holdings type" facet (promin)',
+        { tags: ['criticalPath', 'promin', 'C476753'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(testData.holdingsTypeAccordionName);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(

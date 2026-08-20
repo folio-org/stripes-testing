@@ -54,8 +54,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C434151 "Are you sure?" modal is displayed after user pressed "ESC" button when record has unsaved changes - Edit MARC authority record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C434151'] },
+        'C434151 "Are you sure?" modal is displayed after user pressed "ESC" button when record has unsaved changes - Edit MARC authority record (promin)',
+        { tags: ['extendedPath', 'promin', 'C434151'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFile.authorityTitle);
           MarcAuthorities.selectFirstRecord();

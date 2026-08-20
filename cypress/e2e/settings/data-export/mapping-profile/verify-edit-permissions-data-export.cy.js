@@ -35,8 +35,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C449363 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to edit data export settings (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C449363'] },
+      'C449363 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to edit data export settings (athena)',
+      { tags: ['extendedPath', 'athena', 'C449363'] },
       () => {
         // Step 1: Verify available applications on the landing page
         TopMenuNavigation.verifyAppButtonShown(APPLICATION_NAMES.SETTINGS, true);

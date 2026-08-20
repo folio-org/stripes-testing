@@ -67,8 +67,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C594356 Verify update of Item records from "In Process" status to "Missing" status (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C594356'] },
+      'C594356 Verify update of Item records from "In Process" status to "Missing" status (athena)',
+      { tags: ['criticalPath', 'athena', 'C594356'] },
       () => {
         // Steps 1-3: Select "Inventory - items" radio button and upload CSV file
         BulkEditSearchPane.checkItemsRadio();

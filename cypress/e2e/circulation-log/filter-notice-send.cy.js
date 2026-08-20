@@ -131,8 +131,8 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C17092 Filter circulation log by (notice) send (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C17092'] },
+    'C17092 Filter circulation log by (notice) send (vega)',
+    { tags: ['criticalPath', 'vega', 'C17092'] },
     () => {
       const searchResultsData = {
         userBarcode: user.barcode,
@@ -155,8 +155,8 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C17093 Check the Actions button from filtering Circulation log by (notices) send (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C17093'] },
+    'C17093 Check the Actions button from filtering Circulation log by (notices) send (vega)',
+    { tags: ['criticalPath', 'vega', 'C17093'] },
     () => {
       const goToCircLogApp = (filterName) => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);

@@ -92,8 +92,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422249 Verify options displayed in "Authority file look-up" modal from Member tenant when some authority files (FOLIO and LOCAL) have the "Active" checkbox selected in the settings (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C422249'] },
+          'C422249 Verify options displayed in "Authority file look-up" modal from Member tenant when some authority files (FOLIO and LOCAL) have the "Active" checkbox selected in the settings (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C422249'] },
           () => {
             // Click on "Actions" button in second pane >> Select "+ New" option
             MarcAuthorities.clickActionsAndNewAuthorityButton();

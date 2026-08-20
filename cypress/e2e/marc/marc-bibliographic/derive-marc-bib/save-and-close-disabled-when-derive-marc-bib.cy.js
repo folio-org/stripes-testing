@@ -63,8 +63,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423434 "Save & close" button is disabled by default when deriving new MARC bibliographic record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423434'] },
+        'C423434 "Save & close" button is disabled by default when deriving new MARC bibliographic record (promin)',
+        { tags: ['extendedPath', 'promin', 'C423434'] },
         () => {
           // 2 Click on the "Actions" button → select "Derive new MARC bibliographic record" option
           InventoryInstance.deriveNewMarcBib();

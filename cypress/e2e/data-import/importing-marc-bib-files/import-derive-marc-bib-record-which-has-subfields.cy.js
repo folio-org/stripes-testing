@@ -48,8 +48,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C380502 Import and derive "MARC Bib" record which has subfields "$9" in fields NOT eligible for linking (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C380502'] },
+      'C380502 Import and derive "MARC Bib" record which has subfields "$9" in fields NOT eligible for linking (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C380502'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileName, updatedFileName);

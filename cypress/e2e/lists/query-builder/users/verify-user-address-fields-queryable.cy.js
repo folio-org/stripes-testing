@@ -62,8 +62,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1045968 Verify that User Address fields are queryable (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C1045968'] },
+        'C1045968 Verify that User Address fields are queryable (athena)',
+        { tags: ['criticalPath', 'athena', 'C1045968'] },
         () => {
           // Step 1: Create new list with Users record type and open Query Builder
           Lists.openNewListPane();

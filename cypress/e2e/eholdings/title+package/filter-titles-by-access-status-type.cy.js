@@ -70,8 +70,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C11093 Filter title results by an access status type (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C11093'] },
+      'C11093 Filter title results by an access status type (promin)',
+      { tags: ['extendedPath', 'promin', 'C11093'] },
       () => {
         EHoldingsPackagesSearch.openAccessStatusTypesDropdown();
         EHoldingsPackagesSearch.selectAccessStatusType(testData.accessStatusTypeName);

@@ -39,8 +39,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C356410 Verify first and last record navigation on Browse form (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C356410'] },
+      'C356410 Verify first and last record navigation on Browse form (promin)',
+      { tags: ['extendedPath', 'promin', 'C356410'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

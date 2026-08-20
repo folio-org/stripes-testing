@@ -72,8 +72,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C405511 Verify that Item\'s "Shelving order" will be cleared if "Call number" fields are cleared in "Holdings" with source=FOLIO (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C405511'] },
+      'C405511 Verify that Item\'s "Shelving order" will be cleared if "Call number" fields are cleared in "Holdings" with source=FOLIO (promin)',
+      { tags: ['extendedPath', 'promin', 'C405511'] },
       () => {
         const itemBarcode = testData.folioInstances[0].items[0].barcode;
         // Navigate to the instance and open item

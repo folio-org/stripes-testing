@@ -51,8 +51,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375190 GetRecord: Verify FOLIO holdings suppressed from discovery in case Skip suppressed from discovery records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375190', 'nonParallel'] },
+      'C375190 GetRecord: Verify FOLIO holdings suppressed from discovery in case Skip suppressed from discovery records (athena)',
+      { tags: ['extendedPath', 'athena', 'C375190', 'nonParallel'] },
       () => {
         OaiPmh.getRecordRequest(folioInstanceId, 'marc21_withholdings').then((response) => {
           OaiPmh.verifyMarcField(

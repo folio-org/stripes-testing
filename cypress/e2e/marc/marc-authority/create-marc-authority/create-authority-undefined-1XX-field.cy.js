@@ -75,8 +75,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C519983 Create MARC authority record with undefined 1XX field when Undefined rules are enabled (spitfire)',
-        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C519983'] },
+        'C519983 Create MARC authority record with undefined 1XX field when Undefined rules are enabled (promin)',
+        { tags: ['extendedPathFlaky', 'promin', 'nonParallel', 'C519983'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tags.tag008);

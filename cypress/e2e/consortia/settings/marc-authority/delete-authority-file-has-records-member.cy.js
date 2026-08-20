@@ -92,8 +92,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C436925 Error shows when user tries to delete Local "Authority file" which has assigned Shared "MARC authority" records from Member tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C436925'] },
+          'C436925 Error shows when user tries to delete Local "Authority file" which has assigned Shared "MARC authority" records from Member tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C436925'] },
           () => {
             cy.resetTenant();
             cy.waitForAuthRefresh(() => {

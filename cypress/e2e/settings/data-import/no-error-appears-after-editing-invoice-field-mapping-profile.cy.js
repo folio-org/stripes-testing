@@ -48,8 +48,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C491301 Verify that no error appears after editing Invoice field mapping profile (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C491301'] },
+      'C491301 Verify that no error appears after editing Invoice field mapping profile (promin)',
+      { tags: ['criticalPath', 'promin', 'C491301'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();

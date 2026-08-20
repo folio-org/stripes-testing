@@ -51,8 +51,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651581 Check "Version history" after creating,editing and deleting non- repeatable fields in Holdings (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C651581'] },
+        'C651581 Check "Version history" after creating,editing and deleting non- repeatable fields in Holdings (promin)',
+        { tags: ['criticalPath', 'promin', 'C651581'] },
         () => {
           InstanceRecordView.addHoldings();
           InventoryNewHoldings.fillPermanentLocation(testData.locationName);

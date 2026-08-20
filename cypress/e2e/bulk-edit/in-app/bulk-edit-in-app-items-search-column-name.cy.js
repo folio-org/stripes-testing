@@ -53,8 +53,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C423560 Verify "Search column name" search box for Items records. (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C423560'] },
+      'C423560 Verify "Search column name" search box for Items records. (athena)',
+      { tags: ['extendedPath', 'athena', 'C423560'] },
       () => {
         // Step 1: Select the "Inventory - Items" radio button => Select "Item barcode" option from the "Record identifier" dropdown
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcodes');

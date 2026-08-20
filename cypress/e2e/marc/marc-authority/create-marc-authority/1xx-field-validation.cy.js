@@ -67,8 +67,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423520 "1XX" field existence validation in "Create a new MARC authority record" pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423520'] },
+        'C423520 "1XX" field existence validation in "Create a new MARC authority record" pane (promin)',
+        { tags: ['extendedPath', 'promin', 'C423520'] },
         () => {
           // Step 1: Click on "Actions" button >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();

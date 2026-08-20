@@ -35,8 +35,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C350765 Verify BULK EDIT capability set list (firebird)',
-      { tags: ['smoke', 'firebird', 'C350765'] },
+      'C350765 Verify BULK EDIT capability set list (athena)',
+      { tags: ['smoke', 'athena', 'C350765'] },
       () => {
         AuthorizationRoles.waitContentLoading();
         AuthorizationRoles.clickNewButton();

@@ -136,8 +136,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C366115 Derive a new MARC bib record: Unlink "MARC Bibliographic" fields from "MARC Authority" records using "Remove linking" button in "Remove authority linking" modal (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire', 'C366115'] },
+        'C366115 Derive a new MARC bib record: Unlink "MARC Bibliographic" fields from "MARC Authority" records using "Remove linking" button in "Remove authority linking" modal (promin) (TaaS)',
+        { tags: ['criticalPath', 'promin', 'C366115'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();

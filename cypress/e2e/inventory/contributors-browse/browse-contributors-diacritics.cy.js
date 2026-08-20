@@ -124,8 +124,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466294 Browse contributors which has diacritics (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466294'] },
+      'C466294 Browse contributors which has diacritics (promin)',
+      { tags: ['criticalPath', 'promin', 'C466294'] },
       () => {
         BrowseContributors.waitForContributorToAppear(exactQuery);
         browseQueries.forEach((query) => {

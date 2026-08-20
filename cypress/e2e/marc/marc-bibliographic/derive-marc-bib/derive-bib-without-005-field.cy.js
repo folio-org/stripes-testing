@@ -74,8 +74,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C594519 Derive MARC bibliographic record without "005" field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C594519'] },
+        'C594519 Derive MARC bibliographic record without "005" field (promin)',
+        { tags: ['extendedPath', 'promin', 'C594519'] },
         () => {
           InventoryInstances.searchByTitle(testInstanceId);
           InventoryInstances.selectInstanceById(testInstanceId);

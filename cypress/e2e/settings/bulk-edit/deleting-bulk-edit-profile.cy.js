@@ -95,8 +95,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C740230 Deleting bulk edit profile (firebird)',
-      { tags: ['smoke', 'firebird', 'C740230'] },
+      'C740230 Deleting bulk edit profile (athena)',
+      { tags: ['smoke', 'athena', 'C740230'] },
       () => {
         // Step 1: Click "Actions" menu button
         InstancesBulkEditProfilesPane.clickProfileRow(testData.unlockedProfileName);

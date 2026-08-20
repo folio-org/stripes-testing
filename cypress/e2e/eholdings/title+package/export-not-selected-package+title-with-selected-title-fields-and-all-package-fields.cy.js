@@ -62,8 +62,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C356776 Export of Not selected "Package+title" with user selected fields of "Title" and all fields of "Package" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C356776'] },
+      'C356776 Export of Not selected "Package+title" with user selected fields of "Title" and all fields of "Package" (promin)',
+      { tags: ['extendedPath', 'promin', 'C356776'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackagesSearch.bySelectionStatus(FILTER_STATUSES.NOT_SELECTED);

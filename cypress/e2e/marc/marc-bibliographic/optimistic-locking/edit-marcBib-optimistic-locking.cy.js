@@ -74,8 +74,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C353225 Editing same "MARC Bibliographic" record by 2 different users (optimistic locking) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C353225'] },
+        'C353225 Editing same "MARC Bibliographic" record by 2 different users (optimistic locking) (promin)',
+        { tags: ['extendedPath', 'promin', 'C353225'] },
         () => {
           // Steps 1-2: User A logs in, opens record for editing
           cy.login(userA.username, userA.password, {

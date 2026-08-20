@@ -156,8 +156,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C692100 Check "Version history" pane after CRUD multiple repeatable fields and subfields in "MARC bibliographic" record via "quickmarc" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C692100'] },
+        'C692100 Check "Version history" pane after CRUD multiple repeatable fields and subfields in "MARC bibliographic" record via "quickmarc" (promin)',
+        { tags: ['criticalPath', 'promin', 'C692100'] },
         () => {
           InventoryInstance.editMarcBibliographicRecord();
           dropdownUpdates.forEach((dropdownUpdate) => {

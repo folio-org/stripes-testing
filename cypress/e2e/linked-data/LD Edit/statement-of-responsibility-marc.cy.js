@@ -92,8 +92,8 @@ describe('Citation: Statement of Responsibility - Inventory / View MARC', () => 
   });
 
   it(
-    'C477531 Marigold - Statement of responsibility / Inventory / View MARC (citation)',
-    { tags: ['criticalPath', 'citation', 'C477531', 'marigold'] },
+    'C477531 Marigold - Statement of responsibility / Inventory / View MARC (promin)',
+    { tags: ['criticalPath', 'promin', 'C477531', 'marigold'] },
     () => {
       // Import MARC bib into Marigold
       InventoryInstances.searchByTitle(testData.uniqueMarcTitle);

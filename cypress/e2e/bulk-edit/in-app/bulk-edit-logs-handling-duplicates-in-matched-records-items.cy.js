@@ -129,8 +129,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C446175 Verify handling duplicates in matched records - Items (Logs) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C446175'] },
+      'C446175 Verify handling duplicates in matched records - Items (Logs) (athena)',
+      { tags: ['extendedPath', 'athena', 'C446175'] },
       () => {
         // Step 1: Select "Inventory - items" radio button and "Item former identifier" from dropdown
         BulkEditSearchPane.checkItemsRadio();

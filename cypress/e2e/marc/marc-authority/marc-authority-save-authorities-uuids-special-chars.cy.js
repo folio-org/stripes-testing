@@ -60,8 +60,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C773220 Save authority UUIDs when search query contains special characters and diacritics (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C773220'] },
+      'C773220 Save authority UUIDs when search query contains special characters and diacritics (promin)',
+      { tags: ['extendedPath', 'promin', 'C773220'] },
       () => {
         MarcAuthoritiesSearch.searchBy(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD, testData.searchQuery);
         MarcAuthorities.checkResultsListRecordsCount();

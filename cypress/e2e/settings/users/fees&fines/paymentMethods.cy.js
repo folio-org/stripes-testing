@@ -20,8 +20,8 @@ describe('Fees&Fines', () => {
     });
 
     it(
-      'C445 Verify that you can create/edit/delete payment methods for a fee/fine owner (volaris)',
-      { tags: ['smoke', 'volaris', 'shiftLeft', 'C445'] },
+      'C445 Verify that you can create/edit/delete payment methods for a fee/fine owner (vega)',
+      { tags: ['smoke', 'vega', 'shiftLeft', 'C445'] },
       () => {
         // create
         const initialPaymentMethod = { ...PaymentMethods.defaultPaymentMethod };

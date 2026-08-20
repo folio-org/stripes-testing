@@ -67,8 +67,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C446012 Export not deleted Authority records with "Deleted authority export job profile" (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C446012'] },
+      'C446012 Export not deleted Authority records with "Deleted authority export job profile" (athena)',
+      { tags: ['criticalPath', 'athena', 'C446012'] },
       () => {
         // Step 1: Trigger the data export by clicking on the "or choose file" button and submitting the CSV file
         ExportFileHelper.uploadFile(authorityUUIDsFileName);

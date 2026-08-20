@@ -56,8 +56,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C440063 Render preview after query executed (Items - Edit) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C440063'] },
+      'C440063 Render preview after query executed (Items - Edit) (athena)',
+      { tags: ['criticalPath', 'athena', 'C440063'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkItemsRadio();

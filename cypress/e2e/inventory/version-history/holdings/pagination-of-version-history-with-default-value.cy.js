@@ -96,8 +96,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651574 Pagination of "Version history" with default value in Holdings (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C651574'] },
+        'C651574 Pagination of "Version history" with default value in Holdings (promin)',
+        { tags: ['criticalPath', 'promin', 'C651574'] },
         () => {
           // Step 1: Open Holdings details from Instance.
           InventoryInstances.searchByTitle(testData.instance.id);

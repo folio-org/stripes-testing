@@ -70,8 +70,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423484 Fields without tag and subfield values are deleted during saving (create MARC bibliographic) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423484'] },
+        'C423484 Fields without tag and subfield values are deleted during saving (create MARC bibliographic) (promin)',
+        { tags: ['extendedPath', 'promin', 'C423484'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

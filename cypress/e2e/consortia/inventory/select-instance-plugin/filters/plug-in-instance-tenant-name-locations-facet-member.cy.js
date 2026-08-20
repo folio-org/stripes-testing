@@ -252,8 +252,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C436892 Select instance plugin | Verify Tenant name displays next to location in "Effective location" facet during searching in Member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C436892'] },
+          'C436892 Select instance plugin | Verify Tenant name displays next to location in "Effective location" facet during searching in Member tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C436892'] },
           () => {
             Orders.selectOrderByPONumber(order.poNumber);
             OrderDetails.selectAddPOLine();

@@ -255,8 +255,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C784504 Verify Tenant name displays next to location in "Effective location" facet during browsing for call numbers in Member tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C784504'] },
+        'C784504 Verify Tenant name displays next to location in "Effective location" facet during browsing for call numbers in Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C784504'] },
         () => {
           const allVisibleCallNumbers = instancesData
             .filter((instanceData) => instanceData.affiliation !== Affiliations.University)

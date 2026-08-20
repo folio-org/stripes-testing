@@ -50,8 +50,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C356821 Verify that "Source" value matched with the user\'s name which had derived "MARC Bibliographic" record. (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C356821'] },
+        'C356821 Verify that "Source" value matched with the user\'s name which had derived "MARC Bibliographic" record. (promin)',
+        { tags: ['extendedPath', 'promin', 'C356821'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstanceById(createdRecordIDs[0]);

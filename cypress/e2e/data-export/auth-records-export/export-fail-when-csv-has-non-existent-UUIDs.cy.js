@@ -47,8 +47,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C353209 Export failed when using ".csv" file with non-existent UUIDs (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C353209'] },
+      'C353209 Export failed when using ".csv" file with non-existent UUIDs (promin)',
+      { tags: ['extendedPath', 'promin', 'C353209'] },
       () => {
         // Trigger the data export by uploading the CSV file with UUIDs
         ExportFileHelper.uploadFile(testData.authorityUUIDsFileName);

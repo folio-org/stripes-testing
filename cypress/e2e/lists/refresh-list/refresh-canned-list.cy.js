@@ -136,8 +136,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411820 Refresh list: Canned lists (corsair)',
-      { tags: ['smoke', 'corsair', 'C411820'] },
+      'C411820 Refresh list: Canned lists (athena)',
+      { tags: ['smoke', 'athena', 'C411820'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

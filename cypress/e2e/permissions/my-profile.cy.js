@@ -40,8 +40,8 @@ describe('Permissions', () => {
       });
 
       it(
-        'C410871 Verify that my profile page title follows correct format (volaris)',
-        { tags: ['extendedPath', 'volaris', 'C410871'] },
+        'C410871 Verify that my profile page title follows correct format (vega)',
+        { tags: ['extendedPath', 'vega', 'C410871'] },
         () => {
           cy.visit(SettingsMenu.myProfilePath);
           MyProfile.waitLoading();
@@ -52,8 +52,8 @@ describe('Permissions', () => {
       );
 
       it(
-        'C374116 Verify that validation violations are displayed immediately in the "Change password" section (volaris)',
-        { tags: ['extendedPath', 'volaris', 'C374116'] },
+        'C374116 Verify that validation violations are displayed immediately in the "Change password" section (vega)',
+        { tags: ['extendedPath', 'vega', 'C374116'] },
         () => {
           cy.intercept('GET', '*/rules?limit=100').as('rules');
           ChangePassword.openChangePasswordViaUserProfile();
@@ -75,8 +75,8 @@ describe('Permissions', () => {
       );
 
       it(
-        'C375097 Verify that "Save" button is disabled in case of validation errors on "My profile" form (volaris)',
-        { tags: ['extendedPathFlaky', 'volaris', 'C375097'] },
+        'C375097 Verify that "Save" button is disabled in case of validation errors on "My profile" form (vega)',
+        { tags: ['extendedPathFlaky', 'vega', 'C375097'] },
         () => {
           ChangePassword.openChangePasswordViaUserProfile();
           ChangePassword.checkInitialState();

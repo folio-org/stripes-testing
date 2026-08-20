@@ -61,8 +61,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C729552 Save authorities CQL query (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C729552'] },
+      'C729552 Save authorities CQL query (promin)',
+      { tags: ['extendedPath', 'promin', 'C729552'] },
       () => {
         // Step 1: Search using Keyword option — results must be found
         MarcAuthoritiesSearch.searchBy(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD, testData.searchQuery);

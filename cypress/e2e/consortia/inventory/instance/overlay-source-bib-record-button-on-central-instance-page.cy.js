@@ -50,8 +50,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C409467 (CONSORTIA) Verify the " Overlay source bibliographic record" button on Central tenant Instance page (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C409467'] },
+        'C409467 (CONSORTIA) Verify the " Overlay source bibliographic record" button on Central tenant Instance page (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C409467'] },
         () => {
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();

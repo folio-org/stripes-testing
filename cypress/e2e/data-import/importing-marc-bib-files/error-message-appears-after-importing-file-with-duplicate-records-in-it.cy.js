@@ -109,8 +109,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C410708 Verify that clear error message appears after importing a file with duplicate records in it (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C410708'] },
+      'C410708 Verify that clear error message appears after importing a file with duplicate records in it (promin)',
+      { tags: ['criticalPath', 'promin', 'C410708'] },
       () => {
         DataImport.uploadFile(firstFilePathForUpload, firstFileName);
         JobProfiles.waitFileIsUploaded();

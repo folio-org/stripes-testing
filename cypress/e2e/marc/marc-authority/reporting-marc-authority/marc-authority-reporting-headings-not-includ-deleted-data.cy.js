@@ -159,8 +159,8 @@ describe('MARC', () => {
         MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1]);
       });
       it(
-        'C380532 Data for "MARC authority headings updates (CSV)" report does NOT include data on deleted "MARC authority" record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C380532'] },
+        'C380532 Data for "MARC authority headings updates (CSV)" report does NOT include data on deleted "MARC authority" record (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C380532'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading1);
           MarcAuthoritiesSearch.selectAuthorityByIndex(0);

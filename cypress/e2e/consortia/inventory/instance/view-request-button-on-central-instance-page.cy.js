@@ -38,8 +38,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C409472 (CONSORTIA) Verify the "View request" button on Central tenant Instance page (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C409472'] },
+        'C409472 (CONSORTIA) Verify the "View request" button on Central tenant Instance page (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C409472'] },
         () => {
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();

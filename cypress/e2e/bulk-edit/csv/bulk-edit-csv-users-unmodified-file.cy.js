@@ -43,7 +43,7 @@ describe('Bulk-edit', () => {
 
     // Obsolete from Trillium
     it.skip(
-      'C359010 Verify the successful notification and absence of empty "File with updated records" after uploading unmodified file for bulk edit Users (firebird) (TaaS)',
+      'C359010 Verify the successful notification and absence of empty "File with updated records" after uploading unmodified file for bulk edit Users (athena) (TaaS)',
       { tags: [] },
       () => {
         BulkEditSearchPane.checkUsersRadio();

@@ -41,8 +41,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C825344 Verify the "Owner" field validation for custom entity types (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C825344'] },
+        'C825344 Verify the "Owner" field validation for custom entity types (athena)',
+        { tags: ['criticalPath', 'athena', 'C825344'] },
         () => {
           cy.getUserToken(userData1.username, userData1.password);
 

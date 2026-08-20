@@ -57,7 +57,7 @@ describe('Users', () => {
     Users.deleteViaApi(testData.testUser.userId);
   });
 
-  it('C427 Edit user details (volaris)', { tags: ['criticalPath', 'volaris', 'C427'] }, () => {
+  it('C427 Edit user details (vega)', { tags: ['criticalPath', 'vega', 'C427'] }, () => {
     UsersSearchPane.searchByUsername(testData.testUser.username);
     UserEdit.openEdit();
     UserEdit.editUserDetails(testData.editUser);

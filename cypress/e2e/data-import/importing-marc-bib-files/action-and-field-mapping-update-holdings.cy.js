@@ -240,8 +240,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C11106 Action and field mapping: Update a holdings (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C11106'] },
+      'C11106 Action and field mapping: Update a holdings (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C11106'] },
       () => {
         // change file for adding random barcode and holdings hrid
         DataImport.editMarcFile(

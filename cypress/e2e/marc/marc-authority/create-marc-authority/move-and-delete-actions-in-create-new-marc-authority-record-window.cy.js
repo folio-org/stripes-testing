@@ -79,8 +79,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423556 Move and delete actions in "Create a new MARC authority record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C423556'] },
+        'C423556 Move and delete actions in "Create a new MARC authority record" window (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C423556'] },
         () => {
           // Steps 1-2: Open form, set valid 008 values
           MarcAuthorities.clickActionsAndNewAuthorityButton();

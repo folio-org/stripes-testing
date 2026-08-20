@@ -159,8 +159,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C350668 Update a MARC authority record via data import. Record match with 999 ff $s (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C350668'] },
+      'C350668 Update a MARC authority record via data import. Record match with 999 ff $s (promin)',
+      { tags: ['criticalPath', 'promin', 'C350668'] },
       () => {
         MarcAuthorities.searchBy(testData.searchOption, testData.createdRecordTitle);
         MarcAuthorities.selectAllRecords();

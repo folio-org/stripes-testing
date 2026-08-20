@@ -102,8 +102,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C356841 Confirm a user with limited Data Import permissions can import a file (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C356841'] },
+      'C356841 Confirm a user with limited Data Import permissions can import a file (promin)',
+      { tags: ['criticalPath', 'promin', 'C356841'] },
       () => {
         cy.login(firstUser.username, firstUser.password, {
           path: SettingsMenu.mappingProfilePath,

@@ -40,8 +40,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C353540 Verify that the "Drag and Drop" is enabled after file is uploaded (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C353540'] },
+      'C353540 Verify that the "Drag and Drop" is enabled after file is uploaded (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C353540'] },
       () => {
         BulkEditSearchPane.verifyDefaultFilterState();
         BulkEditSearchPane.checkUsersRadio();
@@ -63,8 +63,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C353538 Verify link record identifier with the drag and drop area on the landing page (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C353538'] },
+      'C353538 Verify link record identifier with the drag and drop area on the landing page (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C353538'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.verifyDefaultFilterState();

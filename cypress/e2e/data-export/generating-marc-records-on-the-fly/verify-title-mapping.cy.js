@@ -70,8 +70,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10965 Verify Title mapping (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C10965'] },
+      'C10965 Verify Title mapping (athena)',
+      { tags: ['extendedPath', 'athena', 'C10965'] },
       () => {
         // Step 1: Go to "Inventory" app
         InventorySearchAndFilter.verifySearchAndFilterPane();

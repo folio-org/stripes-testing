@@ -112,8 +112,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C466303 Only opened "MARC authority" record exported from browse result pane when other records checkboxes are checked (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C466303'] },
+        'C466303 Only opened "MARC authority" record exported from browse result pane when other records checkboxes are checked (promin)',
+        { tags: ['extendedPath', 'promin', 'C466303'] },
         () => {
           // Step 1: Browse for authority records
           MarcAuthorities.switchToBrowse();

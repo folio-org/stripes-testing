@@ -84,8 +84,8 @@ describe('Users', () => {
   });
 
   it(
-    'C345422 Check for dependencies and delete user (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C345422'] },
+    'C345422 Check for dependencies and delete user (vega)',
+    { tags: ['criticalPath', 'vega', 'C345422'] },
     () => {
       cy.login(testData.userWithTransactions.username, testData.userWithTransactions.password, {
         path: TopMenu.usersPath,

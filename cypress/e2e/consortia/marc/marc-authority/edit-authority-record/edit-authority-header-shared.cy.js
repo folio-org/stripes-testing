@@ -54,8 +54,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C446169 Header of shared MARC authority edit page contains word "shared" (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C446169'] },
+          'C446169 Header of shared MARC authority edit page contains word "shared" (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C446169'] },
           () => {
             // Log in as user in Member tenant
             cy.resetTenant();

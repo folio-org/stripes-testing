@@ -43,8 +43,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C360109 Check the content of "Resource information" accordion in "Title+package" detail record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C360109'] },
+      'C360109 Check the content of "Resource information" accordion in "Title+package" detail record (promin)',
+      { tags: ['extendedPath', 'promin', 'C360109'] },
       () => {
         EHoldingsResourceView.verifyResourceInformationAccordionExists();
 

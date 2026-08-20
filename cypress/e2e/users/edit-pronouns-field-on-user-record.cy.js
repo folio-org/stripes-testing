@@ -50,8 +50,8 @@ describe('Users', () => {
   });
 
   it(
-    'C648467 Edit "Pronouns" field on user record (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C648467', 'eurekaPhase1'] },
+    'C648467 Edit "Pronouns" field on user record (vega)',
+    { tags: ['criticalPath', 'vega', 'C648467', 'eurekaPhase1'] },
     () => {
       // Search for the user and open their details
       UsersSearchPane.searchByUsername(userData.username);

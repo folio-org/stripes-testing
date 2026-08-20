@@ -113,8 +113,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C655281 Check "Version history" after creating Instance, Holdings, Item via Orders (folijet)',
-        { tags: ['extendedPath', 'folijet', 'C655281'] },
+        'C655281 Check "Version history" after creating Instance, Holdings, Item via Orders (promin)',
+        { tags: ['extendedPath', 'promin', 'C655281'] },
         () => {
           // Navigate to Inventory, search for the instance created via Orders
           InventoryInstances.searchByTitle(testData.orderLine.titleOrPackage);

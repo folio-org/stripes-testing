@@ -38,8 +38,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      "C365590 Verify that User's Email can be edited partially (firebird)",
-      { tags: ['extendedPath', 'firebird', 'C365590'] },
+      "C365590 Verify that User's Email can be edited partially (athena)",
+      { tags: ['extendedPath', 'athena', 'C365590'] },
       () => {
         // Step 1: Select "Users" radio button under "Record types" accordion
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');

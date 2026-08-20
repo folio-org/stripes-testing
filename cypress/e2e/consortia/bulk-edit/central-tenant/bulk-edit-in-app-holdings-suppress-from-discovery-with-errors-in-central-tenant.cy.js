@@ -263,8 +263,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C496121 Verify "Suppress from discovery" action (with errors) for Holdings in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C496121'] },
+        'C496121 Verify "Suppress from discovery" action (with errors) for Holdings in Central tenant (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C496121'] },
         () => {
           // Step 1: Select "Inventory - holdings" radio button => Select "Holdings UUIDs" from "Record identifier" dropdown
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');

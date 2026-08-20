@@ -94,8 +94,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C350639 Verify the ability to see holdings with 1000+ items: CASE 1 (folijet)',
-      { tags: ['smoke', 'folijet', 'C350639'] },
+      'C350639 Verify the ability to see holdings with 1000+ items: CASE 1 (promin)',
+      { tags: ['smoke', 'promin', 'C350639'] },
       () => {
         InventorySearchAndFilter.searchByParameter(
           'Keyword (title, contributor, identifier, HRID, UUID)',

@@ -40,8 +40,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C2348 Edit an existing action profile without associated job profile (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C2348'] },
+      'C2348 Edit an existing action profile without associated job profile (promin)',
+      { tags: ['criticalPath', 'promin', 'C2348'] },
       () => {
         SettingsActionProfiles.checkListOfExistingProfilesIsDisplayed();
         SettingsActionProfiles.search(actionProfile.name);

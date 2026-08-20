@@ -108,8 +108,8 @@ describe('Citation: cancel without saving', () => {
   });
 
   it(
-    'C656342 [User journey] Marigold - Cancel without saving (Yes/No) (citation)',
-    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C656342', 'marigold'] },
+    'C656342 [User journey] Marigold - Cancel without saving (Yes/No) (promin)',
+    { tags: ['criticalPath', 'shiftLeft', 'promin', 'C656342', 'marigold'] },
     () => {
       // select advanced search option
       SearchAndFilter.selectAdvancedSearch();

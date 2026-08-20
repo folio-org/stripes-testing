@@ -29,8 +29,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C927743 Verify Inventory hit list maintains scroll position after viewing and closing an Instance record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C927743'] },
+      'C927743 Verify Inventory hit list maintains scroll position after viewing and closing an Instance record (promin)',
+      { tags: ['extendedPath', 'promin', 'C927743'] },
       () => {
         const verifyScrollPositionSteps = () => {
           InventoryInstances.getResultsCount().then((count) => {

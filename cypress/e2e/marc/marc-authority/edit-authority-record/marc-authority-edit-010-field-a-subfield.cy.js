@@ -109,8 +109,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C376593 Add multiple "$a" to "010" field in linked "MARC Authority" record when "$0" = "010 $a" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C376593'] },
+        'C376593 Add multiple "$a" to "010" field in linked "MARC Authority" record when "$0" = "010 $a" (promin)',
+        { tags: ['extendedPath', 'promin', 'C376593'] },
         () => {
           // #1-3 Search and open the MARC Authority record
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);

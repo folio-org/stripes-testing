@@ -55,8 +55,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C430212 Verify updated properties columns appear on "Are you sure?" form and on Confirmation screen - users (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C430212'] },
+      'C430212 Verify updated properties columns appear on "Are you sure?" form and on Confirmation screen - users (athena)',
+      { tags: ['criticalPath', 'athena', 'C430212'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);

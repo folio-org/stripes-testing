@@ -23,28 +23,24 @@ describe('Patron notices', () => {
       });
     });
 
-    it(
-      'C6530 Create notice policy (volaris)',
-      { tags: ['smoke', 'volaris', 'system', 'C6530'] },
-      () => {
-        NewNoticePolicy.waitLoading();
-        NewNoticePolicy.startAdding();
-        NewNoticePolicy.checkInitialState();
-        NewNoticePolicy.fillGeneralInformation(noticePolicy);
-        NewNoticePolicy.save();
-        NewNoticePolicy.checkPolicyName(noticePolicy);
+    it('C6530 Create notice policy (vega)', { tags: ['smoke', 'vega', 'system', 'C6530'] }, () => {
+      NewNoticePolicy.waitLoading();
+      NewNoticePolicy.startAdding();
+      NewNoticePolicy.checkInitialState();
+      NewNoticePolicy.fillGeneralInformation(noticePolicy);
+      NewNoticePolicy.save();
+      NewNoticePolicy.checkPolicyName(noticePolicy);
 
-        NewNoticePolicy.choosePolicy(noticePolicy);
-        NewNoticePolicy.duplicatePolicy(noticePolicy);
-        NewNoticePolicy.deletePolicy(noticePolicy);
+      NewNoticePolicy.choosePolicy(noticePolicy);
+      NewNoticePolicy.duplicatePolicy(noticePolicy);
+      NewNoticePolicy.deletePolicy(noticePolicy);
 
-        NewNoticePolicy.choosePolicy(noticePolicy);
-        NewNoticePolicy.editPolicy(noticePolicy, newNoticePolicy);
-        NewNoticePolicy.save(newNoticePolicy);
-        NewNoticePolicy.checkPolicyName(newNoticePolicy);
-        NewNoticePolicy.choosePolicy(newNoticePolicy);
-        NewNoticePolicy.deletePolicy(newNoticePolicy);
-      },
-    );
+      NewNoticePolicy.choosePolicy(noticePolicy);
+      NewNoticePolicy.editPolicy(noticePolicy, newNoticePolicy);
+      NewNoticePolicy.save(newNoticePolicy);
+      NewNoticePolicy.checkPolicyName(newNoticePolicy);
+      NewNoticePolicy.choosePolicy(newNoticePolicy);
+      NewNoticePolicy.deletePolicy(newNoticePolicy);
+    });
   });
 });

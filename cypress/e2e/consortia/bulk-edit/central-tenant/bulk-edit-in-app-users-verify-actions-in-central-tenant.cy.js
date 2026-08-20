@@ -88,8 +88,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C496156 Verify bulk edit actions for Users in Central tenant - Identifier (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C496156'] },
+        'C496156 Verify bulk edit actions for Users in Central tenant - Identifier (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C496156'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
           BulkEditSearchPane.uploadFile(userUUIDsFileName);

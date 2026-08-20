@@ -113,8 +113,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584480 Create new MARC source Instance with subject types/sources using Inventory app (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C584480'] },
+      'C584480 Create new MARC source Instance with subject types/sources using Inventory app (promin)',
+      { tags: ['criticalPath', 'promin', 'C584480'] },
       () => {
         InventoryInstances.createNewMarcBibRecord();
         QuickMarcEditor.updateLDR06And07Positions();

@@ -116,8 +116,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C1046005 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to duplicate locked and default mapping profiles (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C1046005'] },
+      'C1046005 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to duplicate locked and default mapping profiles (athena)',
+      { tags: ['criticalPath', 'athena', 'C1046005'] },
       () => {
         // Step 1: Select existing locked mapping profile from Preconditions: locked mapping profile not referenced in job profile
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(

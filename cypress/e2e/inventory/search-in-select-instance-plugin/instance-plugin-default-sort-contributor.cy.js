@@ -100,8 +100,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C543877 Select Instance plugin | Default sort is applied to search result list in "Inventory" app according to selected option in settings ("Contributors" case) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C543877'] },
+      'C543877 Select Instance plugin | Default sort is applied to search result list in "Inventory" app according to selected option in settings ("Contributors" case) (promin)',
+      { tags: ['extendedPath', 'promin', 'nonParallel', 'C543877'] },
       () => {
         // Step 1: Search; verify results sorted by Contributors column
         SelectInstanceModal.searchByName(titlePrefix);

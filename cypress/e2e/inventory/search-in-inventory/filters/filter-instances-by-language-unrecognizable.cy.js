@@ -64,8 +64,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C813007 Filter "Instance" records which has an empty or unrecognizable "language" field by "Language" filter/facet (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C813007'] },
+        'C813007 Filter "Instance" records which has an empty or unrecognizable "language" field by "Language" filter/facet (promin)',
+        { tags: ['extendedPath', 'promin', 'C813007'] },
         () => {
           InventorySearchAndFilter.executeSearch(testData.instancesTitlePrefix);
           InventorySearchAndFilter.verifyResultListExists();

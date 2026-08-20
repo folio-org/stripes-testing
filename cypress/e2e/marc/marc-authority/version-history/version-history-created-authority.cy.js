@@ -70,8 +70,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C651478 "Version history" pane is displayed for "MARC authority" records created via "quickmarc" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C651478'] },
+        'C651478 "Version history" pane is displayed for "MARC authority" records created via "quickmarc" (promin)',
+        { tags: ['criticalPath', 'promin', 'C651478'] },
         () => {
           MarcAuthority.verifyVersionHistoryButtonShown();
           MarcAuthority.clickVersionHistoryButton();

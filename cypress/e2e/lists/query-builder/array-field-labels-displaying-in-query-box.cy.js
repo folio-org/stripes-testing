@@ -49,8 +49,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C651465 Verify that array field labels are displaying in "Query" box of query builder (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C651465'] },
+      'C651465 Verify that array field labels are displaying in "Query" box of query builder (athena)',
+      { tags: ['criticalPath', 'athena', 'C651465'] },
       () => {
         // Step 1: Create new list with Instances record type
         Lists.openNewListPane();

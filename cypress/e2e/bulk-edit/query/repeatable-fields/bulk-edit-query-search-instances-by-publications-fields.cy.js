@@ -122,8 +122,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C808476 Search instances by Publications fields (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C808476'] },
+        'C808476 Search instances by Publications fields (athena)',
+        { tags: ['extendedPath', 'athena', 'C808476'] },
         () => {
           // Step 1: Verify Publications fields are queryable under "Select options" dropdown
           BulkEditSearchPane.openQuerySearch();

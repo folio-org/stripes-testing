@@ -50,8 +50,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C655265 Check "Version history" after creating instance via ISRI (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C655265'] },
+        'C655265 Check "Version history" after creating instance via ISRI (promin)',
+        { tags: ['criticalPath', 'promin', 'C655265'] },
         () => {
           InventoryInstances.importWithOclc(testData.oclcNumber);
           InventoryInstance.waitLoading();

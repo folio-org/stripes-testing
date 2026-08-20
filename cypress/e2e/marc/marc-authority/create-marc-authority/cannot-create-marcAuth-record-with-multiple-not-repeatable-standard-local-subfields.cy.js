@@ -72,8 +72,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514938 Cannot create MARC authority record with multiple not-repeatable standard / local subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514938'] },
+        'C514938 Cannot create MARC authority record with multiple not-repeatable standard / local subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514938'] },
         () => {
           cy.then(() => {
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C514938_');

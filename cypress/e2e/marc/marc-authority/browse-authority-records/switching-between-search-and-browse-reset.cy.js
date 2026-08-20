@@ -85,8 +85,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C386497 Switching between Search and Browse in "MARC authority" app (reset) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C386497'] },
+        'C386497 Switching between Search and Browse in "MARC authority" app (reset) (promin)',
+        { tags: ['extendedPath', 'promin', 'C386497'] },
         () => {
           // Step 1: Set up Browse with filters
           MarcAuthorities.switchToBrowse();

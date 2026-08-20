@@ -100,8 +100,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C368479 Verify that there no errors during bulk editing if entry HOLDINGS body has special characters (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird', 'C368479'] },
+        'C368479 Verify that there no errors during bulk editing if entry HOLDINGS body has special characters (athena) (TaaS)',
+        { tags: ['extendedPath', 'athena', 'C368479'] },
         () => {
           BulkEditSearchPane.checkHoldingsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');

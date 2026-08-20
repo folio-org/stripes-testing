@@ -209,8 +209,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C402343 Apply "Held by" facet when "No" is selected in "Shared" facet (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C402343'] },
+          'C402343 Apply "Held by" facet when "No" is selected in "Shared" facet (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C402343'] },
           () => {
             InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
             InventorySearchAndFilter.clickAccordionByName(heldbyAccordionName);

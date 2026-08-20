@@ -188,8 +188,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C808508 Create "Item" with empty "order" field (default state) when Shared Instance has multiple Holdings with Items in different tenants (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C808508'] },
+          'C808508 Create "Item" with empty "order" field (default state) when Shared Instance has multiple Holdings with Items in different tenants (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C808508'] },
           () => {
             cy.resetTenant();
             cy.waitForAuthRefresh(() => {

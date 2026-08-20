@@ -51,8 +51,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C375217 Verify generated Logs files for Users Local (firebird)',
-        { tags: ['smoke', 'firebird', 'C375217'] },
+        'C375217 Verify generated Logs files for Users Local (athena)',
+        { tags: ['smoke', 'athena', 'C375217'] },
         () => {
           BulkEditSearchPane.checkUsersRadio();
           BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

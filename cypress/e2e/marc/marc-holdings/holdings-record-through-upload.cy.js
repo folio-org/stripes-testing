@@ -40,8 +40,8 @@ describe(
       });
 
       it(
-        'C345408 MARC instance record + FOLIO holdings record (Regression) (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C345408'] },
+        'C345408 MARC instance record + FOLIO holdings record (Regression) (promin)',
+        { tags: ['smoke', 'promin', 'shiftLeft', 'C345408'] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.loginAsAdmin({

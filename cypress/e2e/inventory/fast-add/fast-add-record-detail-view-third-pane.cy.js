@@ -87,8 +87,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C422052 Detail view of record created via "Fast add" is opened in third pane of "Inventory" app (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C422052'] },
+      'C422052 Detail view of record created via "Fast add" is opened in third pane of "Inventory" app (promin)',
+      { tags: ['extendedPath', 'promin', 'C422052'] },
       () => {
         // Test scenario 1: Create fast add record with empty search results
         cy.intercept('POST', '/inventory/instances').as('createInstance1');

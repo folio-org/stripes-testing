@@ -73,8 +73,8 @@ describe(
         });
 
         it(
-          'C375289 Verify generated Logs files for Holdings In app -- only valid Holdings UUIDs (firebird)',
-          { tags: ['smoke', 'firebird', 'C375289'] },
+          'C375289 Verify generated Logs files for Holdings In app -- only valid Holdings UUIDs (athena)',
+          { tags: ['smoke', 'athena', 'C375289'] },
           () => {
             BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
               'Holdings',

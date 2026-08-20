@@ -144,8 +144,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C825249 Search instances by Nature of content, Editions, Physical descriptions (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C825249'] },
+        'C825249 Search instances by Nature of content, Editions, Physical descriptions (athena)',
+        { tags: ['extendedPath', 'athena', 'C825249'] },
         () => {
           // Step 1: Search instances by "Instance — Nature of content" field using "equals" operator
           BulkEditSearchPane.openQuerySearch();

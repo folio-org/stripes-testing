@@ -46,8 +46,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C535523 Verify that app context menu dropdown is available (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C535523'] },
+      'C535523 Verify that app context menu dropdown is available (athena)',
+      { tags: ['criticalPath', 'athena', 'C535523'] },
       () => {
         // Step 1: Click on any existing List to open it
         Lists.openList(listName);

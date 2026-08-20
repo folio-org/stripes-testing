@@ -101,9 +101,9 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808484 API | Edit "Item" with empty "order" field when Instance has multiple Holdings with Items (spitfire)',
+        'C808484 API | Edit "Item" with empty "order" field when Instance has multiple Holdings with Items (promin)',
         {
-          tags: ['extendedPath', 'spitfire', 'C808484'],
+          tags: ['extendedPath', 'promin', 'C808484'],
         },
         () => {
           cy.getToken(user.username, user.password);

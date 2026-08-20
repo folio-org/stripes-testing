@@ -125,8 +125,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C446023 Verify export MARC Instance with edited SRS (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C446023'] },
+    'C446023 Verify export MARC Instance with edited SRS (athena)',
+    { tags: ['criticalPath', 'athena', 'C446023'] },
     () => {
       // Step 1-2: Upload the .csv file
       ExportFileHelper.uploadFile(marcInstanceUUIDFileName);

@@ -69,8 +69,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C353642 Verify that "Browse contributors" search option not displayed at "Holdings"/"item" tabs. (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C353642'] },
+      'C353642 Verify that "Browse contributors" search option not displayed at "Holdings"/"item" tabs. (promin)',
+      { tags: ['extendedPath', 'promin', 'C353642'] },
       () => {
         BrowseContributors.waitForContributorToAppear(contributorValue);
         InventorySearchAndFilter.selectBrowseContributors();

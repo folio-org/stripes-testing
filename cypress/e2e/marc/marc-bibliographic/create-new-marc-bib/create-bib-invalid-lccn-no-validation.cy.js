@@ -54,8 +54,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C569556 Create a new MARC bib record with invalid LCCN when "LCCN structure validation" is disabled (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C569556'] },
+        'C569556 Create a new MARC bib record with invalid LCCN when "LCCN structure validation" is disabled (promin)',
+        { tags: ['extendedPath', 'promin', 'C569556'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateLDR06And07Positions();

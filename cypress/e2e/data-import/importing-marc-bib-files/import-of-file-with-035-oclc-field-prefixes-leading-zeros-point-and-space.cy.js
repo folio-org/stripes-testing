@@ -57,8 +57,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C502968 Import of file with 035 OCLC field with prefixes, leading zeros, point and space (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C502968'] },
+      'C502968 Import of file with 035 OCLC field with prefixes, leading zeros, point and space (promin)',
+      { tags: ['criticalPath', 'promin', 'C502968'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();

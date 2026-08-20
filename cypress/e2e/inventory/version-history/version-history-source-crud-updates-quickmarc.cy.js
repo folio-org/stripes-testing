@@ -223,8 +223,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C692071 Check "Version history" pane after CRUD field and subfield in "MARC bibliographic" record via "quickmarc" (spitfire)',
-        { tags: ['criticalPathFlaky', 'spitfire', 'C692071'] },
+        'C692071 Check "Version history" pane after CRUD field and subfield in "MARC bibliographic" record via "quickmarc" (promin)',
+        { tags: ['criticalPathFlaky', 'promin', 'C692071'] },
         () => {
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.addEmptyFields(testData.addedField.indexAbove);

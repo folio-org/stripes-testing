@@ -54,8 +54,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C376977 GetRecord: Verify that added FOLIO instances are retrieved in response (oai_dc) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'nonParallel', 'C376977'] },
+      'C376977 GetRecord: Verify that added FOLIO instances are retrieved in response (oai_dc) (athena)',
+      { tags: ['extendedPath', 'athena', 'nonParallel', 'C376977'] },
       () => {
         OaiPmh.getRecordRequest(folioInstanceId, 'oai_dc').then((response) => {
           OaiPmh.verifyDublinCoreField(response, folioInstanceId, {

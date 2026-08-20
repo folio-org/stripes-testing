@@ -90,8 +90,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808482 API | "order" field validation in edit "Item" request (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C808482'] },
+        'C808482 API | "order" field validation in edit "Item" request (promin)',
+        { tags: ['extendedPath', 'promin', 'C808482'] },
         () => {
           cy.getToken(user.username, user.password);
 

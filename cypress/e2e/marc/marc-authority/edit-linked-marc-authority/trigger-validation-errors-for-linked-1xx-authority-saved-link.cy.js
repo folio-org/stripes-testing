@@ -174,8 +174,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C566593 Trigger validation errors for 1XX field of linked MARC authority record (saved link) on "Edit MARC authority record" pane (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C566593'] },
+        'C566593 Trigger validation errors for 1XX field of linked MARC authority record (saved link) on "Edit MARC authority record" pane (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C566593'] },
         () => {
           cy.then(() => {
             cy.getAdminToken();

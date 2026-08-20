@@ -104,8 +104,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C387454 "008" field existence validation when edit imported "MARC Holdings" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C387454'] },
+        'C387454 "008" field existence validation when edit imported "MARC Holdings" (promin)',
+        { tags: ['extendedPath', 'promin', 'C387454'] },
         () => {
           InventoryInstances.searchByTitle(recordId);
           InventoryInstances.selectInstanceById(recordId);

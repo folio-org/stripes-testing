@@ -91,8 +91,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C345392 Undo deletion of field(s) by clicking Restore deleted fields button on the "Are you sure you want to delete these fields" modal message (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C345392'] },
+      'C345392 Undo deletion of field(s) by clicking Restore deleted fields button on the "Are you sure you want to delete these fields" modal message (promin)',
+      { tags: ['extendedPath', 'promin', 'C345392'] },
       () => {
         InventoryInstances.searchByTitle(recordId);
         InventoryInstances.selectInstanceById(recordId);

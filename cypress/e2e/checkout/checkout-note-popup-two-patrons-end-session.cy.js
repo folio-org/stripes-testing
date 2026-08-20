@@ -102,8 +102,8 @@ describe('Check out', () => {
   });
 
   it(
-    'C380513 Verify that "Note for patron" pop-up for two patrons on a row (use "End session" button) (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C380513'] },
+    'C380513 Verify that "Note for patron" pop-up for two patrons on a row (use "End session" button) (promin)',
+    { tags: ['extendedPath', 'promin', 'C380513'] },
     () => {
       const itemBarcode = testData.folioInstances[0].barcodes[0];
 

@@ -102,8 +102,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C656340 Bulk edit administrative data for part of the records (MARC) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C656340'] },
+      'C656340 Bulk edit administrative data for part of the records (MARC) (athena)',
+      { tags: ['criticalPath', 'athena', 'C656340'] },
       () => {
         // Step 1: Hide Administrative note column
         BulkEditActions.openActions();

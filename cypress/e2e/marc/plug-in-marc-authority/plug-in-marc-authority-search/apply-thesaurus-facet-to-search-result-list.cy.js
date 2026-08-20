@@ -147,8 +147,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C359143 MARC Authority plug-in | Apply "Thesaurus" facet to the search result list (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C359143'] },
+        'C359143 MARC Authority plug-in | Apply "Thesaurus" facet to the search result list (promin)',
+        { tags: ['extendedPath', 'promin', 'C359143'] },
         () => {
           // Steps 1-3: Search for created authority records by keyword
           MarcAuthorities.searchByParameter(searchOption, testData.authorityPrefix);

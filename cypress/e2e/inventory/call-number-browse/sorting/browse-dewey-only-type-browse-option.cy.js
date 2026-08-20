@@ -137,8 +137,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C627505 Only Call number of selected in settings type could be found in the browse result list by "Dewey Decimal classification" browse option (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C627505'] },
+      'C627505 Only Call number of selected in settings type could be found in the browse result list by "Dewey Decimal classification" browse option (promin)',
+      { tags: ['criticalPathFlaky', 'promin', 'nonParallel', 'C627505'] },
       () => {
         cy.login(tempUser.username, tempUser.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

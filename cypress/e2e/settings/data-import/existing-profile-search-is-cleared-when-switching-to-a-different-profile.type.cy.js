@@ -86,8 +86,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C402332 Verify that any existing profile search is cleared when switching to a different profile type (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C402332'] },
+      'C402332 Verify that any existing profile search is cleared when switching to a different profile type (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C402332'] },
       () => {
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
         FieldMappingProfiles.search(mappingProfile.name);

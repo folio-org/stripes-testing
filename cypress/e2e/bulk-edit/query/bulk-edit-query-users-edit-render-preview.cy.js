@@ -49,8 +49,8 @@ describe(
       });
 
       it(
-        'C440079 Render preview after query executed (Users - Edit In app) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C440079'] },
+        'C440079 Render preview after query executed (Users - Edit In app) (athena)',
+        { tags: ['criticalPath', 'athena', 'C440079'] },
         () => {
           BulkEditSearchPane.openQuerySearch();
           BulkEditSearchPane.checkUsersRadio();

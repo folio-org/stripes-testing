@@ -143,8 +143,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C889718 Profiles with "Set records for deletion" option are NOT available for selection in bulk edit without UI-Inventory Instance Set-Records-For-Deletion capability set (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C889718'] },
+      'C889718 Profiles with "Set records for deletion" option are NOT available for selection in bulk edit without UI-Inventory Instance Set-Records-For-Deletion capability set (athena)',
+      { tags: ['criticalPath', 'athena', 'C889718'] },
       () => {
         // Step 1: Click "Actions" menu and Click "Select FOLIO instances bulk edit profile"
         BulkEditActions.openActions();

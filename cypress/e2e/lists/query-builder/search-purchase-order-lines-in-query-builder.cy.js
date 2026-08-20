@@ -124,8 +124,8 @@ describe('Lists', () => {
         });
 
         it(
-          `${data.testCaseId} Search purchase order lines in the Query Builder (corsair)`,
-          { tags: ['criticalPath', 'corsair'] },
+          `${data.testCaseId} Search purchase order lines in the Query Builder (athena)`,
+          { tags: ['criticalPath', 'athena'] },
           () => {
             QueryModal.selectField(data.field);
             QueryModal.selectOperator(data.operator);

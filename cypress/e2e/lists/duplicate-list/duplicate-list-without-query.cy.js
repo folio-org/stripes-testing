@@ -48,8 +48,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C423606 Duplicate lists - list without query (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C423606'] },
+      'C423606 Duplicate lists - list without query (athena)',
+      { tags: ['criticalPath', 'athena', 'C423606'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

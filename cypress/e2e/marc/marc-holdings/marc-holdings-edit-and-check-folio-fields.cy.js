@@ -116,8 +116,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C983156 Folio fields are not cleared after update of "MARC holdings" record via "quickmarc" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C983156'] },
+      'C983156 Folio fields are not cleared after update of "MARC holdings" record via "quickmarc" (promin)',
+      { tags: ['extendedPath', 'promin', 'C983156'] },
       () => {
         // User is on the detail view of imported 'MARC holdings' record opened via 'Inventory' app
         InventoryInstances.searchByTitle(recordIDs[0]);

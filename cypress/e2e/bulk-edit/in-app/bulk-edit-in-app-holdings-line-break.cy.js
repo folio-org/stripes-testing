@@ -109,8 +109,8 @@ describe(
       });
 
       it(
-        'C399093 Verify Previews for the number of Holdings records if the records have fields with line breaks (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C399093'] },
+        'C399093 Verify Previews for the number of Holdings records if the records have fields with line breaks (athena)',
+        { tags: ['criticalPath', 'athena', 'C399093'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
           BulkEditSearchPane.uploadFile(holdingsHRIDFileName);

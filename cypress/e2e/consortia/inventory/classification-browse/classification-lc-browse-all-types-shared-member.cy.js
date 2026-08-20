@@ -209,8 +209,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C468277 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Library of Congress classification" option when LC, LC (local), NLM and local (shared) are selected in settings, from Member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C468277'] },
+        'C468277 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Library of Congress classification" option when LC, LC (local), NLM and local (shared) are selected in settings, from Member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C468277'] },
         () => {
           cy.login(user.username, user.password, {
             path: TopMenu.inventoryPath,

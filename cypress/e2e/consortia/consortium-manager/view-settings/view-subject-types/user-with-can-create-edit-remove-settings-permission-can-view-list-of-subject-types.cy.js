@@ -137,8 +137,8 @@ describe('Consortia', () => {
         };
 
         it(
-          'C594398 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of subject types of affiliated tenants in "Consortium manager" app (consortia) (folijet)',
-          { tags: ['criticalPathECS', 'folijet', 'C594398'] },
+          'C594398 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of subject types of affiliated tenants in "Consortium manager" app (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C594398'] },
           () => {
             SelectMembersModal.selectAllMembers();
             ConsortiumManager.verifyStatusOfConsortiumManager(3);

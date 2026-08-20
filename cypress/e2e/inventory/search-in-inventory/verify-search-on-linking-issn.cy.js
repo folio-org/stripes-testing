@@ -53,8 +53,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C353613 Search: Verify search on linking ISSN (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C353613'] },
+      'C353613 Search: Verify search on linking ISSN (promin)',
+      { tags: ['extendedPath', 'promin', 'C353613'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

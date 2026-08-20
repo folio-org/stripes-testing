@@ -79,8 +79,8 @@ describe('Staff slips', () => {
   });
 
   it(
-    'C387438 Metadata accordion contains "Unknown user" when user last edited Staff Slip was deleted (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C387438'] },
+    'C387438 Metadata accordion contains "Unknown user" when user last edited Staff Slip was deleted (vega)',
+    { tags: ['extendedPath', 'vega', 'C387438'] },
     () => {
       StaffSlips.waitLoading();
       // Step 2: Click on first staff slip record (Due date receipt)

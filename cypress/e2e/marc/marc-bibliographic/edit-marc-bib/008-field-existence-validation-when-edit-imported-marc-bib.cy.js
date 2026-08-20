@@ -119,8 +119,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C387451 "008" field existence validation when edit imported "MARC bib" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C387451'] },
+        'C387451 "008" field existence validation when edit imported "MARC bib" (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C387451'] },
         () => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);

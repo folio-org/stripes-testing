@@ -81,8 +81,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436920 Error shows when user tries to delete Local "Authority file" which has assigned "MARC authority" records (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C436920'] },
+        'C436920 Error shows when user tries to delete Local "Authority file" which has assigned "MARC authority" records (promin)',
+        { tags: ['extendedPath', 'promin', 'C436920'] },
         () => {
           // Step 1: Go to Settings > MARC authority > Manage authority files
           cy.login(user.username, user.password, {

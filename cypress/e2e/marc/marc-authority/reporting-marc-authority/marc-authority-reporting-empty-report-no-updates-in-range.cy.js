@@ -102,8 +102,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375228 Empty "MARC authority headings updates (CSV)" report is generated when record headings were not updated during chosen time range (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C375228'] },
+        'C375228 Empty "MARC authority headings updates (CSV)" report is generated when record headings were not updated during chosen time range (promin)',
+        { tags: ['extendedPath', 'promin', 'C375228'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.marcAuthorities,

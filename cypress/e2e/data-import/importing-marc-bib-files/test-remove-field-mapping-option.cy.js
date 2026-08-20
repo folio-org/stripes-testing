@@ -210,8 +210,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C17033 Test ###REMOVE### field mapping option (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C17033'] },
+      'C17033 Test ###REMOVE### field mapping option (promin)',
+      { tags: ['criticalPath', 'promin', 'C17033'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

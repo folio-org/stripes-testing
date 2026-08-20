@@ -57,8 +57,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C345403 Delete holdings without item (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C345403'] },
+      'C345403 Delete holdings without item (promin)',
+      { tags: ['extendedPath', 'promin', 'C345403'] },
       () => {
         InventoryInstances.searchByTitle(recordId);
         InventoryInstances.selectInstanceById(recordId);

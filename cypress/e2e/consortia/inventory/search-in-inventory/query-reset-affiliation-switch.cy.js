@@ -56,8 +56,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C423590 Verify reset of search query in Inventory when affiliation is switched to Member from Central (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C423590'] },
+        'C423590 Verify reset of search query in Inventory when affiliation is switched to Member from Central (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C423590'] },
         () => {
           InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.FOLIO);
           InventorySearchAndFilter.fillInSearchQuery(instanceTitle);

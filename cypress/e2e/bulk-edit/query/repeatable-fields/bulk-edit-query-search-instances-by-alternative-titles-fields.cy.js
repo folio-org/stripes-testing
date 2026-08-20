@@ -130,8 +130,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C825248 Search instances by Alternative titles fields (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C825248'] },
+        'C825248 Search instances by Alternative titles fields (athena)',
+        { tags: ['extendedPath', 'athena', 'C825248'] },
         () => {
           // Map alternative titles data to format expected by UI verification
           const mappedInstancesDataToUIView = testInstancesData.map((instance) => ({

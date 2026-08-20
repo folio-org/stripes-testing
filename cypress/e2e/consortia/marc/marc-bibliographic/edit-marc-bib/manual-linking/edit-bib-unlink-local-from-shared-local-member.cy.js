@@ -204,8 +204,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C407627 Unlink Local MARC bib from Shared/Local MARC Authority in Member tenant (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C407627'] },
+            'C407627 Unlink Local MARC bib from Shared/Local MARC Authority in Member tenant (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C407627'] },
             () => {
               InventorySearchAndFilter.clearDefaultHeldbyFilter();
               InventoryInstances.searchByTitle(createdInstanceId);

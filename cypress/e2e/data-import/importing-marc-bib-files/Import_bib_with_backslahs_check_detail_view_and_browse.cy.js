@@ -75,8 +75,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C877081 Import MARC bib record with backslash character in some fields and check Instance detail view pane / browse pane (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C877081'] },
+      'C877081 Import MARC bib record with backslash character in some fields and check Instance detail view pane / browse pane (promin)',
+      { tags: ['extendedPath', 'promin', 'C877081'] },
       () => {
         // Step 4. Check Instance detail view:
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);

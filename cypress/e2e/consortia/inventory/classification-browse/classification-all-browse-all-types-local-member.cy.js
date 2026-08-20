@@ -226,8 +226,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C468274 Classifications of each identifier type from Local Instances could be found in the browse result list by "Classification (all)" option when settings are empty, from Member tenant only (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C468274'] },
+        'C468274 Classifications of each identifier type from Local Instances could be found in the browse result list by "Classification (all)" option when settings are empty, from Member tenant only (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C468274'] },
         () => {
           // Steps 1-11: On Member 1, all classifications should be found as exact matches
           cy.waitForAuthRefresh(() => {

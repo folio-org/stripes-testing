@@ -116,8 +116,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C380478 Verify that "Browse call numbers" result list correctly displays preceding results before the one being searched (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C380478', 'eurekaPhase1'] },
+      'C380478 Verify that "Browse call numbers" result list correctly displays preceding results before the one being searched (promin)',
+      { tags: ['extendedPath', 'promin', 'C380478', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
         callNumbers.forEach((callNumber) => {

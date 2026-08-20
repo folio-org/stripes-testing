@@ -77,8 +77,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C367949 Verify bulk edit with Custom field contains special symbols (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C367949'] },
+        'C367949 Verify bulk edit with Custom field contains special symbols (athena)',
+        { tags: ['extendedPath', 'athena', 'C367949'] },
         () => {
           BulkEditSearchPane.checkUsersRadio();
           BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

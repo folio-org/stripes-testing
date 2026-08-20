@@ -338,8 +338,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C1292050 Verify that MARC authority record data import updates do not clear FOLIO fields in linked MARC bib records (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C1292050'] },
+      'C1292050 Verify that MARC authority record data import updates do not clear FOLIO fields in linked MARC bib records (promin)',
+      { tags: ['criticalPath', 'promin', 'C1292050'] },
       () => {
         // Step 1. Click Actions - Export (MARC) on the MARC authority record detail pane
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.authorityHeading);

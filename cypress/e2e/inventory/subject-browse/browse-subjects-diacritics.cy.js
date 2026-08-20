@@ -68,8 +68,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466296 Browse subjects which has diacritics (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466296'] },
+      'C466296 Browse subjects which has diacritics (promin)',
+      { tags: ['criticalPath', 'promin', 'C466296'] },
       () => {
         [
           testData.queries[0],

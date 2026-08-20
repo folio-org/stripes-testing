@@ -59,8 +59,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C409428 Verify Bulk Edit for Item without populated "URI" in electronic access (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C409428'] },
+      'C409428 Verify Bulk Edit for Item without populated "URI" in electronic access (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C409428'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');

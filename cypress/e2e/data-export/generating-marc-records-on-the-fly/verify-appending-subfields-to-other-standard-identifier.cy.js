@@ -129,8 +129,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C430247 Verify appending subfields to Other Standard Identifier (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C430247'] },
+      'C430247 Verify appending subfields to Other Standard Identifier (athena)',
+      { tags: ['extendedPath', 'athena', 'C430247'] },
       () => {
         // Step 1: Trigger the data export by submitting .csv file with UUIDs of inventory instances
         ExportFile.uploadFile(csvFileName);

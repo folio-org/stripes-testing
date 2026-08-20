@@ -129,8 +129,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411676 (CONSORTIA) Verify the closing after Add holdings action on Consortial holdings accordion details on shadow Instance on Member Tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411676'] },
+        'C411676 (CONSORTIA) Verify the closing after Add holdings action on Consortial holdings accordion details on shadow Instance on Member Tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411676'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.shadowInstance.id);

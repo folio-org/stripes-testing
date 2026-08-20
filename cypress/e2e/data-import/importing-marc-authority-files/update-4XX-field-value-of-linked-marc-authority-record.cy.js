@@ -220,8 +220,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C374187 Update "4XX" field value (edit not controlling field) of linked "MARC Authority" record. (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C374187'] },
+      'C374187 Update "4XX" field value (edit not controlling field) of linked "MARC Authority" record. (promin) (TaaS)',
+      { tags: ['criticalPath', 'promin', 'C374187'] },
       () => {
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
         MarcAuthorities.selectAllRecords();

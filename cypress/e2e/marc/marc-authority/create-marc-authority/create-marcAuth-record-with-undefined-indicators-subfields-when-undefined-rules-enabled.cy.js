@@ -67,8 +67,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514944 Create MARC authority record with undefined Indicators / Subfield codes in Standard and Local fields when "Undefined" rules are enabled (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514944'] },
+        'C514944 Create MARC authority record with undefined Indicators / Subfield codes in Standard and Local fields when "Undefined" rules are enabled (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514944'] },
         () => {
           cy.then(() => {
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C514944_');

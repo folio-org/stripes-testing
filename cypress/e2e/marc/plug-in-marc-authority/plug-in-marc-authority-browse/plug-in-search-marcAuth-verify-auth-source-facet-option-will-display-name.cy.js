@@ -126,8 +126,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C366586 MARC Authority plug-in | Browse: Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C366586'] },
+        'C366586 MARC Authority plug-in | Browse: Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (promin)',
+        { tags: ['extendedPath', 'promin', 'C366586'] },
         () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,

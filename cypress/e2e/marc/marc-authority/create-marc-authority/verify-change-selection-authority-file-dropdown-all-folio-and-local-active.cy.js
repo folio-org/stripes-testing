@@ -69,8 +69,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422247 Verify that user can change selection in "Select authority file" dropdown in "Create a new MARC authority record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C422247'] },
+        'C422247 Verify that user can change selection in "Select authority file" dropdown in "Create a new MARC authority record" window (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C422247'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateNewMarcAuthorityRecord);

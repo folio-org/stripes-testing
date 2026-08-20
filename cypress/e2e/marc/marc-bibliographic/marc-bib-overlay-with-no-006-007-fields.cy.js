@@ -73,8 +73,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C350446 Verify that 006 / 007 tag(s) do not persist if record overlaid does not contain the tag(s) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C350446'] },
+      'C350446 Verify that 006 / 007 tag(s) do not persist if record overlaid does not contain the tag(s) (promin)',
+      { tags: ['extendedPath', 'promin', 'C350446'] },
       () => {
         InventoryInstances.searchByTitle(createdInstanceId);
         InventoryInstances.selectInstanceById(createdInstanceId);

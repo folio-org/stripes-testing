@@ -171,8 +171,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566120 Verify "Suppress from discovery" action (with warnings) for Instances in Member tenant (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C566120'] },
+        'C566120 Verify "Suppress from discovery" action (with warnings) for Instances in Member tenant (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C566120'] },
         () => {
           // Step 1: Select record type and identifier
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

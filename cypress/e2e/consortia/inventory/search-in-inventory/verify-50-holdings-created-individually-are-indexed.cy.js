@@ -97,8 +97,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C1009050 Verify that 50 holdings created individually are successfully indexed (spitfire) (TaaS)',
-          { tags: ['criticalPathECS', 'spitfire', 'C1009050'] },
+          'C1009050 Verify that 50 holdings created individually are successfully indexed (promin) (TaaS)',
+          { tags: ['criticalPathECS', 'promin', 'C1009050'] },
           () => {
             InventorySearchAndFilter.fillInSearchQuery(instancePrefix);
             InventorySearchAndFilter.clickSearch();

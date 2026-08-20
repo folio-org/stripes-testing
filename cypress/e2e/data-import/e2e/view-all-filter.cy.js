@@ -71,8 +71,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C11113 Filter the "View all" log screen (folijet)',
-      { tags: ['smoke', 'folijet', 'C11113', 'nonParallel'] },
+      'C11113 Filter the "View all" log screen (promin)',
+      { tags: ['smoke', 'promin', 'C11113', 'nonParallel'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.checkByReverseChronologicalOrder();

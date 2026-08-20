@@ -97,8 +97,8 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C407706 Correct Patron name shown in the "Source" field of Circulation log for "Change Due Date" loan type (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C407706'] },
+    'C407706 Correct Patron name shown in the "Source" field of Circulation log for "Change Due Date" loan type (vega)',
+    { tags: ['extendedPath', 'vega', 'C407706'] },
     () => {
       CheckOutActions.checkOutUser(userB.barcode);
       CheckOutActions.checkOutItem(testData.folioInstances[0].barcodes[0]);

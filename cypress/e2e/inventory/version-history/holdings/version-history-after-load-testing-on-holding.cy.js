@@ -96,8 +96,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651462 Check "Version history" after load testing on Holding (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C651462'] },
+        'C651462 Check "Version history" after load testing on Holding (promin)',
+        { tags: ['criticalPath', 'promin', 'C651462'] },
         () => {
           InstanceRecordView.openHoldingView();
           HoldingsRecordView.waitLoading();

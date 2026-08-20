@@ -46,8 +46,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C2359 Check that instances are created when a MARC bibliographic file is imported (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C2359'] },
+      'C2359 Check that instances are created when a MARC bibliographic file is imported (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C2359'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyInstancePaneExists();

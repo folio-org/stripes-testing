@@ -93,8 +93,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1322594 Build query to find MARC authority records which have Leader status = New (n) and have been updated several times (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1322594'] },
+        'C1322594 Build query to find MARC authority records which have Leader status = New (n) and have been updated several times (promin)',
+        { tags: ['extendedPath', 'promin', 'C1322594'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,
