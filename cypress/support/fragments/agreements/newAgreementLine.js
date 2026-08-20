@@ -39,6 +39,10 @@ export default {
     cy.do([newAgreementLinePane.find(descriptionTextArea).fillIn(text)]);
   },
 
+  fillNote(text) {
+    cy.do([newAgreementLinePane.find(noteTextArea).fillIn(text)]);
+  },
+
   saveAndClose() {
     cy.do(saveButton.click());
     cy.expect(newAgreementLinePane.absent());

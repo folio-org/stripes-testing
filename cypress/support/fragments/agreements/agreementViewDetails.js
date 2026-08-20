@@ -129,7 +129,13 @@ export default {
   },
 
   openAgreementLineSection() {
-    cy.do(agreementLinesAccordion.find(Button({ id: 'accordion-toggle-button-lines' })).click());
+    cy.do(
+      agreementLinesAccordion
+        .find(Button({ id: 'accordion-toggle-button-lines' }))
+        .perform((el) => {
+          if (el.getAttribute('aria-expanded') === 'false') el.click();
+        }),
+    );
     cy.expect(agreementLinesAccordion.has({ open: true }));
   },
 
@@ -329,12 +335,12 @@ export default {
     cy.expect(
       Accordion({ label: including('Notes') })
         .find(Badge())
-        .has({ text: itemCount }),
+        .has({ text: String(itemCount) }),
     );
   },
 
   verifyAgreementLinesCount(itemCount) {
-    cy.expect(agreementLinesAccordion.find(Badge()).has({ text: itemCount }));
+    cy.expect(agreementLinesAccordion.find(Badge()).has({ text: String(itemCount) }));
   },
 
   verifyAgreementDetailsIsDisplayedByTitle(agreementTitle) {
