@@ -987,6 +987,15 @@ export default {
     cy.expect(buildQueryModal.find(MultiColumnList()).has({ rowCount: expectedNumberOfRows }));
   },
 
+  verifyPreviewTableContainsRowWithValuesInOrder(expectedText) {
+    cy.get('[id="results-viewer-table"] [data-row-index]').then(($rows) => {
+      const rowTexts = $rows.toArray().map((row) => row.innerText.trim());
+      const found = rowTexts.some((text) => text === expectedText.trim());
+      // eslint-disable-next-line no-unused-expressions
+      expect(found, `Expected a row with exact text: "${expectedText}"`).to.be.true;
+    });
+  },
+
   verifyRecordWithContent(content) {
     cy.expect(buildQueryModal.find(MultiColumnListCell({ content })).exists());
   },
@@ -1410,6 +1419,22 @@ export default {
 
   selectCheckboxInShowColumns(columnName) {
     cy.do(Checkbox(columnName).checkIfNotSelected());
+  },
+
+  uncheckAllShowColumns() {
+    // Re-query on each iteration to handle re-renders after each click
+    const uncheckNext = () => {
+      cy.get('body').then(($body) => {
+        const checked = $body.find('[id^="clickable-filter-"][type="checkbox"]:checked');
+        if (checked.length > 0) {
+          // eslint-disable-next-line cypress/no-force
+          cy.wrap(checked.first()).click({ force: true });
+          cy.wait(300);
+          uncheckNext();
+        }
+      });
+    };
+    uncheckNext();
   },
 
   verifyCheckboxInShowColumnsChecked(columnName, isChecked = true) {
