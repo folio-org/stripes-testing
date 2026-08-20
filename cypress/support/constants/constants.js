@@ -1872,3 +1872,18 @@ export const TIMER_TYPES = {
 };
 
 export const SEARCH_AND_FILTER_PANE_TITLE = 'Search & filter';
+
+export const THE_LIST_CONTAINS_NO_ITEMS = 'The list contains no items';
+
+export const HOLDING_RECEIVING_HISTORY = {
+  DISPLAY_SUMMARY: 'Display summary',
+  COPY_NUMBER: 'Copy number',
+  ENUMERATION: 'Enumeration',
+  CHRONOLOGY: 'Chronology',
+  RECEIPT_DATE: 'Receipt date',
+  COMMENT: 'Comment',
+  PUBLIC_DISPLAY: 'Public display',
+  SOURCE: 'Source',
+  USER: 'User',
+  RECEIVING: 'Receiving',
+};

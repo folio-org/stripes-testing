@@ -51,8 +51,8 @@ describe('Bulk-edit', () => {
         QueryModal.selectField(usersFieldValues.patronGroup);
         QueryModal.verifySelectedField(usersFieldValues.patronGroup);
         QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-        QueryModal.chooseFromValueMultiselect(patronGroupNames.STAFF);
-        QueryModal.chooseFromValueMultiselect(patronGroupNames.FACULTY);
+        QueryModal.chooseFromValueMultiselect(patronGroupNames.STAFF, 0, { exactMatch: true });
+        QueryModal.chooseFromValueMultiselect(patronGroupNames.FACULTY, 0, { exactMatch: true });
         QueryModal.addNewRow();
         QueryModal.selectField(usersFieldValues.userBarcode, 1);
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
