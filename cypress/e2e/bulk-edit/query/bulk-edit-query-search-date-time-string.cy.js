@@ -52,7 +52,7 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(usersFieldValues.expirationDate);
         QueryModal.verifySelectedField(usersFieldValues.expirationDate);
-        QueryModal.verifyQueryAreaContent('(users.expiration_date  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator('greater than or equal to');
         QueryModal.verifyOperatorsList(dateTimeOperators);
@@ -69,7 +69,7 @@ describe('Bulk-edit', () => {
         QueryModal.verifyEmptyValue(1);
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, false);
-        QueryModal.verifyQueryAreaContent(`(users.expiration_date >= ${todayDate}) AND (  )`);
+        QueryModal.verifyQueryAreaContent(`(users.expiration_date >= ${todayDate})`);
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.typeInAndSelectField(usersFieldValues.expirationDate, 1);

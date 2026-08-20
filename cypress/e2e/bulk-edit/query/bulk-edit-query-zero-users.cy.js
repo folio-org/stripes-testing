@@ -45,7 +45,7 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(usersFieldValues.userBarcode);
         QueryModal.verifySelectedField(usersFieldValues.userBarcode);
-        QueryModal.verifyQueryAreaContent('(users.barcode  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(users.barcode == )');
