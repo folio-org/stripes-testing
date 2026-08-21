@@ -36,7 +36,12 @@ import {
   or,
 } from '../../../../interactors';
 import Badge from '../../../../interactors/badge';
-import { REQUEST_METHOD, ITEM_STATUS_NAMES, INSTANCE_STATUS_TERM_NAMES } from '../../constants';
+import {
+  REQUEST_METHOD,
+  ITEM_STATUS_NAMES,
+  INSTANCE_STATUS_TERM_NAMES,
+  HOLDING_TABLE_CONTENT,
+} from '../../constants';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -1418,7 +1423,9 @@ export default {
     return ItemRecordView;
   },
   checkHoldingsTableContent({ name, records = [], shouldOpen = true } = {}) {
-    const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
+    const holdingsSection = Accordion({
+      label: including(`${HOLDING_TABLE_CONTENT.HOLDINGS} ${name}`),
+    });
 
     if (shouldOpen) {
       cy.do(holdingsSection.clickHeader());
@@ -1429,7 +1436,7 @@ export default {
         cy.expect(
           holdingsSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ column: 'Item: barcode' }))
+            .find(MultiColumnListCell({ column: HOLDING_TABLE_CONTENT.ITEM_BARCODE }))
             .has({ content: including(record.barcode) }),
         );
       }
@@ -1438,8 +1445,35 @@ export default {
         cy.expect(
           holdingsSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ column: 'Status' }))
+            .find(MultiColumnListCell({ column: HOLDING_TABLE_CONTENT.STATUS }))
             .has({ content: including(record.status) }),
+        );
+      }
+
+      if (record.copyNumber) {
+        cy.expect(
+          holdingsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ column: HOLDING_TABLE_CONTENT.COPY_NUMBER }))
+            .has({ content: including(record.copyNumber) }),
+        );
+      }
+
+      if (record.enumeration) {
+        cy.expect(
+          holdingsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ column: HOLDING_TABLE_CONTENT.ENUMERATION }))
+            .has({ content: including(record.enumeration) }),
+        );
+      }
+
+      if (record.chronology) {
+        cy.expect(
+          holdingsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ column: HOLDING_TABLE_CONTENT.CHRONOLOGY }))
+            .has({ content: including(record.chronology) }),
         );
       }
 
@@ -1447,7 +1481,7 @@ export default {
         cy.expect(
           holdingsSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ column: 'Effective location' }))
+            .find(MultiColumnListCell({ column: HOLDING_TABLE_CONTENT.EFFECTIVE_LOCATION }))
             .has({ content: including(record.location) }),
         );
       }

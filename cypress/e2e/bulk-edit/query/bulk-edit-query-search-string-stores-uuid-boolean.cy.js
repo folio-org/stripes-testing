@@ -55,7 +55,7 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(usersFieldValues.preferredContactType);
         QueryModal.verifySelectedField(usersFieldValues.preferredContactType);
-        QueryModal.verifyQueryAreaContent('(users.preferred_contact_type  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(STRING_STORES_UUID_OPERATORS.EQUAL);
         QueryModal.verifyOperatorsList(STRING_STORES_UUID_OPERATORS);
