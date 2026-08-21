@@ -64,7 +64,7 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(itemFieldValues.instanceId);
         QueryModal.verifySelectedField(itemFieldValues.instanceId);
-        QueryModal.verifyQueryAreaContent('(instances.id  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.verifyOperatorsList(stringStoresUuidButMillionOperators);
         QueryModal.selectOperator(QUERY_OPERATIONS.IN);

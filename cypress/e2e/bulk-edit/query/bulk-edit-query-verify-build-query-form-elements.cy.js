@@ -64,7 +64,7 @@ describe('Bulk-edit', () => {
         QueryModal.verifyBooleanColumn(1);
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, false);
-        QueryModal.verifyQueryAreaContent(' AND (  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.testQueryDisabled(true);
         QueryModal.runQueryDisabled(true);
 

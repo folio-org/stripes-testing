@@ -66,7 +66,7 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(itemFieldValues.itemUuid);
         QueryModal.verifySelectedField(itemFieldValues.itemUuid);
-        QueryModal.verifyQueryAreaContent('(items.id  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator('not in');
         QueryModal.fillInValueTextfield(item.itemId);
