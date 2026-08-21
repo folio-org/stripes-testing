@@ -165,6 +165,7 @@ const classificationAccordion = Accordion('Classification');
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
 const versionHistoryButton = Button({ icon: 'clock' });
 const instanceRelationshipAccordion = Accordion('Instance relationship');
+const clipboardIcon = Button({ icon: 'clipboard' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -2076,12 +2077,22 @@ export default {
     cy.expect(targetEl.exists());
   },
 
+  verifyNoCopyIconForItemInHoldings(holdingsLocation, itemIndex = 0) {
+    const holdingSection = Accordion(including(holdingsLocation));
+    cy.expect(
+      holdingSection
+        .find(MultiColumnListCell({ columnIndex: 1, row: itemIndex }))
+        .find(clipboardIcon)
+        .absent(),
+    );
+  },
+
   copyItemBarcode(itemIndex = 0, holdingsLocation, whileMoving = false) {
     const holdingSection = Accordion(including(holdingsLocation));
     cy.do(
       holdingSection
         .find(MultiColumnListCell({ columnIndex: whileMoving ? 3 : 1, row: itemIndex }))
-        .find(Button({ icon: 'clipboard' }))
+        .find(clipboardIcon)
         .click(),
     );
 
