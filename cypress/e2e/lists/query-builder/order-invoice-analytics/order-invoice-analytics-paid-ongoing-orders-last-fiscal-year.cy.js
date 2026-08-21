@@ -36,10 +36,11 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import OrderLinesLimit from '../../../../support/fragments/settings/orders/orderLinesLimit';
 import getRandomPostfix, { getTestEntityValue } from '../../../../support/utils/stringTools';
 import DateTools from '../../../../support/utils/dateTools';
+import { CodeTools, StringTools } from '../../../../support/utils';
 
 const recordType = Lists.recordTypes.orderInvoiceAnalysis;
 const currentYear = new Date().getFullYear();
-
+const code = CodeTools(4);
 const testData = {
   user: {},
   vendorA: NewOrganization.getDefaultOrganization({ isVendor: true }),
@@ -52,10 +53,12 @@ const testData = {
   fiscalYear1: {
     ...FiscalYears.getDefaultFiscalYear(),
     ...DateTools.getFullFiscalYearStartAndEnd(0),
+    code: `${code}${StringTools.randomTwoDigitNumber()}01`,
   },
   fiscalYear2: {
     ...FiscalYears.getDefaultFiscalYear(),
     ...DateTools.getFullFiscalYearStartAndEnd(1),
+    code: `${code}${StringTools.randomTwoDigitNumber()}02`,
   },
   electronicExpenseClassId: null,
   printExpenseClassId: null,
