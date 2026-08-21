@@ -34,6 +34,11 @@ const META_PREFIX = 'RP-Meta:';
 const HISTORY_DEPTH = 10;
 // A test passing this many consecutive most-recent runs is considered stable → close.
 const STABLE_STREAK_THRESHOLD = 3;
+// Off by default: closing is a destructive, hard-to-reverse action against real Jira
+// tickets, so it must be explicitly opted into via JIRA_FLAKY_AUTO_CLOSE=true (or the
+// --auto-close-stable CLI flag on runFailedTestsMatrix.js). When disabled, stable
+// tickets are reported but left open instead of being closed.
+const AUTO_CLOSE_STABLE_ENV = /^(1|true)$/i.test(process.env.JIRA_FLAKY_AUTO_CLOSE || '');
 // Status the ticket is moved to once the test is deemed stable.
 const STABLE_TARGET_STATUS = 'Closed';
 // Status a closed ticket is reopened to when the test turns flaky again.
@@ -447,10 +452,13 @@ async function createOrUpdateTicket(jiraClient, { featureKey }, entry) {
  * @param {import('axios').AxiosInstance} jiraClient
  * @param {Object} opts
  * @param {string} opts.epicKey
+ * @param {boolean} [opts.autoCloseStable] - actually close stable tickets (default:
+ *   JIRA_FLAKY_AUTO_CLOSE env var, itself off by default)
  * @param {Array} flakyGroups - output of collectFlakyTests (per launch/team)
- * @returns {Promise<Array>} per-test results
+ * @returns {Promise<{synced: Array, closed: Array, deleted: Array, stableSkipped: Array,
+ *   reconcileErrors: Array}>}
  */
-async function syncFlakyTickets(jiraClient, { epicKey }, flakyGroups) {
+async function syncFlakyTickets(jiraClient, { epicKey, autoCloseStable }, flakyGroups) {
   const featureKey = epicKey;
   const byTest = aggregateFlakyTests(flakyGroups);
   const entries = Array.from(byTest.values());
@@ -487,26 +495,37 @@ async function syncFlakyTickets(jiraClient, { epicKey }, flakyGroups) {
   // the flaky-create criteria (a stale/no-longer-flaky test drops out of the flaky set,
   // so it must be re-checked here rather than in the sync loop above).
   // eslint-disable-next-line no-use-before-define
-  const { closed, deleted } = await reconcileTickets(jiraClient, { featureKey });
+  const { closed, deleted, stableSkipped, errors } = await reconcileTickets(jiraClient, {
+    featureKey,
+    autoCloseStable,
+  });
 
-  return { synced: results, closed, deleted };
+  return { synced: results, closed, deleted, stableSkipped, reconcileErrors: errors };
 }
 
 /**
  * Reconcile open flaky tickets linked to the feature against fresh Report Portal
  * history (last HISTORY_DEPTH runs). For each open ticket:
- *   - if the test passed the last STABLE_STREAK_THRESHOLD consecutive runs → close it;
+ *   - if the test passed the last STABLE_STREAK_THRESHOLD consecutive runs → close it,
+ *     but only when autoCloseStable is on; otherwise report it as stable and leave it open;
  *   - else if the test no longer meets the flaky-create criteria → delete it;
  *   - otherwise leave it open (still legitimately flaky).
  * @param {import('axios').AxiosInstance} jiraClient
  * @param {Object} opts
  * @param {string} opts.featureKey - tracking feature (used as a scoping label)
  * @param {number} [opts.threshold] - consecutive clean passes required to close
- * @returns {Promise<{closed: Array, deleted: Array}>}
+ * @param {boolean} [opts.autoCloseStable] - actually close stable tickets (default:
+ *   JIRA_FLAKY_AUTO_CLOSE env var, itself off by default)
+ * @returns {Promise<{closed: Array, deleted: Array, stableSkipped: Array, errors: Array}>}
  */
-async function reconcileTickets(jiraClient, { featureKey, threshold = STABLE_STREAK_THRESHOLD }) {
+async function reconcileTickets(
+  jiraClient,
+  { featureKey, threshold = STABLE_STREAK_THRESHOLD, autoCloseStable = AUTO_CLOSE_STABLE_ENV },
+) {
   const closed = [];
   const deleted = [];
+  const stableSkipped = [];
+  const errors = [];
   const jql =
     `project = "${TICKET_PROJECT_KEY}" AND labels = "${FLAKY_LABEL}" AND labels = "${featureKey}" ` +
     'AND statusCategory != Done ORDER BY created ASC';
@@ -516,15 +535,15 @@ async function reconcileTickets(jiraClient, { featureKey, threshold = STABLE_STR
     openTickets = await searchIssues(jiraClient, jql, 100);
   } catch (err) {
     console.error(`  ✗ Could not list open flaky tickets: ${err.message}`);
-    return { closed, deleted };
+    return { closed, deleted, stableSkipped, errors };
   }
 
-  if (!openTickets.length) return { closed, deleted };
+  if (!openTickets.length) return { closed, deleted, stableSkipped, errors };
 
   console.log(
     `\nReconciling ${openTickets.length} open flaky ticket(s) ` +
-      `(close ever-flaky tests after ${threshold} clean runs, delete tickets that never ` +
-      'met the create criteria)...',
+      `(${autoCloseStable ? 'close' : 'report (auto-close disabled)'} ever-flaky tests after ` +
+      `${threshold} clean runs, delete tickets that never met the create criteria)...`,
   );
 
   // Cache latest launch id per launch name to avoid repeated lookups.
@@ -557,6 +576,14 @@ async function reconcileTickets(jiraClient, { featureKey, threshold = STABLE_STR
     );
     console.log(`  ✓ Closed ${key} (stable ${streak} runs): ${summary}`);
     return { action: 'closed', key, summary, streak };
+  };
+
+  const reportStableSkipped = (key, summary, streak) => {
+    console.log(
+      `  – Stable (${streak} runs) but auto-close disabled — left open: ${summary} ` +
+        '(set JIRA_FLAKY_AUTO_CLOSE=true or pass --auto-close-stable to close it)',
+    );
+    return { action: 'stable-skipped', key, summary, streak };
   };
 
   const removeTicket = async (key, summary, stats) => {
@@ -594,6 +621,9 @@ async function reconcileTickets(jiraClient, { featureKey, threshold = STABLE_STR
       }
       // Was flaky before: keep it, and only close once it's been stable long enough.
       if (streak >= threshold) {
+        if (!autoCloseStable) {
+          return { bucket: 'stableSkipped', result: reportStableSkipped(key, summary, streak) };
+        }
         return { bucket: 'closed', result: await closeTicket(key, summary, streak) };
       }
       // Legitimately flaky and not yet stable → leave the ticket open.
@@ -601,7 +631,7 @@ async function reconcileTickets(jiraClient, { featureKey, threshold = STABLE_STR
     } catch (err) {
       const detail = err.response?.data ? JSON.stringify(err.response.data) : err.message;
       console.error(`  ✗ Reconcile failed for ${key}: ${detail}`);
-      return { bucket: 'closed', result: { action: 'error', key, summary, error: detail } };
+      return { bucket: 'errors', result: { action: 'error', key, summary, error: detail } };
     }
   };
 
@@ -610,11 +640,13 @@ async function reconcileTickets(jiraClient, { featureKey, threshold = STABLE_STR
     const evaluated = await evaluateTicket(ticket);
     if (evaluated) {
       if (evaluated.bucket === 'deleted') deleted.push(evaluated.result);
+      else if (evaluated.bucket === 'stableSkipped') stableSkipped.push(evaluated.result);
+      else if (evaluated.bucket === 'errors') errors.push(evaluated.result);
       else closed.push(evaluated.result);
     }
   }
 
-  return { closed, deleted };
+  return { closed, deleted, stableSkipped, errors };
 }
 
 /**

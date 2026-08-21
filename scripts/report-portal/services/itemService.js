@@ -7,8 +7,6 @@ const LIMIT = 1000;
 const TO_INVESTIGATE_ISSUE_TYPE = 'ti001';
 const FLAKY_ISSUE_TYPE = 'ab_uvbcfwkvo3e8';
 const LAUNCH_PROVIDER_TYPE = 'launch';
-// How many past launches of a test to inspect when computing pass/flaky statistics.
-const DEFAULT_HISTORY_DEPTH = 30;
 
 // Report Portal project used for building UI links (matches rpClient baseURL project)
 const RP_UI_BASE = 'https://report-portal.ci.folio.org/ui/#cypress-nightly';
@@ -76,8 +74,6 @@ const getItemsByIssueType = async ({ launchName, team, issueType }) => {
         return a.type === SPEC_TYPES.STEP ? -1 : 1;
       }
 
-      if (a.name.toLowerCase().includes('volaris')) return -1;
-      if (b.name.toLowerCase().includes('volaris')) return 1;
       return 0;
     })
     .map((item) => ({
@@ -154,14 +150,11 @@ const classifyHistoryResource = (resource) => {
  * @param {Object} opts
  * @param {string|number} opts.launchId - a recent launch id containing the test (baseline)
  * @param {string} opts.uniqueId - RP stable test identifier (e.g. "auto:154cea4d...")
- * @param {number} [opts.historyDepth]
+ * @param {number} opts.historyDepth - how many past runs to inspect (callers must pass
+ *   this explicitly; e.g. HISTORY_DEPTH in flakyTicketService.js)
  * @returns {Promise<Object>} aggregated stats + per-run timeline
  */
-const getItemHistoryStats = async ({
-  launchId,
-  uniqueId,
-  historyDepth = DEFAULT_HISTORY_DEPTH,
-}) => {
+const getItemHistoryStats = async ({ launchId, uniqueId, historyDepth }) => {
   const params = {
     'filter.eq.launchId': launchId,
     'filter.eq.uniqueId': uniqueId,

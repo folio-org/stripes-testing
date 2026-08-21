@@ -6,12 +6,18 @@ async function getIssue(api, key) {
   return response.data;
 }
 
+// Memoizes issue status lookups by key. Previously kept on `this.issues`, but this
+// function is always called as a bare function (not a method), so `this` resolved to
+// the Node global object — an accidental global-scoped cache. Use a module-scoped Map
+// instead so the cache is explicit and doesn't leak onto globalThis.
+const issueStatusCache = new Map();
+
 async function getIssueStatus(api, key) {
-  this.issues = this.issues || {};
-  if (!this.issues[key]) {
-    this.issues[key] = (await getIssue(api, key)).fields.status.name;
+  if (!issueStatusCache.has(key)) {
+    const issue = await getIssue(api, key);
+    issueStatusCache.set(key, issue.fields.status.name);
   }
-  return this.issues[key];
+  return issueStatusCache.get(key);
 }
 
 async function searchIssues(api, jql, maxResults = 100) {

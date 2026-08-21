@@ -93,17 +93,21 @@ Behaviour:
   re-created. Instead, on **every run its description is updated** with:
   - the **TestRail link** for the case,
   - a **Run statistics** block pulled live from **Report Portal history**
-    (Passed / Flaky / Failed counts, flaky rate, first/last seen over the last 30 runs),
+    (Passed / Flaky / Failed counts, flaky rate, first/last seen over the last 10 runs,
+    `HISTORY_DEPTH` in `services/flakyTicketService.js`),
   - a **de-duplicated log of observations** (fail date + launch/environment + Report
     Portal link),
   - a running **total count** of recorded flaky occurrences.
 - Flaky tests seen across multiple launches/teams are aggregated per case + team, so
   each ticket accumulates history over successive daily runs.
-- **Auto-close when stable**: after syncing, the run scans open flaky tasks linked to
-  the feature and, for each, re-checks the test's Report Portal history (last 10 runs).
-  If the test has **passed cleanly for the last 3 consecutive runs**, the task is
-  transitioned to **Closed** with an explanatory comment. (The threshold is
-  `STABLE_STREAK_THRESHOLD` in `services/flakyTicketService.js`.)
+- **Auto-close when stable (opt-in, off by default)**: after syncing, the run scans
+  open flaky tasks linked to the feature and, for each, re-checks the test's Report
+  Portal history (last 10 runs). If the test has **passed cleanly for the last 3
+  consecutive runs**, it is reported as stable — but the ticket is only actually
+  transitioned to **Closed** (with an explanatory comment) when auto-close is enabled
+  via `JIRA_FLAKY_AUTO_CLOSE=true` or `--auto-close-stable`. Otherwise the run logs it
+  and leaves the ticket open, so nothing is closed unless explicitly requested. (The
+  streak threshold is `STABLE_STREAK_THRESHOLD` in `services/flakyTicketService.js`.)
 - **Create criteria**: a ticket is only created for tests that are **flaky in ≥ 3 of the
   last 10 runs** (flaky rate > 20%, `FLAKY_CREATE_MIN_COUNT`).
 - **Priority by flaky rate**: `< 40% → P4`, `< 60% → P3`, `< 80% → P2`, `≥ 80% → P1`
@@ -162,6 +166,9 @@ Environment variables (in the plist `EnvironmentVariables` or the repo `.env`):
 - `CI_API_KEY` — Report Portal API token (used for the flaky detection + history stats).
 - `JIRA_FLAKY_PROJECT` — *(optional)* target project for the tasks (default `FAT`).
 - `JIRA_FLAKY_LINK_TYPE` — *(optional)* issue link type name (default `Relates`).
+- `JIRA_FLAKY_AUTO_CLOSE` — *(optional)* set to `true` to actually close flaky tickets
+  once their test is stable (default: off — stable tickets are reported but left open).
+  Can also be enabled per-run with `--auto-close-stable`.
 - `TEAMS` — *(optional)* comma-separated team names, e.g. `Vega` or `Firebird,Corsair`.
 - `LAUNCHES` — *(optional)* comma-separated launch names (default: all supported).
 - `CONCURRENCY` — *(optional)* max parallel runs (default `4`).

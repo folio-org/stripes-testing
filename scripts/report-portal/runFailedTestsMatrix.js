@@ -25,13 +25,19 @@ const { createJiraClient } = require('../helpers/api.client');
  *   node scripts/report-portal/runFailedTestsMatrix.js --sync-only --epic UXPROD-5976
  *
  * Options:
- *   --teams        Comma-separated team names (default: TEAMS env or Firebird,Corsair)
- *   --launches     Comma-separated launch names (default: LAUNCHES env or all supported)
- *   --concurrency  Max runs in parallel (default: CONCURRENCY env or 4)
- *   --headed       Run Cypress in headed mode
+ *   --teams              Comma-separated team names (default: TEAMS env or Firebird,Corsair)
+ *   --launches           Comma-separated launch names (default: LAUNCHES env or all supported)
+ *   --concurrency        Max runs in parallel (default: CONCURRENCY env or 4)
+ *   --headed             Run Cypress in headed mode
+ *   --auto-close-stable  Actually close flaky tickets whose test has been stable for
+ *                        STABLE_STREAK_THRESHOLD runs. OFF by default (a stable ticket
+ *                        is reported but left open) — must be opted into explicitly via
+ *                        this flag or JIRA_FLAKY_AUTO_CLOSE=true, since closing Jira
+ *                        tickets is a hard-to-reverse action.
  *
- * Precedence for teams / launches / concurrency / epic: CLI flag > env var (.env) > default.
- * Relevant .env vars: TEAMS, LAUNCHES, CONCURRENCY, JIRA_EPIC.
+ * Precedence for teams / launches / concurrency / epic / auto-close-stable:
+ *   CLI flag > env var (.env) > default.
+ * Relevant .env vars: TEAMS, LAUNCHES, CONCURRENCY, JIRA_EPIC, JIRA_FLAKY_AUTO_CLOSE.
  *   --sync-only    Skip the Cypress reruns; only collect tests already marked flaky
  *                  in Report Portal and sync them to the epic. Useful to (re)create
  *                  tickets without re-running tests.
@@ -74,6 +80,9 @@ function parseArgs() {
     syncOnly: false,
     resetBelowCriteria: false,
     resetAll: false,
+    // Off by default: closing Jira tickets is hard to reverse, so it must be opted
+    // into via JIRA_FLAKY_AUTO_CLOSE=true or --auto-close-stable.
+    autoCloseStable: /^(1|true)$/i.test(process.env.JIRA_FLAKY_AUTO_CLOSE || ''),
   };
 
   for (let i = 0; i < argv.length; i++) {
@@ -82,6 +91,8 @@ function parseArgs() {
       args.headed = true;
     } else if (arg === '--sync-only') {
       args.syncOnly = true;
+    } else if (arg === '--auto-close-stable') {
+      args.autoCloseStable = true;
     } else if (arg === '--reset-below-criteria') {
       args.resetBelowCriteria = true;
     } else if (arg === '--reset-all') {
@@ -269,8 +280,17 @@ async function collectFlakyTests(launches, teams) {
 }
 
 async function main() {
-  const { teams, launches, concurrency, headed, epic, syncOnly, resetBelowCriteria, resetAll } =
-    parseArgs();
+  const {
+    teams,
+    launches,
+    concurrency,
+    headed,
+    epic,
+    syncOnly,
+    resetBelowCriteria,
+    resetAll,
+    autoCloseStable,
+  } = parseArgs();
 
   fs.mkdirSync(LOGS_DIR, { recursive: true });
 
@@ -359,21 +379,34 @@ async function main() {
       const flakyGroups = await collectFlakyTests(launches, teams);
 
       const jiraClient = createJiraClient(jiraApiKey);
-      const ticketResults = await syncFlakyTickets(jiraClient, { epicKey: epic }, flakyGroups);
-      const { synced, closed, deleted } = ticketResults;
+      const ticketResults = await syncFlakyTickets(
+        jiraClient,
+        { epicKey: epic, autoCloseStable },
+        flakyGroups,
+      );
+      const { synced, closed, deleted, stableSkipped, reconcileErrors } = ticketResults;
 
       const created = synced.filter((r) => r.action === 'created').length;
       const updated = synced.filter((r) => r.action === 'updated').length;
       const reopened = synced.filter((r) => r.action === 'reopened').length;
       const skipped = synced.filter((r) => r.action === 'skipped').length;
-      const errored = synced.filter((r) => r.action === 'error').length;
-      const closedCount = closed.filter((r) => r.action === 'closed').length;
-      const deletedCount = (deleted || []).filter((r) => r.action === 'deleted').length;
+      const syncErrored = synced.filter((r) => r.action === 'error').length;
+      const reconcileErrored = (reconcileErrors || []).length;
+      const errored = syncErrored + reconcileErrored;
+      const closedCount = closed.length;
+      const deletedCount = (deleted || []).length;
+      const stableSkippedCount = (stableSkipped || []).length;
       console.log(
         `\n✔ Flaky tickets synced under ${epic}: ${created} created, ${updated} updated, ` +
           `${reopened} reopened, ${skipped} skipped, ${closedCount} closed (stable), ` +
-          `${deletedCount} deleted (below criteria), ${errored} failed.`,
+          `${deletedCount} deleted (below criteria), ${stableSkippedCount} stable but not ` +
+          `closed (auto-close disabled), ${errored} failed.`,
       );
+      if (stableSkippedCount && !autoCloseStable) {
+        console.log(
+          '  (pass --auto-close-stable or set JIRA_FLAKY_AUTO_CLOSE=true to close stable tickets)',
+        );
+      }
 
       // Save a local audit copy of what was synced.
       const ticketsFile = path.join(LOGS_DIR, `flaky-tickets-${epic}.json`);
