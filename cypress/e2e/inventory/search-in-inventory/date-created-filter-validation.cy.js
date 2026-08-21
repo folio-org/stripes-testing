@@ -109,8 +109,6 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifyDateCreatedAccordionValues(dateInputs[3][0], dateInputs[3][1]);
           InventorySearchAndFilter.verifyResultListExists();
 
-          cy.pause();
-
           // Final reset clears search
           InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         },
