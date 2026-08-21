@@ -45,6 +45,8 @@ export default HTML.extend('text field')
     errorTextRed: (el) => getComputedStyle(el.querySelector('[class*=feedbackError-]')).getPropertyValue('color') ===
       'rgb(153, 0, 0)',
     errorIcon: (el) => !!el.querySelector('[class*="errorIcon-"]'),
+    nativeValidationMessage: (el) => el.querySelector('input').validationMessage,
+    dataIndex: (el) => el.querySelector('input').getAttribute('data-index') || '',
   })
   .actions({
     blur: ({ find }) => find(TextField()).perform(dispatchFocusout),
