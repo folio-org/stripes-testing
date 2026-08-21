@@ -2,7 +2,7 @@
 const fs = require('fs');
 const { status, team, testTypes } = require('./helpers/test.rail.helper');
 
-const selectedTestTypes = [testTypes.smoke, testTypes.criticalPath, testTypes.extendedPath];
+const selectedTestTypes = [testTypes.Smoke, testTypes.CriticalPath, testTypes.ExtendedPath];
 
 const selectedTeams = [
   team.Firebird,

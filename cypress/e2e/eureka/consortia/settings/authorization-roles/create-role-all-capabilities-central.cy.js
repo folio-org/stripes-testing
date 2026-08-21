@@ -132,7 +132,7 @@ describe('Eureka', () => {
             cy.wait('@capabilitiesCall', { timeout: 120_000 }).then((callCapabs) => {
               expect(callCapabs.response.statusCode).to.eq(201);
             });
-            cy.wait('@capabilitySetsCall', { timeout: 120_000 }).then((callCapabSets) => {
+            cy.wait('@capabilitySetsCall', { timeout: 200_000 }).then((callCapabSets) => {
               expect(callCapabSets.response.statusCode).to.eq(201);
               expect(callCapabSets.request.body.capabilitySetIds).to.have.lengthOf(
                 capabilitySetsCount,

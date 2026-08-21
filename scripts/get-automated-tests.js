@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable guard-for-in */
 /* eslint-disable no-console */
 const fs = require('fs');
@@ -17,6 +16,7 @@ const testRailClient = createTestRailClient(testUsername, testPassword);
 const getTests = getTestRunResults.bind(null, testRailClient, runId);
 const getTestCases = getAllTestCases.bind(null, testRailClient, projectId);
 
+// eslint-disable-next-line no-unused-vars
 function printAutomatedTestsByTeamsFromTestRun() {
   getTests().then((tests) => {
     console.log(`\nNumber of all tests in the #${runId} run: ${tests.length}\n`);

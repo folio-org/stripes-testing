@@ -162,7 +162,7 @@ describe('MARC', () => {
           MarcAuthorities.searchBy('Keyword', searchValue);
           verifySharedAndLocalRecordsFoundCheckBoxesUnchecked();
 
-          MarcAuthoritiesSearch.selectAuthorityByIndex(1);
+          MarcAuthorities.selectIncludingTitle(sharedAuthorityFromCentralTenant.heading);
           MarcAuthority.verifySharedAuthorityDetailsHeading(
             sharedAuthorityFromCentralTenant.heading,
           );

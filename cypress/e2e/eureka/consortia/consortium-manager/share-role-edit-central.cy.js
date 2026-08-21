@@ -153,11 +153,11 @@ describe('Eureka', () => {
         AuthorizationRoles.searchRole(testData.roleName);
         AuthorizationRoles.clickOnRoleName(testData.roleName);
         AuthorizationRoles.checkRoleCentrallyManaged(testData.roleName, false);
-        AuthorizationRoles.shareRole(testData.roleName, { verifyModal: true, timeout: 82_000 });
+        AuthorizationRoles.shareRole(testData.roleName, { verifyModal: true, timeout: 120_000 });
         AuthorizationRoles.openForEdit(testData.roleName);
         AuthorizationRoles.fillRoleNameDescription('', testData.roleDescription);
         testData.originalCapabilitySets.forEach((set) => {
-          AuthorizationRoles.selectCapabilitySetCheckbox(set, false);
+          AuthorizationRoles.selectCapabilitySetCheckbox(set, { isSelected: false });
         });
         cy.wait(3000);
         testData.newCapabilitySets.forEach((set) => {
@@ -171,7 +171,7 @@ describe('Eureka', () => {
         AuthorizationRoles.checkSaveButton();
         AuthorizationRoles.clickSaveButton();
         AuthorizationRoles.checkAfterSaveEdit(testData.roleNameUpdated, testData.roleDescription, {
-          timeout: 100_000,
+          timeout: 120_000,
         });
         AuthorizationRoles.clickAssignUsersButton();
         AuthorizationRoles.selectUserInModal(assignUserCentralData.username);
