@@ -246,7 +246,7 @@ describe('Data Import', () => {
           JobProfileView.verifyJobProfileOpened();
           cy.wait(2000);
           JobProfileView.verifyJobProfileName(jobProfileNameForChanging);
-          JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length - 1);
+          JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
         },
       );
     },
