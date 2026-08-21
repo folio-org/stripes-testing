@@ -27,20 +27,9 @@ const selectedStatus = [
 const selectedTeams = [
   team.Thunderjet,
   team.Vega,
-<<<<<<< HEAD
   team.Eureka,
   team.Athena,
   team.Promin,
-=======
-  team.Volaris,
-  team.Citation,
-  team.Corsair,
-  team.Eureka,
-  team.KInt,
-  team.Athena,
-  team.Promin,
-  team.Helios,
->>>>>>> a7c71a6f2d14750eaf05153ec48720458f923f91
 ];
 
 const testUsername = process.env.TESTRAIL_API_USER;
