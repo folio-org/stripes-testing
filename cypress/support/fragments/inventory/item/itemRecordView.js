@@ -30,6 +30,7 @@ const administrativeDataAccordion = Accordion('Administrative data');
 const acquisitionAccordion = Accordion('Acquisition');
 const itemDataAccordion = Accordion('Item data');
 const itemNotesAccordion = Accordion('Item notes');
+const itemEnumerationAccordion = Accordion('Enumeration data');
 const circulationHistoryAccordion = Accordion('Circulation history');
 const saveAndCloseBtn = Button('Save & close');
 const electronicAccessAccordion = Accordion('Electronic access');
@@ -361,13 +362,19 @@ export default {
       Callout({ textContent: including('The item - HRID  has been successfully saved.') }).exists(),
     );
   },
-  checkItemRecordDetails({ administrativeData = [], itemData = [], acquisitionData = [] } = {}) {
+  checkItemRecordDetails({
+    administrativeData = [],
+    itemData = [],
+    acquisitionData = [],
+    enumerationData = [],
+  } = {}) {
     this.checkFieldsConditions({
       fields: administrativeData,
       section: administrativeDataAccordion,
     });
     this.checkFieldsConditions({ fields: itemData, section: itemDataAccordion });
     this.checkFieldsConditions({ fields: acquisitionData, section: acquisitionAccordion });
+    this.checkFieldsConditions({ fields: enumerationData, section: itemEnumerationAccordion });
   },
   checkItemDetails(location, barcode, status) {
     this.verifyEffectiveLocation(location);
