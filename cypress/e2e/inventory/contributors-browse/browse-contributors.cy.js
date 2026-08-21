@@ -109,7 +109,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
 
         BrowseContributors.select();
-        BrowseContributors.waitForContributorToAppear(testData.contributor.name);
+        BrowseContributors.waitForContributorToAppear(testData.contributor.name, true, false, 3);
         BrowseContributors.browse(testData.contributor.name);
         BrowseContributors.checkSearchResultRow(
           testData.contributor.name,

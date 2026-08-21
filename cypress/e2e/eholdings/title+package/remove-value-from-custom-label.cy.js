@@ -7,8 +7,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('eHoldings', () => {
   describe('Title+Package', () => {
     const testData = {
-      resourcePath: '/resources/19-166-60764',
-      resourceId: '19-166-60764',
+      resourcePath: '/resources/19-166-115237081',
+      resourceId: '19-166-115237081',
       labelAValue: `Test value ${getRandomPostfix()}`,
     };
 
@@ -41,8 +41,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C9241 Selected Title+Package: Remove a value from a custom label (promin)',
-      { tags: ['extendedPath', 'promin', 'C9241'] },
+      'C9241 Selected Title+Package: Remove a value from a custom label (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C9241'] },
       () => {
         EHoldingsResourceView.verifyCustomLabelValue(testData.labelA, testData.labelAValue);
         EHoldingsResourceView.goToEdit();

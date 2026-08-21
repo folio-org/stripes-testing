@@ -6,25 +6,37 @@ import Users from '../../../support/fragments/users/users';
 describe('eHoldings', () => {
   describe('Title+Package', () => {
     const testData = {
-      resourceId: '19-166-60764',
+      resourceId: '19-166-356',
+      beginCoverage: '2023-01-01',
+      endCoverage: '2023-11-20',
     };
 
     before('Create user and login', () => {
       cy.getAdminToken();
+      EHoldingsResourceEdit.updateResourceAttributesViaApi(testData.resourceId, {
+        customCoverages: [
+          {
+            beginCoverage: testData.beginCoverage,
+            endCoverage: testData.endCoverage,
+          },
+        ],
+        customEmbargoPeriod: {
+          embargoValue: 2,
+          embargoUnit: 'Months',
+        },
+        isSelected: true,
+      });
+
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
         Permissions.uieHoldingsRecordsEdit.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        EHoldingsResourceEdit.addCustomEmbargoViaAPI(testData.resourceId, {
-          embargoValue: 4,
-          embargoUnit: 'Months',
-        });
-
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.eholdingsPath + `/resources/${testData.resourceId}`,
           waiter: EHoldingsResourceView.waitLoading,
+          authRefresh: true,
         });
       });
     });
@@ -39,8 +51,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C421986 Remove "Custom Embargo" period for "Resource" that has specified "Managed embargo period" (promin)',
-      { tags: ['extendedPath', 'promin', 'C421986'] },
+      'C421986 Remove "Custom Embargo" period for "Resource" that has specified "Managed embargo period" (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C421986'] },
       () => {
         EHoldingsResourceView.waitLoading();
 

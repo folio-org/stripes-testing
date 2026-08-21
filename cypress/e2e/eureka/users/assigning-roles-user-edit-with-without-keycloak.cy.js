@@ -234,7 +234,6 @@ describe(
           UserEdit.saveAndCloseRolesModal();
           UserEdit.verifyUserRoleNames([testData.roleName]);
           UserEdit.verifyUserRolesRowsCount(1);
-          UserEdit.changePreferredContact();
           cy.intercept('GET', `*${userBodies[2].username}*`).as('searchCallC');
           UserEdit.saveUserEditForm();
 
