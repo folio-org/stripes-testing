@@ -1392,6 +1392,47 @@ export default {
     }
   },
 
+  verifyRowLinkedByTag(tag, { isLinked = true, contentPart = null } = {}) {
+    const targetRow = contentPart
+      ? QuickMarcEditorRow({ tagValue: tag, content: including(contentPart) })
+      : QuickMarcEditorRow({ tagValue: tag });
+    const textBoxes = {
+      content: targetRow.find(TextArea({ name: including('].content') })),
+      controlled: targetRow.find(TextArea({ name: including('].subfieldGroups.controlled') })),
+      uncontrolledAlpha: targetRow.find(
+        TextArea({ name: including('].subfieldGroups.uncontrolledAlpha') }),
+      ),
+      zeroSubfield: targetRow.find(TextArea({ name: including('].subfieldGroups.zeroSubfield') })),
+      uncontrolledNumber: targetRow.find(
+        TextArea({ name: including('].subfieldGroups.uncontrolledNumber') }),
+      ),
+    };
+    if (isLinked) {
+      cy.expect([
+        textBoxes.content.absent(),
+        textBoxes.controlled.exists(),
+        textBoxes.uncontrolledAlpha.exists(),
+        textBoxes.zeroSubfield.exists(),
+        textBoxes.uncontrolledNumber.exists(),
+        targetRow.find(unlinkIconButton).exists(),
+        targetRow.find(viewAuthorityIconButton).exists(),
+        targetRow.find(linkToMarcRecordButton).absent(),
+      ]);
+    } else {
+      cy.expect([
+        textBoxes.content.exists(),
+        textBoxes.controlled.absent(),
+        textBoxes.uncontrolledAlpha.absent(),
+        textBoxes.zeroSubfield.absent(),
+        textBoxes.uncontrolledNumber.absent(),
+        targetRow.find(unlinkIconButton).absent(),
+        targetRow.find(viewAuthorityIconButton).absent(),
+        targetRow.find(linkToMarcRecordButton).exists(),
+      ]);
+    }
+    cy.expect(targetRow.find(Spinner()).absent());
+  },
+
   verifyTagFieldAfterLinking(
     rowIndex,
     tag,
