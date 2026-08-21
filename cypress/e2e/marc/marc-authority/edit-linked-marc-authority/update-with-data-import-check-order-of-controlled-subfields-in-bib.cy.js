@@ -36,13 +36,13 @@ const testData = {
   createdAuthorityID: null,
   createdBibID: null,
   userProperties: null,
-  firstAuthFileName: 'marcAuthFileForC605928-1-2.mrc',
+  firstAuthFileName: 'marcAuthFileForC605928-1.mrc',
   firstAuthEditedFileName: `marcAuthFileForC605928-1.${getRandomPostfix()}.mrc`,
   firstAuthUpdatedFileName: `testMarcFileUpd.${getRandomPostfix()}.mrc`,
-  secondAuthFileName: 'marcAuthFileForC605928-2-2.mrc',
+  secondAuthFileName: 'marcAuthFileForC605928-2.mrc',
   secondAuthEditedFileName: `marcAuthFileForC605928-2.${getRandomPostfix()}.mrc`,
   secondAuthUpdatedFileName: `testMarcFileUpd.${getRandomPostfix()}.mrc`,
-  bibFileName: 'marcBibFileForC605928-2.mrc',
+  bibFileName: 'marcBibFileForC605928.mrc',
   bibEditedFileName: `marcBibFileForC605928.${getRandomPostfix()}mrc`,
   bibUpdatedFileName: `testMarcFileUpd.${getRandomPostfix()}.mrc`,
   jobStatusCompleted: 'Completed',
@@ -61,6 +61,14 @@ const testData = {
   updatedAuth151: '$a AT_C605928 United States of America $z USA $y Independence war $x History $y Civil War, 1861-1865 $x Cavalry operations',
   field651ControlledUpdated: '$a AT_C605928 United States of America $z USA $y Independence war $x History $y Civil War, 1861-1865 $x Cavalry operations',
   field651Uncontrolled1Updated: '$e Country $b States $e USA',
+};
+const marcTestSubstitutions = {
+  auth1Original: ['United States', '4788734', '85140220'],
+  auth1Substitute: ['AT_C605928 United States', '4788734605928', '85140220605928'],
+  auth2Original: ['United States of America', '4788734', '85140220'],
+  auth2Substitute: ['AT_C605928 United States of America', '4788734605928', '85140220605928'],
+  bib1Original: ['The 6th United States Cavalry', 'sh85140220'],
+  bib1Substitute: ['AT_C605928 The 6th United States Cavalry', 'sh85140220605928'],
 };
 const authoritySubfields = [
   {
@@ -117,22 +125,22 @@ describe('MARC', () => {
         DataImport.editMarcFile(
           testData.firstAuthFileName,
           testData.firstAuthEditedFileName,
-          ['United States', '4788734', '85140220'],
-          ['AT_C605928 United States', '4788734', '85140220605928'],
+          marcTestSubstitutions.auth1Original,
+          marcTestSubstitutions.auth1Substitute,
         );
 
         DataImport.editMarcFile(
           testData.bibFileName,
           testData.bibEditedFileName,
-          ['The 6th United States Cavalry', 'sh85140220'],
-          ['AT_C605928 The 6th United States Cavalry', 'sh85140220605928'],
+          marcTestSubstitutions.bib1Original,
+          marcTestSubstitutions.bib1Substitute,
         );
 
         DataImport.editMarcFile(
           testData.secondAuthFileName,
           testData.secondAuthEditedFileName,
-          ['United States of America', '4788734', '85140220'],
-          ['AT_C605928 United States of America', '4788734605928', '85140220605928'],
+          marcTestSubstitutions.auth2Original,
+          marcTestSubstitutions.auth2Substitute,
         );
         cy.getAdminToken();
 
