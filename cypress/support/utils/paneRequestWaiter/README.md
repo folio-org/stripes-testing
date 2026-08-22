@@ -93,6 +93,25 @@ Options:
 The result phase yields the primary Cypress interceptions. The filters phase
 yields the URLs of completed filter-resource requests.
 
+## Asserting that no request runs
+
+Some behavior is defined by a request the application must *not* send, such as a
+search index change that only takes effect when the user submits the search.
+`assertNoPaneRequests` runs the action, keeps watching the profile for a quiet
+period, and fails if any of its requests were sent.
+
+```js
+PaneRequestWaiter.assertNoPaneRequests({
+  pane: PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE,
+  trigger: () => SelectOrderLinesModal.selectSearchIndex('POL number'),
+});
+```
+
+Options match `waitForPaneRequests`, except `timeout` is replaced by
+`quietPeriod` — the time in milliseconds the pane must stay silent after the
+action (2000 by default). An absent request cannot be awaited, so raise it only
+when an application is known to schedule requests later than that.
+
 ## Filter panes
 
 Filter resources are requested when their components render. Some resources

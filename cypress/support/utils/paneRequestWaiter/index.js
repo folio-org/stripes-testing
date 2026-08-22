@@ -1,7 +1,7 @@
 import { waitForTrackedRequests } from './core/filterWaiter';
 import { registerPaneRequests } from './core/registration';
 import { waitForResultRequests } from './core/resultWaiter';
-import { PANE_REQUEST_PHASES } from './constants';
+import { NO_REQUEST_QUIET_PERIOD_MS, PANE_REQUEST_PHASES } from './constants';
 
 export { PANE_REQUEST_PHASES, PANE_REQUEST_PROFILE_NAMES } from './constants';
 export { PANE_REQUEST_PROFILES } from './profiles';
@@ -98,5 +98,49 @@ export const waitForPaneRequests = ({
     conditions,
     routes,
     timeout,
+  });
+};
+
+/**
+ * Runs a UI action and asserts the pane sends none of its requests.
+ *
+ * Use it for behavior defined by an absent request, such as a search index
+ * change that must not run a search before the user submits it. The absence
+ * cannot be awaited, so the action is followed by a quiet period long enough
+ * for a request the application should not send.
+ *
+ * @param {Object} options - Assertion options.
+ * @param {string} options.pane - A value from `PANE_REQUEST_PROFILE_NAMES`.
+ * @param {Function} options.trigger - UI action run after tracking is installed.
+ * @param {string} [options.phase=PANE_REQUEST_PHASES.RESULTS] - A value from
+ * `PANE_REQUEST_PHASES` identifying which group of profile requests must not run.
+ * @param {Object.<string, boolean>} [options.conditions={}] - Runtime facts used
+ * to select a result variant.
+ * @param {Object.<string, PaneRequestMatcher>} [options.matchers={}] - Custom
+ * predicates keyed by route ID.
+ * @param {number} [options.quietPeriod=NO_REQUEST_QUIET_PERIOD_MS] - Time in ms
+ * the pane must stay silent after the action.
+ * @returns {Cypress.Chainable} Chainable resolved after the assertion passes.
+ */
+export const assertNoPaneRequests = ({
+  pane,
+  trigger,
+  phase = PANE_REQUEST_PHASES.RESULTS,
+  conditions = {},
+  matchers = {},
+  quietPeriod = NO_REQUEST_QUIET_PERIOD_MS,
+}) => {
+  if (typeof trigger !== 'function') throw new Error('A pane request trigger function is required');
+
+  const { routes, tracker } = registerPaneRequests({ pane, phase, conditions, matchers });
+
+  trigger();
+
+  cy.wait(quietPeriod);
+
+  return cy.then({ log: false }, () => {
+    const sentRouteIds = routes.filter(({ id }) => tracker.routeCounts[id]).map(({ id }) => id);
+
+    expect(sentRouteIds, `requests sent by the ${pane} action`).to.deep.equal([]);
   });
 };

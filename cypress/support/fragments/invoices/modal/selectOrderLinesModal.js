@@ -61,6 +61,17 @@ export default {
   },
   selectSearchIndex(searchOption) {
     cy.do(searchField.selectIndex(searchOption));
+    cy.expect(searchField.has({ selectedFilterText: searchOption }));
+  },
+  assertSearchFieldValue(value) {
+    cy.expect(searchField.has({ value }));
+  },
+  clickSearchButton() {
+    cy.do(searchButton.click());
+  },
+  // The plugin renders its search field inside a form, so Enter submits the search.
+  pressEnterInSearchField() {
+    cy.get('[class^=modal-] input#input-record-search').type('{enter}');
   },
   resetFilters() {
     cy.do(resetButton.click());

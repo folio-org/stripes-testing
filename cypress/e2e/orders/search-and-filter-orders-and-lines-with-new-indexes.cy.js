@@ -450,6 +450,57 @@ describe('Orders', () => {
     SelectOrderLinesModal.assertSearchResults(expected.map((lineIndex) => titles[lineIndex]));
   };
 
+  // Changing the search index must not run a new search: the current results stay until the
+  // user submits the search with the "Search" button or the Enter key. Both indexes are used
+  // with the same search term, so a search started by the index change alone would be visible
+  // as a changed result set.
+  const verifySearchRunsOnSubmitOnly = ({
+    step,
+    pane,
+    fragment,
+    verifyResults,
+    index,
+    changedIndex,
+    value,
+    expected,
+    changedExpected = [],
+  }) => {
+    const changeSearchIndex = (nextIndex, keptExpected) => {
+      PaneRequestWaiter.assertNoPaneRequests({
+        pane,
+        trigger: () => fragment.selectSearchIndex(nextIndex),
+      });
+      fragment.assertSearchFieldValue(value);
+      // The changed index is not applied yet, so the previous result set is still displayed.
+      verifyResults(keptExpected);
+    };
+
+    cy.log(
+      `<--- STEP ${step}: Changing the search index from ${index} to ${changedIndex} does not run a search --->`,
+    );
+    PaneRequestWaiter.waitForPaneRequests({
+      pane,
+      trigger: () => fragment.searchByParameter(index, value),
+    });
+    verifyResults(expected);
+    changeSearchIndex(changedIndex, expected);
+
+    cy.log(`<--- STEP ${step}: The "Search" button applies the changed search index --->`);
+    PaneRequestWaiter.waitForPaneRequests({
+      pane,
+      trigger: () => fragment.clickSearchButton(),
+    });
+    verifyResults(changedExpected);
+    changeSearchIndex(index, changedExpected);
+
+    cy.log(`<--- STEP ${step}: Pressing Enter applies the changed search index --->`);
+    PaneRequestWaiter.waitForPaneRequests({
+      pane,
+      trigger: () => fragment.pressEnterInSearchField(),
+    });
+    verifyResults(expected);
+  };
+
   const searchClaiming = (index, value, expected) => {
     cy.log(`<--- STEP 29: Search Claiming by ${index}: ${value} --->`);
     Claiming.assertResetAllButtonState({ disabled: false });
@@ -1008,6 +1059,17 @@ describe('Orders', () => {
       receivingKeywordTextCases.forEach(([value, expected]) => searchClaiming(RECEIVING_TITLE_SEARCH_INDEX_LABELS.KEYWORD, value, expected));
       receivingDedicatedTextCases.forEach(([index, value, expected]) => searchClaiming(index, value, expected));
 
+      verifySearchRunsOnSubmitOnly({
+        step: 29,
+        pane: PANE_REQUEST_PROFILE_NAMES.CLAIMING,
+        fragment: Claiming,
+        verifyResults: verifyClaiming,
+        index: RECEIVING_TITLE_SEARCH_INDEX_LABELS.PO_NUMBER,
+        changedIndex: RECEIVING_TITLE_SEARCH_INDEX_LABELS.POL_NUMBER,
+        value: poNumbers[0],
+        expected: [0],
+      });
+
       filterClaimingAndVerify(CLAIMING_FILTER_LABELS.TAGS, [tag1.label], []);
       filterClaimingAndVerify(CLAIMING_FILTER_LABELS.TAGS, [tag2.label], []);
       filterClaimingAndVerify(CLAIMING_FILTER_LABELS.TAGS, [tag1.label, tag2.label], []);
@@ -1067,6 +1129,19 @@ describe('Orders', () => {
         [VENDOR_ACCOUNT, '*3-5*', [0]],
         [VENDOR_ACCOUNT, '*', [0, 1]],
       ].forEach(([index, value, expected]) => searchPlugin(31, index, value, expected));
+
+      verifySearchRunsOnSubmitOnly({
+        step: 31,
+        pane: PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE,
+        fragment: SelectOrderLinesModal,
+        verifyResults: (lineIndexes) => SelectOrderLinesModal.assertSearchResults(
+          lineIndexes.map((lineIndex) => titles[lineIndex]),
+        ),
+        index: VENDOR_ACCOUNT,
+        changedIndex: POL_NUMBER,
+        value: '123-58',
+        expected: [0],
+      });
 
       runPoLineTextSearchMatrix({
         step: 32,

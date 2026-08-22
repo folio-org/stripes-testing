@@ -97,6 +97,20 @@ export default {
 
   selectSearchIndex(parameter) {
     cy.do(searchField.selectIndex(parameter));
+    cy.expect(searchField.has({ selectedFilterText: parameter }));
+  },
+
+  assertSearchFieldValue(value) {
+    cy.expect(searchField.has({ value }));
+  },
+
+  clickSearchButton() {
+    cy.do(Button(COMMON_BUTTON_LABELS.SEARCH).click());
+  },
+
+  // The search field is rendered inside a form, so Enter submits the search.
+  pressEnterInSearchField() {
+    cy.get('#claiming-filters-pane-content').find('#input-record-search').type('{enter}');
   },
 
   sortResultsBy(columnName) {
