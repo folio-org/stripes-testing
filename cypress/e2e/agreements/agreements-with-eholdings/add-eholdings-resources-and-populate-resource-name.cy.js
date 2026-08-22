@@ -11,13 +11,18 @@ import EHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitle
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { ExecutionFlowManager } from '../../../support/utils';
+import { ERMTools, ExecutionFlowManager } from '../../../support/utils';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { AgreementsDisplaySettings } from '../../../support/fragments/settings/agreements';
+import { formatIntlDateTime } from '../../../support/utils/acquisitions';
 
 const R = {
   AGREEMENT: 'agreement',
-  PACKAGE: 'package',
-  TITLE: 'title',
+  CUSTOM_PACKAGE: 'customPackage',
+  CUSTOM_TITLE: 'customTitle',
+  LOCALE: 'locale',
+  NON_CUSTOM_PACKAGE: 'package',
+  NON_CUSTOM_TITLE: 'title',
   USER: 'user',
 };
 
@@ -25,33 +30,81 @@ describe('Agreements', () => {
   describe('Agreements with eHoldings', () => {
     const flow = new ExecutionFlowManager();
     const postfix = getRandomPostfix();
-    const packageName = `AT_C1347108_Package_${postfix}`;
-    const titleName = `AT_C1347108_Title_${postfix}`;
 
     before('Create C1347108 preconditions', () => {
       cy.getAdminToken();
       cy.clearLocalStorage();
+      cy.getTenantLocaleApi().then((locale) => flow.set(R.LOCALE, locale));
 
       flow
-        .step((currentFlow) => Agreements.createViaApi({
-          ...Agreements.defaultAgreement,
-          name: `AT_C1347108_Agreement_${postfix}`,
-        }).then((agreement) => currentFlow.set(R.AGREEMENT, agreement, () => Agreements.deleteViaApi(agreement.id))))
-        .step((currentFlow) => EHoldingsPackages.createPackageViaAPI({
-          data: {
+        .step(() => {
+          AgreementsDisplaySettings.setAgreementsHideResourceSettingsViaApi(false);
+        })
+        .step((currentFlow) => {
+          return Agreements.createViaApi({
+            ...Agreements.defaultAgreement,
+            name: `AT_C1347108_Agreement_${postfix}`,
+          }).then((agreement) => currentFlow.set(R.AGREEMENT, agreement, () => {
+            Agreements.deleteViaApi(agreement.id);
+          }));
+        })
+        .step((currentFlow) => {
+          EHoldingsPackages.getNotCustomSelectedPackageIdViaApi()
+            .then((pkg) => EHoldingsPackages.getPackageDataViaApi(pkg.id, {
+              searchParams: { include: 'resources' },
+            }))
+            .then(({ body }) => currentFlow.set(R.NON_CUSTOM_PACKAGE, {
+              ...body.data,
+              _included: body.included,
+            }));
+
+          EHoldingsTitles.getSelectedNotCustomTitleViaApi('test')
+            .then((t) => EHoldingsTitles.getTitleByIdViaApi(t.id, { searchParams: { include: 'resources' } }))
+            .then(({ body }) => currentFlow.set(R.NON_CUSTOM_TITLE, {
+              ...body.data,
+              _included: body.included,
+            }));
+        })
+        .step((currentFlow) => {
+          const d = {
             type: 'packages',
-            attributes: { name: packageName, contentType: 'E-Book' },
-          },
-        }).then(({ data }) => currentFlow.set(R.PACKAGE, data, () => EHoldingsPackages.deletePackageViaAPI(packageName))))
-        .step((currentFlow) => EHoldingsTitles.createEHoldingTitleVIaApi({
-          packageId: currentFlow.get(R.PACKAGE).id,
-          titleName,
-        }).then((title) => currentFlow.set(R.TITLE, title)))
+            attributes: { name: `AT_C1347108_Package_${postfix}`, contentType: 'E-Book' },
+          };
+
+          return EHoldingsPackages.createPackageViaAPI({ data: d })
+            .then(({ data }) => EHoldingsPackages.getPackageDataViaApi(data.id, {
+              searchParams: { include: 'resources' },
+            }))
+            .then(({ body }) => currentFlow.set(
+              R.CUSTOM_PACKAGE,
+              {
+                ...body.data,
+                _included: body.included,
+              },
+              () => EHoldingsPackages.deletePackageViaAPI(d.attributes.name),
+            ));
+        })
+        .step((currentFlow) => {
+          const d = {
+            packageId: currentFlow.get(R.CUSTOM_PACKAGE).id,
+            titleName: `AT_C1347108_Title_${postfix}`,
+          };
+
+          return EHoldingsTitles.createEHoldingTitleVIaApi(d)
+            .then((t) => EHoldingsTitles.getTitleByIdViaApi(t.id, { searchParams: { include: 'resources' } }))
+            .then(({ body }) => currentFlow.set(
+              R.CUSTOM_TITLE,
+              {
+                ...body.data,
+                _included: body.included,
+              },
+              () => EHoldingsTitles.deleteTitleByIdViaApi(body.data.id),
+            ));
+        })
         .step((currentFlow) => cy
           .createTempUser([
-            Permissions.moduleeHoldingsEnabled.gui,
             Permissions.uiAgreementsAgreementsEdit.gui,
-            Permissions.uiAgreementsSearchAndView.gui,
+            Permissions.uieHoldingsAppView.gui,
           ])
           .then((user) => currentFlow.set(R.USER, user, () => Users.deleteViaApi(user.userId))))
         .step((currentFlow) => cy.login(currentFlow.get(R.USER).username, currentFlow.get(R.USER).password, {
@@ -65,106 +118,167 @@ describe('Agreements', () => {
       flow.cleanup();
     });
 
-    const addAgreementLine = ({ resourceName, title = false, description, note } = {}) => {
+    const addAgreementLine = ({
+      resource,
+      resourceName,
+      title = false,
+      description,
+      note,
+    } = {}) => {
       AgreementViewDetails.openAgreementLineSection();
       AgreementViewDetails.clickActionsForAgreementLines();
       AgreementViewDetails.clickNewAgreementLine();
       NewAgreementLine.waitLoading();
       NewAgreementLine.clickEHoldingsTab();
       NewAgreementLine.clickLinkEResource();
+
       if (title) SelectEHoldingsModal.clickTitlesToggle();
+
       SelectEHoldingsModal.searchForTitleOrPackage(resourceName);
       SelectEHoldingsModal.selectRecord(resourceName);
-      NewAgreementLine.verifyLinkedEResourceIsDisplayed(resourceName);
+
+      const eHoldingDetails = title
+        ? {
+          publicationType: resource.attributes.publicationType,
+          holdingStatus: resource._included[0].attributes.isSelected
+            ? 'Selected'
+            : 'Not selected',
+          accessStatusType: '-',
+        }
+        : {
+          packageContentType: resource.attributes.contentType,
+          holdingStatus: resource.attributes.isSelected ? 'Selected' : 'Not selected',
+          accessStatusType: '-',
+          provider: ERMTools.getEResourceProvider(resource.attributes) || '',
+          count: ERMTools.getEResourceCount(resource.attributes),
+        };
+
+      NewAgreementLine.assertLinkedEResource(eHoldingDetails);
+
       if (description) NewAgreementLine.fillDescription(description);
       if (note) NewAgreementLine.fillNote(note);
 
       cy.intercept('POST', '**/erm/entitlements').as('createEntitlement');
       NewAgreementLine.saveAndClose();
       cy.wait('@createEntitlement').then((interception) => {
+        flow.set(resourceName, interception.response.body);
         expect(interception.request.body.resourceName).to.eq(resourceName);
         expect(interception.response.body.resourceName).to.eq(resourceName);
       });
       AgreementLineInformation.verifyResourceName(resourceName);
       AgreementLineInformation.close();
+
+      return cy.get('@createEntitlement');
+    };
+
+    const getAgreementLineCoverage = ({ coverage = [] }) => {
+      const locale = flow.get(R.LOCALE);
+
+      return coverage
+        .map(({ endDate, startDate }) => {
+          return [
+            startDate ? formatIntlDateTime(locale, startDate) : '*',
+            startDate ? formatIntlDateTime(locale, endDate) : '*',
+          ]
+            .filter(Boolean)
+            .join('');
+        })
+        .join('');
     };
 
     it(
       'C1347108 Add an agreement line with an eHoldings resource and populate resourceName (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'C1347108'] },
+      { tags: ['criticalPath', 'thunderjet', 'C1347108', 'nonParallel'] },
       () => {
-        const { agreement } = flow.ctx();
+        const { agreement, customPackage, customTitle, package: pkg, title } = flow.ctx();
+
+        const nonCustomPackageName = pkg.attributes.name;
+        const nonCustomTitleName = title.attributes.name;
+        const customPackageName = customPackage.attributes.name;
+        const customTitleName = customTitle.attributes.name;
+
         SearchAndFilterAgreements.search(agreement.name);
         Agreements.selectRecord(agreement.name);
         AgreementViewDetails.waitLoading();
 
-        cy.log('<--- STEP 1: Open the New agreement line page --->');
-        cy.log('<--- STEP 2: Link an eHoldings package --->');
-        cy.log('<--- STEP 3: Save and verify package resourceName in the POST payload --->');
-        cy.intercept('POST', '**/erm/entitlements').as('packagePost');
-        addAgreementLine({ resourceName: packageName });
-        cy.get('@packagePost').then((interception) => {
-          cy.wrap(interception.response?.body?.id).as('packageEntitlementId');
+        const cases = [
+          {
+            resource: pkg,
+            resourceName: nonCustomPackageName,
+            title: false,
+          },
+          {
+            resource: title,
+            resourceName: nonCustomTitleName,
+            title: true,
+          },
+          {
+            resource: customPackage,
+            resourceName: customPackageName,
+            description: `AT_C1347108_Description_${postfix}`,
+            note: `AT_C1347108_Note_${postfix}`,
+            title: false,
+          },
+          {
+            resource: customTitle,
+            resourceName: customTitleName,
+            title: true,
+          },
+        ];
+
+        cy.log('<--- STEP 1-9 --->');
+        cases.forEach((config, index) => {
+          addAgreementLine(config).then(() => {
+            const entitlement = flow.get(config.resourceName);
+
+            const line = {
+              name: entitlement.resourceName,
+              provider: ERMTools.getEResourceProvider(entitlement),
+              publicationType: ERMTools.getEResourceType(entitlement),
+              count: ERMTools.getEResourceCount(entitlement),
+              coverage: getAgreementLineCoverage(entitlement),
+            };
+
+            AgreementViewDetails.verifyAgreementLinesCount(index + 1);
+            AgreementViewDetails.openAgreementLineSection();
+            AgreementViewDetails.assertAgreementLinesList([line]);
+          });
         });
-
-        cy.log('<--- STEP 4: Verify the package line in the Agreement lines accordion --->');
-        AgreementViewDetails.verifyAgreementLinesCount(1);
-        AgreementViewDetails.clickAgreementLineRecordByTitle(packageName);
-        AgreementLineInformation.verifyResourceName(packageName);
-        AgreementLineInformation.close();
-
-        cy.log('<--- STEP 5: Open another New agreement line page --->');
-        cy.log('<--- STEP 6: Link an eHoldings title --->');
-        cy.log('<--- STEP 7: Save and verify title resourceName in the POST payload --->');
-        cy.intercept('POST', '**/erm/entitlements').as('titlePost');
-        addAgreementLine({ resourceName: titleName, title: true });
-        cy.get('@titlePost').then((interception) => {
-          cy.wrap(interception.response?.body?.id).as('titleEntitlementId');
-        });
-
-        cy.log('<--- STEP 8: Verify the title line in the Agreement lines accordion --->');
-        AgreementViewDetails.verifyAgreementLinesCount(2);
-
-        cy.log('<--- STEP 9: Add custom package/title lines with description and note --->');
-        addAgreementLine({
-          resourceName: packageName,
-          description: `AT_C1347108_Description_${postfix}`,
-          note: `AT_C1347108_Note_${postfix}`,
-        });
-        addAgreementLine({ resourceName: titleName, title: true });
-        AgreementViewDetails.verifyAgreementLinesCount(4);
 
         cy.log('<--- STEP 10: Filter Agreement lines by the Agreement --->');
         AgreementViewDetails.openAgreementLineFilter();
-        SearchAndFilterAgreementLines.search(packageName);
-        AgreementLines.checkAgreementLineFound(packageName);
-        SearchAndFilterAgreementLines.search(titleName);
-        AgreementLines.checkAgreementLineFound(titleName);
+        SearchAndFilterAgreementLines.filterByAgreement(agreement.name);
+        [customPackageName, customTitleName, nonCustomPackageName, nonCustomTitleName].forEach(
+          (resourceName) => {
+            AgreementLines.checkAgreementLineFound(resourceName);
+          },
+        );
 
-        cy.log('<--- STEP 11: Verify resourceName in every entitlement response --->');
-        cy.get('@packageEntitlementId').then((id) => {
-          cy.okapiRequest({
-            path: `erm/entitlements/${id}`,
-            isDefaultSearchParamsRequired: false,
-          }).then(({ body }) => {
-            expect(body.resourceName).to.eq(packageName);
-          });
-        });
-        cy.get('@titleEntitlementId').then((id) => {
-          cy.okapiRequest({
-            path: `erm/entitlements/${id}`,
-            isDefaultSearchParamsRequired: false,
-          }).then(({ body }) => {
-            expect(body.resourceName).to.eq(titleName);
-          });
+        cy.then(() => {
+          cy.log('<--- STEP 11: Verify resourceName in every entitlement response --->');
+          [customPackageName, customTitleName, nonCustomPackageName, nonCustomTitleName].forEach(
+            (resourceName) => {
+              const entitlement = flow.get(resourceName);
+
+              cy.intercept(`erm/entitlements/${entitlement.id}`).as('entitlement');
+              AgreementLines.selectRecord(resourceName);
+              AgreementLineInformation.waitLoadingWithExistingLine(agreement.name);
+              cy.wait('@entitlement').then((interception) => {
+                expect(interception.response.body.resourceName).to.eq(resourceName);
+              });
+            },
+          );
         });
 
         cy.log('<--- STEPS 12-14: Search by resource name, description and note --->');
+        SearchAndFilterAgreementLines.clearAllFilters();
         [
-          { query: packageName, expectedName: packageName },
-          { query: titleName, expectedName: titleName },
-          { query: `AT_C1347108_Description_${postfix}`, expectedName: packageName },
-          { query: `AT_C1347108_Note_${postfix}`, expectedName: packageName },
+          { query: cases[0].resourceName, expectedName: nonCustomPackageName },
+          { query: cases[1].resourceName, expectedName: nonCustomTitleName },
+          { query: cases[2].resourceName, expectedName: customPackageName },
+          { query: cases[3].resourceName, expectedName: customTitleName },
+          { query: cases[2].description, expectedName: customPackageName },
+          { query: cases[2].note, expectedName: customPackageName },
         ].forEach(({ query, expectedName }) => {
           SearchAndFilterAgreementLines.search(query);
           AgreementLines.checkAgreementLineFound(expectedName);

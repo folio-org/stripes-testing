@@ -1,5 +1,7 @@
 import { Accordion, Button, Pane, TextField } from '../../../../interactors';
-import { COMMON_BUTTON_LABELS } from '../../constants';
+import { COMMON_BUTTON_LABELS, DEFAULT_WAIT_TIME } from '../../constants';
+import SelectAgreementModal from '../eholdings/modals/selectAgreementModal';
+import FIltersPaneHelper from '../filtersPane';
 
 const filtersPane = Pane({ id: 'agreements-tab-filter-pane' });
 const agreementFilterSection = Accordion({ id: 'filter-accordion-agreement' });
@@ -10,6 +12,7 @@ const POLineFilterSection = Accordion({ id: 'filter-accordion-po-lines' });
 const tagsFilterSection = Accordion({ id: 'clickable-tags-filter' });
 const searchInput = filtersPane.find(TextField({ id: 'input-agreementLine-search' }));
 const searchButton = filtersPane.find(Button(COMMON_BUTTON_LABELS.SEARCH));
+const selectAgreementLookupTrigger = filtersPane.find(Button('Select agreement'));
 
 export default {
   search(name) {
@@ -25,5 +28,18 @@ export default {
       POLineFilterSection.exists(),
       tagsFilterSection.exists(),
     ]);
+  },
+
+  clearAllFilters() {
+    FIltersPaneHelper.clearAllFilters(filtersPane);
+  },
+
+  filterByAgreement(agreement) {
+    cy.expect(selectAgreementLookupTrigger.exists());
+    cy.do(selectAgreementLookupTrigger.click());
+
+    SelectAgreementModal.searchByName(agreement);
+    cy.wait(DEFAULT_WAIT_TIME);
+    SelectAgreementModal.selectAgreement();
   },
 };

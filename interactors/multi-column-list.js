@@ -50,6 +50,13 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
         .querySelectorAll('[role=columnheader]');
       return headers ? headers[childIndex(el)]?.textContent : undefined;
     },
+    columnId: (el) => {
+      const headers = el
+        .closest('[class^=mclContainer]')
+        .querySelector('[class^=mclHeaderContainer]')
+        .querySelectorAll('[role=columnheader]');
+      return headers ? headers[childIndex(el)]?.id : undefined;
+    },
     columnIndex: childIndex,
     selected: (el) => !!el.parentElement.className.match(/mclSelected/),
     measured: (el) => el.style && el.style.width !== '',

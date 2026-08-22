@@ -1,5 +1,5 @@
-import { TextField } from '@interactors/html';
-import { Button, HTML, Pane, TextArea } from '../../../../interactors';
+import { including, TextField } from '@interactors/html';
+import { Button, KeyValue, HTML, Pane, TextArea } from '../../../../interactors';
 import SelectEHoldingsModal from './modals/selectEHoldingsModal';
 
 const newAgreementLinePane = Pane({ id: 'pane-agreement-line-form' });
@@ -68,5 +68,24 @@ export default {
 
   verifyLinkedEResourceIsDisplayed(eResourceName) {
     cy.expect(newAgreementLinePane.find(HTML(eResourceName)).exists());
+  },
+
+  assertLinkedEResource(details = {}) {
+    const LABELS_MAP = {
+      accessStatusType: 'Access status type',
+      count: 'Count',
+      holdingStatus: 'Holding status',
+      packageContentType: 'Package content type',
+      provider: 'Provider',
+      publicationType: 'Publication type',
+    };
+
+    cy.wrap(Object.entries(details)).each(([k, value]) => {
+      cy.expect(
+        newAgreementLinePane
+          .find(KeyValue({ label: including(LABELS_MAP[k]), value: including(value) }))
+          .exists(),
+      );
+    });
   },
 };
