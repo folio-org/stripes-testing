@@ -109,7 +109,7 @@ describe(
           BulkEditSearchPane.clickBuildQueryButton();
           QueryModal.selectField(itemFieldValues.itemStatus);
           QueryModal.verifySelectedField(itemFieldValues.itemStatus);
-          QueryModal.verifyQueryAreaContent('(items.status_name  )');
+          QueryModal.verifyQueryAreaContent('');
           QueryModal.verifyOperatorColumn();
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.verifyQueryAreaContent('(items.status_name in ())');
