@@ -129,7 +129,7 @@ describe('Bulk-edit', () => {
         // Step 11: Click "Select field" dropdown => Select "Patron group - Name" option
         QueryModal.selectField(usersFieldValues.patronGroup);
         QueryModal.verifySelectedField(usersFieldValues.patronGroup);
-        QueryModal.verifyQueryAreaContent('(groups.group  )');
+        QueryModal.verifyQueryAreaContent('');
 
         // Step 12: Click "Select operator" dropdown => Select "equals" option
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);

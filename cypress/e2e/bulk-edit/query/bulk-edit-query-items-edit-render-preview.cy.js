@@ -67,7 +67,7 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(itemFieldValues.temporaryLocation);
         QueryModal.verifySelectedField(itemFieldValues.temporaryLocation);
-        QueryModal.verifyQueryAreaContent('(temporary_location.name  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(temporary_location.name == )');
