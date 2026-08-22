@@ -365,6 +365,7 @@ export default {
     const filterMultiSelect = filterSection.find(MultiSelect());
 
     cy.expect(filterMultiSelect.exists());
+    cy.do(filterMultiSelect.perform((el) => el.scrollIntoView({ block: 'center' })));
     cy.do(filterMultiSelect.choose(selectOptions));
   },
 
@@ -440,6 +441,27 @@ export default {
     }
 
     cy.do(findFilterSectionByLabel(filtersPane, filterLabel).find(Select()).choose(value));
+  },
+
+  /**
+   * Fills a single-value text or number filter.
+   *
+   * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
+   * @param {string} filterLabel - Visible accordion and field label.
+   * @param {string|number} value - Value applied by the controlled field.
+   * @param {object} [options={}]
+   * @param {boolean} [options.expandAccordion=true] - Whether to expand the accordion first.
+   */
+  filterByTextField(filtersPane, filterLabel, value, options = {}) {
+    const { expandAccordion = true } = options;
+
+    if (expandAccordion) {
+      this.expandFilterAccordion(filtersPane, filterLabel);
+    }
+
+    cy.do(
+      findFilterSectionByLabel(filtersPane, filterLabel).find(TextField(filterLabel)).fillIn(value),
+    );
   },
 
   /**
@@ -531,6 +553,7 @@ export default {
 
     cy.get(`[${FILTER_ACCORDION_SELECTOR_ATTRIBUTE}="${filterLabel}"]`)
       .should('exist')
+      .scrollIntoView()
       .then(($btn) => {
         if (JSON.parse($btn.attr('aria-expanded')) !== desiredExpanded) {
           cy.wrap($btn).click().should('have.attr', 'aria-expanded', desiredExpanded.toString());

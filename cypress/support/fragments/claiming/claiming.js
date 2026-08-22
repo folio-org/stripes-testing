@@ -12,10 +12,17 @@ import {
   SearchField,
   TextArea,
 } from '../../../../interactors';
-import { COMMON_BUTTON_LABELS, RESULTS_PANE_NOT_FOUND_MESSAGE } from '../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  ORDER_LINE_FILTER_LABELS,
+  RESULTS_PANE_NOT_FOUND_MESSAGE,
+} from '../../constants';
 import DateTools from '../../utils/dateTools';
 import FiltersPaneHelper from '../filtersPane';
 import MultiColumnListHelper from '../multiColumnList';
+import SelectLocationModal from '../orders/modals/selectLocationModal';
+
+const LOCATIONS_LOOKUP_TRIGGER = 'Location look-up';
 
 const claimingPane = Pane('Claiming');
 const filtersPane = Pane({ id: 'claiming-filters-pane' });
@@ -76,8 +83,20 @@ export default {
   },
 
   searchByTitle(title) {
-    cy.do([searchField.fillIn(title), Button('Search').click()]);
+    cy.do([searchField.fillIn(title), Button(COMMON_BUTTON_LABELS.SEARCH).click()]);
     cy.wait(2000);
+  },
+
+  searchByParameter(parameter, value) {
+    cy.do([
+      searchField.selectIndex(parameter),
+      searchField.fillIn(value),
+      Button(COMMON_BUTTON_LABELS.SEARCH).click(),
+    ]);
+  },
+
+  selectSearchIndex(parameter) {
+    cy.do(searchField.selectIndex(parameter));
   },
 
   sortResultsBy(columnName) {
@@ -95,8 +114,17 @@ export default {
     });
   },
 
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(filtersPane, { disabled });
+  },
+
+  clearSearchField() {
+    cy.get('#claiming-filters-pane-content').find('#input-record-search').clear();
+  },
+
   clearAllFilters() {
     FiltersPaneHelper.clearAllFilters(filtersPane);
+    this.assertResetAllButtonState({ disabled: true });
   },
 
   clearFilter(filterLabel) {
@@ -105,6 +133,28 @@ export default {
 
   filterByMultiSelectOptions(filterLabel, options) {
     FiltersPaneHelper.filterByMultiSelectOptions(filtersPane, filterLabel, options);
+  },
+
+  filterByCheckboxes(filterLabel, values, options) {
+    FiltersPaneHelper.filterByCheckboxes(filtersPane, filterLabel, values, options);
+  },
+
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, tags);
+  },
+
+  selectLocationInFilters(locationName, options = {}) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(filtersPane.find(Button(LOCATIONS_LOOKUP_TRIGGER)).click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectLocation(locationName, { multiselect: true, ...options });
+  },
+
+  selectMultipleLocationsInFilters(locationNames) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(filtersPane.find(Button(LOCATIONS_LOOKUP_TRIGGER)).click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectMultipleLocations(locationNames);
   },
 
   /* Assertions */
@@ -129,6 +179,17 @@ export default {
         `Expected ${expectedCount} pieces after searching for "${title}", but found ${actualCount}`,
       );
     });
+  },
+
+  assertPiecesWithTitlesDisplayed(titles = []) {
+    if (!titles.length) {
+      cy.expect(claimingPane.find(HTML(including('No results found'))).exists());
+      return;
+    }
+    titles.forEach((title) => {
+      cy.expect(claimingList.find(HTML(including(title))).exists());
+    });
+    MultiColumnListHelper.assertRowCount(claimingList, titles.length);
   },
 
   verifyMessageDisplayed(message) {

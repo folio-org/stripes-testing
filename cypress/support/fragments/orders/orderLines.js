@@ -127,7 +127,6 @@ const lineDetails = Section({ id: 'lineDetails' });
 const poLineDetails = {
   receiptStatus: lineDetails.find(Select('Receipt status')),
 };
-const selectLocationsModal = Modal('Select locations');
 const submitOrderLine = () => {
   cy.wait(4000);
   const submitButton = Button('Submit');
@@ -2692,19 +2691,18 @@ export default {
     submitOrderLine();
   },
 
-  selectLocationInFilters: (locationName) => {
-    cy.wait(4000);
-    cy.do([
-      Button({ id: 'accordion-toggle-button-pol-location-filter' }).click(),
-      locationLookUpButton.click(),
-      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
-      Button('Search').click(),
-    ]);
-    cy.wait(2000);
-    cy.do([
-      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
-      selectLocationsModal.find(Button('Save')).click(),
-    ]);
+  selectLocationInFilters(locationName, options = {}) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(locationLookUpButton.click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectLocation(locationName, { multiselect: true, ...options });
+  },
+
+  selectMultipleLocationsInFilters(locationNames) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(locationLookUpButton.click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectMultipleLocations(locationNames);
   },
 
   selectOrders: () => {
@@ -2801,6 +2799,19 @@ export default {
     MultiColumnListHelper.sortListBy(searchResultsPane.find(orderLineList), columnName);
   },
 
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(filtersPane, { disabled });
+  },
+
+  clearSearchField() {
+    cy.get('#order-lines-filters-pane-content').find('#input-record-search').clear();
+  },
+
+  clearAllFilters(filterLabel) {
+    FiltersPaneHelper.clearAllFilters(filtersPane, filterLabel);
+    this.assertResetAllButtonState({ disabled: true });
+  },
+
   clearFilter(filterLabel) {
     FiltersPaneHelper.clearFilter(filtersPane, filterLabel);
   },
@@ -2819,6 +2830,10 @@ export default {
 
   filterByFundCodes(codes = []) {
     this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.FUND_CODE, codes);
+  },
+
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, tags);
   },
 
   removeMultiSelectChips(filterLabel, values = []) {
@@ -2841,17 +2856,28 @@ export default {
   },
 
   assertResultsCount(expectedCount) {
-    searchResultsPane
-      .find(
-        PaneHeader({ subtitle: `${expectedCount} record${expectedCount === 1 ? '' : 's'} found` }),
-      )
-      .exists();
+    cy.expect(
+      searchResultsPane
+        .find(
+          PaneHeader({
+            subtitle: `${expectedCount} record${expectedCount === 1 ? '' : 's'} found`,
+          }),
+        )
+        .exists(),
+    );
   },
 
   assertOrderLinesResults(rowsConfig) {
     cy.expect(searchResultsPane.exists());
     MultiColumnListHelper.assertRowsCellsContent(searchResultsPane, rowsConfig);
     this.assertResultsCount(rowsConfig.length);
+  },
+
+  assertTitlesInResults(titles = []) {
+    titles.forEach((title) => {
+      cy.expect(searchResultsPane.find(MultiColumnListCell({ content: title })).exists());
+    });
+    this.assertResultsCount(titles.length);
   },
 
   assertResultsActionIsDisabled(actionButtonName, expectedDisabledState = true) {
