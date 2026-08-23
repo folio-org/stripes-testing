@@ -45,6 +45,7 @@ import SelectInstanceModal from './modals/selectInstanceModal';
 import SelectLocationModal from './modals/selectLocationModal';
 import SelectDonorModal from './modals/selectDonorModal';
 import OrderLineDetails from './orderLineDetails';
+import SelectOrganizationModal from './modals/selectOrganizationModal';
 
 const path = require('path');
 
@@ -62,7 +63,6 @@ const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
 const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderFormat' });
 const buttonFVendorFilter = Button({ id: 'accordion-toggle-button-purchaseOrder.vendor' });
 const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
-const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
 const physicalUnitPrice = '10';
 const quantityPhysical = '5';
 const electronicUnitPrice = '10';
@@ -120,6 +120,7 @@ const donorsInformationSection = Section({ id: 'donorsInformation' });
 // Results pane
 const searchResultsPane = Pane({ id: 'order-lines-results-pane' });
 const locationLookUpButton = Button('Location look-up');
+const organizationLookupTrigger = Button('Organization look-up');
 
 // Edit form
 // PO Line details section
@@ -1215,7 +1216,7 @@ export default {
     cy.do(searchResultsPane.find(Link(POlinenumber)).click());
   },
 
-  varifyOrderlineInResultsList: (POlinenumber) => {
+  verifyOrderLineInResultsList: (POlinenumber) => {
     cy.expect(searchResultsPane.find(Link(POlinenumber)).exists());
   },
 
@@ -1803,16 +1804,6 @@ export default {
 
   selectFilterOngoingPaymentStatus: () => {
     cy.do(Checkbox({ id: 'clickable-filter-paymentStatus-ongoing' }).click());
-  },
-
-  selectFilterSubscriptionFromPOL: (newDate) => {
-    cy.do([
-      buttonSubscriptionFromFilter.click(),
-      TextField('From').fillIn(newDate),
-      TextField('To').fillIn(newDate),
-      Button('Apply').click(),
-      buttonSubscriptionFromFilter.click(),
-    ]);
   },
 
   selectPOLInOrder: (index = 0) => {
@@ -2816,6 +2807,10 @@ export default {
     FiltersPaneHelper.clearFilter(filtersPane, filterLabel);
   },
 
+  filterByDateRange(filterLabel, { from, to }) {
+    FiltersPaneHelper.filterByDateRange(filtersPane, filterLabel, { from, to });
+  },
+
   filterByCheckboxOptions(filterLabel, options = []) {
     FiltersPaneHelper.filterByCheckboxes(filtersPane, filterLabel, options);
   },
@@ -2849,6 +2844,22 @@ export default {
     SelectDonorModal.selectDonors(names);
     SelectDonorModal.submitSelectedDonors();
     SelectDonorModal.assertModalClosed();
+  },
+
+  filterByVendor(vendor) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.VENDOR);
+    cy.expect(organizationLookupTrigger.exists());
+    cy.do(organizationLookupTrigger.click());
+    SelectOrganizationModal.verifyModalView();
+    SelectOrganizationModal.findOrganization(vendor);
+  },
+
+  filterByOrderFormats(formatLabels = []) {
+    this.filterByCheckboxOptions(ORDER_LINE_FILTER_LABELS.ORDER_FORMAT, formatLabels);
+  },
+
+  filterBySubscriptionFrom({ from, to }) {
+    this.filterByDateRange(ORDER_LINE_FILTER_LABELS.SUBSCRIPTION_FROM, { from, to });
   },
 
   assertNoFiltersApplied() {

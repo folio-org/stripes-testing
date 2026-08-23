@@ -365,6 +365,12 @@ export default {
     const filterMultiSelect = filterSection.find(MultiSelect());
 
     cy.expect(filterMultiSelect.exists());
+    cy.expect(filterMultiSelect.has({ disabled: false }));
+    cy.do(
+      filterMultiSelect.perform(($el) => {
+        cy.wrap($el.querySelector('button[class^=multiSelectToggleButton-]')).should('be.enabled');
+      }),
+    );
     cy.do(filterMultiSelect.perform((el) => el.scrollIntoView({ block: 'center' })));
     cy.do(filterMultiSelect.choose(selectOptions));
   },
@@ -418,7 +424,17 @@ export default {
     }
 
     labels.forEach((label) => {
-      cy.do(findFilterSectionByLabel(filtersPane, filterLabel).find(Checkbox(label)).click());
+      const filterCheckbox = findFilterSectionByLabel(filtersPane, filterLabel).find(
+        Checkbox(label),
+      );
+
+      cy.expect(filterCheckbox.has({ disabled: false }));
+      cy.do(
+        filterCheckbox.perform(($el) => {
+          cy.wrap($el.querySelector('input')).should('be.enabled');
+        }),
+      );
+      cy.do(filterCheckbox.click());
     });
   },
 
@@ -440,7 +456,15 @@ export default {
       this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
-    cy.do(findFilterSectionByLabel(filtersPane, filterLabel).find(Select()).choose(value));
+    const filterSelect = findFilterSectionByLabel(filtersPane, filterLabel).find(Select());
+
+    cy.expect(filterSelect.has({ disabled: false }));
+    cy.do(
+      filterSelect.perform(($el) => {
+        cy.wrap($el.querySelector('select[class^=selectControl-]')).should('be.enabled');
+      }),
+    );
+    cy.do(filterSelect.choose(value));
   },
 
   /**
@@ -459,9 +483,17 @@ export default {
       this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
-    cy.do(
-      findFilterSectionByLabel(filtersPane, filterLabel).find(TextField(filterLabel)).fillIn(value),
+    const filterTexField = findFilterSectionByLabel(filtersPane, filterLabel).find(
+      TextField(filterLabel),
     );
+
+    cy.expect(filterTexField.has({ disabled: false }));
+    cy.do(
+      filterTexField.perform(($el) => {
+        cy.wrap($el.querySelector('input')).should('be.enabled');
+      }),
+    );
+    cy.do(filterTexField.fillIn(value));
   },
 
   /**
@@ -484,10 +516,16 @@ export default {
       this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
-    const filterSection = findFilterSectionByLabel(filtersPane, filterLabel);
+    const filterSelection = findFilterSectionByLabel(filtersPane, filterLabel).find(Selection());
 
+    cy.expect(filterSelection.has({ disabled: false }));
+    cy.do(
+      filterSelection.perform(($el) => {
+        cy.wrap($el.querySelector('button[class^=selectionControl-]')).should('be.enabled');
+      }),
+    );
     cy.do([
-      filterSection.find(Selection()).open(),
+      filterSelection.open(),
       SelectionList().filter(value),
       SelectionList().select(including(value)),
     ]);
@@ -519,10 +557,26 @@ export default {
     const filterSection = findFilterSectionByLabel(filtersPane, filterLabel);
 
     if (from !== undefined) {
-      cy.do(filterSection.find(TextField(DATE_RANGE_FIELD_LABELS.FROM)).fillIn(from));
+      const fieldFrom = filterSection.find(TextField(DATE_RANGE_FIELD_LABELS.FROM));
+
+      cy.expect(fieldFrom.has({ disabled: false }));
+      cy.do(
+        fieldFrom.perform(($el) => {
+          cy.wrap($el.querySelector('input')).should('be.enabled');
+        }),
+      );
+      cy.do(fieldFrom.fillIn(from));
     }
     if (to !== undefined) {
-      cy.do(filterSection.find(TextField(DATE_RANGE_FIELD_LABELS.TO)).fillIn(to));
+      const fieldTo = filterSection.find(TextField(DATE_RANGE_FIELD_LABELS.TO));
+
+      cy.expect(fieldTo.has({ disabled: false }));
+      cy.do(
+        fieldTo.perform(($el) => {
+          cy.wrap($el.querySelector('input')).should('be.enabled');
+        }),
+      );
+      cy.do(fieldTo.fillIn(to));
     }
 
     cy.do(filterSection.find(Button(COMMON_BUTTON_LABELS.APPLY)).click());
