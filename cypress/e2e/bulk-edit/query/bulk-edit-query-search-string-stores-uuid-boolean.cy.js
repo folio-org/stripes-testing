@@ -111,7 +111,7 @@ describe('Bulk-edit', () => {
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, false);
         QueryModal.verifyQueryAreaContent(
-          `(users.preferred_contact_type in [${preferredContactTypeEmail}]) AND (  )`,
+          `(users.preferred_contact_type in [${preferredContactTypeEmail}])`,
         );
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();

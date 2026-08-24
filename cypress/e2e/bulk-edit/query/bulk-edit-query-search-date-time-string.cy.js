@@ -93,7 +93,7 @@ describe('Bulk-edit', () => {
         QueryModal.selectField(usersFieldValues.lastName, 2);
         QueryModal.verifySelectedField(usersFieldValues.lastName, 2);
         QueryModal.verifyQueryAreaContent(
-          `(users.expiration_date >= ${todayDate}) AND (users.expiration_date <= ${nextWeekDate}) AND (users.last_name  )`,
+          `(users.expiration_date >= ${todayDate}) AND (users.expiration_date <= ${nextWeekDate})`,
         );
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();

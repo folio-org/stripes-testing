@@ -53,6 +53,22 @@ Cypress.Commands.add('getModUsersVersion', () => {
   }
 });
 
+Cypress.Commands.add('getModOrdersStorageVersion', () => {
+  if (!Cypress.env('MOD_ORDERS_VERSION')) {
+    return cy.getApplicationsForTenantApi(Cypress.env('OKAPI_TENANT'), false).then(({ body }) => {
+      const moduleIds = [];
+      body.applicationDescriptors.forEach((app) => {
+        moduleIds.push(...app.modules);
+      });
+      const modOrdersId = moduleIds.find((m) => String(m.name) === 'mod-orders-storage').id;
+      Cypress.env('MOD_ORDERS_STORAGE_VERSION', modOrdersId);
+      return cy.wrap(modOrdersId);
+    });
+  } else {
+    return Cypress.env('MOD_ORDERS_STORAGE_VERSION');
+  }
+});
+
 Cypress.Commands.add(
   'getInterfacesForTenantProxyApi',
   (tenantName, { full, type } = { full: true }) => {

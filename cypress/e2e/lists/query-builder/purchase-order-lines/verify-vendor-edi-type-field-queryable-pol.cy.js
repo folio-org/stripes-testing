@@ -114,7 +114,7 @@ describe('Lists', () => {
           // Step 3: Select "Vendor org — EDI vendor type" field
           QueryModal.selectField(purchaseOrderLinesFieldValues.vendorOrgEdiType);
           QueryModal.verifySelectedField(purchaseOrderLinesFieldValues.vendorOrgEdiType);
-          QueryModal.verifyQueryAreaContent('(vendor_organization.edi_vendor_edi_type  )');
+          QueryModal.verifyQueryAreaContent('');
 
           // Step 4: Verify operators available for Vendor org — EDI vendor type field
           QueryModal.verifyOperatorsList(enumOperators);

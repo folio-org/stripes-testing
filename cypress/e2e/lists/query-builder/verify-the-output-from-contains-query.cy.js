@@ -74,7 +74,7 @@ describe('Lists', () => {
         // Step 3: Click on "Select field" dropdown, select the option "Instance — Resource title"
         QueryModal.selectField(instanceFieldValues.instanceResourceTitle);
         QueryModal.verifySelectedField(instanceFieldValues.instanceResourceTitle);
-        QueryModal.verifyQueryAreaContent('(instance.title  )');
+        QueryModal.verifyQueryAreaContent('');
 
         // Step 4: Click on "Select operator" dropdown
         const expectedOperators = Object.values(STRING_OPERATORS);
