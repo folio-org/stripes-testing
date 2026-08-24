@@ -129,7 +129,13 @@ export default {
   },
 
   openAgreementLineSection() {
-    cy.do(agreementLinesAccordion.find(Button({ id: 'accordion-toggle-button-lines' })).click());
+    cy.do(
+      agreementLinesAccordion
+        .find(Button({ id: 'accordion-toggle-button-lines' }))
+        .perform((el) => {
+          if (el.getAttribute('aria-expanded') === 'false') el.click();
+        }),
+    );
     cy.expect(agreementLinesAccordion.has({ open: true }));
   },
 
@@ -329,12 +335,12 @@ export default {
     cy.expect(
       Accordion({ label: including('Notes') })
         .find(Badge())
-        .has({ text: itemCount }),
+        .has({ text: String(itemCount) }),
     );
   },
 
   verifyAgreementLinesCount(itemCount) {
-    cy.expect(agreementLinesAccordion.find(Badge()).has({ text: itemCount }));
+    cy.expect(agreementLinesAccordion.find(Badge()).has({ text: String(itemCount) }));
   },
 
   verifyAgreementDetailsIsDisplayedByTitle(agreementTitle) {
@@ -479,5 +485,23 @@ export default {
     cy.do(
       notesAccordionSection.find(MultiColumnListCell({ content: including(noteTitle) })).click(),
     );
+  },
+
+  assertAgreementLinesList(rows = []) {
+    rows.forEach((row) => {
+      const columnsEntries = Object.entries(row).map(([k, v]) => [
+        `list-column-${k.toLocaleLowerCase()}`,
+        v,
+      ]);
+
+      columnsEntries.forEach(([columnId, value]) => {
+        cy.expect(
+          agreementLinesList
+            .find(MultiColumnListRow({ content: including(row.name), isContainer: false }))
+            .find(MultiColumnListCell({ columnId, content: including(value) }))
+            .exists(),
+        );
+      });
+    });
   },
 };

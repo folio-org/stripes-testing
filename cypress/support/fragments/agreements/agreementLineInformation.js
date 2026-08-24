@@ -10,6 +10,7 @@ import {
   MultiSelectOption,
   including,
   Card,
+  HTML,
 } from '../../../../interactors';
 import AgreementViewDetails from './agreementViewDetails';
 
@@ -91,5 +92,13 @@ export default {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect(deleteButton.exists());
     cy.do(deleteButton.click());
+  },
+
+  verifyResourceName(displayValue) {
+    cy.expect(rootSection.find(HTML(including(displayValue))).exists());
+  },
+
+  verifyNotFoundError() {
+    cy.expect(rootSection.find(HTML(including('Error 404: Not Found'))).exists());
   },
 };
