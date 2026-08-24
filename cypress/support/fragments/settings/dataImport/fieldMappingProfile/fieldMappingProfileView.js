@@ -34,6 +34,7 @@ const fullScreenView = Pane({ id: 'full-screen-view' });
 const associatedList = MultiColumnList({ id: 'associated-actionProfiles-list' });
 const overrideProtectedSectionAccordoin = Accordion({ id: 'override-protected-section' });
 const cannotDeleteModal = Modal({ title: 'Cannot delete field mapping profile' });
+const actionProfilesAccordion = Accordion('Associated action profiles');
 
 const itemDetailsViews = {
   administrativeData: adminDataSection,
@@ -146,7 +147,7 @@ export default {
   },
   verifyLinkedActionProfile: (profileName) => {
     cy.expect(
-      Accordion('Associated action profiles')
+      actionProfilesAccordion
         .find(associatedList)
         .find(MultiColumnListCell({ content: profileName }))
         .exists(),
@@ -384,5 +385,14 @@ export default {
         orderDetailsViews.donorDetails.find(MultiColumnListCell({ content: donor })).exists(),
       );
     });
+  },
+
+  verifyActionProfileAbsent: (profileName) => {
+    cy.expect(
+      actionProfilesAccordion
+        .find(associatedList)
+        .find(MultiColumnListCell({ content: profileName }))
+        .absent(),
+    );
   },
 };

@@ -1246,6 +1246,11 @@ export default {
             name: profile.name,
             incomingRecordType: INCOMING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
             existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+            mappingDetails: {
+              name: 'instance',
+              recordType: EXISTING_RECORD_NAMES.INSTANCE,
+              mappingFields: [],
+            },
           },
         },
         isDefaultSearchParamsRequired: false,
