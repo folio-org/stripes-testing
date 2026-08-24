@@ -52,6 +52,7 @@ describe('Data Import', () => {
       // First set to a random number, to make sure "Save" button is clickable
       OrderLinesLimit.setPOLLimit(defaultPurchaseOrderLinesLimit);
       SettingsOrders.verifyPurchaseOrderLinesLimit();
+      SettingsOrders.verifyPurchaseOrderLinesLimitValue(defaultPurchaseOrderLinesLimit);
 
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
@@ -68,6 +69,7 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
+      OrderLinesLimit.setPOLLimitViaApi(1);
       Users.deleteViaApi(testData.user.userId);
       SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.newName);
     });
