@@ -86,4 +86,17 @@ export default {
       cy.expect(agreementLinesList.has({ rowCount: itemCount }));
     }
   },
+
+  selectRecord: (agreementLine) => {
+    cy.expect(agreementLinesList.find(MultiColumnListCell(agreementLine)).exists());
+    cy.do(agreementLinesList.find(MultiColumnListCell(agreementLine)).click());
+  },
+
+  /* INTERCEPTORS */
+  interceptGetEntitlements() {
+    return cy.intercept('GET', '/erm/entitlements**').as('waiterForGetEntitlements');
+  },
+  waitForGetEntitlements() {
+    return cy.wait('@waiterForGetEntitlements');
+  },
 };

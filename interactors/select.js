@@ -50,6 +50,7 @@ export default HTML.extend('select')
       return `${option.textContent}${option.disabled ? ' (disabled)' : ''}`;
     }),
     hasInfoButton: (el) => !!el.querySelector('[data-test-info-popover-trigger="true"]'),
+    selectedOptionLabel: (el) => el.querySelector('select').selectedOptions?.[0]?.textContent,
   })
   .actions({
     choose,

@@ -1600,4 +1600,10 @@ export default {
     internal: 'ui-service-interaction.numberGenerator.view',
     gui: 'Settings (Service-interaction): View number generator settings and use number generators within apps',
   },
+
+  // Dashboard
+  uiDashboardManage: {
+    internal: 'ui-dashboard.dashboards.manage',
+    gui: 'Dashboard: Manage dashboard',
+  },
 };
