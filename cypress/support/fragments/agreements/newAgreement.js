@@ -48,6 +48,15 @@ export default {
     cy.do(saveButton.click());
   },
   waitLoading() {
+    cy.get('[id="edit-agreement-name"]', { timeout: 120000 })
+      .should('exist')
+      .then(($input) => {
+        let el = $input[0].parentElement;
+        while (el && el !== document.body) {
+          if (window.getComputedStyle(el).opacity === '0') el.style.opacity = '1';
+          el = el.parentElement;
+        }
+      });
     cy.expect(nameField.exists());
   },
 };

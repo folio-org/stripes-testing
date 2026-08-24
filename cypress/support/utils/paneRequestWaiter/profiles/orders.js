@@ -9,18 +9,23 @@ import {
   locations,
   materialTypes,
   organizations,
+  isbnConversion,
   orderLines,
   orders,
   prefixes,
-  settingsEntries,
   suffixes,
   tenantAddresses,
   users,
+  invalidOrderLinesQuery,
 } from '../routes';
 import { batchCount } from '../utils/batching';
 import { hasOrderLineProperty, orderLineRecords, orderRecords } from '../utils/responses';
-import { tagsDependency } from './common';
+import { tagFilterRoutes } from './common';
 
+/**
+ * Orders renders its list from composite orders, then resolves display values
+ * that are stored as IDs: vendor organizations, acquisition units, and users.
+ */
 export const ordersProfile = {
   filters: [
     acquisitionUnits,
@@ -30,11 +35,10 @@ export const ordersProfile = {
     suffixes,
     closureReasons,
     tenantAddresses,
-    settingsEntries,
+    ...tagFilterRoutes,
   ],
   results: [orders],
   responseDependencies: [
-    tagsDependency,
     {
       route: organizations,
       dependsOn: [orders.id],
@@ -62,6 +66,12 @@ export const ordersProfile = {
   ],
 };
 
+/**
+ * Order Lines normally starts with `/orders/order-lines`, then fetches parent
+ * orders and their acquisition units. Product ID ISBN searches are different:
+ * conversion is the primary request, and the list request is sent only when
+ * conversion succeeds. A rejected invalid ISBN therefore ends the chain.
+ */
 export const orderLinesProfile = {
   filters: [
     acquisitionUnits,
@@ -74,11 +84,27 @@ export const orderLinesProfile = {
     prefixes,
     suffixes,
     centralOrderingSettings,
-    settingsEntries,
+    ...tagFilterRoutes,
   ],
   results: [orderLines],
+  resultVariants: [
+    {
+      when: ({ conditions }) => Boolean(conditions.isbnConversion),
+      routes: [isbnConversion],
+    },
+    {
+      when: ({ conditions }) => Boolean(conditions.invalidQuery),
+      routes: [invalidOrderLinesQuery],
+    },
+  ],
   responseDependencies: [
-    tagsDependency,
+    {
+      route: orderLines,
+      dependsOn: [isbnConversion.id],
+      // The route accepts the expected invalid-ISBN 400, but only a successful
+      // conversion causes ui-orders to issue the actual order-line search.
+      when: ({ responses }) => responses[isbnConversion.id].response.statusCode < 400,
+    },
     {
       route: orders,
       dependsOn: [orderLines.id],

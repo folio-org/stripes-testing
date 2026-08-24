@@ -1806,6 +1806,7 @@ export const COMMON_BUTTON_LABELS = {
   EDIT: 'Edit',
   NEXT: 'Next',
   NEW: 'New',
+  OK: 'Ok',
   PREVIOUS: 'Previous',
   REMOVE: 'Remove',
   RESET_ALL: 'Reset all',
@@ -1848,6 +1849,8 @@ export const FILE_TYPES = {
 
 export const CUSTOM_FIELD_ENTITY_TYPES = {
   USER: 'user',
+  PURCHASE_ORDER: 'purchase_order',
+  PO_LINE: 'po_line',
 };
 
 export const CUSTOM_FIELD_TYPES = {
@@ -1886,4 +1889,28 @@ export const HOLDING_RECEIVING_HISTORY = {
   SOURCE: 'Source',
   USER: 'User',
   RECEIVING: 'Receiving',
+};
+
+export const INVENTORY_ITEMS = {
+  EFFECTIVE_CALL_NUMBER: 'Effective call number',
+  CALL_NUMBER: 'Call number',
+  BARCODE: 'Item barcode',
+  ACCESSION_NUMBER: 'Accession number',
+  MATERIAL_TYPE: 'Material type',
+  COPY_NUMBER: 'Copy number',
+  SHELVING_ORDER: 'Shelving order',
+  ENUMERATION: 'Enumeration',
+  CHRONOLOGY: 'Chronology',
+  VOLUME: 'Volume',
+  DISPLAY_SUMMARY: 'Display summary',
+};
+
+export const HOLDING_TABLE_CONTENT = {
+  HOLDINGS: 'Holdings:',
+  ITEM_BARCODE: 'Item: barcode',
+  STATUS: 'Status',
+  COPY_NUMBER: 'Copy number',
+  ENUMERATION: 'Enumeration',
+  CHRONOLOGY: 'Chronology',
+  EFFECTIVE_LOCATION: 'Effective location',
 };

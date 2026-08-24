@@ -6,14 +6,25 @@ import Users from '../../../support/fragments/users/users';
 describe('eHoldings', () => {
   describe('Title+Package', () => {
     const testData = {
-      resourceId: '19-166-60764',
-      customEmbargoValue: String(Math.floor(Math.random() * 15) + 1),
+      resourceId: '19-166-184657',
+      customEmbargoValue: String(Math.floor(Math.random() * 11) + 1),
       customEmbargoUnit: 'Months',
+      beginCoverage: '2023-01-01',
+      endCoverage: '2023-11-20',
     };
 
     before('Create user and login', () => {
       cy.getAdminToken();
-      EHoldingsResourceEdit.removeCustomEmbargoViaAPI(testData.resourceId);
+      EHoldingsResourceEdit.updateResourceAttributesViaApi(testData.resourceId, {
+        customCoverages: [
+          {
+            beginCoverage: testData.beginCoverage,
+            endCoverage: testData.endCoverage,
+          },
+        ],
+        customEmbargoPeriod: {},
+        isSelected: true,
+      });
 
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
@@ -35,8 +46,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C421987 Add "Custom Embargo" period for "Resource" that has specified "Managed embargo period" (promin)',
-      { tags: ['extendedPath', 'promin', 'C421987'] },
+      'C421987 Add "Custom Embargo" period for "Resource" that has specified "Managed embargo period" (spitfire)',
+      { tags: ['extendedPath', 'spitfire', 'C421987'] },
       () => {
         EHoldingsResourceView.waitLoading();
         EHoldingsResourceView.verifyCustomEmbargoAbsent();

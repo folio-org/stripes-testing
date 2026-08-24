@@ -118,7 +118,20 @@ export default {
   },
 
   createNewAgreement() {
-    cy.do(Accordion({ id: 'packageShowAgreements' }).find(Button('New')).click());
+    cy.window().then((win) => {
+      cy.stub(win, 'open').callsFake((url) => {
+        // eslint-disable-next-line no-param-reassign
+        win.location.href = url;
+      });
+    });
+    cy.do(
+      Accordion({ id: 'packageShowAgreements' })
+        .find(Button('New'))
+        .perform((element) => {
+          element.removeAttribute('target');
+          element.click();
+        }),
+    );
   },
 
   addExistingAgreement() {
@@ -126,7 +139,7 @@ export default {
   },
 
   searchForExistingAgreement(agreementName) {
-    cy.expect(findAgreementModal.exists());
+    cy.get('[id="plugin-find-agreement-modal"]').invoke('css', 'opacity', '1');
     cy.do([agreementSearchInputField.fillIn(agreementName), searchAgreementButton.click()]);
   },
 

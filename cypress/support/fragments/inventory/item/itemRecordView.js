@@ -30,6 +30,7 @@ const administrativeDataAccordion = Accordion('Administrative data');
 const acquisitionAccordion = Accordion('Acquisition');
 const itemDataAccordion = Accordion('Item data');
 const itemNotesAccordion = Accordion('Item notes');
+const itemEnumerationAccordion = Accordion('Enumeration data');
 const circulationHistoryAccordion = Accordion('Circulation history');
 const saveAndCloseBtn = Button('Save & close');
 const electronicAccessAccordion = Accordion('Electronic access');
@@ -41,10 +42,14 @@ const closeIcon = Button({ icon: 'times' });
 const versionHistoryButton = Button({ icon: 'clock' });
 const confirmationModal = ConfirmationModal('Are you sure?');
 const itemViewPane = Pane({ id: 'item-view-pane' });
+const effectiveCallNumberKeyValue = KeyValue('Effective call number');
+const shelvingOrderKeyValue = KeyValue('Shelving order');
+const infoIcon = HTML({ className: including('icon-info') });
+const boundWithAndAnalyticsAccordion = Accordion('Bound-with and analytics');
 
 const NO_BARCODE = 'No barcode';
 
-const verifyItemBarcode = (value) => {
+const verifyItemBarcode = (value = 'No value set-') => {
   cy.expect(KeyValue('Item barcode').has({ value }));
 };
 const verifyItemIdentifier = (value) => {
@@ -361,13 +366,19 @@ export default {
       Callout({ textContent: including('The item - HRID  has been successfully saved.') }).exists(),
     );
   },
-  checkItemRecordDetails({ administrativeData = [], itemData = [], acquisitionData = [] } = {}) {
+  checkItemRecordDetails({
+    administrativeData = [],
+    itemData = [],
+    acquisitionData = [],
+    enumerationData = [],
+  } = {}) {
     this.checkFieldsConditions({
       fields: administrativeData,
       section: administrativeDataAccordion,
     });
     this.checkFieldsConditions({ fields: itemData, section: itemDataAccordion });
     this.checkFieldsConditions({ fields: acquisitionData, section: acquisitionAccordion });
+    this.checkFieldsConditions({ fields: enumerationData, section: itemEnumerationAccordion });
   },
   checkItemDetails(location, barcode, status) {
     this.verifyEffectiveLocation(location);
@@ -462,7 +473,7 @@ export default {
   },
 
   verifyFormerIdentifiers: (identifier) => cy.expect(KeyValue('Former identifier').has({ value: identifier })),
-  verifyShelvingOrder: (orderValue) => cy.expect(KeyValue('Shelving order').has({ value: orderValue })),
+  verifyShelvingOrder: (orderValue) => cy.expect(shelvingOrderKeyValue.has({ value: orderValue })),
   verifyCallNumber: (callNumber) => cy.expect(KeyValue('Call number').has({ value: callNumber })),
   verifyItemPermanentLocation: (value) => {
     cy.get('div[data-testid="item-permanent-location"]')
@@ -638,7 +649,27 @@ export default {
     cy.wait(1500);
   },
 
-  verifyEffectiveCallNumber: (effectiveCallNumber) => cy.expect(KeyValue('Effective call number').has({ value: effectiveCallNumber })),
+  verifyEffectiveCallNumber: (effectiveCallNumber) => cy.expect(effectiveCallNumberKeyValue.has({ value: effectiveCallNumber })),
+
+  verifyNoInfoIconsNextToCallNumberFields() {
+    cy.expect([
+      itemViewPane.find(effectiveCallNumberKeyValue).find(infoIcon).absent(),
+      itemDataAccordion.find(shelvingOrderKeyValue).find(infoIcon).absent(),
+    ]);
+  },
+
+  verifyLastUpdatedDateAndTime(date, { matches = true } = {}) {
+    if (matches) {
+      cy.expect(
+        administrativeDataAccordion.find(HTML(including(`Record last updated: ${date}`))).exists(),
+      );
+    } else {
+      cy.expect([
+        administrativeDataAccordion.find(HTML(including('Record last updated:'))).exists(),
+        administrativeDataAccordion.find(HTML(including(`Record last updated: ${date}`))).absent(),
+      ]);
+    }
+  },
 
   closeItemEditForm() {
     cy.do(Button({ icon: 'times' }).click());
@@ -760,6 +791,20 @@ export default {
       actionsButton.click(),
       Button('Restricted').click(),
       Modal('Confirm item status: Restricted').find(Button('Confirm')).click(),
+    ]);
+  },
+
+  verifyBoundWithAndAnalyticsRow(instanceHrid, instanceTitle, holdingsHrid, rowIndex = 0) {
+    cy.expect([
+      boundWithAndAnalyticsAccordion
+        .find(MultiColumnListCell(instanceHrid, { row: rowIndex, columnIndex: 0 }))
+        .exists(),
+      boundWithAndAnalyticsAccordion
+        .find(MultiColumnListCell(instanceTitle, { row: rowIndex, columnIndex: 1 }))
+        .exists(),
+      boundWithAndAnalyticsAccordion
+        .find(MultiColumnListCell(holdingsHrid, { row: rowIndex, columnIndex: 2 }))
+        .exists(),
     ]);
   },
 };

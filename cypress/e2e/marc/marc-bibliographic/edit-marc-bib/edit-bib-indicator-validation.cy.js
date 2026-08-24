@@ -71,6 +71,7 @@ describe('MARC', () => {
 
         getBibliographicSpec().then((spec) => {
           specId = spec.id;
+          cy.syncSpecifications(specId);
           toggleAllUndefinedValidationRules(specId, { enable: false });
 
           cy.createTempUser([
@@ -97,9 +98,9 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        toggleAllUndefinedValidationRules(specId, { enable: false });
         Users.deleteViaApi(user.userProperties.userId);
         InventoryInstance.deleteInstanceViaApi(createdInstanceId);
-        toggleAllUndefinedValidationRules(specId, { enable: false });
       });
 
       it(

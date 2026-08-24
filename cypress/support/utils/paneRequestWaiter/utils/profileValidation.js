@@ -15,6 +15,14 @@ const assertRoute = (profileName, route) => {
   if (route.matcher && typeof route.matcher !== 'function') {
     throw new Error(`Invalid matcher for ${profileName}.${route.id}`);
   }
+
+  const invalidAcceptedStatus = route.acceptedErrorStatuses?.find(
+    (status) => !Number.isInteger(status) || status < 400 || status > 599,
+  );
+
+  if (invalidAcceptedStatus) {
+    throw new Error(`Invalid accepted error status for ${profileName}.${route.id}`);
+  }
 };
 
 const assertUniqueRouteIds = (profileName, phase, routes) => {
@@ -28,17 +36,41 @@ const validateDependencies = (profileName, profile, phase) => {
   const dependencies = (profile.responseDependencies || []).filter(
     (dependency) => (dependency.phase || PANE_REQUEST_PHASES.RESULTS) === phase,
   );
-  const availableRouteIds = new Set((profile[phase] || []).map(({ id }) => id));
+  const variantRoutes =
+    phase === PANE_REQUEST_PHASES.RESULTS
+      ? (profile.resultVariants || []).flatMap(({ routes }) => routes)
+      : [];
+  const availableRouteIds = new Set(
+    [...(profile[phase] || []), ...variantRoutes].map(({ id }) => id),
+  );
+  const initialRouteSets = [
+    profile[phase] || [],
+    ...(phase === PANE_REQUEST_PHASES.RESULTS
+      ? (profile.resultVariants || []).map(({ routes }) => routes)
+      : []),
+  ].map((routes) => new Set(routes.map(({ id }) => id)));
+  const dependencyRouteIds = new Set();
 
   dependencies.forEach((dependency) => {
     assertRoute(profileName, dependency.route);
 
-    if (availableRouteIds.has(dependency.route.id)) {
+    if (!Array.isArray(dependency.dependsOn) || typeof dependency.when !== 'function') {
+      throw new Error(`Invalid response dependency in ${profileName}: ${dependency.route.id}`);
+    }
+
+    if (dependencyRouteIds.has(dependency.route.id)) {
       throw new Error(`Duplicate ${phase} dependency in ${profileName}: ${dependency.route.id}`);
     }
 
-    if (!Array.isArray(dependency.dependsOn) || typeof dependency.when !== 'function') {
-      throw new Error(`Invalid response dependency in ${profileName}: ${dependency.route.id}`);
+    const duplicatesInitialRoute = initialRouteSets.some((routeIds) => {
+      return (
+        routeIds.has(dependency.route.id) &&
+        dependency.dependsOn.every((routeId) => routeIds.has(routeId))
+      );
+    });
+
+    if (duplicatesInitialRoute) {
+      throw new Error(`Duplicate ${phase} dependency in ${profileName}: ${dependency.route.id}`);
     }
 
     const unavailableRoute = dependency.dependsOn.find(
@@ -60,6 +92,7 @@ const validateDependencies = (profileName, profile, phase) => {
     }
 
     availableRouteIds.add(dependency.route.id);
+    dependencyRouteIds.add(dependency.route.id);
   });
 };
 
@@ -71,6 +104,19 @@ export const validateProfiles = (profiles) => {
 
       routes.forEach((profileRoute) => assertRoute(profileName, profileRoute));
       assertUniqueRouteIds(profileName, phase, routes);
+      if (phase === PANE_REQUEST_PHASES.RESULTS) {
+        (profile.resultVariants || []).forEach((variant) => {
+          if (
+            typeof variant.when !== 'function' ||
+            !Array.isArray(variant.routes) ||
+            !variant.routes.length
+          ) {
+            throw new Error(`Invalid result variant in pane request profile: ${profileName}`);
+          }
+          variant.routes.forEach((profileRoute) => assertRoute(profileName, profileRoute));
+          assertUniqueRouteIds(profileName, phase, variant.routes);
+        });
+      }
       validateDependencies(profileName, profile, phase);
     });
   });
