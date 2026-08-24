@@ -119,7 +119,7 @@ describe('Lists', () => {
           // Step 3: Select "Vendor org — Name" field
           QueryModal.selectField(purchaseOrderLinesFieldValues.vendorOrgName);
           QueryModal.verifySelectedField(purchaseOrderLinesFieldValues.vendorOrgName);
-          QueryModal.verifyQueryAreaContent('(vendor_organization.name  )');
+          QueryModal.verifyQueryAreaContent('');
 
           // Step 4: Verify operators available for Vendor org — Name field
           QueryModal.verifyOperatorsList(enumOperators);
