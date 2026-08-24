@@ -36,7 +36,7 @@ describe('Lists', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Lists.deleteListByNameViaApi(listData.name);
       Lists.deleteListByNameViaApi(editListData.name);
       Users.deleteViaApi(userData.userId);

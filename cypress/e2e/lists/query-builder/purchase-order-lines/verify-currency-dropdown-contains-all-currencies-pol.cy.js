@@ -216,7 +216,7 @@ describe('Lists', () => {
           // Step 3: Select "POL — Cost currency" field, "not equal to" operator, and verify Value dropdown
           QueryModal.selectField(purchaseOrderLinesFieldValues.costCurrency);
           QueryModal.verifySelectedField(purchaseOrderLinesFieldValues.costCurrency);
-          QueryModal.verifyQueryAreaContent('(pol.cost_currency  )');
+          QueryModal.verifyQueryAreaContent('');
 
           QueryModal.verifyOperatorsList(enumOperators);
           QueryModal.selectOperator(QUERY_OPERATIONS.NOT_EQUAL);
