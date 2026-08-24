@@ -1093,8 +1093,13 @@ export default {
     this.assertMultiSelectFilterOptions(ORDER_FILTER_LABELS.FUND_CODE, expectedOptions, options);
   },
 
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(ordersFiltersPane, { disabled });
+  },
+
   resetAllFilters() {
     FiltersPaneHelper.clearAllFilters(ordersFiltersPane);
+    this.assertResetAllButtonState({ disabled: true });
   },
 
   clearFilter(filterLabel) {
@@ -1107,8 +1112,16 @@ export default {
     FiltersPaneHelper.filterByMultiSelectOptions(ordersFiltersPane, filterLabel, options);
   },
 
+  filterByTextField(filterLabel, value, options) {
+    FiltersPaneHelper.filterByTextField(ordersFiltersPane, filterLabel, value, options);
+  },
+
   filterByFundCodes(codes = []) {
     this.filterByMultiSelectOptions(ORDER_FILTER_LABELS.FUND_CODE, codes);
+  },
+
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_FILTER_LABELS.TAGS, tags);
   },
 
   removeMultiSelectChips(filterLabel, values = []) {
