@@ -520,12 +520,6 @@ describe('Lists', () => {
               ).then((invLine4Line3) => {
                 testData.invLine4Line3 = invLine4Line3;
               });
-
-              // Pay Invoice #4
-              // Invoices.changeInvoiceStatusViaApi({
-              //   invoice: inv4,
-              //   status: INVOICE_STATUSES.PAID,
-              // });
             });
           });
 
