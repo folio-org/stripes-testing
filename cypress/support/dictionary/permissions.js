@@ -72,6 +72,10 @@ export default {
   },
 
   // eHoldings
+  uieHoldingsAppView: {
+    internal: 'ui-eholdings.app.view',
+    gui: 'UI-Eholdings App',
+  },
   uieHoldingsRecordsEdit: {
     internal: 'ui-eholdings.records.edit',
     gui: 'eHoldings: Can edit providers, packages, titles detail records',
