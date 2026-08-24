@@ -124,4 +124,5 @@ export const ORDER_VIEW_FIELD_LABELS = {
 export const ORDER_AND_ORDER_LINE_BUTTONS = {
   ADD_POL: 'Add POL',
   SAVE_AND_OPEN: 'Save & open order',
+  CREATE_NEW_PURCHASE_ORDER: 'Create new purchase order',
 };

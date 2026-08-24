@@ -1,11 +1,17 @@
 import { REQUEST_METHOD } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
-import { MultiColumnListCell, Section, MultiColumnList, Button } from '../../../../interactors';
+import {
+  MultiColumnListCell,
+  Section,
+  MultiColumnList,
+  Button,
+  Pane,
+} from '../../../../interactors';
 
 const rootSection = Section({ id: 'agreements-tab-pane' });
 const agreementLinesList = rootSection.find(MultiColumnList());
 const agreementLinesToggleButton = Button({ id: 'clickable-nav-agreementLines' });
-const selectAgreementsButton = Button({ id: 'agreement-agreement-search-button' });
+const filterPane = Pane({ id: 'agreements-tab-filter-pane' });
 
 const defaultAgreementLine = (agreementId) => {
   return {
@@ -18,14 +24,14 @@ const defaultAgreementLine = (agreementId) => {
 export default {
   defaultAgreementLine,
 
+  navigate() {
+    cy.visit('/erm/agreements');
+    cy.do(agreementLinesToggleButton.click());
+  },
+
   waitLoading() {
+    cy.expect(filterPane.exists());
     cy.expect(rootSection.exists());
-    cy.do(
-      agreementLinesToggleButton.perform((element) => {
-        expect(element.classList[2]).to.include('primary');
-      }),
-    );
-    cy.expect(selectAgreementsButton.exists());
   },
 
   createViaApi: (agreementLine) => {
@@ -85,5 +91,10 @@ export default {
     } else {
       cy.expect(agreementLinesList.has({ rowCount: itemCount }));
     }
+  },
+
+  selectRecord: (agreementLine) => {
+    cy.expect(agreementLinesList.find(MultiColumnListCell(agreementLine)).exists());
+    cy.do(agreementLinesList.find(MultiColumnListCell(agreementLine)).click());
   },
 };

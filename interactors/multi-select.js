@@ -152,10 +152,7 @@ export default createInteractor('multi select')
     error: (el) => el.querySelector('[class^=feedbackError]').textContent,
     ariaLabelledby: (el) => el.querySelector('[role=combobox]').getAttribute('aria-labelledby'),
     span: (el) => el.querySelector('span').textContent,
-    disabled: {
-      apply: (el) => el.querySelector('input').disabled,
-      default: false,
-    },
+    disabled: (el) => el.querySelector('button[class^=multiSelectToggleButton-]').disabled,
   })
   .actions({
     toggle: ({ find }) => find(Button({ className: including('multiSelectToggleButton-') })).click(),

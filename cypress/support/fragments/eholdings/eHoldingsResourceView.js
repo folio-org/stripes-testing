@@ -136,6 +136,21 @@ export default {
       /^cypress\/downloads\/\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_\d+_\d+-\d+-\d+_resource\.csv$/,
     );
   },
+  createNewAgreement() {
+    cy.window().then((win) => {
+      cy.stub(win, 'open').callsFake((url) => {
+        // eslint-disable-next-line no-param-reassign
+        win.location.href = url;
+      });
+    });
+    cy.do(
+      agreementsSection.find(Button('New')).perform((element) => {
+        element.removeAttribute('target');
+        element.click();
+      }),
+    );
+  },
+
   openSelectAgreementModal() {
     cy.do(agreementsSection.find(Button('Add')).click());
     SelectAgreementModal.waitLoading();
