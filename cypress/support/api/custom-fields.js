@@ -5,6 +5,11 @@ Cypress.Commands.add('getCustomFieldsViaApi', (entityType = CUSTOM_FIELD_ENTITY_
 
   if (entityType === CUSTOM_FIELD_ENTITY_TYPES.USER) {
     moduleVersionPromise = cy.getModUsersVersion();
+  } else if (
+    entityType === CUSTOM_FIELD_ENTITY_TYPES.PURCHASE_ORDER ||
+    entityType === CUSTOM_FIELD_ENTITY_TYPES.PO_LINE
+  ) {
+    moduleVersionPromise = cy.getModOrdersStorageVersion();
   }
 
   return moduleVersionPromise.then((modVersion) => {
@@ -28,6 +33,11 @@ Cypress.Commands.add(
 
     if (entityType === CUSTOM_FIELD_ENTITY_TYPES.USER) {
       moduleVersionPromise = cy.getModUsersVersion();
+    } else if (
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PURCHASE_ORDER ||
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PO_LINE
+    ) {
+      moduleVersionPromise = cy.getModOrdersStorageVersion();
     }
 
     return cy.getCustomFieldsViaApi().then((response) => {
@@ -54,9 +64,14 @@ Cypress.Commands.add(
 
     if (entityType === CUSTOM_FIELD_ENTITY_TYPES.USER) {
       moduleVersionPromise = cy.getModUsersVersion();
+    } else if (
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PURCHASE_ORDER ||
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PO_LINE
+    ) {
+      moduleVersionPromise = cy.getModOrdersStorageVersion();
     }
 
-    return cy.getCustomFieldsViaApi().then((response) => {
+    return cy.getCustomFieldsViaApi(entityType).then((response) => {
       return moduleVersionPromise.then((modVersion) => {
         const createdCustomFields = [];
 
@@ -92,6 +107,11 @@ Cypress.Commands.add(
 
     if (entityType === CUSTOM_FIELD_ENTITY_TYPES.USER) {
       moduleVersionPromise = cy.getModUsersVersion();
+    } else if (
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PURCHASE_ORDER ||
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PO_LINE
+    ) {
+      moduleVersionPromise = cy.getModOrdersStorageVersion();
     }
 
     return cy.getCustomFieldsViaApi().then((response) => {
@@ -122,6 +142,11 @@ Cypress.Commands.add(
 
     if (entityType === CUSTOM_FIELD_ENTITY_TYPES.USER) {
       moduleVersionPromise = cy.getModUsersVersion();
+    } else if (
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PURCHASE_ORDER ||
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PO_LINE
+    ) {
+      moduleVersionPromise = cy.getModOrdersStorageVersion();
     }
     return moduleVersionPromise.then((modVersion) => {
       return cy.wrap(ids).each((id) => {
