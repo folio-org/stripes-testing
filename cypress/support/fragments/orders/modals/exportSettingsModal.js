@@ -14,6 +14,8 @@ import OrderStates from '../orderStates';
 const exportSettingsModal = Modal('Export settings');
 const cancelButton = exportSettingsModal.find(Button('Cancel'));
 const exportButton = exportSettingsModal.find(Button('Export'));
+const selectPoFieldsDropdown = MultiSelect({ ariaLabelledby: 'selected-po-fields' });
+const selectPolFieldsDropdown = MultiSelect({ ariaLabelledby: 'selected-pol-fields' });
 
 const content =
   'This export could take a few minutes. If you reload or close the page the export will not be completed. Once the file is ready it could take another minute for your browser to finish downloading the file. You can continue to work with orders and order lines in a different browser tab if needed.';
@@ -47,9 +49,13 @@ export default {
       exportSettingsModal.find(Label('PO fields to export')).exists(),
       exportSettingsModal.find(Label('POL fields to export')).exists(),
       exportSettingsModal.find(allOrderFieldsRadioButton).exists(),
+      exportSettingsModal.find(allOrderFieldsRadioButton).has({ checked: true }),
       exportSettingsModal.find(selectedOrderFieldsRadioButton).exists(),
       exportSettingsModal.find(allOrderLineFieldsRadioButton).exists(),
+      exportSettingsModal.find(allOrderLineFieldsRadioButton).has({ checked: true }),
       exportSettingsModal.find(selectedOrderLineFieldsRadioButton).exists(),
+      selectPoFieldsDropdown.has({ disabled: true }),
+      selectPolFieldsDropdown.has({ disabled: true }),
       cancelButton.has({ disabled: false, visible: true }),
       exportButton.has({ disabled: false, visible: true }),
     ]);
@@ -57,14 +63,16 @@ export default {
   selectOrderFieldsToExport(option) {
     cy.do([
       selectedOrderFieldsRadioButton.click(),
-      MultiSelect({ ariaLabelledby: 'selected-po-fields' }).toggle(),
-      MultiSelectMenu().find(MultiSelectOption(option)).click(),
+      selectPoFieldsDropdown.toggle(),
+      MultiSelectMenu()
+        .find(MultiSelectOption(including(option)))
+        .click(),
     ]);
   },
   selectOrderLineFieldsToExport(option) {
     cy.do([
       selectedOrderLineFieldsRadioButton.click(),
-      MultiSelect({ ariaLabelledby: 'selected-pol-fields' }).toggle(),
+      selectPolFieldsDropdown.toggle(),
       MultiSelectMenu().find(MultiSelectOption(option)).click(),
     ]);
   },
@@ -78,5 +86,11 @@ export default {
       InteractorsTools.checkCalloutMessage(OrderStates.exportJobStartedSuccessfully);
     }
     cy.expect(exportSettingsModal.absent());
+  },
+  getAllOrderFieldOptions() {
+    cy.do([selectedOrderFieldsRadioButton.click(), selectPoFieldsDropdown.open()]);
+    return cy.then(() => {
+      return MultiSelectMenu().optionList();
+    });
   },
 };

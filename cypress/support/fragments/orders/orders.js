@@ -25,7 +25,9 @@ import {
   matching,
 } from '../../../../interactors';
 import {
+  COMMON_BUTTON_LABELS,
   DEFAULT_WAIT_TIME,
+  ORDER_AND_ORDER_LINE_BUTTONS,
   ORDER_FILTER_LABELS,
   ORDER_SYSTEM_CLOSING_REASONS,
   RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
@@ -44,6 +46,7 @@ import OrderDetails from './orderDetails';
 import OrderEditForm from './orderEditForm';
 import OrderLines from './orderLines';
 import OrderStates from './orderStates';
+import orderLineEditForm from './orderLineEditForm';
 
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorders-results-pane-subtitle"]/span';
 const actionsButton = Button('Actions');
@@ -828,6 +831,55 @@ export default {
     }
   },
 
+  verifyHeaderAndValuesInCsvFileByIdentifier(
+    exportedFileName,
+    identifierHeader,
+    identifierValue,
+    targetValues,
+  ) {
+    const fileName = `${exportedFileName}.csv`;
+
+    return FileManager.convertCsvToJson(fileName).then((jsonDataArray) => {
+      // eslint-disable-next-line no-unused-expressions
+      expect(jsonDataArray).to.be.an('array').and.not.be.empty;
+
+      const targetRow = jsonDataArray.find((row) => row[identifierHeader] === identifierValue);
+
+      // eslint-disable-next-line no-unused-expressions
+      expect(targetRow).to.exist;
+
+      targetValues.forEach((pair) => {
+        const actualValue = targetRow[pair.header];
+
+        expect(actualValue).to.equal(pair.value);
+      });
+    });
+  },
+
+  verifyColumnHeaderExistsInCsvFile(fileName, columnHeaders, isExist = true) {
+    FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
+      if (!downloadedFilenames || downloadedFilenames.length === 0) {
+        throw new Error(`No downloaded files found matching mask: ${fileName}`);
+      }
+      FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
+        const values = actualContent.split('\n');
+        const stringWithHeaders = values.shift();
+        // Split headers by comma and trim each header
+        const headersArray = stringWithHeaders.split(',').map((header) => header.trim());
+
+        if (isExist) {
+          columnHeaders.forEach((columnHeader) => {
+            expect(headersArray).to.include(columnHeader);
+          });
+        } else {
+          columnHeaders.forEach((columnHeader) => {
+            expect(headersArray).to.not.include(columnHeader);
+          });
+        }
+      });
+    });
+  },
+
   verifySaveCSVQueryFileName(actualName) {
     // valid name example: order-export-2022-06-24-12_08.csv
     const expectedFileNameMask = /order-export-\d{4}-\d{2}-\d{2}-\d{2}_\d{2}.csv/gm;
@@ -870,9 +922,31 @@ export default {
   checkPurchaseOrderLineLimitReachedModal: () => {
     cy.expect([
       purchaseOrderLineLimitReachedModal.exists(),
-      purchaseOrderLineLimitReachedModal.find(Button('Ok')).exists(),
-      purchaseOrderLineLimitReachedModal.find(Button('Create new purchase order')).exists(),
+      purchaseOrderLineLimitReachedModal.has({ header: 'Purchase order line limit reached' }),
+      purchaseOrderLineLimitReachedModal.has({
+        content: including(
+          'This would exceed the maximum number of purchase order lines permitted by system settings.For more information contact your system administrator.',
+        ),
+      }),
+      purchaseOrderLineLimitReachedModal.find(Button(COMMON_BUTTON_LABELS.OK)).exists(),
+      purchaseOrderLineLimitReachedModal
+        .find(Button(ORDER_AND_ORDER_LINE_BUTTONS.CREATE_NEW_PURCHASE_ORDER))
+        .exists(),
     ]);
+  },
+
+  clickOkinPOLLimitModal: () => {
+    cy.do(purchaseOrderLineLimitReachedModal.find(Button(COMMON_BUTTON_LABELS.OK)).click());
+    cy.expect(purchaseOrderLineLimitReachedModal.absent());
+  },
+
+  clickCreateNewOrderInPOLLimitModal: () => {
+    cy.do(
+      purchaseOrderLineLimitReachedModal
+        .find(Button(ORDER_AND_ORDER_LINE_BUTTONS.CREATE_NEW_PURCHASE_ORDER))
+        .click(),
+    );
+    cy.expect(orderLineEditForm.waitLoading());
   },
 
   openVersionHistory() {
@@ -1068,8 +1142,13 @@ export default {
     this.assertMultiSelectFilterOptions(ORDER_FILTER_LABELS.FUND_CODE, expectedOptions, options);
   },
 
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(ordersFiltersPane, { disabled });
+  },
+
   resetAllFilters() {
     FiltersPaneHelper.clearAllFilters(ordersFiltersPane);
+    this.assertResetAllButtonState({ disabled: true });
   },
 
   clearFilter(filterLabel) {
@@ -1082,8 +1161,16 @@ export default {
     FiltersPaneHelper.filterByMultiSelectOptions(ordersFiltersPane, filterLabel, options);
   },
 
+  filterByTextField(filterLabel, value, options) {
+    FiltersPaneHelper.filterByTextField(ordersFiltersPane, filterLabel, value, options);
+  },
+
   filterByFundCodes(codes = []) {
     this.filterByMultiSelectOptions(ORDER_FILTER_LABELS.FUND_CODE, codes);
+  },
+
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_FILTER_LABELS.TAGS, tags);
   },
 
   removeMultiSelectChips(filterLabel, values = []) {

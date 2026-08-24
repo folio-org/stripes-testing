@@ -151,7 +151,7 @@ describe('Lists', () => {
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(2, false, false);
         QueryModal.verifyQueryAreaContent(
-          `(po.po_number != non-existent-value) AND (po.po_number starts with ${testData.order.poNumber}) AND (  )`,
+          `(po.po_number != non-existent-value) AND (po.po_number starts with ${testData.order.poNumber})`,
         );
         QueryModal.testQueryDisabled(true);
         QueryModal.runQueryDisabled(true);

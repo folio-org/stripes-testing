@@ -19,6 +19,8 @@ import parseMrcFileContentAndVerify, {
   verifyMarcFieldByTag,
   verify001FieldValue,
 } from '../../../support/utils/parseMrcFileContent';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
+import { LOCATION_NAMES } from '../../../support/constants';
 
 let user;
 let exportedFileName;
@@ -87,8 +89,8 @@ describe('Data Export', () => {
           });
 
           cy.withinTenant(Affiliations.College, () => {
-            cy.getLocations({ limit: 1 }).then((res) => {
-              testData.locationId = res.id;
+            Locations.getViaApiAnyDefault().then((res) => {
+              testData.locationId = res[0].id;
             });
             cy.getLoanTypes({ limit: 1 }).then((res) => {
               testData.loanTypeId = res[0].id;
@@ -177,13 +179,119 @@ describe('Data Export', () => {
                 });
               });
 
-              cy.getLocations({ limit: 1 }).then((location) => {
+              Locations.getViaApiAnyDefault().then((location) => {
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: instances[0].uuid,
+                  sourceId: testData.sourceId,
+                  permanentLocationId: location[0].id,
+                }).then((holding) => {
+                  instances[0].holdingsCollege.push({
+                    id: holding.id,
+                    hrid: holding.hrid,
+                    type: 'folio',
+                  });
+                });
+
+                cy.createMarcHoldingsViaAPI(instances[0].uuid, [
+                  {
+                    content: instances[0].hrid,
+                    tag: '004',
+                  },
+                  {
+                    content: QuickMarcEditor.defaultValid008HoldingsValues,
+                    tag: '008',
+                  },
+                  {
+                    content: `$b ${location[0].code}`,
+                    indicators: ['\\', '\\'],
+                    tag: '852',
+                  },
+                ]).then((marcHoldingId) => {
+                  cy.getHoldings({ limit: 1, query: `"id"=="${marcHoldingId}"` }).then(
+                    (holdingsRecords) => {
+                      instances[0].holdingsCollege.push({
+                        id: marcHoldingId,
+                        hrid: holdingsRecords[0].hrid,
+                        type: 'marc',
+                      });
+                    },
+                  );
+                });
+
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: instances[1].uuid,
+                  sourceId: testData.sourceId,
+                  permanentLocationId: location[0].id,
+                }).then((holding) => {
+                  instances[1].holdingsCollege.push({
+                    id: holding.id,
+                    hrid: holding.hrid,
+                    type: 'folio',
+                  });
+                });
+
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: instances[2].uuid,
+                  sourceId: testData.sourceId,
+                  permanentLocationId: location[0].id,
+                }).then((holding) => {
+                  instances[2].holdingsCollege.push({
+                    id: holding.id,
+                    hrid: holding.hrid,
+                    type: 'folio',
+                  });
+                });
+
+                cy.createMarcHoldingsViaAPI(instances[2].uuid, [
+                  {
+                    content: instances[2].hrid,
+                    tag: '004',
+                  },
+                  {
+                    content: QuickMarcEditor.defaultValid008HoldingsValues,
+                    tag: '008',
+                  },
+                  {
+                    content: `$b ${location[0].code}`,
+                    indicators: ['\\', '\\'],
+                    tag: '852',
+                  },
+                ]).then((marcHoldingId) => {
+                  cy.getHoldings({ limit: 1, query: `"id"=="${marcHoldingId}"` }).then(
+                    (holdingsRecords) => {
+                      instances[2].holdingsCollege.push({
+                        id: marcHoldingId,
+                        hrid: holdingsRecords[0].hrid,
+                        type: 'marc',
+                      });
+                    },
+                  );
+                });
+
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: instances[3].uuid,
+                  sourceId: testData.sourceId,
+                  permanentLocationId: location[0].id,
+                }).then((holding) => {
+                  instances[3].holdingsCollege.push({
+                    id: holding.id,
+                    hrid: holding.hrid,
+                    type: 'folio',
+                  });
+                });
+              });
+            });
+          });
+
+          cy.withinTenant(Affiliations.University, () => {
+            cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+              (location) => {
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: instances[0].uuid,
                   sourceId: testData.sourceId,
                   permanentLocationId: location.id,
                 }).then((holding) => {
-                  instances[0].holdingsCollege.push({
+                  instances[0].holdingsUniversity.push({
                     id: holding.id,
                     hrid: holding.hrid,
                     type: 'folio',
@@ -207,7 +315,7 @@ describe('Data Export', () => {
                 ]).then((marcHoldingId) => {
                   cy.getHoldings({ limit: 1, query: `"id"=="${marcHoldingId}"` }).then(
                     (holdingsRecords) => {
-                      instances[0].holdingsCollege.push({
+                      instances[0].holdingsUniversity.push({
                         id: marcHoldingId,
                         hrid: holdingsRecords[0].hrid,
                         type: 'marc',
@@ -221,118 +329,14 @@ describe('Data Export', () => {
                   sourceId: testData.sourceId,
                   permanentLocationId: location.id,
                 }).then((holding) => {
-                  instances[1].holdingsCollege.push({
+                  instances[1].holdingsUniversity.push({
                     id: holding.id,
                     hrid: holding.hrid,
                     type: 'folio',
                   });
                 });
-
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instances[2].uuid,
-                  sourceId: testData.sourceId,
-                  permanentLocationId: location.id,
-                }).then((holding) => {
-                  instances[2].holdingsCollege.push({
-                    id: holding.id,
-                    hrid: holding.hrid,
-                    type: 'folio',
-                  });
-                });
-
-                cy.createMarcHoldingsViaAPI(instances[2].uuid, [
-                  {
-                    content: instances[2].hrid,
-                    tag: '004',
-                  },
-                  {
-                    content: QuickMarcEditor.defaultValid008HoldingsValues,
-                    tag: '008',
-                  },
-                  {
-                    content: `$b ${location.code}`,
-                    indicators: ['\\', '\\'],
-                    tag: '852',
-                  },
-                ]).then((marcHoldingId) => {
-                  cy.getHoldings({ limit: 1, query: `"id"=="${marcHoldingId}"` }).then(
-                    (holdingsRecords) => {
-                      instances[2].holdingsCollege.push({
-                        id: marcHoldingId,
-                        hrid: holdingsRecords[0].hrid,
-                        type: 'marc',
-                      });
-                    },
-                  );
-                });
-
-                InventoryHoldings.createHoldingRecordViaApi({
-                  instanceId: instances[3].uuid,
-                  sourceId: testData.sourceId,
-                  permanentLocationId: location.id,
-                }).then((holding) => {
-                  instances[3].holdingsCollege.push({
-                    id: holding.id,
-                    hrid: holding.hrid,
-                    type: 'folio',
-                  });
-                });
-              });
-            });
-          });
-
-          cy.withinTenant(Affiliations.University, () => {
-            cy.getLocations({ limit: 1 }).then((location) => {
-              InventoryHoldings.createHoldingRecordViaApi({
-                instanceId: instances[0].uuid,
-                sourceId: testData.sourceId,
-                permanentLocationId: location.id,
-              }).then((holding) => {
-                instances[0].holdingsUniversity.push({
-                  id: holding.id,
-                  hrid: holding.hrid,
-                  type: 'folio',
-                });
-              });
-
-              cy.createMarcHoldingsViaAPI(instances[0].uuid, [
-                {
-                  content: instances[0].hrid,
-                  tag: '004',
-                },
-                {
-                  content: QuickMarcEditor.defaultValid008HoldingsValues,
-                  tag: '008',
-                },
-                {
-                  content: `$b ${location.code}`,
-                  indicators: ['\\', '\\'],
-                  tag: '852',
-                },
-              ]).then((marcHoldingId) => {
-                cy.getHoldings({ limit: 1, query: `"id"=="${marcHoldingId}"` }).then(
-                  (holdingsRecords) => {
-                    instances[0].holdingsUniversity.push({
-                      id: marcHoldingId,
-                      hrid: holdingsRecords[0].hrid,
-                      type: 'marc',
-                    });
-                  },
-                );
-              });
-
-              InventoryHoldings.createHoldingRecordViaApi({
-                instanceId: instances[1].uuid,
-                sourceId: testData.sourceId,
-                permanentLocationId: location.id,
-              }).then((holding) => {
-                instances[1].holdingsUniversity.push({
-                  id: holding.id,
-                  hrid: holding.hrid,
-                  type: 'folio',
-                });
-              });
-            });
+              },
+            );
           });
 
           cy.then(() => {
