@@ -1849,6 +1849,8 @@ export const FILE_TYPES = {
 
 export const CUSTOM_FIELD_ENTITY_TYPES = {
   USER: 'user',
+  PURCHASE_ORDER: 'purchase_order',
+  PO_LINE: 'po_line',
 };
 
 export const CUSTOM_FIELD_TYPES = {
