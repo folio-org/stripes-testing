@@ -9,6 +9,7 @@ import {
   MultiSelectOption,
   including,
   Section,
+  Select,
 } from '../../../../interactors';
 import eHoldingsPackages from './eHoldingsPackages';
 
@@ -23,7 +24,7 @@ const resultSection = Section({ id: 'search-results' });
 export default {
   byContentType: (type) => {
     cy.do(contentTypeAccordion.clickHeader());
-    cy.do(contentTypeAccordion.find(RadioButton(type)).click());
+    cy.do(contentTypeAccordion.find(Select()).choose(type));
     eHoldingsPackages.waitLoading();
   },
   bySelectionStatus: (selectionStatus) => {
