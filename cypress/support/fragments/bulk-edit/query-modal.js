@@ -1168,6 +1168,19 @@ export default {
     });
   },
 
+  verifyMatchedRecordInMultipleColumnsByIdentifier(identifier, columnHeaderAndValues) {
+    cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnHeaderAndValues.forEach((pair) => {
+        cy.expect(
+          buildQueryModal
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
+    });
+  },
+
   verifyRecordWithIdentifierAbsentInResultTable(identifier, timeout = 2000) {
     cy.wait(timeout);
     cy.expect(buildQueryModal.find(MultiColumnListCell(identifier)).absent());

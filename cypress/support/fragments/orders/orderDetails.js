@@ -33,6 +33,7 @@ const orderInfoSection = orderDetailsPane.find(Section({ id: 'purchaseOrder' }))
 const ongoingOrderInfoSection = orderDetailsPane.find(Section({ id: 'ongoing' }));
 const poSummarySection = orderDetailsPane.find(Section({ id: 'POSummary' }));
 const polListingAccordion = Section({ id: 'POListing' });
+const customFieldsAccordion = Section({ id: 'customFieldsPO' });
 
 const exportDetailsSection = orderDetailsPane.find(Section({ id: 'exportDetails' }));
 const relatedInvoicesSection = orderDetailsPane.find(Section({ id: 'relatedInvoices' }));
@@ -369,5 +370,22 @@ export default {
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .click(),
     );
+  },
+
+  verifyValuesInCustomFieldsAccordion(customFieldName, customFieldValue, isCheckBox = false) {
+    if (isCheckBox) {
+      cy.expect(
+        customFieldsAccordion
+          .find(KeyValue({ label: customFieldName }))
+          .find(Checkbox())
+          .has({ checked: customFieldValue, disabled: true }),
+      );
+    } else {
+      cy.expect(
+        customFieldsAccordion
+          .find(KeyValue(customFieldName))
+          .has({ value: including(customFieldValue) }),
+      );
+    }
   },
 };

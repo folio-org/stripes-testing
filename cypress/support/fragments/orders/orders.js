@@ -857,26 +857,23 @@ export default {
   },
 
   verifyColumnHeaderExistsInCsvFile(fileName, columnHeaders, isExist = true) {
-    FileManager.findDownloadedFilesByMask(fileName).then((downloadedFilenames) => {
-      if (!downloadedFilenames || downloadedFilenames.length === 0) {
-        throw new Error(`No downloaded files found matching mask: ${fileName}`);
+    return FileManager.convertCsvToJson(fileName).then((jsonDataArray) => {
+      if (!jsonDataArray || jsonDataArray.length === 0) {
+        throw new Error(`CSV file is empty or could not be converted to JSON: ${fileName}`);
       }
-      FileManager.readFile(downloadedFilenames[0]).then((actualContent) => {
-        const values = actualContent.split('\n');
-        const stringWithHeaders = values.shift();
-        // Split headers by comma and trim each header
-        const headersArray = stringWithHeaders.split(',').map((header) => header.trim());
 
-        if (isExist) {
-          columnHeaders.forEach((columnHeader) => {
-            expect(headersArray).to.include(columnHeader);
-          });
-        } else {
-          columnHeaders.forEach((columnHeader) => {
-            expect(headersArray).to.not.include(columnHeader);
-          });
-        }
-      });
+      // Get actual column headers from the first row's keys
+      const actualHeaders = Object.keys(jsonDataArray[0]);
+
+      if (isExist) {
+        columnHeaders.forEach((columnHeader) => {
+          expect(actualHeaders).to.include(columnHeader);
+        });
+      } else {
+        columnHeaders.forEach((columnHeader) => {
+          expect(actualHeaders).to.not.include(columnHeader);
+        });
+      }
     });
   },
 
