@@ -59,6 +59,11 @@ export default {
   checkOrderStatus(orderStatus) {
     cy.expect(poSummarySection.find(KeyValue('Workflow status')).has({ value: orderStatus }));
   },
+
+  checkPurchaseOrderPaneAbsent() {
+    cy.expect(orderDetailsPane.absent());
+  },
+
   checkFieldsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(orderDetailsPane.find(KeyValue(label)).has(conditions));

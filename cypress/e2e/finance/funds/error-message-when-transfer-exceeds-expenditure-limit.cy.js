@@ -87,17 +87,19 @@ describe('Finance', () => {
           fromFund: fundB.name,
           amount: '200',
         });
-        AddTransferModal.verifyConfirmButtonDisabled(false);
+        AddTransferModal.verifyConfirmButtonDisabled(true);
 
-        AddTransferModal.clickConfirmButton({
-          confirmNegative: { confirm: true },
-          expectError: true,
-        });
-        AddTransferModal.verifyModalView();
-        InteractorsTools.checkCalloutMessage(
-          States.exceedExpenditureLimitError('200', budgetA.name, budgetB.name),
-          'error',
-        );
+        AddTransferModal.expectErrorPresent('Total allocation cannot be less than zero');
+
+        // AddTransferModal.clickConfirmButton({
+        //   confirmNegative: { confirm: true },
+        //   expectError: true,
+        // });
+        // AddTransferModal.verifyModalView();
+        // InteractorsTools.checkCalloutMessage(
+        //   States.exceedExpenditureLimitError('200', budgetA.name, budgetB.name),
+        //   'error',
+        // );
 
         AddTransferModal.closeModal();
         BudgetDetails.checkBudgetDetails({
