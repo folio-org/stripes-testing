@@ -10,8 +10,6 @@ import {
 import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import States from '../../../support/fragments/finance/states';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Finance', () => {
   describe('Funds', () => {
@@ -90,16 +88,6 @@ describe('Finance', () => {
         AddTransferModal.verifyConfirmButtonDisabled(true);
 
         AddTransferModal.expectErrorPresent('Total allocation cannot be less than zero');
-
-        // AddTransferModal.clickConfirmButton({
-        //   confirmNegative: { confirm: true },
-        //   expectError: true,
-        // });
-        // AddTransferModal.verifyModalView();
-        // InteractorsTools.checkCalloutMessage(
-        //   States.exceedExpenditureLimitError('200', budgetA.name, budgetB.name),
-        //   'error',
-        // );
 
         AddTransferModal.closeModal();
         BudgetDetails.checkBudgetDetails({
