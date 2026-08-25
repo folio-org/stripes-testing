@@ -163,12 +163,14 @@ const getReadingRoomAccessOptionValue = (optionValue) => {
 // Expiration date modal appears for only some patron groups based on their settings,
 // so we need to check if it appears and click "Set" if it does.
 const clickSetExpirationDateIfModalExists = () => {
+  cy.wait(2000);
   cy.get('body').then(($body) => {
     if ($body.find('#recalculate_expirationdate_modal').length > 0) {
       cy.do(resetExpirationDateModal.find(recalculateExpirationDateButton).click());
       cy.expect(resetExpirationDateModal.absent());
     }
   });
+  cy.wait(2000);
 };
 
 const getAccordionByLabel = (accordionLabel) => Accordion(accordionLabel);
@@ -1245,6 +1247,8 @@ export default {
       emailField.fillIn(userData.personal.email),
     ]);
     this.changePatronGroup(patronGroup);
+    clickSetExpirationDateIfModalExists();
+    cy.wait(3000);
     cy.do(saveAndCloseBtn.click());
     return cy.wait('@createUser', { timeout: 80_000 }).then(({ response }) => {
       return response.body.id;
@@ -1952,7 +1956,7 @@ export default {
         disabled: fulfillmentPreferenceDisabled,
       }),
       defaultDeliveryAddress &&
-        defaultDeliveryAddressField.checkedOptionText(defaultDeliveryAddress),
+      defaultDeliveryAddressField.checkedOptionText(defaultDeliveryAddress),
       defaultDeliveryAddressField.has({ disabled: defaultDeliveryAddressDisabled }),
     ]);
 

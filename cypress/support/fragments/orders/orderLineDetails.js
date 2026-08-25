@@ -65,6 +65,11 @@ export default {
       cy.expect(orderLineDetailsSection.find(KeyValue(label)).has(conditions));
     });
   },
+
+  checkPOLinePaneAbsent() {
+    cy.expect(orderLineDetailsSection.absent());
+  },
+
   checkFieldsHasCopyIcon(fields = []) {
     fields.forEach(({ label }) => {
       cy.expect(

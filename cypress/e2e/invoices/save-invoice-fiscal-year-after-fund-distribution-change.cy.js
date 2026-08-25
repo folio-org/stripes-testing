@@ -199,14 +199,14 @@ describe('Invoices', () => {
       FinanceHelp.searchByName(firstFiscalYear.name);
       FiscalYears.selectFY(firstFiscalYear.name);
       FiscalYears.editFiscalYearDetails();
-      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+      FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(
         periodStartForFirstFY,
         periodEndForFirstFY,
       );
       FinanceHelp.searchByName(secondFiscalYear.name);
       FiscalYears.selectFY(secondFiscalYear.name);
       FiscalYears.editFiscalYearDetails();
-      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+      FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(
         periodStartForSecondFY,
         periodEndForSecondFY,
       );
