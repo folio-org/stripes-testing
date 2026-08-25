@@ -4,6 +4,7 @@ import {
   Button,
   Callout,
   Checkbox,
+  DropdownMenu,
   KeyValue,
   Link,
   Modal,
@@ -32,7 +33,9 @@ const actionsButton = mappingProfileView.find(Button('Actions'));
 const deleteButton = Button('Delete');
 const fullScreenView = Pane({ id: 'full-screen-view' });
 const associatedList = MultiColumnList({ id: 'associated-actionProfiles-list' });
-const overrideProtectedSectionAccordoin = Accordion({ id: 'override-protected-section' });
+const overrideProtectedSectionAccordion = Accordion({
+  id: including('override-protected-section'),
+});
 const cannotDeleteModal = Modal({ title: 'Cannot delete field mapping profile' });
 const actionProfilesAccordion = Accordion('Associated action profiles');
 
@@ -235,15 +238,15 @@ export default {
     secondFieldStatus = true,
   ) => {
     checkUpdatesSectionOfMappingProfile();
-    cy.do(overrideProtectedSectionAccordoin.clickHeader());
+    cy.do(overrideProtectedSectionAccordion.clickHeader());
     checkOverrideSectionOfMappingProfile(firstField, firstFieldStatus);
     checkOverrideSectionOfMappingProfile(secondField, secondFieldStatus);
     closeViewMode(profileName);
   },
 
   checkOverrideProtectedSection: (profileName) => {
-    cy.do(overrideProtectedSectionAccordoin.clickHeader());
-    cy.expect(overrideProtectedSectionAccordoin.find(HTML({ text: matching(/[-]|\d*/) })).exists());
+    cy.do(overrideProtectedSectionAccordion.clickHeader());
+    cy.expect(overrideProtectedSectionAccordion.find(HTML({ text: matching(/[-]|\d*/) })).exists());
     closeViewMode(profileName);
   },
 
@@ -394,5 +397,44 @@ export default {
         .find(MultiColumnListCell({ content: profileName }))
         .absent(),
     );
+  },
+
+  verifyActionsMenuOptionsDisabled(optionNames) {
+    this.expandActionsDropdown();
+    const options = Array.isArray(optionNames) ? optionNames : [optionNames];
+    cy.expect(options.map((option) => DropdownMenu().find(Button(option)).has({ disabled: true })));
+  },
+
+  verifySectionOverrideProtectedFields() {
+    cy.expect([
+      detailsSection.exists(),
+      overrideProtectedSectionAccordion.has({ open: true }),
+      overrideProtectedSectionAccordion.has({ label: including('Override protected fields') }),
+      overrideProtectedSectionAccordion
+        .find(MultiColumnList())
+        .has({ columns: ['Field', 'In.1', 'In.2', 'Subfield', 'Data', 'Override'] }),
+      overrideProtectedSectionAccordion.find(Checkbox({ disabled: true })).exists(),
+      overrideProtectedSectionAccordion.find(Checkbox({ disabled: false })).absent(),
+    ]);
+  },
+
+  verifyAccountingCodeEnabledViaApi: ({
+    profileId,
+    accountingCode,
+    isEnabled = true,
+    isRequired = false,
+  } = {}) => {
+    cy.okapiRequest({
+      path: `data-import-profiles/mappingProfiles/${profileId}`,
+    }).then(({ body }) => {
+      const accountingCodeField = body.mappingDetails.mappingFields.find(
+        (field) => field.name === 'accountingCode',
+      );
+      expect(accountingCodeField.enabled).to.equal(`${isEnabled}`);
+      expect(accountingCodeField.required).to.equal(isRequired);
+      expect(accountingCodeField.path).to.equal('invoice.accountingCode');
+      expect(accountingCodeField.value).to.equal(`${accountingCode}`);
+      expect(accountingCodeField.subfields).to.eql([]);
+    });
   },
 };

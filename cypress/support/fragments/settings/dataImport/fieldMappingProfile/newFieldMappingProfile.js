@@ -616,6 +616,13 @@ export default {
     if (profile.organizationName) {
       selectOrganizationByName(profile.organizationName);
     }
+    if (profile.accountingCode) {
+      cy.do(
+        Accordion('Vendor information')
+          .find(TextField('Accounting code'))
+          .fillIn(`${profile.accountingCode}`),
+      );
+    }
     // Extended information section
     if (profile.paymentMethod) {
       cy.do(paymentMethodField.fillIn(profile.paymentMethod));
