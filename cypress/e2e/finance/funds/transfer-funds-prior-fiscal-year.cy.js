@@ -94,14 +94,14 @@ describe('Finance', () => {
       FinanceHelper.searchByName(fiscalYear1.name);
       FiscalYears.selectFY(fiscalYear1.name);
       FiscalYears.editFiscalYearDetails();
-      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+      FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(
         periodStartForFirstFY,
         periodEndForFirstFY,
       );
       FinanceHelper.searchByName(fiscalYear2.name);
       FiscalYears.selectFY(fiscalYear2.name);
       FiscalYears.editFiscalYearDetails();
-      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+      FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(
         periodStartForSecondFY,
         periodEndForSecondFY,
       );
