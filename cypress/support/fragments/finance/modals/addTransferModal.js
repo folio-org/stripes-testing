@@ -90,7 +90,7 @@ export default {
   },
   clickConfirmButton({
     transferCreated = true,
-    ammountAllocated = false,
+    amountAllocated = false,
     confirmNegative,
     expectError = false,
   } = {}) {
@@ -117,7 +117,7 @@ export default {
       );
     }
 
-    if (!expectError && ammountAllocated) {
+    if (!expectError && amountAllocated) {
       InteractorsTools.checkCalloutMessage(
         matching(new RegExp(States.amountAllocatedSuccessfully)),
       );

@@ -9,6 +9,7 @@ import {
   MultiSelectMenu,
   MultiSelectOption,
   including,
+  Card,
   HTML,
 } from '../../../../interactors';
 import AgreementViewDetails from './agreementViewDetails';
@@ -79,6 +80,12 @@ export default {
     cy.do(rootSection.find(actionsButton).click());
     cy.expect([editButton.exists(), deleteButton.exists()]);
     cy.do(rootSection.find(actionsButton).click());
+  },
+
+  assertResourceName(resourceName) {
+    const resourceCard = rootSection.find(Card({ headerStart: including(resourceName) }));
+
+    cy.expect(resourceCard.exists());
   },
 
   gotoDelete() {

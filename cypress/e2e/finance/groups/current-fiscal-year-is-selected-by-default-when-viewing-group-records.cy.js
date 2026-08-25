@@ -93,20 +93,20 @@ describe('Finance', () => {
         FinanceHelp.searchByName(defaultLedger.name);
         Ledgers.selectLedger(defaultLedger.name);
         Ledgers.rollover();
-        Ledgers.fillInclearRolloverInfo(secondFiscalYear.code);
+        Ledgers.fillInClearRolloverInfo(secondFiscalYear.code);
         Ledgers.closeRolloverInfo();
         FinanceHelp.selectFiscalYearsNavigation();
         FinanceHelp.searchByName(firstFiscalYear.name);
         FiscalYears.selectFY(firstFiscalYear.name);
         FiscalYears.editFiscalYearDetails();
-        FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+        FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(
           periodStartForFirstFY,
           periodEndForFirstFY,
         );
         FinanceHelp.searchByName(secondFiscalYear.name);
         FiscalYears.selectFY(secondFiscalYear.name);
         FiscalYears.editFiscalYearDetails();
-        FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+        FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(
           periodStartForSecondFY,
           periodEndForSecondFY,
         );

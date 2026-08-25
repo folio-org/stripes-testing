@@ -168,7 +168,7 @@ describe('Orders', () => {
   });
 
   after(() => {
-    cy.getAdminToken();
+    cy.getAdminToken(false);
     Users.deleteViaApi(user.userId);
   });
 

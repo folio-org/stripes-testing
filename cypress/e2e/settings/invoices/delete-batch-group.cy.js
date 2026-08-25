@@ -24,6 +24,7 @@ describe('Invoices', () => {
     const organization = { ...NewOrganization.defaultUiOrganizations };
 
     before(() => {
+      delete invoice.invoiceDate;
       cy.getAdminToken();
       BatchGroups.createBatchGroupViaApi(firstBatchGroup).then((firstResponse) => {
         invoice.batchGroupId = firstResponse.id;
