@@ -274,3 +274,8 @@ export const ORDER_LINE_FILTER_LABELS = {
   UPDATED_BY: 'Updated by',
   VENDOR: 'Vendor',
 };
+
+export const ORDER_LINE_DISCOUNT_TYPES = {
+  PERCENTAGE: 'percentage',
+  AMOUNT: 'amount',
+};
