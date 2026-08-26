@@ -143,6 +143,7 @@ export const POL_CREATE_INVENTORY_SETTINGS_VIEW = {
 };
 
 export const POLINE_DETAILS_FIELDS = {
+  TITLE: 'Title',
   ACQUISITION_METHOD: 'Acquisition method',
   ORDER_FORMAT: 'Order format',
   RECEIPT_STATUS: 'Receipt status',
