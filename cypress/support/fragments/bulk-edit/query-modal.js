@@ -41,7 +41,7 @@ const fieldSelection = Selection({ id: including('field-option-') });
 const booleanValues = ['AND'];
 
 // Embedded table headers mapping for different table types
-const embeddedTableHeadersMap = {
+export const embeddedTableHeadersMap = {
   electronicAccess: [
     'URL relationship',
     'URI',
@@ -86,6 +86,15 @@ const embeddedTableHeadersMap = {
     'Type',
     'Primary address',
     'Line 2',
+  ],
+  organizationAddresses: [
+    'Address line 1',
+    'Address line 2',
+    'City',
+    'State/region',
+    'Zip code',
+    'Country',
+    'Categories',
   ],
   additionalCallNumbers: ['Call number', 'Prefix', 'Suffix', 'Type'],
 };
@@ -1302,6 +1311,16 @@ export default {
           dataObj.primaryAddress,
           dataObj.line2,
         ];
+      case 'organizationAddresses':
+        return [
+          dataObj.addressLine1,
+          dataObj.addressLine2,
+          dataObj.city,
+          dataObj.stateRegion,
+          dataObj.zipCode,
+          dataObj.country,
+          dataObj.categories,
+        ];
       case 'additionalCallNumbers':
         return [dataObj.callNumber, dataObj.prefix, dataObj.suffix, dataObj.type];
       case 'polLocations':
@@ -1407,6 +1426,10 @@ export default {
 
   verifyUserAddressEmbeddedTableInQueryModal(identifier, expectedUserAddress) {
     this.verifyEmbeddedTableInQueryModal('userAddress', identifier, expectedUserAddress);
+  },
+
+  verifyOrganizationAddressesEmbeddedTableInQueryModal(identifier, expectedAddresses) {
+    this.verifyEmbeddedTableInQueryModal('organizationAddresses', identifier, expectedAddresses);
   },
 
   verifyAdditionalCallNumbersEmbeddedTableInQueryModal(
