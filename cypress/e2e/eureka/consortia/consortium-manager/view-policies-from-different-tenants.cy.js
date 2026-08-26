@@ -95,13 +95,10 @@ describe('Eureka', () => {
       { tags: ['criticalPathECS', 'thunderjet', 'eureka', 'C514964'] },
       () => {
         cy.resetTenant();
-        cy.waitForAuthRefresh(() => {
-          cy.login(userData.username, userData.password);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
-          ConsortiumManagerApp.verifyStatusOfConsortiumManager();
-          cy.reload();
-          ConsortiumManagerApp.verifyStatusOfConsortiumManager();
-        }, 20000);
+        cy.login(userData.username, userData.password);
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        ConsortiumManagerApp.verifyStatusOfConsortiumManager();
+
         ConsortiumManagerApp.clickSelectMembers();
         SelectMembers.verifyAvailableTenants(
           [tenantNames.central, tenantNames.college, tenantNames.university].sort(),

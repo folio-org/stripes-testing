@@ -101,25 +101,8 @@ describe('Eureka', () => {
             AuthorizationRoles.selectUserInModal(userBodies[1].username);
             AuthorizationRoles.selectUserInModal(userBodies[2].username);
             AuthorizationRoles.clickSaveInAssignModal();
-            AuthorizationRoles.checkPromoteUsersModal([testData.userAId, testData.userBId], true);
-            cy.intercept(`${testData.promotePath}/${testData.userBId}`).as('promoteB');
-            AuthorizationRoles.clickConfirmInPromoteUsersModal();
-            cy.wait('@promoteB').its('response.statusCode').should('eq', 201);
             AuthorizationRoles.checkNoUsernameErrorCallout();
-            AuthorizationRoles.verifyAssignedUsersAccordion();
-            AuthorizationRoles.checkUsersAccordion(2);
-            AuthorizationRoles.verifyAssignedUser(
-              userBodies[1].personal.lastName,
-              userBodies[1].personal.firstName,
-              true,
-              testData.userCGroupName,
-            );
-            AuthorizationRoles.verifyAssignedUser(
-              userBodies[2].personal.lastName,
-              userBodies[2].personal.firstName,
-              true,
-              testData.userCGroupName,
-            );
+            AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
 
             AuthorizationRoles.searchRole(testData.roleBName);
             AuthorizationRoles.clickOnRoleName(testData.roleBName, false);
@@ -127,10 +110,6 @@ describe('Eureka', () => {
             AuthorizationRoles.clickAssignUsersButton();
             AuthorizationRoles.selectUserInModal(userBodies[0].personal.lastName);
             AuthorizationRoles.clickSaveInAssignModal();
-            AuthorizationRoles.checkPromoteUsersModal([testData.userAId]);
-            cy.intercept(`${testData.promotePath}/${testData.userAId}`).as('promoteA');
-            AuthorizationRoles.clickConfirmInPromoteUsersModal();
-            cy.wait('@promoteA').its('response.statusCode').should('eq', 400);
             AuthorizationRoles.checkNoUsernameErrorCallout();
             AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
           },

@@ -102,7 +102,8 @@ const promoteUsersModal = Modal('Create user records in Keycloak');
 const confirmButton = Button('Confirm');
 const promoteUsersModalText =
   'This operation will create new records in Keycloak for the following users:';
-const noUsernameCalloutText = 'User without username cannot be created in Keycloak';
+const noUsernameCalloutText =
+  'User assignment aborted.  This operation requires all users involved to have a username.';
 const createAccessErrorText = 'Role could not be created: Access Denied';
 const clearFieldButton = Button({ icon: 'times-circle-solid' });
 const noAccessErrorText = or(
