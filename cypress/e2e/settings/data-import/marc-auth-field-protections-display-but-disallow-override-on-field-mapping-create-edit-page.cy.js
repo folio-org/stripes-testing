@@ -23,10 +23,10 @@ describe('Data Import', () => {
         data: 'VLR',
       },
       secondProtectedFieldData: {
-        field: '400',
-        indicator1: '*',
-        indicator2: '*',
-        subfield: 'a',
+        field: '601',
+        indicator1: 'm',
+        indicator2: 'n',
+        subfield: 'x',
         data: '*',
       },
       mappingProfile: {
