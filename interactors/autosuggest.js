@@ -30,7 +30,7 @@ const AutoSuggestOption = HTML.extend('auto-suggest option')
   .locator((el) => el.textContent || '');
 
 export default HTML.extend('auto-suggest')
-  .selector('[class^=downshift-], [data-test-autosuggest]')
+  .selector('[data-test-autosuggest]')
   .locator((el) => el.querySelector('label').textContent)
   .filters({
     open,
