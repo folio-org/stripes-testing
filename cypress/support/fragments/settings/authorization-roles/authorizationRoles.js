@@ -159,6 +159,8 @@ export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unsel
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
 export const defaultRoleCrudErrorMessage =
   'Default role cannot be created, updated or deleted via roles API.';
+export const nameSlashErrorText = 'Role name cannot contain the "/" character';
+export const nameRequiredErrorText = 'Please fill this in to continue';
 
 export default {
   capabilitiesAccordion,
@@ -182,17 +184,23 @@ export default {
     cy.do(newButton.click());
     cy.expect([
       createRolePane.exists(),
+      roleNameInput.exists(),
       capabilitiesAccordion.has({ open: true }),
       capabilitySetsAccordion.exists(),
       saveButton.has({ disabled: true }),
+      cancelButton.exists(),
       selectApplicationButton.exists(),
       Spinner().absent(),
     ]);
     cy.wait(2000);
   },
 
-  fillRoleNameDescription: (roleName, roleDescription = '') => {
+  fillRoleNameDescription(roleName, roleDescription = '') {
     cy.do([roleNameInput.fillIn(roleName), roleDescriptionInput.fillIn(roleDescription)]);
+    this.verifyNameDescriptionInEditForm(roleName, roleDescription);
+  },
+
+  verifyNameDescriptionInEditForm(roleName, roleDescription = '') {
     cy.expect([
       roleNameInput.has({ value: roleName }),
       roleDescriptionInput.has({ value: roleDescription }),
@@ -1294,5 +1302,17 @@ export default {
   closeConfirmShareModal: () => {
     cy.do(shareToAllModal.find(cancelButton).click());
     cy.expect(shareToAllModal.absent());
+  },
+
+  checkErrorForNameField({ isError = false, errorText = nameRequiredErrorText } = {}) {
+    if (isError) cy.expect(roleNameInput.has({ error: errorText }));
+    else cy.expect(roleNameInput.has({ error: undefined }));
+  },
+
+  focusOnNameField({ isFocused = true } = {}) {
+    if (isFocused) cy.do(roleNameInput.focus());
+    else cy.do(roleNameInput.blur());
+    cy.expect(roleNameInput.has({ focused: isFocused }));
+    cy.wait(500);
   },
 };

@@ -2,6 +2,7 @@ export const APPLICATION_NAMES = {
   AGREEMENTS: 'Agreements',
   BULK_EDIT: 'Bulk edit',
   CLAIMING: 'Claiming',
+  DASHBOARD: 'Dashboard',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
   EXPORT_MANAGER: 'Export manager',

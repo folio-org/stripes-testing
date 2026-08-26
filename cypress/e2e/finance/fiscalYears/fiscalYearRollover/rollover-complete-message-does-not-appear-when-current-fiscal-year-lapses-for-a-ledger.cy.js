@@ -70,7 +70,7 @@ describe('Finance', () => {
         FinanceHelp.searchByName(firstFiscalYear.name);
         FiscalYears.selectFY(firstFiscalYear.name);
         FiscalYears.editFiscalYearDetails();
-        FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+        FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(
           periodStartForFirstFY,
           periodEndForFirstFY,
         );

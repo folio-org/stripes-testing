@@ -150,7 +150,7 @@ export default {
     cy.do([rolloverConfirmButton.click()]);
   },
 
-  fillInclearRolloverInfo(fiscalYear) {
+  fillInClearRolloverInfo(fiscalYear) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
     cy.do([fiscalYearSelect.choose(fiscalYear)]);
