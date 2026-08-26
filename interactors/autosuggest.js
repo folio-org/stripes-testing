@@ -2,7 +2,7 @@ import { TextField } from '@interactors/html';
 import HTML from './baseHTML';
 import { dispatchInput, dispatchKeyDown, dispatchKeyUp, setValue, guessCode } from './helpers';
 
-const open = (el) => el.getAttribute('aria-expanded') === 'true';
+const open = (el) => el.querySelector('input').getAttribute('aria-expanded') === 'true';
 
 const fillInput = (element, value) => {
   const input = element.querySelector('input');
@@ -30,7 +30,7 @@ const AutoSuggestOption = HTML.extend('auto-suggest option')
   .locator((el) => el.textContent || '');
 
 export default HTML.extend('auto-suggest')
-  .selector('[class^=downshift-]')
+  .selector('[class^=downshift-], [data-test-autosuggest]')
   .locator((el) => el.querySelector('label').textContent)
   .filters({
     open,
