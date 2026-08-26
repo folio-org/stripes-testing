@@ -249,6 +249,7 @@ describe('Invoices', () => {
       });
 
       CASES.forEach((filter) => {
+        cy.log(`<--- Filter by '${filter.name}' --->`);
         isolateInvoicesList();
 
         PaneRequestWaiter.waitForPaneRequests({
