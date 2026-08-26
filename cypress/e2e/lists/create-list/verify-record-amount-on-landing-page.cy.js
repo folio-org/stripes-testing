@@ -8,7 +8,7 @@ describe('Lists', () => {
   describe('Create list', () => {
     let userData = {};
     const listData = {
-      name: getTestEntityValue('AT_C411695_Test100'),
+      name: getTestEntityValue('C411695_Test100'),
       description: 'Test description',
     };
 

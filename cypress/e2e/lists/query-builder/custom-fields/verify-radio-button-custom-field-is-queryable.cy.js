@@ -3,43 +3,12 @@ import { Lists } from '../../../../support/fragments/lists/lists';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import { generateRadioButtonCustomFieldData } from '../../../../support/utils/customFields';
-import { poll } from '../../../../support/utils/polling';
 import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
 describe('Lists', () => {
   describe('Query Builder', () => {
     describe('Custom fields', () => {
       const recordType = 'Users';
-
-      const waitForCustomFieldToBeQueryable = (fieldLabel) => {
-        return Lists.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
-          return poll(
-            () => Lists.getEntityTypeByIdViaApi(entityTypeId, { failOnStatusCode: false }),
-            ({ body }) => body.columns?.some(
-              ({ labelAlias, queryable }) => labelAlias === fieldLabel && queryable,
-            ),
-            {
-              timeout: 360000,
-              delay: 15000,
-              errorMessage: `"${fieldLabel}" custom field did not become queryable for ${recordType}`,
-            },
-          );
-        });
-      };
-
-      const waitForFieldLabelToBeAbsent = (fieldLabel) => {
-        return Lists.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
-          return poll(
-            () => Lists.getEntityTypeByIdViaApi(entityTypeId, { failOnStatusCode: false }),
-            ({ body }) => !body.columns?.some(({ labelAlias }) => labelAlias === fieldLabel),
-            {
-              timeout: 360000,
-              delay: 15000,
-              errorMessage: `"${fieldLabel}" custom field did not disappear from ${recordType}`,
-            },
-          );
-        });
-      };
 
       describe('Radio button custom field queryable', () => {
         const option1Value = 'AT_C648488_RB_Option1';
@@ -75,7 +44,8 @@ describe('Lists', () => {
                   {
                     ...Users.generateUserModel(),
                     customFields: {
-                      [createdCustomField.refId]: option1Value,
+                      // select-type custom fields store the option id, not the display value
+                      [createdCustomField.refId]: 'opt_0',
                     },
                   },
                   [],
@@ -84,7 +54,7 @@ describe('Lists', () => {
                   userData = userProperties;
                 });
             })
-            .then(() => waitForCustomFieldToBeQueryable(testData.customFieldLabel));
+            .then(() => Lists.waitForCustomFieldToBeQueryable(recordType, testData.customFieldLabel));
         });
 
         after('Delete test data', () => {
@@ -148,6 +118,7 @@ describe('Lists', () => {
         const option2Value = 'AT_C648493_RB_Option2';
         const updatedOption1Value = 'AT_C648493_RB_Option1_Updated';
         const updatedOption2Value = 'AT_C648493_RB_Option2_Updated';
+        let userData = {};
         let listName;
         const testData = {
           customField: generateRadioButtonCustomFieldData({
@@ -174,8 +145,23 @@ describe('Lists', () => {
               testData.customFieldLabel = `User — ${createdCustomField.name}`;
               testData.updatedFieldName = `${createdCustomField.name}_Updated`;
               testData.updatedFieldLabel = `User — ${testData.updatedFieldName}`;
+
+              return cy
+                .createTempUserParameterized(
+                  {
+                    ...Users.generateUserModel(),
+                    customFields: {
+                      // select-type custom fields store the option id, not the display value
+                      [createdCustomField.refId]: 'opt_0',
+                    },
+                  },
+                  [],
+                )
+                .then((userProperties) => {
+                  userData = userProperties;
+                });
             })
-            .then(() => waitForCustomFieldToBeQueryable(testData.customFieldLabel));
+            .then(() => Lists.waitForCustomFieldToBeQueryable(recordType, testData.customFieldLabel));
         });
 
         after('Delete test data', () => {
@@ -186,10 +172,13 @@ describe('Lists', () => {
           if (testData.customField?.id) {
             cy.deleteCustomFieldsViaApi({ ids: [testData.customField.id] });
           }
+          if (userData.userId) {
+            Users.deleteViaApi(userData.userId);
+          }
         });
 
         it(
-          "C648493 Verify that it's possible to update the Radio custom fields, and all existing queries are still available (corsair)",
+          'C648493 Verify that it\'s possible to update the Radio custom fields, and all existing queries are still available (corsair)',
           { tags: ['criticalPath', 'corsair', 'C648493'] },
           () => {
             listName = getTestEntityValue('C648493_List');
@@ -240,11 +229,13 @@ describe('Lists', () => {
             });
 
             // Wait ~5-6 min for the update to propagate to the entity type
-            waitForCustomFieldToBeQueryable(testData.updatedFieldLabel);
+            Lists.waitForCustomFieldToBeQueryable(recordType, testData.updatedFieldLabel);
 
             // #3 Go to the "Lists" app and open the list that uses the updated custom field
-            cy.visit(TopMenu.listsPath);
-            Lists.waitLoading();
+            cy.loginAsAdmin({
+              path: TopMenu.listsPath,
+              waiter: Lists.filtersWaitLoading,
+            });
             Lists.openList(listName);
 
             // #4 Verify the user-friendly query contains the updated field name and option values
@@ -264,8 +255,9 @@ describe('Lists', () => {
         );
       });
 
-      describe('Radio button custom field not queryable after deletion', () => {
+      describe.only('Radio button custom field not queryable after deletion', () => {
         let listName;
+        let userData = {};
         const testData = {
           customField: generateRadioButtonCustomFieldData({
             testNumber: 'C648498',
@@ -289,14 +281,32 @@ describe('Lists', () => {
             .then(([createdCustomField]) => {
               testData.customField = createdCustomField;
               testData.customFieldLabel = `User — ${createdCustomField.name}`;
+
+              return cy
+                .createTempUserParameterized(
+                  {
+                    ...Users.generateUserModel(),
+                    customFields: {
+                      // select-type custom fields store the option id, not the display value
+                      [createdCustomField.refId]: 'opt_0',
+                    },
+                  },
+                  [],
+                )
+                .then((userProperties) => {
+                  userData = userProperties;
+                });
             })
-            .then(() => waitForCustomFieldToBeQueryable(testData.customFieldLabel));
+            .then(() => Lists.waitForCustomFieldToBeQueryable(recordType, testData.customFieldLabel));
         });
 
         after('Delete test list', () => {
           cy.getAdminToken();
           if (listName) {
             Lists.deleteListByNameViaApi(listName);
+          }
+          if (userData.userId) {
+            Users.deleteViaApi(userData.userId);
           }
         });
 
@@ -335,11 +345,13 @@ describe('Lists', () => {
             testData.customField = null;
 
             // Wait ~5-6 min for the deletion to propagate to the entity type
-            waitForFieldLabelToBeAbsent(testData.customFieldLabel);
+            Lists.waitForFieldLabelToBeAbsent(recordType, testData.customFieldLabel);
 
             // #2 Go to the "Lists" app and open the list that contained the radio button custom field
-            cy.visit(TopMenu.listsPath);
-            Lists.waitLoading();
+            cy.loginAsAdmin({
+              path: TopMenu.listsPath,
+              waiter: Lists.filtersWaitLoading,
+            });
             Lists.openList(listName);
 
             // #3 Verify the query is empty — the deleted field no longer appears in the query

@@ -78,7 +78,8 @@ describe('Lists', () => {
                   {
                     ...Users.generateUserModel(),
                     customFields: {
-                      [createdCustomField.refId]: option1Value,
+                      // select-type custom fields store the option id, not the display value
+                      [createdCustomField.refId]: 'opt_0',
                     },
                   },
                   [],
@@ -192,7 +193,7 @@ describe('Lists', () => {
         });
 
         it(
-          "C648492 Verify that it's possible to update the Single select custom fields, and all existing queries are still available (corsair)",
+          'C648492 Verify that it\'s possible to update the Single select custom fields, and all existing queries are still available (corsair)',
           { tags: ['criticalPath', 'corsair', 'C648492'] },
           () => {
             listName = getTestEntityValue('C648492_List');
@@ -273,6 +274,7 @@ describe('Lists', () => {
           customField: generateCheckboxCustomFieldData({
             testNumber: 'C648496',
           }),
+          customFieldLabel: ''
         };
 
         before('Create checkbox custom field', () => {
