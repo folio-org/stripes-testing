@@ -1,6 +1,7 @@
 import { HTML, including } from '@interactors/html';
 import {
   Button,
+  DropdownMenu,
   Pane,
   MultiColumnList,
   MultiColumnListCell,
@@ -72,6 +73,26 @@ export default {
   verifyAction: () => cy.expect(KeyValue('Action').has({ value: 'Update' })),
   closeViewModeForMatchProfile: () => cy.do(viewPane.find(Button({ icon: 'times' })).click()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
+  checkSummaryFieldsConditions(fields) {
+    fields.forEach(({ label, conditions }) => {
+      if (label === 'Name') {
+        this.verifyActionProfileTitleName(conditions.value);
+      } else cy.expect(viewPane.find(KeyValue(label)).has(conditions));
+    });
+  },
+  verifyLinkedJobProfile(profileName) {
+    cy.expect(
+      viewPane
+        .find(MultiColumnList({ id: 'associated-jobProfiles-list' }))
+        .find(MultiColumnListCell({ content: profileName }))
+        .exists(),
+    );
+  },
+  verifyActionsMenuOptionsDisabled(optionNames) {
+    cy.do(viewPane.find(actionsButton).click());
+    const options = Array.isArray(optionNames) ? optionNames : [optionNames];
+    cy.expect(options.map((option) => DropdownMenu().find(Button(option)).has({ disabled: true })));
+  },
   checkCalloutMessage: (message) => {
     cy.expect(Callout({ textContent: including(message) }).exists());
   },
