@@ -60,6 +60,12 @@ export default {
       exportButton.has({ disabled: false, visible: true }),
     ]);
   },
+  checkExportAllPoFieldsRadioButton() {
+    cy.do(exportSettingsModal.find(allOrderFieldsRadioButton).click());
+  },
+  checkExportAllPolFieldsRadioButton() {
+    cy.do(exportSettingsModal.find(allOrderLineFieldsRadioButton).click());
+  },
   selectOrderFieldsToExport(option) {
     cy.do([
       selectedOrderFieldsRadioButton.click(),
@@ -89,6 +95,12 @@ export default {
   },
   getAllOrderFieldOptions() {
     cy.do([selectedOrderFieldsRadioButton.click(), selectPoFieldsDropdown.open()]);
+    return cy.then(() => {
+      return MultiSelectMenu().optionList();
+    });
+  },
+  getAllOrderLineFieldOptions() {
+    cy.do([selectedOrderLineFieldsRadioButton.click(), selectPolFieldsDropdown.open()]);
     return cy.then(() => {
       return MultiSelectMenu().optionList();
     });

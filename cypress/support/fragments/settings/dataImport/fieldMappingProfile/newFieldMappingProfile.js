@@ -17,6 +17,7 @@ import {
   Option,
   Pane,
   Popover,
+  RepeatableFieldItem,
   SearchField,
   Select,
   TextArea,
@@ -1028,6 +1029,24 @@ export default {
       Select({ name: selectName }).focus(),
       Select({ name: selectName }).choose(staffOnly),
     ]);
+  },
+
+  addNextCheckInCheckOutNote: (noteType, note, staffOnly, rowIndex) => {
+    const targetRow = loanAndAvailabilityAccordion.find(RepeatableFieldItem({ index: rowIndex }));
+
+    cy.do(Button('Add check in / check out note').click());
+    cy.do([targetRow.find(noteTypeField).fillIn(noteType), targetRow.find(noteField).fillIn(note)]);
+    cy.expect([
+      targetRow.find(noteTypeField).has({ value: noteType }),
+      targetRow.find(noteField).has({ value: note }),
+    ]);
+    cy.do([
+      targetRow.find(Select(including('Staff only'))).focus(),
+      targetRow.find(Select(including('Staff only'))).choose(staffOnly),
+    ]);
+    cy.expect(
+      targetRow.find(Select(including('Staff only'))).has({ checkedOptionText: staffOnly }),
+    );
   },
 
   fillVendorName: (vendorName) => {
