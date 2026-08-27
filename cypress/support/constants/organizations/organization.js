@@ -35,9 +35,6 @@ export const ORGANIZATION_CATEGORIES = {
   SHIPMENTS: 'Shipments',
 };
 
-export const ORGANIZATION_URLS_FIELDS = {
-  URL: 'Organization — URLs — URL',
-  DESCRIPTION: 'Organization — URLs — Description',
-  CATEGORIES: 'Organization — URLs — Categories',
-  NOTES: 'Organization — URLs — Notes',
+export const ORGANIZATION_PAYMENT_METHODS = {
+  CASH: 'Cash',
 };

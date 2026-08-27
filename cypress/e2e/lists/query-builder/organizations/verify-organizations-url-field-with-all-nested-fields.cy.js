@@ -10,10 +10,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import { ORGANIZATIONS_FIELDS } from '../../../../support/constants/query-builder/organizationsFields';
-import {
-  ORGANIZATION_CATEGORIES,
-  ORGANIZATION_URLS_FIELDS,
-} from '../../../../support/constants/organizations/organization';
+import { ORGANIZATION_CATEGORIES } from '../../../../support/constants/organizations/organization';
 
 const testCaseId = 'C1453682';
 const listName = `AT_${testCaseId}_List_${getRandomPostfix()}`;
@@ -107,10 +104,10 @@ describe('Lists', () => {
           // Step 3: Click "Select field" dropdown and search for "Organizations - URLs"
           // Verify subtitles appear (URL, Description, Categories, Notes)
           QueryModal.verifyFieldOptionExists([
-            ORGANIZATION_URLS_FIELDS.URL,
-            ORGANIZATION_URLS_FIELDS.DESCRIPTION,
-            ORGANIZATION_URLS_FIELDS.CATEGORIES,
-            ORGANIZATION_URLS_FIELDS.NOTES,
+            ORGANIZATIONS_FIELDS.ORGANIZATION.URLS.URL,
+            ORGANIZATIONS_FIELDS.ORGANIZATION.URLS.DESCRIPTION,
+            ORGANIZATIONS_FIELDS.ORGANIZATION.URLS.CATEGORIES,
+            ORGANIZATIONS_FIELDS.ORGANIZATION.URLS.NOTES,
           ]);
 
           // Step 4: Select "Organizations - URLs - URL" option
@@ -124,6 +121,9 @@ describe('Lists', () => {
 
           // Step 7: Fill in the "Value" input field with URL
           QueryModal.fillInValueTextfield(testData.url.value);
+          QueryModal.verifyQueryAreaContent(
+            `(organization.urls[*]->value == ${testData.url.value})`,
+          );
 
           // Step 8: Click "+" button and select "Organizations - URLs - Description" option
           QueryModal.addNewRow();
@@ -134,6 +134,9 @@ describe('Lists', () => {
 
           // Step 10: Fill in the "Value" input field with description
           QueryModal.fillInValueTextfield(testData.url.description, 1);
+          QueryModal.verifyQueryAreaContent(
+            `(organization.urls[*]->value == ${testData.url.value}) AND (organization.urls[*]->description contains ${testData.url.description})`,
+          );
 
           // Step 11: Click "+" button and select "Organizations - URLs - Categories" option
           QueryModal.addNewRow();
@@ -146,6 +149,9 @@ describe('Lists', () => {
           QueryModal.chooseFromValueMultiselect(testData.url.category, 2, {
             exactMatch: true,
           });
+          QueryModal.verifyQueryAreaContent(
+            `(organization.urls[*]->value == ${testData.url.value}) AND (organization.urls[*]->description contains ${testData.url.description}) AND (organization.urls[*]->categories_names in [${testData.url.category}])`,
+          );
 
           // Step 14: Click on "Test query" button
           QueryModal.testQuery();

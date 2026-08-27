@@ -97,6 +97,19 @@ export const embeddedTableHeadersMap = {
     'Categories',
   ],
   organizationUrls: ['URL', 'Description', 'Categories', 'Notes'],
+  organizationAccounts: [
+    'Name',
+    'Account number',
+    'Description',
+    'Accounting code',
+    'Payment method',
+    'Status',
+    'Contact info',
+    'Library code',
+    'Library EDI code',
+    'Notes',
+    'Acquisition unit names',
+  ],
   additionalCallNumbers: ['Call number', 'Prefix', 'Suffix', 'Type'],
 };
 
@@ -1338,6 +1351,20 @@ export default {
         return [dataObj.name, dataObj.code, dataObj.quantityElectronic, dataObj.quantityPhysical];
       case 'organizationUrls':
         return [dataObj.url, dataObj.description, dataObj.categories, dataObj.notes];
+      case 'organizationAccounts':
+        return [
+          dataObj.name,
+          dataObj.accountNumber,
+          dataObj.description,
+          dataObj.accountingCode,
+          dataObj.paymentMethod,
+          dataObj.status,
+          dataObj.contactInfo,
+          dataObj.libraryCode,
+          dataObj.libraryEdiCode,
+          dataObj.notes,
+          dataObj.acquisitionUnitNames,
+        ];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -1447,6 +1474,10 @@ export default {
 
   verifyOrganizationUrlsEmbeddedTableInQueryModal(identifier, expectedUrls) {
     this.verifyEmbeddedTableInQueryModal('organizationUrls', identifier, expectedUrls);
+  },
+
+  verifyOrganizationAccountsEmbeddedTableInQueryModal(identifier, expectedAccounts) {
+    this.verifyEmbeddedTableInQueryModal('organizationAccounts', identifier, expectedAccounts);
   },
 
   verifyAdditionalCallNumbersEmbeddedTableInQueryModal(
