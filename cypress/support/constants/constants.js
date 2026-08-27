@@ -1771,6 +1771,7 @@ export const COMMON_BUTTON_LABELS = {
   SUBMIT: 'Submit',
   YES: 'Yes',
   NO: 'No',
+  DUPLICATE: 'Duplicate',
 };
 
 export const RESULTS_PANE_NOT_FOUND_MESSAGE = 'No results found. Please check your filters.';

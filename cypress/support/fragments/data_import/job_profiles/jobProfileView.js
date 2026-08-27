@@ -4,6 +4,7 @@ import {
   Button,
   Callout,
   DropdownMenu,
+  KeyValue,
   Link,
   Modal,
   MultiColumnList,
@@ -80,6 +81,15 @@ export default {
   verifyJobProfileOpened: () => {
     cy.expect(resultsPane.exists());
     cy.expect(viewPane.exists());
+  },
+  checkSummaryFieldsConditions(fields) {
+    fields.forEach(({ label, conditions }) => {
+      if (label === 'Name') {
+        this.verifyJobProfileName(conditions.value);
+      } else {
+        cy.expect(viewPane.find(KeyValue(label)).has(conditions));
+      }
+    });
   },
   verifyAssignedTags: (tag, quantityOfTags = 1) => {
     cy.expect(MultiSelect({ selectedCount: quantityOfTags }).exists());
