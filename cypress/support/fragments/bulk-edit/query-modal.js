@@ -96,6 +96,7 @@ export const embeddedTableHeadersMap = {
     'Country',
     'Categories',
   ],
+  organizationUrls: ['URL', 'Description', 'Categories', 'Notes'],
   additionalCallNumbers: ['Call number', 'Prefix', 'Suffix', 'Type'],
 };
 
@@ -499,6 +500,7 @@ export default {
   },
 
   clickSelectFieldButton() {
+    cy.wait(300);
     cy.do(selectFieldButton.click());
   },
 
@@ -668,6 +670,15 @@ export default {
     cy.do(targetSelection.open());
     expectedFields.forEach((field) => {
       cy.expect(SelectionList().has({ optionList: not(including(field)) }));
+    });
+    this.closeOpenedSelection();
+  },
+
+  verifyFieldOptionExists(expectedFields, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+    cy.do(targetSelection.open());
+    expectedFields.forEach((field) => {
+      cy.expect(SelectionList().has({ optionList: including(field) }));
     });
     this.closeOpenedSelection();
   },
@@ -1325,6 +1336,8 @@ export default {
         return [dataObj.callNumber, dataObj.prefix, dataObj.suffix, dataObj.type];
       case 'polLocations':
         return [dataObj.name, dataObj.code, dataObj.quantityElectronic, dataObj.quantityPhysical];
+      case 'organizationUrls':
+        return [dataObj.url, dataObj.description, dataObj.categories, dataObj.notes];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -1430,6 +1443,10 @@ export default {
 
   verifyOrganizationAddressesEmbeddedTableInQueryModal(identifier, expectedAddresses) {
     this.verifyEmbeddedTableInQueryModal('organizationAddresses', identifier, expectedAddresses);
+  },
+
+  verifyOrganizationUrlsEmbeddedTableInQueryModal(identifier, expectedUrls) {
+    this.verifyEmbeddedTableInQueryModal('organizationUrls', identifier, expectedUrls);
   },
 
   verifyAdditionalCallNumbersEmbeddedTableInQueryModal(

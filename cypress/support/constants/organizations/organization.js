@@ -29,3 +29,15 @@ export const ORGANIZATION_FILTER_LABELS = {
   ORGANIZATIONS_STATUS: 'Organizations status',
   PAYMENT_METHOD: 'Payment method',
 };
+
+export const ORGANIZATION_CATEGORIES = {
+  PAYMENTS: 'Payments',
+  SHIPMENTS: 'Shipments',
+};
+
+export const ORGANIZATION_URLS_FIELDS = {
+  URL: 'Organization — URLs — URL',
+  DESCRIPTION: 'Organization — URLs — Description',
+  CATEGORIES: 'Organization — URLs — Categories',
+  NOTES: 'Organization — URLs — Notes',
+};

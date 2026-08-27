@@ -10,7 +10,15 @@ export const ORGANIZATIONS_FIELDS = {
       STATE_REGION: 'Organization — Addresses — State/region',
       ZIP_CODE: 'Organization — Addresses — Zip code',
       COUNTRY: 'Organization — Addresses — Country',
+      CATEGORIES: 'Organization — Addresses — Categories',
     },
     ADDRESSES_COLUMN: 'Organization — Addresses',
+    URLS: {
+      URL: 'Organization — URLs — URL',
+      DESCRIPTION: 'Organization — URLs — Description',
+      CATEGORIES: 'Organization — URLs — Categories',
+      NOTES: 'Organization — URLs — Notes',
+    },
+    URLS_COLUMN: 'Organization — URLs',
   },
 };
