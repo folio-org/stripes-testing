@@ -3,10 +3,15 @@ export const ORDER_INVOICE_ANALYSIS_FIELDS = {
     FOLIO_INVOICE_NUMBER: 'Invoice — Folio invoice number',
     FISCAL_YEAR: 'Invoice — Fiscal year',
     STATUS: 'Invoice — Status',
+    VENDOR_NAME: 'Invoice — Vendor name',
+    VENDOR_INVOICE_NUMBER: 'Invoice — Vendor invoice number',
   },
   INVOICE_LINE: {
     INVOICE_LINE_NUMBER: 'Invoice — Line — Invoice line number',
     TOTAL: 'Invoice — Line — Total',
+    SUB_TOTAL: 'Invoice — Line — Sub-total',
+    FUND_DISTRIBUTION_AMOUNT: 'Invoice — Line — Fund distribution amount',
+    FUND_DISTRIBUTION_VALUE: 'Invoice — Line — Fund distribution value',
   },
   PO_LINE: {
     TITLE_OR_PACKAGE: 'PO line — Title or package',
@@ -26,6 +31,7 @@ export const ORDER_INVOICE_ANALYSIS_FIELDS = {
   },
   FUND: {
     NAME: 'Fund — Name',
+    CODE: 'Fund — Code',
   },
   FISCAL_YEAR: {
     CODE: 'Fiscal year — Code',

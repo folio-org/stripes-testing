@@ -727,6 +727,11 @@ const UI = {
     cy.expect(resultViewerTable.find(MultiColumnListHeader(columnName)).exists());
   },
 
+  verifyRecordValueAbsentInResultTable(value, timeout = 2000) {
+    cy.wait(timeout);
+    cy.expect(resultViewerTable.find(MultiColumnListCell(value)).absent());
+  },
+
   verifyLandingPageTableColumns(expectedColumns) {
     cy.get('[role=columnheader]').then((headers) => {
       const columnNames = [...headers].map((header) => header.innerText.trim());
