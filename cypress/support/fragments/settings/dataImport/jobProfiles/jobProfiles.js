@@ -61,10 +61,11 @@ export default {
       body: jobProfile,
     });
   },
-  deleteJobProfileViaApi(profileId) {
+  deleteJobProfileViaApi(profileId, ignoreErrors = true) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `data-import-profiles/jobProfiles/${profileId}`,
+      failOnStatusCode: !ignoreErrors,
     });
   },
   deleteJobProfileByNameViaApi(profileName) {
