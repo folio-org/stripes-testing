@@ -12,6 +12,8 @@ export default {
   orderInstanceConnectionUpdatedSuccessfully:
     'Order instance connection has been successfully updated',
   exportJobStartedSuccessfully: 'Export has been started successfully',
+  activeBudgetsInMultipleFiscalYearsError:
+    'Order line fund distributions have active budgets in multiple fiscal years.',
 
   // warnings
   exchangeRateAmountMustBePositive: 'Amount must be a positive number',
