@@ -104,8 +104,8 @@ describe('Orders', () => {
   });
 
   it(
-    'C464371 Save using "Save & keep editing" button when editing order and order line (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C464371'] },
+    'C667567 Save using "Save & keep editing" button when editing order and order line (thunderjet)',
+    { tags: ['extendedPath', 'thunderjet', 'C667567'] },
     () => {
       // Step 1: Search for the order and open it
       Orders.searchByParameter(ORDER_SEARCH_OPTIONS.PO_NUMBER, testData.order.poNumber);
