@@ -30,6 +30,7 @@ const ongoingInformationSection = orderEditFormRoot.find(Section({ id: 'ongoing'
 const orderSummarySection = orderEditFormRoot.find(Section({ id: 'poSummary' }));
 
 const collapseAllButton = orderEditFormRoot.find(Button(COMMON_BUTTON_LABELS.COLLAPSE_ALL));
+const clearFieldButton = Button({ icon: 'times-circle-solid' });
 const cancelButton = orderEditFormRoot.find(Button(COMMON_BUTTON_LABELS.CANCEL));
 const saveAndCloseButton = orderEditFormRoot.find(Button(COMMON_BUTTON_LABELS.SAVE_AND_CLOSE));
 const saveAndKeepEditingButton = orderEditFormRoot.find(
@@ -225,6 +226,9 @@ export default {
       if (!requiredFieldsConfig) throw new Error(`Unknown field: ${field}`);
       cy.expect(requiredFieldsConfig.field.has({ error: 'Required!' }));
     });
+  },
+  clearVendorField() {
+    cy.do(infoSectionFields.vendor.find(clearFieldButton).click());
   },
   clickAddPolButton({ orderSaved = true } = {}) {
     this.clickCreateOrder({ button: addPoLineButton, orderSaved });
