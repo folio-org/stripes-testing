@@ -412,13 +412,11 @@ describe('Agreements', () => {
         );
         AgreementViewDetails.openAgreementLineFilter();
         AgreementLines.waitLoading();
-        AgreementLines.getViaApi({ filters: `owner==${flow.get(R.AGREEMENT_2).id}` }).then(
-          (agreementLines) => {
-            const resourceNames = agreementLines.map(({ resourceName }) => resourceName);
+        SearchAndFilterAgreementLines.filterByAgreement(agreement2Name);
 
-            expect(resourceNames).to.include.members(agreementLinesNames);
-          },
-        );
+        agreementLinesNames.forEach((resourceName) => {
+          AgreementLines.checkAgreementLineFound(resourceName);
+        });
 
         cy.log('<--- STEP 9 --->');
         cy.then(() => {
@@ -427,10 +425,19 @@ describe('Agreements', () => {
             title,
           ]);
 
+          cy.intercept('GET', '/erm/entitlements*').as('agreementLinesByAgreement');
+
           flow.get(R.CREATED_AGREEMENTS).forEach(({ id: agreementId }, index) => {
+            SearchAndFilterAgreementLines.clearAllFilters();
+            SearchAndFilterAgreementLines.filterByAgreement(agreement2Name);
+
             AgreementLines.getViaApi({ filters: `owner==${agreementId}` }).then(
               (agreementLines) => {
                 expect(agreementLines[0].resourceName).to.eq(createdAgreementLineNames[index]);
+
+                agreementLines.forEach(({ resourceName }) => {
+                  AgreementLines.checkAgreementLineFound(resourceName);
+                });
               },
             );
           });
