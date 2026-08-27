@@ -13,10 +13,19 @@ import {
 /**
  * Converts field values to CSV header format
  * CSV exports use regular dashes (-) while UI field values use em dashes (—)
+ * Handles both flat and nested objects
  */
-const convertToCsvHeaders = (fieldValues) => {
+export const convertToCsvHeaders = (fieldValues) => {
   return Object.entries(fieldValues).reduce((acc, [key, value]) => {
-    acc[key] = value.replace('—', '-');
+    if (typeof value === 'object' && value !== null) {
+      // Recursively handle nested objects
+      acc[key] = convertToCsvHeaders(value);
+    } else if (typeof value === 'string') {
+      // Convert em dash to regular dash for strings
+      acc[key] = value.replace(/—/g, '-');
+    } else {
+      acc[key] = value;
+    }
     return acc;
   }, {});
 };
