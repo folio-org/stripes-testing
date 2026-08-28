@@ -7,11 +7,10 @@ import { Lists } from '../../../../support/fragments/lists/lists';
 import { NewOrganization, Organizations } from '../../../../support/fragments/organizations';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import getRandomPostfix, { randomNDigitNumber } from '../../../../support/utils/stringTools';
 import { ORGANIZATIONS_FIELDS } from '../../../../support/constants/query-builder/organizationsFields';
-import { ORGANIZATION_PAYMENT_METHODS } from '../../../../support/constants/organizations/organization';
 
-const testCaseId = 'C1453711';
+const testCaseId = 'C1453713';
 const listName = `AT_${testCaseId}_List_${getRandomPostfix()}`;
 const testData = {
   organization: {
@@ -24,9 +23,9 @@ const testData = {
     accountNo: `12345_${getRandomPostfix()}`,
     description: `account description_${getRandomPostfix()}`,
     accountingCode: `112233_${getRandomPostfix()}`,
-    paymentMethod: ORGANIZATION_PAYMENT_METHODS.CASH,
+    paymentMethod: 'Cash',
     status: 'Active',
-    contactInfo: `094062672_${getRandomPostfix()}`,
+    contactInfo: `${randomNDigitNumber(10)}`,
     libraryCode: `25_${getRandomPostfix()}`,
     libraryEdiCode: `254_${getRandomPostfix()}`,
     notes: `account notes_${getRandomPostfix()}`,
@@ -91,8 +90,8 @@ describe('Lists', () => {
       });
 
       it(
-        "C1453711 Verify 'Organizations Accounts' field with all nested fields - 1 (athena)",
-        { tags: ['extendedPath', 'athena', 'C1453711'] },
+        "C1453713 Verify 'Organizations Accounts' field with all nested fields - 2 (athena)",
+        { tags: ['extendedPath', 'athena', 'C1453713'] },
         () => {
           // Step 1: Create new list with Organizations record type
           Lists.openNewListPane();
@@ -118,77 +117,95 @@ describe('Lists', () => {
             ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.ACQUISITIONS_UNIT_NAMES,
           ]);
 
-          // Step 4: Select "Organizations - Accounts - Name" option
-          QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.NAME);
+          // Step 4: Select "Organizations - Accounts - Contact info" option
+          QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.CONTACT_INFO);
           QueryModal.verifyQueryAreaContent('');
 
           // Step 5: Verify operators list
           QueryModal.verifyOperatorsList(STRING_OPERATORS);
 
-          // Step 6: Select "equals" option
-          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+          // Step 6: Select "starts with" option
+          QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH);
 
-          // Step 7: Fill in the "Value" input field with account name
-          QueryModal.fillInValueTextfield(testData.account.name);
+          // Step 7: Fill in the "Value" input field with "09"
+          const contactInfoMatch = testData.account.contactInfo.slice(0, 4);
 
-          // Step 8: Add new row for Account number filter
+          QueryModal.fillInValueTextfield(contactInfoMatch);
+
+          // Step 8: Add new row for Library code filter
           QueryModal.addNewRow();
-          QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.ACCOUNT_NUMBER, 1);
+          QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.LIBRARY_CODE, 1);
           QueryModal.verifyQueryAreaContent(
-            `(organization.accounts[*]->name == ${testData.account.name})`,
+            `(organization.accounts[*]->contact_info starts with ${contactInfoMatch})`,
           );
 
-          // Step 9: Select "starts with" option
-          QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
+          // Step 9: Select "contains" option
+          QueryModal.selectOperator(QUERY_OPERATIONS.CONTAINS, 1);
 
-          // Step 10: Fill in the "Value" input field with account number prefix
-          QueryModal.fillInValueTextfield('12', 1);
+          // Step 10: Fill in the "Value" input field with "25"
+          QueryModal.fillInValueTextfield('25', 1);
 
-          // Step 11: Add new row for Description filter
+          // Step 11: Add new row for Library EDI code filter
           QueryModal.addNewRow();
-          QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.DESCRIPTION, 2);
+          QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.LIBRARY_EDI_CODE, 2);
 
-          // Step 12: Select "contains" option
-          QueryModal.selectOperator(QUERY_OPERATIONS.CONTAINS, 2);
+          // Step 12: Select "equals" option
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 2);
 
-          // Step 13: Fill in the "Value" input field with description
-          QueryModal.fillInValueTextfield('account', 2);
+          // Step 13: Fill in the "Value"
+          QueryModal.fillInValueTextfield(testData.account.libraryEdiCode, 2);
           QueryModal.verifyQueryAreaContent(
-            `(organization.accounts[*]->name == ${testData.account.name}) AND (organization.accounts[*]->account_no starts with 12) AND (organization.accounts[*]->description contains account)`,
+            `(organization.accounts[*]->contact_info starts with ${contactInfoMatch}) AND (organization.accounts[*]->library_code contains 25) AND (organization.accounts[*]->library_edi_code == ${testData.account.libraryEdiCode})`,
           );
 
-          // Step 14: Add new row for Accounting code filter
+          // Step 14: Add new row for Notes filter
           QueryModal.addNewRow();
-          QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.ACCOUNTING_CODE, 3);
+          QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.NOTES, 3);
 
-          // Step 15: Select "equals" option
-          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 3);
+          // Step 15: Select "contains" option
+          QueryModal.selectOperator(QUERY_OPERATIONS.CONTAINS, 3);
 
-          // Step 16: Fill in the "Value" input field with accounting code
-          QueryModal.fillInValueTextfield(testData.account.accountingCode, 3);
+          // Step 16: Fill in the "Value" input field with "note"
+          QueryModal.fillInValueTextfield('note', 3);
           QueryModal.verifyQueryAreaContent(
-            `(organization.accounts[*]->name == ${testData.account.name}) AND (organization.accounts[*]->account_no starts with 12) AND (organization.accounts[*]->description contains account) AND (organization.accounts[*]->app_system_no == ${testData.account.accountingCode})`,
+            `(organization.accounts[*]->contact_info starts with ${contactInfoMatch}) AND (organization.accounts[*]->library_code contains 25) AND (organization.accounts[*]->library_edi_code == ${testData.account.libraryEdiCode}) AND (organization.accounts[*]->notes contains note)`,
           );
 
-          // Step 17: Add new row for Payment method filter
+          // Step 17: Add new row for Status filter
           QueryModal.addNewRow();
-          QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.PAYMENT_METHOD, 4);
+          QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.STATUS, 4);
 
-          // Step 18: Select "in" option and select "Cash" value
+          // Step 18: Select "in" option and select "Active" value
           QueryModal.selectOperator(QUERY_OPERATIONS.IN, 4);
-          QueryModal.chooseFromValueMultiselect(testData.account.paymentMethod, 4, {
+          QueryModal.chooseFromValueMultiselect('Active', 4, {
             exactMatch: true,
           });
           QueryModal.verifyQueryAreaContent(
-            `(organization.accounts[*]->name == ${testData.account.name}) AND (organization.accounts[*]->account_no starts with 12) AND (organization.accounts[*]->description contains account) AND (organization.accounts[*]->app_system_no == ${testData.account.accountingCode}) AND (organization.accounts[*]->payment_method in [${testData.account.paymentMethod}])`,
+            `(organization.accounts[*]->contact_info starts with ${contactInfoMatch}) AND (organization.accounts[*]->library_code contains 25) AND (organization.accounts[*]->library_edi_code == ${testData.account.libraryEdiCode}) AND (organization.accounts[*]->notes contains note) AND (organization.accounts[*]->account_status in [Active])`,
           );
 
-          // Step 19: Click on "Test query" button
+          // Step 19: Add new row for Acquisition unit names filter
+          QueryModal.addNewRow();
+          QueryModal.selectField(
+            ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.ACQUISITIONS_UNIT_NAMES,
+            5,
+          );
+
+          // Step 20: Select "is null/empty" option and select "True" value
+          QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL, 5);
+          QueryModal.chooseValueSelect('True', 5, {
+            exactMatch: true,
+          });
+          QueryModal.verifyQueryAreaContent(
+            `(organization.accounts[*]->contact_info starts with ${contactInfoMatch}) AND (organization.accounts[*]->library_code contains 25) AND (organization.accounts[*]->library_edi_code == ${testData.account.libraryEdiCode}) AND (organization.accounts[*]->notes contains note) AND (organization.accounts[*]->account_status in [Active]) AND (organization.accounts[*]->acq_unit is null/empty True)`,
+          );
+
+          // Step 21: Click on "Test query" button
           QueryModal.testQuery();
           QueryModal.cancelDisabled(false);
           QueryModal.runQueryDisabled();
 
-          // Step 20: Check the preview of found records
+          // Step 22: Check the preview of found records
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyNumberOfRowsInPreviewTable(1);
           QueryModal.testQueryDisabled(false);
@@ -210,19 +227,19 @@ describe('Lists', () => {
             },
           );
 
-          // Step 21: Click on "Run query & save"
+          // Step 23: Click on "Run query & save"
           QueryModal.clickRunQueryAndSave();
           QueryModal.verifyClosed();
           Lists.verifyListSavedCalloutMessage(listName);
 
-          // Step 22: Verify the result after the refresh is done
+          // Step 24: Verify the result after the refresh is done
           Lists.waitForCompilingAnimationToDisappear();
 
-          // Step 23: Click on "View updated list" link on the toast message
+          // Step 25: Click on "View updated list" link on the toast message
           Lists.viewUpdatedList();
           Lists.verifyResultColumnDisplayed(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS_COLUMN);
 
-          // Step 24: Click on "Actions" button and check the "Organizations -- Accounts" checkbox
+          // Step 26: Click on "Actions" button and check the "Organizations -- Accounts" checkbox
           Lists.openActions();
           Lists.selectResultColumn(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS_COLUMN);
           Lists.verifyResultColumnDisplayed(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS_COLUMN);
