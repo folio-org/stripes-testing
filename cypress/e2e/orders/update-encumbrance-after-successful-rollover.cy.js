@@ -16,6 +16,7 @@ import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderDetails from '../../support/fragments/orders/orderDetails';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
+import OrderStates from '../../support/fragments/orders/orderStates';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
@@ -293,14 +294,11 @@ describe('Orders', () => {
       cy.wait('@reEncumber').then((interception) => {
         OrderDetails.checkApiErrorResponse(interception, {
           expectedStatus: 409,
-          expectedErrorCode: 'encumbrancesForReEncumberNotFound',
-          expectedErrorMessage:
-            'The encumbrances were correctly created during the rollover or have already been updated.',
+          expectedErrorCode: OrderStates.encumbrancesForReEncumberNotFound,
+          expectedErrorMessage: OrderStates.encumbranceNotUpdatedAPIMessage,
         });
       });
-      InteractorsTools.checkCalloutErrorMessage(
-        'The encumbrances were correctly created during the rollover or have already been updated.',
-      );
+      InteractorsTools.checkCalloutErrorMessage(OrderStates.encumbranceNotUpdated);
     },
   );
 });
