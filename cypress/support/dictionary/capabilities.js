@@ -84,6 +84,16 @@ export default {
     resource: 'Acquisitions-Units Memberships Item',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiCalendarView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Calendar',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiTagsManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Tags',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Procedural capabilities
   uiUsersResetPassword: {

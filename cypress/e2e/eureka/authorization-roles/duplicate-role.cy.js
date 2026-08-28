@@ -4,52 +4,32 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import Capabilities from '../../../support/dictionary/capabilities';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
+import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 
 describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const testData = {
         roleName: `AT_C554636_UserRole_${getRandomPostfix()}`,
-        application: 'app-platform-complete',
         capabilitySets: [
           {
-            table: 'Data',
-            resource: 'Calendar',
-            action: 'View',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'UI-Calendar',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         capabilitiesInSets: [
           {
-            table: 'Data',
-            resource: 'Calendar',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Calendar Endpoint Calendars',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Calendar Endpoint Calendars AllOpenings',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Calendar Endpoint Calendars CalendarId',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Calendar Endpoint Calendars SurroundingOpenings',
-            action: 'View',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'UI-Calendar',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         capabilities: [
           {
-            table: 'Data',
-            resource: 'Owners Item',
-            action: 'Create',
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'UI-Orders Settings Order-Templates',
+            action: CAPABILITY_ACTIONS.CREATE,
           },
         ],
         capabIds: [],

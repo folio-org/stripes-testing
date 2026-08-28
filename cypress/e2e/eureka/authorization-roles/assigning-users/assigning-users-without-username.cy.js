@@ -2,7 +2,6 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import TopMenu from '../../../../support/fragments/topMenu';
 import AuthorizationRoles from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
-import Capabilities from '../../../../support/dictionary/capabilities';
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
@@ -15,12 +14,9 @@ describe('Eureka', () => {
         const testData = {
           roleAName: `AT_C627403_UserRole_A_${randomPostfix}`,
           roleBName: `AT_C627403_UserRole_B_${randomPostfix}`,
-          promotePath: '/users-keycloak/auth-users',
         };
 
         const capabSetsToAssign = [CapabilitySets.uiAuthorizationRolesUsersSettingsManage];
-
-        const capabsToAssign = [Capabilities.settingsEnabled];
 
         before('Create data', () => {
           cy.getAdminToken();
@@ -66,11 +62,7 @@ describe('Eureka', () => {
             });
             cy.createTempUser([]).then((createdUserProperties) => {
               testData.tempUser = createdUserProperties;
-              cy.assignCapabilitiesToExistingUser(
-                testData.tempUser.userId,
-                capabsToAssign,
-                capabSetsToAssign,
-              );
+              cy.assignCapabilitiesToExistingUser(testData.tempUser.userId, [], capabSetsToAssign);
               cy.login(testData.tempUser.username, testData.tempUser.password, {
                 path: TopMenu.settingsAuthorizationRoles,
                 waiter: AuthorizationRoles.waitContentLoading,

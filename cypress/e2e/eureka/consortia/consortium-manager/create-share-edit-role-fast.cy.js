@@ -35,22 +35,16 @@ describe('Eureka', () => {
       newCapabilitySets: [
         {
           type: CAPABILITY_TYPES.DATA,
-          resource: 'Batch-Groups',
+          resource: 'UI-Organizations Creds',
           action: CAPABILITY_ACTIONS.MANAGE,
         },
         {
           type: CAPABILITY_TYPES.DATA,
-          resource: 'Finance',
+          resource: 'Organizations Settings',
           action: CAPABILITY_ACTIONS.MANAGE,
         },
       ],
     };
-    testData.originalCapabilitySets.forEach((capabilitySet) => {
-      capabilitySet.table = capabilitySet.type;
-    });
-    testData.newCapabilitySets.forEach((capabilitySet) => {
-      capabilitySet.table = capabilitySet.type;
-    });
 
     let assignUser1Data;
     let assignUser2Data;

@@ -14,7 +14,6 @@ import AuthorizationRoles, {
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
-import Capabilities from '../../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -28,12 +27,12 @@ describe('Eureka', () => {
       capabilitySets: [
         {
           table: CAPABILITY_TYPES.DATA,
-          resource: 'Login',
+          resource: 'UI-Tags',
           action: CAPABILITY_ACTIONS.MANAGE,
         },
         {
           table: CAPABILITY_TYPES.SETTINGS,
-          resource: 'Settings Notes Enabled',
+          resource: 'UI-Authorization-Roles Settings',
           action: CAPABILITY_ACTIONS.VIEW,
         },
       ],
@@ -42,7 +41,6 @@ describe('Eureka', () => {
       CapabilitySets.uiAuthorizationRolesUsersSettingsManage,
       CapabilitySets.uiConsortiaSettingsConsortiumManagerEdit,
     ];
-    const capabsToAssign = [Capabilities.settingsEnabled];
     const capabSetsToAssignCollege = [
       CapabilitySets.uiAuthorizationRolesUsersSettingsManage,
       CapabilitySets.uiAuthorizationRolesSettingsEdit,
@@ -57,11 +55,7 @@ describe('Eureka', () => {
       cy.createTempUser([])
         .then((userProperties) => {
           tempUser = userProperties;
-          cy.assignCapabilitiesToExistingUser(
-            tempUser.userId,
-            capabsToAssign,
-            capabSetsToAssignCentral,
-          );
+          cy.assignCapabilitiesToExistingUser(tempUser.userId, [], capabSetsToAssignCentral);
         })
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.College, tempUser.userId);
@@ -72,11 +66,7 @@ describe('Eureka', () => {
             userCentral = userProperties;
           });
           cy.setTenant(Affiliations.College);
-          cy.assignCapabilitiesToExistingUser(
-            tempUser.userId,
-            capabsToAssign,
-            capabSetsToAssignCollege,
-          );
+          cy.assignCapabilitiesToExistingUser(tempUser.userId, [], capabSetsToAssignCollege);
           cy.createAuthorizationRoleApi(testData.collegeRoleName).then((roleCollege) => {
             testData.roleCollegeId = roleCollege.id;
           });

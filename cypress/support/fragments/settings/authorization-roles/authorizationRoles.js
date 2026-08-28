@@ -876,7 +876,7 @@ export default {
   duplicateRole(roleName, capabilitiesShown = true) {
     const currentDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
     const duplicatedTitleRegExp = new RegExp(
-      `^${roleName} \\(duplicate\\) - ${currentDate.replace('/', '\\/')}, \\d{1,2}:\\d{2}:\\d{2} (A|P)M$`,
+      `^${roleName} \\(duplicate\\) - ${currentDate.replace(/\//g, '-')}, \\d{1,2}:\\d{2}:\\d{2} (A|P)M$`,
     );
     this.clickActionsButton(roleName);
     this.clickDuplicateButton();

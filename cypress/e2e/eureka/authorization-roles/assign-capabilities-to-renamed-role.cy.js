@@ -13,23 +13,22 @@ describe('Eureka', () => {
         roleDescription: `Description ${getRandomPostfix()}`,
         updatedRoleName: `AT_C431152_UserRole_${getRandomPostfix()} UPD`,
         updateRoleDescription: `Description ${getRandomPostfix()} UPD`,
-        application: 'app-platform-full',
         originalCapabilities: [
           {
             table: 'Data',
-            resource: 'Tags Collection',
+            resource: 'UI-Users Roles',
             action: 'View',
           },
           {
             table: 'Procedural',
-            resource: 'Login Password',
+            resource: 'UI-Users Reset Password',
             action: 'Execute',
           },
         ],
         capabilityToSelect: {
           table: 'Settings',
-          resource: 'UI-Tags Settings',
-          action: 'Manage',
+          resource: 'UI-Users Settings',
+          action: 'View',
         },
         expectedCounts: {
           Data: 1,
@@ -37,11 +36,6 @@ describe('Eureka', () => {
         },
         capabIds: [],
       };
-
-      testData.originalCapabilities.forEach((capab) => {
-        capab.application = testData.application;
-      });
-      testData.capabilityToSelect.application = testData.application;
 
       const capabSetsToAssign = [
         CapabilitySets.uiAuthorizationRolesSettingsAdmin,
