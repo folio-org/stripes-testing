@@ -24,6 +24,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import OrderStates from '../../support/fragments/orders/orderStates';
 
 describe('Orders', () => {
   const testData = {
@@ -297,13 +298,12 @@ describe('Orders', () => {
       cy.wait('@openOrder').then((interception) => {
         OrderDetails.checkApiErrorResponse(interception, {
           expectedStatus: 422,
-          expectedErrorCode: 'multipleFiscalYears',
-          expectedErrorMessage:
-            'Order line fund distributions have active budgets in multiple fiscal years.',
+          expectedErrorCode: OrderStates.multipleFiscalYears,
+          expectedErrorMessage: OrderStates.activeBudgetsInMultipleFiscalYearsError,
         });
       });
       InteractorsTools.checkCalloutErrorMessage(
-        'Order line fund distributions have active budgets in multiple fiscal years.',
+        OrderStates.activeBudgetsInMultipleFiscalYearsError,
       );
       OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
       OrderDetails.openPolDetails(testData.orderLines.orderLine1.titleOrPackage);

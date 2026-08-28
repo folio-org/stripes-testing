@@ -100,10 +100,10 @@ export default {
       .then(({ body }) => body);
   },
 
-  getTitleByIdViaApi(packageId, { searchParams } = {}) {
+  getTitleByIdViaApi(titleId, { searchParams } = {}) {
     return cy.okapiRequest({
       method: 'GET',
-      path: `eholdings/titles/${packageId}`,
+      path: `eholdings/titles/${titleId}`,
       isDefaultSearchParamsRequired: false,
       searchParams,
     });

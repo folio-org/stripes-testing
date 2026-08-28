@@ -2,6 +2,7 @@ import { REQUEST_METHOD } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import {
   MultiColumnListCell,
+  MultiColumnListHeader,
   Section,
   MultiColumnList,
   Button,
@@ -62,6 +63,17 @@ export default {
     });
   },
 
+  getViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.GET,
+        path: 'erm/entitlements',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
+
   getIdViaApi: (searchParams) => {
     return cy
       .okapiRequest({
@@ -77,6 +89,26 @@ export default {
 
   agreementLinesListClick(agreementLineName) {
     cy.do(MultiColumnListCell(agreementLineName).click());
+  },
+
+  clickResultsHeaderId(id = 'name') {
+    cy.do(agreementLinesList.clickHeader({ id: `list-column-${id.toLocaleLowerCase()}` }));
+  },
+
+  verifyResultsHeaderSort(sort, id = 'name') {
+    cy.expect(
+      agreementLinesList
+        .find(MultiColumnListHeader({ id: `list-column-${id.toLocaleLowerCase()}` }))
+        .has({ sort }),
+    );
+  },
+
+  verifyAgreementLinesOrder(agreementLineNames) {
+    agreementLineNames.forEach((agreementLineName, row) => {
+      cy.expect(
+        agreementLinesList.find(MultiColumnListCell({ row, content: agreementLineName })).exists(),
+      );
+    });
   },
 
   checkAgreementLineFound(agreementLineDescription, { isFound = true } = {}) {
