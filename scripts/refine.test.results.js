@@ -1,9 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable camelcase */
 
-const { glob } = require('glob');
 const fs = require('fs');
-const { getTestNames } = require('find-test-names');
 const { createJiraClient, createTestRailClient } = require('./helpers/api.client');
 const {
   getTestHistory,
@@ -13,13 +11,17 @@ const {
   status,
 } = require('./helpers/test.rail.helper');
 const { getIssueStatus } = require('./helpers/jira.helper');
-const { removeRootPath, titleContainsId } = require('./helpers/tests.helper');
 require('dotenv').config();
 
 const API_USER = process.env.TESTRAIL_API_USER;
 const API_KEY = process.env.TESTRAIL_API_KEY;
 const JIRA_API_KEY = process.env.JIRA_API_KEY;
 const RUN_ID = process.env.TESTRAIL_RUN_ID;
+
+if (!API_USER || !API_KEY || !JIRA_API_KEY || !RUN_ID) {
+  console.error('Missing required environment variables');
+  process.exit(1);
+}
 
 const jiraClient = createJiraClient(JIRA_API_KEY);
 const testrailClient = createTestRailClient(API_USER, API_KEY);
@@ -91,7 +93,8 @@ async function classifyTestResults(runId) {
 
   // Get only Failed tests
   const failedTests = allTests.filter(
-    (test) => test.status_id === status.Failed && teams.includes(test.custom_dev_team),
+    (test) => (test.status_id === status.Failed || test.status_id === status.Retest) &&
+      teams.includes(test.custom_dev_team),
   );
 
   /**
@@ -101,16 +104,15 @@ async function classifyTestResults(runId) {
    * Flaky - test that pass and fail several times for the last 5 runs
    * UnknownFailed - failed test several times in a row for unknown reason
    */
-  const resultsList = { regression: [], knownFailed: [], flaky: [], unknownFailed: [] };
+  const resultsList = { regression: [], knownFailed: [], flaky: [], unknownFailed: [], retest: [] };
 
   for (const test of failedTests) {
     const { case_id, id: testId, status_id } = test;
 
     // Get test history from 7 days ago
-    const startDate =
-      Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 7) / 1000;
-    const endDate =
-      Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()) / 1000;
+    const endDate = Math.floor(Date.now() / 1000);
+    const startDate = endDate - 7 * 24 * 60 * 60;
+
     const history = (await getTestHistory(testrailClient, case_id, RUN_ID)).results.filter(
       (result) => result.created_on >= startDate && result.created_on <= endDate,
     );
@@ -120,8 +122,9 @@ async function classifyTestResults(runId) {
     // Check the historical data for the current test
     const passedInHistory = joinedHistory[0]?.status_id === status.Passed;
     const failedInHistory = joinedHistory.some((result) => result.status_id === status.Failed);
-
-    if (status_id === status.Failed && passedInHistory) {
+    if (status_id === status.Retest) {
+      resultsList.retest.push({ testId, caseId: case_id });
+    } else if (status_id === status.Failed && passedInHistory) {
       // If current test failed but passed in the past, mark as potential regression
       resultsList.regression.push({ testId, caseId: case_id });
     } else if (status_id === status.Failed && failedInHistory) {
@@ -159,38 +162,29 @@ async function analyzeTestResults(runId) {
       );
     } else {
       resultsList.unknownFailed.push({ testId, caseId: test.caseId });
+      resultsList.knownFailed = resultsList.knownFailed.filter((t) => t.testId !== testId);
       console.log(`Defect ${defects} is closed. Skipping...`);
     }
   }
 
   // Collect files for re-execution
   const ids = [];
-  for (const { caseId } of [...resultsList.regression, ...resultsList.flaky]) {
+  for (const { caseId } of [
+    ...resultsList.regression,
+    ...resultsList.unknownFailed,
+    ...resultsList.retest,
+    ...resultsList.flaky,
+  ]) {
     ids.push(`C${caseId}`);
   }
-
-  const testFilesList = (await glob('cypress/e2e/**/*'))
-    .filter((file) => file.includes('.cy.js'))
-    .map((file) => removeRootPath(file).replace(/\\/g, '/'));
-
-  let filteredFiles = [];
-  testFilesList.forEach((file) => {
-    const fileContent = fs.readFileSync(file, { encoding: 'utf8' });
-    const names = getTestNames(fileContent).tests.filter(
-      (test) => test.type === 'test' && titleContainsId(test.name, ids),
-    );
-    if (names.length > 0) {
-      filteredFiles.push(file);
-    }
-  });
-  filteredFiles = Array.from(new Set(filteredFiles));
-  filteredFiles.sort();
-
-  console.log(JSON.stringify(resultsList, null, 2));
-  console.log(
-    `To run tests use the following command: \n\n npx cypress run -b chrome --spec "${filteredFiles.join(',')}"`,
-  );
-  fs.writeFileSync('./test-to-rerun.txt', filteredFiles.join(','));
+  console.log('\n=== Test Classification Summary ===');
+  console.log(`Regression: ${resultsList.regression.length}`);
+  console.log(`Known Failed: ${resultsList.knownFailed.length}`);
+  console.log(`Flaky: ${resultsList.flaky.length}`);
+  console.log(`Unknown Failed: ${resultsList.unknownFailed.length}`);
+  console.log(`Retest: ${resultsList.retest.length}`);
+  console.log(`Total for rerun: ${ids.length}`);
+  fs.writeFileSync('./rerun.out', ids.join(' '));
 }
 
 // Run the analysis
