@@ -34,5 +34,17 @@ export const ORGANIZATIONS_FIELDS = {
       ACQUISITIONS_UNIT_NAMES: 'Organization — Accounts — Acquisition unit names',
     },
     ACCOUNTS_COLUMN: 'Organization — Accounts',
+    EMAILS: {
+      EMAIL_ADDRESS: 'Organization — Emails — Email',
+      DESCRIPTION: 'Organization — Emails — Description',
+      CATEGORIES: 'Organization — Emails — Categories',
+    },
+    EMAILS_COLUMN: 'Organization — Emails',
+    PHONE_NUMBERS: {
+      PHONE_NUMBER: 'Organization — Phone numbers — Phone number',
+      TYPE: 'Organization — Phone numbers — Type',
+      CATEGORIES: 'Organization — Phone numbers — Categories',
+    },
+    PHONE_NUMBERS_COLUMN: 'Organization — Phone numbers',
   },
 };

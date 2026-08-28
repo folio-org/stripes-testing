@@ -110,6 +110,8 @@ export const embeddedTableHeadersMap = {
     'Notes',
     'Acquisition unit names',
   ],
+  organizationEmails: ['Email', 'Description', 'Categories'],
+  organizationPhoneNumbers: ['Phone number', 'Categories', 'Type'],
   additionalCallNumbers: ['Call number', 'Prefix', 'Suffix', 'Type'],
 };
 
@@ -1365,6 +1367,10 @@ export default {
           dataObj.notes,
           dataObj.acquisitionUnitNames,
         ];
+      case 'organizationEmails':
+        return [dataObj.email, dataObj.description, dataObj.categories];
+      case 'organizationPhoneNumbers':
+        return [dataObj.phoneNumber, dataObj.categories, dataObj.type];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -1478,6 +1484,18 @@ export default {
 
   verifyOrganizationAccountsEmbeddedTableInQueryModal(identifier, expectedAccounts) {
     this.verifyEmbeddedTableInQueryModal('organizationAccounts', identifier, expectedAccounts);
+  },
+
+  verifyOrganizationEmailsEmbeddedTableInQueryModal(identifier, expectedEmails) {
+    this.verifyEmbeddedTableInQueryModal('organizationEmails', identifier, expectedEmails);
+  },
+
+  verifyOrganizationPhoneNumbersEmbeddedTableInQueryModal(identifier, expectedPhoneNumbers) {
+    this.verifyEmbeddedTableInQueryModal(
+      'organizationPhoneNumbers',
+      identifier,
+      expectedPhoneNumbers,
+    );
   },
 
   verifyAdditionalCallNumbersEmbeddedTableInQueryModal(
