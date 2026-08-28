@@ -479,9 +479,7 @@ export default {
   },
 
   checkOrderIsNotOpened: (fundCode) => {
-    InteractorsTools.checkCalloutErrorMessage(
-      `One or more fund distributions on this order can not be encumbered, because there is not enough money in [${fundCode}].`,
-    );
+    InteractorsTools.checkCalloutErrorMessage(OrderStates.notEnoughMoneyInFundError(fundCode));
   },
 
   checkInvalidLocationErrorMessage: (polNumber) => {
