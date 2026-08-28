@@ -12,12 +12,12 @@ describe('Eureka', () => {
         capabilitySets: [
           {
             table: 'Data',
-            resource: 'Acquisitions-Units Memberships',
+            resource: 'Organizations Settings',
             action: 'Manage',
           },
           {
             table: 'Settings',
-            resource: 'UI-Authorization-Policies Settings Admin',
+            resource: 'UI-Invoice Settings',
             action: 'View',
           },
         ],

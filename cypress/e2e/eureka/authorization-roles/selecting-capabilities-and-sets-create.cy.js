@@ -106,6 +106,7 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectApplicationInModal(testData.applicationName);
           AuthorizationRoles.clickSaveInModal();
+          AuthorizationRoles.toggleShowHiddenCapabilities();
           testData.capabilitiesInSet.forEach((capability) => {
             AuthorizationRoles.selectCapabilityCheckbox(capability);
           });
@@ -148,9 +149,7 @@ describe('Eureka', () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.checkCapabilitySetsAccordionCounter('0');
-          AuthorizationRoles.checkCapabilitiesAccordionCounter(
-            testData.capabilitiesInSet.length + testData.additionalCapabilities.length + '',
-          );
+          AuthorizationRoles.checkCapabilitiesAccordionCounter('1');
         },
       );
     });

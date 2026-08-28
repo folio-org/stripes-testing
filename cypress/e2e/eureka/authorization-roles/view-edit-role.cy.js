@@ -3,11 +3,11 @@ import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
+import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 
 let testData;
 let capabilitySetToRemove;
 let capabilitiesToRemove;
-let originalCapabilitiesInSecondSet;
 
 describe(
   'Eureka',
@@ -27,152 +27,71 @@ describe(
             updatedRoleDescription: `Description C424001 ${getRandomPostfix()} UPD`,
             originalCapabilitySets: [
               {
-                table: 'Data',
-                resource: 'Licenses Licenses',
-                action: 'View',
-              },
-              {
-                table: 'Settings',
-                resource: 'Erm Settings',
-                action: 'View',
+                table: CAPABILITY_TYPES.DATA,
+                resource: 'UI-Notes Item',
+                action: CAPABILITY_ACTIONS.EDIT,
               },
             ],
             originalCapabilitiesInSets: [
               {
-                table: 'Procedural',
-                resource: 'Licenses Custprops Compare',
-                action: 'Execute',
+                table: CAPABILITY_TYPES.DATA,
+                resource: 'UI-Notes Item',
+                action: CAPABILITY_ACTIONS.VIEW,
               },
               {
-                table: 'Data',
-                resource: 'Licenses Amendments Collection',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Licenses Amendments Item',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Licenses Licenses',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Licenses Licenses Collection',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Licenses Licenses Item LinkedAgreements',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Licenses Licenses Item',
-                action: 'View',
-              },
-              {
-                table: 'Settings',
-                resource: 'Erm Settings',
-                action: 'View',
-              },
-              {
-                table: 'Settings',
-                resource: 'Erm Settings Collection',
-                action: 'View',
+                table: CAPABILITY_TYPES.DATA,
+                resource: 'UI-Notes Item',
+                action: CAPABILITY_ACTIONS.EDIT,
               },
             ],
             originalCapabilities: [
               {
-                table: 'Data',
-                resource: 'Erm Agreements Item',
-                action: 'Create',
+                table: CAPABILITY_TYPES.DATA,
+                resource: 'UI-Tags',
+                action: CAPABILITY_ACTIONS.VIEW,
               },
               {
-                table: 'Data',
-                resource: 'Erm Agreements Item',
-                action: 'Delete',
-              },
-              {
-                table: 'Procedural',
-                resource: 'UI-Agreements Agreements File',
-                action: 'Execute',
+                table: CAPABILITY_TYPES.DATA,
+                resource: 'UI-Tags',
+                action: CAPABILITY_ACTIONS.MANAGE,
               },
             ],
             newCapabilitySet: {
-              table: 'Data',
-              resource: 'Erm Titles',
-              action: 'Edit',
+              table: CAPABILITY_TYPES.PROCEDURAL,
+              resource: 'UI-Notes Item Assign-Unassign',
+              action: CAPABILITY_ACTIONS.EXECUTE,
             },
             newCapabilitiesInSet: [
               {
-                table: 'Data',
-                resource: 'Erm Titles',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Erm Titles',
-                action: 'Edit',
-              },
-              {
-                table: 'Data',
-                resource: 'Erm Titles Collection',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Erm Titles Electronic Collection',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Erm Titles Entitled Collection',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Erm Titles Item',
-                action: 'View',
-              },
-              {
-                table: 'Data',
-                resource: 'Erm Titles Item',
-                action: 'Edit',
+                table: CAPABILITY_TYPES.PROCEDURAL,
+                resource: 'UI-Notes Item Assign-Unassign',
+                action: CAPABILITY_ACTIONS.EXECUTE,
               },
             ],
             newCapabilities: [
               {
-                table: 'Settings',
-                resource: 'Licenses Settings',
-                action: 'View',
+                table: CAPABILITY_TYPES.SETTINGS,
+                resource: 'UI-Notes Settings',
+                action: CAPABILITY_ACTIONS.EDIT,
               },
             ],
             expectedRowCounts: {
               capabilitySets: {
-                Settings: 1,
-                Data: 1,
+                Procedural: 1,
               },
               capabilities: {
-                Settings: 3,
-                Data: 6,
+                Settings: 1,
+                Data: 2,
+                Procedural: 1,
               },
             },
-            absentCapabilitySetTables: ['Procedural'],
+            absentCapabilitySetTables: [CAPABILITY_TYPES.DATA, CAPABILITY_TYPES.SETTINGS],
             capabSetIds: [],
             capabIds: [],
           };
 
           capabilitySetToRemove = testData.originalCapabilitySets[0];
-          capabilitiesToRemove = [
-            testData.originalCapabilities[1],
-            testData.originalCapabilities[2],
-          ];
-          originalCapabilitiesInSecondSet = testData.originalCapabilitiesInSets.filter(
-            (capab, index) => index > 6,
-          );
+          capabilitiesToRemove = [testData.originalCapabilities[1]];
 
           const capabSetsToAssign = [CapabilitySets.uiAuthorizationRolesSettingsEdit];
 
@@ -282,7 +201,7 @@ describe(
             });
             cy.wait('@capabilitySetsCall').then((call) => {
               expect(call.response.statusCode).to.eq(204);
-              expect(call.request.body.capabilitySetIds).to.have.lengthOf(2);
+              expect(call.request.body.capabilitySetIds).to.have.lengthOf(1);
             });
             AuthorizationRoles.checkAfterSaveEdit(
               testData.updatedRoleName,
@@ -291,17 +210,11 @@ describe(
             cy.url().then((url) => expect(url).to.eq(roleViewUrl));
             AuthorizationRoles.clickOnCapabilitySetsAccordion();
             AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.newCapabilitySet);
-            AuthorizationRoles.verifyCapabilitySetCheckboxChecked(
-              testData.originalCapabilitySets[1],
-            );
             AuthorizationRoles.clickOnCapabilitiesAccordion();
             testData.newCapabilities.forEach((capability) => {
               AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
             });
             testData.newCapabilitiesInSet.forEach((capability) => {
-              AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
-            });
-            originalCapabilitiesInSecondSet.forEach((capability) => {
               AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
             });
             Object.entries(testData.expectedRowCounts.capabilitySets).forEach(([table, count]) => {

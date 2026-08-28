@@ -14,56 +14,36 @@ describe('Eureka', () => {
         applicationName: 'app-platform-minimal',
         capabilitySet: {
           table: CAPABILITY_TYPES.DATA,
-          resource: 'Note Types',
-          action: CAPABILITY_ACTIONS.MANAGE,
+          resource: 'UI-Notes Item',
+          action: CAPABILITY_ACTIONS.EDIT,
         },
         capabilitiesInSet: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types',
-            action: CAPABILITY_ACTIONS.MANAGE,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Collection',
+            resource: 'UI-Notes Item',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Item',
+            resource: 'UI-Notes Item',
             action: CAPABILITY_ACTIONS.EDIT,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Item',
-            action: CAPABILITY_ACTIONS.CREATE,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Item',
-            action: CAPABILITY_ACTIONS.DELETE,
           },
         ],
         capabilitiesToSelect: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Addresstypes Item',
-            action: CAPABILITY_ACTIONS.DELETE,
+            resource: 'UI-Tags',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Addresstypes Item',
-            action: CAPABILITY_ACTIONS.EDIT,
+            resource: 'UI-Tags',
+            action: CAPABILITY_ACTIONS.MANAGE,
           },
         ],
         expectedRowCounts: {
           capabilities: {
-            Data: 4,
+            Data: 2,
           },
           capabilitySets: {
             Data: 1,
@@ -90,9 +70,7 @@ describe('Eureka', () => {
       after('Deleting user, role', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.user.userId);
-        cy.deleteCapabilitiesFromRoleApi(testData.roleId);
-        cy.deleteCapabilitySetsFromRoleApi(testData.roleId);
-        cy.deleteAuthorizationRoleApi(testData.roleId);
+        cy.deleteAuthorizationRoleApi(testData.roleId, true);
       });
 
       it(
@@ -159,7 +137,7 @@ describe('Eureka', () => {
             AuthorizationRoles.verifyCapabilityTableAbsent(table);
           });
           // Verify multiple checkboxes checked in certain rows for different actions
-          AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(testData.capabilitiesInSet[2], 4);
+          AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(testData.capabilitiesInSet[0], 2);
           AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(
             testData.capabilitiesToSelect[0],
             2,

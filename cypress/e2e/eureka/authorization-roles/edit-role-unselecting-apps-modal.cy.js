@@ -14,7 +14,7 @@ describe('Eureka', () => {
         originalCapabilitySets: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Orders Titles',
+            resource: 'Organizations Settings',
             action: CAPABILITY_ACTIONS.MANAGE,
           },
           {
@@ -28,11 +28,12 @@ describe('Eureka', () => {
         capabilitiesForSecondApp: [],
       };
 
-      function isCapabilityFromApp(capability, appName, resultArray) {
+      function isCapabilityFromAppAndVisible(capability, appName, resultArray) {
         const appRegExp = new RegExp(`${appName}-\\d\\..+`);
         return (
           appRegExp.test(capability.applicationId) &&
-          !resultArray.find((el) => el.name === capability.name)
+          !resultArray.find((el) => el.name === capability.name) &&
+          capability.visible
         );
       }
 
@@ -62,7 +63,7 @@ describe('Eureka', () => {
           }).then((response) => {
             response.body.capabilities.forEach((capability) => {
               if (
-                isCapabilityFromApp(
+                isCapabilityFromAppAndVisible(
                   capability,
                   testData.originalApplications[0],
                   testData.capabilitiesForFirstApp,
@@ -77,7 +78,7 @@ describe('Eureka', () => {
           }).then((response) => {
             response.body.capabilities.forEach((capability) => {
               if (
-                isCapabilityFromApp(
+                isCapabilityFromAppAndVisible(
                   capability,
                   testData.originalApplications[1],
                   testData.capabilitiesForSecondApp,

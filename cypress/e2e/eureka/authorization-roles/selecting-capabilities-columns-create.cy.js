@@ -24,7 +24,7 @@ describe('Eureka', () => {
           action: CAPABILITY_ACTIONS.EDIT,
         },
         notSelectedCapabilityColumn: {
-          type: CAPABILITY_TYPES.SETTINGS,
+          type: CAPABILITY_TYPES.DATA,
           action: CAPABILITY_ACTIONS.DELETE,
         },
         absentCapabilitySetTables: [CAPABILITY_TYPES.SETTINGS, CAPABILITY_TYPES.PROCEDURAL],
