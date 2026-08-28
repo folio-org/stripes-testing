@@ -298,7 +298,7 @@ describe('Orders', () => {
       cy.wait('@openOrder').then((interception) => {
         OrderDetails.checkApiErrorResponse(interception, {
           expectedStatus: 422,
-          expectedErrorCode: 'multipleFiscalYears',
+          expectedErrorCode: OrderStates.multipleFiscalYears,
           expectedErrorMessage: OrderStates.activeBudgetsInMultipleFiscalYearsError,
         });
       });
