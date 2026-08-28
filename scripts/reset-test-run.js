@@ -15,11 +15,13 @@ const getTests = getTestRunResults.bind(null, testRailClient, runId);
 const statusToSet = status.Unassigned;
 
 const testResultsToUpdate = [];
+
 function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
+
 async function resetTestRunResults() {
   console.log(`Resetting test run #${runId} results to ${statusToSet} status...`);
   const timeout = 10; // seconds
