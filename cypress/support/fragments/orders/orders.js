@@ -45,6 +45,7 @@ import OrderDetails from './orderDetails';
 import OrderEditForm from './orderEditForm';
 import OrderLines from './orderLines';
 import orderLineEditForm from './orderLineEditForm';
+import orderStates from './orderStates';
 
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorders-results-pane-subtitle"]/span';
 const actionsButton = Button('Actions');
@@ -479,7 +480,7 @@ export default {
   },
 
   checkOrderIsNotOpened: (fundCode) => {
-    InteractorsTools.checkCalloutErrorMessage(OrderStates.notEnoughMoneyInFundError(fundCode));
+    InteractorsTools.checkCalloutErrorMessage(orderStates.notEnoughMoneyInFundError(fundCode));
   },
 
   checkInvalidLocationErrorMessage: (polNumber) => {
