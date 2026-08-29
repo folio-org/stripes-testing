@@ -84,13 +84,17 @@ describe('Eureka', () => {
             capabilitySetTableNames: testData.capabilitySetColumnsToAssign.map(
               (column) => column.type,
             ),
-            capabilityTableNames: Object.values(CAPABILITY_TYPES),
+            capabilityTableNames: testData.capabilitySetColumnsToAssign.map(
+              (column) => column.type,
+            ),
           });
           AuthorizationRoles.verifyCapabilityRowsSortedInMultipleTables({
             capabilitySetTableNames: testData.capabilitySetColumnsToAssign.map(
               (column) => column.type,
             ),
-            capabilityTableNames: Object.values(CAPABILITY_TYPES),
+            capabilityTableNames: testData.capabilitySetColumnsToAssign.map(
+              (column) => column.type,
+            ),
           });
 
           cy.intercept('GET', capabilityCallRegExp).as('getCapabilities');
@@ -113,13 +117,17 @@ describe('Eureka', () => {
             capabilitySetTableNames: testData.capabilitySetColumnsToAssign.map(
               (column) => column.type,
             ),
-            capabilityTableNames: Object.values(CAPABILITY_TYPES),
+            capabilityTableNames: testData.capabilitySetColumnsToAssign.map(
+              (column) => column.type,
+            ),
           });
           AuthorizationRoles.verifyCapabilityRowsSortedInMultipleTables({
             capabilitySetTableNames: testData.capabilitySetColumnsToAssign.map(
               (column) => column.type,
             ),
-            capabilityTableNames: Object.values(CAPABILITY_TYPES),
+            capabilityTableNames: testData.capabilitySetColumnsToAssign.map(
+              (column) => column.type,
+            ),
           });
         },
       );

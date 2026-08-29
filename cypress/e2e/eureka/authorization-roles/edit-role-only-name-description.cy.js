@@ -17,7 +17,7 @@ describe('Eureka', () => {
         capabilities: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Data-Export Mapping-Profiles Collection',
+            resource: 'UI-Finance Fiscal-Year',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
@@ -27,7 +27,7 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Roles Collection',
+            resource: 'UI-Users',
             action: CAPABILITY_ACTIONS.VIEW,
           },
         ],

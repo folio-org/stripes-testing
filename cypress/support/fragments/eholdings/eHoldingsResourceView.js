@@ -11,6 +11,7 @@ import {
   MultiSelect,
   MultiSelectOption,
   Link,
+  MultiColumnListRow,
 } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
@@ -183,6 +184,25 @@ export default {
       }
     });
   },
+
+  assertAgreementLinesList(rows = []) {
+    rows.forEach((row) => {
+      const columnsEntries = Object.entries(row).map(([k, v]) => [
+        `list-column-${k.toLocaleLowerCase()}`,
+        v,
+      ]);
+
+      columnsEntries.forEach(([columnId, value]) => {
+        cy.expect(
+          agreementsSection
+            .find(MultiColumnListRow({ content: including(row.name), isContainer: false }))
+            .find(MultiColumnListCell({ columnId, content: including(value) }))
+            .exists(),
+        );
+      });
+    });
+  },
+
   closeHoldingsResourceView() {
     cy.do(closeViewButton.click());
   },

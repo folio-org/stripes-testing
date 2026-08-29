@@ -32,8 +32,8 @@ describe('Eureka', () => {
           cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then(
             (role) => {
               testData.roleId = role.id;
-              cy.getCapabilitiesApi(10).then((capabs) => {
-                cy.getCapabilitySetsApi(3).then((capabSets) => {
+              cy.getCapabilitiesApi(10, undefined, { query: 'visible=true' }).then((capabs) => {
+                cy.getCapabilitySetsApi(3, { query: 'visible=true' }).then((capabSets) => {
                   cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
                     testData.roleId = roleId;
                     cy.addCapabilitiesToNewRoleApi(

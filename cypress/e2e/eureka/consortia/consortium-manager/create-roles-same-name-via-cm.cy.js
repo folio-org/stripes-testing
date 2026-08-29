@@ -28,7 +28,7 @@ describe('Eureka', () => {
       },
       {
         table: CAPABILITY_TYPES.DATA,
-        resource: 'Capabilities',
+        resource: 'UI-Tags',
         action: CAPABILITY_ACTIONS.MANAGE,
       },
     ];
