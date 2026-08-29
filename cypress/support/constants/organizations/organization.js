@@ -29,3 +29,12 @@ export const ORGANIZATION_FILTER_LABELS = {
   ORGANIZATIONS_STATUS: 'Organizations status',
   PAYMENT_METHOD: 'Payment method',
 };
+
+export const ORGANIZATION_CATEGORIES = {
+  PAYMENTS: 'Payments',
+  SHIPMENTS: 'Shipments',
+};
+
+export const ORGANIZATION_PAYMENT_METHODS = {
+  CASH: 'Cash',
+};

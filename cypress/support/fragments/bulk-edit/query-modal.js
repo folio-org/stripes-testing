@@ -96,6 +96,22 @@ export const embeddedTableHeadersMap = {
     'Country',
     'Categories',
   ],
+  organizationUrls: ['URL', 'Description', 'Categories', 'Notes'],
+  organizationAccounts: [
+    'Name',
+    'Account number',
+    'Description',
+    'Accounting code',
+    'Payment method',
+    'Status',
+    'Contact info',
+    'Library code',
+    'Library EDI code',
+    'Notes',
+    'Acquisition unit names',
+  ],
+  organizationEmails: ['Email', 'Description', 'Categories'],
+  organizationPhoneNumbers: ['Phone number', 'Categories', 'Type'],
   additionalCallNumbers: ['Call number', 'Prefix', 'Suffix', 'Type'],
 };
 
@@ -499,6 +515,7 @@ export default {
   },
 
   clickSelectFieldButton() {
+    cy.wait(300);
     cy.do(selectFieldButton.click());
   },
 
@@ -668,6 +685,15 @@ export default {
     cy.do(targetSelection.open());
     expectedFields.forEach((field) => {
       cy.expect(SelectionList().has({ optionList: not(including(field)) }));
+    });
+    this.closeOpenedSelection();
+  },
+
+  verifyFieldOptionExists(expectedFields, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+    cy.do(targetSelection.open());
+    expectedFields.forEach((field) => {
+      cy.expect(SelectionList().has({ optionList: including(field) }));
     });
     this.closeOpenedSelection();
   },
@@ -1325,6 +1351,26 @@ export default {
         return [dataObj.callNumber, dataObj.prefix, dataObj.suffix, dataObj.type];
       case 'polLocations':
         return [dataObj.name, dataObj.code, dataObj.quantityElectronic, dataObj.quantityPhysical];
+      case 'organizationUrls':
+        return [dataObj.url, dataObj.description, dataObj.categories, dataObj.notes];
+      case 'organizationAccounts':
+        return [
+          dataObj.name,
+          dataObj.accountNumber,
+          dataObj.description,
+          dataObj.accountingCode,
+          dataObj.paymentMethod,
+          dataObj.status,
+          dataObj.contactInfo,
+          dataObj.libraryCode,
+          dataObj.libraryEdiCode,
+          dataObj.notes,
+          dataObj.acquisitionUnitNames,
+        ];
+      case 'organizationEmails':
+        return [dataObj.email, dataObj.description, dataObj.categories];
+      case 'organizationPhoneNumbers':
+        return [dataObj.phoneNumber, dataObj.categories, dataObj.type];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -1430,6 +1476,26 @@ export default {
 
   verifyOrganizationAddressesEmbeddedTableInQueryModal(identifier, expectedAddresses) {
     this.verifyEmbeddedTableInQueryModal('organizationAddresses', identifier, expectedAddresses);
+  },
+
+  verifyOrganizationUrlsEmbeddedTableInQueryModal(identifier, expectedUrls) {
+    this.verifyEmbeddedTableInQueryModal('organizationUrls', identifier, expectedUrls);
+  },
+
+  verifyOrganizationAccountsEmbeddedTableInQueryModal(identifier, expectedAccounts) {
+    this.verifyEmbeddedTableInQueryModal('organizationAccounts', identifier, expectedAccounts);
+  },
+
+  verifyOrganizationEmailsEmbeddedTableInQueryModal(identifier, expectedEmails) {
+    this.verifyEmbeddedTableInQueryModal('organizationEmails', identifier, expectedEmails);
+  },
+
+  verifyOrganizationPhoneNumbersEmbeddedTableInQueryModal(identifier, expectedPhoneNumbers) {
+    this.verifyEmbeddedTableInQueryModal(
+      'organizationPhoneNumbers',
+      identifier,
+      expectedPhoneNumbers,
+    );
   },
 
   verifyAdditionalCallNumbersEmbeddedTableInQueryModal(
