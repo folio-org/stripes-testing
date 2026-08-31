@@ -1,4 +1,5 @@
 import { Button, TextField, Select } from '../../../../interactors';
+import InteractorsTools from '../../utils/interactorsTools';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -24,6 +25,10 @@ const defaultAgreement = {
 
 const getdefaultAgreement = () => {
   return defaultAgreement;
+};
+
+const CALLOUTS = {
+  agreementCreated: (label) => `Agreement created: ${label}`,
 };
 
 export default {
@@ -58,5 +63,9 @@ export default {
         }
       });
     cy.expect(nameField.exists());
+  },
+
+  assertAgreementCreatedCallout(label) {
+    InteractorsTools.checkCalloutMessage(CALLOUTS.agreementCreated(label));
   },
 };

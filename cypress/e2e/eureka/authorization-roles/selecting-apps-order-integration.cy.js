@@ -13,26 +13,16 @@ describe('Eureka', () => {
         roleName: `AT_C736766_UserRole_${getRandomPostfix()}`,
         gobiCapabilitySets: [
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Gobi Orders Mappings',
-            action: CAPABILITY_ACTIONS.MANAGE,
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'UI-Gobi-Settings Permission Settings',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         gobiCapabilities: [
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Gobi Orders Item',
-            action: CAPABILITY_ACTIONS.CREATE,
-          },
-          {
             table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Settings Gobi-Settings Enabled',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Gobi Validate Item Get',
-            action: CAPABILITY_ACTIONS.EXECUTE,
+            resource: 'UI-Gobi-Settings Permission Settings',
+            action: CAPABILITY_ACTIONS.EDIT,
           },
         ],
         gobiModules: ['mod-gobi', 'ui-gobi-settings'],
@@ -118,6 +108,7 @@ describe('Eureka', () => {
           AuthorizationRoles.selectApplicationInModal(applicationNames[0], true);
           AuthorizationRoles.clickSaveInModal();
           AuthorizationRoles.verifyAppNamesInCapabilityTables([applicationNames[0]]);
+          AuthorizationRoles.toggleShowHiddenCapabilities();
           gobiResourceNames.forEach((resourceName) => {
             AuthorizationRoles.verifyResourceOrAppPresent(resourceName, 1);
           });
@@ -141,16 +132,19 @@ describe('Eureka', () => {
           });
 
           AuthorizationRoles.openForEdit();
+          AuthorizationRoles.toggleShowHiddenCapabilities();
           testData.gobiCapabilitySets.forEach((capabilitySet) => {
             AuthorizationRoles.verifyCapabilitySetCheckboxChecked(capabilitySet);
           });
           testData.gobiCapabilities.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxChecked(capability);
           });
-          AuthorizationRoles.verifyAppNamesInCapabilityTables([applicationNames[0]]);
 
           AuthorizationRoles.clickSelectApplication();
-          AuthorizationRoles.selectApplicationInModal(applicationNames[0], false);
+          AuthorizationRoles.selectAllApplicationsInModal();
+          AuthorizationRoles.checkApplicationShownInModal(applicationNames[1], true, true);
+          AuthorizationRoles.selectAllApplicationsInModal(false);
+          AuthorizationRoles.checkApplicationShownInModal(applicationNames[1], true, false);
           AuthorizationRoles.selectApplicationInModal(applicationNames[1]);
           AuthorizationRoles.clickSaveInModal({ confirmUnselect: true });
           AuthorizationRoles.verifyAppNamesInCapabilityTables([applicationNames[1]]);

@@ -2,7 +2,6 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
-import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
@@ -17,7 +16,7 @@ describe('Eureka', () => {
         originalCapabilitySets: [
           {
             table: 'Data',
-            resource: 'Calendar',
+            resource: 'UI-Calendar',
             action: 'View',
           },
           {
@@ -29,92 +28,12 @@ describe('Eureka', () => {
         originalCapabilitiesInSets: [
           {
             table: 'Data',
-            resource: 'Calendar',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Calendar Endpoint Calendars',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Calendar Endpoint Calendars AllOpenings',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Calendar Endpoint Calendars CalendarId',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Calendar Endpoint Calendars SurroundingOpenings',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Locale Item',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Mod-Settings Entries Collection',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Mod-Settings Global Read Stripes-Core Prefs',
-            action: 'Manage',
-          },
-          {
-            table: 'Data',
-            resource: 'Mod-Settings Owner Read Stripes-Core Prefs',
-            action: 'Manage',
-          },
-          {
-            table: 'Data',
-            resource: 'Note Links Collection',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Note Links Collection',
-            action: 'Edit',
-          },
-          {
-            table: 'Data',
-            resource: 'Note Types Collection',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Note Types Item',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Notes Collection',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Notes Item',
+            resource: 'UI-Calendar',
             action: 'View',
           },
           {
             table: 'Data',
             resource: 'UI-Notes Item',
-            action: 'View',
-          },
-          {
-            table: 'Settings',
-            resource: 'Module Notes Enabled',
-            action: 'View',
-          },
-          {
-            table: 'Settings',
-            resource: 'Stripes-Core Settings',
             action: 'View',
           },
           {
@@ -126,50 +45,30 @@ describe('Eureka', () => {
         originalCapabilities: [
           {
             table: 'Data',
-            resource: 'Owners Item',
+            resource: 'UI-Requests',
             action: 'Create',
           },
           {
             table: 'Data',
-            resource: 'Policies Item',
+            resource: 'UI-Users',
             action: 'Edit',
           },
         ],
         newCapabilitySet: {
           table: 'Data',
-          resource: 'Note Types',
+          resource: 'UI-Tags',
           action: 'Manage',
         },
         newCapabilitiesInSet: [
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types',
-            action: CAPABILITY_ACTIONS.MANAGE,
+            table: 'Data',
+            resource: 'UI-Tags',
+            action: 'View',
           },
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Item',
-            action: CAPABILITY_ACTIONS.EDIT,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Item',
-            action: CAPABILITY_ACTIONS.CREATE,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Item',
-            action: CAPABILITY_ACTIONS.DELETE,
+            table: 'Data',
+            resource: 'UI-Tags',
+            action: 'Manage',
           },
         ],
         expectedCounts: {
@@ -224,12 +123,12 @@ describe('Eureka', () => {
       });
 
       const appNameRegExpPart = `(${testData.originalApplications[0]}|${testData.originalApplications[1]})`;
-      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${appNameRegExpPart}-.{1,}or.{1,}${appNameRegExpPart}-.{1,}\\)`;
+      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${appNameRegExpPart}-.{1,}or.{1,}${appNameRegExpPart}-.{1,}`;
       const capabilitiesCallRegExp = new RegExp(`\\/capabilities${regExpBase}`);
       const capabilitySetsCallRegExp = new RegExp(`\\/capability-sets${regExpBase}`);
 
       after('Delete user, role', () => {
-        cy.getAdminToken();
+        cy.getAdminToken(true);
         Users.deleteViaApi(testData.user.userId);
         cy.deleteCapabilitySetsFromRoleApi(testData.roleId);
         cy.deleteCapabilitiesFromRoleApi(testData.roleId);
@@ -301,7 +200,7 @@ describe('Eureka', () => {
             expect(calls).to.have.length(0);
           });
           AuthorizationRoles.checkCapabilitySetsAccordionCounter('2');
-          AuthorizationRoles.checkCapabilitiesAccordionCounter('20');
+          AuthorizationRoles.checkCapabilitiesAccordionCounter('6');
           AuthorizationRoles.clickOnCapabilitySetsAccordion();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.originalCapabilitySets[1]);
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.newCapabilitySet);

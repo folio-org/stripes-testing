@@ -22,40 +22,25 @@ describe('Eureka', () => {
         originalCapabilitySets: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Memberships',
-            action: CAPABILITY_ACTIONS.MANAGE,
+            resource: 'UI-Calendar',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'UI-Notes Item',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         originalCapabilitiesInSets: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Memberships',
-            action: CAPABILITY_ACTIONS.MANAGE,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Memberships Collection',
+            resource: 'UI-Calendar',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Memberships Item',
+            resource: 'UI-Notes Item',
             action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Memberships Item',
-            action: CAPABILITY_ACTIONS.EDIT,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Memberships Item',
-            action: CAPABILITY_ACTIONS.CREATE,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Memberships Item',
-            action: CAPABILITY_ACTIONS.DELETE,
           },
         ],
         capabSetIds: [],
@@ -157,7 +142,10 @@ describe('Eureka', () => {
             testData.newRoleDescription,
           );
           AuthorizationRoles.clickSaveButton();
-          AuthorizationRoles.checkAfterSaveEdit(testData.newRoleName, testData.newRoleDescription);
+          AuthorizationRoles.checkAfterSaveCreate(
+            testData.newRoleName,
+            testData.newRoleDescription,
+          );
 
           AuthorizationRoles.openForEdit();
           AuthorizationRoles.fillRoleNameDescription(

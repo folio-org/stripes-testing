@@ -16,6 +16,11 @@ export default {
   exportJobStartedSuccessfully: 'Export has been started successfully',
   activeBudgetsInMultipleFiscalYearsError:
     'Order line fund distributions have active budgets in multiple fiscal years.',
+  notEnoughMoneyInFundError(fundCode) {
+    return `One or more fund distributions on this order can not be encumbered, because there is not enough money in [${fundCode}].`;
+  },
+  encumbranceNotUpdated:
+    'The encumbrances were correctly created during the rollover or have already been updated.',
 
   // warnings
   exchangeRateAmountMustBePositive: 'Amount must be a positive number',
@@ -24,4 +29,14 @@ export default {
   remainingAmountToBeDistributed(remainingAmount) {
     return `Remaining amount to be distributed: $${remainingAmount}`;
   },
+
+  // API errorCodes
+  fundCannotBePaid: 'fundCannotBePaid',
+  multipleFiscalYears: 'multipleFiscalYears',
+  encumbrancesForReEncumberNotFound: 'encumbrancesForReEncumberNotFound',
+
+  // API errorMessages
+  fundCannotBePaidDueToRestricrions: 'Fund cannot be paid due to restrictions',
+  encumbranceNotUpdatedAPIMessage:
+    'The encumbrances were correctly created during the rollover or have already been updated.',
 };

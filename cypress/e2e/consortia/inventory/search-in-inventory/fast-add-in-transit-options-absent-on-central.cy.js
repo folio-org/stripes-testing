@@ -179,6 +179,7 @@ describe('Inventory', () => {
 
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.holdingsTabIsDefault();
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(searchQuery);
           InventorySearchAndFilter.verifyResultListExists();
           checkOptionsShown(true);

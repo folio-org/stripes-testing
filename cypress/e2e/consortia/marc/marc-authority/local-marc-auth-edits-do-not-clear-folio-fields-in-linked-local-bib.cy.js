@@ -135,17 +135,6 @@ describe('MARC', () => {
           })
             .then(() => {
               cy.setTenant(Affiliations.College);
-              QuickMarcEditor.linkMarcRecordsViaApi({
-                bibId: localInstanceId,
-                authorityIds: [authorityId],
-                bibFieldTags: [testData.tag700],
-                authorityFieldTags: [testData.tag100],
-                finalBibFieldContents: [linkingTagAndValue.value],
-                bibFieldIndexes: [linkingTagAndValue.bibFieldIndex],
-              });
-            })
-            .then(() => {
-              cy.setTenant(Affiliations.College);
               cy.getInstanceById(localInstanceId).then((instanceData) => {
                 InstanceStatusTypes.getViaApi({
                   query: `name=="${testData.instanceStatusTerm}"`,
@@ -193,6 +182,17 @@ describe('MARC', () => {
                   });
                 });
               });
+            })
+            .then(() => {
+              cy.setTenant(Affiliations.College);
+              QuickMarcEditor.linkMarcRecordsViaApi({
+                bibId: localInstanceId,
+                authorityIds: [authorityId],
+                bibFieldTags: [testData.tag700],
+                authorityFieldTags: [testData.tag100],
+                finalBibFieldContents: [linkingTagAndValue.value],
+                bibFieldIndexes: [linkingTagAndValue.bibFieldIndex],
+              });
             });
 
           // Create user with permissions in Member tenant only
@@ -224,10 +224,11 @@ describe('MARC', () => {
 
         after('Delete test data', () => {
           cy.resetTenant();
-          cy.getAdminToken();
+          cy.getAdminToken(false);
           Users.deleteViaApi(testData.userProperties.userId);
           cy.setTenant(Affiliations.College);
           MarcAuthority.deleteViaAPI(authorityId, true);
+          cy.wait(3000);
           cy.then(() => {
             cy.getInstanceById(localInstanceId).then((instanceData) => {
               cy.updateInstance({

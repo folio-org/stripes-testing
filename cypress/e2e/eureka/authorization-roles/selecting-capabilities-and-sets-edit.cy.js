@@ -147,6 +147,7 @@ describe('Eureka', () => {
           AuthorizationRoles.openForEdit();
 
           AuthorizationRoles.fillRoleNameDescription(testData.updatedRoleName);
+          AuthorizationRoles.toggleShowHiddenCapabilities();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.capabilitySet, false);
           capabilitiesInSetSelected.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxChecked(capability, true, true);
@@ -185,13 +186,8 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSaveButton();
 
           AuthorizationRoles.checkAfterSaveEdit(testData.updatedRoleName);
-          AuthorizationRoles.checkCapabilitySetsAccordionCounter('2');
-          AuthorizationRoles.checkCapabilitiesAccordionCounter(
-            capabilitiesInSetSelected.length +
-              testData.additionalCapabilities.length +
-              testData.numberOfCapabilitiesInAdditionalSets +
-              '',
-          );
+          AuthorizationRoles.checkCapabilitySetsAccordionCounter('0');
+          AuthorizationRoles.checkCapabilitiesAccordionCounter('1');
         },
       );
     });

@@ -243,7 +243,7 @@ export default {
       searchParams,
     });
   },
-  deleteInvoiceViaApi(invoiceId, { failOnStatusCode } = {}) {
+  deleteInvoiceViaApi(invoiceId, { failOnStatusCode = false } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `invoice/invoices/${invoiceId}`,
@@ -251,7 +251,7 @@ export default {
       failOnStatusCode,
     });
   },
-  deleteInvoiceLineViaApi(invoiceLineId, { failOnStatusCode } = {}) {
+  deleteInvoiceLineViaApi(invoiceLineId, { failOnStatusCode = false } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `invoice/invoice-lines/${invoiceLineId}`,
@@ -310,6 +310,7 @@ export default {
     adjustments,
     acqUnitIds,
     currency,
+    tags = [],
   }) {
     this.createInvoiceViaApi({
       vendorId,
@@ -321,6 +322,7 @@ export default {
       adjustments,
       acqUnitIds,
       currency,
+      tags,
     }).then((resp) => {
       cy.wrap(resp).as('invoice');
       const { id: invoiceId, status: invoiceLineStatus } = resp;
@@ -1223,8 +1225,8 @@ export default {
     );
   },
 
-  clearAllFilters() {
-    FiltersPane.clearAllFilters(invoiceFiltersSection);
+  clearAllFilters(options = {}) {
+    FiltersPane.clearAllFilters(invoiceFiltersSection, options);
   },
 
   filterByMultiSelectOptions(filterLabel, options) {
@@ -1416,7 +1418,7 @@ export default {
     ]);
   },
 
-  selectButchGroupFilter: (batchGroup) => {
+  selectBatchGroupFilter: (batchGroup) => {
     cy.do([
       invoiceFiltersSection
         .find(batchGroupFilterSection)

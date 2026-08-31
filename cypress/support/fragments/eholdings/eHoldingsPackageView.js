@@ -647,4 +647,22 @@ export default {
     cy.do(DropdownMenu().find(RadioButton(status)).click());
     cy.wait(1000);
   },
+
+  assertAgreementLinesList(rows = []) {
+    rows.forEach((row) => {
+      const columnsEntries = Object.entries(row).map(([k, v]) => [
+        `list-column-${k.toLocaleLowerCase()}`,
+        v,
+      ]);
+
+      columnsEntries.forEach(([columnId, value]) => {
+        cy.expect(
+          agreementsAccordion
+            .find(MultiColumnListRow({ content: including(row.name), isContainer: false }))
+            .find(MultiColumnListCell({ columnId, content: including(value) }))
+            .exists(),
+        );
+      });
+    });
+  },
 };

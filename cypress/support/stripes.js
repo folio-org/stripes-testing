@@ -19,7 +19,11 @@ Cypress.Commands.add(
     encoding = null,
     customTimeout = null,
   }) => {
-    const initialParams = new URLSearchParams({ ...searchParams });
+    const initialParams =
+      searchParams instanceof URLSearchParams
+        ? searchParams
+        : new URLSearchParams({ ...searchParams });
+
     const cypressEnvPath = `${Cypress.env('OKAPI_HOST')}/${path}`;
     if (isDefaultSearchParamsRequired) {
       Object.entries(DEFAULT_SEARCH_PARAMS).forEach(([key, value]) => initialParams.append(key, value));
