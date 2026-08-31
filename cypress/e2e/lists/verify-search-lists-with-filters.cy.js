@@ -149,7 +149,7 @@ describe('Lists', () => {
 
     it(
       'C1434639 Verify search lists used simultaneously with filters (athena)',
-      { tags: ['extendedPath', 'athena', 'C1434639'] },
+      { tags: ['criticalPath', 'athena', 'C1434639'] },
       () => {
         // #1 Search "missing" + filter by Status: uncheck Active, check Inactive
         Lists.fillInSearchField('missing');

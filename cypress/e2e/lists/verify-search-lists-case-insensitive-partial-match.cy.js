@@ -35,7 +35,7 @@ describe('Lists', () => {
         isPrivate: false,
       },
       {
-        name: `Summer Reading List ${postfix}`,
+        name: `Summer Reading Catalog ${postfix}`,
         description: 'Items tagged for summer reading program',
         recordType: 'Items',
         fqlQuery: '',
@@ -122,8 +122,8 @@ describe('Lists', () => {
         Lists.verifyListIsPresent(Lists.cannedListInactivePatronsWithOpenLoans);
         Lists.verifyListsPaneRecordsCount(2);
 
-        // #4 Search "list", click "Search" (matches anywhere in the field)
-        Lists.fillInSearchField('list');
+        // #4 Search "catalog", click "Search" (matches anywhere in the field)
+        Lists.fillInSearchField('catalog');
         Lists.clickOnSearchButton();
         Lists.verifyListIsPresent(createdLists[3].name);
         Lists.verifyListsPaneRecordsCount(1);
