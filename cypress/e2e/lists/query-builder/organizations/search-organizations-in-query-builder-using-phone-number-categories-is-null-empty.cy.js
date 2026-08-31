@@ -112,7 +112,7 @@ describe('Lists', () => {
 
           // Step 3: Select "Organization — Phone numbers — Categories" field
           QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.PHONE_NUMBERS.CATEGORIES);
-          QueryModal.verifyQueryAreaContent('');
+          QueryModal.verifyQueryAreaContent('(organization.phone_numbers[*]->categories_names  )');
 
           // Step 4: Verify operators for Categories field
           QueryModal.verifyOperatorsList(enumOperators);
@@ -120,7 +120,7 @@ describe('Lists', () => {
           // Step 5: Select "is null/empty" operator
           QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
           QueryModal.verifyQueryAreaContent(
-            '(organization.phone_numbers[*]->categories_names is null/empty )',
+            '(organization.phone_numbers[*]->categories_names  is null/empty )',
           );
 
           // Step 6: Select "True" from value dropdown

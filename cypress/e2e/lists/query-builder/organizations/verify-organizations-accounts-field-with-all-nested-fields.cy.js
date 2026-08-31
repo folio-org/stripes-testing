@@ -120,7 +120,7 @@ describe('Lists', () => {
 
           // Step 4: Select "Organizations - Accounts - Name" option
           QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.NAME);
-          QueryModal.verifyQueryAreaContent('');
+          QueryModal.verifyQueryAreaContent('(organization.accounts[*]->name  )');
 
           // Step 5: Verify operators list
           QueryModal.verifyOperatorsList(STRING_OPERATORS);
@@ -135,7 +135,7 @@ describe('Lists', () => {
           QueryModal.addNewRow();
           QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.ACCOUNT_NUMBER, 1);
           QueryModal.verifyQueryAreaContent(
-            `(organization.accounts[*]->name == ${testData.account.name})`,
+            `(organization.accounts[*]->name == ${testData.account.name}) AND (organization.accounts[*]->account_no  )`,
           );
 
           // Step 9: Select "starts with" option

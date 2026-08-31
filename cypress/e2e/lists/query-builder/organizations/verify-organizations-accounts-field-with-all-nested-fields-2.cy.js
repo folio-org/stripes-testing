@@ -119,7 +119,7 @@ describe('Lists', () => {
 
           // Step 4: Select "Organizations - Accounts - Contact info" option
           QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.CONTACT_INFO);
-          QueryModal.verifyQueryAreaContent('');
+          QueryModal.verifyQueryAreaContent('(organization.accounts[*]->contact_info  )');
 
           // Step 5: Verify operators list
           QueryModal.verifyOperatorsList(STRING_OPERATORS);
@@ -136,7 +136,7 @@ describe('Lists', () => {
           QueryModal.addNewRow();
           QueryModal.selectField(ORGANIZATIONS_FIELDS.ORGANIZATION.ACCOUNTS.LIBRARY_CODE, 1);
           QueryModal.verifyQueryAreaContent(
-            `(organization.accounts[*]->contact_info starts with ${contactInfoMatch})`,
+            `(organization.accounts[*]->contact_info starts with ${contactInfoMatch}) AND (organization.accounts[*]->library_code  )`,
           );
 
           // Step 9: Select "contains" option
@@ -197,7 +197,7 @@ describe('Lists', () => {
             exactMatch: true,
           });
           QueryModal.verifyQueryAreaContent(
-            `(organization.accounts[*]->contact_info starts with ${contactInfoMatch}) AND (organization.accounts[*]->library_code contains 25) AND (organization.accounts[*]->library_edi_code == ${testData.account.libraryEdiCode}) AND (organization.accounts[*]->notes contains note) AND (organization.accounts[*]->account_status in [Active]) AND (organization.accounts[*]->acq_unit is null/empty True)`,
+            `(organization.accounts[*]->contact_info starts with ${contactInfoMatch}) AND (organization.accounts[*]->library_code contains 25) AND (organization.accounts[*]->library_edi_code == ${testData.account.libraryEdiCode}) AND (organization.accounts[*]->notes contains note) AND (organization.accounts[*]->account_status in [Active]) AND (organization.accounts[*]->acq_unit  is null/empty true)`,
           );
 
           // Step 21: Click on "Test query" button
