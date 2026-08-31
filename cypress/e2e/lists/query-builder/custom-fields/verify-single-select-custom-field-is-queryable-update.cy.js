@@ -70,7 +70,7 @@ describe('Lists', () => {
         });
 
         it(
-          "C648492 Verify that it's possible to update the Single select custom fields, and all existing queries are still available (corsair)",
+          'C648492 Verify that it\'s possible to update the Single select custom fields, and all existing queries are still available (corsair)',
           { tags: ['criticalPath', 'corsair', 'C648492'] },
           () => {
             listName = getTestEntityValue('C648492_List');
@@ -96,7 +96,7 @@ describe('Lists', () => {
             QueryModal.waitForQueryTestToFinish();
             QueryModal.clickRunQueryAndSave();
             QueryModal.verifyClosed();
-            Lists.waitForCompilingToComplete(3000);
+            Lists.waitForCompilingToComplete();
 
             // #2 Update the single select custom field name and option labels via API
             cy.getAdminToken();

@@ -75,7 +75,7 @@ describe('Lists', () => {
             QueryModal.waitForQueryTestToFinish();
             QueryModal.clickRunQueryAndSave();
             QueryModal.verifyClosed();
-            Lists.waitForCompilingToComplete(3000);
+            Lists.waitForCompilingToComplete();
 
             // #1 Go to "Settings" → "Users" → "Custom fields" → "Edit", remove the checkbox field
             // (performed via API to avoid UI navigation overhead)

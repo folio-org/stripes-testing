@@ -115,7 +115,7 @@ describe('Lists', () => {
             QueryModal.waitForQueryTestToFinish();
             QueryModal.clickRunQueryAndSave();
             QueryModal.verifyClosed();
-            Lists.waitForCompilingToComplete(3000);
+            Lists.waitForCompilingToComplete();
 
             // #2 Update the radio button custom field name and option labels via API
             cy.getAdminToken();
