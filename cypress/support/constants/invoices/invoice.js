@@ -28,6 +28,34 @@ export const INVOICE_POL_PAYMENT_STATUSES = {
   PARTIALLY_PAID_UI: 'Partially paid',
 };
 
+export const INVOICE_FILTERS_LABELS = {
+  ACQUISITION_UNIT: 'Acquisition unit',
+  APPROVAL_DATE: 'Approval date',
+  BATCH_GROUP: 'Batch group',
+  CREATED_BY: 'Created by',
+  CREATED_BY_INVOICE_LINE: 'Created by (invoice line)',
+  DATE_CREATED: 'Date created',
+  DATE_CREATED_INVOICE_LINE: 'Date created (invoice line)',
+  DATE_UPDATED: 'Date updated',
+  DATE_UPDATED_INVOICE_LINE: 'Date updated (invoice line)',
+  EXPENSE_CLASS: 'Expense class',
+  EXPORT_TO_ACCOUNTING: 'Export to accounting',
+  FISCAL_YEAR: 'Fiscal year',
+  FUND_CODE: 'Fund code',
+  INVOICE_DATE: 'Invoice date',
+  INVOICE_STATUS: 'Status',
+  LOCK_TOTAL: 'Lock total',
+  PAYMENT_DATE: 'Payment date',
+  PAYMENT_DUE: 'Payment due',
+  PAYMENT_METHOD: 'Payment method',
+  SOURCE: 'Source',
+  TAGS: 'Tags',
+  TOTAL_AMOUNT: 'Total amount',
+  UPDATED_BY: 'Updated by',
+  UPDATED_BY_INVOICE_LINE: 'Updated by (invoice line)',
+  VENDOR_NAME: 'Vendor name',
+};
+
 export const INVOICE_VIEW_FIELDS = {
   ACQUISITION_UNITS: 'Acquisition units',
   BATCH_GROUP: 'Batch group',

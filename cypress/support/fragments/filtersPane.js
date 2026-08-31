@@ -335,7 +335,7 @@ export default {
       .then(($btn) => {
         if ($btn.is(':disabled') && skipDisabled) return;
 
-        cy.wrap($btn).click();
+        cy.wrap($btn).should('be.enabled').click();
       })
       .should('be.disabled')
       .invoke('removeAttr', RESET_BUTTON_SELECTOR_ATTRIBUTE);

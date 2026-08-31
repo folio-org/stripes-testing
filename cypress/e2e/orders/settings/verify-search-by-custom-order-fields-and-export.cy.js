@@ -439,9 +439,11 @@ describe('Orders', () => {
           );
 
           // Find ALL Order field options that were NOT selected (both custom and non-custom)
-          const unselectedOrderFields = allOrderFieldOptions.filter(
-            (opt) => !orderFieldsToExport.includes(opt),
-          );
+          // Need to normalize by removing trailing "+" for comparison
+          const unselectedOrderFields = allOrderFieldOptions.filter((opt) => {
+            const normalizedOpt = opt.replace(/\+$/, '');
+            return !orderFieldsToExport.includes(normalizedOpt);
+          });
 
           // Remove "Custom fields - " prefix and trailing "+" to get actual column names
           const unselectedOrderFieldNames = unselectedOrderFields.map((opt) => {

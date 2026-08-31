@@ -5,6 +5,7 @@ import {
   InfoRow,
   KeyValue,
   Link,
+  MetaSection,
   MultiColumnListCell,
   MultiColumnListRow,
   PaneHeader,
@@ -51,6 +52,7 @@ const addRoutingListButton = Button('Add routing list');
 const relatedInvoiceLinesSection = orderLineDetailsSection.find(
   Section({ id: 'relatedInvoiceLines' }),
 );
+const customFieldsAccordion = orderLineDetailsSection.find(Section({ id: 'customFieldsPOLine' }));
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -569,6 +571,18 @@ export default {
     );
   },
 
+  toggleMetadataAccordion(isOpen = true) {
+    cy.do(MetaSection().clickHeader());
+    cy.expect(MetaSection().has({ open: isOpen }));
+  },
+
+  verifyMetadataContent({ updated, updatedBy, created, createdBy } = {}) {
+    if (updated) cy.expect(MetaSection({ updatedText: including(updated) }).exists());
+    if (updatedBy) cy.expect(MetaSection({ updatedByText: including(updatedBy) }).exists());
+    if (created) cy.expect(MetaSection({ createdText: including(created) }).exists());
+    if (createdBy) cy.expect(MetaSection({ createdByText: including(createdBy) }).exists());
+  },
+
   checkRelatedInvoiceLinesTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.vendorInvoiceNo) {
@@ -612,5 +626,22 @@ export default {
         this.checkRelatedInvoiceLineColumnItem(index, 'Comment', record.comment);
       }
     });
+  },
+
+  verifyValuesInCustomFieldsAccordion(customFieldName, customFieldValue, isCheckBox = false) {
+    if (isCheckBox) {
+      cy.expect(
+        customFieldsAccordion
+          .find(KeyValue({ label: customFieldName }))
+          .find(Checkbox())
+          .has({ checked: customFieldValue, disabled: true }),
+      );
+    } else {
+      cy.expect(
+        customFieldsAccordion
+          .find(KeyValue(customFieldName))
+          .has({ value: including(customFieldValue) }),
+      );
+    }
   },
 };

@@ -60,8 +60,8 @@ describe('Eureka', () => {
 
       const capabSetsForTestUser = [CapabilitySets.uiAuthorizationRolesSettingsEdit];
 
-      let capabilitiesCount;
-      let capabilitySetsCount;
+      let capabilitiesCountVisible;
+      let capabilitySetsCountVisible;
 
       before('Create test user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
@@ -72,13 +72,13 @@ describe('Eureka', () => {
               cy.getCapabilitySetsApi(2000, {
                 query: `applicationId==(${appIds.join(' or ')})`,
               }).then((capabSets) => {
-                capabilitySetsCount = capabSets.length;
+                capabilitySetsCountVisible = capabSets.filter((set) => set.visible).length;
               });
               cy.getCapabilitiesApi(5000, true, {
                 customTimeout: 60_000,
                 query: `applicationId==(${appIds.join(' or ')})`,
               }).then((capabs) => {
-                capabilitiesCount = capabs.length;
+                capabilitiesCountVisible = capabs.filter((capab) => capab.visible).length;
               });
               cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
                 testData.roleId = role.id;
@@ -123,6 +123,7 @@ describe('Eureka', () => {
           AuthorizationRoles.clickSelectApplication();
           AuthorizationRoles.selectAllApplicationsInModal();
           AuthorizationRoles.clickSaveInModal();
+          AuthorizationRoles.toggleShowHiddenCapabilities();
           AuthorizationRoles.checkCapabilitySpinnersAbsent();
           testData.capabilityColumns.forEach((capabilityColumn) => {
             AuthorizationRoles.selectCapabilitySetColumn(
@@ -155,10 +156,14 @@ describe('Eureka', () => {
           }).then(() => {
             AuthorizationRoles.checkAfterSaveEdit(testData.roleName);
             AuthorizationRoles.verifyRoleViewPane(testData.roleName);
-            AuthorizationRoles.checkCapabilitySetsAccordionCounter(`${capabilitySetsCount}`);
-            AuthorizationRoles.checkCapabilitiesAccordionCounter(`${capabilitiesCount}`, false, {
-              notLessThan: true,
-            });
+            AuthorizationRoles.checkCapabilitySetsAccordionCounter(`${capabilitySetsCountVisible}`);
+            AuthorizationRoles.checkCapabilitiesAccordionCounter(
+              `${capabilitiesCountVisible}`,
+              false,
+              {
+                notLessThan: true,
+              },
+            );
           });
         },
       );

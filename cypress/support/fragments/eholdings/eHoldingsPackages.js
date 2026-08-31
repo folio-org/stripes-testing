@@ -287,7 +287,16 @@ export default {
     return cy.okapiRequest({
       method: 'GET',
       path: 'eholdings/packages',
-      searchParams: { q: packageName },
+      searchParams: { q: packageName, include: 'resources' },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  getPackageByIdViaApi(packageId, { searchParams } = {}) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `eholdings/packages/${packageId}`,
+      searchParams,
       isDefaultSearchParamsRequired: false,
     });
   },

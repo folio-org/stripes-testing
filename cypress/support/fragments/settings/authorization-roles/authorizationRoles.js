@@ -102,7 +102,8 @@ const promoteUsersModal = Modal('Create user records in Keycloak');
 const confirmButton = Button('Confirm');
 const promoteUsersModalText =
   'This operation will create new records in Keycloak for the following users:';
-const noUsernameCalloutText = 'User without username cannot be created in Keycloak';
+const noUsernameCalloutText =
+  'User assignment aborted.  This operation requires all users involved to have a username.';
 const createAccessErrorText = 'Role could not be created: Access Denied';
 const clearFieldButton = Button({ icon: 'times-circle-solid' });
 const noAccessErrorText = or(
@@ -154,6 +155,7 @@ const expectedCapabilityTableActions = {
   [CAPABILITY_TYPES.PROCEDURAL]: [CAPABILITY_ACTIONS.EXECUTE],
 };
 const unselectSetConfirmModal = Modal({ id: 'unselect-capability-set-confirmation-modal' });
+const showHiddenCapabilitiesCheckbox = Checkbox('Show hidden capabilities');
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
@@ -874,7 +876,7 @@ export default {
   duplicateRole(roleName, capabilitiesShown = true) {
     const currentDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
     const duplicatedTitleRegExp = new RegExp(
-      `^${roleName} \\(duplicate\\) - ${currentDate.replace('/', '\\/')}, \\d{1,2}:\\d{2}:\\d{2} (A|P)M$`,
+      `^${roleName} \\(duplicate\\) - ${currentDate.replace(/\//g, '-')}, \\d{1,2}:\\d{2}:\\d{2} (A|P)M$`,
     );
     this.clickActionsButton(roleName);
     this.clickDuplicateButton();
@@ -1313,6 +1315,14 @@ export default {
     if (isFocused) cy.do(roleNameInput.focus());
     else cy.do(roleNameInput.blur());
     cy.expect(roleNameInput.has({ focused: isFocused }));
+    cy.wait(500);
+  },
+
+  toggleShowHiddenCapabilities({ show = true } = {}) {
+    cy.expect(showHiddenCapabilitiesCheckbox.has({ disabled: false }));
+    if (show) cy.do(showHiddenCapabilitiesCheckbox.checkIfNotSelected());
+    else cy.do(showHiddenCapabilitiesCheckbox.uncheckIfSelected());
+    cy.expect(showHiddenCapabilitiesCheckbox.has({ checked: show }));
     cy.wait(500);
   },
 };

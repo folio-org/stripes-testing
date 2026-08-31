@@ -34,12 +34,23 @@ export default {
     FIltersPaneHelper.clearAllFilters(filtersPane);
   },
 
-  filterByAgreement(agreement) {
+  openSelectAgreementLookup() {
     cy.expect(selectAgreementLookupTrigger.exists());
     cy.do(selectAgreementLookupTrigger.click());
+  },
 
+  filterByAgreement(agreement) {
+    this.openSelectAgreementLookup();
     SelectAgreementModal.searchByName(agreement);
     cy.wait(DEFAULT_WAIT_TIME);
     SelectAgreementModal.selectAgreement();
+  },
+
+  filterByMultiSelectOptions(filterLabel, options) {
+    FIltersPaneHelper.filterByMultiSelectOptions(filtersPane, filterLabel, options);
+  },
+
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions('Tags', tags);
   },
 };

@@ -143,6 +143,7 @@ export const POL_CREATE_INVENTORY_SETTINGS_VIEW = {
 };
 
 export const POLINE_DETAILS_FIELDS = {
+  TITLE: 'Title',
   ACQUISITION_METHOD: 'Acquisition method',
   ORDER_FORMAT: 'Order format',
   RECEIPT_STATUS: 'Receipt status',
@@ -273,4 +274,9 @@ export const ORDER_LINE_FILTER_LABELS = {
   TRIAL: 'Trial',
   UPDATED_BY: 'Updated by',
   VENDOR: 'Vendor',
+};
+
+export const ORDER_LINE_DISCOUNT_TYPES = {
+  PERCENTAGE: 'percentage',
+  AMOUNT: 'amount',
 };
