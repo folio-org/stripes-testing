@@ -33,6 +33,7 @@ import {
 import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import ArrayUtils from '../../utils/arrays';
 import { poll } from '../../utils/polling';
+import MultiColumnListHelper from '../multiColumnList';
 
 const listInformationAccording = Accordion('List information');
 const queryAccordion = Accordion({ id: 'results-viewer-accordion' });
@@ -64,6 +65,8 @@ const recordTypesAccordion = filterPane.find(Accordion('Record types'));
 const resetAllButton = filterPane.find(Button('Reset all'));
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
 const editQueryButton = Button('Edit query');
+const searchField = TextField({ id: 'input-record-search' });
+const searchButton = Button('Search');
 const resultViewerTable = MultiColumnList({ id: 'results-viewer-table' });
 const listsTable = MultiColumnList();
 
@@ -78,6 +81,24 @@ const buildQueryModal = Modal('Build query');
 
 const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
 const linkSelector = 'a[data-test-text-link="true"]';
+
+const numericComparator = (leftValue, rightValue) => leftValue - rightValue;
+
+// Inactive/null lists don't have a computed value, so they are treated as the lowest
+// possible value: this naturally sorts them first ascending and last descending.
+const landingPageColumnSortOptions = {
+  Records: {
+    getSortableValue: (value) => {
+      const parsed = parseInt(value, 10);
+      return Number.isNaN(parsed) ? -Infinity : parsed;
+    },
+    comparator: numericComparator,
+  },
+  'Last updated': {
+    getSortableValue: (value) => (value ? new Date(value).getTime() : -Infinity),
+    comparator: numericComparator,
+  },
+};
 
 const constants = {
   cannedListInactivePatronsWithOpenLoans: 'Inactive patrons with open loans',
@@ -326,6 +347,10 @@ const UI = {
 
   verifyListsPaneSubTitle(subtitle) {
     cy.expect(Pane({ subtitle }).exists());
+  },
+
+  verifyListsPaneRecordsFoundSubtitle(count) {
+    this.verifyListsPaneSubTitle(`${count} ${pluralize(count, 'record')} found`);
   },
 
   verifyDuplicateListButtonIsActive() {
@@ -813,6 +838,29 @@ const UI = {
     cy.wait(1000);
   },
 
+  clickLandingPageColumnHeader(columnName) {
+    MultiColumnListHelper.sortListBy(listsTable, columnName);
+  },
+
+  verifyLandingPageColumnSortable(columnName, isSortable = true) {
+    MultiColumnListHelper.assertColumnSortable(listsTable, columnName, isSortable);
+  },
+
+  verifyLandingPageColumnSortDirection(columnName, direction) {
+    MultiColumnListHelper.assertColumnSortDirection(listsTable, columnName, direction);
+  },
+
+  verifyLandingPageColumnValuesSorted(columnName, direction) {
+    return MultiColumnListHelper.assertColumnValuesSorted(listsTable, columnName, {
+      direction,
+      ...(landingPageColumnSortOptions[columnName] || {}),
+    });
+  },
+
+  verifyLandingPageRowCount(rowCount) {
+    MultiColumnListHelper.assertRowCount(listsTable, rowCount);
+  },
+
   verifyResultCellContains(rowIndex, columnName, content) {
     this.verifyResultColumnDisplayed(columnName);
     cy.expect(
@@ -912,6 +960,39 @@ const UI = {
     cy.do(filterPane.find(Accordion(accordionName)).clickHeader());
   },
 
+  expandFilterAccordion(accordionName) {
+    const accordion = filterPane.find(Accordion(accordionName));
+    cy.then(() => accordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(accordion.clickHeader());
+      }
+    });
+  },
+
+  searchLists(searchTerm) {
+    cy.do([searchField.fillIn(searchTerm), searchButton.click()]);
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+  },
+
+  searchListsAndPressEnter(searchTerm) {
+    cy.do(searchField.fillIn(searchTerm));
+    // The search field is rendered inside a form, so Enter submits the search.
+    cy.get('#input-record-search').type('{enter}');
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+  },
+
+  clearSearchField() {
+    cy.do(searchField.clear());
+    cy.wait(500);
+  },
+
+  resetSearchAndFilters() {
+    this.clearSearchField();
+    this.resetAllFilters();
+  },
+
   verifyAccordionExpandedInFilter(accordionName) {
     cy.expect(filterPane.find(Accordion(accordionName)).has({ open: true }));
   },
@@ -965,6 +1046,22 @@ const UI = {
   selectInactiveLists() {
     cy.wait(1000);
     cy.do(inactiveCheckbox.checkIfNotSelected());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+    cy.wait(1000);
+  },
+
+  deselectActiveLists() {
+    cy.wait(1000);
+    cy.do(activeCheckbox.uncheckIfSelected());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+    cy.wait(1000);
+  },
+
+  deselectInactiveLists() {
+    cy.wait(1000);
+    cy.do(inactiveCheckbox.uncheckIfSelected());
     cy.wait(1000);
     this.waitForSpinnerToDisappear();
     cy.wait(1000);
