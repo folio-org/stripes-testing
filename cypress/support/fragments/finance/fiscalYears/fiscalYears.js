@@ -20,6 +20,7 @@ import getRandomPostfix from '../../../utils/stringTools';
 import DateTools from '../../../utils/dateTools';
 import FiscalYearDetails from './fiscalYearDetails';
 import Headline from '../../../../../interactors/headline';
+import { COMMON_BUTTON_LABELS } from '../../../constants';
 
 const createdFiscalYearNameXpath =
   '//*[@id="paneHeaderpane-fiscal-year-details-pane-title"]/h2/span';
@@ -39,6 +40,12 @@ const fiscalYearButton = Button('Fiscal year');
 const resetButton = Button({ id: 'reset-fiscal-years-filters' });
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
+const cancelButton = Button(COMMON_BUTTON_LABELS.CANCEL);
+
+const buttons = {
+  [COMMON_BUTTON_LABELS.CANCEL]: cancelButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_CLOSE]: saveAndClose,
+};
 
 export default {
   defaultUiFiscalYear: {
@@ -361,5 +368,11 @@ export default {
 
   checkPageTitle(expectedTitle) {
     cy.title().should('eq', expectedTitle);
+  },
+
+  checkButtonsConditions(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(buttons[label].has(conditions));
+    });
   },
 };

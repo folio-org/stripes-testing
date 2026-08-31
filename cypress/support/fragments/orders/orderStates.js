@@ -19,6 +19,10 @@ export default {
   },
   encumbranceNotUpdated:
     'The encumbrances were correctly created during the rollover or have already been updated.',
+  noCurrentBudgetForFund(fundCode, fiscalYearCode) {
+    return `Order cannot be opened because there is no current budget for fund(s) [${fundCode}] for fiscal year ${fiscalYearCode}.`;
+  },
+  noCurrentFYFoundForLedger: 'Current fiscal year not found for ledger.',
 
   // warnings
   exchangeRateAmountMustBePositive: 'Amount must be a positive number',
@@ -32,9 +36,14 @@ export default {
   fundCannotBePaid: 'fundCannotBePaid',
   multipleFiscalYears: 'multipleFiscalYears',
   encumbrancesForReEncumberNotFound: 'encumbrancesForReEncumberNotFound',
+  currentFiscalYearNotFound: 'currentFYearNotFound',
+  budgetNotFoundForFiscalYear: 'budgetNotFoundForFiscalYear',
 
   // API errorMessages
   fundCannotBePaidDueToRestricrions: 'Fund cannot be paid due to restrictions',
   encumbranceNotUpdatedAPIMessage:
     'The encumbrances were correctly created during the rollover or have already been updated.',
+  currentFYearNotFoundAPIMessage: 'Current fiscal year not found for ledger',
+  couldNotFindActiveBudgetInCurrentFY:
+    'Could not find an active budget for a fund with the current fiscal year of another fund in the fund distribution',
 };

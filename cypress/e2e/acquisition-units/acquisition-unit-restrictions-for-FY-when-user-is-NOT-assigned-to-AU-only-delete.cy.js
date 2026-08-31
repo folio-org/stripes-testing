@@ -2,6 +2,7 @@ import Permissions from '../../support/dictionary/permissions';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYearDetails from '../../support/fragments/finance/fiscalYears/fiscalYearDetails';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import States from '../../support/fragments/finance/states';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -98,13 +99,13 @@ describe('Acquisition Units', () => {
       FiscalYears.editDescription();
       FiscalYears.clickSaveAndClose();
       cy.wait(1000);
-      InteractorsTools.checkCalloutMessage('Fiscal year has been saved');
+      InteractorsTools.checkCalloutMessage(States.fiscalYearSavedSuccessfully);
       FiscalYears.closeThirdPane();
       FiscalYears.clickNewFY();
       FiscalYears.createFiscalYearWithAllFields(newFiscalYear, acquisitionUnit.name);
       FiscalYears.clickSaveAndClose();
       cy.wait(1000);
-      InteractorsTools.checkCalloutMessage('Fiscal year has been saved');
+      InteractorsTools.checkCalloutMessage(States.fiscalYearSavedSuccessfully);
       FiscalYears.waitForFiscalYearDetailsLoading();
       FiscalYears.getFiscalYearIdByName(newFiscalYear.name).then((fiscalYearId) => {
         newFiscalYear.id = fiscalYearId;
