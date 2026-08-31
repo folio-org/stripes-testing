@@ -178,8 +178,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C396371 Verify that ISRI Z39.50 target profiles are sorted in alphabetical order on Settings View page (folijet)',
-        { tags: ['extendedPath', 'folijet', 'C396371'] },
+        'C396371 Verify that ISRI Z39.50 target profiles are sorted in alphabetical order on Settings View page (promin)',
+        { tags: ['extendedPath', 'promin', 'C396371'] },
         () => {
           const createProfileOrder = [3, 4, 2, 0, 1];
           const updateProfileOrder = [2, 1, 4, 0, 3];

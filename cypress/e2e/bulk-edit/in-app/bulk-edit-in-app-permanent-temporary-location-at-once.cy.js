@@ -77,8 +77,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C353635 Verify that user can bulk edit  permanent and temporary location at once (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C353635'] },
+      'C353635 Verify that user can bulk edit  permanent and temporary location at once (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C353635'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
           'Items',

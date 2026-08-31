@@ -120,8 +120,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C624270 Derive Shared MARC bibliographic record from Member tenant by user with granted permissions via Permission set (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C624270'] },
+        'C624270 Derive Shared MARC bibliographic record from Member tenant by user with granted permissions via Permission set (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C624270'] },
         () => {
           // Step 1: Derive shared MARC bib record in Central tenant
           cy.resetTenant();

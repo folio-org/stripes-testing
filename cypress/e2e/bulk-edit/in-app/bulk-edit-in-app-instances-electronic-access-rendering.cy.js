@@ -198,8 +198,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C736694 Verify rendering "Electronic access" data of Instance record in bulk edit forms and files (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C736694'] },
+      'C736694 Verify rendering "Electronic access" data of Instance record in bulk edit forms and files (athena)',
+      { tags: ['extendedPath', 'athena', 'C736694'] },
       () => {
         // Step 1: Select record type and identifier
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

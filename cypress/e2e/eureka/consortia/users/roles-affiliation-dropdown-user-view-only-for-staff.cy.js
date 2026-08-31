@@ -69,8 +69,8 @@ describe('Eureka', () => {
       });
 
       it(
-        'C1051455 ECS | "User roles" display Affiliation dropdown only for Staff users (volaris)',
-        { tags: ['extendedPathECS', 'eureka', 'volaris', 'C1051455'] },
+        'C1051455 ECS | "User roles" display Affiliation dropdown only for Staff users (vega)',
+        { tags: ['extendedPathECS', 'eureka', 'vega', 'C1051455'] },
         () => {
           function checkRoleAffiliations(
             mainTenant,

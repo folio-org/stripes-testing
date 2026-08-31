@@ -123,8 +123,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350971 Export of multiple "MARC Authority" records (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C350971'] },
+      'C350971 Export of multiple "MARC Authority" records (promin)',
+      { tags: ['extendedPath', 'promin', 'C350971'] },
       () => {
         ExportFileHelper.uploadFile(authorityUUIDsFileName);
 

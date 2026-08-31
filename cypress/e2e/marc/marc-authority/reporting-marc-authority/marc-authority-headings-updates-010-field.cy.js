@@ -141,8 +141,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375225 "MARC authority headings updates (CSV)" report is generated for controlling record with updated heading ("$0"="010") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C375225'] },
+        'C375225 "MARC authority headings updates (CSV)" report is generated for controlling record with updated heading ("$0"="010") (promin)',
+        { tags: ['extendedPath', 'promin', 'C375225'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.title);
           MarcAuthoritiesSearch.selectAuthorityByIndex(0);

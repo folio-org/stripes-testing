@@ -80,8 +80,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C451554 Non-default fields that are part of the query are automatically displayed as columns (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C451554'] },
+      'C451554 Non-default fields that are part of the query are automatically displayed as columns (athena)',
+      { tags: ['extendedPath', 'athena', 'C451554'] },
       () => {
         // Step 1: Create new list with Holdings record type and build query
         Lists.openNewListPane();

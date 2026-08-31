@@ -83,8 +83,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C380585 Verify that "Birth date", "Date enrolled", "Expiration date" fields are formatted to show date only (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C380585'] },
+      'C380585 Verify that "Birth date", "Date enrolled", "Expiration date" fields are formatted to show date only (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C380585'] },
       () => {
         // Step 1: Verify record type and identifier area
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');

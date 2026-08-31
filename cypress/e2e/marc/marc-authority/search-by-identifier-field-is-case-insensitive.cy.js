@@ -68,8 +68,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C466085 Search by "Identifier" field is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466085'] },
+      'C466085 Search by "Identifier" field is case-insensitive (promin)',
+      { tags: ['criticalPath', 'promin', 'C466085'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.marcAuthorities,

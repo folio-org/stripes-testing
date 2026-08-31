@@ -64,8 +64,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C369049 Verify that Errors accordoin displays correct identifier on the confirmation screen (Items barcodes) (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C369049'] },
+      'C369049 Verify that Errors accordoin displays correct identifier on the confirmation screen (Items barcodes) (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C369049'] },
       () => {
         // Navigate to the "Bulk edit" app => Select the "Inventory-holdings" radio button on  the "Record types" accordion => Select  "Items barcode" option from the "Record identifier" dropdown
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Item barcodes');

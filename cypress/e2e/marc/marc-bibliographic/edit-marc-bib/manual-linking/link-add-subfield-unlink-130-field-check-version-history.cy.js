@@ -121,8 +121,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C374198 Link/add not controlled subfield/unlink "130" MARC bib\'s field with "130" field of "MARC authority" record and check "Version history" pane (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C374198'] },
+          'C374198 Link/add not controlled subfield/unlink "130" MARC bib\'s field with "130" field of "MARC authority" record and check "Version history" pane (promin)',
+          { tags: ['extendedPath', 'promin', 'C374198'] },
           () => {
             const changesModalDataCard0 = [
               {

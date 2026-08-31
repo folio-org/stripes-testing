@@ -37,8 +37,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C566513 Create Instance with selected "Select date type" value in "Date type" dropdown mannually (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C566513'] },
+      'C566513 Create Instance with selected "Select date type" value in "Date type" dropdown mannually (promin)',
+      { tags: ['extendedPath', 'promin', 'C566513'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
 

@@ -221,8 +221,8 @@ describe('MARC', () => {
         });
 
         it(
-          "C605926 Order of controlled subfields in MARC bib's field is the same as in automatically linked MARC authority (spitfire)",
-          { tags: ['extendedPath', 'spitfire', 'C605926'] },
+          "C605926 Order of controlled subfields in MARC bib's field is the same as in automatically linked MARC authority (promin)",
+          { tags: ['extendedPath', 'promin', 'C605926'] },
           () => {
             InventoryInstances.searchByTitle(createdInstanceId);
             InventoryInstances.selectInstanceById(createdInstanceId);

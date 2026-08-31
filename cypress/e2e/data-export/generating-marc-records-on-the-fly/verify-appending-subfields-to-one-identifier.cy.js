@@ -79,8 +79,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350440 Verify appending subfields to 1 any Identifier of DOI, Handle, URN (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C350440'] },
+      'C350440 Verify appending subfields to 1 any Identifier of DOI, Handle, URN (athena)',
+      { tags: ['extendedPath', 'athena', 'C350440'] },
       () => {
         // Step 1: Trigger the data export by submitting .csv file with UUIDs of inventory instances
         ExportFile.uploadFile(csvFileName);

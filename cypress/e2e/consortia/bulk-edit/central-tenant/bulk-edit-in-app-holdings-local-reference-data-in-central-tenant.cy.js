@@ -224,8 +224,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C926165 Verify bulk edit of Holdings with local reference data in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C926165'] },
+        'C926165 Verify bulk edit of Holdings with local reference data in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C926165'] },
         () => {
           // Step 1: Upload file and show columns with local reference data
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');

@@ -73,8 +73,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10973 Verify Date Created and Date Updated mapping (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C10973'] },
+      'C10973 Verify Date Created and Date Updated mapping (athena)',
+      { tags: ['extendedPath', 'athena', 'C10973'] },
       () => {
         // Step 1: Go to the "Data export" app
         DataExportLogs.verifyDragAndDropAreaExists();

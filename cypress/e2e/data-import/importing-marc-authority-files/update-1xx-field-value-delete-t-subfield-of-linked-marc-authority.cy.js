@@ -165,8 +165,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C374172 Update "1XX" field value (delete "$t") of linked "MARC Authority" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C374172'] },
+      'C374172 Update "1XX" field value (delete "$t") of linked "MARC Authority" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C374172'] },
       () => {
         // Steps 1-4: Export authority record to .mrc via Data Export
         ExportFileHelper.uploadFile(authorityUUIDsFileName);

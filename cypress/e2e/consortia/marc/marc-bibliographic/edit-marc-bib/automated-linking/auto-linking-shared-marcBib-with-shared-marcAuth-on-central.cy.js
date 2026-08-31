@@ -160,8 +160,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C400663 Automated linking of Shared MARC bib with Shared MARC authority records on Central tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C400663'] },
+          'C400663 Automated linking of Shared MARC bib with Shared MARC authority records on Central tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C400663'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

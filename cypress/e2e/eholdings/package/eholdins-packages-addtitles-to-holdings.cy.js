@@ -32,8 +32,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C688 Add all titles in a package to your holdings (spitfire)',
-      { tags: ['smoke', 'spitfire', 'C688'] },
+      'C688 Add all titles in a package to your holdings (promin)',
+      { tags: ['smoke', 'promin', 'C688'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(user.username, user.password, {

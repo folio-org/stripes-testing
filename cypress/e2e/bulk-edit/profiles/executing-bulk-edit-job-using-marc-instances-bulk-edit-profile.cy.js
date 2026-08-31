@@ -179,8 +179,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C788738 Executing bulk edit job using MARC Instance bulk edit profile (080, 919) (Query, Logs) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C788738'] },
+      'C788738 Executing bulk edit job using MARC Instance bulk edit profile (080, 919) (Query, Logs) (athena)',
+      { tags: ['criticalPath', 'athena', 'C788738'] },
       () => {
         // Step 1: Click "Actions" menu
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false, true);

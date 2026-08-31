@@ -185,8 +185,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C410756 Contributors from "Shared" and "Local" (for current tenant) Instance records are shown in the browse result list on Member tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C410756'] },
+        'C410756 Contributors from "Shared" and "Local" (for current tenant) Instance records are shown in the browse result list on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C410756'] },
         () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.selectBrowseOption(contributorBrowseoption);

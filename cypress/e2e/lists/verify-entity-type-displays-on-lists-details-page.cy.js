@@ -34,8 +34,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C446123 Verify that entity type displays on the "Lists details" page (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C446123'] },
+      'C446123 Verify that entity type displays on the "Lists details" page (athena)',
+      { tags: ['criticalPath', 'athena', 'C446123'] },
       () => {
         // Preconditions: Log into the application and open the "Lists" page
         cy.login(userData.username, userData.password, {

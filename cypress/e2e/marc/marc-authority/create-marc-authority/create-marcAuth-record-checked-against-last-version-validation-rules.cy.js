@@ -79,8 +79,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C552459 Verify that created MARC authority record is checked against the last version of MARC validation rules (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C552459'] },
+        'C552459 Verify that created MARC authority record is checked against the last version of MARC validation rules (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C552459'] },
         () => {
           cy.then(() => {
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C552459_');

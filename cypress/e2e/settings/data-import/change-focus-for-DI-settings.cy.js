@@ -25,8 +25,8 @@ describe('Data Import', () => {
 
     // bug report https://folio-org.atlassian.net/browse/STRIPES-1024
     it(
-      'C350008 Verify that "Data import" settings displays correctly with focus (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C350008'] },
+      'C350008 Verify that "Data import" settings displays correctly with focus (promin)',
+      { tags: ['extendedPath', 'promin', 'C350008'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsPane.waitLoading();

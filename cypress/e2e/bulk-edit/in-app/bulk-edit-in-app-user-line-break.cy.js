@@ -102,8 +102,8 @@ describe(
       });
 
       it(
-        'C399098 Verify Previews for the number of Users records if the record has field with line break (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C399098'] },
+        'C399098 Verify Previews for the number of Users records if the record has field with line break (athena)',
+        { tags: ['criticalPath', 'athena', 'C399098'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
 

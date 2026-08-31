@@ -190,8 +190,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C692203 Use facets when there are same call numbers in different Local Instances with different selected locations (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C692203'] },
+        'C692203 Use facets when there are same call numbers in different Local Instances with different selected locations (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C692203'] },
         () => {
           InventorySearchAndFilter.browseSearch(nonExactQuery);
           BrowseCallNumber.checkNonExactSearchResult(nonExactQuery);

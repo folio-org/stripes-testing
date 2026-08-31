@@ -30,8 +30,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C813005 (CONSORTIA) Verify the suppressed MARC Holdings job profile in Central tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C813005'] },
+        'C813005 (CONSORTIA) Verify the suppressed MARC Holdings job profile in Central tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C813005'] },
         () => {
           TopMenuNavigation.navigateToApp(
             APPLICATION_NAMES.SETTINGS,

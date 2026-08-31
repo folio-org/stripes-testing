@@ -158,8 +158,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566173 Verify "Clear" action for Items location in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566173'] },
+        'C566173 Verify "Clear" action for Items location in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566173'] },
         () => {
           // Step 1: Select record type and identifier
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');

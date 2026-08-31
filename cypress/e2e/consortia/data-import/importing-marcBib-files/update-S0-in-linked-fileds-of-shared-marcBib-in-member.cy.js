@@ -283,8 +283,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C407696 Updating "$0" in linked fields of shared "MARC Bib" in member tenant via Data Import (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C407696'] },
+        'C407696 Updating "$0" in linked fields of shared "MARC Bib" in member tenant via Data Import (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C407696'] },
         () => {
           cy.setTenant(Affiliations.College);
           InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);

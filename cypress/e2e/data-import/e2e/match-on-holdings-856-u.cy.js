@@ -168,8 +168,8 @@ describe('Data Import', () => {
     };
 
     it(
-      'C17025 Match on Holdings 856 $u (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C17025'] },
+      'C17025 Match on Holdings 856 $u (promin)',
+      { tags: ['criticalPath', 'promin', 'C17025'] },
       () => {
         createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(

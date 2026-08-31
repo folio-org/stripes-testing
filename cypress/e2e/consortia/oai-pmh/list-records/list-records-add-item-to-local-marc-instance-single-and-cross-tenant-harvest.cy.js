@@ -139,8 +139,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C410740 Consortia | SRS | ListRecords | ListIdentifiers: Add Item to local MARC instance in Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C410740', 'nonParallel'] },
+        'C410740 Consortia | SRS | ListRecords | ListIdentifiers: Add Item to local MARC instance in Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C410740', 'nonParallel'] },
         () => {
           const fromDate = DateTools.getCurrentDateForOaiPmh();
 

@@ -56,8 +56,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C10989 Change the 020 subfield in quickMARC and verify change in the instance record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C10989'] },
+        'C10989 Change the 020 subfield in quickMARC and verify change in the instance record (promin)',
+        { tags: ['extendedPath', 'promin', 'C10989'] },
         () => {
           InventoryInstances.searchByTitle(instanceId[0]);
           InventoryInstances.selectInstance();

@@ -72,8 +72,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C350901 Add multiple / delete 1XX tag of "MARC Authority" record (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C350901'] },
+        'C350901 Add multiple / delete 1XX tag of "MARC Authority" record (promin)',
+        { tags: ['criticalPath', 'promin', 'C350901'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.selectTitle(testData.authority.title);

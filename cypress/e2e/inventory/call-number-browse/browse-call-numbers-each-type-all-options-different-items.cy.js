@@ -161,8 +161,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C387475 Browse for call numbers of each type when all call numbers belong to same instance (different Items) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C387475'] },
+        'C387475 Browse for call numbers of each type when all call numbers belong to same instance (different Items) (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C387475'] },
         () => {
           // Wait for all call numbers to be indexed
           callNumberItems.forEach((item) => {

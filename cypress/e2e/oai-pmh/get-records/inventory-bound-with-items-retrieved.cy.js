@@ -126,8 +126,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C411630 GetRecord: Inventory - Verify that bounded-with items retrieved in response (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C411630', 'nonParallel'] },
+      'C411630 GetRecord: Inventory - Verify that bounded-with items retrieved in response (athena)',
+      { tags: ['extendedPath', 'athena', 'C411630', 'nonParallel'] },
       () => {
         // Step 1-2: Send GetRecord request for first instance and verify
         OaiPmh.getRecordRequest(firstFolioInstance.id, 'marc21_withholdings').then((response) => {

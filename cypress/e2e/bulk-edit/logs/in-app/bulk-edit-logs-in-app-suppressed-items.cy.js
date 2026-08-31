@@ -78,8 +78,8 @@ describe(
         });
 
         it(
-          'C380761 Verify generated Logs files for Items suppressed from discovery (firebird)',
-          { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C380761'] },
+          'C380761 Verify generated Logs files for Items suppressed from discovery (athena)',
+          { tags: ['criticalPath', 'athena', 'shiftLeft', 'C380761'] },
           () => {
             BulkEditSearchPane.checkItemsRadio();
             BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

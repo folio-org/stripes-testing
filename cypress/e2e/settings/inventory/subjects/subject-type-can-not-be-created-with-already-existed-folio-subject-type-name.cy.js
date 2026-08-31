@@ -36,8 +36,8 @@ describe('Inventory', () => {
       });
 
       it(
-        "C543862 Check that Subject type can't be created with already existed folio subject type name name (folijet)",
-        { tags: ['extendedPath', 'folijet', 'C543862'] },
+        "C543862 Check that Subject type can't be created with already existed folio subject type name name (promin)",
+        { tags: ['extendedPath', 'promin', 'C543862'] },
         () => {
           SubjectTypes.createSubjectType(testData.subjectTypeName);
           SubjectTypes.validateNameFieldWithError(testData.errorMessage);

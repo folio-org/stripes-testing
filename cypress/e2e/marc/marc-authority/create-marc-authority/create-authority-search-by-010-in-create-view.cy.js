@@ -129,8 +129,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C476803 Run search for "MARC authority" records by "010" field values from "Create a new MARC authority record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476803'] },
+        'C476803 Run search for "MARC authority" records by "010" field values from "Create a new MARC authority record" window (promin)',
+        { tags: ['extendedPath', 'promin', 'C476803'] },
         () => {
           function goToCreateAuth(field010Content) {
             MarcAuthorities.clickActionsAndNewAuthorityButton();

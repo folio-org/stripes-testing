@@ -36,8 +36,8 @@ describe('Inventory', () => {
       });
 
       it(
-        "C543860 Check that Subject source can't be created with already existed folio subject source name (folijet)",
-        { tags: ['extendedPath', 'folijet', 'C543860'] },
+        "C543860 Check that Subject source can't be created with already existed folio subject source name (promin)",
+        { tags: ['extendedPath', 'promin', 'C543860'] },
         () => {
           SubjectSources.create(testData.subjectSourceName);
           SubjectSources.validateNameFieldWithError(testData.errorMessage);

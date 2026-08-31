@@ -35,8 +35,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C347871 Uploading file with identifiers (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C347871'] },
+      'C347871 Uploading file with identifiers (athena)',
+      { tags: ['criticalPath', 'athena', 'C347871'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

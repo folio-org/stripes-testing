@@ -66,8 +66,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C584511 Check filtering by local Subject type in FOLIO records (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C584511'] },
+        'C584511 Check filtering by local Subject type in FOLIO records (promin)',
+        { tags: ['criticalPath', 'promin', 'C584511'] },
         () => {
           BrowseSubjects.searchBrowseSubjects(testData.subjectType.subjectHeading);
           cy.ifConsortia(true, () => {

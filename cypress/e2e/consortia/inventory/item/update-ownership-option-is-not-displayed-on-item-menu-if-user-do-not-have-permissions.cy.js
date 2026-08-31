@@ -125,8 +125,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C477591 "Update ownership" option is not displayed on Item menu if user don\'t have permissions (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C477591'] },
+        'C477591 "Update ownership" option is not displayed on Item menu if user don\'t have permissions (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C477591'] },
         () => {
           InstanceRecordView.openHoldingItem({
             name: testData.locationName,

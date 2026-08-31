@@ -17,7 +17,7 @@ import {
 
 let user;
 
-describe('Citation: create work', () => {
+describe('Promin: create work', () => {
   const testData = {
     uniqueTitle: `Cypress test ${getRandomPostfix()}`,
     partName: `Part test name ${getRandomPostfix()}`,
@@ -53,8 +53,8 @@ describe('Citation: create work', () => {
   });
 
   it(
-    'C624167 [User journey] Marigold - Create new work only from blank workform (citation)',
-    { tags: ['smoke', 'citation', 'C624167', 'marigold', 'shiftLeft'] },
+    'C624167 [User journey] Marigold - Create new work only from blank workform (promin)',
+    { tags: ['smoke', 'promin', 'C624167', 'marigold', 'shiftLeft'] },
     () => {
       // open new resource form
       Marigold.openNewResourceForm();

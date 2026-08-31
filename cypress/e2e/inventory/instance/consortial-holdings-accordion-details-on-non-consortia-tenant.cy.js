@@ -60,8 +60,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C411621 (NON-CONSORTIA) Verify the Consortial holdings accordion details on Non-consortia tenant (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C411621'] },
+      'C411621 (NON-CONSORTIA) Verify the Consortial holdings accordion details on Non-consortia tenant (promin)',
+      { tags: ['extendedPath', 'promin', 'C411621'] },
       () => {
         InventoryInstances.searchByTitle(testData.testInstanceIds.instanceId);
         InventoryInstances.selectInstance();

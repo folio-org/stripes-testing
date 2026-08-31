@@ -207,8 +207,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C434148 Verify generated Logs files for Instances suppressed from discovery (Set true) (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C434148'] },
+        'C434148 Verify generated Logs files for Instances suppressed from discovery (Set true) (athena)',
+        { tags: ['extendedPath', 'athena', 'C434148'] },
         () => {
           // Step 1: Select radio and identifier
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance HRIDs');

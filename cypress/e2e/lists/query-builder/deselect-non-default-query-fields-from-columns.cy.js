@@ -71,8 +71,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C451555 Non-default fields that are part of the query can be deselected as columns (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C451555'] },
+      'C451555 Non-default fields that are part of the query can be deselected as columns (athena)',
+      { tags: ['extendedPath', 'athena', 'C451555'] },
       () => {
         // Define columns used in test
         const allDefaultColumns = [

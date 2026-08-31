@@ -105,8 +105,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C402769 Derive new Local MARC bib record from Shared Instance in Member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C402769'] },
+        'C402769 Derive new Local MARC bib record from Shared Instance in Member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C402769'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
           InventoryInstances.searchByTitle(createdInstanceIDs[0]);

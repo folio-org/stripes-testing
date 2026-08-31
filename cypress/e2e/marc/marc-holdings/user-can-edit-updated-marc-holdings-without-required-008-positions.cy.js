@@ -235,8 +235,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C387481 User can edit updated "MARC Holdings" file without required number (32) of "008" positions (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C387481'] },
+        'C387481 User can edit updated "MARC Holdings" file without required number (32) of "008" positions (promin)',
+        { tags: ['extendedPath', 'promin', 'C387481'] },
         () => {
           // Steps 12-13: Verify import completed; open file details; both records show Updated
           Logs.checkJobStatus(combinedFile, JOB_STATUS_NAMES.COMPLETED);

@@ -90,8 +90,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C404372 Verify filtering by Started running and Ended running on the "View all" screen (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C404372'] },
+    'C404372 Verify filtering by Started running and Ended running on the "View all" screen (athena)',
+    { tags: ['extendedPath', 'athena', 'C404372'] },
     () => {
       // Step 1: Click "View all" button in the "Logs" main pane
       DataExportViewAllLogs.openAllJobLogs();

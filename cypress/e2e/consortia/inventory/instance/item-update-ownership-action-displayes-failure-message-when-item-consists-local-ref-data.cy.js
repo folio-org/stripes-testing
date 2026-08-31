@@ -190,8 +190,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C648468 (CONSORTIA) Item - Update Ownership action displays failure message when Item contains Local reference data (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C648468'] },
+        'C648468 (CONSORTIA) Item - Update Ownership action displays failure message when Item contains Local reference data (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C648468'] },
         () => {
           InstanceRecordView.openHoldingItem({
             name: testData.colledgeHoldings.locationName,

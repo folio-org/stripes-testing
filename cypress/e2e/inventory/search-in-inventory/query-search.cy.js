@@ -62,8 +62,8 @@ describe('Inventory', () => {
       },
     ].forEach((searcher) => {
       it(
-        'C9202 Test search field working for Query Search in Instance, Holdings and Item segment (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C9202'] },
+        'C9202 Test search field working for Query Search in Instance, Holdings and Item segment (promin)',
+        { tags: ['extendedPath', 'promin', 'C9202'] },
         () => {
           searcher.searchTab();
           InventorySearchAndFilter.searchByParameter('Query search', searcher.value);

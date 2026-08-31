@@ -24,7 +24,7 @@ import Users from '../../support/fragments/users/users';
 
 let user;
 
-describe('Citation: cancel without saving', () => {
+describe('Promin: cancel without saving', () => {
   const testData = {
     marcFilePath: 'marcBibFileForC451572.mrc',
     modifiedMarcFile: `C656342 editedMarcFile${getRandomPostfix()}.mrc`,
@@ -108,8 +108,8 @@ describe('Citation: cancel without saving', () => {
   });
 
   it(
-    'C656342 [User journey] Marigold - Cancel without saving (Yes/No) (citation)',
-    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C656342', 'marigold'] },
+    'C656342 [User journey] Marigold - Cancel without saving (Yes/No) (promin)',
+    { tags: ['criticalPath', 'shiftLeft', 'promin', 'C656342', 'marigold'] },
     () => {
       // select advanced search option
       SearchAndFilter.selectAdvancedSearch();

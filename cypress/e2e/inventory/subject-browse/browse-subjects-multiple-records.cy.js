@@ -54,8 +54,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C356831 Verify selecting a row with multiple entries -- Subject browse (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C356831'] },
+      'C356831 Verify selecting a row with multiple entries -- Subject browse (promin)',
+      { tags: ['extendedPath', 'promin', 'C356831'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password, {

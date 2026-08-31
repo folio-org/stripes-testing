@@ -29,8 +29,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C1045416 Verify that only "Exactly matches" present on Match criteria on Match profiles (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C1045416'] },
+      'C1045416 Verify that only "Exactly matches" present on Match criteria on Match profiles (promin)',
+      { tags: ['extendedPath', 'promin', 'C1045416'] },
       () => {
         // Step 1: Open new match profile, fill Name, Incoming = MARC Bibliographic, Existing = Instance
         MatchProfiles.clickCreateNewMatchProfile();

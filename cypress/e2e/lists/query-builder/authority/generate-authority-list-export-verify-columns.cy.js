@@ -254,8 +254,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1405036 Generate Authority record type List, export it and verify all available columns (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C1405036'] },
+        'C1405036 Generate Authority record type List, export it and verify all available columns (promin)',
+        { tags: ['criticalPath', 'promin', 'C1405036'] },
         () => {
           // Step 1: Create new list with "Authority" record type and open Build query form
           Lists.openNewListPane();

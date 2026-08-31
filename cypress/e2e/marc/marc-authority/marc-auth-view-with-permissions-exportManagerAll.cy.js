@@ -33,8 +33,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C375134 User with "Export manager: All" permission can view report options for "MARC authority" records (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C375134'] },
+      'C375134 User with "Export manager: All" permission can view report options for "MARC authority" records (promin)',
+      { tags: ['criticalPath', 'promin', 'C375134'] },
       () => {
         MarcAuthorities.clickActionsAndReportsButtons();
       },

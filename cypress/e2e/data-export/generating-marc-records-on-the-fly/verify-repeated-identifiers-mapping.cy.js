@@ -81,8 +81,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350439 Verify appending subfields to Identifiers if the record contains repeated "024 $a 8 " fields (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C350439'] },
+      'C350439 Verify appending subfields to Identifiers if the record contains repeated "024 $a 8 " fields (athena)',
+      { tags: ['extendedPath', 'athena', 'C350439'] },
       () => {
         // Step 1: Trigger the data export by submitting .csv file with UUIDs of inventory instances
         ExportFile.uploadFile(csvFileName);

@@ -97,8 +97,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C436926 Error shows when user tries to delete Local "Authority file" which has assigned Local "MARC authority" records from Central tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C436926'] },
+          'C436926 Error shows when user tries to delete Local "Authority file" which has assigned Local "MARC authority" records from Central tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C436926'] },
           () => {
             cy.resetTenant();
             cy.login(user.username, user.password);

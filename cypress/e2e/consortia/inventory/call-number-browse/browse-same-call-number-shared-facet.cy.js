@@ -329,8 +329,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C402777 Apply "Shared" facet when Browse for same Call number existing in different tenants (exact match) (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C402777'] },
+        'C402777 Apply "Shared" facet when Browse for same Call number existing in different tenants (exact match) (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C402777'] },
         () => {
           cy.wait(10_000); // wait for the same CN from all instances to be available
           cy.setTenant(Affiliations.College);

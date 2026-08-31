@@ -47,8 +47,8 @@ describe('Data Import', () => {
 
     describe('Settings', () => {
       it(
-        'C365130 Verify Orders record type on creating new field mapping profile (folijet) (TaaS)',
-        { tags: ['extendedPath', 'folijet', 'C365130'] },
+        'C365130 Verify Orders record type on creating new field mapping profile (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C365130'] },
         () => {
           // Go to Settings application-> Data import-> Field mapping profiles
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
@@ -101,8 +101,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C365131 Verify Orders record type on editing existing field mapping profile (folijet) (TaaS)',
-        { tags: ['extendedPath', 'folijet', 'C365131'] },
+        'C365131 Verify Orders record type on editing existing field mapping profile (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C365131'] },
         () => {
           // Go to Settings application-> Data import-> Field mapping profiles
           SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);

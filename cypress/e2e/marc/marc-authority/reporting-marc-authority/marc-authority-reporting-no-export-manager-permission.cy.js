@@ -30,8 +30,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375136 User without "Export manager" permissions cannot view report options for "MARC authority" records (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C375136'] },
+        'C375136 User without "Export manager" permissions cannot view report options for "MARC authority" records (promin)',
+        { tags: ['extendedPath', 'promin', 'C375136'] },
         () => {
           // Step 1: Login and navigate to MARC Authority app
           cy.login(userData.username, userData.password, {

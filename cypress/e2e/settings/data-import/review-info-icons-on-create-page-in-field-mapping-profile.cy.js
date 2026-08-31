@@ -33,8 +33,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C380720 Order field mapping: review adjusted info icon to the "Acquisitions units" field in the Create page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C380720'] },
+      'C380720 Order field mapping: review adjusted info icon to the "Acquisitions units" field in the Create page (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C380720'] },
       () => {
         const message =
           'Order creation will error unless the importing user is a member of the specified acquisitions unit';
@@ -46,8 +46,8 @@ describe('Data Import', () => {
     );
 
     it(
-      'C380722 Invoice field mapping: review adjusted info icon to the "Acquisitions units" field in the Create page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C380722'] },
+      'C380722 Invoice field mapping: review adjusted info icon to the "Acquisitions units" field in the Create page (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C380722'] },
       () => {
         const message =
           'Invoice creation will error unless the importing user is a member of the specified acquisitions unit';
@@ -59,8 +59,8 @@ describe('Data Import', () => {
     );
 
     it(
-      'C369052 Field mapping profile: Check info icons when creating field mapping profile for holdings (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C369052'] },
+      'C369052 Field mapping profile: Check info icons when creating field mapping profile for holdings (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C369052'] },
       () => {
         const message = 'Required when creating Holdings';
 

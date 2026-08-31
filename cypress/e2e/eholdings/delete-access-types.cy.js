@@ -57,8 +57,8 @@ describe('eHoldings', () => {
   });
 
   it(
-    'C590793 Delete access status types (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C590793'] },
+    'C590793 Delete access status types (promin)',
+    { tags: ['extendedPath', 'promin', 'C590793'] },
     () => {
       SettingsPane.selectSettingsTab(APPLICATION_NAMES.EHOLDINGS);
       AccessStatusTypes.openTab();

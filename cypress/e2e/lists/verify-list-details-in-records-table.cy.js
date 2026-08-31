@@ -37,8 +37,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411699 Verify that list details are correct in the records table (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C411699'] },
+      'C411699 Verify that list details are correct in the records table (athena)',
+      { tags: ['extendedPath', 'athena', 'C411699'] },
       () => {
         // Step 1: Click on "Lists" in app navigation bar
         cy.login(userData.username, userData.password, {

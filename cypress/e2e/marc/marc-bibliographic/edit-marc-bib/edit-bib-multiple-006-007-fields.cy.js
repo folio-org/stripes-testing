@@ -61,8 +61,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C499606 Save existing "MARC bib" record with multiple "006" and "007" fields (which are "system" and repeatable) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C499606'] },
+        'C499606 Save existing "MARC bib" record with multiple "006" and "007" fields (which are "system" and repeatable) (promin)',
+        { tags: ['extendedPath', 'promin', 'C499606'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

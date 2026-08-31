@@ -56,8 +56,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C353561 Verify "Actions" menu elements with CSV and In app permissions (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C353561'] },
+      'C353561 Verify "Actions" menu elements with CSV and In app permissions (athena)',
+      { tags: ['extendedPath', 'athena', 'C353561'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

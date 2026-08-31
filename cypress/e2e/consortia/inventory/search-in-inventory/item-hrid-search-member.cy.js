@@ -228,8 +228,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411785 Search for Shared/Local records by "Item HRID" search options from "Member" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411785'] },
+        'C411785 Search for Shared/Local records by "Item HRID" search options from "Member" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411785'] },
         () => {
           expectedInstanceIndexesMemberViewOpens.forEach((instanceIndex) => {
             instancesData[instanceIndex].itemHrids.forEach((itemHrid) => {

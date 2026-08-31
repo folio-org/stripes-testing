@@ -98,8 +98,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C368026 Search for "Instance" by "Title" field without special characters using "Keyword" search option (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C368026', 'eurekaPhase1'] },
+      'C368026 Search for "Instance" by "Title" field without special characters using "Keyword" search option (promin) (TaaS)',
+      { tags: ['criticalPath', 'promin', 'C368026', 'eurekaPhase1'] },
       () => {
         testData.positiveSearchQueries.forEach((query) => {
           cy.ifConsortia(() => {

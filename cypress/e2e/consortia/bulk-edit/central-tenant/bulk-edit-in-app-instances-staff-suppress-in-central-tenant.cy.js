@@ -143,8 +143,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C477642 Verify "Staff suppress" action for Instances in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C477642'] },
+        'C477642 Verify "Staff suppress" action for Instances in Central tenant (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C477642'] },
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();

@@ -35,8 +35,8 @@ describe('Staff slips', () => {
   });
 
   it(
-    'C515006 "staffUsername" token can be added to Hold staff slip (volaris)',
-    { tags: ['criticalPathFlaky', 'volaris', 'C515006'] },
+    'C515006 "staffUsername" token can be added to Hold staff slip (vega)',
+    { tags: ['criticalPathFlaky', 'vega', 'C515006'] },
     () => {
       SettingsPane.selectSettingsTab('Circulation');
       BaseCirculationPane.goToSettingsCirculation('Staff slips');

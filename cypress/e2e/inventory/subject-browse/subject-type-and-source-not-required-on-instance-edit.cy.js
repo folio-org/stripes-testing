@@ -36,8 +36,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584411 Check the subject type and source fields are not required on Instance Edit page (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C584411'] },
+      'C584411 Check the subject type and source fields are not required on Instance Edit page (promin)',
+      { tags: ['extendedPath', 'promin', 'C584411'] },
       () => {
         // Step 1: Search for instance; open detail view
         InventoryInstances.searchByTitle(testData.instance.instanceId);

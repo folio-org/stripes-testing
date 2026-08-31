@@ -147,8 +147,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808505 Import "Item" record and check "order" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C808505'] },
+        'C808505 Import "Item" record and check "order" field (promin)',
+        { tags: ['criticalPath', 'promin', 'C808505'] },
         () => {
           cy.getToken(user.username, user.password);
 

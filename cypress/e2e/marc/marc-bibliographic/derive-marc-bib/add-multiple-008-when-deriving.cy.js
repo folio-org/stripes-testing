@@ -59,8 +59,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C499627 Cannot derive "MARC bib" record with multiple "008" fields ("system", not repeatable) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C499627'] },
+        'C499627 Cannot derive "MARC bib" record with multiple "008" fields ("system", not repeatable) (promin)',
+        { tags: ['extendedPath', 'promin', 'C499627'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();

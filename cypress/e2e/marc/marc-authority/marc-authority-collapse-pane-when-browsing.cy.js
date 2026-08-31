@@ -77,8 +77,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C360540 "Search & filter" pane collapsing and expanding when browsing for records (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C360540'] },
+      'C360540 "Search & filter" pane collapsing and expanding when browsing for records (promin)',
+      { tags: ['extendedPath', 'promin', 'C360540'] },
       () => {
         MarcAuthoritiesSearch.collapseSearchPane();
         MarcAuthoritiesSearch.verifySearchPaneIsCollapsed(true);

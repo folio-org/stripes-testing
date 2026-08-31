@@ -34,8 +34,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503055 Cannot create "MARC bib" record without a value in "245" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C503055'] },
+        'C503055 Cannot create "MARC bib" record without a value in "245" field (promin)',
+        { tags: ['criticalPath', 'promin', 'C503055'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateLDR06And07Positions();

@@ -214,8 +214,8 @@ describe('Lists', () => {
     });
 
     it(
-      "C740220 Null/Empty values are returned with the 'not equal to' operator for the integer types (corsair)",
-      { tags: ['extendedPath', 'corsair', 'C740220'] },
+      "C740220 Null/Empty values are returned with the 'not equal to' operator for the integer types (athena)",
+      { tags: ['extendedPath', 'athena', 'C740220'] },
       () => {
         // Step 1: Create new list and open query builder
         Lists.openNewListPane();

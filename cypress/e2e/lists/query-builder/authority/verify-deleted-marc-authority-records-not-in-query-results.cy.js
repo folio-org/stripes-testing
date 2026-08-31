@@ -93,8 +93,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1292061 Verify that deleted MARC authority records do not appear in query results (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1292061'] },
+        'C1292061 Verify that deleted MARC authority records do not appear in query results (promin)',
+        { tags: ['extendedPath', 'promin', 'C1292061'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

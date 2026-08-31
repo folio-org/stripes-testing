@@ -91,8 +91,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C353229 Edit "MARC Holdings" record after conflict detection banner displays (Optimistic locking) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C353229'] },
+      'C353229 Edit "MARC Holdings" record after conflict detection banner displays (Optimistic locking) (promin)',
+      { tags: ['extendedPath', 'promin', 'C353229'] },
       () => {
         // Steps 1-2: User A logs in, opens holdings record for editing
         cy.login(testData.userA.username, testData.userA.password, {

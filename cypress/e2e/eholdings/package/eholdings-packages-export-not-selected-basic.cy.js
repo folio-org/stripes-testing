@@ -54,8 +54,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C356418 Export all not selected titles in a "Package". Export all "Package" and "Titles" fields selected by default settings (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C356418'] },
+      'C356418 Export all not selected titles in a "Package". Export all "Package" and "Titles" fields selected by default settings (promin)',
+      { tags: ['extendedPath', 'promin', 'C356418'] },
       () => {
         EHoldingsPackagesSearch.byName('EBSCO');
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();

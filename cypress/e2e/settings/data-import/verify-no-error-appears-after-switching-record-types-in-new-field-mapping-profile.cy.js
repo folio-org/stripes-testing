@@ -33,8 +33,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C366110 Verify no error appears after switching record types when creating new field mapping profile (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C366110'] },
+      'C366110 Verify no error appears after switching record types when creating new field mapping profile (promin)',
+      { tags: ['extendedPath', 'promin', 'C366110'] },
       () => {
         // Step 1: Open new field mapping profile form
         FieldMappingProfiles.clickCreateNewFieldMappingProfile();

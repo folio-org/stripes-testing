@@ -140,8 +140,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C376595 Verify that update of linked MARC authority "010 $a" (prefix deletion) will update linked bib fields "$0" with MARC authority "001" value (because it contains valid prefix) (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C376595'] },
+        'C376595 Verify that update of linked MARC authority "010 $a" (prefix deletion) will update linked bib fields "$0" with MARC authority "001" value (because it contains valid prefix) (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C376595'] },
         () => {
           cy.ifConsortia(true, () => {
             MarcAuthorities.clickAccordionByName('Shared');

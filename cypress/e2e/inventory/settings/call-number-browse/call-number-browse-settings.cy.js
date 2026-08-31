@@ -53,8 +53,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C627456 All available "Call number types" are displayed in "Call number types" multi-select dropdown for each "Call number browse" option on "Call number browse" pane. (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C627456'] },
+        'C627456 All available "Call number types" are displayed in "Call number types" multi-select dropdown for each "Call number browse" option on "Call number browse" pane. (promin)',
+        { tags: ['criticalPath', 'promin', 'C627456'] },
         () => {
           Object.values(BROWSE_CALL_NUMBER_OPTIONS).forEach((browseOption) => {
             CallNumberBrowseSettings.clickEditButtonForItem(browseOption);
@@ -125,8 +125,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C627455 View "Settings >> Inventory >> Call number browse" page (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C627455'] },
+        'C627455 View "Settings >> Inventory >> Call number browse" page (promin)',
+        { tags: ['extendedPath', 'promin', 'C627455'] },
         () => {
           cy.login(testUser.username, testUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);

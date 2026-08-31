@@ -53,8 +53,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C499626 Cannot save existing "MARC bib" record with multiple "008" fields ("system", not repeatable) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C499626'] },
+        'C499626 Cannot save existing "MARC bib" record with multiple "008" fields ("system", not repeatable) (promin)',
+        { tags: ['extendedPath', 'promin', 'C499626'] },
         () => {
           InventoryInstances.searchByTitle(instanceId[0]);
           InventoryInstances.selectInstance();

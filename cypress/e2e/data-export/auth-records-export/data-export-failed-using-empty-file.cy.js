@@ -30,8 +30,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C353208 Export failed when using empty ".csv" file (Spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C353208'] },
+      'C353208 Export failed when using empty ".csv" file (Promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C353208'] },
       () => {
         ExportFileHelper.uploadFile(emptyFile);
         ExportFileHelper.exportWithDefaultJobProfile(emptyFile, 'Default authority', 'Authorities');

@@ -304,8 +304,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C478262 Verify "Find & replace" action for Items notes in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C478262'] },
+        'C478262 Verify "Find & replace" action for Items notes in Central tenant (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C478262'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);

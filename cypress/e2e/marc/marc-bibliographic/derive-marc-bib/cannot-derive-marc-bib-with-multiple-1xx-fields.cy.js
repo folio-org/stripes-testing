@@ -69,8 +69,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C515004 Cannot derive MARC bib record with multiple 1XX fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C515004'] },
+        'C515004 Cannot derive MARC bib record with multiple 1XX fields (promin)',
+        { tags: ['extendedPath', 'promin', 'C515004'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();

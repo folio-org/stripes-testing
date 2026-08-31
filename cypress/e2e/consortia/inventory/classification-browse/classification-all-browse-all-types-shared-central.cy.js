@@ -188,8 +188,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C468272 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Classification (all)" option when settings are empty, from Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C468272'] },
+        'C468272 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Classification (all)" option when settings are empty, from Central tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C468272'] },
         () => {
           cy.resetTenant();
           cy.login(user.username, user.password, {

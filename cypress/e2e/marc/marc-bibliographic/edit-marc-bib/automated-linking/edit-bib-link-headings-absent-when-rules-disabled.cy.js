@@ -167,8 +167,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C389481 "Link headings" button is NOT displayed in edit "MARC bib" window when auto-link for all heading types is disabled (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C389481'] },
+          'C389481 "Link headings" button is NOT displayed in edit "MARC bib" window when auto-link for all heading types is disabled (promin)',
+          { tags: ['extendedPath', 'promin', 'nonParallel', 'C389481'] },
           () => {
             cy.then(() => {
               autoinkableTags.forEach((tag) => {

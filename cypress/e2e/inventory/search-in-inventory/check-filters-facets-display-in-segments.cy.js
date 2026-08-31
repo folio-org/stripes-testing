@@ -69,8 +69,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476718 Check what filters and facets display in the three segments (Instance, Holdings, Item) in "Inventory" app (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C476718'] },
+        'C476718 Check what filters and facets display in the three segments (Instance, Holdings, Item) in "Inventory" app (promin)',
+        { tags: ['criticalPath', 'promin', 'C476718'] },
         () => {
           // Verify we're on the Search tab and Instance tab by default
           cy.ifConsortia(true, () => {

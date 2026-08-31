@@ -280,8 +280,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C877132 Verify rendering "Electronic access" data of Item record in bulk edit forms and files (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C877132'] },
+      'C877132 Verify rendering "Electronic access" data of Item record in bulk edit forms and files (athena)',
+      { tags: ['extendedPath', 'athena', 'C877132'] },
       () => {
         // Step 1: Click "Actions" menu, Check "Electronic access" checkbox under "Show columns" subsection
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');

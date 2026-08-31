@@ -28,8 +28,8 @@ describe('Eureka', () => {
       });
 
       it(
-        'C740245 Log in in ECS member tenant using copied URL with preselected tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'eureka', 'spitfire', 'C740245'] },
+        'C740245 Log in in ECS member tenant using copied URL with preselected tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'eureka', 'promin', 'C740245'] },
         () => {
           cy.visit('/');
           cy.verifyDefaultTenantSelectionPage();

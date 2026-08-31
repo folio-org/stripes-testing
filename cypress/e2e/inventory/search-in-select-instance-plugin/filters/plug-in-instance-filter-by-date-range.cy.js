@@ -103,8 +103,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C553057 "Select Instance" plugin | Filter "Instance" records by "Date range" filter using "From" and "To" boxes (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C553057'] },
+        'C553057 "Select Instance" plugin | Filter "Instance" records by "Date range" filter using "From" and "To" boxes (promin)',
+        { tags: ['extendedPath', 'promin', 'C553057'] },
         () => {
           SelectInstanceModal.searchByName(instanceTitlePrefix);
           date1Values.forEach((date) => {

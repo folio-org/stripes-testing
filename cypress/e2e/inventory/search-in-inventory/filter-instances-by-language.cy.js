@@ -74,8 +74,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476719 Filter "Instance" records by "Language" filter/facet (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C476719'] },
+        'C476719 Filter "Instance" records by "Language" filter/facet (promin)',
+        { tags: ['criticalPath', 'promin', 'C476719'] },
         () => {
           // 1. Expand Language facet, verify options and counters
           InventorySearchAndFilter.toggleAccordionByName(testData.languageAccordionName);

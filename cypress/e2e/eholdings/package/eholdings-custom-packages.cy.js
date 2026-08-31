@@ -44,8 +44,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C1434633 Create a custom package (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C1434633'] },
+      'C1434633 Create a custom package (promin)',
+      { tags: ['criticalPath', 'promin', 'C1434633'] },
       () => {
         EHoldingSearch.switchToPackages();
         cy.intercept('eholdings/packages').as('createPackage');

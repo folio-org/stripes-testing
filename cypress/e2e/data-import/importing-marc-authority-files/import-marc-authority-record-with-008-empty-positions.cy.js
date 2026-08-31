@@ -96,8 +96,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C1332502 Import MARC authority record with empty positions 00-05 of 008 MARC field (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1332502'] },
+      'C1332502 Import MARC authority record with empty positions 00-05 of 008 MARC field (promin)',
+      { tags: ['extendedPath', 'promin', 'C1332502'] },
       () => {
         const orginal008Content = `${tag008}\t\\s{6}${tag008UnchangedPart}`;
         const final008Content = `${tag008}\t${DateTools.getCurrentDateYYMMDD()}${tag008UnchangedPart}`;

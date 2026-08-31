@@ -36,8 +36,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with D
   });
 
   it(
-    'C490925 Cannot create Local Field with duplicate "tag" for MARC bib spec (API) (spitfire)',
-    { tags: ['C490925', 'extendedPath', 'spitfire'] },
+    'C490925 Cannot create Local Field with duplicate "tag" for MARC bib spec (API) (promin)',
+    { tags: ['C490925', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

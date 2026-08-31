@@ -97,8 +97,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C423593 Link "MARC Bib" field with subfield "$0" which doesn\'t match to "MARC authority" record with created by user "Authority source file" (100 field to 100) (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C423593'] },
+          'C423593 Link "MARC Bib" field with subfield "$0" which doesn\'t match to "MARC authority" record with created by user "Authority source file" (100 field to 100) (promin)',
+          { tags: ['extendedPath', 'promin', 'C423593'] },
           () => {
             cy.getAdminToken();
             MarcAuthority.createAuthoritySource(testData.authoritySourceFile)

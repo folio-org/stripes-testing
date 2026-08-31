@@ -58,8 +58,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C380547 Verify updating Holdings "Effective location" in case of updating Holdings "Temporary location" (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C380547'] },
+      'C380547 Verify updating Holdings "Effective location" in case of updating Holdings "Temporary location" (athena)',
+      { tags: ['criticalPath', 'athena', 'C380547'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);

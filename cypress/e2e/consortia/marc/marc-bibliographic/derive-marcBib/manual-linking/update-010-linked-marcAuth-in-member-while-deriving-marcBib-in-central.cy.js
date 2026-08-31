@@ -153,8 +153,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C407671 Update "010 $a" in linked "MARC Authority" record in Member tenant while "MARC Bib" record being derived in Central tenant (NOT saved link) (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C407671'] },
+            'C407671 Update "010 $a" in linked "MARC Authority" record in Member tenant while "MARC Bib" record being derived in Central tenant (NOT saved link) (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C407671'] },
             () => {
               cy.resetTenant();
               cy.login(user.username, user.password, {

@@ -115,8 +115,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C405513 Adding/deleting fields and subfields when editing shared "MARC Bib" in member tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C405513'] },
+          'C405513 Adding/deleting fields and subfields when editing shared "MARC Bib" in member tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C405513'] },
           () => {
             InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
             InventoryInstances.searchByTitle(createdRecordIDs[0]);

@@ -22,8 +22,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C523679 User with "data - UI-Data-Export - view" capability set is NOT able to trigger data export (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C523679'] },
+    'C523679 User with "data - UI-Data-Export - view" capability set is NOT able to trigger data export (athena)',
+    { tags: ['extendedPath', 'athena', 'C523679'] },
     () => {
       // Step 1: Verify available applications on the landing page
       TopMenuNavigation.verifyNavigationItemAbsentOnTheBar(APPLICATION_NAMES.SETTINGS);

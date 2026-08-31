@@ -51,8 +51,8 @@ describe('Notes', () => {
   });
 
   it(
-    'C357556 Verify that user can update "Note type" in Settings that is selected for an existing Note (spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire', 'C357556'] },
+    'C357556 Verify that user can update "Note type" in Settings that is selected for an existing Note (promin) (TaaS)',
+    { tags: ['extendedPath', 'promin', 'C357556'] },
     () => {
       cy.login(user.username, user.password, {
         path: `/eholdings/providers/${providerId}`,

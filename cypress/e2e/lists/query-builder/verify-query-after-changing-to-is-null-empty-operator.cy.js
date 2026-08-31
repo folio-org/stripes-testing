@@ -36,8 +36,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C651430 Verify that the user friendly query is correct, after changing from any operator to is null/empty (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C651430'] },
+      'C651430 Verify that the user friendly query is correct, after changing from any operator to is null/empty (athena)',
+      { tags: ['criticalPath', 'athena', 'C651430'] },
       () => {
         // Step 1: Create new list with Instances record type and open Build query form
         Lists.openNewListPane();

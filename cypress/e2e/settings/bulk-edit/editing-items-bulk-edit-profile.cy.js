@@ -80,8 +80,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C1375786 Editing Items bulk edit profile (firebird)',
-      { tags: ['smoke', 'firebird', 'C1375786'] },
+      'C1375786 Editing Items bulk edit profile (athena)',
+      { tags: ['smoke', 'athena', 'C1375786'] },
       () => {
         // Step 1: Click on the row with items bulk edit profile from Preconditions
         ItemsBulkEditProfilesPane.clickProfileRow(testData.originalProfileName);

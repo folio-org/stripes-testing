@@ -25,8 +25,8 @@ describe('remote-storage-configuration', () => {
   });
 
   it(
-    'C367964 Verify text of success toast when creating remote storage configurations (volaris) (TaaS)',
-    { tags: ['extendedPath', 'volaris', 'C367964'] },
+    'C367964 Verify text of success toast when creating remote storage configurations (vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C367964'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
       // #1 Go to the "Settings" app
@@ -74,8 +74,8 @@ describe('remote-storage-configuration', () => {
   );
 
   it(
-    'C367965 Verify text of success toast when editing remote storage configurations (volaris) (TaaS)',
-    { tags: ['extendedPath', 'volaris', 'C367965'] },
+    'C367965 Verify text of success toast when editing remote storage configurations (vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C367965'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
       const editedConfiguration = {

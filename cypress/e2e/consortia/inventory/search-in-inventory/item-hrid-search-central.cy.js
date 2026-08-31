@@ -222,8 +222,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411777 Search for Shared/Local records by "Item HRID" search options from "Central" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411777'] },
+        'C411777 Search for Shared/Local records by "Item HRID" search options from "Central" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411777'] },
         () => {
           expectedInstanceIndexesCentral.forEach((instanceIndex) => {
             instancesData[instanceIndex].itemHrids.forEach((itemHrid) => {

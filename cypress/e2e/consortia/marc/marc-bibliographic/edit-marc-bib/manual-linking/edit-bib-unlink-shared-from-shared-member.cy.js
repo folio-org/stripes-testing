@@ -144,8 +144,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C407666 Unlink Shared MARC bib from Shared MARC Authority in Member tenant (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C407666'] },
+            'C407666 Unlink Shared MARC bib from Shared MARC Authority in Member tenant (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C407666'] },
             () => {
               InventorySearchAndFilter.clearDefaultHeldbyFilter();
               InventoryInstances.searchByTitle(createdInstanceId);

@@ -74,7 +74,7 @@ describe('MARC', () => {
 
     // skipped due to https://folio-org.atlassian.net/browse/EUREKA-618
     it.skip(
-      'C417047 Update MARC Holdings via quickMARC; check for updated 005 (folijet) (TaaS)',
+      'C417047 Update MARC Holdings via quickMARC; check for updated 005 (promin) (TaaS)',
       { tags: [] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);

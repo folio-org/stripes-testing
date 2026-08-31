@@ -69,8 +69,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C388544 GetRecord: SRS - Verify that value LDR 05 are properly return in the response (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C388544'] },
+      'C388544 GetRecord: SRS - Verify that value LDR 05 are properly return in the response (athena)',
+      { tags: ['extendedPath', 'athena', 'C388544'] },
       () => {
         // Step 1-3: Send initial OAI-PMH GetRecord request with marc21 prefix
         cy.getAdminToken();

@@ -32,7 +32,7 @@ import {
 
 let user;
 
-describe('Citation: check language MARC codes', () => {
+describe('Promin: check language MARC codes', () => {
   const testData = {
     workId: null,
     instanceId: null,
@@ -144,8 +144,8 @@ describe('Citation: check language MARC codes', () => {
   });
 
   it(
-    'C499692 Marigold - Language Code Work / Inventory / View MARC (citation)',
-    { tags: ['criticalPath', 'citation', 'C499692', 'marigold'] },
+    'C499692 Marigold - Language Code Work / Inventory / View MARC (promin)',
+    { tags: ['criticalPath', 'promin', 'C499692', 'marigold'] },
     () => {
       // Edit instance from Inventory
       InventoryInstances.searchByTitle(resourceData.inventoryTitle);

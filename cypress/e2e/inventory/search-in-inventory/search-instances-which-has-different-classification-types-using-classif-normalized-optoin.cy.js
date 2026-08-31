@@ -145,8 +145,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466148 Search for Instances which have different classification types using "Classification, normalized" search option and one query (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466148'] },
+      'C466148 Search for Instances which have different classification types using "Classification, normalized" search option and one query (promin)',
+      { tags: ['criticalPath', 'promin', 'C466148'] },
       () => {
         InventorySearchAndFilter.selectSearchOption(testData.classificationOption);
         cy.ifConsortia(true, () => {

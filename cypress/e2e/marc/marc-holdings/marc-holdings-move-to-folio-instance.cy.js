@@ -86,8 +86,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C345405 Move holdings record with Source = MARC to an instance record with source = FOLIO (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C345405'] },
+      'C345405 Move holdings record with Source = MARC to an instance record with source = FOLIO (promin)',
+      { tags: ['extendedPath', 'promin', 'C345405'] },
       () => {
         InventoryInstances.searchByTitle(recordIds[0]);
         InventoryInstances.selectInstanceById(recordIds[0]);

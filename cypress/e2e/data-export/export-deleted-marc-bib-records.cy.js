@@ -76,8 +76,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C566502 Export deleted MARC bib records (firebird)',
-    { tags: ['smoke', 'firebird', 'C566502'] },
+    'C566502 Export deleted MARC bib records (athena)',
+    { tags: ['smoke', 'athena', 'C566502'] },
     () => {
       // Common assertions for MARC record verification
       const commonAssertions = (instance) => [

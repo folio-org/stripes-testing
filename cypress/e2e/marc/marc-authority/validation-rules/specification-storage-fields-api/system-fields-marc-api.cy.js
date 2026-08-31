@@ -38,8 +38,8 @@ describe('MARC Authority Validation Rules - System Fields API', () => {
   });
 
   it(
-    'C499837 Cannot update System Field with invalid "url" for MARC authority spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C499837', 'spitfire'] },
+    'C499837 Cannot update System Field with invalid "url" for MARC authority spec (API) (promin)',
+    { tags: ['extendedPath', 'C499837', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);
@@ -212,8 +212,8 @@ describe('MARC Authority Validation Rules - System Fields API', () => {
   );
 
   it(
-    'C499838 Cannot update System Field (except "url") for MARC authority spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C499838', 'spitfire'] },
+    'C499838 Cannot update System Field (except "url") for MARC authority spec (API) (promin)',
+    { tags: ['criticalPath', 'C499838', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

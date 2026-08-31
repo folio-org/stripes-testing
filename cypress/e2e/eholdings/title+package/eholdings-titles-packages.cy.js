@@ -38,8 +38,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C684 Title Search: Search titles for chemical engineering. Then filter results to journals. (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C684'] },
+      'C684 Title Search: Search titles for chemical engineering. Then filter results to journals. (promin)',
+      { tags: ['criticalPath', 'promin', 'shiftLeft', 'C684'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.C684UserProperties.username, testData.C684UserProperties.password, {
@@ -56,8 +56,8 @@ describe('eHoldings', () => {
     );
 
     it(
-      'C9240 Selected Title+Package: Add a value to a custom label (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C9240'] },
+      'C9240 Selected Title+Package: Add a value to a custom label (promin)',
+      { tags: ['criticalPath', 'promin', 'C9240'] },
       () => {
         cy.login(testData.C9240UserProperties.username, testData.C9240UserProperties.password, {
           path: TopMenu.eholdingsPath,

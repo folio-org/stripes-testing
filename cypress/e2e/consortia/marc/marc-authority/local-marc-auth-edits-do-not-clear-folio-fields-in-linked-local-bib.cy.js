@@ -243,8 +243,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C1307994 Verify that Local MARC authority record edits do not clear FOLIO fields in linked Local MARC bib records (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C1307994'] },
+          'C1307994 Verify that Local MARC authority record edits do not clear FOLIO fields in linked Local MARC bib records (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C1307994'] },
           () => {
             // Step 1. Open Local MARC authority record - click Actions > Edit
             MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading);

@@ -130,8 +130,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C417042 (CONSTORTIA) Verify the JSON log of the updated SRS and Instance for shared source = FOLIO Instance updated via Data import on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C417042'] },
+        'C417042 (CONSTORTIA) Verify the JSON log of the updated SRS and Instance for shared source = FOLIO Instance updated via Data import on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C417042'] },
         () => {
           const updatedInstanceTitle = `${testData.instance.instanceTitle} modified`;
 

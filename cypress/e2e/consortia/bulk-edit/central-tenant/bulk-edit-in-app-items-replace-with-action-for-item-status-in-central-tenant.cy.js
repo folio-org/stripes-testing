@@ -226,8 +226,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C496144 Verify "Replace with" action for Items status in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C496144'] },
+        'C496144 Verify "Replace with" action for Items status in Central tenant (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C496144'] },
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();

@@ -66,8 +66,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C608 In the Title Data --> Go to the Alternative Title type --> (Validate matching settings) (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C608'] },
+      'C608 In the Title Data --> Go to the Alternative Title type --> (Validate matching settings) (promin)',
+      { tags: ['extendedPath', 'promin', 'C608'] },
       () => {
         // Steps 1-2: Open Inventory and search for the created FOLIO instance
         InventoryInstances.searchByTitle(testData.instanceId);

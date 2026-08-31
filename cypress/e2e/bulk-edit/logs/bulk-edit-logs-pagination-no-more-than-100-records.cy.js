@@ -63,8 +63,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C389487 Verify pagination with no more than 100 records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C389487'] },
+      'C389487 Verify pagination with no more than 100 records (athena)',
+      { tags: ['extendedPath', 'athena', 'C389487'] },
       () => {
         BulkEditLogs.verifyLogsPane();
         BulkEditLogs.checkHoldingsCheckbox();

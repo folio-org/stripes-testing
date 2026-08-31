@@ -58,8 +58,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C471499 Search for Instance record which has diacritics in title using "Advanced search" modal (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C471499'] },
+      'C471499 Search for Instance record which has diacritics in title using "Advanced search" modal (promin)',
+      { tags: ['criticalPath', 'promin', 'C471499'] },
       () => {
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(

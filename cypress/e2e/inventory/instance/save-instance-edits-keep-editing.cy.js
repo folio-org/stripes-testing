@@ -39,8 +39,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C399069 Saving record using "Save & keep editing" button when editing an "Instance" record with source "FOLIO" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C399069'] },
+      'C399069 Saving record using "Save & keep editing" button when editing an "Instance" record with source "FOLIO" (promin)',
+      { tags: ['extendedPath', 'promin', 'C399069'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password, {

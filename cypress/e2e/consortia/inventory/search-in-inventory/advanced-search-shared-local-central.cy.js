@@ -200,8 +200,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411675 Search for Shared/Local records by "Advanced search" search option from "Central" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411675'] },
+        'C411675 Search for Shared/Local records by "Advanced search" search option from "Central" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411675'] },
         () => {
           InventoryInstances.clickAdvSearchButton();
           InventoryInstances.fillAdvSearchRow(

@@ -59,8 +59,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375132 verb=ListIdentifiers: Verify that MARC BIB is retrieved in case added Holding MARC to it (marc21_withholdings) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375132'] },
+      'C375132 verb=ListIdentifiers: Verify that MARC BIB is retrieved in case added Holding MARC to it (marc21_withholdings) (athena)',
+      { tags: ['extendedPath', 'athena', 'C375132'] },
       () => {
         OaiPmh.listIdentifiersRequest('marc21_withholdings', holdingsAddedTimestamp).then(
           (response) => {

@@ -125,8 +125,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C543847 ECS | Verify export FOLIO Instance set for deletion (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C543847'] },
+      'C543847 ECS | Verify export FOLIO Instance set for deletion (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C543847'] },
       () => {
         // Step 1-2: Click on the "Action" menu
         InventorySearchAndFilter.saveCQLQuery();

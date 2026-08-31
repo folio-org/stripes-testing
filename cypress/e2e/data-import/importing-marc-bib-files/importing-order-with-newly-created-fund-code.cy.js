@@ -121,8 +121,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C584529 Importing order with newly created fund code (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C584529'] },
+      'C584529 Importing order with newly created fund code (promin)',
+      { tags: ['criticalPath', 'promin', 'C584529'] },
       () => {
         const fundAndExpenseClassData = [
           {

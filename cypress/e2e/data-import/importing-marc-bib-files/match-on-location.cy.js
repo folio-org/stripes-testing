@@ -367,8 +367,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C17027 Match on location (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C17027'] },
+        'C17027 Match on location (promin)',
+        { tags: ['criticalPath', 'promin', 'C17027'] },
         () => {
           // change Instance HRID in .mrc file
           DataImport.editMarcFile(

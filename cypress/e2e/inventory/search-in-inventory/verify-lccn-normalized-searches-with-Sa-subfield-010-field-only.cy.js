@@ -61,8 +61,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C442835 Verify that "LCCN, normalized" search option searches by "$a" subfield of "010" field only (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C442835'] },
+      'C442835 Verify that "LCCN, normalized" search option searches by "$a" subfield of "010" field only (promin)',
+      { tags: ['criticalPath', 'promin', 'C442835'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         cy.ifConsortia(true, () => {

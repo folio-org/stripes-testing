@@ -41,8 +41,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C356817 Verify Matched records label cleanup -- Local approach (firebird)',
-      { tags: ['smoke', 'firebird', 'C356817'] },
+      'C356817 Verify Matched records label cleanup -- Local approach (athena)',
+      { tags: ['smoke', 'athena', 'C356817'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

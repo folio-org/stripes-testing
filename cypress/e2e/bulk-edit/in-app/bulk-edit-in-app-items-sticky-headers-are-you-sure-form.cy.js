@@ -140,8 +140,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C386512 Verify that headers on the "Are you sure" are sticky (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C386512'] },
+        'C386512 Verify that headers on the "Are you sure" are sticky (athena)',
+        { tags: ['extendedPath', 'athena', 'C386512'] },
         () => {
           // Step 1: Select the "Inventory - items" radio button on the "Record types" accordion => Select "Item UUIDs" option from the "Record identifier" dropdown
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');

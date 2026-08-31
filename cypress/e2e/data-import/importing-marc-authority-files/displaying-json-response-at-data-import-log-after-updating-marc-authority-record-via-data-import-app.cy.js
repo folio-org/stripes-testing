@@ -142,8 +142,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C434143 Displaying json response at data import log after updating MARC Authority record via Data import app (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C434143'] },
+      'C434143 Displaying json response at data import log after updating MARC Authority record via Data import app (promin)',
+      { tags: ['extendedPath', 'promin', 'C434143'] },
       () => {
         // Steps 1-4: Upload edited file, select job profile, run, wait for completion
         DataImport.uploadFile(editedMarcFileName, editedMarcFileName);

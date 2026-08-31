@@ -46,8 +46,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C368013 Verify that the user with "Bulk edit - Can view logs" permission can access to the logs (firebird)',
-      { tags: ['smoke', 'firebird', 'C368013'] },
+      'C368013 Verify that the user with "Bulk edit - Can view logs" permission can access to the logs (athena)',
+      { tags: ['smoke', 'athena', 'C368013'] },
       () => {
         BulkEditSearchPane.verifyBulkEditPaneItems();
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');

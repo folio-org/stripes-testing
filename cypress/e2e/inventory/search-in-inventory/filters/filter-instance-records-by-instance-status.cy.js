@@ -113,8 +113,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C415361 Filter "Instance" records by instance status (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C415361'] },
+        'C415361 Filter "Instance" records by instance status (promin)',
+        { tags: ['extendedPath', 'promin', 'C415361'] },
         () => {
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();

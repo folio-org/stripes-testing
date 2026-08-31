@@ -481,8 +481,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C398024 Call numbers are sorted by "NLM" type when using "National Library of Medicine classification" browse option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C398024'] },
+        'C398024 Call numbers are sorted by "NLM" type when using "National Library of Medicine classification" browse option (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C398024'] },
         () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.validateBrowseToggleIsSelected();

@@ -100,8 +100,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C442800 "Select instance" plug-in | Search for "MARC bibliographic" by "LCCN, normalized" option using a query without prefix (numbers only) when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (spitfire)',
-      { tags: ['extendedPathFlaky', 'spitfire', 'C442800'] },
+      'C442800 "Select instance" plug-in | Search for "MARC bibliographic" by "LCCN, normalized" option using a query without prefix (numbers only) when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (promin)',
+      { tags: ['extendedPathFlaky', 'promin', 'C442800'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);

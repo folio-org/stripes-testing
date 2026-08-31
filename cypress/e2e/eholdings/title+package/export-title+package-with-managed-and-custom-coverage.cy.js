@@ -67,8 +67,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C367921 Export of "Title+Package" record which has filled "Managed Coverage" and "Custom Coverage" fields (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C367921'] },
+      'C367921 Export of "Title+Package" record which has filled "Managed Coverage" and "Custom Coverage" fields (promin)',
+      { tags: ['extendedPath', 'promin', 'C367921'] },
       () => {
         EHoldingsResourceView.checkCustomPeriods([testData.customCoverageRange]);
         EHoldingsResourceView.openExportModal();

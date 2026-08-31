@@ -76,8 +76,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C356832 Inventory Admin note field should validate for MARC, text, or cascade in the field mapping profile (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C356832'] },
+      'C356832 Inventory Admin note field should validate for MARC, text, or cascade in the field mapping profile (promin)',
+      { tags: ['extendedPath', 'promin', 'C356832'] },
       () => {
         // create mapping profile for instance
         FieldMappingProfiles.openNewMappingProfileForm();

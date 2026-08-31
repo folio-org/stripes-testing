@@ -88,8 +88,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C350964 Displaying detail view pane automatically when search return 1 record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C350964'] },
+        'C350964 Displaying detail view pane automatically when search return 1 record (promin)',
+        { tags: ['extendedPath', 'promin', 'C350964'] },
         () => {
           // Steps 1-3: Search with unique heading → 1 result → detail view opens automatically
           MarcAuthoritiesSearch.searchBy(

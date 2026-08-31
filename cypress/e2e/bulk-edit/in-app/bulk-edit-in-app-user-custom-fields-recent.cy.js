@@ -117,8 +117,8 @@ describe(
       });
 
       it(
-        'C389570 In app | Verify bulk edit Users records with recently updated Custom fields (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C389570'] },
+        'C389570 In app | Verify bulk edit Users records with recently updated Custom fields (athena)',
+        { tags: ['criticalPath', 'athena', 'C389570'] },
         () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
           BulkEditSearchPane.checkUsersRadio();

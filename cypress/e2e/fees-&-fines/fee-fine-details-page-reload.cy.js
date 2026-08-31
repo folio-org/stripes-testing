@@ -100,8 +100,8 @@ describe('Fees&Fines', () => {
     });
 
     it(
-      'C808511 Fee/fine details page can be reloaded without errors (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C808511'] },
+      'C808511 Fee/fine details page can be reloaded without errors (vega)',
+      { tags: ['extendedPath', 'vega', 'C808511'] },
       () => {
         UsersSearchPane.searchByKeywords(testData.targetUser.username);
         UsersSearchPane.selectUserFromList(testData.targetUser.username);

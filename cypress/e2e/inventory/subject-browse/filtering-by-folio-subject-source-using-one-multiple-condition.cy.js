@@ -63,8 +63,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584505 Check filtering by folio Subject Source using only one condition (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C584505'] },
+      'C584505 Check filtering by folio Subject Source using only one condition (promin)',
+      { tags: ['criticalPath', 'promin', 'C584505'] },
       () => {
         BrowseSubjects.searchBrowseSubjects(testData.notProduceSubjectName);
         cy.ifConsortia(true, () => {
@@ -79,8 +79,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C584506 Check filtering by folio Subject Source using multiple conditions (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C584506'] },
+      'C584506 Check filtering by folio Subject Source using multiple conditions (promin)',
+      { tags: ['criticalPath', 'promin', 'C584506'] },
       () => {
         BrowseSubjects.searchBrowseSubjects(testData.notProduceSubjectName);
         cy.ifConsortia(true, () => {

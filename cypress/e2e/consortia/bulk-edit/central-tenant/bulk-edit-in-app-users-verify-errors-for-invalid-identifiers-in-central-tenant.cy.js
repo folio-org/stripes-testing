@@ -139,8 +139,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C477641 Identifier - Verify "Errors" when uploading invalid Users identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C477641'] },
+        'C477641 Identifier - Verify "Errors" when uploading invalid Users identifiers in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C477641'] },
         () => {
           const testParams = [
             {

@@ -33,8 +33,8 @@ describe('Note creation', () => {
   });
 
   it(
-    'C1296 Create a note (spitfire)',
-    { tags: ['smoke', 'spitfire', 'shiftLeft', 'C1296'] },
+    'C1296 Create a note (promin)',
+    { tags: ['smoke', 'promin', 'shiftLeft', 'C1296'] },
     () => {
       const note = {
         title: `AT_C1296_Note ${getRandomPostfix()}`,
@@ -51,7 +51,7 @@ describe('Note creation', () => {
     },
   );
 
-  it('C1299 Edit a note (spitfire)', { tags: ['smoke', 'spitfire', 'shiftLeft', 'C1299'] }, () => {
+  it('C1299 Edit a note (promin)', { tags: ['smoke', 'promin', 'shiftLeft', 'C1299'] }, () => {
     const note = {
       title: `AT_C1299_Note ${getRandomPostfix()}`,
       details: `AT_C1299_NoteDescription ${getRandomPostfix()}`,
@@ -72,8 +72,8 @@ describe('Note creation', () => {
   });
 
   it(
-    'C16992 View a note (spitfire)',
-    { tags: ['smoke', 'spitfire', 'shiftLeft', 'C16992'] },
+    'C16992 View a note (promin)',
+    { tags: ['smoke', 'promin', 'shiftLeft', 'C16992'] },
     () => {
       const note = {
         title: `AT_C16992_Note ${getRandomPostfix()}`,
@@ -91,8 +91,8 @@ describe('Note creation', () => {
   );
 
   it(
-    'C359004 A user can view Notes that were created by deleted user (spitfire)',
-    { tags: ['criticalPath', 'spitfire', 'C359004'] },
+    'C359004 A user can view Notes that were created by deleted user (promin)',
+    { tags: ['criticalPath', 'promin', 'C359004'] },
     () => {
       const note = {
         title: `AT_C359004_Note ${getRandomPostfix()}`,

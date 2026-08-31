@@ -53,8 +53,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C552359 Cannot create MARC authority record with multiple not-repeatable "Local" fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C552359'] },
+        'C552359 Cannot create MARC authority record with multiple not-repeatable "Local" fields (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C552359'] },
         () => {
           cy.then(() => {
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C552359_');

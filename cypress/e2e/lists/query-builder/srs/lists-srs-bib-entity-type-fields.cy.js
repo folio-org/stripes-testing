@@ -42,8 +42,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C788721 Verify that the fields/properties are defined correctly in the entity type SRS Bib (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C788721'] },
+      'C788721 Verify that the fields/properties are defined correctly in the entity type SRS Bib (athena)',
+      { tags: ['criticalPath', 'athena', 'C788721'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

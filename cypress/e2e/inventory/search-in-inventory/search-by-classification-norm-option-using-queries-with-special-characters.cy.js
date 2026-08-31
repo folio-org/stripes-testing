@@ -73,8 +73,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466154 Search by "Classification, normalized" search option using queries with special characters (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466154'] },
+      'C466154 Search by "Classification, normalized" search option using queries with special characters (promin)',
+      { tags: ['criticalPath', 'promin', 'C466154'] },
       () => {
         testData.searchQueries.forEach((query) => {
           cy.ifConsortia(true, () => {

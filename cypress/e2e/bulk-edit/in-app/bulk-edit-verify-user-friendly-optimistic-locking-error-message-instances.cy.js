@@ -144,8 +144,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C468221 Verify user-friendly error message for optimistic locking - instances (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C468221'] },
+      'C468221 Verify user-friendly error message for optimistic locking - instances (athena)',
+      { tags: ['criticalPath', 'athena', 'C468221'] },
       () => {
         const allInstanceIds = testInstances.map((instance) => instance.instanceId);
         const optimisticLockingErrorInstances = testInstances.filter(

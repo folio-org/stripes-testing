@@ -51,8 +51,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C496211 Add multiple 005s when editing "MARC authority" record (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C496211'] },
+        'C496211 Add multiple 005s when editing "MARC authority" record (promin)',
+        { tags: ['criticalPath', 'promin', 'C496211'] },
         () => {
           MarcAuthorities.searchBy(keywordOption, marcAuthorityHeading);
           MarcAuthorities.select(createdAuthorityId);

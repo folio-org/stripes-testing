@@ -113,8 +113,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C651492 Browse for same call numbers with different copy numbers (enumeration data) which belongs to different instances (spitfire)',
-      { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C651492'] },
+      'C651492 Browse for same call numbers with different copy numbers (enumeration data) which belongs to different instances (promin)',
+      { tags: ['extendedPathFlaky', 'promin', 'nonParallel', 'C651492'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

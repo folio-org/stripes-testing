@@ -227,8 +227,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808507 Update "Item" record via "Data import" and check "order" field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C808507'] },
+        'C808507 Update "Item" record via "Data import" and check "order" field (promin)',
+        { tags: ['extendedPath', 'promin', 'C808507'] },
         () => {
           DataImport.uploadFileViaApi(
             filePath,

@@ -226,8 +226,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C367936 Verify that correct number of linked records are displayed in the "Number of titles" column when browsing for linked "MARC Authority" records (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C367936'] },
+        'C367936 Verify that correct number of linked records are displayed in the "Number of titles" column when browsing for linked "MARC Authority" records (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C367936'] },
         () => {
           MarcAuthorityBrowse.searchBy(testData.personalNameSearchOption, marcFiles[2].title);
           cy.ifConsortia(true, () => {

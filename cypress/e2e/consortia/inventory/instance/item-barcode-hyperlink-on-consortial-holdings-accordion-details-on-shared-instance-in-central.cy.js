@@ -125,8 +125,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411656 (CONSORTIA) Verify Item barcode hyperlink on Consortial holdings accordion details on shared Instance in Central Tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411656'] },
+        'C411656 (CONSORTIA) Verify Item barcode hyperlink on Consortial holdings accordion details on shared Instance in Central Tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411656'] },
         () => {
           InventorySearchAndFilter.searchInstanceByTitle(testData.shadowInstance.id);
           InventoryInstances.selectInstance();

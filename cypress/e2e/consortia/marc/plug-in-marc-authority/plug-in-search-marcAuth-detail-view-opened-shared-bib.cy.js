@@ -91,8 +91,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C410884 "MARC authority" record is opened automatically in "Select MARC authority" plug-in on Central tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C410884'] },
+        'C410884 "MARC authority" record is opened automatically in "Select MARC authority" plug-in on Central tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C410884'] },
         () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,

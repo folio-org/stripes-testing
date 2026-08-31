@@ -125,8 +125,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C380558 MARC Authority plug-in | Collapse and expand "Search & filter" pane when browsing "MARC Authority" records (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C380558'] },
+        'C380558 MARC Authority plug-in | Collapse and expand "Search & filter" pane when browsing "MARC Authority" records (promin)',
+        { tags: ['extendedPath', 'promin', 'C380558'] },
         () => {
           MarcAuthorityBrowse.clickResetAllAndCheck();
 

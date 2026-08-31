@@ -39,8 +39,8 @@ describe('Lists', () => {
     };
 
     it(
-      'C477571 C477572 Verify that it\'s possible to access the POL entity type using "Orders: Can edit Orders and Order lines" permission when Lists app permissions assigned (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C477571', 'C477572'] },
+      'C477571 C477572 Verify that it\'s possible to access the POL entity type using "Orders: Can edit Orders and Order lines" permission when Lists app permissions assigned (athena)',
+      { tags: ['criticalPath', 'athena', 'C477571', 'C477572'] },
       () => {
         createNewUser([
           Permissions.listsAll.gui,
@@ -68,8 +68,8 @@ describe('Lists', () => {
     );
 
     it(
-      "C477577 C477573 Verify that it's not possible to access the entity type when Lists app permissions are assigned, but the user no longer has that permission (corsair)",
-      { tags: ['criticalPath', 'corsair', 'C477577', 'C477573'] },
+      "C477577 C477573 Verify that it's not possible to access the entity type when Lists app permissions are assigned, but the user no longer has that permission (athena)",
+      { tags: ['criticalPath', 'athena', 'C477577', 'C477573'] },
       () => {
         createNewUser([
           Permissions.listsAll.gui,

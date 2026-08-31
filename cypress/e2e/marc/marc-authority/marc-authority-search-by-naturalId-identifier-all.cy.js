@@ -75,8 +75,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C378891 Verify that "Identifier (all)" option search by "naturalId" field when it\'s filled from "010" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C378891'] },
+        'C378891 Verify that "Identifier (all)" option search by "naturalId" field when it\'s filled from "010" (promin)',
+        { tags: ['extendedPath', 'promin', 'C378891'] },
         () => {
           searchQueries.forEach((query) => {
             MarcAuthorities.searchByParameter(testData.identifierAllSearchOption, query);

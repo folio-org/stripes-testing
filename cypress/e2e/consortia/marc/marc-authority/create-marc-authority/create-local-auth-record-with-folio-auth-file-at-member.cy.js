@@ -69,8 +69,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423582 Create a new local MARC authority record with "FOLIO" authority file selected at Member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C423582'] },
+        'C423582 Create a new local MARC authority record with "FOLIO" authority file selected at Member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C423582'] },
         () => {
           // Step 1: Click Actions > + New
           MarcAuthorities.clickActionsAndNewAuthorityButton();

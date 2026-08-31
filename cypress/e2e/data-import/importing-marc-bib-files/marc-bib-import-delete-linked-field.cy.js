@@ -197,8 +197,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C376946 Delete non-repeatable linked field which is controlled by "MARC Authority" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C376946'] },
+      'C376946 Delete non-repeatable linked field which is controlled by "MARC Authority" record (promin)',
+      { tags: ['criticalPath', 'promin', 'C376946'] },
       () => {
         InventoryInstances.searchByTitle(createdRecordIDs[0]);
         // download .csv file

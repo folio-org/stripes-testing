@@ -47,8 +47,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C350628 Verify saving quickMARC edits (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C350628'] },
+        'C350628 Verify saving quickMARC edits (promin)',
+        { tags: ['extendedPath', 'promin', 'C350628'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstanceById(createdRecordIDs[0]);

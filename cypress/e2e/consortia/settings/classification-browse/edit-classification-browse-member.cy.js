@@ -74,8 +74,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C451647 Edit "Classification browse" option from Member tenant (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C451647'] },
+          'C451647 Edit "Classification browse" option from Member tenant (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C451647'] },
           () => {
             ClassificationBrowse.checkClassificationBrowseInTable(
               testData.classificationBrowseName,

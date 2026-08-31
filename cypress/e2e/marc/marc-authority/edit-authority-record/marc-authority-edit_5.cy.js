@@ -99,8 +99,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C353583 Verify LDR validation rules with valid data (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C353583'] },
+        'C353583 Verify LDR validation rules with valid data (promin)',
+        { tags: ['criticalPath', 'promin', 'C353583'] },
         () => {
           for (let i = 0; i < statusDropdownOptions.length; i++) {
             MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);

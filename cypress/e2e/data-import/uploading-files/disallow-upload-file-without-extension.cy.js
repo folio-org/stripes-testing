@@ -29,8 +29,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C343279 Disallow upload of a file without a file extension (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C343279'] },
+      'C343279 Disallow upload of a file without a file extension (promin)',
+      { tags: ['extendedPath', 'promin', 'C343279'] },
       () => {
         const fileNameNoExtension = `${filePathNoExtension}${getRandomLetters(15)}`;
 

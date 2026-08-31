@@ -32,8 +32,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C624371 Search for MARC authority record when user is offline (search request is canceled) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C624371'] },
+        'C624371 Search for MARC authority record when user is offline (search request is canceled) (promin)',
+        { tags: ['extendedPath', 'promin', 'C624371'] },
         () => {
           // Step 1: Simulate offline network condition by intercepting search request with forceNetworkError
           cy.intercept('GET', '/search/authorities?*', { forceNetworkError: true }).as(

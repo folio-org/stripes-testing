@@ -23,8 +23,8 @@ describe('Users', () => {
   });
 
   it(
-    'C422168 Verify that user pane appears after user creation (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C422168', 'eurekaPhase1'] },
+    'C422168 Verify that user pane appears after user creation (vega)',
+    { tags: ['extendedPath', 'vega', 'C422168', 'eurekaPhase1'] },
     () => {
       UsersSearchResultsPane.openNewUser();
       cy.createUser(userLastName, 'undergrad (Undergraduate Student)', 'test@folio.org', 'Staff', userLastName);

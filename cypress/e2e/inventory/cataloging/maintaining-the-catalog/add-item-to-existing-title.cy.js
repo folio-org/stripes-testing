@@ -53,8 +53,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C3494 Add an item to an existing title. There is already a copy at another library branch. (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C3494'] },
+      'C3494 Add an item to an existing title. There is already a copy at another library branch. (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C3494'] },
       () => {
         InventorySearchAndFilter.searchByParameter(
           'Title (all)',

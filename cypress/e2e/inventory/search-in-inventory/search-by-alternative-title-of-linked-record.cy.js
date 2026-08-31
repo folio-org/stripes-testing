@@ -118,8 +118,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C375255 Title (all) | Search by "Alternative title" field of linked "MARC Bib" record (spitfire) (TaaS)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'C375255'] },
+      'C375255 Title (all) | Search by "Alternative title" field of linked "MARC Bib" record (promin) (TaaS)',
+      { tags: ['criticalPathFlaky', 'promin', 'C375255'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

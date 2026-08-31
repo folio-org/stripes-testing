@@ -73,8 +73,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C490888 Saving record using "Save & keep editing" button when editing a "Holdings" record with source "FOLIO" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C490888'] },
+      'C490888 Saving record using "Save & keep editing" button when editing a "Holdings" record with source "FOLIO" (promin)',
+      { tags: ['extendedPath', 'promin', 'C490888'] },
       () => {
         // Step 1: Find Instance record and click Search
         InventoryInstances.searchByTitle(testData.instanceId);

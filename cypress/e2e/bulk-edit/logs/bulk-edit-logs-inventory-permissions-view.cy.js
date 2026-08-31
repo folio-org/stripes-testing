@@ -134,8 +134,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C423672 User with "Bulk edit: Can view logs", "Bulk Edit: In app - View inventory records" and "Inventory: View, create, edit instances" permissions is able to view Inventory records Logs in "Bulk edit" (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C423672'] },
+      'C423672 User with "Bulk edit: Can view logs", "Bulk Edit: In app - View inventory records" and "Inventory: View, create, edit instances" permissions is able to view Inventory records Logs in "Bulk edit" (athena)',
+      { tags: ['criticalPath', 'athena', 'C423672'] },
       () => {
         // Step 1: Select "Inventory-holdings", "Inventory-instances", "Inventory-items", "Users" checkboxes
         BulkEditLogs.checkHoldingsCheckbox();

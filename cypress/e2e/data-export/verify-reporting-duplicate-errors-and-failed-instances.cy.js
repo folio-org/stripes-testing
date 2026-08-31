@@ -123,8 +123,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C411504 Verify reporting "duplicate" errors and failed instances of exported instances for Default job profile (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C411504'] },
+    'C411504 Verify reporting "duplicate" errors and failed instances of exported instances for Default job profile (athena)',
+    { tags: ['extendedPath', 'athena', 'C411504'] },
     () => {
       // Step 1: Verify Data Export app main page
       DataExportLogs.verifyDragAndDropAreaExists();

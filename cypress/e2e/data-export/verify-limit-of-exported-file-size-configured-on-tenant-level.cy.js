@@ -151,8 +151,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C432316 Verify that limit of exported file size is configured on tenant level (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C432316', 'nonParallel'] },
+    'C432316 Verify that limit of exported file size is configured on tenant level (athena)',
+    { tags: ['criticalPath', 'athena', 'C432316', 'nonParallel'] },
     () => {
       cy.getAdminToken();
       // Configure slice_size limit via API

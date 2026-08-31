@@ -91,8 +91,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C421994 (CONSORTIA) Verify the action profile options on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C421994'] },
+        'C421994 (CONSORTIA) Verify the action profile options on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C421994'] },
         () => {
           SettingsActionProfiles.createNewActionProfile();
           NewActionProfile.verifyFolioRecordTypeOptions(recordTypeOptionsForNew);

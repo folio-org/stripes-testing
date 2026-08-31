@@ -30,8 +30,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C345409 MARC instance record + MARC holdings record (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C345409'] },
+      'C345409 MARC instance record + MARC holdings record (promin)',
+      { tags: ['smoke', 'promin', 'shiftLeft', 'C345409'] },
       () => {
         // waiting until page loading
         cy.wait(10000);

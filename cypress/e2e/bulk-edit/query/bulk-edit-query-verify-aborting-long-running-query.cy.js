@@ -35,8 +35,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C389573 Query builder - Verify Aborting long running query (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C389573'] },
+      'C389573 Query builder - Verify Aborting long running query (athena)',
+      { tags: ['extendedPath', 'athena', 'C389573'] },
       () => {
         // Step 1: Select "Users" radio button under "Record types" accordion => Click "Build query" button
         BulkEditSearchPane.openQuerySearch();

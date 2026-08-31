@@ -114,8 +114,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C788750 Update ownership of MARC holdings record which belongs to Shared MARC bib (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C788750'] },
+        'C788750 Update ownership of MARC holdings record which belongs to Shared MARC bib (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C788750'] },
         () => {
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();

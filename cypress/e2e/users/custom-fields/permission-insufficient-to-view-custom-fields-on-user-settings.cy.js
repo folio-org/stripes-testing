@@ -28,8 +28,8 @@ describe('Users', () => {
     });
 
     it(
-      'C388654 permission insufficient to view custom fields on user settings (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C388654', 'eurekaPhase1'] },
+      'C388654 permission insufficient to view custom fields on user settings (vega)',
+      { tags: ['extendedPath', 'vega', 'C388654', 'eurekaPhase1'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(userData.username, userData.password, {

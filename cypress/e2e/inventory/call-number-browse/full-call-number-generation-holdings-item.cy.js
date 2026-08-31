@@ -78,8 +78,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C478256 Verify "fullCallNumber" generation when all "Call number" fields are filled in "Holdings" record and "Enumeration" fields are filled in "Item" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C478256'] },
+      'C478256 Verify "fullCallNumber" generation when all "Call number" fields are filled in "Holdings" record and "Enumeration" fields are filled in "Item" record (promin)',
+      { tags: ['criticalPath', 'promin', 'C478256'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password);

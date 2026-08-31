@@ -42,8 +42,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C196752 Verify "Actions" menu options in three segments when no search results are returned (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C196752'] },
+      'C196752 Verify "Actions" menu options in three segments when no search results are returned (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C196752'] },
       () => {
         InventoryActions.open();
 
@@ -100,8 +100,8 @@ describe('Data Export', () => {
     );
 
     it(
-      'C196753 Verify Action menu options - search results pane populated (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C196753'] },
+      'C196753 Verify Action menu options - search results pane populated (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C196753'] },
       () => {
         InventorySearchAndFilter.byKeywords(item.instanceName);
         InventoryActions.open();

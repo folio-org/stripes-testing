@@ -64,8 +64,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C494058 Focus is moved to "X" icon of detail view when user clicks on the "Save & close" button in the "Edit MARC authority record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C494058'] },
+        'C494058 Focus is moved to "X" icon of detail view when user clicks on the "Save & close" button in the "Edit MARC authority record" window (promin)',
+        { tags: ['extendedPath', 'promin', 'C494058'] },
         () => {
           // Step 1: Click Actions → Edit → "Edit MARC authority record" pane opens
           MarcAuthority.edit();

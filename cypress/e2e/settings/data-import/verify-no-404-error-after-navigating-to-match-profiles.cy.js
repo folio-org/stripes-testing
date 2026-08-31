@@ -25,8 +25,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C377024 Verify that no 404 error in console appears after navigating to the match profiles main page in settings (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C377024'] },
+      'C377024 Verify that no 404 error in console appears after navigating to the match profiles main page in settings (promin)',
+      { tags: ['extendedPath', 'promin', 'C377024'] },
       () => {
         // Step 1: Set up network spy BEFORE navigation to catch any matching request during page load
         let noteSchemaRequested = false;

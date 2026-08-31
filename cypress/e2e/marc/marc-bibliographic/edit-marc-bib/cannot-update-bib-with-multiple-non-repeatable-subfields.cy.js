@@ -72,8 +72,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514923 Cannot update MARC bib record with multiple not-repeatable standard / local subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514923'] },
+        'C514923 Cannot update MARC bib record with multiple not-repeatable standard / local subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514923'] },
         () => {
           cy.then(() => {
             // Create user and MARC bib FIRST (before setting up validation rules)

@@ -37,8 +37,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C950872 API | Create multiple Instances using POST instance-storage/batch/synchronous with / without upsert=true (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C950872'] },
+      'C950872 API | Create multiple Instances using POST instance-storage/batch/synchronous with / without upsert=true (promin)',
+      { tags: ['extendedPath', 'promin', 'C950872'] },
       () => {
         // Step 1. Send POST ‘instance-storage/batch/synchronous’ with following body (without instance “id”)
         const instanceRecordsWithoutIdsOne = [

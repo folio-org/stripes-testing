@@ -115,8 +115,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C553003 Apply "Date" sort option to the Instance/Holdings/Item search result list in "Inventory" app" (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C553003'] },
+      'C553003 Apply "Date" sort option to the Instance/Holdings/Item search result list in "Inventory" app" (promin)',
+      { tags: ['criticalPath', 'promin', 'C553003'] },
       () => {
         InventoryInstances.searchByTitle(testData.searchQuery);
         InventoryInstances.checkColumnHeaderSort(testData.titleHeader);

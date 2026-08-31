@@ -117,8 +117,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C850001 Verify that the "Affiliation name" is working correctly on the Central tenant with all operators (consortia) (corsair)',
-      { tags: ['criticalPathECS', 'corsair', 'C850001'] },
+      'C850001 Verify that the "Affiliation name" is working correctly on the Central tenant with all operators (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C850001'] },
       () => {
         // Step 1: Open Lists app, create new list, select Instances, open query builder
         Lists.openNewListPane();

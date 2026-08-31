@@ -123,8 +123,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C526748 (CONSORTIA) Verify presence of update ownership action for Holdings when the permission for updating ownership is assigned on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C526748'] },
+        'C526748 (CONSORTIA) Verify presence of update ownership action for Holdings when the permission for updating ownership is assigned on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C526748'] },
         () => {
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();

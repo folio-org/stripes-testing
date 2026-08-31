@@ -11,8 +11,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C788713 Verify that the entity types SRS Authority, Simple SRS record and SRS Bib are private (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C788713'] },
+      'C788713 Verify that the entity types SRS Authority, Simple SRS record and SRS Bib are private (athena)',
+      { tags: ['criticalPath', 'athena', 'C788713'] },
       () => {
         // #1 Go to the "Lists" app and click on "New" button
         Lists.openNewListPane();

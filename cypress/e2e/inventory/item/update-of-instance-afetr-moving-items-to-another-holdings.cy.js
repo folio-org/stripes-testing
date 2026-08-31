@@ -102,8 +102,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C423972 Verify instance metadata is updated after moving item to another holdings (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C423972'] },
+      'C423972 Verify instance metadata is updated after moving item to another holdings (promin)',
+      { tags: ['extendedPath', 'promin', 'C423972'] },
       () => {
         // Find pre-created instance and check initial item placement.
         InventorySearchAndFilter.searchInstanceByTitle(testData.instanceTitle);

@@ -27,7 +27,7 @@ import Users from '../../support/fragments/users/users';
 
 let user;
 
-describe('Citation: create instance in central tenant + holdings in member', () => {
+describe('Promin: create instance in central tenant + holdings in member', () => {
   const testData = {
     marcFilePath: 'marcBibFileForC451572.mrc',
     modifiedMarcFile: `C736677 editedMarcFile${getRandomPostfix()}.mrc`,
@@ -120,8 +120,8 @@ describe('Citation: create instance in central tenant + holdings in member', () 
   });
 
   it(
-    'C736677 [User journey] Marigold - Create new instance in central tenant (citation)',
-    { tags: ['criticalPathECS', 'citation', 'marigold', 'C736677'] },
+    'C736677 [User journey] Marigold - Create new instance in central tenant (promin)',
+    { tags: ['criticalPathECS', 'promin', 'marigold', 'C736677'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);

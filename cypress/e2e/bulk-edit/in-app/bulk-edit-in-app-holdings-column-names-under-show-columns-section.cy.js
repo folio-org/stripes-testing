@@ -85,8 +85,8 @@ describe(
       });
 
       it(
-        'C446039 Verify column names under "Show columns" section - holdings (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C446039'] },
+        'C446039 Verify column names under "Show columns" section - holdings (athena)',
+        { tags: ['criticalPath', 'athena', 'C446039'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);

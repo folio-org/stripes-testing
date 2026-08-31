@@ -117,8 +117,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C396370 Browse results list is cleared when browse input field is cleared (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C396370'] },
+      'C396370 Browse results list is cleared when browse input field is cleared (promin)',
+      { tags: ['extendedPath', 'promin', 'C396370'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

@@ -177,8 +177,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466164 Find Instance plugin | Search for Instances which have different classification types using "Classification, normalized" search option and one query (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C466164'] },
+      'C466164 Find Instance plugin | Search for Instances which have different classification types using "Classification, normalized" search option and one query (promin)',
+      { tags: ['extendedPath', 'promin', 'C466164'] },
       () => {
         SelectInstanceModal.clickSearchOptionSelect();
         SelectInstanceModal.chooseSearchOption(testData.classificationOption);

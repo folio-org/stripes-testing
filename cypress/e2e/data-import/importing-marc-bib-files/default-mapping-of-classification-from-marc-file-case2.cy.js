@@ -78,8 +78,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C380724 Check the default mapping of Classification from the MARC record to the Inventory Instance Classification fields: Case 2 (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C380724'] },
+      'C380724 Check the default mapping of Classification from the MARC record to the Inventory Instance Classification fields: Case 2 (promin)',
+      { tags: ['extendedPath', 'promin', 'C380724'] },
       () => {
         // Steps 1-4: Import done via API; open first record
         InventoryInstances.searchByTitle(instanceId1);

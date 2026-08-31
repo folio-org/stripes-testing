@@ -144,8 +144,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C368017 Check the filters section in Logs tab (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C368017'] },
+      'C368017 Check the filters section in Logs tab (athena)',
+      { tags: ['extendedPath', 'athena', 'C368017'] },
       () => {
         const currentDate = DateTools.getCurrentDateForFiscalYear();
         const yesterday = DateTools.getPreviousDayDateForFiscalYear();

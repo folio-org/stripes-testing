@@ -165,8 +165,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C1375794 Create Items bulk edit profile in Central tenant and use it to execute bulk edit job with errors (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C1375794'] },
+        'C1375794 Create Items bulk edit profile in Central tenant and use it to execute bulk edit job with errors (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C1375794'] },
         () => {
           // Step 1: Navigate to Items bulk edit profiles and create new profile
           SettingsPane.selectSettingsTab(APPLICATION_NAMES.BULK_EDIT);

@@ -55,8 +55,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C353943 Negative: Verify Local updating records with invalid data (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C353943'] },
+      'C353943 Negative: Verify Local updating records with invalid data (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C353943'] },
       () => {
         // Upload user UUIDs and download matched records
         BulkEditSearchPane.checkUsersRadio();

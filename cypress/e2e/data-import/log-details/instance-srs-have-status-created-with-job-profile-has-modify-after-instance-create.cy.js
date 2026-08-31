@@ -79,8 +79,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C386867 Verify that Instance and SRS MARC have status "Created" with job profile that has MARC modify after Instance create (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C386867'] },
+      'C386867 Verify that Instance and SRS MARC have status "Created" with job profile that has MARC modify after Instance create (promin)',
+      { tags: ['criticalPath', 'promin', 'C386867'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();

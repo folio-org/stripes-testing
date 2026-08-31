@@ -61,8 +61,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C476695 Windows | "Edit MARC record" page is opened when user with edit permission uses shortcut "Ctrl + Shift + E" on the detail view pane of Instance with source "MARC" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C476695'] },
+      'C476695 Windows | "Edit MARC record" page is opened when user with edit permission uses shortcut "Ctrl + Shift + E" on the detail view pane of Instance with source "MARC" (promin)',
+      { tags: ['extendedPath', 'promin', 'C476695'] },
       () => {
         InventoryInstances.searchByTitle(createdRecordId);
         InventoryInstances.selectInstanceById(createdRecordId);

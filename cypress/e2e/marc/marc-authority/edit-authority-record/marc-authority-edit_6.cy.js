@@ -78,8 +78,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C353585 Verify LDR validation rules with invalid data (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C353585'] },
+        'C353585 Verify LDR validation rules with invalid data (promin)',
+        { tags: ['criticalPath', 'promin', 'C353585'] },
         () => {
           const errorInvalidLDR05and17and18 =
             'Record cannot be saved. Please enter a valid Leader 05, Leader 17 and Leader 18. Valid values are listed at https://www.loc.gov/marc/authority/adleader.html';

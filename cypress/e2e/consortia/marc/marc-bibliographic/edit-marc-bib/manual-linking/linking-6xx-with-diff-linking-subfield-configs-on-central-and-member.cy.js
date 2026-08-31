@@ -422,8 +422,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C770440 Link "Subjects" (6XX) fields of shared MARC bib from Member tenant when Central and Member tenants have different linkable subfields configured (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C770440'] },
+          'C770440 Link "Subjects" (6XX) fields of shared MARC bib from Member tenant when Central and Member tenants have different linkable subfields configured (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C770440'] },
           () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventoryInstances.searchByTitle(createdRecordIDs[0]);

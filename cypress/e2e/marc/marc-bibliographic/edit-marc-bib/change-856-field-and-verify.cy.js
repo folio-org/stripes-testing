@@ -58,8 +58,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C10988 Change the 856 indicator in quickMARC and verify change in the instance record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C10988'] },
+        'C10988 Change the 856 indicator in quickMARC and verify change in the instance record (promin)',
+        { tags: ['extendedPath', 'promin', 'C10988'] },
         () => {
           InventoryInstances.searchByTitle(instanceId[0]);
           InventoryInstances.selectInstance();

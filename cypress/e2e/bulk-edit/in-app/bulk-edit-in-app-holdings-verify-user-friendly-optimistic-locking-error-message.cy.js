@@ -90,8 +90,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C468224 Verify user-friendly error message for optimistic locking - holdings (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C468224'] },
+      'C468224 Verify user-friendly error message for optimistic locking - holdings (athena)',
+      { tags: ['extendedPath', 'athena', 'C468224'] },
       () => {
         // Step 1: Select "Inventory - holdings" radio button and "Holdings UUIDs" identifier
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');

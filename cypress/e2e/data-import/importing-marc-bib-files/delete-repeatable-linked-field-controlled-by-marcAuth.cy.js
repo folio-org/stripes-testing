@@ -223,8 +223,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C375108 Delete repeatable linked field which is controlled by "MARC Authority" record (spitfire) (TaaS)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'C375108'] },
+      'C375108 Delete repeatable linked field which is controlled by "MARC Authority" record (promin) (TaaS)',
+      { tags: ['criticalPathFlaky', 'promin', 'C375108'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         // download .csv file

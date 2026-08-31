@@ -62,8 +62,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C345389 Import a MARC Holdings record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C345389'] },
+      'C345389 Import a MARC Holdings record (promin)',
+      { tags: ['extendedPath', 'promin', 'C345389'] },
       () => {
         DataImport.editMarcFile(
           holdingsFileName,

@@ -51,8 +51,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C421996 (CONSORTIA) Verify the field mapping profile options on Central tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C421996'] },
+        'C421996 (CONSORTIA) Verify the field mapping profile options on Central tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C421996'] },
         () => {
           TopMenuNavigation.navigateToApp(
             APPLICATION_NAMES.SETTINGS,

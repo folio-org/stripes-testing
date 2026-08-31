@@ -116,8 +116,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C844256 Verify that it\'s possible to run queries using the field "Items—Year, caption" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C844256'] },
+        'C844256 Verify that it\'s possible to run queries using the field "Items—Year, caption" (athena)',
+        { tags: ['extendedPath', 'athena', 'C844256'] },
         () => {
           // Step 1: Create new list with Items record type and build query
           Lists.openNewListPane();

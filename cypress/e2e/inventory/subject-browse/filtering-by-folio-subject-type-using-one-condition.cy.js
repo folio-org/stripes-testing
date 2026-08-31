@@ -104,8 +104,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584508 Check filtering by folio Subject Type using only one condition (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C584508'] },
+      'C584508 Check filtering by folio Subject Type using only one condition (promin)',
+      { tags: ['extendedPath', 'promin', 'C584508'] },
       () => {
         subjectValues.forEach((subjectValue) => {
           BrowseSubjects.waitForSubjectToAppear(subjectValue);

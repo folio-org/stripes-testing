@@ -175,8 +175,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651583 Check "Version history" after creating,editing and deleting non repeatable fields in Item (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C651583'] },
+        'C651583 Check "Version history" after creating,editing and deleting non repeatable fields in Item (promin)',
+        { tags: ['criticalPath', 'promin', 'C651583'] },
         () => {
           openCreatedInstance();
 

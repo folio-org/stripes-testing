@@ -90,8 +90,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C423578 Verify the creation of Authority record with non-matches create (folijet)',
-      { tags: ['smoke', 'folijet', 'C423578', 'shiftLeft'] },
+      'C423578 Verify the creation of Authority record with non-matches create (promin)',
+      { tags: ['smoke', 'promin', 'C423578', 'shiftLeft'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);

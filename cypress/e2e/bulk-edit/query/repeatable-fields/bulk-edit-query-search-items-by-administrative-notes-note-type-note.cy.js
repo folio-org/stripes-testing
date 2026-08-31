@@ -206,8 +206,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C813674 Search items by Administrative notes, Note type, Note (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C813674'] },
+        'C813674 Search items by Administrative notes, Note type, Note (athena)',
+        { tags: ['criticalPath', 'athena', 'C813674'] },
         () => {
           // Create expected items for verification
           const itemBarcodes = items.map((item) => item.barcode);

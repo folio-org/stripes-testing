@@ -96,8 +96,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C523571 Create MARC bib record with value in "010 $a" subfield which matches to other records "LCCN", "Canceled LCCN" fields when duplicate LCCN check is disabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C523571'] },
+          'C523571 Create MARC bib record with value in "010 $a" subfield which matches to other records "LCCN", "Canceled LCCN" fields when duplicate LCCN check is disabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C523571'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField('245', `$a ${marcInstanceTitle} Test`);

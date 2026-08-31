@@ -46,8 +46,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C375147 Verify that no ISRI records are shown on Data Import Landing page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C375147'] },
+      'C375147 Verify that no ISRI records are shown on Data Import Landing page (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C375147'] },
       () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();
@@ -88,8 +88,8 @@ describe('Data Import', () => {
     );
 
     it(
-      'C375148 Verify that ISRI records are shown on log details page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C375148'] },
+      'C375148 Verify that ISRI records are shown on log details page (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C375148'] },
       () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();

@@ -97,8 +97,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503166 Save existing "MARC holdings" record with multiple Local control fields (002, 009) which don\'t have or have subfield "$a" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C503166'] },
+        'C503166 Save existing "MARC holdings" record with multiple Local control fields (002, 009) which don\'t have or have subfield "$a" (promin)',
+        { tags: ['extendedPath', 'promin', 'C503166'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

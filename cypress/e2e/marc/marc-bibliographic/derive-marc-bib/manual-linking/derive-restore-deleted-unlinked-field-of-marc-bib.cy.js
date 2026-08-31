@@ -132,8 +132,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C366581 Derive | Restore deleted unlinked field of "MARC Bib" record in deriving window (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C366581'] },
+          'C366581 Derive | Restore deleted unlinked field of "MARC Bib" record in deriving window (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C366581'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();

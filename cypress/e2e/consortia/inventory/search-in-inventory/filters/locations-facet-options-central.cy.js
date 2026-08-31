@@ -192,8 +192,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C423620 Locations from all existing tenants displays in "Effective location (item)" facet of search pane in "Inventory" app opened from "Central" tenant (Instance|Holdings|Items tabs) (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C423620'] },
+          'C423620 Locations from all existing tenants displays in "Effective location (item)" facet of search pane in "Inventory" app opened from "Central" tenant (Instance|Holdings|Items tabs) (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C423620'] },
           () => {
             const usedLocations = [
               locations[Affiliations.College][0].name,

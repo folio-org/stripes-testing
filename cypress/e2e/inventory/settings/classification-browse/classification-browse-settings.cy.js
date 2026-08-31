@@ -76,8 +76,8 @@ describe('Inventory', () => {
 
       it(
         `C451642 All available "Classification identifier types" are displayed in "Classification identifier types" 
-            multi-select dropdown element of each "Classification browse" option on "Classification browse" pane. (spitfire)`,
-        { tags: ['criticalPath', 'spitfire', 'C451642'] },
+            multi-select dropdown element of each "Classification browse" option on "Classification browse" pane. (promin)`,
+        { tags: ['criticalPath', 'promin', 'C451642'] },
         () => {
           defaultClassificationBrowseNames.forEach((classificationBrowseName) => {
             // Click on the "Edit" (pencil) icon next to the browse option
@@ -198,8 +198,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C451644 Select all available “Classification identifier types” when edit "Classification browse" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C451644'] },
+        'C451644 Select all available “Classification identifier types” when edit "Classification browse" option (promin)',
+        { tags: ['criticalPath', 'promin', 'C451644'] },
         () => {
           ClassificationBrowse.checkClassificationBrowseInTable(
             testData.classificationBrowseName,
@@ -329,8 +329,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C451645 Delete already selected “Classification identifier types” when edit "Classification browse" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C451645'] },
+        'C451645 Delete already selected “Classification identifier types” when edit "Classification browse" option (promin)',
+        { tags: ['criticalPath', 'promin', 'C451645'] },
         () => {
           ClassificationBrowse.checkClassificationBrowseInTable(
             testData.classificationBrowseName,
@@ -419,8 +419,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C451643 Successful saving toast message is displayed after editing and saving "Classification browse" option (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C451643'] },
+        'C451643 Successful saving toast message is displayed after editing and saving "Classification browse" option (promin)',
+        { tags: ['criticalPath', 'promin', 'C451643'] },
         () => {
           ClassificationBrowse.checkClassificationBrowseInTable(
             testData.classificationBrowseName,
@@ -488,8 +488,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C451641 View "Settings >> Inventory >> Classification browse" page (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C451641'] },
+        'C451641 View "Settings >> Inventory >> Classification browse" page (promin)',
+        { tags: ['criticalPath', 'promin', 'C451641'] },
         () => {
           // 1 Go to "Settings" app >> "Inventory" tab
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, 'Inventory');
@@ -540,8 +540,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C451646 Switch to another pane during editing of "Classification browse" option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C451646'] },
+        'C451646 Switch to another pane during editing of "Classification browse" option (promin)',
+        { tags: ['extendedPath', 'promin', 'C451646'] },
         () => {
           ClassificationBrowse.clickEditButtonInBrowseOption(browseName);
           ClassificationBrowse.checkCancelButtonEnabledInBrowseOption(browseName);

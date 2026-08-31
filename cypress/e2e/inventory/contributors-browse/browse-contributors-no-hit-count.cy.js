@@ -64,8 +64,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C358531 Verify the hit count does not display on Browse contributors list (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C358531'] },
+      'C358531 Verify the hit count does not display on Browse contributors list (promin)',
+      { tags: ['extendedPath', 'promin', 'C358531'] },
       () => {
         BrowseContributors.waitForContributorToAppear(contributorValue);
         InventorySearchAndFilter.selectBrowseContributors();

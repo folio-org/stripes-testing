@@ -66,8 +66,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C3611 Search: Verify search on ISSN (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C3611'] },
+      'C3611 Search: Verify search on ISSN (promin)',
+      { tags: ['extendedPath', 'promin', 'C3611'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password, {

@@ -407,8 +407,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C477538 Verify "Preview of record matched" when uploading valid Items identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C477538'] },
+        'C477538 Verify "Preview of record matched" when uploading valid Items identifiers in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C477538'] },
         () => {
           // Upload and verify Item barcodes
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcodes');

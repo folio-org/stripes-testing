@@ -220,8 +220,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C411286 Consortia | Verify that local instances from Member 1 do not exported for Member 2 (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C411286'] },
+      'C411286 Consortia | Verify that local instances from Member 1 do not exported for Member 2 (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C411286'] },
       () => {
         // Step 1: Go to the "Data export" app
         // Step 2: Trigger the data export by uploading .csv file

@@ -116,8 +116,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C590843 Verify user-friendly optimistic locking error message for Holdings in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C590843'] },
+        'C590843 Verify user-friendly optimistic locking error message for Holdings in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C590843'] },
         () => {
           // Step 1: Select "Inventory - holdings" radio button and Holdings UUIDs
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');

@@ -116,8 +116,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C397331 Label is shown for "Type" boxes in fields "006", "007" of "MARC bib" record when editing (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C397331'] },
+        'C397331 Label is shown for "Type" boxes in fields "006", "007" of "MARC bib" record when editing (promin)',
+        { tags: ['extendedPath', 'promin', 'C397331'] },
         () => {
           // Steps 1-2: Search and select instance record with 006/007 fields
           InventoryInstances.searchByTitle(instanceIdWith006007);

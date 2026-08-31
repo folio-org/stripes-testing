@@ -159,8 +159,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C410752 Only contributors from "Shared" Instance records are shown in the browse result list on Central tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C410752'] },
+        'C410752 Only contributors from "Shared" Instance records are shown in the browse result list on Central tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C410752'] },
         () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.selectBrowseOption(contributorBrowseoption);

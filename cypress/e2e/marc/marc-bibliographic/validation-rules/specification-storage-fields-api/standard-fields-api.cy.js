@@ -38,8 +38,8 @@ describe('Specification Storage - Standard Fields API', () => {
   });
 
   it(
-    'C499802 Cannot update Fields of Standard Field (except "url", "required") for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C499802', 'spitfire'] },
+    'C499802 Cannot update Fields of Standard Field (except "url", "required") for MARC bib spec (API) (promin)',
+    { tags: ['criticalPath', 'C499802', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);
@@ -144,8 +144,8 @@ describe('Specification Storage - Standard Fields API', () => {
   );
 
   it(
-    'C499819 Cannot update Standard Field with invalid value in "required" field for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C499819', 'spitfire'] },
+    'C499819 Cannot update Standard Field with invalid value in "required" field for MARC bib spec (API) (promin)',
+    { tags: ['criticalPath', 'C499819', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

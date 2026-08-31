@@ -77,8 +77,8 @@ describe('Data Import', () => {
     });
 
     it(
-      "C350394 Edit MARC 008 tag (imported marc holdings record doesn't have this tag) (spitfire)",
-      { tags: ['extendedPath', 'spitfire', 'C350394'] },
+      "C350394 Edit MARC 008 tag (imported marc holdings record doesn't have this tag) (promin)",
+      { tags: ['extendedPath', 'promin', 'C350394'] },
       () => {
         InventorySearchAndFilter.searchByParameter(hridSearchOption, instanceHrid);
         InventoryInstance.waitLoading();

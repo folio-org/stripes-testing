@@ -64,8 +64,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C418652 Lists (Export): Can create, edit, refresh, and export lists (corsair)',
-        { tags: ['smoke', 'corsair', 'shiftLeft', 'C418652'] },
+        'C418652 Lists (Export): Can create, edit, refresh, and export lists (athena)',
+        { tags: ['smoke', 'athena', 'shiftLeft', 'C418652'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

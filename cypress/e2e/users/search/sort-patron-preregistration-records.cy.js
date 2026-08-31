@@ -131,7 +131,7 @@ describe('Users', () => {
 
     it(
       'C584494 - Sort patron preregistration records in "Users" app',
-      { tags: ['extendedPath', 'volaris', 'C584494'] },
+      { tags: ['extendedPath', 'vega', 'C584494'] },
       () => {
         // Step 1: Click on "Actions" button -> select "Search patron preregistration records" option
         UsersSearchPane.openPatronPreRegistrationRecords();

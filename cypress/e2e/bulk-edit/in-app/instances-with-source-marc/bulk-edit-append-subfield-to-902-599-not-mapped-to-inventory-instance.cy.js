@@ -115,8 +115,8 @@ describe(
       });
 
       it(
-        'C506680 Append subfield to MARC field (902, 599) not mapped to Inventory Instance (MARC) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C506680'] },
+        'C506680 Append subfield to MARC field (902, 599) not mapped to Inventory Instance (MARC) (athena)',
+        { tags: ['criticalPath', 'athena', 'C506680'] },
         () => {
           // Step 1: Check columns for Source and General note
           BulkEditActions.openActions();

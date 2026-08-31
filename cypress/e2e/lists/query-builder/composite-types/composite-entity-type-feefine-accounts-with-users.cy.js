@@ -34,8 +34,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1259779 Composite ET: Fee/fine accounts with users (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C1259779'] },
+        'C1259779 Composite ET: Fee/fine accounts with users (athena)',
+        { tags: ['extendedPath', 'athena', 'C1259779'] },
         () => {
           // Step 1: Click on "New" button, add list name, click on "Select record type" dropdown and select "Fee/Fine accounts with users"
           Lists.openNewListPane();

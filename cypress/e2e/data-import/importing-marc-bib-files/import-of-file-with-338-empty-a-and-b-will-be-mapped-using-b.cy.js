@@ -51,8 +51,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C844845 Import of file with 338 with empty $a and $b should be mapped using $b (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C844845'] },
+      'C844845 Import of file with 338 with empty $a and $b should be mapped using $b (promin)',
+      { tags: ['extendedPath', 'promin', 'C844845'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();

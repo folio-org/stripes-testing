@@ -251,8 +251,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411626 Search for Shared/Local records by "Identifier (all)" and "OCLC number, normalized" search options from "Member" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411626'] },
+        'C411626 Search for Shared/Local records by "Identifier (all)" and "OCLC number, normalized" search options from "Member" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411626'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter(helbyAccordionName);
 

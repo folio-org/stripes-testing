@@ -67,8 +67,8 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Order Va
   });
 
   it(
-    'C502976 Cannot update Indicator of Local field with invalid "order" value for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C502976', 'spitfire'] },
+    'C502976 Cannot update Indicator of Local field with invalid "order" value for MARC bib spec (API) (promin)',
+    { tags: ['criticalPath', 'C502976', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

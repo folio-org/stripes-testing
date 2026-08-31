@@ -107,8 +107,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C552453 Verify that edited MARC bib record is checked against the last version of MARC validation rules (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C552453', 'nonParallel'] },
+        'C552453 Verify that edited MARC bib record is checked against the last version of MARC validation rules (promin)',
+        { tags: ['criticalPath', 'promin', 'C552453', 'nonParallel'] },
         () => {
           cy.then(() => {
             cy.createTempUser([

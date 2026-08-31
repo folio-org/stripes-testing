@@ -105,8 +105,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C411639 Verify separating notes in different columns - edit notes (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C411639'] },
+      'C411639 Verify separating notes in different columns - edit notes (athena)',
+      { tags: ['criticalPath', 'athena', 'C411639'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

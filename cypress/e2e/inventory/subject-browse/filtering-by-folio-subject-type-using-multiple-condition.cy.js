@@ -56,8 +56,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584509 Check filtering by folio Subject Type using multiple conditions (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C584509'] },
+      'C584509 Check filtering by folio Subject Type using multiple conditions (promin)',
+      { tags: ['criticalPath', 'promin', 'C584509'] },
       () => {
         BrowseSubjects.searchBrowseSubjects(testData.notProduceSubjectName);
         BrowseSubjects.verifyNonExistentSearchResult(testData.notProduceSubjectName);

@@ -60,8 +60,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C584534 (CONSORTIA) Check "Subject source" facet on "Browse" page (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C584534'] },
+        'C584534 (CONSORTIA) Check "Subject source" facet on "Browse" page (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C584534'] },
         () => {
           InventorySearchAndFilter.verifySearchAndFilterPane();
           InventorySearchAndFilter.switchToBrowseTab();

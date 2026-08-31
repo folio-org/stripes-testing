@@ -258,8 +258,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651512 Call number of each type which belong to Shared Instances could be found by call number browse from Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C651512'] },
+        'C651512 Call number of each type which belong to Shared Instances could be found by call number browse from Central tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C651512'] },
         () => {
           InventorySearchAndFilter.switchToBrowseTab();
           folioInstancesShared.forEach((instance) => {

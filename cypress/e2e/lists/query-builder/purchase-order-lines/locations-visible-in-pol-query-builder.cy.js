@@ -97,8 +97,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C889719 Locations are visible in POLs (Purchase order lines) (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C889719'] },
+        'C889719 Locations are visible in POLs (Purchase order lines) (athena)',
+        { tags: ['criticalPath', 'athena', 'C889719'] },
         () => {
           // Step 1: Click "New" button, add list name, select record type
           Lists.openNewListPane();

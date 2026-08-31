@@ -85,8 +85,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C566113 ECS | Simplified export of deleted Authority records with Deleted profile in Member tenant (consortia) (firebird)',
-      { tags: ['smokeECS', 'firebird', 'C566113'] },
+      'C566113 ECS | Simplified export of deleted Authority records with Deleted profile in Member tenant (consortia) (athena)',
+      { tags: ['smokeECS', 'athena', 'C566113'] },
       () => {
         cy.resetTenant();
         cy.getAdminToken();

@@ -34,8 +34,8 @@ describe('Users', () => {
   });
 
   it(
-    'C343246 Users: Add a pop-up note and delete pop-up note (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C343246'] },
+    'C343246 Users: Add a pop-up note and delete pop-up note (promin)',
+    { tags: ['extendedPath', 'promin', 'C343246'] },
     () => {
       // Step 1: Go to Users app and select a user record
       cy.login(testData.user.username, testData.user.password, {

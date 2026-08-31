@@ -80,8 +80,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C446038 Verify column names under "Show columns" section - items (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C446038'] },
+        'C446038 Verify column names under "Show columns" section - items (athena)',
+        { tags: ['extendedPath', 'athena', 'C446038'] },
         () => {
           // Step 1: Select "Inventory-items" record type => Select "Item barcode" from "Record identifier" dropdown
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcodes');

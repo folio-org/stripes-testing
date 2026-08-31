@@ -128,8 +128,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C380573 MARC Authority plug-in | Search using "Advanced search" option (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C380573'] },
+        'C380573 MARC Authority plug-in | Search using "Advanced search" option (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C380573'] },
         () => {
           MarcAuthorities.searchBy('Advanced search', testData.advancesSearchQuery, true);
           cy.ifConsortia(true, () => {

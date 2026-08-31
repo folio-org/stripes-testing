@@ -88,8 +88,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375192 GetRecord: Verify MARC holdings suppressed from discovery in case Transfer suppressed records with discovery flag value (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375192'] },
+      'C375192 GetRecord: Verify MARC holdings suppressed from discovery in case Transfer suppressed records with discovery flag value (athena)',
+      { tags: ['extendedPath', 'athena', 'C375192'] },
       () => {
         // Step 1: Navigate to the instance and find the holdings
         InventorySearchAndFilter.searchByParameter('Instance UUID', marcInstance.id);

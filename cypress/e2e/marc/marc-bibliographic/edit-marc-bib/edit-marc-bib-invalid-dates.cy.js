@@ -91,8 +91,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C554633 Cannot update MARC bib with more or less than 4 characters in "Date 1" and "Date 2" fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C554633'] },
+        'C554633 Cannot update MARC bib with more or less than 4 characters in "Date 1" and "Date 2" fields (promin)',
+        { tags: ['criticalPath', 'promin', 'C554633'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstanceById(createdRecordIDs[0]);

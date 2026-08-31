@@ -64,8 +64,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436854 Change "Active" checkbox state of Local "Authority file" which has assigned "MARC authority" records (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C436854'] },
+        'C436854 Change "Active" checkbox state of Local "Authority file" which has assigned "MARC authority" records (promin)',
+        { tags: ['criticalPath', 'promin', 'C436854'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
           cy.login(user.username, user.password, {

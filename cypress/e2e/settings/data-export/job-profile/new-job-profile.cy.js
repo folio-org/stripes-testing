@@ -56,8 +56,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10953 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to create unlocked job profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C10953'] },
+      'C10953 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to create unlocked job profile (athena)',
+      { tags: ['criticalPath', 'athena', 'shiftLeft', 'C10953'] },
       () => {
         // Step 1: Click "New" button in the header of "Job profiles" pane
         ExportJobProfiles.openNewJobProfileForm();

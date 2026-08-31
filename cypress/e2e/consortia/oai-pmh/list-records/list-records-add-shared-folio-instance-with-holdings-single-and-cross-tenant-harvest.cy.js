@@ -115,8 +115,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C407760 Consortia | Inventory | ListRecords |ListIdentifiers: Add shared FOLIO instance to Central tenant and enrich it with local FOLIO Holdings in Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C407760', 'nonParallel'] },
+        'C407760 Consortia | Inventory | ListRecords |ListIdentifiers: Add shared FOLIO instance to Central tenant and enrich it with local FOLIO Holdings in Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C407760', 'nonParallel'] },
         () => {
           // Steps 1-4: Login to Central tenant and create shared FOLIO instance
           cy.login(testData.user.username, testData.user.password, {

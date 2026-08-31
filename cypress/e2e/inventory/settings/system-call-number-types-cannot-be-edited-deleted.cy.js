@@ -35,8 +35,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C387447 System call number types cannot be edited/deleted in Settings (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C387447'] },
+      'C387447 System call number types cannot be edited/deleted in Settings (promin)',
+      { tags: ['extendedPath', 'promin', 'C387447'] },
       () => {
         // Step 1: Click on "Settings" option in upper navigation menu
         cy.login(testUser.username, testUser.password);

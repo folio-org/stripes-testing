@@ -109,8 +109,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1322597 Build query to find MARC authority records updated by a user (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1322597'] },
+        'C1322597 Build query to find MARC authority records updated by a user (promin)',
+        { tags: ['extendedPath', 'promin', 'C1322597'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

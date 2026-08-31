@@ -42,8 +42,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C375089 View Authority Record: record opens in third pane when "Heading/Reference" value clicked for highlighted row (spitfire) (TaaS)',
-      { tags: ['extendedPathBroken', 'spitfire', 'obsolete', 'C375089'] },
+      'C375089 View Authority Record: record opens in third pane when "Heading/Reference" value clicked for highlighted row (promin) (TaaS)',
+      { tags: ['extendedPathBroken', 'promin', 'obsolete', 'C375089'] },
       () => {
         MarcAuthorities.searchBy('Geographic name', 'C375089 Chidao Jineiya');
         MarcAuthorities.selectFirst();

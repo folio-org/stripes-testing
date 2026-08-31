@@ -144,8 +144,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C736768 Verify that the "Affiliation name" is displayed for Instances, Holdings, Items on Central tenant (consortia) (corsair)',
-      { tags: ['criticalPathECS', 'corsair', 'C736768'] },
+      'C736768 Verify that the "Affiliation name" is displayed for Instances, Holdings, Items on Central tenant (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C736768'] },
       () => {
         // Steps 1-4: Instances
         Lists.openNewListPane();

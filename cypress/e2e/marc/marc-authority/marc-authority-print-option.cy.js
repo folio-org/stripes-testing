@@ -56,8 +56,8 @@ describe('MARC', () => {
       Users.deleteViaApi(testData.userProperties.userId);
     });
     it(
-      'C380635 "Print" option is located below "Export (MARC)" option in "Actions" menu for "MARC authority" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C380635'] },
+      'C380635 "Print" option is located below "Export (MARC)" option in "Actions" menu for "MARC authority" record (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C380635'] },
       () => {
         MarcAuthorities.searchBeats(testData.authorityHeading);
         MarcAuthorities.selectFirstRecord();

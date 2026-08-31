@@ -78,8 +78,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C367976 Verify that search by "Keyword" will find records with specific string type (e.g.: ".b1234") in "Resource identifier" field (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C367976'] },
+      'C367976 Verify that search by "Keyword" will find records with specific string type (e.g.: ".b1234") in "Resource identifier" field (promin)',
+      { tags: ['extendedPath', 'promin', 'C367976'] },
       () => {
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();

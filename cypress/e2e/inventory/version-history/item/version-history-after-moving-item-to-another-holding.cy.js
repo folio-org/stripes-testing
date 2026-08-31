@@ -115,8 +115,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C656259 Check "Version history" after moving item to another holding (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C656259'] },
+        'C656259 Check "Version history" after moving item to another holding (promin)',
+        { tags: ['criticalPath', 'promin', 'C656259'] },
         () => {
           const itemBarcode = testData.folioInstancesA[0].items[0].barcode;
 

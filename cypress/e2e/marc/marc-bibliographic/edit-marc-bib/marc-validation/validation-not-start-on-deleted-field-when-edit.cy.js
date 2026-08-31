@@ -89,8 +89,8 @@ describe('MARC', () => {
 
     describe('Edit MARC bib', () => {
       it(
-        "C552450 MARC validation doesn't start on deleted field during editing of MARC authority record (spitfire)",
-        { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C552450'] },
+        "C552450 MARC validation doesn't start on deleted field during editing of MARC authority record (promin)",
+        { tags: ['criticalPathFlaky', 'promin', 'nonParallel', 'C552450'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFile.queryValue);
           MarcAuthorities.selectFirst(marcFile.queryValue);

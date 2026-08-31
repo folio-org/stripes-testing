@@ -32,8 +32,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C466258 View "Keyboard shortcut" pop-up modal window in "MARC authority" app (Windows) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C466258'] },
+      'C466258 View "Keyboard shortcut" pop-up modal window in "MARC authority" app (Windows) (promin)',
+      { tags: ['extendedPath', 'promin', 'C466258'] },
       () => {
         AppContextDropdown.verifyInventoryDropdownIsShown(false);
         AppContextDropdown.toggleAppContextDropdown();

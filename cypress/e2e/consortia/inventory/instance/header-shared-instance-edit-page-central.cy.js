@@ -53,8 +53,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C404355 (CONSORTIA) Verify the header of a shared Instance on edit page for the Central tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C404355'] },
+        'C404355 (CONSORTIA) Verify the header of a shared Instance on edit page for the Central tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C404355'] },
         () => {
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           cy.reload();

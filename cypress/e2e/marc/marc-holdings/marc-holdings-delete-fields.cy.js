@@ -85,8 +85,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C345391 MARC holdings record: Remove multiple MARC tags (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C345391'] },
+      'C345391 MARC holdings record: Remove multiple MARC tags (promin)',
+      { tags: ['extendedPath', 'promin', 'C345391'] },
       () => {
         InventoryInstances.searchByTitle(recordId);
         InventoryInstances.selectInstanceById(recordId);

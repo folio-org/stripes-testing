@@ -92,8 +92,8 @@ describe('Inventory', () => {
     });
 
     it(
-      "C651502 Create, Update, Delete Item's call number and verify browse result list (spitfire)",
-      { tags: ['criticalPath', 'spitfire', 'C651502'] },
+      "C651502 Create, Update, Delete Item's call number and verify browse result list (promin)",
+      { tags: ['criticalPath', 'promin', 'C651502'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password);

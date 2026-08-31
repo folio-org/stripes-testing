@@ -161,8 +161,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C869996 Verify that call number is still browsable after "Item" ownership update (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C869996'] },
+        'C869996 Verify that call number is still browsable after "Item" ownership update (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C869996'] },
         () => {
           callNumbers.forEach((callNumber) => {
             BrowseCallNumber.waitForCallNumberToAppear(callNumber);

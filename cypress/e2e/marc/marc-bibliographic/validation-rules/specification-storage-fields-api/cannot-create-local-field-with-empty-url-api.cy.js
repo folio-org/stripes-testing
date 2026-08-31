@@ -46,8 +46,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with E
   });
 
   it(
-    'C490929 Create Local Field with empty "url" for MARC bib spec (API) (spitfire)',
-    { tags: ['C490929', 'extendedPath', 'spitfire'] },
+    'C490929 Create Local Field with empty "url" for MARC bib spec (API) (promin)',
+    { tags: ['C490929', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

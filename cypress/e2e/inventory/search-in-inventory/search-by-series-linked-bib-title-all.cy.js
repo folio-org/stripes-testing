@@ -156,8 +156,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C375257 Title (all) | Search by "Series" field of linked "MARC Bib" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C375257'] },
+      'C375257 Title (all) | Search by "Series" field of linked "MARC Bib" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C375257'] },
       () => {
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();

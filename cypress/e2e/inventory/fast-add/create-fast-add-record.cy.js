@@ -46,8 +46,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
-      { tags: ['smoke', 'folijet', 'C15850', 'shiftLeft'] },
+      'C15850 Create a fast add record from Inventory. Monograph. (promin)',
+      { tags: ['smoke', 'promin', 'C15850', 'shiftLeft'] },
       () => {
         cy.intercept('POST', '/inventory/instances').as('createInstance');
         cy.intercept('POST', '/holdings-storage/holdings').as('createHolding');
@@ -115,8 +115,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C16972 Create a fast add record from Inventory. Journal issue. (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C16972'] },
+      'C16972 Create a fast add record from Inventory. Journal issue. (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C16972'] },
       () => {
         const fastAddRecord = { ...FastAddNewRecord.fastAddNewRecordFormDetails };
         fastAddRecord.resourceTitle = `Journal issue${randomFourDigitNumber()}`;

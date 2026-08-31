@@ -58,8 +58,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C496206 Cannot create "MARC Holdings" record with multiple "LDR" fields (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C496206'] },
+      'C496206 Cannot create "MARC Holdings" record with multiple "LDR" fields (promin)',
+      { tags: ['extendedPath', 'promin', 'C496206'] },
       () => {
         InventoryInstances.searchByTitle(instanceID);
         InventoryInstances.selectInstance();

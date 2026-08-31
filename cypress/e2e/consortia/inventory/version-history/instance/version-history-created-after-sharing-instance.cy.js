@@ -68,8 +68,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C655272 Check that "Version history" is cleared after sharing instance (folijet)',
-          { tags: ['criticalPathECS', 'folijet', 'C655272'] },
+          'C655272 Check that "Version history" is cleared after sharing instance (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C655272'] },
           () => {
             InventoryInstances.addNewInventory();
             InventoryNewInstance.fillResourceTitle(testData.instanceTitle);

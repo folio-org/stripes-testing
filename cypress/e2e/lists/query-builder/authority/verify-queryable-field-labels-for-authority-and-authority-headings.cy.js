@@ -39,8 +39,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1405035 Verify the available queryable field labels for "Authority" record type and "Authority headings" in the "Build query" pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1405035'] },
+        'C1405035 Verify the available queryable field labels for "Authority" record type and "Authority headings" in the "Build query" pane (promin)',
+        { tags: ['extendedPath', 'promin', 'C1405035'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

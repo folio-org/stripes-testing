@@ -71,8 +71,8 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C409487 Settings (tenant): View -- Location setup (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird', 'C409487'] },
+    'C409487 Settings (tenant): View -- Location setup (athena) (TaaS)',
+    { tags: ['extendedPath', 'athena', 'C409487'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: [testData.institution] });
       // Select "Institutions" option on the "Location setup" subsection

@@ -51,8 +51,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C353589 For the Data Import View all page, change from Load more to Paginated (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C353589'] },
+      'C353589 For the Data Import View all page, change from Load more to Paginated (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C353589'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();

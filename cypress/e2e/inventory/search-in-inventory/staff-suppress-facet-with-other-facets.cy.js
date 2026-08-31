@@ -82,8 +82,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446079 Staff suppress facet is off by default when other facets are applied (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C446079'] },
+        'C446079 Staff suppress facet is off by default when other facets are applied (promin)',
+        { tags: ['extendedPath', 'promin', 'C446079'] },
         () => {
           InventorySearchAndFilter.verifyAccordionExistance(accordionName);
           InventorySearchAndFilter.expandAccordion(accordionName);

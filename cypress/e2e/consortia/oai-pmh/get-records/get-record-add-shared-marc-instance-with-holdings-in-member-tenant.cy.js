@@ -110,8 +110,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C402361 Consortia | SRS | GetRecord: Add shared MARC instance to Central tenant and enrich it with local FOLIO Holdings in Member tenant is retrieved in the response of single tenant harvest (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C402361', 'nonParallel'] },
+        'C402361 Consortia | SRS | GetRecord: Add shared MARC instance to Central tenant and enrich it with local FOLIO Holdings in Member tenant is retrieved in the response of single tenant harvest (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C402361', 'nonParallel'] },
         () => {
           // Step 1: Login and navigate to Data Import in Central tenant
           cy.login(testData.user.username, testData.user.password, {

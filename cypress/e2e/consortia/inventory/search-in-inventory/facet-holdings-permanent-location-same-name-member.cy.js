@@ -188,8 +188,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C494020 Locations with same names could be found using "Holdings permanent location" facet in "Inventory" app from "Member" tenant (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C494020'] },
+          'C494020 Locations with same names could be found using "Holdings permanent location" facet in "Inventory" app from "Member" tenant (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C494020'] },
           () => {
             // Login and switch affiliation to Member 1
             cy.login(testData.user.username, testData.user.password);

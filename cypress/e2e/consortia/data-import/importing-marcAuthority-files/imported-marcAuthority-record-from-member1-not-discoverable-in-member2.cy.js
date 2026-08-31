@@ -79,8 +79,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C405522 Imported "MARC authority" record from Member 1 tenant is not discoverable in Member 2 tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C405522'] },
+        'C405522 Imported "MARC authority" record from Member 1 tenant is not discoverable in Member 2 tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C405522'] },
         () => {
           DataImport.verifyUploadState();
           DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);

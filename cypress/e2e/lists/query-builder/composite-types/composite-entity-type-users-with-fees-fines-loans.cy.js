@@ -35,8 +35,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1259780 Composite ET: Users with fees/fines, loans (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C1259780'] },
+        'C1259780 Composite ET: Users with fees/fines, loans (athena)',
+        { tags: ['extendedPath', 'athena', 'C1259780'] },
         () => {
           // Step 1: Click on "New" button, add list name, click on "Select record type" dropdown and select "Users with fees/fines, loans"
           Lists.openNewListPane();

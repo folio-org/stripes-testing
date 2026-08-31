@@ -220,8 +220,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C496127 Verify "Suppress from discovery" action for Items in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C496127'] },
+        'C496127 Verify "Suppress from discovery" action for Items in Central tenant (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C496127'] },
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();

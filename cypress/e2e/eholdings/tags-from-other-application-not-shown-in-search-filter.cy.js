@@ -52,8 +52,8 @@ describe('eHoldings', () => {
   });
 
   it(
-    'C376614 Tags from another application are not shown in search filter for Packages, Titles, Providers (spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire', 'C376614'] },
+    'C376614 Tags from another application are not shown in search filter for Packages, Titles, Providers (promin) (TaaS)',
+    { tags: ['extendedPath', 'promin', 'C376614'] },
     () => {
       InventoryInstances.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();

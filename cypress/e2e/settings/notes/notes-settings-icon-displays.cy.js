@@ -24,8 +24,8 @@ describe('Notes', () => {
   });
 
   it(
-    'C423517 "Settings>>Notes" HTML page title follows "<<App name>> settings - <<selected page name>> - FOLIO" format (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C423517'] },
+    'C423517 "Settings>>Notes" HTML page title follows "<<App name>> settings - <<selected page name>> - FOLIO" format (promin)',
+    { tags: ['extendedPath', 'promin', 'C423517'] },
     () => {
       SettingsPane.verifyNotesIconInSettings();
       SettingsPane.selectNotesSettings();

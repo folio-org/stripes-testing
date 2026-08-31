@@ -47,8 +47,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C1375804 Verify "Administrative data", "Item notes", "Loan and availability" and "Location" dividers are present in a list of options for Items Bulk edit (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C1375804'] },
+      'C1375804 Verify "Administrative data", "Item notes", "Loan and availability" and "Location" dividers are present in a list of options for Items Bulk edit (athena)',
+      { tags: ['extendedPath', 'athena', 'C1375804'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.verifyRecordTypeIdentifiers('Items');

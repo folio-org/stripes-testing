@@ -143,8 +143,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503160 Derive "MARC bib" record with multiple Local control fields (002, 004, 009) which don\'t have or have subfield "$a" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C503160'] },
+        'C503160 Derive "MARC bib" record with multiple Local control fields (002, 004, 009) which don\'t have or have subfield "$a" (promin)',
+        { tags: ['extendedPath', 'promin', 'C503160'] },
         () => {
           // Step 1: Navigate to imported instance and derive new MARC bib
           InventoryInstances.searchByTitle(testData.instanceTitle);

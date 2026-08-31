@@ -56,7 +56,7 @@ describe('eHoldings', () => {
 
     it(
       'C350745 Create/View/Edit Mixed Content package and related title (eHoldings > Package)',
-      { tags: ['extendedPath', 'spitfire', 'C350745'] },
+      { tags: ['extendedPath', 'promin', 'C350745'] },
       () => {
         EHoldingsSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.packageName);

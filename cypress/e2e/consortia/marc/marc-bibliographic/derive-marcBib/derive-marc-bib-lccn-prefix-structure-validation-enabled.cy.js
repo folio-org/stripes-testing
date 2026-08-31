@@ -88,8 +88,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569540 LCCN prefix case validation on "Derive a new MARC bib record" pane when "LCCN structure validation" rule is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C569540'] },
+          'C569540 LCCN prefix case validation on "Derive a new MARC bib record" pane when "LCCN structure validation" rule is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C569540'] },
           () => {
             // Step 0: User is on the detail view pane of "MARC bibliographic" record
             InventoryInstances.searchByTitle(marcInstanceTitle);

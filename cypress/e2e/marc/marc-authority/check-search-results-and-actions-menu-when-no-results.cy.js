@@ -63,8 +63,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C350606 Check search results pane and "Actions" menu when no results are returned (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C350606'] },
+        'C350606 Check search results pane and "Actions" menu when no results are returned (promin)',
+        { tags: ['extendedPath', 'promin', 'C350606'] },
         () => {
           // Steps 1-3: Select search option, enter a no-results query, click Search
           MarcAuthoritiesSearch.searchBy(

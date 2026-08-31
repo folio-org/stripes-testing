@@ -56,8 +56,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C9312 Assign an Access status type to a selected package (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C9312'] },
+      'C9312 Assign an Access status type to a selected package (promin)',
+      { tags: ['extendedPath', 'promin', 'C9312'] },
       () => {
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.customPackageName);

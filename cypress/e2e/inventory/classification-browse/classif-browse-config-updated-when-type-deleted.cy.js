@@ -31,8 +31,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C449381 API | Browse configuration updated after local "Classification identifier type" is deleted (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C449381'] },
+      'C449381 API | Browse configuration updated after local "Classification identifier type" is deleted (promin)',
+      { tags: ['extendedPath', 'promin', 'nonParallel', 'C449381'] },
       () => {
         cy.then(() => {
           // Step 4: Update Dewey browse config to include localTypeId and Dewey type ID

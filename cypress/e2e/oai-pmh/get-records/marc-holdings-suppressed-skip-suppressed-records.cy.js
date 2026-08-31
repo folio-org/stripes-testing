@@ -75,8 +75,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375191 GetRecord: Verify MARC holdings suppressed from discovery in case Skip suppressed from discovery records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375191', 'nonParallel'] },
+      'C375191 GetRecord: Verify MARC holdings suppressed from discovery in case Skip suppressed from discovery records (athena)',
+      { tags: ['extendedPath', 'athena', 'C375191', 'nonParallel'] },
       () => {
         OaiPmh.getRecordRequest(marcInstance.id, 'marc21_withholdings').then((response) => {
           OaiPmh.verifyMarcField(

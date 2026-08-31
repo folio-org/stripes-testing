@@ -77,8 +77,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350973 Export failed when picked wrong job profile (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C350973'] },
+      'C350973 Export failed when picked wrong job profile (promin)',
+      { tags: ['extendedPath', 'promin', 'C350973'] },
       () => {
         // Steps 1-3: Upload CSV and run with "Default holdings export job profile"
         ExportFileHelper.uploadFile(testData.authorityUUIDsFileName);

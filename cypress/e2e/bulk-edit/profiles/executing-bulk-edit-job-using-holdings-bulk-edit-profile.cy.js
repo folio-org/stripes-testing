@@ -321,8 +321,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C773231 Executing bulk edit job using Holdings bulk edit profile (Query, Logs) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C773231'] },
+      'C773231 Executing bulk edit job using Holdings bulk edit profile (Query, Logs) (athena)',
+      { tags: ['criticalPath', 'athena', 'C773231'] },
       () => {
         // Step 1: Click "Actions" menu
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);

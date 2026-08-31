@@ -94,8 +94,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C594342 Verify user-friendly optimistic locking error message for Instance in Member tenant (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C594342'] },
+        'C594342 Verify user-friendly optimistic locking error message for Instance in Member tenant (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C594342'] },
         () => {
           // Step 1: Select "Inventory - instances" radio button and Instance UUIDs
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

@@ -97,8 +97,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C422224 Verify filtering by job profile in the "Search & filter" pane on the "View all" screen (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C422224'] },
+    'C422224 Verify filtering by job profile in the "Search & filter" pane on the "View all" screen (athena)',
+    { tags: ['extendedPath', 'athena', 'C422224'] },
     () => {
       // Step 1: Click "View all" button in the "Logs" main pane
       cy.intercept('GET', '**/data-export/job-profiles?used=true**').as('getUsedJobProfiles');

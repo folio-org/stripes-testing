@@ -75,8 +75,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Local Field Empty 
   });
 
   it(
-    'C490937 Cannot update Local Field with empty "tag" for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C490937', 'spitfire'] },
+    'C490937 Cannot update Local Field with empty "tag" for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C490937', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

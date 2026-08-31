@@ -111,8 +111,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C388531 Verify that contributors with the same "Name" , "Name type" and "authorityID" will display as one row (spitfire)',
-      { tags: ['criticalPathBroken', 'spitfire', 'C388531'] },
+      'C388531 Verify that contributors with the same "Name" , "Name type" and "authorityID" will display as one row (promin)',
+      { tags: ['criticalPathBroken', 'promin', 'C388531'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();

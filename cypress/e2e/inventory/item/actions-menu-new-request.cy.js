@@ -183,8 +183,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C10946 Actions menu: New Request (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C10946'] },
+      'C10946 Actions menu: New Request (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C10946'] },
       () => {
         [
           ITEM_STATUS_NAMES.AVAILABLE,

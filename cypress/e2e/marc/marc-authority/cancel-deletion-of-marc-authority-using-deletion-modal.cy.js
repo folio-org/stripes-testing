@@ -65,8 +65,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C367928 Cancel deletion of "MARC Authority" record from "Confirm deletion of authority record" modal (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C367928'] },
+        'C367928 Cancel deletion of "MARC Authority" record from "Confirm deletion of authority record" modal (promin)',
+        { tags: ['extendedPath', 'promin', 'C367928'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, marcFile.authorityTitle);
           cy.ifConsortia(true, () => {

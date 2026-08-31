@@ -41,8 +41,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C490914 Cannot create Standard Field for MARC bib spec (API) (spitfire)',
-        { tags: ['extendedPath', 'C490914', 'spitfire'] },
+        'C490914 Cannot create Standard Field for MARC bib spec (API) (promin)',
+        { tags: ['extendedPath', 'C490914', 'promin'] },
         () => {
           cy.getUserToken(user.username, user.password);
 

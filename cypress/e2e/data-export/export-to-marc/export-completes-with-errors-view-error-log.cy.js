@@ -140,8 +140,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C446049 Export completes with errors - view error log (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C446049'] },
+      'C446049 Export completes with errors - view error log (athena)',
+      { tags: ['criticalPath', 'athena', 'C446049'] },
       () => {
         // Trigger the data export by submitting File_1
         ExportFileHelper.uploadFile(testData.file1.csvFileName);

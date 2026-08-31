@@ -73,8 +73,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C9314 Unassign an access status type from a package + title (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C9314'] },
+      'C9314 Unassign an access status type from a package + title (promin)',
+      { tags: ['extendedPath', 'promin', 'C9314'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.customPackageName);
         EHoldingsPackages.openPackageWithExpectedName(testData.customPackageName);

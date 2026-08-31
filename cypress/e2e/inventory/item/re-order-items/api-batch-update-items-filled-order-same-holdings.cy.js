@@ -85,8 +85,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C825233 API | Update "order" of multiple "Item" records (specified "order" field) for same holdings using batch endpoint (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C825233'] },
+        'C825233 API | Update "order" of multiple "Item" records (specified "order" field) for same holdings using batch endpoint (promin)',
+        { tags: ['criticalPath', 'promin', 'C825233'] },
         () => {
           cy.getToken(user.username, user.password);
 

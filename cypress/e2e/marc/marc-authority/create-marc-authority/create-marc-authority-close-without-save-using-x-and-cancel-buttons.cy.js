@@ -40,8 +40,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C663333 Close "Create a new MARC authority record" window without save using "Cancel" and "X" buttons (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C663333'] },
+        'C663333 Close "Create a new MARC authority record" window without save using "Cancel" and "X" buttons (promin)',
+        { tags: ['extendedPath', 'promin', 'C663333'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);

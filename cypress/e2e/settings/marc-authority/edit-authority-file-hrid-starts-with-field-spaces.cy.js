@@ -59,8 +59,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436954 "HRID starts with" field "Spaces" validation during editing of Local "Authority file" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C436954'] },
+        'C436954 "HRID starts with" field "Spaces" validation during editing of Local "Authority file" (promin)',
+        { tags: ['extendedPath', 'promin', 'C436954'] },
         () => {
           hridValuesWithSpaces.forEach((value) => {
             ManageAuthorityFiles.clickEditButton(localAuthorityFile.name);

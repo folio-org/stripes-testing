@@ -47,8 +47,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C523637 All entity types are available in the member tenant when all ET capabilities are assigned (consortia) (corsair)',
-      { tags: ['criticalPathECS', 'corsair', 'C523637'] },
+      'C523637 All entity types are available in the member tenant when all ET capabilities are assigned (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C523637'] },
       () => {
         // Step 1: Switch affiliation to member tenant and open Lists app
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

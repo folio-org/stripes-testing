@@ -201,8 +201,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C360557 Verify sorting on View all logs form (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C360557'] },
+      'C360557 Verify sorting on View all logs form (athena)',
+      { tags: ['extendedPath', 'athena', 'C360557'] },
       () => {
         // Step 1: Navigate to "Data export" app
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as(

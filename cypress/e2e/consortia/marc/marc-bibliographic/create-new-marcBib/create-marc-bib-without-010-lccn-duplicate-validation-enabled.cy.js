@@ -45,8 +45,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C523560 Create "MARC bib" record without "010" field when duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C523560'] },
+          'C523560 Create "MARC bib" record without "010" field when duplicate LCCN check is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C523560'] },
           () => {
             // Step 1: Click on "Actions" - "+ New MARC bibliographic record" option
             InventoryInstance.newMarcBibRecord();

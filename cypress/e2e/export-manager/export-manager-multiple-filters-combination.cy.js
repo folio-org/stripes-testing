@@ -156,8 +156,8 @@ describe('Export Manager', () => {
   });
 
   it(
-    'C350733 Export Manager -- multiple filters in combination with one another (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C350733'] },
+    'C350733 Export Manager -- multiple filters in combination with one another (athena)',
+    { tags: ['criticalPath', 'athena', 'C350733'] },
     () => {
       // Step 1: Navigate to the Export Manager App
       cy.login(user.username, user.password, {

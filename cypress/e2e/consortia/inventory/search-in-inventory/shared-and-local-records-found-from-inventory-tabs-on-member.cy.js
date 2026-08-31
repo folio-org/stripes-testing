@@ -144,8 +144,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C410715 "Shared" and "Local" (for current tenant) records will be found from "Instance/Holdings/Item" tabs of "inventory" app on Member tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'C410715'] },
+      'C410715 "Shared" and "Local" (for current tenant) records will be found from "Instance/Holdings/Item" tabs of "inventory" app on Member tenant (consortia) (promin)',
+      { tags: ['criticalPathECS', 'promin', 'C410715'] },
       () => {
         InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
         InventoryInstances.searchByTitle(titlePrefix);

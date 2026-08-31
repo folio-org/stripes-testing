@@ -75,8 +75,8 @@ describe('Inventory', () => {
       });
 
       it(
-        "C580266 (CONSORTIA) Local Subject type can't be settled for shared instance (consortia) (folijet)",
-        { tags: ['extendedPathECS', 'folijet', 'C580266'] },
+        "C580266 (CONSORTIA) Local Subject type can't be settled for shared instance (consortia) (promin)",
+        { tags: ['extendedPathECS', 'promin', 'C580266'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);

@@ -69,8 +69,8 @@ describe('MARC', () => {
       });
 
       it(
-        "C367959 Search | Verify that panes size doesn't change while the loading pane is visible (spitfire)",
-        { tags: ['extendedPath', 'spitfire', 'C367959'] },
+        "C367959 Search | Verify that panes size doesn't change while the loading pane is visible (promin)",
+        { tags: ['extendedPath', 'promin', 'C367959'] },
         () => {
           // Step 1: Fill in the search box with wildcard query
           MarcAuthoritiesSearch.fillSearchInput(testData.searchQuery);

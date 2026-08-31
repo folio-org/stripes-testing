@@ -143,8 +143,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C440120 Search for "MARC authority" by "LCCN" option using a query with lower, UPPER case when "Canceled LCCN" (010 $z) has (leading, internal, trailing) spaces". (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C440120'] },
+        'C440120 Search for "MARC authority" by "LCCN" option using a query with lower, UPPER case when "Canceled LCCN" (010 $z) has (leading, internal, trailing) spaces". (promin)',
+        { tags: ['extendedPath', 'promin', 'C440120'] },
         () => {
           // Steps 1-6: Run LCCN searches
           searchQueries.forEach((searchData, index) => {

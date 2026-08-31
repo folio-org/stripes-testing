@@ -58,8 +58,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C413371 (CONSORTIA) Adding Local parent Instances to Local Instance on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C413371'] },
+        'C413371 (CONSORTIA) Adding Local parent Instances to Local Instance on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C413371'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.firstLocalInstance.instanceTitle);

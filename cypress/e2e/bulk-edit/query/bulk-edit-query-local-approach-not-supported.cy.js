@@ -44,8 +44,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C494352 Verify local approach (via csv file) is not supported in the Query tab (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C494352'] },
+      'C494352 Verify local approach (via csv file) is not supported in the Query tab (athena)',
+      { tags: ['extendedPath', 'athena', 'C494352'] },
       () => {
         // Step 1: Select "Users" radio button and "User Barcodes" from dropdown
         BulkEditSearchPane.checkUsersRadio();

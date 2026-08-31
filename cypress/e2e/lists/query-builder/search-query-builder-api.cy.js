@@ -104,8 +104,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C446063 Search holdings in the Query Builder using "Holdings suppress from discovery" field (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C446063'] },
+        'C446063 Search holdings in the Query Builder using "Holdings suppress from discovery" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C446063'] },
         () => {
           const fqlQuery = { 'holdings.discovery_suppress': { $eq: 'true' } };
 
@@ -120,8 +120,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C446064 Search holdings in the Query Builder using "Holdings permanent location name" field (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C446064'] },
+        'C446064 Search holdings in the Query Builder using "Holdings permanent location name" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C446064'] },
         () => {
           let fqlQuery = {};
 
@@ -148,8 +148,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C446065 Search holdings in the Query Builder using "Holdings effective library — Code" field with "IN" operator (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C446065'] },
+        'C446065 Search holdings in the Query Builder using "Holdings effective library — Code" field with "IN" operator (athena)',
+        { tags: ['criticalPath', 'athena', 'C446065'] },
         () => {
           let fqlQuery = {};
           let testLabel;
@@ -195,8 +195,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C446018 Search instances in the Query Builder using "Instance — Created date" field (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C446018'] },
+        'C446018 Search instances in the Query Builder using "Instance — Created date" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C446018'] },
         () => {
           const fqlQuery = { 'instance.created_at': { $gt: '2020-01-01T00:00:00.000' } };
 
@@ -213,8 +213,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C446020 Search instances in the Query Builder using "Instance — Suppress from discovery" field (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C446020'] },
+        'C446020 Search instances in the Query Builder using "Instance — Suppress from discovery" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C446020'] },
         () => {
           const fqlQuery = { 'instance.discovery_suppress': { $eq: 'true' } };
 
@@ -229,8 +229,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C451491 Search instances in the Query Builder using "Instance — Source" field (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C451491'] },
+        'C451491 Search instances in the Query Builder using "Instance — Source" field (athena)',
+        { tags: ['extendedPath', 'athena', 'C451491'] },
         () => {
           const fqlQuery = { 'instance.source': { $in: ['FOLIO', 'MARC'] } };
 
@@ -245,8 +245,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C451526 Search instances in the Query Builder using "Instance status — Term" field (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C451526'] },
+        'C451526 Search instances in the Query Builder using "Instance status — Term" field (athena)',
+        { tags: ['extendedPath', 'athena', 'C451526'] },
         () => {
           let fqlQuery = {};
 
@@ -271,8 +271,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C451527 Search instances in the Query Builder using "Instance — Mode of issuance" field (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C451527'] },
+        'C451527 Search instances in the Query Builder using "Instance — Mode of issuance" field (athena)',
+        { tags: ['extendedPath', 'athena', 'C451527'] },
         () => {
           let fqlQuery = {};
 
@@ -320,8 +320,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C451508 Search for "Organizations" in the query builder using "Organization — EDI vendor code" field (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C451508'] },
+        'C451508 Search for "Organizations" in the query builder using "Organization — EDI vendor code" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C451508'] },
         () => {
           const fqlQuery = { 'organization.edi_vendor_edi_code': { $empty: true } };
 
@@ -336,8 +336,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C451509 Search for "Organizations" in the query builder using "Organization updated by — Username" field (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C451509'] },
+        'C451509 Search for "Organizations" in the query builder using "Organization updated by — Username" field (athena)',
+        { tags: ['extendedPath', 'athena', 'C451509'] },
         () => {
           const fqlQuery = { 'updated_by.username': { $ne: 'test' } };
 
@@ -352,8 +352,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C451516 Search for "Organizations" in the query builder using "Organization — Name" field (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C451516'] },
+        'C451516 Search for "Organizations" in the query builder using "Organization — Name" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C451516'] },
         () => {
           const fqlQuery = { 'organization.name': { $empty: false } };
 
@@ -368,8 +368,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C451518 C451517 Search for "organizations - vendor info" in the query builder using "Discount percent" field (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C451518', 'C451517'] },
+        'C451518 C451517 Search for "organizations - vendor info" in the query builder using "Discount percent" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C451518', 'C451517'] },
         () => {
           const fqlQuery = { 'organization.is_vendor': { $eq: 'true' } };
 
@@ -384,8 +384,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C451524 C451523 Search for organizations in the query builder using "Orgs — Is donor" field (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C451524', 'C451523'] },
+        'C451524 C451523 Search for organizations in the query builder using "Orgs — Is donor" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C451524', 'C451523'] },
         () => {
           const fqlQuery = { 'organization.is_donor': { $eq: 'false' } };
 
@@ -400,8 +400,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C451525 C451532 Search for "organizations" in the query builder using "Code" field (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C451525', 'C451532'] },
+        'C451525 C451532 Search for "organizations" in the query builder using "Code" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C451525', 'C451532'] },
         () => {
           const fqlQuery = { 'organization.code': { $empty: false } };
 
@@ -442,8 +442,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C436901 Search purchase order lines in the Query Builder using "PO — Order type" field (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C436901'] },
+        'C436901 Search purchase order lines in the Query Builder using "PO — Order type" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C436901'] },
         () => {
           const fqlQuery = { 'po.order_type': { $eq: 'One-Time' } };
 
@@ -458,8 +458,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C440056 Search purchase order lines in the Query Builder using "PO — Approved" field (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C440056'] },
+        'C440056 Search purchase order lines in the Query Builder using "PO — Approved" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C440056'] },
         () => {
           const fqlQuery = { 'po.approved': { $eq: 'true' } };
 
@@ -474,8 +474,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C440057 Search purchase order lines in the Query Builder using "PO assigned to user — Last name, first name" type (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C440057'] },
+        'C440057 Search purchase order lines in the Query Builder using "PO assigned to user — Last name, first name" type (athena)',
+        { tags: ['extendedPath', 'athena', 'C440057'] },
         () => {
           const fqlQuery = { 'assigned_to_user.last_name_first_name': { $empty: true } };
 
@@ -494,8 +494,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C440058 Search purchase order lines in the Query Builder using "POL — Cost PO line estimated price" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C440058'] },
+        'C440058 Search purchase order lines in the Query Builder using "POL — Cost PO line estimated price" (athena)',
+        { tags: ['criticalPath', 'athena', 'C440058'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -516,8 +516,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C442845 Search purchase order lines in the Query Builder using "POL exchange rate" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C442845'] },
+        'C442845 Search purchase order lines in the Query Builder using "POL exchange rate" (athena)',
+        { tags: ['criticalPath', 'athena', 'C442845'] },
         () => {
           const fqlQuery = {
             $and: [{ pol_exchange_rate: { $gte: '0' } }, { pol_exchange_rate: { $lte: '1000' } }],
@@ -535,8 +535,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C442846 Search purchase order lines in the Query Builder using "PO — PO number" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C442846'] },
+        'C442846 Search purchase order lines in the Query Builder using "PO — PO number" (athena)',
+        { tags: ['criticalPath', 'athena', 'C442846'] },
         () => {
           const fqlQuery = { 'po.po_number': { $contains: '1' } };
 
@@ -551,8 +551,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C442847 Search purchase order lines in the Query Builder using "POL — Payment status" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C442847'] },
+        'C442847 Search purchase order lines in the Query Builder using "POL — Payment status" (athena)',
+        { tags: ['criticalPath', 'athena', 'C442847'] },
         () => {
           const fqlQuery = { 'pol.payment_status': { $ne: 'Cancelled' } };
 
@@ -567,8 +567,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C442848 Search purchase order lines in the Query Builder using "PO — Updated at" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C442848'] },
+        'C442848 Search purchase order lines in the Query Builder using "PO — Updated at" (athena)',
+        { tags: ['criticalPath', 'athena', 'C442848'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -602,8 +602,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C688805 Search for "Purchase orders with titles" in the query builder using the fields "Created by user — Username", "Instance — Instance HRID", "Instance — Format names", "PO — Workflow status (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C688805'] },
+        'C688805 Search for "Purchase orders with titles" in the query builder using the fields "Created by user — Username", "Instance — Instance HRID", "Instance — Format names", "PO — Workflow status (athena)',
+        { tags: ['extendedPath', 'athena', 'C688805'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -628,8 +628,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C688805 Search for "Purchase order lines with titles" in the query builder using the fields "Instance — Languages" ,"Organization — Code", "Organization — UUID" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C688805'] },
+        'C688805 Search for "Purchase order lines with titles" in the query builder using the fields "Instance — Languages" ,"Organization — Code", "Organization — UUID" (athena)',
+        { tags: ['extendedPath', 'athena', 'C688805'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -654,8 +654,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C688748 Search for "Purchase order lines with titles" in the query builder using the fields Created by user — Email, Organization — EDI vendor type and POL — Created at (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C688748'] },
+        'C688748 Search for "Purchase order lines with titles" in the query builder using the fields Created by user — Email, Organization — EDI vendor type and POL — Created at (athena)',
+        { tags: ['criticalPath', 'athena', 'C688748'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -702,8 +702,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C692068 Search for "Vouchers" in the query builder using the fields "Voucher — Enclosure needed", "Name" and "Voucher — Updated date" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C692068'] },
+        'C692068 Search for "Vouchers" in the query builder using the fields "Voucher — Enclosure needed", "Name" and "Voucher — Updated date" (athena)',
+        { tags: ['criticalPath', 'athena', 'C692068'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -728,8 +728,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C692063 Search for "Vouchers" in the query builder using the fields "Voucher — Acquisition unit names", "Voucher — Disbursement amount", "Voucher — UUID" and "Voucher — Created date" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C692063'] },
+        'C692063 Search for "Vouchers" in the query builder using the fields "Voucher — Acquisition unit names", "Voucher — Disbursement amount", "Voucher — UUID" and "Voucher — Created date" (athena)',
+        { tags: ['extendedPath', 'athena', 'C692063'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -788,8 +788,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C692062 Search for "Invoice lines" in the query builder using the fields "Invoice — Check subscription overlap", "Invoice — Enclosure needed" and "Invoice — Export to accounting" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C692062'] },
+        'C692062 Search for "Invoice lines" in the query builder using the fields "Invoice — Check subscription overlap", "Invoice — Enclosure needed" and "Invoice — Export to accounting" (athena)',
+        { tags: ['extendedPath', 'athena', 'C692062'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -811,8 +811,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C692061 Search for "Invoice lines" in the query builder using the fields "Invoice — Note", "Invoice — Payment method", "Invoice lines — Account number", and "Invoice — Folio invoice number" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C692061'] },
+        'C692061 Search for "Invoice lines" in the query builder using the fields "Invoice — Note", "Invoice — Payment method", "Invoice lines — Account number", and "Invoice — Folio invoice number" (athena)',
+        { tags: ['criticalPath', 'athena', 'C692061'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -836,8 +836,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C692060 Search for "Invoice lines" in the query builder using the fields "Invoice — Payment due", "Invoice lines — Total adjustments", "Invoice lines — Sub-total", and "Invoice — Invoice date" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C692060'] },
+        'C692060 Search for "Invoice lines" in the query builder using the fields "Invoice — Payment due", "Invoice lines — Total adjustments", "Invoice lines — Sub-total", and "Invoice — Invoice date" (athena)',
+        { tags: ['extendedPath', 'athena', 'C692060'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -863,8 +863,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C692059 Search for "Invoice lines" in the query builder using the fields "Invoice — Vendor name", "Invoice — Batch group", "Invoice — Source" and "Invoice — Fiscal year" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C692059'] },
+        'C692059 Search for "Invoice lines" in the query builder using the fields "Invoice — Vendor name", "Invoice — Batch group", "Invoice — Source" and "Invoice — Fiscal year" (athena)',
+        { tags: ['criticalPath', 'athena', 'C692059'] },
         () => {
           const fqlQuery = {
             $and: [{ 'invoice.source': { $in: ['API', 'EDI'] } }],
@@ -903,8 +903,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C692058 Search for "Invoice lines" in the query builder using the fields "Acquisition unit names" , "Invoice lines — UUID" and "Invoice — Approved date" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C692058'] },
+        'C692058 Search for "Invoice lines" in the query builder using the fields "Acquisition unit names" , "Invoice lines — UUID" and "Invoice — Approved date" (athena)',
+        { tags: ['criticalPath', 'athena', 'C692058'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -961,8 +961,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C692047 Search for "Voucher lines with fund" in the query builder using the fields "Voucher — Exchange rate" and "Voucher — Total" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C692047'] },
+        'C692047 Search for "Voucher lines with fund" in the query builder using the fields "Voucher — Exchange rate" and "Voucher — Total" (athena)',
+        { tags: ['criticalPath', 'athena', 'C692047'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -985,8 +985,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C692048 Search for "Voucher lines with fund" in the query builder using the fields "Voucher — Enclosure needed", "Voucher — Export to accounting", "Voucher — Account number", "Fund with ledger — Ledger — Fiscal year one" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C692048'] },
+        'C692048 Search for "Voucher lines with fund" in the query builder using the fields "Voucher — Enclosure needed", "Voucher — Export to accounting", "Voucher — Account number", "Fund with ledger — Ledger — Fiscal year one" (athena)',
+        { tags: ['criticalPath', 'athena', 'C692048'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1007,8 +1007,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C689202 Search for "Voucher lines with fund" in the query builder using the fields "Voucher — Created date", " Voucher — Disbursement date" , "Voucher — Voucher date", "Ledger — UUID" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C689202'] },
+        'C689202 Search for "Voucher lines with fund" in the query builder using the fields "Voucher — Created date", " Voucher — Disbursement date" , "Voucher — Voucher date", "Ledger — UUID" (athena)',
+        { tags: ['extendedPath', 'athena', 'C689202'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1037,8 +1037,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C689201 Search for "Voucher lines with fund" in the query builder using the fields "Voucher — Type", "Voucher — Batch group", "Fund — Acquisition unit names", "Fund — Status" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C689201'] },
+        'C689201 Search for "Voucher lines with fund" in the query builder using the fields "Voucher — Type", "Voucher — Batch group", "Fund — Acquisition unit names", "Fund — Status" (athena)',
+        { tags: ['criticalPath', 'athena', 'C689201'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1089,8 +1089,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C689200 Search for "Voucher lines with fund" in the query builder using the fields "Voucher — Disbursement number", " and "Fund with ledger — Fund — Name" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C689200'] },
+        'C689200 Search for "Voucher lines with fund" in the query builder using the fields "Voucher — Disbursement number", " and "Fund with ledger — Fund — Name" (athena)',
+        { tags: ['extendedPath', 'athena', 'C689200'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1138,8 +1138,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C692083 Search for "Voucher lines with invoice,fund, organization" in the query builder using the fields "Voucher line — External account number", "Invoice — Terms", "Ledger — Restrict expenditures" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C692083'] },
+        'C692083 Search for "Voucher lines with invoice,fund, organization" in the query builder using the fields "Voucher line — External account number", "Invoice — Terms", "Ledger — Restrict expenditures" (athena)',
+        { tags: ['extendedPath', 'athena', 'C692083'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1164,8 +1164,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C692082 Search for "Voucher lines with invoice,fund, organization" in the query builder using the fields "Invoice — Note", "Ledger — Status", "Invoice — Accounting code", "Voucher — Export to accounting" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C692082'] },
+        'C692082 Search for "Voucher lines with invoice,fund, organization" in the query builder using the fields "Invoice — Note", "Ledger — Status", "Invoice — Accounting code", "Voucher — Export to accounting" (athena)',
+        { tags: ['extendedPath', 'athena', 'C692082'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1192,8 +1192,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C688836 Search for "Voucher lines with invoice,fund, organization" in the query builder using the fields "Voucher line — Created date", " Invoice — Created date", "Invoice — Payment date" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C688836'] },
+        'C688836 Search for "Voucher lines with invoice,fund, organization" in the query builder using the fields "Voucher line — Created date", " Invoice — Created date", "Invoice — Payment date" (athena)',
+        { tags: ['criticalPath', 'athena', 'C688836'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1224,8 +1224,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C688832 Search for "Voucher lines with invoice,fund, organization" in the query builder using the fields "Voucher — Status", "Invoice — Exchange rate," "Organization — is vendor" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C688832'] },
+        'C688832 Search for "Voucher lines with invoice,fund, organization" in the query builder using the fields "Voucher — Status", "Invoice — Exchange rate," "Organization — is vendor" (athena)',
+        { tags: ['extendedPath', 'athena', 'C688832'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1250,8 +1250,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C688808 Search for "Voucher lines with invoice,fund, organization" in the query builder using the fields "Fund — Acquisition unit names","Invoice — Payment method", "Organization — Status" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C688808'] },
+        'C688808 Search for "Voucher lines with invoice,fund, organization" in the query builder using the fields "Fund — Acquisition unit names","Invoice — Payment method", "Organization — Status" (athena)',
+        { tags: ['criticalPath', 'athena', 'C688808'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1309,8 +1309,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C692079 Search for "Transactions" in the query builder using the fields "Fiscal year — Acquisition unit names", "From fund — Updated date" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C692079'] },
+        'C692079 Search for "Transactions" in the query builder using the fields "Fiscal year — Acquisition unit names", "From fund — Updated date" (athena)',
+        { tags: ['extendedPath', 'athena', 'C692079'] },
         () => {
           const fqlQuery = {
             $and: [{ 'from_fund.updated_date': { $gt: '2020-01-01T00:00:00.000' } }],
@@ -1343,8 +1343,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C692078 Search for "Transactions" in the query builder using the fields "Transaction — Invoice cancelled", " From fund — Version" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C692078'] },
+        'C692078 Search for "Transactions" in the query builder using the fields "Transaction — Invoice cancelled", " From fund — Version" (athena)',
+        { tags: ['extendedPath', 'athena', 'C692078'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1365,8 +1365,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C692077 Search for "Transactions" in the query builder using the fields "Transaction — Encumbrance order type", "Transaction — Encumbrance re-encumber" and "From fund — Restrict by locations" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C692077'] },
+        'C692077 Search for "Transactions" in the query builder using the fields "Transaction — Encumbrance order type", "Transaction — Encumbrance re-encumber" and "From fund — Restrict by locations" (athena)',
+        { tags: ['extendedPath', 'athena', 'C692077'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1389,8 +1389,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C692075 Search for "Transactions" in the query builder using the fields "To fund — Acquisition unit names", "To fund — Donor organizations" and "To fund — External account number" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C692075'] },
+        'C692075 Search for "Transactions" in the query builder using the fields "To fund — Acquisition unit names", "To fund — Donor organizations" and "To fund — External account number" (athena)',
+        { tags: ['extendedPath', 'athena', 'C692075'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1423,8 +1423,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C692074 Search for "Transactions" in the query builder using the fields "Transaction — Amount", "Transaction — Created date" and "Fiscal year — Code" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C692074'] },
+        'C692074 Search for "Transactions" in the query builder using the fields "Transaction — Amount", "Transaction — Created date" and "Fiscal year — Code" (athena)',
+        { tags: ['criticalPath', 'athena', 'C692074'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1447,8 +1447,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C688736 Search for "Transactions" in the query builder using the fields "From fund — Name", "Fiscal year — Currency and "From fund — Acquisition unit" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C688736'] },
+        'C688736 Search for "Transactions" in the query builder using the fields "From fund — Name", "Fiscal year — Currency and "From fund — Acquisition unit" (athena)',
+        { tags: ['criticalPath', 'athena', 'C688736'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1504,8 +1504,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C667580 Search for "Fund with ledger" in the query builder using the fields "Ledger — Code", "Ledger — Currency", "Fund — External account number" and "Fund — Name" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C667580'] },
+        'C667580 Search for "Fund with ledger" in the query builder using the fields "Ledger — Code", "Ledger — Currency", "Fund — External account number" and "Fund — Name" (athena)',
+        { tags: ['extendedPath', 'athena', 'C667580'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1530,8 +1530,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C667573 Search for "Fund with ledger" in the query builder using the fields "Ledger — UUID", " Fund — UUID", "Ledger — Version" and "Fund — Version" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C667573'] },
+        'C667573 Search for "Fund with ledger" in the query builder using the fields "Ledger — UUID", " Fund — UUID", "Ledger — Version" and "Fund — Version" (athena)',
+        { tags: ['extendedPath', 'athena', 'C667573'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1556,8 +1556,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C667571 Search for "Fund with ledger" in the query builder using the fields "Ledger — Restrict expenditures" , "Fund — Restrict by locations", "Fund — Updated date" and "Ledger — Created date" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C667571'] },
+        'C667571 Search for "Fund with ledger" in the query builder using the fields "Ledger — Restrict expenditures" , "Fund — Restrict by locations", "Fund — Updated date" and "Ledger — Created date" (athena)',
+        { tags: ['extendedPath', 'athena', 'C667571'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1586,8 +1586,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C667570 Search for "Fund with ledger" in the query builder using the fields "Ledger — Fiscal year one", "Fund type — Type", "Fund — Status" and "Ledger — Status" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C667570'] },
+        'C667570 Search for "Fund with ledger" in the query builder using the fields "Ledger — Fiscal year one", "Fund type — Type", "Fund — Status" and "Ledger — Status" (athena)',
+        { tags: ['criticalPath', 'athena', 'C667570'] },
         () => {
           const fqlQuery = {
             $and: [{ 'fund.fund_status': { $eq: 'Active' } }],
@@ -1629,8 +1629,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C667568 Search for "Fund with ledger" in the query builder using the fields "Fund — Acquisition unit names", "Fund — Donor organizations" and " Fund — Transfer from" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C667568'] },
+        'C667568 Search for "Fund with ledger" in the query builder using the fields "Fund — Acquisition unit names", "Fund — Donor organizations" and " Fund — Transfer from" (athena)',
+        { tags: ['extendedPath', 'athena', 'C667568'] },
         () => {
           const fqlQuery = {
             $and: [{ 'fund.donor_organizations': { $empty: true } }],
@@ -1689,8 +1689,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C688840 Search for "Budgets" in the query builder using the fields "Fund — Fund — Acquisition unit names", "Budget — Budget UUID", "Fiscal Year — Version", "Fund — Fund — Status" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C688840'] },
+        'C688840 Search for "Budgets" in the query builder using the fields "Fund — Fund — Acquisition unit names", "Budget — Budget UUID", "Fiscal Year — Version", "Fund — Fund — Status" (athena)',
+        { tags: ['extendedPath', 'athena', 'C688840'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1724,8 +1724,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C688845 Search for "Budgets" in the query builder using the fields "Fiscal Year — Created date", "Fiscal Year — Period begin date", "Fiscal Year — Code", "Fiscal Year — Description" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C688845'] },
+        'C688845 Search for "Budgets" in the query builder using the fields "Fiscal Year — Created date", "Fiscal Year — Period begin date", "Fiscal Year — Code", "Fiscal Year — Description" (athena)',
+        { tags: ['extendedPath', 'athena', 'C688845'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1754,8 +1754,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C689199 Search for "Budgets" in the query builder using the fields Fund — Ledger — Fiscal year one, Budget — Status, Fund — Ledger — Restrict encumbrance, Fund — Ledger — Restrict expenditures (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C689199'] },
+        'C689199 Search for "Budgets" in the query builder using the fields Fund — Ledger — Fiscal year one, Budget — Status, Fund — Ledger — Restrict encumbrance, Fund — Ledger — Restrict expenditures (athena)',
+        { tags: ['criticalPath', 'athena', 'C689199'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1787,8 +1787,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C692084 Search for "Budgets" in the query builder using the fields "Budget — Allocated", "Fiscal Year — Currency", "Fund — Fund — Donor organizations","Fund — Ledger — UUID" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C692084'] },
+        'C692084 Search for "Budgets" in the query builder using the fields "Budget — Allocated", "Fiscal Year — Currency", "Fund — Fund — Donor organizations","Fund — Ledger — UUID" (athena)',
+        { tags: ['criticalPath', 'athena', 'C692084'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1813,8 +1813,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C692085 Search for "Budgets" in the query builder using the fields "Fiscal Year — Series", "Fund — Fund — Transfer to", "Fund — Fund — External account number", Budget — Initial allocation (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C692085'] },
+        'C692085 Search for "Budgets" in the query builder using the fields "Fiscal Year — Series", "Fund — Fund — Transfer to", "Fund — Fund — External account number", Budget — Initial allocation (athena)',
+        { tags: ['extendedPath', 'athena', 'C692085'] },
         () => {
           const fqlQuery = {
             $and: [
@@ -1846,8 +1846,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C692086 Search for "Budgets" in the query builder using the fields "Budget — Net transfers", "Fiscal Year — Updated date", "Fiscal Year — Name", "Fund — Fund — UUID" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C692086'] },
+        'C692086 Search for "Budgets" in the query builder using the fields "Budget — Net transfers", "Fiscal Year — Updated date", "Fiscal Year — Name", "Fund — Fund — UUID" (athena)',
+        { tags: ['extendedPath', 'athena', 'C692086'] },
         () => {
           const fqlQuery = {
             $and: [

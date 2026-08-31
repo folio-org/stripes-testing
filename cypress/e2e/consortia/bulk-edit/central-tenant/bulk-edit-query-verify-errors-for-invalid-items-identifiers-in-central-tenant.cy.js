@@ -199,8 +199,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C503032 Query - Verify "Errors" when querying by invalid Items identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C503032'] },
+        'C503032 Query - Verify "Errors" when querying by invalid Items identifiers in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C503032'] },
         () => {
           // Step 1: Select "Inventory - items" radio button and click "Build query"
           BulkEditSearchPane.checkItemsRadio();

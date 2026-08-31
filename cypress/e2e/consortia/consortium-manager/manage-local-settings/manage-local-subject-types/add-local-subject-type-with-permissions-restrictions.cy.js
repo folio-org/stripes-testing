@@ -112,8 +112,8 @@ describe('Consortia', () => {
         });
 
         it(
-          'C594414 Add local subject type via "Consortium manager" app with permissions and affiliations restrictions (consortia) (folijet)',
-          { tags: ['extendedPathECS', 'folijet', 'C594414'] },
+          'C594414 Add local subject type via "Consortium manager" app with permissions and affiliations restrictions (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C594414'] },
           () => {
             // Step 1: Navigate to Consortium manager app and select all members
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);

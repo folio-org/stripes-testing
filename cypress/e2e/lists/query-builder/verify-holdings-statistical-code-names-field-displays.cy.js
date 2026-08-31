@@ -50,8 +50,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C451495 [Holdings] Verify that the field "Holdings — Statistical code names" displays in the Query Builder (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C451495'] },
+      'C451495 [Holdings] Verify that the field "Holdings — Statistical code names" displays in the Query Builder (athena)',
+      { tags: ['criticalPath', 'athena', 'C451495'] },
       () => {
         // Step 1: Create new list with Holdings record type
         Lists.openNewListPane();

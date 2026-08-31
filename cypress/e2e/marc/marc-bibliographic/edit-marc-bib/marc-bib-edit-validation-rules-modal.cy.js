@@ -69,8 +69,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C523592 "MARC validation rules check" modal appears during edit of MARC bib record (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C523592'] },
+        'C523592 "MARC validation rules check" modal appears during edit of MARC bib record (promin)',
+        { tags: ['criticalPath', 'promin', 'C523592'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.verifyInstanceResultListIsAbsent(false);

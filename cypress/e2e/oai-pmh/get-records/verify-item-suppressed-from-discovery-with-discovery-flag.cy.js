@@ -101,8 +101,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375194 GetRecord: Verify Item suppressed from discovery in case Transfer suppressed records with discovery flag value (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375194'] },
+      'C375194 GetRecord: Verify Item suppressed from discovery in case Transfer suppressed records with discovery flag value (athena)',
+      { tags: ['extendedPath', 'athena', 'C375194'] },
       () => {
         // Step 1: Click on the "Add item" button in the "Holdings" accordion
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);

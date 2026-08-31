@@ -41,8 +41,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C399088 Verify the option for the creating requests on Instance detail page (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C399088'] },
+      'C399088 Verify the option for the creating requests on Instance detail page (promin)',
+      { tags: ['extendedPath', 'promin', 'C399088'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

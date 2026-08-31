@@ -49,8 +49,8 @@ describe('Lists', () => {
     });
 
     it(
-      "C451496 [instance] Verify that some array type fields are shown in the Query Builder for 'Instances' entity type (corsair)",
-      { tags: ['criticalPath', 'corsair', 'C451496'] },
+      "C451496 [instance] Verify that some array type fields are shown in the Query Builder for 'Instances' entity type (athena)",
+      { tags: ['criticalPath', 'athena', 'C451496'] },
       () => {
         // Step 1: Create new list with Instances record type
         Lists.openNewListPane();

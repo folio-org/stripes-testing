@@ -70,8 +70,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C831964 "Set records for deletion" option is NOT available on bulk edit form without UI-Inventory Instance Set-Records-For-Deletion capability set (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C831964'] },
+      'C831964 "Set records for deletion" option is NOT available on bulk edit form without UI-Inventory Instance Set-Records-For-Deletion capability set (athena)',
+      { tags: ['criticalPath', 'athena', 'C831964'] },
       () => {
         // Step 1: Click "Actions" menu and select "FOLIO Instances"
         BulkEditActions.openActions();

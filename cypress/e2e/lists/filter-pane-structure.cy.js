@@ -8,8 +8,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C1444107 Verify the Filter pane structure (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C1444107'] },
+      'C1444107 Verify the Filter pane structure (athena)',
+      { tags: ['criticalPath', 'athena', 'C1444107'] },
       () => {
         Lists.verifyCheckboxChecked('Active');
         Lists.verifyCheckboxUnchecked('Inactive');
@@ -23,8 +23,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C1444140 Verify that after clicking on "Reset all" button, all filters resets (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C1444140'] },
+      'C1444140 Verify that after clicking on "Reset all" button, all filters resets (athena)',
+      { tags: ['criticalPath', 'athena', 'C1444140'] },
       () => {
         Lists.verifyClearFilterButton('Status');
         Lists.clickOnCheckbox('Active');

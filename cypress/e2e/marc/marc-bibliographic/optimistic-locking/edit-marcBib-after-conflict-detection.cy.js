@@ -75,8 +75,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C353226 Edit "MARC Bibliographic" record after conflict detection banner displays (Optimistic locking) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C353226'] },
+        'C353226 Edit "MARC Bibliographic" record after conflict detection banner displays (Optimistic locking) (promin)',
+        { tags: ['extendedPath', 'promin', 'C353226'] },
         () => {
           // Step 1: User A logs in, opens record for editing
           cy.login(userA.username, userA.password, {

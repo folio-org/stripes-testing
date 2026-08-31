@@ -95,8 +95,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C446061 Vendor type can be selected independently in the UI (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C446061'] },
+        'C446061 Vendor type can be selected independently in the UI (athena)',
+        { tags: ['criticalPath', 'athena', 'C446061'] },
         () => {
           // Step 1: Create new list with Purchase order lines record type
           Lists.openNewListPane();

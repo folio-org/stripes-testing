@@ -54,8 +54,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C376994 A user can add organizations to Order field mapping with "Settings (Data import): Can view, create, edit, and remove" (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C376994'] },
+      'C376994 A user can add organizations to Order field mapping with "Settings (Data import): Can view, create, edit, and remove" (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C376994'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);

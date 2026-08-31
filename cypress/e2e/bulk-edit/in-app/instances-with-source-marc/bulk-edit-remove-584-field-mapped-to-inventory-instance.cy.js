@@ -107,8 +107,8 @@ describe(
       });
 
       it(
-        'C1348673 Remove MARC field (584) mapped to Inventory Instance (MARC) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C1348673'] },
+        'C1348673 Remove MARC field (584) mapped to Inventory Instance (MARC) (athena)',
+        { tags: ['criticalPath', 'athena', 'C1348673'] },
         () => {
           // Step 1: Check columns for Source and Accumulation and Frequency of Use note
           BulkEditActions.openActions();

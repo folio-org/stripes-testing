@@ -49,8 +49,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C380417 Order field mapping profile: review adjusted info icon text for E-resources "Create inventory" field (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C380417'] },
+      'C380417 Order field mapping profile: review adjusted info icon text for E-resources "Create inventory" field (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C380417'] },
       () => {
         const message =
           'Required when Order format is Electronic resource or P/E mix.' +

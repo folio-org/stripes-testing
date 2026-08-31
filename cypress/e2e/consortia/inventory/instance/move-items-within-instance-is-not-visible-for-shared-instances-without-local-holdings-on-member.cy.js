@@ -107,8 +107,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C594480 (CONSORTIA) "Move items within an instance" is not visible for shared instances without local holdings on member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C594480'] },
+        'C594480 (CONSORTIA) "Move items within an instance" is not visible for shared instances without local holdings on member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C594480'] },
         () => {
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();

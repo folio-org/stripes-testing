@@ -203,8 +203,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350713 Trigger export by cql file that contains long query (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C350713'] },
+      'C350713 Trigger export by cql file that contains long query (athena)',
+      { tags: ['extendedPath', 'athena', 'C350713'] },
       () => {
         // Step 1: Trigger the data export by clicking on the "or choose file" button at jobs panel
         // and submitting .cql file containing long query from Preconditions #3

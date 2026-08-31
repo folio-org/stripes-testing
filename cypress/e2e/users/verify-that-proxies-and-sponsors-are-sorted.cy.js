@@ -60,8 +60,8 @@ describe('Users', () => {
   });
 
   it(
-    'C410869 Verify that proxies and sponsors are sorted (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C410869', 'eurekaPhase1'] },
+    'C410869 Verify that proxies and sponsors are sorted (vega)',
+    { tags: ['extendedPath', 'vega', 'C410869', 'eurekaPhase1'] },
     () => {
       UsersSearchPane.searchByKeywords(testData.mainUsername);
       UserEdit.openEdit();

@@ -134,8 +134,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C552522 Querying items from the member tenant, returns the holding record associated with local instance (consortia) (corsair)',
-        { tags: ['criticalPathECS', 'corsair', 'C552522'] },
+        'C552522 Querying items from the member tenant, returns the holding record associated with local instance (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C552522'] },
         () => {
           // Step 1: Switch to College (Tenant_A)
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

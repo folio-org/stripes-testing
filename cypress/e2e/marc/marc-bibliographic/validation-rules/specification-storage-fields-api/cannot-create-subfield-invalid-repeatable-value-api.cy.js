@@ -60,8 +60,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Subfield with Inva
   });
 
   it(
-    'C499718 Cannot create Subfield code of Local field with invalid "repeatable" field value for MARC bib spec (API) (spitfire)',
-    { tags: ['C499718', 'extendedPath', 'spitfire'] },
+    'C499718 Cannot create Subfield code of Local field with invalid "repeatable" field value for MARC bib spec (API) (promin)',
+    { tags: ['C499718', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

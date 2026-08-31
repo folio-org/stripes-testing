@@ -116,8 +116,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C388555 More than 100 fields are linked after clicking on the "Link headings" button when edit "MARC bib" (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C388555'] },
+          'C388555 More than 100 fields are linked after clicking on the "Link headings" button when edit "MARC bib" (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C388555'] },
           () => {
             // Step 1: Find and open detail view of MARC Bib record
             InventoryInstances.searchByTitle(testData.searchQuery);

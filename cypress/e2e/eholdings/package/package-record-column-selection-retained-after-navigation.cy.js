@@ -37,8 +37,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C1282793 Package detail record: Data column selection is retained after switching between records and panes (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1282793'] },
+      'C1282793 Package detail record: Data column selection is retained after switching between records and panes (promin)',
+      { tags: ['extendedPath', 'promin', 'C1282793'] },
       () => {
         // Step 1: Verify all columns are shown by default and check all checkboxes
         EHoldingsPackageView.clickActionsButtonInTitlesSection();

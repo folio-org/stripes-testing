@@ -346,8 +346,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C407000 Automated linking of Shared MARC bib with Shared MARC auth on Member tenant (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C407000'] },
+            'C407000 Automated linking of Shared MARC bib with Shared MARC auth on Member tenant (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C407000'] },
             () => {
               // Step 1-2: Edit shared MARC bib in Member 1 and auto-link
               InventorySearchAndFilter.clearDefaultHeldbyFilter();

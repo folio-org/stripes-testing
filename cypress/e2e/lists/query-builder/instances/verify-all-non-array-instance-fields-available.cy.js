@@ -62,8 +62,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C451511 Verify that all non-array queryable fields are available in the Query Builder (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C451511'] },
+        'C451511 Verify that all non-array queryable fields are available in the Query Builder (athena)',
+        { tags: ['extendedPath', 'athena', 'C451511'] },
         () => {
           // Step 1: Create new list with Instances record type and open Build query form
           Lists.openNewListPane();

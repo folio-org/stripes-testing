@@ -68,8 +68,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C366101 MARC Authority field protections display but disallow override on field mapping create/edit page (folijet)',
-      { tags: ['extendedPath', 'folijet', 'nonParallel', 'C366101'] },
+      'C366101 MARC Authority field protections display but disallow override on field mapping create/edit page (promin)',
+      { tags: ['extendedPath', 'promin', 'nonParallel', 'C366101'] },
       () => {
         cy.wait(5000);
         FieldMappingProfiles.openNewMappingProfileForm();

@@ -33,8 +33,8 @@ describe('Permissions', () => {
     });
 
     it(
-      'C499880 Check that "Settings (Inventory): View list of settings pages" allows user to view the HRID handlings for Inventory (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C499880'] },
+      'C499880 Check that "Settings (Inventory): View list of settings pages" allows user to view the HRID handlings for Inventory (promin)',
+      { tags: ['extendedPath', 'promin', 'C499880'] },
       () => {
         SettingsInventory.goToSettingsInventory();
         SettingsInventory.validateSettingsTab({

@@ -78,8 +78,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C584451 Verify that "Children\'s subject heading" search option uses "all" search operator ("Montessori method of education" case) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C584451'] },
+      'C584451 Verify that "Children\'s subject heading" search option uses "all" search operator ("Montessori method of education" case) (promin)',
+      { tags: ['criticalPath', 'promin', 'C584451'] },
       () => {
         testData.searchOptions.forEach((option) => {
           testData.searchQueries.forEach((query) => {

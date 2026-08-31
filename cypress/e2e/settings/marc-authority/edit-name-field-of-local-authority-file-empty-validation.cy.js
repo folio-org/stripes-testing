@@ -52,8 +52,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436864 Empty "Name" field validation during editing of Local "Authority file" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C436864'] },
+        'C436864 Empty "Name" field validation during editing of Local "Authority file" (promin)',
+        { tags: ['extendedPath', 'promin', 'C436864'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
           cy.login(user.username, user.password, {

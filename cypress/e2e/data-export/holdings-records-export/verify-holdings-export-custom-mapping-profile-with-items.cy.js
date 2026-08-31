@@ -324,8 +324,8 @@ describe(
       });
 
       it(
-        'C423571 Verify export Inventory holdings records based on Custom mapping profile (Holdings & Item) (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C423571'] },
+        'C423571 Verify export Inventory holdings records based on Custom mapping profile (Holdings & Item) (athena)',
+        { tags: ['extendedPath', 'athena', 'C423571'] },
         () => {
           // Step 1: Trigger the data export by submitting .csv file with Holdings UUIDs
           ExportFile.uploadFile(fileName);

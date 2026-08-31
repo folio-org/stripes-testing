@@ -195,8 +195,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C422176 Consortia | SRS+Inventory | GetRecord | Suppressed with flag | Skip suppressed: Edit shared MARC and shared FOLIO Instances (with associated Holdings in Member tenant) from Central tenant is retrieved in the response of single tenant harvest (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C422176', 'nonParallel'] },
+        'C422176 Consortia | SRS+Inventory | GetRecord | Suppressed with flag | Skip suppressed: Edit shared MARC and shared FOLIO Instances (with associated Holdings in Member tenant) from Central tenant is retrieved in the response of single tenant harvest (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C422176', 'nonParallel'] },
         () => {
           // Step 1-3: Suppress shared MARC instance
           InventoryInstances.searchByTitle(testData.marcInstance.uuid);

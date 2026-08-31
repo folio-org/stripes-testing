@@ -55,8 +55,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503063 Cannot save "MARC authority" record without 1XX (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C503063'] },
+        'C503063 Cannot save "MARC authority" record without 1XX (promin)',
+        { tags: ['criticalPath', 'promin', 'C503063'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.marcAuthorityHeading);
           MarcAuthorities.select(createdAuthorityId);

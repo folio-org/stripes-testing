@@ -73,8 +73,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C423685 Verify "Preview of record matched" in case of uploading invalid Instance identifiers (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C423685'] },
+      'C423685 Verify "Preview of record matched" in case of uploading invalid Instance identifiers (athena)',
+      { tags: ['criticalPath', 'athena', 'C423685'] },
       () => {
         // Step 1: Select "Inventory - instances" radio button and "Instance HRIDs" identifier
         BulkEditSearchPane.checkInstanceRadio();

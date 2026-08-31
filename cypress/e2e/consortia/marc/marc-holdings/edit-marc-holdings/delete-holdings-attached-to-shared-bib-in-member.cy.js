@@ -93,8 +93,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C788748 Delete MARC holdings record attached to Shared MARC bib (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C788748'] },
+          'C788748 Delete MARC holdings record attached to Shared MARC bib (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C788748'] },
           () => {
             // Login to Member 1 tenant
             cy.setTenant(Affiliations.College);

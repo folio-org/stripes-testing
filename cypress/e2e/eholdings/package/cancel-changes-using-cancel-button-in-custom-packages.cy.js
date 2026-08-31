@@ -38,8 +38,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C423475 Cancel changes made in not saved custom "Package" record using "Cancel" button (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423475'] },
+      'C423475 Cancel changes made in not saved custom "Package" record using "Cancel" button (promin)',
+      { tags: ['extendedPath', 'promin', 'C423475'] },
       () => {
         EHoldingSearch.switchToPackages();
         EHoldingsPackages.waitLoading();

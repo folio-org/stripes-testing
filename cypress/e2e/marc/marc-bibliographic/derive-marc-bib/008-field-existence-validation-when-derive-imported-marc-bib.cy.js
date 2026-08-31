@@ -117,8 +117,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C387452 "008" field existence validation when derive imported "MARC bib" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C387452'] },
+        'C387452 "008" field existence validation when derive imported "MARC bib" (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C387452'] },
         () => {
           cy.visit(`${TopMenu.inventoryPath}/view/${testData.createdRecordIDs[0]}`);
           InventoryInstance.deriveNewMarcBib();

@@ -88,8 +88,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C409423 Search Items using advanced search in combination with search facets (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C409423'] },
+      'C409423 Search Items using advanced search in combination with search facets (promin)',
+      { tags: ['extendedPath', 'promin', 'C409423'] },
       () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.itemTabIsDefault();

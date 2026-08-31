@@ -112,8 +112,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C1373191 Editing MARC Instances bulk edit profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C1373191'] },
+      'C1373191 Editing MARC Instances bulk edit profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C1373191'] },
       () => {
         // Step 1: Click on the row with instances with source MARC bulk edit profile from Preconditions
         InstancesBulkEditProfilesPane.clickProfileRow(testData.originalProfileName);

@@ -55,8 +55,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Indicator Code Emp
   });
 
   it(
-    'C499676 Cannot create Indicator code of Standard field with empty "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['C499676', 'extendedPath', 'spitfire'] },
+    'C499676 Cannot create Indicator code of Standard field with empty "label" for MARC bib spec (API) (promin)',
+    { tags: ['C499676', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

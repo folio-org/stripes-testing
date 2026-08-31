@@ -104,8 +104,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C446040 Verify export MARC Authority with edited SRS (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C446040'] },
+      'C446040 Verify export MARC Authority with edited SRS (athena)',
+      { tags: ['criticalPath', 'athena', 'C446040'] },
       () => {
         // Step 1-2: Upload the .csv file
         ExportFileHelper.uploadFile(marcAuthorityUUIDFileName);

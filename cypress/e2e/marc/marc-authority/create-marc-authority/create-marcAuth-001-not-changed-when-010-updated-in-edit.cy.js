@@ -59,8 +59,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423539 Copied "001" field value of created MARC authority record doesn\'t change when "010" field is updated from edit window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423539'] },
+        'C423539 Copied "001" field value of created MARC authority record doesn\'t change when "010" field is updated from edit window (promin)',
+        { tags: ['extendedPath', 'promin', 'C423539'] },
         () => {
           // Step 1: Open new MARC authority record form
           MarcAuthorities.clickActionsAndNewAuthorityButton();

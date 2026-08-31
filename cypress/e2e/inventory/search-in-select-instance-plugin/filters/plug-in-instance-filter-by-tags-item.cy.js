@@ -128,8 +128,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476837 "Select Instance" plugin | Filter "Instance" records by "Tags" filter in "Item" segment (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476837'] },
+        'C476837 "Select Instance" plugin | Filter "Instance" records by "Tags" filter in "Item" segment (promin)',
+        { tags: ['extendedPath', 'promin', 'C476837'] },
         () => {
           InventorySearchAndFilter.verifyAccordionExistance(tagsAccordionName, true);
           InventorySearchAndFilter.toggleAccordionByName(tagsAccordionName);

@@ -60,8 +60,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503071 Create a new MARC holdings record with multiple "999 ff" fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C503071'] },
+        'C503071 Create a new MARC holdings record with multiple "999 ff" fields (promin)',
+        { tags: ['extendedPath', 'promin', 'C503071'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

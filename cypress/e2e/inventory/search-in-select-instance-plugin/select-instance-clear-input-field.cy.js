@@ -83,8 +83,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C423628 Instance plug-in search | Check the "x" icon in the Inventory app search box (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423628'] },
+      'C423628 Instance plug-in search | Check the "x" icon in the Inventory app search box (promin)',
+      { tags: ['extendedPath', 'promin', 'C423628'] },
       () => {
         function searchClearAndCheck() {
           SelectInstanceModal.fillInSearchQuery(testData.titlePrefix);

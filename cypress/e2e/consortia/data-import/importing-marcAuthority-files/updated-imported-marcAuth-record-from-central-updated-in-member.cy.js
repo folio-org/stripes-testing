@@ -196,8 +196,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C405144 Updated "MARC authority" record via "Data import" from Central tenant is updated in Member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C405144'] },
+        'C405144 Updated "MARC authority" record via "Data import" from Central tenant is updated in Member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C405144'] },
         () => {
           cy.login(users.userAProperties.username, users.userAProperties.password, {
             path: TopMenu.marcAuthorities,

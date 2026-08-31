@@ -25,7 +25,7 @@ import {
 
 let user;
 
-describe('Citation: check place of work MARC codes', () => {
+describe('Promin: check place of work MARC codes', () => {
   const testData = {
     workId: null,
     instanceId: null,
@@ -102,8 +102,8 @@ describe('Citation: check place of work MARC codes', () => {
   });
 
   it(
-    'C466293 Marigold - Adding "Place of origin of the work" to the new work through Marigold / Inventory. View MARC. (citation)',
-    { tags: ['criticalPath', 'citation', 'C466293', 'marigold'] },
+    'C466293 Marigold - Adding "Place of origin of the work" to the new work through Marigold / Inventory. View MARC. (promin)',
+    { tags: ['criticalPath', 'promin', 'C466293', 'marigold'] },
     () => {
       // Find and import precondition inventory instance
       InventoryInstances.searchByTitle(testData.uniqueInventoryTitle);

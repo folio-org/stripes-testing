@@ -138,8 +138,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C503097 No error after updating existing instance with multiple 035 fields (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C503097'] },
+      'C503097 No error after updating existing instance with multiple 035 fields (promin)',
+      { tags: ['criticalPath', 'promin', 'C503097'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, marcFileNameForCreate);

@@ -116,8 +116,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466065 Verify that version of "Instance" record (source=MARC) was not updated after editing of "Holdings" (source=MARC) and "Item" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C466065'] },
+      'C466065 Verify that version of "Instance" record (source=MARC) was not updated after editing of "Holdings" (source=MARC) and "Item" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C466065'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

@@ -45,8 +45,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411822  Refresh list: Inactive lists (corsair)',
-      { tags: ['smoke', 'corsair', 'C411822'] },
+      'C411822  Refresh list: Inactive lists (athena)',
+      { tags: ['smoke', 'athena', 'C411822'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -62,8 +62,8 @@ describe('Lists', () => {
     );
 
     it(
-      "C411823 Refresh list: The list doesn't contain query (corsair)",
-      { tags: ['criticalPath', 'corsair', 'C411823'] },
+      "C411823 Refresh list: The list doesn't contain query (athena)",
+      { tags: ['criticalPath', 'athena', 'C411823'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -78,8 +78,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411824 Refresh list: Edit is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411824', 'eurekaPhase1'] },
+      'C411824 Refresh list: Edit is in progress (athena)',
+      { tags: ['criticalPath', 'athena', 'C411824', 'eurekaPhase1'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -96,8 +96,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411833 Refresh list: Export is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411833', 'eurekaPhase1'] },
+      'C411833 Refresh list: Export is in progress (athena)',
+      { tags: ['criticalPath', 'athena', 'C411833', 'eurekaPhase1'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);
@@ -116,8 +116,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411834 Refresh list: Cancel Refresh - less than 500 records (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411834', 'eurekaPhase1'] },
+      'C411834 Refresh list: Cancel Refresh - less than 500 records (athena)',
+      { tags: ['criticalPath', 'athena', 'C411834', 'eurekaPhase1'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listData.name);

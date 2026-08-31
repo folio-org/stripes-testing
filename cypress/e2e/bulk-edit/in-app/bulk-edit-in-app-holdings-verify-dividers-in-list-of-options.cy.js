@@ -71,8 +71,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C648461 Verify "Administrative data", "Electronic access", "Holdings Notes" and "Location" dividers are present in a list of options for Holdings Bulk edit (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C648461'] },
+      'C648461 Verify "Administrative data", "Electronic access", "Holdings Notes" and "Location" dividers are present in a list of options for Holdings Bulk edit (athena)',
+      { tags: ['extendedPath', 'athena', 'C648461'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.verifyRecordTypeIdentifiers('Holdings');

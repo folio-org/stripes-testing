@@ -65,8 +65,8 @@ describe('MARC', () => {
       });
 
       it(
-        "C360549 Verify that long query doesn't cut off in the not-exact match placeholder (spitfire)",
-        { tags: ['extendedPath', 'spitfire', 'C360549'] },
+        "C360549 Verify that long query doesn't cut off in the not-exact match placeholder (promin)",
+        { tags: ['extendedPath', 'promin', 'C360549'] },
         () => {
           // Step 1: Click on the browse option dropdown and select any browse option
           MarcAuthorities.switchToBrowse();

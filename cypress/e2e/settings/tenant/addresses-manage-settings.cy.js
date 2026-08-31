@@ -45,8 +45,8 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C2374 Settings - UI-Tenant-Settings Settings Addresses - Manage (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C2374'] },
+    'C2374 Settings - UI-Tenant-Settings Settings Addresses - Manage (athena)',
+    { tags: ['extendedPath', 'athena', 'C2374'] },
     () => {
       // Step 6: Open Settings App and navigate to Tenant settings --> Addresses
       // 7.1) See Addresses menu option

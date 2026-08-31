@@ -118,8 +118,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476725 Filter "Instance" records by "Mode of issuance" filter/facet (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C476725'] },
+        'C476725 Filter "Instance" records by "Mode of issuance" filter/facet (promin)',
+        { tags: ['criticalPath', 'promin', 'C476725'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(testData.modeOfIssuanceAccordionName);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(

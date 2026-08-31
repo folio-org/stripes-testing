@@ -178,8 +178,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C405556 Consortia | Verify exporting instance records with Default instances job profile (consortia) (firebird)',
-      { tags: ['smokeECS', 'firebird', 'C405556'] },
+      'C405556 Consortia | Verify exporting instance records with Default instances job profile (consortia) (athena)',
+      { tags: ['smokeECS', 'athena', 'C405556'] },
       () => {
         ExportFileHelper.uploadFile(instanceUUIDsFileName);
         SelectJobProfile.verifySelectJobPane();

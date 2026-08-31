@@ -409,8 +409,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C410961 Consortia | Verify exporting instance records with CQL query (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C410961'] },
+      'C410961 Consortia | Verify exporting instance records with CQL query (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C410961'] },
       () => {
         // Step 1: Search instances by title prefix
         InventorySearchAndFilter.clearDefaultFilter('Held by');

@@ -84,10 +84,10 @@ cy.get('[data-testid="save-button"]').click()
 3. Include test ID (C######) in test name and tags
 4. **REQUIRED**: Each test (`it` block) must have tags attribute with 3 components:
    ```javascript
-   { tags: ['extendedPath', 'spitfire', 'C627455'] }
+   { tags: ['extendedPath', 'promin', 'C627455'] }
    ```
    - **Test group tag**: `criticalPath`, `smoke`, `extendedPath` (add "ECS" for consortia: `criticalPathECS`)
-   - **Dev team tag**: lowercase team name (`spitfire`, `thunderjet`, `eureka`, etc.)
+   - **Dev team tag**: lowercase team name (`promin`, `thunderjet`, `eureka`, etc.)
    - **Test ID tag**: exact test case identifier (`C######`)
 5. Use unique test data prefixes: `AT_C######_Description_${randomPostfix}`
 

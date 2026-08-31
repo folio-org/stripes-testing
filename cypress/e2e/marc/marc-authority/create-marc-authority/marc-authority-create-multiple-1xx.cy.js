@@ -151,8 +151,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423521 Cannot create MARC authority record with multiple 1XX fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C423521'] },
+        'C423521 Cannot create MARC authority record with multiple 1XX fields (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C423521'] },
         () => {
           cy.then(() => {
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C423521_');

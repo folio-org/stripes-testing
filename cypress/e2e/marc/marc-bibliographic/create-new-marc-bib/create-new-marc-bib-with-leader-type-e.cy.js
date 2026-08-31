@@ -54,8 +54,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422119 Create new "MARC bib" with leader "Type" position="e" and valid values in 008 "Relf" position (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C422119'] },
+        'C422119 Create new "MARC bib" with leader "Type" position="e" and valid values in 008 "Relf" position (promin)',
+        { tags: ['criticalPath', 'promin', 'C422119'] },
         () => {
           // 1 Click on the "Actions" button placed on the second pane → Select "+ New MARC bibliographic record" option
           InventoryInstance.newMarcBibRecord();

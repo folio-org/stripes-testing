@@ -45,8 +45,8 @@ describe('Users', () => {
   });
 
   it(
-    'C422059 Users: edit a note added by another user (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C422059'] },
+    'C422059 Users: edit a note added by another user (promin)',
+    { tags: ['extendedPath', 'promin', 'C422059'] },
     () => {
       // Step 1-2: Login as User A, filter Active users, search and open target user
       cy.login(testData.userA.username, testData.userA.password, {

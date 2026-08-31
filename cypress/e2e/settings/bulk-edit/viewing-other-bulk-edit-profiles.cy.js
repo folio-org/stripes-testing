@@ -82,8 +82,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C740207 Viewing Other bulk edit profiles (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C740207'] },
+      'C740207 Viewing Other bulk edit profiles (athena)',
+      { tags: ['criticalPath', 'athena', 'C740207'] },
       () => {
         // Step 1: Click "Bulk edit" option in "Settings" pane
         SettingsPane.selectSettingsTab(APPLICATION_NAMES.BULK_EDIT);

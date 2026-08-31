@@ -81,8 +81,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C376990 Verify Query tab capability sets (Local) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C376990'] },
+      'C376990 Verify Query tab capability sets (Local) (athena)',
+      { tags: ['extendedPath', 'athena', 'C376990'] },
       () => {
         // Step 1: Navigate to the "Bulk edit" app
         cy.login(user.username, user.password, {

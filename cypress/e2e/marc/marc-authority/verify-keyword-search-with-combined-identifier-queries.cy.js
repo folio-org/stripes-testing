@@ -88,8 +88,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C957385 Verify keyword search behavior with identifiers using combined search queries (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C957385'] },
+        'C957385 Verify keyword search behavior with identifiers using combined search queries (promin)',
+        { tags: ['extendedPath', 'promin', 'C957385'] },
         () => {
           // Step 1: Search with combined heading + identifier query - should not find Authority A
           MarcAuthorities.searchBy(testData.searchOption, 'Harmelen, Frank n 001234523');

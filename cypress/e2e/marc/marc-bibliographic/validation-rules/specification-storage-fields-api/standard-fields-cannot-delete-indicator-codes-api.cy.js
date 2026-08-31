@@ -41,8 +41,8 @@ describe('MARC Bibliographic Validation Rules - Standard Fields Cannot Delete In
   });
 
   it(
-    'C503102 Cannot delete Indicator Code of Standard Field for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C503102', 'spitfire'] },
+    'C503102 Cannot delete Indicator Code of Standard Field for MARC bib spec (API) (promin)',
+    { tags: ['criticalPath', 'C503102', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

@@ -111,8 +111,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C387477 Browsing call number types when "Call numbers (all)" browse option selected (based on "Item") (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C387477', 'eurekaPhase1'] },
+      'C387477 Browsing call number types when "Call numbers (all)" browse option selected (based on "Item") (promin) (TaaS)',
+      { tags: ['criticalPath', 'promin', 'C387477', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.browseOptionsDropdownIncludesOptions(

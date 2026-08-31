@@ -157,8 +157,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514920 Cannot create MARC bib record with multiple not-repeatable standard / local subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'C514920', 'spitfire', 'nonParallel'] },
+        'C514920 Cannot create MARC bib record with multiple not-repeatable standard / local subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'C514920', 'promin', 'nonParallel'] },
         () => {
           // Step 1: Click on "Actions" button in second pane >> Select "New MARC bibliographic record" option
           InventoryInstance.newMarcBibRecord();

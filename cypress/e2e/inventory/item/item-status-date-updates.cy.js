@@ -168,8 +168,8 @@ describe.skip('Inventory', () => {
 
     // test is looping
     it(
-      'C9200 Item status date updates (folijet)',
-      { tags: ['smokeBroken', 'folijet', 'C9200'] },
+      'C9200 Item status date updates (promin)',
+      { tags: ['smokeBroken', 'promin', 'C9200'] },
       () => {
         const enumeration = `autotest_caption_${getRandomPostfix()}`;
         const numberOfPieces = '3';

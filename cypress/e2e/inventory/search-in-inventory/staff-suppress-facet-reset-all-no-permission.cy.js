@@ -79,8 +79,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446088 Staff suppressed records remain hidden when user without permission clicks "Reset all" button (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C446088'] },
+        'C446088 Staff suppressed records remain hidden when user without permission clicks "Reset all" button (promin)',
+        { tags: ['extendedPath', 'promin', 'C446088'] },
         () => {
           InventorySearchAndFilter.verifyAccordionExistance(accordionName, false);
           cy.ifConsortia(true, () => {

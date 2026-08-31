@@ -86,8 +86,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C398003 Check the punctuation of the imported file for 1xx7xx fields (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C398003'] },
+      'C398003 Check the punctuation of the imported file for 1xx7xx fields (promin)',
+      { tags: ['extendedPath', 'promin', 'C398003'] },
       () => {
         // Steps 1-4: File imported via API; navigate to instance in Inventory
         InventoryInstances.searchByTitle(instanceId);

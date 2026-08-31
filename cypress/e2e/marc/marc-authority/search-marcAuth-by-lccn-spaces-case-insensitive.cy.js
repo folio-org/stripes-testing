@@ -159,8 +159,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C440113 Search for "MARC authority" by "LCCN" option using a query with lower, UPPER case when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C440113'] },
+        'C440113 Search for "MARC authority" by "LCCN" option using a query with lower, UPPER case when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (promin)',
+        { tags: ['extendedPath', 'promin', 'C440113'] },
         () => {
           cy.login(user.username, user.password, {
             path: TopMenu.marcAuthorities,

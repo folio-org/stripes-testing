@@ -46,8 +46,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651494 Check "Version History" card is filled on FOLIO Instance (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C651494'] },
+        'C651494 Check "Version History" card is filled on FOLIO Instance (promin)',
+        { tags: ['criticalPath', 'promin', 'C651494'] },
         () => {
           InstanceRecordView.clickVersionHistoryButton();
           VersionHistorySection.waitLoading();

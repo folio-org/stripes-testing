@@ -86,8 +86,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808499 User can duplicate an item that has a filled order field and the duplicated item order field will use the next order value (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C808499'] },
+        'C808499 User can duplicate an item that has a filled order field and the duplicated item order field will use the next order value (promin)',
+        { tags: ['extendedPath', 'promin', 'C808499'] },
         () => {
           cy.login(user.username, user.password, {
             path: TopMenu.inventoryPath,

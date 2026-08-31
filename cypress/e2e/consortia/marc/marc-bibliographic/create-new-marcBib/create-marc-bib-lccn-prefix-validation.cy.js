@@ -60,8 +60,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569546 Digit, special characters, spaces validation in LCCN prefix on "Create a new MARC bib record" pane when LCCN structure validation is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C569546'] },
+          'C569546 Digit, special characters, spaces validation in LCCN prefix on "Create a new MARC bib record" pane when LCCN structure validation is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C569546'] },
           () => {
             // Step 1: Click on "Actions" - "+ New MARC bibliographic record" option
             InventoryInstance.newMarcBibRecord();

@@ -112,8 +112,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C825265 Search holdings by Former IDs (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C825265'] },
+        'C825265 Search holdings by Former IDs (athena)',
+        { tags: ['extendedPath', 'athena', 'C825265'] },
         () => {
           // Step 1-2: Search holdings by "Holdings — Former IDs" field using "starts with" operator
           BulkEditSearchPane.openQuerySearch();

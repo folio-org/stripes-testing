@@ -106,8 +106,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C411509 Verify Bulk Edit actions for Items notes - change note type ( "Staff only" checkbox ) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C411509'] },
+      'C411509 Verify Bulk Edit actions for Items notes - change note type ( "Staff only" checkbox ) (athena)',
+      { tags: ['criticalPath', 'athena', 'C411509'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

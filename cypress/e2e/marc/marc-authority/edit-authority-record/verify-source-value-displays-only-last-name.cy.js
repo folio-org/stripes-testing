@@ -94,8 +94,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C356848 Verify that "Source" value displays only the Last name of user, which edited record, when First name of user is not populated (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C356848'] },
+      'C356848 Verify that "Source" value displays only the Last name of user, which edited record, when First name of user is not populated (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C356848'] },
       () => {
         // Step 1: Fill in the input field at "Search & filter" pane with the search query
         MarcAuthorities.searchByParameter(

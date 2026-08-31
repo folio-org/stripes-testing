@@ -55,8 +55,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436919 Delete Local "Authority file" which doesn\'t have assigned "MARC authority" records (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C436919'] },
+        'C436919 Delete Local "Authority file" which doesn\'t have assigned "MARC authority" records (promin)',
+        { tags: ['extendedPath', 'promin', 'C436919'] },
         () => {
           // Step 1: Go to Settings > MARC authority > Manage authority files
           cy.login(user.username, user.password, {

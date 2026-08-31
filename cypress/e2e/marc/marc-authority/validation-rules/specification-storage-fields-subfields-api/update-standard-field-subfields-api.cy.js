@@ -58,8 +58,8 @@ describe('MARC Authority Validation Rules - Update Standard Field Subfields API'
   });
 
   it(
-    'C511229 Cannot update Subfield of Standard Field with invalid value in "required" for MARC authority spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C511229', 'spitfire'] },
+    'C511229 Cannot update Subfield of Standard Field with invalid value in "required" for MARC authority spec (API) (promin)',
+    { tags: ['extendedPath', 'C511229', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

@@ -58,8 +58,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C378897 Order field mapping profile: confirm that purchase order lines limit setting does not allow fractional numbers (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C378897'] },
+      'C378897 Order field mapping profile: confirm that purchase order lines limit setting does not allow fractional numbers (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C378897'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);

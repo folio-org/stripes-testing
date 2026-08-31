@@ -312,8 +312,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C411287 Consortia | Verify exporting instance without holdings with Default instances job profile (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C411287'] },
+      'C411287 Consortia | Verify exporting instance without holdings with Default instances job profile (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C411287'] },
       () => {
         // Step 1: Upload CSV file with Instance UUIDs
         ExportFileHelper.uploadFile(instanceUUIDsFileName);

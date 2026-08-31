@@ -119,8 +119,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C374158 Edit "1XX" field value of linked "MARC Authority" record (without "010" field) (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C374158'] },
+        'C374158 Edit "1XX" field value of linked "MARC Authority" record (without "010" field) (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C374158'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);

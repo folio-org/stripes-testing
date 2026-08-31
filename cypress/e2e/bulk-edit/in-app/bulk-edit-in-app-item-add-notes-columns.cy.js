@@ -99,8 +99,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C411629 Verify separating notes in different columns - add notes (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C411629'] },
+      'C411629 Verify separating notes in different columns - add notes (athena)',
+      { tags: ['extendedPath', 'athena', 'C411629'] },
       () => {
         // Step 1: Select the "Inventory - items" radio button => Select "Item barcode" option from the "Record identifier" dropdown
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcodes');

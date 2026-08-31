@@ -53,8 +53,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651477 Check "Version History" pane in the detail view of FOLIO Instance record (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C651477'] },
+        'C651477 Check "Version History" pane in the detail view of FOLIO Instance record (promin)',
+        { tags: ['criticalPath', 'promin', 'C651477'] },
         () => {
           const currentCardIndex = 0;
           const numberOfVersions = 2;

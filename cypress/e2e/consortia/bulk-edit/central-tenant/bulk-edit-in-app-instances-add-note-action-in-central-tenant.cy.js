@@ -137,8 +137,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C477644 Verify "Add note" action for Instances in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C477644'] },
+        'C477644 Verify "Add note" action for Instances in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C477644'] },
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();

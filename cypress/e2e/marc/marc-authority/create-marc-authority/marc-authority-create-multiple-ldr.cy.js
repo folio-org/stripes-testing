@@ -58,8 +58,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C496202 Create a new MARC authority record with multiple "LDR" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C496202'] },
+        'C496202 Create a new MARC authority record with multiple "LDR" field (promin)',
+        { tags: ['criticalPath', 'promin', 'C496202'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkRecordStatusNew();

@@ -84,8 +84,8 @@ describe('Users', () => {
   });
 
   it(
-    'C692248 Reset expiration date of user (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C692248'] },
+    'C692248 Reset expiration date of user (vega)',
+    { tags: ['extendedPath', 'vega', 'C692248'] },
     () => {
       UsersSearchPane.searchByUsername(testData.user1.username);
       UserEdit.openEdit();

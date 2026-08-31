@@ -59,8 +59,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C2323 Search: Verify search on Subject (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C2323'] },
+      'C2323 Search: Verify search on Subject (promin)',
+      { tags: ['extendedPath', 'promin', 'C2323'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password, {

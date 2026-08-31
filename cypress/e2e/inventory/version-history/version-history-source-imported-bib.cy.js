@@ -70,8 +70,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C692070 "Version history" pane is displayed on "View source" pane of "MARC bibliographic" record created via "Data import" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C692070'] },
+        'C692070 "Version history" pane is displayed on "View source" pane of "MARC bibliographic" record created via "Data import" (promin)',
+        { tags: ['criticalPath', 'promin', 'C692070'] },
         () => {
           InventoryInstance.viewSource();
           InventoryViewSource.verifyVersionHistoryButtonShown();

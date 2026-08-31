@@ -340,8 +340,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C407688 Update shared linked "MARC Authority" record in Central tenant via Data Import (change tag of linked field) (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C407688'] },
+        'C407688 Update shared linked "MARC Authority" record in Central tenant via Data Import (change tag of linked field) (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C407688'] },
         () => {
           // Step 1-2: Verify authority record exists
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);

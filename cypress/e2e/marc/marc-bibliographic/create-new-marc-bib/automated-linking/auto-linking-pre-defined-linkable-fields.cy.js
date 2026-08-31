@@ -232,8 +232,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C389489 Pre-defined linkable fields are linked after clicking on the "Link headings" button when create "MARC bib" (spitfire) (TaaS)',
-          { tags: ['criticalPathFlaky', 'spitfire', 'C389489'] },
+          'C389489 Pre-defined linkable fields are linked after clicking on the "Link headings" button when create "MARC bib" (promin) (TaaS)',
+          { tags: ['criticalPathFlaky', 'promin', 'C389489'] },
           () => {
             // 1 Click on "Actions" button in second pane → Select "+New MARC Bib Record" option
             InventoryInstance.newMarcBibRecord();

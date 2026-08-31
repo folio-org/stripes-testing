@@ -39,8 +39,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C350940 Verify uploading edited records (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C350940'] },
+      'C350940 Verify uploading edited records (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C350940'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);

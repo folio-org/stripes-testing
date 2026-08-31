@@ -83,7 +83,7 @@ describe('Users', () => {
 
     it(
       'C15700 - Set a default value for the following custom fields: Radio button, Single select, Multi-select',
-      { tags: ['extendedPath', 'volaris', 'C15700'] },
+      { tags: ['extendedPath', 'vega', 'C15700'] },
       () => {
         const multiSelectDefaults =
           testData.customFields.multiSelect.selectField.options.values.map(

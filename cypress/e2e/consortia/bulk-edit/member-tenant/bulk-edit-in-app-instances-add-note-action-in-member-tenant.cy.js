@@ -144,8 +144,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566125 Verify "Add note" action for Instances in Member tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C566125'] },
+        'C566125 Verify "Add note" action for Instances in Member tenant (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C566125'] },
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();

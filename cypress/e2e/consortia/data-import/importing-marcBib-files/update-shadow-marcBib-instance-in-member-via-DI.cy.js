@@ -196,8 +196,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C411792 User can update Shadow "MARC Bib" Instance in member tenant via Data import (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411792'] },
+        'C411792 User can update Shadow "MARC Bib" Instance in member tenant via Data import (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411792'] },
         () => {
           cy.login(users.userAProperties.username, users.userAProperties.password);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);

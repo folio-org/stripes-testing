@@ -45,8 +45,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C605986 Delete a custom package (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C605986'] },
+      'C605986 Delete a custom package (promin)',
+      { tags: ['extendedPath', 'promin', 'C605986'] },
       () => {
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.customPackageName);

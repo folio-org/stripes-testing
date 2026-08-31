@@ -40,8 +40,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569537 Cannot create MARC authority record without prefix in LCCN when LCCN structure validation is enabled (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'C569537', 'nonParallel', 'spitfire'] },
+          'C569537 Cannot create MARC authority record without prefix in LCCN when LCCN structure validation is enabled (consortia) (promin)',
+          { tags: ['criticalPathECS', 'C569537', 'nonParallel', 'promin'] },
           () => {
             cy.then(() => {
               // Precondition moved in `it` block to ensure `after` hook is always triggered

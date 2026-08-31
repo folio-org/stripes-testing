@@ -134,8 +134,8 @@ describe('MARC Bibliographic Validation Rules - Update Subfield Code of Local Fi
   });
 
   it(
-    'C511225 Update Subfield Code of Local Field with duplicate "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C511225', 'spitfire'] },
+    'C511225 Update Subfield Code of Local Field with duplicate "label" for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C511225', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

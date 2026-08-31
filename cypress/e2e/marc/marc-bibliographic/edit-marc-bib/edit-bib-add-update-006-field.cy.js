@@ -62,8 +62,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C343205 Edit MARC 006 tag of "MARC bibliographic" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C343205'] },
+        'C343205 Edit MARC 006 tag of "MARC bibliographic" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C343205'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

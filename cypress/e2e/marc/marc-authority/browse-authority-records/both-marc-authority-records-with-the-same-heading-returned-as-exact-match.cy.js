@@ -75,8 +75,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C442833 Both MARC authority records with the same heading are returned as exact match via browse (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C442833'] },
+        'C442833 Both MARC authority records with the same heading are returned as exact match via browse (promin)',
+        { tags: ['criticalPath', 'promin', 'C442833'] },
         () => {
           browseValues.forEach((browseValue) => {
             MarcAuthorities.searchBeats(browseValue.title);

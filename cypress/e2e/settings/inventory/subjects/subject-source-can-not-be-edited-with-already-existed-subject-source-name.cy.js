@@ -63,8 +63,8 @@ describe('Inventory', () => {
       });
 
       it(
-        "C543864 Check that Subject source can't be edited with already existed subject source name (folijet)",
-        { tags: ['extendedPath', 'folijet', 'C543864'] },
+        "C543864 Check that Subject source can't be edited with already existed subject source name (promin)",
+        { tags: ['extendedPath', 'promin', 'C543864'] },
         () => {
           SubjectSources.verifySubjectSourceExists(
             firstLocalSubjectSource.name,

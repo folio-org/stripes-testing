@@ -132,8 +132,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C477594 Identifier - Verify "Preview of record matched" when uploading valid Users identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C477594'] },
+        'C477594 Identifier - Verify "Preview of record matched" when uploading valid Users identifiers in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C477594'] },
         () => {
           const testParams = [
             {

@@ -161,8 +161,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C350724 Edit the created MARC holdings record via quickmarc multiple times (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C350724'] },
+        'C350724 Edit the created MARC holdings record via quickmarc multiple times (promin)',
+        { tags: ['extendedPath', 'promin', 'C350724'] },
         () => {
           InventoryInstances.searchByTitle(recordId);
           InventoryInstances.selectInstanceById(recordId);

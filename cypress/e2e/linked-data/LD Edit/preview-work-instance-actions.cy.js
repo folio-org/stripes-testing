@@ -21,7 +21,7 @@ import {
 
 let user;
 
-describe('Citation: check work / instance preview and actions', () => {
+describe('Promin: check work / instance preview and actions', () => {
   const testData = {
     marcFilePath: 'marcFileForC423954.mrc',
     modifiedMarcFile: `C423954 editedMarcFile${getRandomPostfix()}.mrc`,
@@ -83,8 +83,8 @@ describe('Citation: check work / instance preview and actions', () => {
   });
 
   it(
-    'C523770 Marigold - Preview panel for Work / Instance by clicking title. Actions dropdown for Work / Instance (citation)',
-    { tags: ['criticalPath', 'citation', 'C523770', 'marigold'] },
+    'C523770 Marigold - Preview panel for Work / Instance by clicking title. Actions dropdown for Work / Instance (promin)',
+    { tags: ['criticalPath', 'promin', 'C523770', 'marigold'] },
     () => {
       // Import inventory work and instance
       InventoryInstances.searchByTitle(resourceData.inventoryWorkTitle);

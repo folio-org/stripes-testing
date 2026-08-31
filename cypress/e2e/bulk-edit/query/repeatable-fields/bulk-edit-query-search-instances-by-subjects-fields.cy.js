@@ -141,8 +141,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C808477 Search instances by Subjects fields (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C808477'] },
+        'C808477 Search instances by Subjects fields (athena)',
+        { tags: ['criticalPath', 'athena', 'C808477'] },
         () => {
           // Map subjects data to UI format for verification
           const mappedInstancesDataToUIView = testInstancesData.map((instance) => ({

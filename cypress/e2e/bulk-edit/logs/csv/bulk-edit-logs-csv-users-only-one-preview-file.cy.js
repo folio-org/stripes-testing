@@ -56,8 +56,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C422005 Only one file with the preview of proposed changes is downloaded from Logs (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C422005'] },
+        'C422005 Only one file with the preview of proposed changes is downloaded from Logs (athena)',
+        { tags: ['extendedPath', 'athena', 'C422005'] },
         () => {
           // Step 1-3: Open Bulk edit, select Users => User UUIDs, upload UUIDs file.
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');

@@ -61,8 +61,8 @@ describe('Inventory', () => {
       };
 
       it(
-        'C405563 (CONSORTIA) Verify the action for creating new local records for Member tenant (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C405563'] },
+        'C405563 (CONSORTIA) Verify the action for creating new local records for Member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C405563'] },
         () => {
           verifySearchAndFilterPane();
           const InventoryNewInstance = InventoryInstances.addNewInventory();

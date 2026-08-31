@@ -72,8 +72,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375167 Save "MARC authority" record with wrong tag value and deleted field (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C375167'] },
+        'C375167 Save "MARC authority" record with wrong tag value and deleted field (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C375167'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.searchInput);
           MarcAuthorities.selectFirstRecord();

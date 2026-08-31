@@ -65,8 +65,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Local Field Invali
   });
 
   it(
-    'C490948 Cannot update Local Field with invalid value in "repeatable" field for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C490948', 'spitfire'] },
+    'C490948 Cannot update Local Field with invalid value in "repeatable" field for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C490948', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

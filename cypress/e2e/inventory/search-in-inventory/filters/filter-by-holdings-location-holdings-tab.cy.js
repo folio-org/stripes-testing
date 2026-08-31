@@ -77,8 +77,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476751 Filter "Instance" records by "Holdings permanent location" facet (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C476751'] },
+        'C476751 Filter "Instance" records by "Holdings permanent location" facet (promin)',
+        { tags: ['criticalPath', 'promin', 'C476751'] },
         () => {
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();

@@ -55,8 +55,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C552484 Check the subject type and source settings on Duplicate MARC Instance page (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C552484'] },
+      'C552484 Check the subject type and source settings on Duplicate MARC Instance page (promin)',
+      { tags: ['extendedPath', 'promin', 'C552484'] },
       () => {
         // Step 1: Search for MARC instance, open detail view
         InventoryInstances.searchByTitle(testData.instanceId);

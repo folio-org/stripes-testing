@@ -73,8 +73,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466153 Search by "Classification, normalized" search option using queries with spaces (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'C466153'] },
+      'C466153 Search by "Classification, normalized" search option using queries with spaces (promin)',
+      { tags: ['criticalPathFlaky', 'promin', 'C466153'] },
       () => {
         testData.searchQueries.forEach((query) => {
           cy.ifConsortia(true, () => {

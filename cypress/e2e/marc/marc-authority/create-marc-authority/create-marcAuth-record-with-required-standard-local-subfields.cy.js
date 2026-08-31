@@ -75,8 +75,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514950 Create MARC authority record with required standard / local subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514950'] },
+        'C514950 Create MARC authority record with required standard / local subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514950'] },
         () => {
           cy.then(() => {
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C514950_');

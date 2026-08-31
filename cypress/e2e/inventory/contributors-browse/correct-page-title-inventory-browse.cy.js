@@ -37,8 +37,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C423413 Correct page title in Inventory Browse (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423413'] },
+      'C423413 Correct page title in Inventory Browse (promin)',
+      { tags: ['extendedPath', 'promin', 'C423413'] },
       () => {
         // Navigate to Inventory app and switch to Browse tab
         InventorySearchAndFilter.switchToBrowseTab();

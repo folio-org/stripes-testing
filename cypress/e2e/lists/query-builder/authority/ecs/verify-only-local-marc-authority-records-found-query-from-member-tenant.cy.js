@@ -97,8 +97,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C1312669 Verify that only Local MARC authority records are found by query from Member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C1312669'] },
+          'C1312669 Verify that only Local MARC authority records are found by query from Member tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C1312669'] },
           () => {
             // Login to College tenant (user's primary affiliation)
             cy.setTenant(Affiliations.College);

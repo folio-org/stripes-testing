@@ -119,8 +119,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C388552 Add subfield "$9" in the fields before clicking on "Link headings" button when edit "MARC bib" with saved linked fields (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C388552'] },
+          'C388552 Add subfield "$9" in the fields before clicking on "Link headings" button when edit "MARC bib" with saved linked fields (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C388552'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

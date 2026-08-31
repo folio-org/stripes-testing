@@ -372,8 +372,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C389575 Verify "Quick export" from instance detail view (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C389575'] },
+    'C389575 Verify "Quick export" from instance detail view (athena)',
+    { tags: ['extendedPath', 'athena', 'C389575'] },
     () => {
       // Step 1: Navigate to Inventory app
       InventorySearchAndFilter.waitLoading();

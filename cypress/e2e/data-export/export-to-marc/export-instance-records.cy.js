@@ -63,8 +63,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C9288 Export small number of instance records - default instance mapping profile (firebird)',
-      { tags: ['smoke', 'firebird', 'C9288'] },
+      'C9288 Export small number of instance records - default instance mapping profile (athena)',
+      { tags: ['smoke', 'athena', 'C9288'] },
       () => {
         ExportFileHelper.uploadFile(fileName);
         ExportFileHelper.exportWithDefaultJobProfile(fileName);

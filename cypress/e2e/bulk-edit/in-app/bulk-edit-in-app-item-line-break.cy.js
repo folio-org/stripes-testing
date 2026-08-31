@@ -83,8 +83,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C399086 Verify Previews for the number of Items records if the record has a field with line breaks (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C399086'] },
+      'C399086 Verify Previews for the number of Items records if the record has a field with line breaks (athena)',
+      { tags: ['criticalPath', 'athena', 'C399086'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
           'Items',

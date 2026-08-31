@@ -48,8 +48,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C359198 API request | Verify that search for "Instance" record by "identifierTypeId" and "identifiers.value" values will succeed. (spitfire)',
-      { tags: ['extendedPath', 'backend', 'spitfire', 'C359198'] },
+      'C359198 API request | Verify that search for "Instance" record by "identifierTypeId" and "identifiers.value" values will succeed. (promin)',
+      { tags: ['extendedPath', 'backend', 'promin', 'C359198'] },
       () => {
         cy.recurse(
           () => {

@@ -75,8 +75,8 @@ describe('MARC Authority Validation Rules - Update Subfield of Local field API',
   });
 
   it(
-    'C511236 Update Subfield of Local field for MARC authority spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C511236', 'spitfire'] },
+    'C511236 Update Subfield of Local field for MARC authority spec (API) (promin)',
+    { tags: ['criticalPath', 'C511236', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

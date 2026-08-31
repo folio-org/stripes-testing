@@ -28,8 +28,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C2356 Upload a file that does not have a file extension SETTING (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C2356'] },
+      'C2356 Upload a file that does not have a file extension SETTING (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C2356'] },
       () => {
         const filePathWithNotExistingFileExtension = 'file.txt';
         const fileNameWithNotExistingFileExtension = `C2356 autotestFile${getRandomPostfix()}.txt`;

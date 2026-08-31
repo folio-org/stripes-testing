@@ -136,8 +136,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C514883 Cannot create Local MARC authority record with value in "010 $a" subfield which matches to other Shared, Local record "010 $a", "010 $z" fields when duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C514883'] },
+          'C514883 Cannot create Local MARC authority record with value in "010 $a" subfield which matches to other Shared, Local record "010 $a", "010 $z" fields when duplicate LCCN check is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C514883'] },
           () => {
             // Step 1: Click on "Actions" button in second pane >> Select "+ New" option
             MarcAuthorities.clickActionsAndNewAuthorityButton();

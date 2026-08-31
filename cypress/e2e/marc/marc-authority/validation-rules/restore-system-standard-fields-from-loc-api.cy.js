@@ -98,8 +98,8 @@ describe('MARC Authority Validation Rules - Restore System and Standard Fields f
   });
 
   it(
-    "C494349 Restore System and Standard validation rules for MARC authority's Fields from LOC (API) (spitfire)",
-    { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C494349'] },
+    "C494349 Restore System and Standard validation rules for MARC authority's Fields from LOC (API) (promin)",
+    { tags: ['extendedPath', 'promin', 'nonParallel', 'C494349'] },
     () => {
       // Preconditions: create local field and modify system/standard fields
       cy.then(() => {

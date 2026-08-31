@@ -38,8 +38,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C353644 Apply "Name Type" filter to the browse result list (spitfire) (TaaS)',
-      { tags: ['criticalPathBroken', 'spitfire', 'C353644'] },
+      'C353644 Apply "Name Type" filter to the browse result list (promin) (TaaS)',
+      { tags: ['criticalPathBroken', 'promin', 'C353644'] },
       () => {
         BrowseContributors.clickBrowseBtn();
         InventorySearchAndFilter.verifyKeywordsAsDefault();

@@ -32,8 +32,8 @@ describe('Permissions', () => {
     });
 
     it(
-      'C1223 Users: Can send create/reset password link (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1223'] },
+      'C1223 Users: Can send create/reset password link (promin)',
+      { tags: ['extendedPath', 'promin', 'C1223'] },
       () => {
         cy.login(testUser.username, testUser.password);
         TopMenuNavigation.verifyAppButtonShown(APPLICATION_NAMES.INVENTORY);

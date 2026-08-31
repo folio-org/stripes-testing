@@ -57,8 +57,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C446042 The output from the “contains” query contains at least all of the results from the “==” query (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C446042'] },
+      'C446042 The output from the “contains” query contains at least all of the results from the “==” query (athena)',
+      { tags: ['extendedPath', 'athena', 'C446042'] },
       () => {
         // Step 1: Create new list
         Lists.openNewListPane();

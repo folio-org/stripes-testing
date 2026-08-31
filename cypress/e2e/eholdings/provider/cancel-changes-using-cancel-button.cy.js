@@ -30,8 +30,8 @@ describe('eHoldings', () => {
       Users.deleteViaApi(userId);
     });
     it(
-      'C423457 Cancel changes made in "Provider" record using "Cancel" button (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423457'] },
+      'C423457 Cancel changes made in "Provider" record using "Cancel" button (promin)',
+      { tags: ['extendedPath', 'promin', 'C423457'] },
       () => {
         EHoldingsProvidersSearch.byProvider(specialProvider);
         EHoldingsProviders.viewProvider();

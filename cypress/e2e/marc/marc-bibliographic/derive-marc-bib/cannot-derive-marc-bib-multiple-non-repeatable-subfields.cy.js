@@ -249,8 +249,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514921 Cannot derive MARC bib record with multiple not-repeatable standard / local subfields in Standard and Local fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C514921', 'nonParallel'] },
+        'C514921 Cannot derive MARC bib record with multiple not-repeatable standard / local subfields in Standard and Local fields (promin)',
+        { tags: ['extendedPath', 'promin', 'C514921', 'nonParallel'] },
         () => {
           // Step 1: Click on "Actions" button >> Select "Derive new MARC bibliographic record" option
           InventoryInstances.searchByTitle(createdInstanceId);

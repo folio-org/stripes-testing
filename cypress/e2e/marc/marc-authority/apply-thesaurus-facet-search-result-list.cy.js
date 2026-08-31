@@ -144,8 +144,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C409494 Apply "Thesaurus" facet to the "MARC authority" search result list (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C409494'] },
+        'C409494 Apply "Thesaurus" facet to the "MARC authority" search result list (promin)',
+        { tags: ['extendedPath', 'promin', 'C409494'] },
         () => {
           // Steps 1-2: Search for records and verify results are displayed
           MarcAuthoritiesSearch.searchBy('Keyword', testData.searchQuery);

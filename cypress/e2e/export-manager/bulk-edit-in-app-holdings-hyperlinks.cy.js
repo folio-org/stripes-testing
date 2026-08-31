@@ -62,7 +62,7 @@ describe.skip('Export Manager', () => {
   });
 
   it(
-    'C365104 Verify hyperlink on the "JobID" column -- Holdings in app approach (firebird) (TaaS)',
+    'C365104 Verify hyperlink on the "JobID" column -- Holdings in app approach (athena) (TaaS)',
     { tags: [] },
     () => {
       BulkEditSearchPane.checkHoldingsRadio();

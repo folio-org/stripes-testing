@@ -86,8 +86,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C375146 Verify the modal window for ISRI In inventory instance details menu for single target profile (update) (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C375146'] },
+      'C375146 Verify the modal window for ISRI In inventory instance details menu for single target profile (update) (promin)',
+      { tags: ['criticalPath', 'promin', 'C375146'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
         cy.wait(1000);

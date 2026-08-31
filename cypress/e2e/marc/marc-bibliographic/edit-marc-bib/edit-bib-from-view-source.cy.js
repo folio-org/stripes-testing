@@ -48,8 +48,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C543798 Edit "MARC bibliographic" record from "View source" pane in "Inventory" app (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C543798'] },
+        'C543798 Edit "MARC bibliographic" record from "View source" pane in "Inventory" app (promin)',
+        { tags: ['extendedPath', 'promin', 'C543798'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

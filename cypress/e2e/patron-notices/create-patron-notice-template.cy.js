@@ -22,8 +22,8 @@ describe('Patron notices', () => {
     });
 
     it(
-      'C199656 Create notice template (volaris)',
-      { tags: ['smoke', 'volaris', 'C199656'] },
+      'C199656 Create notice template (vega)',
+      { tags: ['smoke', 'vega', 'C199656'] },
       () => {
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();
@@ -36,8 +36,8 @@ describe('Patron notices', () => {
     );
 
     it(
-      'C356783, C357005 Notice template validations (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C356783'] },
+      'C356783, C357005 Notice template validations (vega)',
+      { tags: ['extendedPath', 'vega', 'C356783'] },
       () => {
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();

@@ -54,8 +54,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C656297 Check "Set for deletion" checkbox in "Edit instance" for MARC records (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C656297'] },
+      'C656297 Check "Set for deletion" checkbox in "Edit instance" for MARC records (promin)',
+      { tags: ['criticalPath', 'promin', 'C656297'] },
       () => {
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();

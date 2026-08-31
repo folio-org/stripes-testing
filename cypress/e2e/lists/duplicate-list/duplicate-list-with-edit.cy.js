@@ -56,8 +56,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C423603 C423601 Duplicate list is saved with edits (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C423603', 'C423601'] },
+      'C423603 C423601 Duplicate list is saved with edits (athena)',
+      { tags: ['criticalPath', 'athena', 'C423603', 'C423601'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

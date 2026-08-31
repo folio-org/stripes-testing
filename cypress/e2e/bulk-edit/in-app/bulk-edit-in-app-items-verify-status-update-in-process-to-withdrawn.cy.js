@@ -166,8 +166,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C594355 Verify update of Item records from "In Process", "Lost and paid" statuses to "Withdrawn" status (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C594355'] },
+      'C594355 Verify update of Item records from "In Process", "Lost and paid" statuses to "Withdrawn" status (athena)',
+      { tags: ['criticalPath', 'athena', 'C594355'] },
       () => {
         scenarios.forEach((scenario) => {
           // Determine fileName based on scenario type

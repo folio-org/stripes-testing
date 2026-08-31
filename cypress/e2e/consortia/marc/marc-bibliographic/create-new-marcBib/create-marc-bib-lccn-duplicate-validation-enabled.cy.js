@@ -112,8 +112,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C514877 Duplicate LCCN ("010 $a") prevents Shared MARC bib record creation when check is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C514877'] },
+          'C514877 Duplicate LCCN ("010 $a") prevents Shared MARC bib record creation when check is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C514877'] },
           () => {
             // Step 1: Click on "Actions" - "+ New MARC bibliographic record" option
             InventoryInstance.newMarcBibRecord();

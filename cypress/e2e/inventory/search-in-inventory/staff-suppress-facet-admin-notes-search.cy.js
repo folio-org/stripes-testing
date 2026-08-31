@@ -102,8 +102,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446031 Staff suppress facet is off by default when user has permission to use facet (search by "Instance administrative notes") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C446031'] },
+        'C446031 Staff suppress facet is off by default when user has permission to use facet (search by "Instance administrative notes") (promin)',
+        { tags: ['extendedPath', 'promin', 'C446031'] },
         () => {
           // Verify we're on Instance tab and Search tab by default
           InventorySearchAndFilter.instanceTabIsDefault();

@@ -11,8 +11,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C196755 Selecting records for quick export (firebird)',
-      { tags: ['smoke', 'firebird', 'C196755'] },
+      'C196755 Selecting records for quick export (athena)',
+      { tags: ['smoke', 'athena', 'C196755'] },
       () => {
         const selectedRecords = 2;
 
@@ -23,8 +23,8 @@ describe('Data Export', () => {
     );
 
     it(
-      'C196754 Show selected records (firebird)',
-      { tags: ['smoke', 'firebird', 'C196754'] },
+      'C196754 Show selected records (athena)',
+      { tags: ['smoke', 'athena', 'C196754'] },
       () => {
         const selectedRecords = 3;
 
@@ -40,8 +40,8 @@ describe('Data Export', () => {
     );
 
     it(
-      'C196756 Change selected records (firebird)',
-      { tags: ['smoke', 'firebird', 'C196756'] },
+      'C196756 Change selected records (athena)',
+      { tags: ['smoke', 'athena', 'C196756'] },
       () => {
         const selectedRecords = 3;
         const unselectedRecords = 1;

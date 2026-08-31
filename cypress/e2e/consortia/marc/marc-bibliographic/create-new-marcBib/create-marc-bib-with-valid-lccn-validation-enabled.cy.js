@@ -47,8 +47,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569553 Create a new MARC bib record with valid LCCN when "LCCN structure validation" is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C569553'] },
+          'C569553 Create a new MARC bib record with valid LCCN when "LCCN structure validation" is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C569553'] },
           () => {
             // Step 1: Click on "Actions" - "+ New MARC bibliographic record" option
             InventoryInstance.newMarcBibRecord();

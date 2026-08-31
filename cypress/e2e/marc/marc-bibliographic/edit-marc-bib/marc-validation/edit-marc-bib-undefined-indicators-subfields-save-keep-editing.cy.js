@@ -102,8 +102,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514911 Edit MARC bib record with undefined Indicators / Subfield codes in Standard and Local fields when "Undefined" rules are enabled (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C514911', 'nonParallel'] },
+        'C514911 Edit MARC bib record with undefined Indicators / Subfield codes in Standard and Local fields when "Undefined" rules are enabled (promin)',
+        { tags: ['criticalPath', 'promin', 'C514911', 'nonParallel'] },
         () => {
           // Step 1: Open the instance and start editing
           InventoryInstances.searchByTitle(createdRecordIDs[0]);

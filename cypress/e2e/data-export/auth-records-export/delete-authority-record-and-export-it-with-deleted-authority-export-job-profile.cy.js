@@ -82,8 +82,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C446015 Delete Authority record and export it with Deleted authority export job profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C446015'] },
+      'C446015 Delete Authority record and export it with Deleted authority export job profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C446015'] },
       () => {
         // Step 1-3: Delete the MARC authority record
         MarcAuthorities.searchBeats(authorityInstance.title);

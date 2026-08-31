@@ -165,8 +165,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476820 "Select Instance" plugin | Filter "Instance" records by "Holdings permanent location" facet in "Item" tab (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476820'] },
+        'C476820 "Select Instance" plugin | Filter "Instance" records by "Holdings permanent location" facet in "Item" tab (promin)',
+        { tags: ['extendedPath', 'promin', 'C476820'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(locationAccordionName);
           SelectInstanceModal.checkOptionsWithCountersExistInAccordion(locationAccordionName);

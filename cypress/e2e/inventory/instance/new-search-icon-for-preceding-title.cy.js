@@ -50,8 +50,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C496125 Check new search icon for Preceding title (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C496125'] },
+      'C496125 Check new search icon for Preceding title (promin)',
+      { tags: ['criticalPath', 'promin', 'C496125'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();

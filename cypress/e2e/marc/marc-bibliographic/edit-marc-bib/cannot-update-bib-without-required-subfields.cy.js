@@ -95,8 +95,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514914 Cannot update MARC bib record without required standard / local subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514914'] },
+        'C514914 Cannot update MARC bib record without required standard / local subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514914'] },
         () => {
           cy.then(() => {
             toggleAllUndefinedValidationRules(bibSpecId, { enable: false });

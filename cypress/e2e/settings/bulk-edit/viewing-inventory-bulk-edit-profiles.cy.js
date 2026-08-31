@@ -163,8 +163,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C740202 Viewing Inventory bulk edit profiles (firebird)',
-      { tags: ['smoke', 'firebird', 'C740202'] },
+      'C740202 Viewing Inventory bulk edit profiles (athena)',
+      { tags: ['smoke', 'athena', 'C740202'] },
       () => {
         // Step 1: Click "Bulk edit" option in "Settings" pane
         SettingsPane.selectSettingsTab(APPLICATION_NAMES.BULK_EDIT);

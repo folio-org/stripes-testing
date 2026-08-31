@@ -84,8 +84,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C380578 verb=ListIdentifiers: Verify that Instance FOLIO is retrieved in case its Item and Holdings are deleted (marc21_withholdings) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C380578', 'nonParallel'] },
+      'C380578 verb=ListIdentifiers: Verify that Instance FOLIO is retrieved in case its Item and Holdings are deleted (marc21_withholdings) (athena)',
+      { tags: ['extendedPath', 'athena', 'C380578', 'nonParallel'] },
       () => {
         beforeDeletionTimestamp = DateTools.getCurrentDateForOaiPmh();
 

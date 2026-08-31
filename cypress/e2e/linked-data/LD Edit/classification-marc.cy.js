@@ -23,7 +23,7 @@ import {
 
 let user;
 
-describe('Citation: check classification number MARC codes', () => {
+describe('Promin: check classification number MARC codes', () => {
   const testData = {
     workId: null,
     marcFilePath: 'marcFileForC490913.mrc',
@@ -167,8 +167,8 @@ describe('Citation: check classification number MARC codes', () => {
   });
 
   it(
-    'C490913 Marigold - Verify the Classification numbers section/ Inventory/ Marigold/ View MARC (citation)',
-    { tags: ['criticalPath', 'citation', 'C490913', 'marigold'] },
+    'C490913 Marigold - Verify the Classification numbers section/ Inventory/ Marigold/ View MARC (promin)',
+    { tags: ['criticalPath', 'promin', 'C490913', 'marigold'] },
     () => {
       // Edit instance from Inventory
       InventoryInstances.searchByTitle(resourceData.inventoryTitle);

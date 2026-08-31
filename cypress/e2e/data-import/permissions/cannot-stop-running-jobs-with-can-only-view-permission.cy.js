@@ -41,8 +41,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C356788 A user cannot stop running jobs with "Data import: Can view only" permission (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C356788'] },
+      'C356788 A user cannot stop running jobs with "Data import: Can view only" permission (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C356788'] },
       () => {
         // upload a marc file
         DataImport.verifyUploadState();

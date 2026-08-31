@@ -173,8 +173,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C401729 Check the "Held by" facet for search from "Central" tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C401729'] },
+          'C401729 Check the "Held by" facet for search from "Central" tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C401729'] },
           () => {
             InventorySearchAndFilter.verifyAccordionExistance(heldbyAccordionName);
             InventorySearchAndFilter.clickAccordionByName(heldbyAccordionName);

@@ -210,8 +210,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C410775 Derive new Local MARC bib record from shadow Instance with "MARC" source and link it in Member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C410775'] },
+        'C410775 Derive new Local MARC bib record from shadow Instance with "MARC" source and link it in Member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C410775'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstance.checkPresentedText(testData.instanceTitle);

@@ -97,8 +97,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476779 "Select Instance" plugin | Filter "Instance" records by "Language" facet (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476779'] },
+        'C476779 "Select Instance" plugin | Filter "Instance" records by "Language" facet (promin)',
+        { tags: ['extendedPath', 'promin', 'C476779'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(languageAccordionName);
           SelectInstanceModal.checkOptionsWithCountersExistInAccordion(languageAccordionName);

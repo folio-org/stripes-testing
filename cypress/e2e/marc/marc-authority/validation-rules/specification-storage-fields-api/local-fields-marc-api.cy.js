@@ -45,8 +45,8 @@ describe('Specification Storage - Create Field API', () => {
   });
 
   it(
-    'C494354 Create Local Field (not repeatable, not required, not deprecated) for MARC authority spec (API) (spitfire)',
-    { tags: ['C494354', 'criticalPath', 'spitfire'] },
+    'C494354 Create Local Field (not repeatable, not required, not deprecated) for MARC authority spec (API) (promin)',
+    { tags: ['C494354', 'criticalPath', 'promin'] },
     () => {
       const payload = {
         ...createFieldPayload,
@@ -69,8 +69,8 @@ describe('Specification Storage - Create Field API', () => {
   );
 
   it(
-    'C494355 Create Local Field (not repeatable, not required, not deprecated selected as default) for MARC authority spec (API) (spitfire)',
-    { tags: ['C494355', 'criticalPath', 'spitfire'] },
+    'C494355 Create Local Field (not repeatable, not required, not deprecated selected as default) for MARC authority spec (API) (promin)',
+    { tags: ['C494355', 'criticalPath', 'promin'] },
     () => {
       const payload = {
         ...createFieldPayload,
@@ -93,8 +93,8 @@ describe('Specification Storage - Create Field API', () => {
   );
 
   it(
-    'C494353 Create Local Field (repeatable, required, deprecated) for MARC authority spec (API) (spitfire)',
-    { tags: ['C494353', 'extendedPathFlaky', 'spitfire', 'nonParallel'] },
+    'C494353 Create Local Field (repeatable, required, deprecated) for MARC authority spec (API) (promin)',
+    { tags: ['C494353', 'extendedPathFlaky', 'promin', 'nonParallel'] },
     () => {
       const payload = {
         ...createFieldPayload,
@@ -121,8 +121,8 @@ describe('Specification Storage - Create Field API', () => {
   );
 
   it(
-    'C494362 Update Local Field for MARC authority spec (API) (spitfire)',
-    { tags: ['C494362', 'criticalPath', 'spitfire'] },
+    'C494362 Update Local Field for MARC authority spec (API) (promin)',
+    { tags: ['C494362', 'criticalPath', 'promin'] },
     () => {
       // Step 1: Create a Local MARC field with all flags true
       const initialPayload = {

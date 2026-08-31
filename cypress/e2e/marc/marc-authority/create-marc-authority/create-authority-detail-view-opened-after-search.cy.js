@@ -73,8 +73,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C451569 Detail view of created "MARC authority" record is open automatically after creation when user is on search result list with one result (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C451569'] },
+        'C451569 Detail view of created "MARC authority" record is open automatically after creation when user is on search result list with one result (promin)',
+        { tags: ['extendedPath', 'promin', 'C451569'] },
         () => {
           MarcAuthorities.searchBeats(existingAuthorityHeading);
           MarcAuthorities.selectTitle(existingAuthorityHeading);

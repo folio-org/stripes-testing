@@ -262,8 +262,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411661 Search for Shared/Local records by "All" search option from "Member" tenant (Instance, Holdings, Item tabs) (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411661'] },
+        'C411661 Search for Shared/Local records by "All" search option from "Member" tenant (Instance, Holdings, Item tabs) (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411661'] },
         () => {
           function searchAndVerify() {
             InventorySearchAndFilter.verifyResultPaneEmpty();

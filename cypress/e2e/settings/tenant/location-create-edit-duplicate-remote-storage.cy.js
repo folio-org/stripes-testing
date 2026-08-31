@@ -85,8 +85,8 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C566501 Verify create, edit, duplicate actions for Location with remote storage (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C566501'] },
+    'C566501 Verify create, edit, duplicate actions for Location with remote storage (athena)',
+    { tags: ['extendedPath', 'athena', 'C566501'] },
     () => {
       // Navigate to Settings > Tenant > Locations
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);

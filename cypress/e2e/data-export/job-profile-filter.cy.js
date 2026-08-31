@@ -124,8 +124,8 @@ describe('Data Export', () => {
       });
 
       it(
-        'C411724 Job profile filter (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C411724'] },
+        'C411724 Job profile filter (athena)',
+        { tags: ['extendedPath', 'athena', 'C411724'] },
         () => {
           // Step 1: Click on "Data export" app
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);

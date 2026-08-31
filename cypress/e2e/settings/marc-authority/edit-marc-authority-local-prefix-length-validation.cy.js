@@ -52,8 +52,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C440098 "Prefix" field length validation during editing of Local "Authority file" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C440098'] },
+        'C440098 "Prefix" field length validation during editing of Local "Authority file" (promin)',
+        { tags: ['extendedPath', 'promin', 'C440098'] },
         () => {
           ManageAuthorityFiles.clickEditButton(localAuthFile.name);
           ManageAuthorityFiles.editField(

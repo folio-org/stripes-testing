@@ -53,8 +53,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375183 GetRecord: Verify that MARC + FOLIO instances are retrieved in responce (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375183', 'nonParallel'] },
+      'C375183 GetRecord: Verify that MARC + FOLIO instances are retrieved in responce (athena)',
+      { tags: ['extendedPath', 'athena', 'C375183', 'nonParallel'] },
       () => {
         OaiPmh.getRecordRequest(marcInstanceId).then((response) => {
           OaiPmh.verifyMarcField(

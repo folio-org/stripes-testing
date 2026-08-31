@@ -52,8 +52,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C1030056 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to create locked job profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C1030056'] },
+      'C1030056 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to create locked job profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C1030056'] },
       () => {
         // Step 1: Click "New" button in the header of "Job profiles" pane
         ExportJobProfiles.goToJobProfilesTab();

@@ -170,8 +170,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C396366 Browsing call number types when call number, type specified in "Holdings" or "Item" (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C396366', 'eurekaPhase1'] },
+      'C396366 Browsing call number types when call number, type specified in "Holdings" or "Item" (promin)',
+      { tags: ['criticalPath', 'promin', 'C396366', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();

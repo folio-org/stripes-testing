@@ -288,8 +288,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C494095 Verify "Staff only" action for Items notes in Central tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C494095'] },
+        'C494095 Verify "Staff only" action for Items notes in Central tenant (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C494095'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
           BulkEditSearchPane.uploadFile(itemUUIDsFileName);

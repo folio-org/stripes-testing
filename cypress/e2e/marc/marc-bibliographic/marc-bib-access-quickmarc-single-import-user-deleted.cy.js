@@ -53,8 +53,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C358993 Verify that 006 / 007 tag(s) do not persist if record overlaid does not contain the tag(s) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C358993'] },
+      'C358993 Verify that 006 / 007 tag(s) do not persist if record overlaid does not contain the tag(s) (promin)',
+      { tags: ['extendedPath', 'promin', 'C358993'] },
       () => {
         InventoryInstances.importWithOclc(testData.oclcNumber);
         InventoryInstance.waitLoading();

@@ -60,8 +60,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C503018 Cannot Create a new MARC holdings record with not valid value in "008" fields (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C503018'] },
+      'C503018 Cannot Create a new MARC holdings record with not valid value in "008" fields (promin)',
+      { tags: ['extendedPath', 'promin', 'C503018'] },
       () => {
         InventoryInstances.searchByTitle(instanceID);
         InventoryInstances.selectInstance();

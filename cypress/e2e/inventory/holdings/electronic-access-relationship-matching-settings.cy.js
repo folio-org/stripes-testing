@@ -49,8 +49,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C625 Electronic Access --> Relationship --> (Validate matching settings) (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C625'] },
+      'C625 Electronic Access --> Relationship --> (Validate matching settings) (promin)',
+      { tags: ['extendedPath', 'promin', 'C625'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.item.instanceName);
         InventorySearchAndFilter.selectViewHoldings();

@@ -127,8 +127,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350431 Verify appending subfields to Identifiers (CODEN, Report number, ISMN, Invalid ISMN, UPC, Invalid UPC) with repeated fields (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C350431'] },
+      'C350431 Verify appending subfields to Identifiers (CODEN, Report number, ISMN, Invalid ISMN, UPC, Invalid UPC) with repeated fields (athena)',
+      { tags: ['extendedPath', 'athena', 'C350431'] },
       () => {
         // Step 1: Go to the "Data Export" app (already logged in from before block)
         DataExportLogs.verifyDragAndDropAreaExists();

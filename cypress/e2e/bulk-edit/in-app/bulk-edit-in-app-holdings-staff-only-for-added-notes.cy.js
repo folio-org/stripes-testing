@@ -135,8 +135,8 @@ describe(
       });
 
       it(
-        'C466271 Verify Staff only checkbox for Added notes - holdings (firebird)',
-        { tags: ['smoke', 'firebird', 'C466271'] },
+        'C466271 Verify Staff only checkbox for Added notes - holdings (athena)',
+        { tags: ['smoke', 'athena', 'C466271'] },
         () => {
           BulkEditSearchPane.checkHoldingsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

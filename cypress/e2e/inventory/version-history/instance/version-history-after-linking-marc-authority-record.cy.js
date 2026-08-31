@@ -111,8 +111,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C656333 Check "Version history" after linking MARC authority record to Instance (folijet)',
-        { tags: ['extendedPath', 'folijet', 'C656333'] },
+        'C656333 Check "Version history" after linking MARC authority record to Instance (promin)',
+        { tags: ['extendedPath', 'promin', 'C656333'] },
         () => {
           InstanceRecordView.clickVersionHistoryButton();
           VersionHistorySection.waitLoading();

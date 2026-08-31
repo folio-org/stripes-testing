@@ -136,8 +136,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C397991 Remove "008" field from "MARC Holdings" record via Data Import and then add new "008" in UI (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C397991'] },
+      'C397991 Remove "008" field from "MARC Holdings" record via Data Import and then add new "008" in UI (promin)',
+      { tags: ['extendedPath', 'promin', 'C397991'] },
       () => {
         const todayDateYYMMDD = DateTools.getCurrentDateYYMMDD();
 

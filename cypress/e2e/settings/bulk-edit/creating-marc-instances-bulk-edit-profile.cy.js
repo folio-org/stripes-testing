@@ -57,8 +57,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C805764 Creating MARC instances bulk edit profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C805764'] },
+      'C805764 Creating MARC instances bulk edit profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C805764'] },
       () => {
         // Step 1: Click "Actions" menu button and select "New instances with source MARC bulk edit profile" option
         InstancesBulkEditProfilesPane.clickActionsButton();

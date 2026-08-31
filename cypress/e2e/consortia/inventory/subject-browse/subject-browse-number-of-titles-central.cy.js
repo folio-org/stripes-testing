@@ -64,8 +64,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C423584 "Number of titles" column counts unique Subjects from "Shared" Instances once, regardless of existing "Shadow" copies at member tenants (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C423584'] },
+        'C423584 "Number of titles" column counts unique Subjects from "Shared" Instances once, regardless of existing "Shadow" copies at member tenants (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C423584'] },
         () => {
           cy.resetTenant();
           cy.login(user.username, user.password, {

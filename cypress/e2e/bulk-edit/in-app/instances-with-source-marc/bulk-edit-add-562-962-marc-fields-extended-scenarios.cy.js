@@ -167,8 +167,8 @@ describe(
       });
 
       it(
-        'C503099 Add MARC field (562, 962) - extended scenarios (MARC) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C503099'] },
+        'C503099 Add MARC field (562, 962) - extended scenarios (MARC) (athena)',
+        { tags: ['criticalPath', 'athena', 'C503099'] },
         () => {
           // Step 1: Check columns for Source and Copy and Version Identification note
           BulkEditActions.openActions();

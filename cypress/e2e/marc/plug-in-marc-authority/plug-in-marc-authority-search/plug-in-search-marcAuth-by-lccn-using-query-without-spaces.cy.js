@@ -105,8 +105,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C440114 MARC Authority plug-in | Search by "LCCN" option using a query without spaces when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeftBroken', 'C440114'] },
+        'C440114 MARC Authority plug-in | Search by "LCCN" option using a query without spaces when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (promin)',
+        { tags: ['criticalPath', 'promin', 'shiftLeftBroken', 'C440114'] },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();

@@ -48,8 +48,8 @@ describe('Lists', () => {
     });
 
     it(
-      "C451521 Verify that the operator 'null/empty' works correctly when editing the list (corsair)",
-      { tags: ['criticalPath', 'corsair', 'C451521'] },
+      "C451521 Verify that the operator 'null/empty' works correctly when editing the list (athena)",
+      { tags: ['criticalPath', 'athena', 'C451521'] },
       () => {
         // Step 1: Create new list with Organizations record type and open Build query form
         Lists.openNewListPane();

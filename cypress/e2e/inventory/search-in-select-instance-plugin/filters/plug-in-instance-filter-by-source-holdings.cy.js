@@ -110,8 +110,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476829 "Select Instance" plugin | Filter "Instance" records by "Source" filter on "Holdings" segment (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476829'] },
+        'C476829 "Select Instance" plugin | Filter "Instance" records by "Source" filter on "Holdings" segment (promin)',
+        { tags: ['extendedPath', 'promin', 'C476829'] },
         () => {
           InventorySearchAndFilter.verifyAccordionExistance(sourceAccordionName, true);
           cy.ifConsortia(true, () => {

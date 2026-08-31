@@ -60,8 +60,8 @@ describe('Settings', () => {
     });
 
     it(
-      'C407670 Verify the item status language in the instances item list when session locale is "German" (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C407670'] },
+      'C407670 Verify the item status language in the instances item list when session locale is "German" (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C407670'] },
       () => {
         TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
         Localization.clickChangeSessionLocalLanguage();

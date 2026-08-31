@@ -40,8 +40,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C566516 Edit Instance with empty "Date type" dropdown and empty "Date 1", "Date 2" fields (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C566516'] },
+      'C566516 Edit Instance with empty "Date type" dropdown and empty "Date 1", "Date 2" fields (promin)',
+      { tags: ['extendedPath', 'promin', 'C566516'] },
       () => {
         InstanceRecordView.waitLoading();
         InstanceRecordView.edit();

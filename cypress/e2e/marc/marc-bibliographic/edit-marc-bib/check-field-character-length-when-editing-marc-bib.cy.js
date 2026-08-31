@@ -54,8 +54,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C10936 Check for field character length when saving in quickMARC (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C10936'] },
+        'C10936 Check for field character length when saving in quickMARC (promin)',
+        { tags: ['extendedPath', 'promin', 'C10936'] },
         () => {
           InventoryInstances.searchByTitle(instanceId[0]);
           InventoryInstances.selectInstance();

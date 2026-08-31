@@ -51,8 +51,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C499628 Cannot save exisitng "MARC authority" record with multiple "008" fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C499628'] },
+        'C499628 Cannot save exisitng "MARC authority" record with multiple "008" fields (promin)',
+        { tags: ['criticalPath', 'promin', 'C499628'] },
         () => {
           MarcAuthorities.searchBy(keywordOption, marcAuthorityHeading);
           MarcAuthorities.select(createdAuthorityId);

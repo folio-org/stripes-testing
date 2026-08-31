@@ -77,7 +77,7 @@ describe('Inventory', () => {
 
     it(
       'C959220 API | Create multiple Items using POST /item-storage/batch/synchronous with empty fields',
-      { tags: ['criticalPath', 'spitfire', 'C959220'] },
+      { tags: ['criticalPath', 'promin', 'C959220'] },
       () => {
         // Step 1. Send POST ‘/items-storage/batch/synchronous’ with following body (with empty fields):
         const itemRecordsWithoutIdsOne = [

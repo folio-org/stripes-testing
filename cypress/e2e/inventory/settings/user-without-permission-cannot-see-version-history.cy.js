@@ -24,8 +24,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C655273 User without permission "Settings (Inventory): Can view and edit general settings" cannot see "Settings >> Inventory >> Version history" page (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C655273'] },
+        'C655273 User without permission "Settings (Inventory): Can view and edit general settings" cannot see "Settings >> Inventory >> Version history" page (promin)',
+        { tags: ['extendedPath', 'promin', 'C655273'] },
         () => {
           cy.login(testUser.username, testUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);

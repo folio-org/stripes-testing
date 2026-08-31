@@ -137,8 +137,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C365600 Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Cancel" button in editing window (100 field to 100). (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C365600'] },
+        'C365600 Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Cancel" button in editing window (100 field to 100). (promin)',
+        { tags: ['extendedPath', 'promin', 'C365600'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

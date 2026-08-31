@@ -138,8 +138,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C375256 Query search | Search by "Alternative title" field of linked "MARC Bib" records (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'C375256'] },
+      'C375256 Query search | Search by "Alternative title" field of linked "MARC Bib" records (promin)',
+      { tags: ['criticalPathFlaky', 'promin', 'C375256'] },
       () => {
         InventorySearchAndFilter.searchByParameter(
           testData.querySearchOption,

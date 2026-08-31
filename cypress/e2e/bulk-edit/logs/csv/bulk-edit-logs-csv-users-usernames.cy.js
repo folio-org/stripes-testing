@@ -44,8 +44,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C375216 Verify generated Logs files for Users CSV -- only errors (firebird)',
-        { tags: ['smoke', 'firebird', 'C375216'] },
+        'C375216 Verify generated Logs files for Users CSV -- only errors (athena)',
+        { tags: ['smoke', 'athena', 'C375216'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'Usernames');
           BulkEditSearchPane.uploadFile(invalidUsernamesFileName);

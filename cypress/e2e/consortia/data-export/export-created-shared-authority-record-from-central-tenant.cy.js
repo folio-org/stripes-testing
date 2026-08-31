@@ -81,8 +81,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C436898 C436899 Export of created Shared MARC authority record from Central and Member tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'C436898', 'C436899'] },
+      'C436898 C436899 Export of created Shared MARC authority record from Central and Member tenant (consortia) (promin)',
+      { tags: ['criticalPathECS', 'promin', 'C436898', 'C436899'] },
       () => {
         MarcAuthorities.clickActionsAndNewAuthorityButton();
         QuickMarcEditor.checkPaneheaderContains('New shared MARC authority record');

@@ -91,8 +91,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C360103 Editing same "MARC Holdings" record by 2 different users (use "Save & keep editing" button)) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C360103'] },
+      'C360103 Editing same "MARC Holdings" record by 2 different users (use "Save & keep editing" button)) (promin)',
+      { tags: ['extendedPath', 'promin', 'C360103'] },
       () => {
         // Steps 1-2: User A logs in, opens holdings record for editing
         cy.login(testData.userA.username, testData.userA.password, {

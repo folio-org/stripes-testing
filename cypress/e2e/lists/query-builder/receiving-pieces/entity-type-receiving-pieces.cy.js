@@ -17,8 +17,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C889720 Entity type - Receiving pieces (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C889720'] },
+        'C889720 Entity type - Receiving pieces (athena)',
+        { tags: ['extendedPath', 'athena', 'C889720'] },
         () => {
           // Step 1: Click on "New" button, Click on "Select record type" dropdown and select for the ET "Receiving pieces"
           Lists.openNewListPane();

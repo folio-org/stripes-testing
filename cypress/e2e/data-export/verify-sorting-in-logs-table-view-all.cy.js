@@ -321,8 +321,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C387482 Verify sorting in "Data export" logs table after clicking "View all" button (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C387482'] },
+    'C387482 Verify sorting in "Data export" logs table after clicking "View all" button (athena)',
+    { tags: ['extendedPath', 'athena', 'C387482'] },
     () => {
       // Step 1: Navigate to the "Data export" app by clicking button in the header. Click "View all" button in the "Logs" main pane
       DataExportViewAllLogs.openAllJobLogs();

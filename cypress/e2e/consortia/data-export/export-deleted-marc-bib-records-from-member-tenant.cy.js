@@ -246,8 +246,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C466285 ECS | Export deleted MARC bib records from Member tenant (consortia) (firebird)',
-      { tags: ['extendedPathECS', 'firebird', 'C466285'] },
+      'C466285 ECS | Export deleted MARC bib records from Member tenant (consortia) (athena)',
+      { tags: ['extendedPathECS', 'athena', 'C466285'] },
       () => {
         // Prepare list of record IDs that should be excluded from exports
         const excludedRecordIds = [

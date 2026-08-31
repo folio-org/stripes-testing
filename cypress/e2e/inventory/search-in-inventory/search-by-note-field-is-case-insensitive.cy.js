@@ -110,8 +110,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C466074 Search by "Note" field is case-insensitive (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C466074'] },
+        'C466074 Search by "Note" field is case-insensitive (promin)',
+        { tags: ['extendedPath', 'promin', 'C466074'] },
         () => {
           InventorySearchAndFilter.instanceTabIsDefault();
           cy.ifConsortia(true, () => {

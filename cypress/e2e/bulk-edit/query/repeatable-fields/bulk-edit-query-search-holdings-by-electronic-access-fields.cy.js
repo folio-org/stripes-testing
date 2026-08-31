@@ -243,8 +243,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C805787 Search holdings by Electronic access fields using AND operator (firebird)',
-        { tags: ['smoke', 'firebird', 'C805787'] },
+        'C805787 Search holdings by Electronic access fields using AND operator (athena)',
+        { tags: ['smoke', 'athena', 'C805787'] },
         () => {
           // Create expected holdings for verification
           const expectedHoldings = createExpectedHoldings(folioInstance.holdingHrids);

@@ -148,8 +148,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C523576 Save Shared MARC bib record with value in "010 $a" subfield which matches to other Shared, Local record "LCCNs", when duplicate LCCN check is disabled on Member, but enabled on Central tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C523576'] },
+          'C523576 Save Shared MARC bib record with value in "010 $a" subfield which matches to other Shared, Local record "LCCNs", when duplicate LCCN check is disabled on Member, but enabled on Central tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C523576'] },
           () => {
             // Step 0: User is on the detail view pane of Shared "MARC bibliographic" record
             InventorySearchAndFilter.clearDefaultHeldbyFilter();

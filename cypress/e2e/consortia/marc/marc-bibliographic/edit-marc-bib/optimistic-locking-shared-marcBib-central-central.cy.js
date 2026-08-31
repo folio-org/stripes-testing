@@ -79,8 +79,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C410827 Optimistic locking in Central tenant when shared "MARC Bib" record updated by another user in Central tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C410827'] },
+          'C410827 Optimistic locking in Central tenant when shared "MARC Bib" record updated by another user in Central tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C410827'] },
           () => {
             // Steps 1-2: User A logs in to Central tenant, opens record for editing
             cy.resetTenant();

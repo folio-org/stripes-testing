@@ -36,8 +36,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375218 Date input via date pickers in "Set date range for MARC authority headings updates (CSV) report" modal (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire', 'C375218'] },
+        'C375218 Date input via date pickers in "Set date range for MARC authority headings updates (CSV) report" modal (promin) (TaaS)',
+        { tags: ['criticalPath', 'promin', 'C375218'] },
         () => {
           MarcAuthorities.clickActionsAndReportsButtons();
           MarcAuthorities.fillReportModal('', tomorrow);
@@ -76,8 +76,8 @@ describe('MARC', () => {
       );
 
       it(
-        'C376606 Manual date input in "Set date range for MARC authority headings updates (CSV) report" modal (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C376606'] },
+        'C376606 Manual date input in "Set date range for MARC authority headings updates (CSV) report" modal (promin)',
+        { tags: ['criticalPath', 'promin', 'shiftLeft', 'C376606'] },
         () => {
           MarcAuthorities.clickActionsAndReportsButtons();
           MarcAuthorities.fillReportModal(today, '');

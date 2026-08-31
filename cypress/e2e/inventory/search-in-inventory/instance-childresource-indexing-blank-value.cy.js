@@ -150,8 +150,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C1003540 Verify ChildResource indexing when it has blank value (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C1003540'] },
+        'C1003540 Verify ChildResource indexing when it has blank value (promin)',
+        { tags: ['criticalPath', 'promin', 'C1003540'] },
         () => {
           BrowseCallNumber.waitForCallNumberToAppear(callNumberValue);
           BrowseClassifications.waitForClassificationNumberToAppear(classificationValue);

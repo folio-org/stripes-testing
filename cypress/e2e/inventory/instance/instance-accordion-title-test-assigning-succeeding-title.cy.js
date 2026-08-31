@@ -89,8 +89,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C9216 In Accordion Title --> Test assigning a Succeeding title (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C9216'] },
+      'C9216 In Accordion Title --> Test assigning a Succeeding title (promin)',
+      { tags: ['extendedPath', 'promin', 'C9216'] },
       () => {
         // Step 1: Find and open the instance, then edit it
         InventoryInstances.searchByTitle(testData.mainInstanceId);

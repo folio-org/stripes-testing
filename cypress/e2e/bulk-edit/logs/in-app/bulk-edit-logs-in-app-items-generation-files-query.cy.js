@@ -166,8 +166,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C436750 Verify generated Logs files for Items (Query - In app) (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C436750'] },
+        'C436750 Verify generated Logs files for Items (Query - In app) (athena)',
+        { tags: ['extendedPath', 'athena', 'C436750'] },
         () => {
           const itemIds = [instance.itemAvailable.id, instance.itemCheckedOut.id];
 

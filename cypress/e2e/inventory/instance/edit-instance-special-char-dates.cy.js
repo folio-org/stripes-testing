@@ -43,8 +43,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C552530 Edit Instance without selected "Date type" and fields "Date 1" and "Date 2" filled by values with special characters (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C552530'] },
+      'C552530 Edit Instance without selected "Date type" and fields "Date 1" and "Date 2" filled by values with special characters (promin)',
+      { tags: ['extendedPath', 'promin', 'C552530'] },
       () => {
         InstanceRecordView.waitLoading();
         InstanceRecordView.edit();

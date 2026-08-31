@@ -70,8 +70,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C409501 Edit "MARC Authority" record that has a heading 147, 148, 162, 180, 181, 182, 185 (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C409501'] },
+        'C409501 Edit "MARC Authority" record that has a heading 147, 148, 162, 180, 181, 182, 185 (promin)',
+        { tags: ['extendedPath', 'promin', 'C409501'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);

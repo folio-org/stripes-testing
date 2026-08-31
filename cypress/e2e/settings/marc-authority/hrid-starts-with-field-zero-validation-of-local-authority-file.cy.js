@@ -59,8 +59,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436867 "HRID starts with" field "zero" validation during editing of Local "Authority file" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C436867'] },
+        'C436867 "HRID starts with" field "zero" validation during editing of Local "Authority file" (promin)',
+        { tags: ['criticalPath', 'promin', 'C436867'] },
         () => {
           // 1 Click on the "Edit" (pencil) icon of "Local" authority file.
           ManageAuthorityFiles.clickEditButton(localAuthFile.name);

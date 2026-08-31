@@ -75,8 +75,8 @@ describe('Inventory', () => {
       });
 
       it(
-        "C580267 (CONSORTIA) Local Subject source can't be settled for shared instance (consortia) (folijet)",
-        { tags: ['extendedPathECS', 'folijet', 'C580267'] },
+        "C580267 (CONSORTIA) Local Subject source can't be settled for shared instance (consortia) (promin)",
+        { tags: ['extendedPathECS', 'promin', 'C580267'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);

@@ -95,8 +95,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468241 Check Dewey sorting during browsing for Classification using Dewey Decimal classification option (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C468241'] },
+      'C468241 Check Dewey sorting during browsing for Classification using Dewey Decimal classification option (promin)',
+      { tags: ['criticalPathFlaky', 'promin', 'nonParallel', 'C468241'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

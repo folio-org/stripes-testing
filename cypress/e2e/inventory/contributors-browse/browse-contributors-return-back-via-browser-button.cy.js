@@ -46,8 +46,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C353653 Return back to "Browse inventory" pane via the web-browser "Back" button (exact match query)(Spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C353653'] },
+      'C353653 Return back to "Browse inventory" pane via the web-browser "Back" button (exact match query)(Promin) (TaaS)',
+      { tags: ['criticalPath', 'promin', 'C353653'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();

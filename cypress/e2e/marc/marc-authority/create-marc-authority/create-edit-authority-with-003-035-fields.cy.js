@@ -72,8 +72,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C1045404 Create/Edit MARC authority record with 003 and 035 fields (no normalization) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C1045404'] },
+        'C1045404 Create/Edit MARC authority record with 003 and 035 fields (no normalization) (promin)',
+        { tags: ['criticalPath', 'promin', 'C1045404'] },
         () => {
           // Step 1: Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();
