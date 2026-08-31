@@ -16,6 +16,9 @@ export default {
   cannotApprovePayFundHasNoCurrentBudget(fundCode, FYCode) {
     return `Invoice cannot be approved and paid because Fund ${fundCode} has no current budget for fiscal year ${FYCode}.`;
   },
+  cannotApproveFundHasNoCurrentBudget(fundCode, FYCode) {
+    return `Invoice cannot be approved because Fund ${fundCode} has no current budget for fiscal year ${FYCode}.`;
+  },
   cannotApproveOrPayFundDistributionNot100Percent(invoiceLineNumber) {
     return `Invoice could not be approved or paid. The fund distribution total must be distributed by 100 percent in invoice line ${invoiceLineNumber}. Please update fund distribution details for that invoice line to continue.`;
   },

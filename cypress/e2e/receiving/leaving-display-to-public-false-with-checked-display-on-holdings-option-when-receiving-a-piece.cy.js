@@ -157,7 +157,7 @@ describe('Receiving', () => {
       Orders.selectFromResultsList(testData.order.poNumber);
       OrderDetails.waitLoading();
       Orders.receiveOrderViaActions();
-      Receiving.selectLinkFromResultsList();
+      Receiving.selectFromResultsList(testData.orderLine.titleOrPackage);
 
       // Step 3: Click on the piece and verify checkboxes presence and state
       Receiving.selectRecordInExpectedList();
