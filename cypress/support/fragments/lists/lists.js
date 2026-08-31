@@ -25,6 +25,7 @@ import {
   or,
   Pane,
   RadioButton,
+  SearchField,
   SelectionList,
   TextArea,
   TextField,
@@ -33,6 +34,7 @@ import {
 import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import ArrayUtils from '../../utils/arrays';
 import { poll } from '../../utils/polling';
+import SelectUser from '../users/modal/selectUser';
 
 const listInformationAccording = Accordion('List information');
 const queryAccordion = Accordion({ id: 'results-viewer-accordion' });
@@ -63,6 +65,9 @@ const visibilityAccordion = filterPane.find(Accordion('Visibility'));
 const recordTypesAccordion = filterPane.find(Accordion('Record types'));
 const sourceAccordion = filterPane.find(Accordion('Source'));
 const resetAllButton = filterPane.find(Button('Reset all'));
+const searchField = SearchField({ id: 'input-record-search' });
+const searchButton = filterPane.find(Button('Search'));
+const clearSearchButton = Button({ id: 'clickable-input-record-search-clear-field' });
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
 const editQueryButton = Button('Edit query');
 const resultViewerTable = MultiColumnList({ id: 'results-viewer-table' });
@@ -982,6 +987,14 @@ const UI = {
     cy.wait(1000);
   },
 
+  unselectActiveLists() {
+    cy.wait(1000);
+    cy.do(activeCheckbox.uncheckIfSelected());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+    cy.wait(1000);
+  },
+
   selectInactiveLists() {
     cy.wait(1000);
     cy.do(inactiveCheckbox.checkIfNotSelected());
@@ -1001,6 +1014,22 @@ const UI = {
   selectPrivateLists() {
     cy.wait(1000);
     cy.do(privateCheckbox.checkIfNotSelected());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+    cy.wait(1000);
+  },
+
+  selectSystemSource() {
+    cy.wait(1000);
+    cy.do(sourceAccordion.find(Checkbox('System')).checkIfNotSelected());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+    cy.wait(1000);
+  },
+
+  selectUserGeneratedSource() {
+    cy.wait(1000);
+    cy.do(sourceAccordion.find(Checkbox('User generated')).checkIfNotSelected());
     cy.wait(1000);
     this.waitForSpinnerToDisappear();
     cy.wait(1000);
@@ -1152,6 +1181,82 @@ const UI = {
 
   verifyResetAllButtonDisabled() {
     cy.expect(resetAllButton.has({ disabled: true }));
+  },
+
+  fillInSearchField(searchTerm) {
+    cy.do(searchField.fillIn(searchTerm));
+  },
+
+  pressEnterInSearchField() {
+    cy.get('#input-record-search').type('{enter}');
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+  },
+
+  clickOnSearchButton() {
+    cy.do(searchButton.click());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+  },
+
+  verifyListsPaneRecordsCount(count) {
+    let text;
+    if (count === 0) {
+      text = 'No records found';
+    } else if (count === 1) {
+      text = '1 record found';
+    } else {
+      text = `${count} records found`;
+    }
+    cy.get('[class^=paneHeader-]').contains(text).should('be.visible');
+  },
+
+  verifyNoResultsFoundForSearchTerm(searchTerm) {
+    cy.contains(
+      `No results found for "${searchTerm}". Please check your spelling and filters.`,
+    ).should('be.visible');
+  },
+
+  verifySearchFieldDisplayed() {
+    cy.expect(searchField.exists());
+  },
+
+  verifySearchFieldValue(value) {
+    cy.expect(searchField.has({ value }));
+  },
+
+  verifySearchFieldEmpty() {
+    cy.expect(searchField.has({ value: '' }));
+  },
+
+  verifySearchButtonEnabled() {
+    cy.expect(searchButton.has({ disabled: false }));
+  },
+
+  verifySearchButtonDisabled() {
+    cy.expect(searchButton.has({ disabled: true }));
+  },
+
+  verifyClearSearchButtonDisplayed() {
+    cy.expect(clearSearchButton.exists());
+  },
+
+  verifyClearSearchButtonAbsent() {
+    cy.expect(clearSearchButton.absent());
+  },
+
+  clickOnClearSearchButton() {
+    cy.do(clearSearchButton.click());
+  },
+
+  selectCreatedByFilter(userName) {
+    cy.do(Button({ id: 'created-by-filter-button' }).click());
+    SelectUser.findAndSelectUserInNameColumn(userName);
+  },
+
+  selectUpdatedByFilter(userName) {
+    cy.do(Button({ id: 'updated-by-filter-button' }).click());
+    SelectUser.findAndSelectUserInNameColumn(userName);
   },
 
   selectList(listName) {
