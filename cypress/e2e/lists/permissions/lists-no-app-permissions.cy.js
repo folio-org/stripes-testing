@@ -26,8 +26,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C476848 Verify that users with entity type permissions, but without list app permissions, cannot see the lists app (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C476848'] },
+      'C476848 Verify that users with entity type permissions, but without list app permissions, cannot see the lists app (athena)',
+      { tags: ['extendedPath', 'athena', 'C476848'] },
       () => {
         // #1 Login to FOLIO
         cy.login(userData.username, userData.password);

@@ -70,8 +70,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C405541 User cannot delete Shared "MARC authority" record in Member tenant without permission in Central tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C405541'] },
+          'C405541 User cannot delete Shared "MARC authority" record in Member tenant without permission in Central tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C405541'] },
           () => {
             // Login directly into Member (College) - primary affiliation
             cy.setTenant(Affiliations.College);

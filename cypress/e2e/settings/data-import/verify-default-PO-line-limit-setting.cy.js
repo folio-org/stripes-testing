@@ -59,8 +59,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C374181 Verify display of defaulted value for PO line limit setting on Order Field Mapping Profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C374181'] },
+      'C374181 Verify display of defaulted value for PO line limit setting on Order Field Mapping Profile (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C374181'] },
       () => {
         // #1 Go to "Settings" application -> Select "Data import" setting -> Select "Field mapping profiles" -> Click "Actions" button -> Click "New field mapping profile" option
         FieldMappingProfiles.openNewMappingProfileForm();

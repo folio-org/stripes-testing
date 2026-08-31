@@ -112,8 +112,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C374157 Verify that edited "010" value of linked "MARC Authority" record will update "$0" controlled field when "010" = "$0" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C374157'] },
+        'C374157 Verify that edited "010" value of linked "MARC Authority" record will update "$0" controlled field when "010" = "$0" (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C374157'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);

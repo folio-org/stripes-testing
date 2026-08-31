@@ -96,8 +96,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514979 Edit MARC authority record with required / not required fields (Standard and Local) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514979'] },
+        'C514979 Edit MARC authority record with required / not required fields (Standard and Local) (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514979'] },
         () => {
           cy.then(() => {
             toggleAllUndefinedValidationRules(authSpecId, { enable: false });

@@ -63,8 +63,8 @@ describe('Inventory', () => {
       });
 
       it(
-        "C543865 Check that Subject type can't be edited with already existed subject type name (folijet)",
-        { tags: ['extendedPath', 'folijet', 'C543865'] },
+        "C543865 Check that Subject type can't be edited with already existed subject type name (promin)",
+        { tags: ['extendedPath', 'promin', 'C543865'] },
         () => {
           SubjectTypes.verifySubjectTypeExists({
             name: firstLocalSubjectType.name,

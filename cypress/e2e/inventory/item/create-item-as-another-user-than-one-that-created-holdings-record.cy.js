@@ -62,8 +62,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C1293 Create an Item as another user than the one that created the Holdings record (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C1293'] },
+      'C1293 Create an Item as another user than the one that created the Holdings record (promin)',
+      { tags: ['extendedPath', 'promin', 'C1293'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(recordsData.instanceTitle);

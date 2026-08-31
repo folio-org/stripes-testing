@@ -36,8 +36,8 @@ describe(
       });
 
       it(
-        'C368035 Filters section: Started, Ended (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird', 'C368035'] },
+        'C368035 Filters section: Started, Ended (athena) (TaaS)',
+        { tags: ['extendedPath', 'athena', 'C368035'] },
         () => {
           const currentDate = DateTools.getCurrentDateForFiscalYear();
           const yesterday = DateTools.getPreviousDayDateForFiscalYear();

@@ -28,8 +28,8 @@ describe('Tenant', () => {
   });
 
   it(
-    'C365610 Verify that "Change session locale" is rendered as a link (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird', 'C365610', 'eurekaPhase1'] },
+    'C365610 Verify that "Change session locale" is rendered as a link (athena) (TaaS)',
+    { tags: ['extendedPath', 'athena', 'C365610', 'eurekaPhase1'] },
     () => {
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
       Localization.checkPaneContent();

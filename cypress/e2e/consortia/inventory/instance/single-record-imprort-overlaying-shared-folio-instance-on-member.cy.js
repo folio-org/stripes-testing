@@ -62,8 +62,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C418585 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when overlaying Local Source = FOLIO Instance (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C418585'] },
+        'C418585 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when overlaying Local Source = FOLIO Instance (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C418585'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instanceId);

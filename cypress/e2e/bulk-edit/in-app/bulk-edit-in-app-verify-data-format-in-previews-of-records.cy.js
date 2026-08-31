@@ -103,8 +103,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C380545 Verify data format in Previews of records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C380545'] },
+      'C380545 Verify data format in Previews of records (athena)',
+      { tags: ['extendedPath', 'athena', 'C380545'] },
       () => {
         // Step 1: Select the "Inventory - items" radio button => Select "Item barcodes" option from the "Record identifier" dropdown
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item barcodes');

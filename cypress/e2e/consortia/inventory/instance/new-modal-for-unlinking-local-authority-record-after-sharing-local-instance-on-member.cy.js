@@ -121,8 +121,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411716 (CONSORTIA) Verify the new modal for unlinking local authority record after sharing the local instance on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411716'] },
+        'C411716 (CONSORTIA) Verify the new modal for unlinking local authority record after sharing the local instance on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411716'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.searchByParameter(

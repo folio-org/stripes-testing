@@ -80,8 +80,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584545 Browsing the multiple instances with different subject types (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C584545'] },
+      'C584545 Browsing the multiple instances with different subject types (promin)',
+      { tags: ['extendedPath', 'promin', 'C584545'] },
       () => {
         BrowseSubjects.waitForSubjectToAppear(subjectValue, { quantity: 2 });
 

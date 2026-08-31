@@ -214,8 +214,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C387487 Call numbers are sorted by "LC" type when using "Library of Congress classification" browse option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C387487'] },
+        'C387487 Call numbers are sorted by "LC" type when using "Library of Congress classification" browse option (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C387487'] },
         () => {
           callNumberValuesInApi.forEach((callNumber) => {
             BrowseCallNumber.waitForCallNumberToAppear(callNumber, true, lcTypeCode);

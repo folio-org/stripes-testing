@@ -72,8 +72,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514906 Edit MARC bib record with standard / local indicators, not repeatable subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514906'] },
+        'C514906 Edit MARC bib record with standard / local indicators, not repeatable subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514906'] },
         () => {
           cy.then(() => {
             // Setup 245 standard field: appended indicator code + not repeatable subfield

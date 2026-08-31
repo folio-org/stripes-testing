@@ -194,8 +194,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C407004 Verify that fields of Shared MARC bib will be linked only with Shared MARC authority records automatically when linking on Central tenant from Derive screen (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C407004'] },
+            'C407004 Verify that fields of Shared MARC bib will be linked only with Shared MARC authority records automatically when linking on Central tenant from Derive screen (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C407004'] },
             () => {
               InventoryInstances.searchByTitle(createdInstanceId);
               InventoryInstances.selectInstanceById(createdInstanceId);

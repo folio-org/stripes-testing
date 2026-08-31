@@ -64,8 +64,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C375118 "Print" option is located below "Edit" option in "Actions" menu for "MARC authority" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C375118'] },
+      'C375118 "Print" option is located below "Edit" option in "Actions" menu for "MARC authority" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C375118'] },
       () => {
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);
         MarcAuthorities.selectTitle(testData.authority.searchInput);

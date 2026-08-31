@@ -166,8 +166,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566119 Verify "Suppress from discovery" action for Instances in Member tenant (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C566119'] },
+        'C566119 Verify "Suppress from discovery" action for Instances in Member tenant (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C566119'] },
         () => {
           const suppressFromDiscoveryParams = [
             { initialValue: 'false', action: 'Set true', newValue: 'true', newValueInFile: true },

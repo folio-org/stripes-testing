@@ -77,8 +77,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C396397 Verify the inability to save empty statistical code field on Item create/edit page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C396397'] },
+      'C396397 Verify the inability to save empty statistical code field on Item create/edit page (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C396397'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();

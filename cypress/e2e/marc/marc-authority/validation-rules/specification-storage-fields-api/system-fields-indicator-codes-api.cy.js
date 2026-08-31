@@ -108,8 +108,8 @@ describe('MARC Authority Validation Rules - System Fields Indicator Codes API', 
   });
 
   it(
-    'C502991 Cannot update Indicator Code of System Field for MARC authority spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C502991', 'spitfire'] },
+    'C502991 Cannot update Indicator Code of System Field for MARC authority spec (API) (promin)',
+    { tags: ['extendedPath', 'C502991', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

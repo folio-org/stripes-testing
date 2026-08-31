@@ -250,8 +250,8 @@ describe('Patron notices', () => {
     });
 
     it(
-      'C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button (volaris)',
-      { tags: ['smoke', 'volaris', 'shiftLeft', 'C347621'] },
+      'C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button (vega)',
+      { tags: ['smoke', 'vega', 'shiftLeft', 'C347621'] },
       () => {
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();
@@ -306,8 +306,8 @@ describe('Patron notices', () => {
     );
 
     it(
-      'C347622 Check that user can receive notice with multiple items after finishing the session "Check out" by setting automatic end (volaris)',
-      { tags: ['smoke', 'volaris', 'shiftLeft', 'C347622'] },
+      'C347622 Check that user can receive notice with multiple items after finishing the session "Check out" by setting automatic end (vega)',
+      { tags: ['smoke', 'vega', 'shiftLeft', 'C347622'] },
       () => {
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();

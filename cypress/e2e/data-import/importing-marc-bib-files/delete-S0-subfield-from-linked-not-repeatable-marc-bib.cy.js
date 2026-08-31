@@ -266,8 +266,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C377001 Delete "$0" subfield from linked not repeatable "MARC Bib" field which is controlled by "MARC Authority" record (when field mapping profile only allows for "$a" update) (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C377001'] },
+      'C377001 Delete "$0" subfield from linked not repeatable "MARC Bib" field which is controlled by "MARC Authority" record (when field mapping profile only allows for "$a" update) (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C377001'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

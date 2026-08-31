@@ -64,8 +64,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503165 Create "MARC holdings" record with multiple Local control fields (002, 009) which have subfield "$a" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C503165'] },
+        'C503165 Create "MARC holdings" record with multiple Local control fields (002, 009) which have subfield "$a" (promin)',
+        { tags: ['extendedPath', 'promin', 'C503165'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

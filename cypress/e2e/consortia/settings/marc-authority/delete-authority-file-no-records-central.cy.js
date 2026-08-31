@@ -67,8 +67,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C436922 Delete Local "Authority file" which doesn\'t have assigned "MARC authority" records from Central tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C436922'] },
+          'C436922 Delete Local "Authority file" which doesn\'t have assigned "MARC authority" records from Central tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C436922'] },
           () => {
             // Step 1: Go to Manage authority files in Central
             cy.resetTenant();

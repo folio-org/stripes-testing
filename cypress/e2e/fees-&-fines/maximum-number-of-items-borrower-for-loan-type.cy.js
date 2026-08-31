@@ -208,8 +208,8 @@ describe('Fees&Fines', () => {
       });
 
       it(
-        'C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works (volaris)',
-        { tags: ['smoke', 'volaris', 'shiftLeft', 'C9277'] },
+        'C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works (vega)',
+        { tags: ['smoke', 'vega', 'shiftLeft', 'C9277'] },
         () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_OUT);
           cy.wait(5000);

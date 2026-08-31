@@ -67,8 +67,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584546 Browsing the multiple instances with different subject sources (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C584546'] },
+      'C584546 Browsing the multiple instances with different subject sources (promin)',
+      { tags: ['criticalPath', 'promin', 'C584546'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         cy.wait(5000);

@@ -123,8 +123,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422183 Search MARC: support search for "naturalId" field using "Children\'s subject heading" search option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C422183'] },
+        'C422183 Search MARC: support search for "naturalId" field using "Children\'s subject heading" search option (promin)',
+        { tags: ['extendedPath', 'promin', 'C422183'] },
         () => {
           MarcAuthorities.selectSearchOptionInDropdown(testData.searchOption);
           MarcAuthorities.checkSelectOptionFieldContent(testData.searchOption);

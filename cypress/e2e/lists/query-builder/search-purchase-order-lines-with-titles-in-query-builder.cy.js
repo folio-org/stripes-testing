@@ -91,8 +91,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C688802 Search for "Purchase order lines with titles" in the query builder using the fields "Instance — Languages", "Organization — Code", "Organization — UUID" (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C688802'] },
+      'C688802 Search for "Purchase order lines with titles" in the query builder using the fields "Instance — Languages", "Organization — Code", "Organization — UUID" (athena)',
+      { tags: ['extendedPath', 'athena', 'C688802'] },
       () => {
         // Step 1: Create new list with 'Purchase order lines with titles' record type
         Lists.openNewListPane();

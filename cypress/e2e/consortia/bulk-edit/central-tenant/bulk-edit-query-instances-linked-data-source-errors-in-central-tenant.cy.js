@@ -154,8 +154,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C651550 Verify Instances with source LINKED_DATA are displayed under "Errors & warnings" accordion in Bulk edit in Central tenant (Logs) (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C651550'] },
+        'C651550 Verify Instances with source LINKED_DATA are displayed under "Errors & warnings" accordion in Bulk edit in Central tenant (Logs) (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C651550'] },
         () => {
           // Step 1: Click "Run query" button and check the Preview of record matched
           QueryModal.clickRunQuery();

@@ -359,8 +359,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C411612 Search for Shared/Local records by "Title (all)" search option from "Member" tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'C411612'] },
+      'C411612 Search for Shared/Local records by "Title (all)" search option from "Member" tenant (consortia) (promin)',
+      { tags: ['criticalPathECS', 'promin', 'C411612'] },
       () => {
         InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
         InventorySearchAndFilter.selectSearchOptions('Title (all)', searchValue);

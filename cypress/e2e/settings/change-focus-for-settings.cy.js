@@ -24,8 +24,8 @@ describe('Inventory', () => {
 
     // bug report https://folio-org.atlassian.net/browse/STRIPES-1024
     it(
-      'C350406 Change focus for Settings (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C350406'] },
+      'C350406 Change focus for Settings (promin)',
+      { tags: ['extendedPath', 'promin', 'C350406'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsPane.waitLoading();

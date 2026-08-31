@@ -104,8 +104,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C877082 Check detail view and browse results for import MARC holdings record with backslash character (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C877082'] },
+      'C877082 Check detail view and browse results for import MARC holdings record with backslash character (promin)',
+      { tags: ['extendedPath', 'promin', 'C877082'] },
       () => {
         // Steps 1-2 in Before all block
         // Step 3. Open detail view pane of MARC holdings record and check some fields

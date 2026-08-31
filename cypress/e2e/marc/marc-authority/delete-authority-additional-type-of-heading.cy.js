@@ -103,8 +103,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C409500 Delete "MARC Authority" record with additional type of heading (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C409500'] },
+        'C409500 Delete "MARC Authority" record with additional type of heading (promin)',
+        { tags: ['extendedPath', 'promin', 'C409500'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeadingPrefix);
           MarcAuthorities.selectTitle(additionalFieldsHeadings.tag548);

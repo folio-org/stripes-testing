@@ -284,8 +284,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C466083 Search by "Note" fields of "Item" record is case-insensitive (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C466083'] },
+        'C466083 Search by "Note" fields of "Item" record is case-insensitive (promin)',
+        { tags: ['extendedPath', 'promin', 'C466083'] },
         () => {
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.itemTabIsDefault();

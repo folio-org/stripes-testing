@@ -72,8 +72,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C423409 Check "Inventory" correct page titles in browser tab (Instance tab) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423409'] },
+        'C423409 Check "Inventory" correct page titles in browser tab (Instance tab) (promin)',
+        { tags: ['extendedPath', 'promin', 'C423409'] },
         () => {
           // Steps 1, 2: Do a basic search with search text
           InventorySearchAndFilter.executeSearch(testData.searchQueries.basic);

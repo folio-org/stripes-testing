@@ -9,7 +9,7 @@ The `runFailedTests.js` script fetches failed tests from the latest Report Porta
 Parse arguments from the user's request:
 
 - `--launchName`: Name of the Report Portal launch (default: `runNightlyCypressEurekaTests`)
-- `--team`: Team name (e.g., Volaris, Firebird). Optional - if not specified, all teams are considered
+- `--team`: Team name (e.g., Vega, Athena). Optional - if not specified, all teams are considered
 - `--headed`: Run Cypress in headed mode (boolean flag, default: false)
 
 ## Execution
@@ -22,8 +22,8 @@ node scripts/report-portal/runFailedTests.js [arguments]
 
 Examples:
 - Default (nightly tests): `node scripts/report-portal/runFailedTests.js`
-- With team: `node scripts/report-portal/runFailedTests.js --launchName runNightlyCypressEurekaTests --team Volaris`
-- Headed mode: `node scripts/report-portal/runFailedTests.js --launchName folioQualityGates --team Firebird --headed`
+- With team: `node scripts/report-portal/runFailedTests.js --launchName runNightlyCypressEurekaTests --team Vega`
+- Headed mode: `node scripts/report-portal/runFailedTests.js --launchName folioQualityGates --team Athena --headed`
 
 ## Required Environment Variables
 
@@ -146,7 +146,7 @@ This approach ensures:
 
 ```
 Launch: runNightlyCypressEurekaTests
-Team: Volaris
+Team: Vega
 Headed: false
 
 Fetching failed tests from Report Portal...

@@ -83,8 +83,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C410925 (CONSORTIA) Duplicating shared instance on Member tenant with Source FOLIO (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C410925'] },
+        'C410925 (CONSORTIA) Duplicating shared instance on Member tenant with Source FOLIO (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C410925'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instanceC410925.instanceId);
@@ -105,8 +105,8 @@ describe('Inventory', () => {
       );
 
       it(
-        'C410926 (CONSORTIA) Duplicating shared instance on Member tenant with Source MARC (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C410926'] },
+        'C410926 (CONSORTIA) Duplicating shared instance on Member tenant with Source MARC (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C410926'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instanceC410926.id);

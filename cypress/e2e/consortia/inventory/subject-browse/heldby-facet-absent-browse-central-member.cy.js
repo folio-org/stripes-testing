@@ -116,8 +116,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C413363 "Held by" facet not shown for Subject/Contributor Browse on Central and Member tenants (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C413363'] },
+        'C413363 "Held by" facet not shown for Subject/Contributor Browse on Central and Member tenants (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C413363'] },
         () => {
           BrowseSubjects.waitForSubjectToAppear(instances[0].subjectValue);
           BrowseContributors.waitForContributorToAppear(instances[0].contributorValue);

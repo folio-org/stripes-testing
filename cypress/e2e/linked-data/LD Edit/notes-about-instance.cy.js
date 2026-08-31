@@ -27,7 +27,7 @@ import FileManager from '../../../support/utils/fileManager';
 
 let user;
 
-describe('Citation: notes about the instance', () => {
+describe('Promin: notes about the instance', () => {
   const testData = {
     marcFilePath: 'C423954.mrc',
     marcFileName: 'C423954 marcFile.mrc',
@@ -104,8 +104,8 @@ describe('Citation: notes about the instance', () => {
   });
 
   it(
-    'C423954 [UILD-162, UILD-94, UILD-569, UILD-606] Notes about the Instance create/edit/Duplicate fields + View MARC (citation)',
-    { tags: ['criticalPath', 'citation', 'C423954', 'marigold'] },
+    'C423954 [UILD-162, UILD-94, UILD-569, UILD-606] Notes about the Instance create/edit/Duplicate fields + View MARC (promin)',
+    { tags: ['criticalPath', 'promin', 'C423954', 'marigold'] },
     () => {
       // Create new work and instance in Marigold
       Marigold.openNewResourceForm();

@@ -88,8 +88,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411841 Shared lists (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C411841'] },
+      'C411841 Shared lists (athena)',
+      { tags: ['extendedPath', 'athena', 'C411841'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

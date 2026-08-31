@@ -95,8 +95,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C380491 Verify that User can bulk edit items with "Checked Out" or "Paged" status (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C380491'] },
+      'C380491 Verify that User can bulk edit items with "Checked Out" or "Paged" status (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C380491'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

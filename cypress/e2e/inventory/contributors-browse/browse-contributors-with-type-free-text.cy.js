@@ -58,8 +58,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C357043 Verify that the existing contributor is returned at "Browse contributors" result list when user filled field "Type, free text" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C357043'] },
+      'C357043 Verify that the existing contributor is returned at "Browse contributors" result list when user filled field "Type, free text" (promin)',
+      { tags: ['extendedPath', 'promin', 'C357043'] },
       () => {
         InventoryInstances.searchByTitle(createdInstanceId);
         InventoryInstances.selectInstanceById(createdInstanceId);

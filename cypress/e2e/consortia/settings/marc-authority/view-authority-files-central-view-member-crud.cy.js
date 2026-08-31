@@ -70,8 +70,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C430208 View "Manage authority files" pane in "Settings >> MARC authority" with view permissions in Central and CRUD permissions in Member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C430208'] },
+          'C430208 View "Manage authority files" pane in "Settings >> MARC authority" with view permissions in Central and CRUD permissions in Member tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C430208'] },
           () => {
             cy.resetTenant();
             // Force increased limit for UI to load all files

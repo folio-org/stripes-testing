@@ -36,8 +36,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C358151 Verify that sensible error message displayed when user use search query with "*" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C358151'] },
+      'C358151 Verify that sensible error message displayed when user use search query with "*" (promin)',
+      { tags: ['extendedPath', 'promin', 'C358151'] },
       () => {
         // Step 1: Select "Browse" in "Search|Browse" toggle on "Search & Filter" pane
         InventorySearchAndFilter.switchToBrowseTab();

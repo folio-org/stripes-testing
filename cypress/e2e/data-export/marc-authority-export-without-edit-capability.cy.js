@@ -50,8 +50,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C523664 "MARC authority" app - User is NOT able to do quick export without "data - UI-Data-Export - edit" capability set (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C523664'] },
+    'C523664 "MARC authority" app - User is NOT able to do quick export without "data - UI-Data-Export - edit" capability set (athena)',
+    { tags: ['extendedPath', 'athena', 'C523664'] },
     () => {
       MarcAuthorities.searchBeats('AT_C523664');
       MarcAuthorities.select(createdAuthorityID);

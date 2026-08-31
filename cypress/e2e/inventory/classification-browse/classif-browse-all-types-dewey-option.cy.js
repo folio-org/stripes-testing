@@ -148,8 +148,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468179 Browse for classifications of Instance which has each classification type using "Dewey Decimal classification" browse option (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C468179'] },
+      'C468179 Browse for classifications of Instance which has each classification type using "Dewey Decimal classification" browse option (promin)',
+      { tags: ['criticalPathFlaky', 'promin', 'nonParallel', 'C468179'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(user.username, user.password, {

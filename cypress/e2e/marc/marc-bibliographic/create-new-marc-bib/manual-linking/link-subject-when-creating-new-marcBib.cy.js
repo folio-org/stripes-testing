@@ -111,8 +111,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422128 Link "Subject" fields when creating "MARC Bibliographic" record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire', 'C422128'] },
+          'C422128 Link "Subject" fields when creating "MARC Bibliographic" record (promin) (TaaS)',
+          { tags: ['criticalPath', 'promin', 'C422128'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(

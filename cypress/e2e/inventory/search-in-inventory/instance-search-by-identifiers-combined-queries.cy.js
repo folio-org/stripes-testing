@@ -148,8 +148,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C957384 Verify keyword search behavior with identifiers using combined search queries (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C957384'] },
+      'C957384 Verify keyword search behavior with identifiers using combined search queries (promin)',
+      { tags: ['criticalPath', 'promin', 'C957384'] },
       () => {
         function searchAndCheck() {
           searchData.forEach(({ query, expectedTitles }) => {

@@ -144,8 +144,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C869995 Verify that call numbers are still browsable after "Holdings" ownership update (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C869995'] },
+        'C869995 Verify that call numbers are still browsable after "Holdings" ownership update (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C869995'] },
         () => {
           callNumbers.forEach((callNumber) => {
             BrowseCallNumber.waitForCallNumberToAppear(callNumber);

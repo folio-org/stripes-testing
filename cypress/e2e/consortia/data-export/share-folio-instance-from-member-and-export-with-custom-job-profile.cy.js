@@ -289,8 +289,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C407652 Consortia | Share FOLIO instance from member and export with Custom job profile (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C407652'] },
+      'C407652 Consortia | Share FOLIO instance from member and export with Custom job profile (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C407652'] },
       () => {
         // Step 1: Go to "Inventory" app => Select "Actions" => Select "New local record" button
         InventoryInstances.addNewInventory();

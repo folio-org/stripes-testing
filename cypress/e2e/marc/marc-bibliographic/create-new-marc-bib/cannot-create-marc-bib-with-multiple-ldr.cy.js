@@ -38,8 +38,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C496193 Cannot create "MARC bibliographic" record with multiple "LDR" fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C496193'] },
+        'C496193 Cannot create "MARC bibliographic" record with multiple "LDR" fields (promin)',
+        { tags: ['extendedPath', 'promin', 'C496193'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.waitLoading();

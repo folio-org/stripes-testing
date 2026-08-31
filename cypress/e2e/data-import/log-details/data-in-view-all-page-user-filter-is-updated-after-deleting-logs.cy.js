@@ -36,8 +36,8 @@ describe('Data Import', () => {
 
     // bug report https://folio-org.atlassian.net/browse/MODSOURMAN-1218
     it(
-      'C358546 Data Import log: Check that data in the "View all" page User filter is updated after deleting the logs for particular users. (folijet) (TaaS)',
-      { tags: ['extendedPathFlaky', 'folijet', 'C358546'] },
+      'C358546 Data Import log: Check that data in the "View all" page User filter is updated after deleting the logs for particular users. (promin) (TaaS)',
+      { tags: ['extendedPathFlaky', 'promin', 'C358546'] },
       () => {
         const filesNames = ['marcBibFileForC358546_1.mrc', 'marcBibFileForC358546_2.MRC'];
         const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;

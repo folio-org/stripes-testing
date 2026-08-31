@@ -92,8 +92,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C389474 Local | Verify that column names are sticky for previews (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C389474'] },
+      'C389474 Local | Verify that column names are sticky for previews (athena)',
+      { tags: ['extendedPath', 'athena', 'C389474'] },
       () => {
         // Step 1: Navigate to Bulk edit app with Users and User UUIDs identifier
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');

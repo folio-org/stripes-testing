@@ -125,8 +125,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C543841 Indicator boxes validation during editing of MARC authority record (spitfire)',
-        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C543841'] },
+        'C543841 Indicator boxes validation during editing of MARC authority record (promin)',
+        { tags: ['extendedPathFlaky', 'promin', 'nonParallel', 'C543841'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);

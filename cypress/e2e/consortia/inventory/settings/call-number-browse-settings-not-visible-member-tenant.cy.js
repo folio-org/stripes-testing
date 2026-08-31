@@ -63,8 +63,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C627462 "Call number browse" pane is not displayed on Member tenant when user has only "Call number types" permission on Member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C627462'] },
+          'C627462 "Call number browse" pane is not displayed on Member tenant when user has only "Call number types" permission on Member tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C627462'] },
           () => {
             CallNumberBrowseSettings.clickEditButtonForItem(browseOption);
             CallNumberBrowseSettings.validateSaveButtonStatusForItem({

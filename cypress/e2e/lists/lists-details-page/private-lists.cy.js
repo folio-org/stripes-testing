@@ -91,8 +91,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411842 Private lists (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C411842'] },
+      'C411842 Private lists (athena)',
+      { tags: ['extendedPath', 'athena', 'C411842'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

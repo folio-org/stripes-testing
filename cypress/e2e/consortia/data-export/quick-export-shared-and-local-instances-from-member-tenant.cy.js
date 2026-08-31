@@ -389,8 +389,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C411285 Consortia | Verify "Quick export" shared and local instances from Member tenant (consortia) (firebird)',
-      { tags: ['smokeECS', 'firebird', 'C411285'] },
+      'C411285 Consortia | Verify "Quick export" shared and local instances from Member tenant (consortia) (athena)',
+      { tags: ['smokeECS', 'athena', 'C411285'] },
       () => {
         // Step 1-2: Search instances by title prefix and select all
         InventorySearchAndFilter.clearDefaultFilter('Held by');

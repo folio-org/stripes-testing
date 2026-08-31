@@ -92,8 +92,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C380395 Search for "MARC bib" record with long Contributor value (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C380395'] },
+      'C380395 Search for "MARC bib" record with long Contributor value (promin)',
+      { tags: ['extendedPath', 'promin', 'C380395'] },
       () => {
         // Search for the first record
         InventoryInstances.searchByTitle(testData.instanceData.first.title);

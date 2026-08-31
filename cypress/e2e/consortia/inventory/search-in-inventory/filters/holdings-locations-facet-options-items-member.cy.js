@@ -204,8 +204,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C423641 Locations from all existing tenants displays in "Holdings permanent location" facet of search Item pane in "Inventory" app opened from "Member" tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C423641'] },
+          'C423641 Locations from all existing tenants displays in "Holdings permanent location" facet of search Item pane in "Inventory" app opened from "Member" tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C423641'] },
           () => {
             const usedLocations = [
               locations[Affiliations.College][0].name,

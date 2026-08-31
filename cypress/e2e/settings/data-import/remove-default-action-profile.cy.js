@@ -50,8 +50,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C422093 Verify removal of default action profile from job profile: Default - Create SRS MARC Authority (folijet) (TaaS)',
-      { tags: ['criticalPath', 'folijet', 'C422093'] },
+      'C422093 Verify removal of default action profile from job profile: Default - Create SRS MARC Authority (promin) (TaaS)',
+      { tags: ['criticalPath', 'promin', 'C422093'] },
       () => {
         // #1 Go to "Settings" application -> Select "Data import" setting -> Select "Match Profile"
         TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.SETTINGS);

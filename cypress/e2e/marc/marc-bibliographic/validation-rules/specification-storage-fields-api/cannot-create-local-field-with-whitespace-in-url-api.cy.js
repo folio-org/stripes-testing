@@ -38,8 +38,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with W
   });
 
   it(
-    'C490931 Cannot create Local Field with whitespace in "url" field for MARC bib spec (API) (spitfire)',
-    { tags: ['C490931', 'extendedPath', 'spitfire'] },
+    'C490931 Cannot create Local Field with whitespace in "url" field for MARC bib spec (API) (promin)',
+    { tags: ['C490931', 'extendedPath', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

@@ -85,8 +85,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C552463 Created MARC bib record on Member tenant is verified against Member tenant rules (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C552463', 'nonParallel'] },
+          'C552463 Created MARC bib record on Member tenant is verified against Member tenant rules (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C552463', 'nonParallel'] },
           () => {
             cy.then(() => {
               cy.resetTenant();

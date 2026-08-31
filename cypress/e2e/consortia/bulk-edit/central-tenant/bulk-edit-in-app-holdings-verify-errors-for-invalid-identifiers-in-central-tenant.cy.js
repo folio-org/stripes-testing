@@ -125,8 +125,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C477616 Identifier - Verify "Errors" when uploading invalid Holdings identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C477616'] },
+        'C477616 Identifier - Verify "Errors" when uploading invalid Holdings identifiers in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C477616'] },
         () => {
           const testParams = [
             {

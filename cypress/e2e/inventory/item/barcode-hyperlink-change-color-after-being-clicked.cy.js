@@ -84,8 +84,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C566518 Verify barcode hyperlink changes color after being clicked (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C566518'] },
+      'C566518 Verify barcode hyperlink changes color after being clicked (promin)',
+      { tags: ['extendedPath', 'promin', 'C566518'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();

@@ -56,8 +56,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C10978 Change the 700 field in quickMARC and verify change in the instance record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C10978'] },
+        'C10978 Change the 700 field in quickMARC and verify change in the instance record (promin)',
+        { tags: ['extendedPath', 'promin', 'C10978'] },
         () => {
           InventoryInstances.searchByTitle(instanceId[0]);
           InventoryInstances.selectInstance();

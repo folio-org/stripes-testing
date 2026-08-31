@@ -24,8 +24,8 @@ describe('Patron notices', () => {
     });
 
     it(
-      'C6530 Create notice policy (volaris)',
-      { tags: ['smoke', 'volaris', 'system', 'C6530'] },
+      'C6530 Create notice policy (vega)',
+      { tags: ['smoke', 'vega', 'system', 'C6530'] },
       () => {
         NewNoticePolicy.waitLoading();
         NewNoticePolicy.startAdding();

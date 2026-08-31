@@ -71,8 +71,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C387462 Add multiple 001s when creating "MARC Holdings" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C387462'] },
+      'C387462 Add multiple 001s when creating "MARC Holdings" record (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C387462'] },
       () => {
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();

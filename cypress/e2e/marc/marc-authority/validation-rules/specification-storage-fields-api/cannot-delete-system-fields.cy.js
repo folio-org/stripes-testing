@@ -38,8 +38,8 @@ describe('MARC Authority Validation Rules - System Fields', () => {
   });
 
   it(
-    'C499842 Cannot delete a system MARC field of authority spec (API) (spitfire)',
-    { tags: ['smoke', 'C499842', 'spitfire'] },
+    'C499842 Cannot delete a system MARC field of authority spec (API) (promin)',
+    { tags: ['smoke', 'C499842', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

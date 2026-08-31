@@ -38,8 +38,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C423566 Verify "Search column name" search box for Users (firebird)',
-      { tags: ['smoke', 'firebird', 'C423566'] },
+      'C423566 Verify "Search column name" search box for Users (athena)',
+      { tags: ['smoke', 'athena', 'C423566'] },
       () => {
         cy.viewport(1000, 660);
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');

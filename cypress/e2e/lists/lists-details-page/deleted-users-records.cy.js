@@ -55,8 +55,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C957375 [Users] Deleted records are handled in Result Viewer (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C957375'] },
+      'C957375 [Users] Deleted records are handled in Result Viewer (athena)',
+      { tags: ['criticalPath', 'athena', 'C957375'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.listsPath,

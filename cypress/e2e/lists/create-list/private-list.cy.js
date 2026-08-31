@@ -52,8 +52,8 @@ describe('Lists', () => {
     });
 
     it(
-      "C411710 Verify that private list isn't visible for the other users (corsair)",
-      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411710', 'eurekaPhase1'] },
+      "C411710 Verify that private list isn't visible for the other users (athena)",
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C411710', 'eurekaPhase1'] },
       () => {
         // cy.waitForAuthRefresh(() => {
         //   cy.login(firstUser.username, firstUser.password, {

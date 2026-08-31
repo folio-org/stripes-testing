@@ -45,8 +45,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C566514 Edit Instance with selected manually "Select date type" value in "Date type" dropdown (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C566514'] },
+      'C566514 Edit Instance with selected manually "Select date type" value in "Date type" dropdown (promin)',
+      { tags: ['extendedPath', 'promin', 'C566514'] },
       () => {
         InstanceRecordView.waitLoading();
         InstanceRecordView.edit();

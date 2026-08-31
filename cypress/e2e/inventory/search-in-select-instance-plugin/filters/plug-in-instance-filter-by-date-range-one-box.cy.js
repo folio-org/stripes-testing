@@ -94,8 +94,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C553055 "Select Instance" plugin | Filter "Instance" records by "Date range" filter using one box ("From" / "To") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C553055'] },
+        'C553055 "Select Instance" plugin | Filter "Instance" records by "Date range" filter using one box ("From" / "To") (promin)',
+        { tags: ['extendedPath', 'promin', 'C553055'] },
         () => {
           // Step 1: Search; verify all instances found with dates 1902-1906
           SelectInstanceModal.searchByName(instanceTitlePrefix);

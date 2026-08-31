@@ -65,8 +65,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651500 Check "Version History" pane in the detail view of MARC Instance record (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C651500'] },
+        'C651500 Check "Version History" pane in the detail view of MARC Instance record (promin)',
+        { tags: ['criticalPath', 'promin', 'C651500'] },
         () => {
           InstanceRecordView.checkButtonsStateWhenVersionHistoryPaneClosed();
           InstanceRecordView.checkVersionHistoryButtonToolTipText();

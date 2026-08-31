@@ -109,8 +109,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C415268 Verify Data export results made by User with "data - UI-Data-Export - edit" capability set (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C415268'] },
+    'C415268 Verify Data export results made by User with "data - UI-Data-Export - edit" capability set (athena)',
+    { tags: ['extendedPath', 'athena', 'C415268'] },
     () => {
       // Step 1: Verify available applications on the landing page
       TopMenuNavigation.verifyAppButtonShown(APPLICATION_NAMES.DATA_EXPORT, true);

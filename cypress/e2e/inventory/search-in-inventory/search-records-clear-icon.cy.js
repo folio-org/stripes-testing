@@ -94,16 +94,16 @@ describe('Inventory', () => {
     });
 
     it(
-      'C423619 Instance search | Check the "x" icon in the Inventory app search box (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423619'] },
+      'C423619 Instance search | Check the "x" icon in the Inventory app search box (promin)',
+      { tags: ['extendedPath', 'promin', 'C423619'] },
       () => {
         searchAndVerifyClearIconWorks();
       },
     );
 
     it(
-      'C423621 Holdings search | Check the "x" icon in the Inventory app search box (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423621'] },
+      'C423621 Holdings search | Check the "x" icon in the Inventory app search box (promin)',
+      { tags: ['extendedPath', 'promin', 'C423621'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.holdingsTabIsDefault();
@@ -113,8 +113,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C423622 Item search | Check the "x" icon in the Inventory app search box (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423622'] },
+      'C423622 Item search | Check the "x" icon in the Inventory app search box (promin)',
+      { tags: ['extendedPath', 'promin', 'C423622'] },
       () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.itemTabIsDefault();

@@ -118,8 +118,8 @@ describe('MARC Bibliographic Validation Rules - Update Indicator Code Duplicate 
   });
 
   it(
-    'C502987 Update Indicator code of Local field with duplicate "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C502987', 'spitfire'] },
+    'C502987 Update Indicator code of Local field with duplicate "label" for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C502987', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

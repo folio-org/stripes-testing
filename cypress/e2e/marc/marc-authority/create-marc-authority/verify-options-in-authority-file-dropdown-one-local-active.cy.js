@@ -69,8 +69,8 @@ describe('MARC', () => {
 
       it(
         `C422243 Verify options displayed in "Select authority file" dropdown in "Create a new MARC authority record" window 
-        when only one LOCAL has the "Active" checkbox selected in the settings (spitfire)`,
-        { tags: ['criticalPath', 'spitfire', 'C422243'] },
+        when only one LOCAL has the "Active" checkbox selected in the settings (promin)`,
+        { tags: ['criticalPath', 'promin', 'C422243'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateNewMarcAuthorityRecord);

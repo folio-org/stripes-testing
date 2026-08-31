@@ -29,8 +29,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C397393 User cannot create new "MARC Authority" record without "quickMARC: Create a new MARC authority record" permission (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C397393'] },
+        'C397393 User cannot create new "MARC Authority" record without "quickMARC: Create a new MARC authority record" permission (promin)',
+        { tags: ['extendedPath', 'promin', 'C397393'] },
         () => {
           MarcAuthorities.clickActionsButton();
           MarcAuthorities.verifyActionsMenu();

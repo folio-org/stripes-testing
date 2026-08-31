@@ -29,8 +29,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C422022 Verify Search / Browse option dropdowns in "MARC authority" app (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C422022'] },
+      'C422022 Verify Search / Browse option dropdowns in "MARC authority" app (promin)',
+      { tags: ['extendedPath', 'promin', 'C422022'] },
       () => {
         MarcAuthorities.checkSelectOptionFieldContent(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD);
         MarcAuthorities.checkSearchOptionsInDropdownInOrder();

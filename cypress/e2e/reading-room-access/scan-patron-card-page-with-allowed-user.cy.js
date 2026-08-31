@@ -69,8 +69,8 @@ describe('Reading Room Access', () => {
   });
 
   it(
-    'C494054 Validate Functionality of Scan Patron Card page with allowed user (volaris)',
-    { tags: ['smoke', 'volaris', 'C494054'] },
+    'C494054 Validate Functionality of Scan Patron Card page with allowed user (vega)',
+    { tags: ['smoke', 'vega', 'C494054'] },
     () => {
       const userInfo = {
         preferredFirstName: testData.secondUser.preferredFirstName,

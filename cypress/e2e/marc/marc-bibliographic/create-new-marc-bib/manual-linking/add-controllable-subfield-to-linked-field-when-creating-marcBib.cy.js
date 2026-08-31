@@ -117,8 +117,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422132 Add controllable subfields to a linked field when creating "MARC Bibliographic" record (spitfire) (TaaS)',
-          { tags: ['criticalPath', 'spitfire', 'C422132'] },
+          'C422132 Add controllable subfields to a linked field when creating "MARC Bibliographic" record (promin) (TaaS)',
+          { tags: ['criticalPath', 'promin', 'C422132'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(

@@ -64,8 +64,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)',
-      { tags: ['smokeFlaky', 'folijet', 'nonParallel', 'C358137'] },
+      'C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (promin)',
+      { tags: ['smokeFlaky', 'promin', 'nonParallel', 'C358137'] },
       () => {
         // need to open file for this we find it
         Logs.openViewAllLogs();

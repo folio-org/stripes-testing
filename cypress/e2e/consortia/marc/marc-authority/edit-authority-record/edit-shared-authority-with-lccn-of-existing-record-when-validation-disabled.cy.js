@@ -94,8 +94,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C523575 Save existing MARC authority record with value in "010 $a" subfield which matches to other records "010 $a" when duplicate LCCN check is disabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C523575'] },
+          'C523575 Save existing MARC authority record with value in "010 $a" subfield which matches to other records "010 $a" when duplicate LCCN check is disabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C523575'] },
           () => {
             // Step 0: User is on detail view pane of record
             MarcAuthorities.searchBeats(sharedMarcAuthorityHeadingToBeEdited);

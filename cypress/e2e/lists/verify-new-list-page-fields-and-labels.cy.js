@@ -29,8 +29,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411711 Verify that displays correct fields and labels in the "New list" page (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411711'] },
+      'C411711 Verify that displays correct fields and labels in the "New list" page (athena)',
+      { tags: ['criticalPath', 'athena', 'C411711'] },
       () => {
         // Step 1: Click on "Lists" in app navigation bar
         cy.login(userData.username, userData.password, {

@@ -134,8 +134,8 @@ describe('Consortia', () => {
         };
 
         it(
-          'C594420 User with "Consortium manager: Can view existing settings" permission is able to view the list of subject sources of affiliated tenants in "Consortium manager" app (consortia) (folijet)',
-          { tags: ['criticalPathECS', 'folijet', 'C594420'] },
+          'C594420 User with "Consortium manager: Can view existing settings" permission is able to view the list of subject sources of affiliated tenants in "Consortium manager" app (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C594420'] },
           () => {
             SelectMembersModal.selectAllMembers();
             ConsortiumManager.verifyStatusOfConsortiumManager(3);

@@ -129,8 +129,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C471473 Apply "Shared" facet to browse classifications result list during browsing by "Dewey Decimal classification" option when Dewey is selected in settings (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C471473'] },
+        'C471473 Apply "Shared" facet to browse classifications result list during browsing by "Dewey Decimal classification" option when Dewey is selected in settings (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C471473'] },
         () => {
           classificationValues.forEach((classification) => {
             BrowseClassifications.waitForClassificationNumberToAppear(

@@ -49,8 +49,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569612 Derive MARC bib record with "010 $a" subfield matched to others, marked as deleted records with "LCCN" field when duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C569612'] },
+          'C569612 Derive MARC bib record with "010 $a" subfield matched to others, marked as deleted records with "LCCN" field when duplicate LCCN check is enabled (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C569612'] },
           () => {
             // Precondition moved to `before` hook to make sure `after` hook will always be executed
             cy.then(() => {

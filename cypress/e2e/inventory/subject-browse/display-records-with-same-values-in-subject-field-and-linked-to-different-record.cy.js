@@ -137,8 +137,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C375224 Browse | Display records with same values in "Subject" field and linked to different "MARC authority" records (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C375224'] },
+      'C375224 Browse | Display records with same values in "Subject" field and linked to different "MARC authority" records (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C375224'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

@@ -121,8 +121,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C471471 Apply "Shared" facet to browse classifications result list during browsing by "Classification (all)" option when settings are empty (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C471471'] },
+        'C471471 Apply "Shared" facet to browse classifications result list during browsing by "Classification (all)" option when settings are empty (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C471471'] },
         () => {
           classificationValues.forEach((classification) => {
             BrowseClassifications.waitForClassificationNumberToAppear(classification);

@@ -26,7 +26,7 @@ describe('Module', () => {
   });
 }); 
 Check that a new test has all the required tags (smoke, criticalPath, extendedPath, <team>tag, <ID>tag):
-{ tags: ['extendedPath', 'spitfire', 'C627455'] }
+{ tags: ['extendedPath', 'promin', 'C627455'] }
 Check if all test entities created in a test are deleted after the test (in the after hook)
 Verify that default test entities are not deleted in the after hook blocks (default service points, locations, material types, etc.)
 Check paths to imports

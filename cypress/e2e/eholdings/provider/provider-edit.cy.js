@@ -22,8 +22,8 @@ describe('eHoldings', () => {
       });
     });
     it(
-      'C696 Edit proxy setting (spitfire)',
-      { tags: ['smoke', 'spitfire', 'broken', 'C696'] },
+      'C696 Edit proxy setting (promin)',
+      { tags: ['smoke', 'promin', 'broken', 'C696'] },
       () => {
         const specialProvider = 'Johns Hopkins University Press';
         EHoldingsProvidersSearch.byProvider(specialProvider);

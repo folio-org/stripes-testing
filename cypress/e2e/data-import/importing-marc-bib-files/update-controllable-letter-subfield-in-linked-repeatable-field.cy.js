@@ -206,8 +206,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C385660 Update controllable letter subfield in linked repeatable field (multiple repeatable fields with same indicators) (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C385660'] },
+      'C385660 Update controllable letter subfield in linked repeatable field (multiple repeatable fields with same indicators) (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C385660'] },
       () => {
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventorySearchAndFilter.closeInstanceDetailPane();

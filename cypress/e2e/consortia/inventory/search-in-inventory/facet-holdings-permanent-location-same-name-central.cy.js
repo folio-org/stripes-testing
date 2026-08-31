@@ -184,8 +184,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C494019 Locations with same names could be found using "Holdings permanent location" facet in "Inventory" app from "Central" tenant (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C494019'] },
+          'C494019 Locations with same names could be found using "Holdings permanent location" facet in "Inventory" app from "Central" tenant (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C494019'] },
           () => {
             cy.login(testData.user.username, testData.user.password);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

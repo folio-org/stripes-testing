@@ -179,8 +179,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C405531 Check adding/deleting fields and subfields when updating shared "MARC Bib" in Central tenant via Data import and confirm in member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C405531'] },
+        'C405531 Check adding/deleting fields and subfields when updating shared "MARC Bib" in Central tenant via Data import and confirm in member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C405531'] },
         () => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(testData.instanceId);

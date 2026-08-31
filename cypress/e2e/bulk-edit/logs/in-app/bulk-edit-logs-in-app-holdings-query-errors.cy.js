@@ -130,8 +130,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C499655 Verify generated Logs file with errors - query (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C499655'] },
+        'C499655 Verify generated Logs file with errors - query (athena)',
+        { tags: ['extendedPath', 'athena', 'C499655'] },
         () => {
           // Step 1: Select "Inventory - holdings" radio button => Click "Build query" button
           BulkEditSearchPane.openQuerySearch();

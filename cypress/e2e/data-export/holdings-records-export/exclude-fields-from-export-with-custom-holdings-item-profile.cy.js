@@ -421,8 +421,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C466269 Exclude fields from Export with custom Holdings & Item profile (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C466269'] },
+      'C466269 Exclude fields from Export with custom Holdings & Item profile (athena)',
+      { tags: ['extendedPath', 'athena', 'C466269'] },
       () => {
         // Step 1: Trigger the data export by submitting .csv file with Holdings UUIDs
         ExportFile.uploadFile(fileName);

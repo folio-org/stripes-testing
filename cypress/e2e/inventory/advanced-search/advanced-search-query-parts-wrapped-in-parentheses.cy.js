@@ -236,8 +236,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C1322591 Advanced search | Verify that advanced search query parts are wrapped in parentheses (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1322591'] },
+      'C1322591 Advanced search | Verify that advanced search query parts are wrapped in parentheses (promin)',
+      { tags: ['extendedPath', 'promin', 'C1322591'] },
       () => {
         // Expected queries
         const expectedQueryStep1 = `(((lccn=="${testData.lccnValue}" or canceledLccn=="${testData.lccnValue}") and (notes.note=="${testData.noteText}" or administrativeNotes=="${testData.noteText}") and (title any "${testData.titleSearchValue}") or (keyword=="${testData.keywordSearchValue}")) and staffSuppress=="false") sortby title`;

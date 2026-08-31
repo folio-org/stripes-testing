@@ -102,8 +102,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C386506 GetRecord: SRS - Verify that Item "Effective location" fields are properly included in "952" field of response (subfields "a", "b", "c", "d", "s") (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C386506'] },
+      'C386506 GetRecord: SRS - Verify that Item "Effective location" fields are properly included in "952" field of response (subfields "a", "b", "c", "d", "s") (athena)',
+      { tags: ['extendedPath', 'athena', 'C386506'] },
       () => {
         // Step 1: Add Item to the Instance by clicking "Add item" button
         InventoryInstance.addItem();

@@ -50,8 +50,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C805765 Creating Users bulk edit profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C805765'] },
+      'C805765 Creating Users bulk edit profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C805765'] },
       () => {
         // Step 1: Click "Users bulk edit profiles" category under "Other profiles" group
         SettingsPane.selectSettingsTab(APPLICATION_NAMES.BULK_EDIT);

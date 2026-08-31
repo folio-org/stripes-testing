@@ -95,8 +95,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569576 Link "100" field with all subfields (except $0) when MARC authority 1XX has all subfields (except $t) (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C569576'] },
+          'C569576 Link "100" field with all subfields (except $0) when MARC authority 1XX has all subfields (except $t) (promin)',
+          { tags: ['extendedPath', 'promin', 'C569576'] },
           () => {
             // Step 1: Click on "Actions" button in second pane >> Select "New MARC bibliographic record" option
             InventoryInstance.newMarcBibRecord();

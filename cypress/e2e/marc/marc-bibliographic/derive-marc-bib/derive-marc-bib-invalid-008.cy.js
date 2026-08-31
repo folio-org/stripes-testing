@@ -57,8 +57,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503015 Cannot derive "MARC bib" record with not valid value in "008" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C503015'] },
+        'C503015 Cannot derive "MARC bib" record with not valid value in "008" field (promin)',
+        { tags: ['criticalPath', 'promin', 'C503015'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstanceById(createdRecordIDs[0]);

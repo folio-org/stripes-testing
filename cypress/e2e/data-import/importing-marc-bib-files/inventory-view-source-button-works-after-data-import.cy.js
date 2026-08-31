@@ -54,8 +54,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C2360 Confirm the Inventory "View source" button works after Data Import (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C2360'] },
+      'C2360 Confirm the Inventory "View source" button works after Data Import (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C2360'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyInstanceIsOpened(title);

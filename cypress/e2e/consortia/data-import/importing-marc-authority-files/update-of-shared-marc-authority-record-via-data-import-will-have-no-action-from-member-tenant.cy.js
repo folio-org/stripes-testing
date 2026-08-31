@@ -160,8 +160,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C407681 Update of Shared "MARC authority" record via "Data import" will have No action from Member tenant (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C407681'] },
+        'C407681 Update of Shared "MARC authority" record via "Data import" will have No action from Member tenant (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C407681'] },
         () => {
           // Steps 1-2: Verify shared authority is visible from Member tenant
           MarcAuthorities.searchBeats(authorityHeading);

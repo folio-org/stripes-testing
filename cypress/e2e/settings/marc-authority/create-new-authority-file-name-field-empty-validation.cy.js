@@ -46,8 +46,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423376 Empty "Name" field validation during creation of new "Authority file" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423376'] },
+        'C423376 Empty "Name" field validation during creation of new "Authority file" (promin)',
+        { tags: ['extendedPath', 'promin', 'C423376'] },
         () => {
           // Step 1: Click "+New", verify new editable row
           ManageAuthorityFiles.clickNewButton();

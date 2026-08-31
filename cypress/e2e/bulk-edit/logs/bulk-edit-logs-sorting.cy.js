@@ -273,8 +273,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C543875 Verify sorting in "Bulk edit" logs table (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C543875'] },
+      'C543875 Verify sorting in "Bulk edit" logs table (athena)',
+      { tags: ['extendedPath', 'athena', 'C543875'] },
       () => {
         cy.viewport(2560, 1440);
 

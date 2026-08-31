@@ -301,8 +301,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C466267 Exclude fields from Export with custom Instance profile (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C466267'] },
+      'C466267 Exclude fields from Export with custom Instance profile (athena)',
+      { tags: ['extendedPath', 'athena', 'C466267'] },
       () => {
         // Step 1: Trigger the data export by uploading the .csv file with Instance UUIDs
         ExportFileHelper.uploadFile(csvFileName);

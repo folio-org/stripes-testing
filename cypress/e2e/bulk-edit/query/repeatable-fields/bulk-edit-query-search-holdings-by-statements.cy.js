@@ -136,8 +136,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C813659 Search holdings by Statements fields (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C813659'] },
+        'C813659 Search holdings by Statements fields (athena)',
+        { tags: ['criticalPath', 'athena', 'C813659'] },
         () => {
           // Step 1: Verify Statements fields are queryable under "Select options" dropdown
           BulkEditSearchPane.openQuerySearch();

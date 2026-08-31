@@ -280,8 +280,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566499 Handling permissions for Items edits from the Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566499'] },
+        'C566499 Handling permissions for Items edits from the Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566499'] },
         () => {
           // Step 1: Build and run query - verify matched records
           BulkEditSearchPane.openQuerySearch();

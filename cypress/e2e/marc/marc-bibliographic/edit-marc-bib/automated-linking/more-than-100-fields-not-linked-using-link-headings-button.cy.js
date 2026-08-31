@@ -90,8 +90,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C388556 More than 100 fields are NOT linked after clicking on the "Link headings" button when edit "MARC bib" (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C388556'] },
+          'C388556 More than 100 fields are NOT linked after clicking on the "Link headings" button when edit "MARC bib" (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C388556'] },
           () => {
             InventoryInstances.searchByTitle(testData.searchQuery);
             InventoryInstances.selectInstance();

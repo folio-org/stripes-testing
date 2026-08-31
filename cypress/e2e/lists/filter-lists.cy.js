@@ -162,8 +162,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C1444108 Filter section: Statuses (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair', 'C1444108', 'eurekaPhase1'] },
+      'C1444108 Filter section: Statuses (athena) (TaaS)',
+      { tags: ['criticalPath', 'athena', 'C1444108', 'eurekaPhase1'] },
       () => {
         // #2 Click on "Status" accordion on the "Filter" pane
         Lists.clickOnAccordionInFilter(statusFilters.accordionName);
@@ -184,8 +184,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C1444109 Filter section: Visibility (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair', 'C1444109', 'eurekaPhase1'] },
+      'C1444109 Filter section: Visibility (athena) (TaaS)',
+      { tags: ['criticalPath', 'athena', 'C1444109', 'eurekaPhase1'] },
       () => {
         // #2 Click on "Visibility" accordion on the "Filter" pane
         Lists.clickOnAccordionInFilter(visibilityFilter.accordionName);
@@ -223,8 +223,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C1444110 Filter section: Record types (corsair) (TaaS)',
-      { tags: ['criticalPath', 'corsair', 'C1444110', 'eurekaPhase1'] },
+      'C1444110 Filter section: Record types (athena) (TaaS)',
+      { tags: ['criticalPath', 'athena', 'C1444110', 'eurekaPhase1'] },
       () => {
         Lists.clickOnAccordionInFilter(recordTypesFilters.accordionName);
         Lists.verifyAccordionCollapsedInFilter(recordTypesFilters.accordionName);

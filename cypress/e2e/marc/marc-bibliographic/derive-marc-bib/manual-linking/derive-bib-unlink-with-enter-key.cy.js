@@ -153,8 +153,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C366121 Derive a new MARC bib record: Unlink "MARC Bibliographic" fields from "MARC Authority" records using "ENTER" hot key in "Remove authority linking" modal (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C366121'] },
+        'C366121 Derive a new MARC bib record: Unlink "MARC Bibliographic" fields from "MARC Authority" records using "ENTER" hot key in "Remove authority linking" modal (promin)',
+        { tags: ['extendedPath', 'promin', 'C366121'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

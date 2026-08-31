@@ -54,8 +54,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C451652 Generic error shows when not handled error is returned from back-end side during editing of "Authority file" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C451652'] },
+        'C451652 Generic error shows when not handled error is returned from back-end side during editing of "Authority file" (promin)',
+        { tags: ['extendedPath', 'promin', 'C451652'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
           cy.login(user.username, user.password, {

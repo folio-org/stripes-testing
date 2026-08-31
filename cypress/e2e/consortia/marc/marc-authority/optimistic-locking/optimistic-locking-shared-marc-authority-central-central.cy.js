@@ -81,8 +81,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C407677 Optimistic locking error appears when Shared "MARC authority" record opened at Central tenant has been edited at the Central tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C407677'] },
+          'C407677 Optimistic locking error appears when Shared "MARC authority" record opened at Central tenant has been edited at the Central tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C407677'] },
           () => {
             // Steps 1-4: User A (Central) opens the authority record for editing
             cy.resetTenant();

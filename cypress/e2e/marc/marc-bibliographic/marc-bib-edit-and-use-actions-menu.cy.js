@@ -47,8 +47,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C10929 Inventory Action menu use after closing quickMARC (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C10929'] },
+      'C10929 Inventory Action menu use after closing quickMARC (promin)',
+      { tags: ['extendedPath', 'promin', 'C10929'] },
       () => {
         InventoryInstances.searchByTitle(createdInstanceId);
         InventoryInstances.selectInstanceById(createdInstanceId);

@@ -66,8 +66,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C380596 Verify that HRIDs in "Logs" are human readable (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C380596'] },
+      'C380596 Verify that HRIDs in "Logs" are human readable (athena)',
+      { tags: ['extendedPath', 'athena', 'C380596'] },
       () => {
         BulkEditLogs.verifyLogsPane();
         cy.intercept('GET', '/bulk-operations?query*').as('getOperations');

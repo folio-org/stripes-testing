@@ -10,7 +10,7 @@ describe('Export Manager', () => {
   });
 
   it(
-    'C350699 Verify the schedule time -- AM/PM format (firebird)',
+    'C350699 Verify the schedule time -- AM/PM format (athena)',
     { tags: ['extendedPathBama', 'bama'] },
     () => {
       TransferFeeFine.selectTransferCriteriaSchedulePeriod('Days');

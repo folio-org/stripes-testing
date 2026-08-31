@@ -174,8 +174,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C877098 Verify that call numbers are still browsable after "MARC holdings" ownership update (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C877098'] },
+        'C877098 Verify that call numbers are still browsable after "MARC holdings" ownership update (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C877098'] },
         () => {
           callNumbers.forEach((callNumber) => {
             BrowseCallNumber.waitForCallNumberToAppear(callNumber);

@@ -139,8 +139,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C409486 Consortia | Inventory | ListRecords |ListIdentifiers: Add local FOLIO Holdings to shared FOLIO instance in Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C409486', 'nonParallel'] },
+        'C409486 Consortia | Inventory | ListRecords |ListIdentifiers: Add local FOLIO Holdings to shared FOLIO instance in Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C409486', 'nonParallel'] },
         () => {
           const fromDate = DateTools.getCurrentDateForOaiPmh();
 

@@ -83,8 +83,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C740233 Editing FOLIO instances bulk edit profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C740233'] },
+      'C740233 Editing FOLIO instances bulk edit profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C740233'] },
       () => {
         // Step 1: Click on the row with FOLIO instances bulk edit profile from Preconditions
         InstancesBulkEditProfilesPane.clickProfileRow(testData.originalProfileName);

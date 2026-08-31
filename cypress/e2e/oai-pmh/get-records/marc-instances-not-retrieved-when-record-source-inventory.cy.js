@@ -36,8 +36,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375184 NEGATIVE: GetRecord: Verify that MARC instances are not retrieved in responce (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375184', 'nonParallel'] },
+      'C375184 NEGATIVE: GetRecord: Verify that MARC instances are not retrieved in responce (athena)',
+      { tags: ['extendedPath', 'athena', 'C375184', 'nonParallel'] },
       () => {
         OaiPmh.getRecordRequest(marcInstanceId).then((response) => {
           OaiPmh.verifyIdDoesNotExistError(response);

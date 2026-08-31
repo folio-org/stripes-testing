@@ -220,8 +220,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411638 Search for Shared/Local records by "Instance HRID" search option from "Member" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411638'] },
+        'C411638 Search for Shared/Local records by "Instance HRID" search option from "Member" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411638'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter(helbyAccordionName);
 

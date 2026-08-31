@@ -98,8 +98,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C715 Delete an item without dependencies (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C715'] },
+      'C715 Delete an item without dependencies (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C715'] },
       () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter(barcodeOption, createdItem.barcode);

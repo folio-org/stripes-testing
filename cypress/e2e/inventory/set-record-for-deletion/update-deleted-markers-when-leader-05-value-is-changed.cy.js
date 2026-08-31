@@ -59,8 +59,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C656318 Update "deleted" markers when leader 05 value is changed (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C656318'] },
+      'C656318 Update "deleted" markers when leader 05 value is changed (promin)',
+      { tags: ['criticalPath', 'promin', 'C656318'] },
       () => {
         InventoryInstance.waitLoading();
         InstanceRecordView.verifyInstanceIsSetForDeletionSuppressedFromDiscoveryStaffSuppressedWarning();

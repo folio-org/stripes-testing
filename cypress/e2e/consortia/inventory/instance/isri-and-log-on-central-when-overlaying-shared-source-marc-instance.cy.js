@@ -50,8 +50,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C418587 (CONSORTIA) Verify Inventory Single Record Import and log on central tenant when creating Shared Source = MARC Instance on central tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C418587'] },
+        'C418587 (CONSORTIA) Verify Inventory Single Record Import and log on central tenant when creating Shared Source = MARC Instance on central tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C418587'] },
         () => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.importWithOclc(testData.oclcNumberForImport);

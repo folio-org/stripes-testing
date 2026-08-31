@@ -128,8 +128,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C813672 Search holdings by Receiving history fields (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C813672'] },
+        'C813672 Search holdings by Receiving history fields (athena)',
+        { tags: ['extendedPath', 'athena', 'C813672'] },
         () => {
           // Map receiving history data to convert boolean publicDisplay to string format for verification
           const mappedHoldingsDatatoUIView = testHoldingsData.map((holding) => ({

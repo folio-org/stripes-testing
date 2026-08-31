@@ -109,8 +109,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C1030068 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to duplicate unlocked job profile (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C1030068'] },
+      'C1030068 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to duplicate unlocked job profile (athena)',
+      { tags: ['extendedPath', 'athena', 'C1030068'] },
       () => {
         // Step 1: Select existing unlocked job profile from Preconditions: job profile not referenced in an existing export job
         SettingsDataExport.goToSettingsDataExport();

@@ -82,8 +82,8 @@ describe('Notes assign and unassign', () => {
   });
 
   it(
-    'C3629 Notes: Can assign and unassign a note (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C3629'] },
+    'C3629 Notes: Can assign and unassign a note (promin)',
+    { tags: ['extendedPath', 'promin', 'C3629'] },
     () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: `/eholdings/providers/${testData.secondProviderId}`,

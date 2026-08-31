@@ -86,8 +86,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C405538 User cannot edit Shared "MARC authority" record in Member tenant without permission in Central tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C405538'] },
+          'C405538 User cannot edit Shared "MARC authority" record in Member tenant without permission in Central tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C405538'] },
           () => {
             // Steps 1,2: Search for created record
             MarcAuthorities.searchBeats(testData.searchQuery);

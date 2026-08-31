@@ -68,8 +68,8 @@ describe('MARC', () => {
 
       it(
         `C422244 Verify options displayed in "Select authority file" dropdown in "Create a new MARC authority record" window 
-        when only one FOLIO has the "Active" checkbox selected in the settings (spitfire)`,
-        { tags: ['criticalPathFlaky', 'spitfire', 'C422244'] },
+        when only one FOLIO has the "Active" checkbox selected in the settings (promin)`,
+        { tags: ['criticalPathFlaky', 'promin', 'C422244'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateNewMarcAuthorityRecord);

@@ -130,8 +130,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422062 Q release | Add "010" field with invalid prefix in "$a" subfield in linked "MARC authority" record when "001" field is controlling "$0" of MARC bib\'s field (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C422062'] },
+        'C422062 Q release | Add "010" field with invalid prefix in "$a" subfield in linked "MARC authority" record when "001" field is controlling "$0" of MARC bib\'s field (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C422062'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, linkingTagAndValues.value);
           MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);

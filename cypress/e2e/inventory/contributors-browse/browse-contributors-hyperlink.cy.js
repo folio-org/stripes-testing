@@ -92,8 +92,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C374702 Value in "Contributor" column is a hyperlink (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C374702'] },
+      'C374702 Value in "Contributor" column is a hyperlink (promin)',
+      { tags: ['extendedPath', 'promin', 'C374702'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

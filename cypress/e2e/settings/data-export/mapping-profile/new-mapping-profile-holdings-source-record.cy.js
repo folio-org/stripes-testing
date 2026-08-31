@@ -39,8 +39,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C196758 Create a new mapping profile for MARC bib record with holdings data included - Source record storage (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C196758'] },
+      'C196758 Create a new mapping profile for MARC bib record with holdings data included - Source record storage (athena)',
+      { tags: ['criticalPath', 'athena', 'C196758'] },
       () => {
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, [

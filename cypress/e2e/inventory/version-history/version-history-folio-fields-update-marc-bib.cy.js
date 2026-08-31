@@ -70,8 +70,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C692122 Check "Version history" pane of "MARC bibliographic" record after Update of FOLIO instance fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C692122'] },
+        'C692122 Check "Version history" pane of "MARC bibliographic" record after Update of FOLIO instance fields (promin)',
+        { tags: ['extendedPath', 'promin', 'C692122'] },
         () => {
           // Step 1: Click on the "Actions" on the third pane >> "Edit instance"
           InstanceRecordView.edit();

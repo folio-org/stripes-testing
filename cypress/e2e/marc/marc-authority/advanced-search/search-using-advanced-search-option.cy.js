@@ -82,8 +82,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C476733 Search using "Advanced search" option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476733'] },
+        'C476733 Search using "Advanced search" option (promin)',
+        { tags: ['extendedPath', 'promin', 'C476733'] },
         () => {
           // Step 1: Open Advanced search modal
           MarcAuthorities.clickAdvancedSearchButton();

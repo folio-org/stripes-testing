@@ -23,8 +23,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C788715 Verify "Simple SRS record" and "SRS Bib" entity types availability via API with correct permissions (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C788715'] },
+      'C788715 Verify "Simple SRS record" and "SRS Bib" entity types availability via API with correct permissions (athena)',
+      { tags: ['extendedPath', 'athena', 'C788715'] },
       () => {
         // #1 Login to the FOLIO using the user from pre-condition
         cy.login(userData.username, userData.password, {

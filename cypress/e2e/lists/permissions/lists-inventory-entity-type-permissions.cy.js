@@ -48,8 +48,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C478274 Verify that it\'s not possible to access the "Holdings/Items/Instances" without a proper permission although Lists app permissions assigned (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C478274'] },
+      'C478274 Verify that it\'s not possible to access the "Holdings/Items/Instances" without a proper permission although Lists app permissions assigned (athena)',
+      { tags: ['criticalPath', 'athena', 'C478274'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -88,8 +88,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C478272 [Inventory: View, create, edit, mark missing items] Verify that it\'s possible to access the "Holdings", "Items", "Instances" entities when Lists app permissions assigned (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C478272'] },
+      'C478272 [Inventory: View, create, edit, mark missing items] Verify that it\'s possible to access the "Holdings", "Items", "Instances" entities when Lists app permissions assigned (athena)',
+      { tags: ['extendedPath', 'athena', 'C478272'] },
       () => {
         cy.login(userDataWithInventory.username, userDataWithInventory.password, {
           path: TopMenu.listsPath,
@@ -118,8 +118,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C478270 [Inventory: View, create, edit, delete holdings] Verify that it\'s possible to access the "Holdings", "Items", "Instances" entities when Lists app permissions assigned (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C478270'] },
+      'C478270 [Inventory: View, create, edit, delete holdings] Verify that it\'s possible to access the "Holdings", "Items", "Instances" entities when Lists app permissions assigned (athena)',
+      { tags: ['extendedPath', 'athena', 'C478270'] },
       () => {
         cy.login(userDataWithHoldings.username, userDataWithHoldings.password, {
           path: TopMenu.listsPath,
@@ -148,8 +148,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C477584 [Inventory: All permissions] Verify that it\'s possible to access the "Holdings", "Items", "Instances" entities when Lists app permissions assigned (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C477584'] },
+      'C477584 [Inventory: All permissions] Verify that it\'s possible to access the "Holdings", "Items", "Instances" entities when Lists app permissions assigned (athena)',
+      { tags: ['extendedPath', 'athena', 'C477584'] },
       () => {
         cy.login(userDataWithInventoryAll.username, userDataWithInventoryAll.password, {
           path: TopMenu.listsPath,

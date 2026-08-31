@@ -114,8 +114,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C700864 Verify that call numbers with max number of character would be browse (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C700864'] },
+      'C700864 Verify that call numbers with max number of character would be browse (promin)',
+      { tags: ['extendedPath', 'promin', 'C700864'] },
       () => {
         // Wait for call number to appear in browse
         BrowseCallNumber.waitForCallNumberToAppear(browseQuery);

@@ -75,8 +75,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C436903 Edit all editable fields of Local "Authority file" which doesn\'t have assigned "MARC authority" records, from Member tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C436903'] },
+          'C436903 Edit all editable fields of Local "Authority file" which doesn\'t have assigned "MARC authority" records, from Member tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C436903'] },
           () => {
             // Login directly to Member (College) tenant
             cy.setTenant(Affiliations.College);

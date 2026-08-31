@@ -78,8 +78,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C584444 Verify that "Corporate/Conference name" search option uses "all" search operator ("Magnitogorskiĭ" case) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C584444'] },
+      'C584444 Verify that "Corporate/Conference name" search option uses "all" search operator ("Magnitogorskiĭ" case) (promin)',
+      { tags: ['criticalPath', 'promin', 'C584444'] },
       () => {
         // execute search by "Keyword" option
         testData.searchOptions.forEach((option) => {

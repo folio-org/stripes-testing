@@ -81,7 +81,7 @@ describe.skip('bulk-edit', () => {
     });
 
     it(
-      'C358977 Verify that 10 records returned in errors preview after updating records (firebird) (TaaS)',
+      'C358977 Verify that 10 records returned in errors preview after updating records (athena) (TaaS)',
       { tags: [] },
       () => {
         BulkEditSearchPane.checkItemsRadio();

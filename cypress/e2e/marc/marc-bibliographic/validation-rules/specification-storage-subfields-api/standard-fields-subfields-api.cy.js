@@ -79,8 +79,8 @@ describe('Specification Storage - Standard Fields Subfield API', () => {
   });
 
   it(
-    'C499730 Create Subfield code of Standard field (repeatable, required, deprecated) for MARC bib spec (API) (spitfire)',
-    { tags: ['C499730', 'criticalPath', 'spitfire'] },
+    'C499730 Create Subfield code of Standard field (repeatable, required, deprecated) for MARC bib spec (API) (promin)',
+    { tags: ['C499730', 'criticalPath', 'promin'] },
     () => {
       // Find a standard field (e.g., 088 - Standard Field)
       const standardField = findStandardFieldByTag('088');
@@ -140,8 +140,8 @@ describe('Specification Storage - Standard Fields Subfield API', () => {
   );
 
   it(
-    'C499732 Cannot create Subfield code of Standard field with duplicate "code" for MARC bib spec (API) (spitfire)',
-    { tags: ['C499732', 'criticalPath', 'spitfire'] },
+    'C499732 Cannot create Subfield code of Standard field with duplicate "code" for MARC bib spec (API) (promin)',
+    { tags: ['C499732', 'criticalPath', 'promin'] },
     () => {
       // Find a standard field (e.g., 100 - Main Entry--Personal Name)
       const standardField = findStandardFieldByTag('100');
@@ -240,8 +240,8 @@ describe('Specification Storage - Standard Fields Subfield API', () => {
   );
 
   it(
-    'C499738 Create Subfield code of Standard field (not repeatable, not required, not deprecated) for MARC bib spec (API) (spitfire)',
-    { tags: ['C499738', 'criticalPath', 'spitfire'] },
+    'C499738 Create Subfield code of Standard field (not repeatable, not required, not deprecated) for MARC bib spec (API) (promin)',
+    { tags: ['C499738', 'criticalPath', 'promin'] },
     () => {
       const subfieldCode = 'y';
 
@@ -312,8 +312,8 @@ describe('Specification Storage - Standard Fields Subfield API', () => {
   );
 
   it(
-    'C499739 Create Subfield code of Standard field (repeatable, not required, not deprecated selected by default) for MARC bib spec (API) (spitfire)',
-    { tags: ['C499739', 'criticalPath', 'spitfire'] },
+    'C499739 Create Subfield code of Standard field (repeatable, not required, not deprecated selected by default) for MARC bib spec (API) (promin)',
+    { tags: ['C499739', 'criticalPath', 'promin'] },
     () => {
       const subfieldCode = 'z';
 

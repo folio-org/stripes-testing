@@ -229,8 +229,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411672 Search for Shared/Local records by "Query search" search option from "Member" tenant ("Series statements" fields) (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411672'] },
+        'C411672 Search for Shared/Local records by "Query search" search option from "Member" tenant ("Series statements" fields) (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411672'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter(helbyAccordionName);
 

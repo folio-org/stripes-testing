@@ -46,8 +46,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C552482 Check the subject type and source settings on Edit Instance page (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C552482'] },
+      'C552482 Check the subject type and source settings on Edit Instance page (promin)',
+      { tags: ['extendedPath', 'promin', 'C552482'] },
       () => {
         // Step 1: Search for instance, open detail view
         InventoryInstances.searchByTitle(testData.instance.instanceId);

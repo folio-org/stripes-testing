@@ -139,8 +139,8 @@ describe('Lists', () => {
 
     // Test case marked as broken due to required update for Trillium + releases (FAT-27352)
     it(
-      'C788719 Verify that the fields/properties are defined correctly in the entity type SRS Authority (corsair)',
-      { tags: ['criticalPathBroken', 'corsair', 'C788719'] },
+      'C788719 Verify that the fields/properties are defined correctly in the entity type SRS Authority (athena)',
+      { tags: ['criticalPathBroken', 'athena', 'C788719'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

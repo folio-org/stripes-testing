@@ -46,7 +46,7 @@ describe('Users', () => {
       PatronGroups.deleteViaApi(testData.secondPatronGroup.id);
     });
 
-    it('C514997 View patron groups (volaris)', { tags: ['smoke', 'volaris', 'C514997'] }, () => {
+    it('C514997 View patron groups (vega)', { tags: ['smoke', 'vega', 'C514997'] }, () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.USERS);
       UsersSettingsGeneral.checkUserSectionOptionExists('Patron groups');
       SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);

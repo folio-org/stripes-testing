@@ -97,8 +97,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466169 Find Instance plugin | Search by "Classification, normalized" search option using queries with special characters (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C466169'] },
+      'C466169 Find Instance plugin | Search by "Classification, normalized" search option using queries with special characters (promin)',
+      { tags: ['extendedPath', 'promin', 'C466169'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.ordersPath,

@@ -52,8 +52,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C1259792 Package Record: Verify the "Actions" menu options in the "Titles" accordion. (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1259792'] },
+      'C1259792 Package Record: Verify the "Actions" menu options in the "Titles" accordion. (promin)',
+      { tags: ['extendedPath', 'promin', 'C1259792'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.openPackageWithExpectedName(testData.packageName);

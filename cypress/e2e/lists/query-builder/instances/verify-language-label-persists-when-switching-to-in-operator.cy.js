@@ -84,8 +84,8 @@ describe('Lists', () => {
       });
 
       it(
-        "C1045967 Verify that dynamically fetched values doesn't lose their labels when switching to $in (corsair)",
-        { tags: ['criticalPath', 'corsair', 'C1045967'] },
+        "C1045967 Verify that dynamically fetched values doesn't lose their labels when switching to $in (athena)",
+        { tags: ['criticalPath', 'athena', 'C1045967'] },
         () => {
           // Step 1: Create new list with Instances record type and open Build query form
           Lists.openNewListPane();

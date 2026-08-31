@@ -87,9 +87,9 @@ describe('Inventory', () => {
     });
 
     it(
-      'C366108 Verify that search by "Holdings HRID" for "Holdings" which moved from one "Instance" to another will return only one record. (spitfire)',
+      'C366108 Verify that search by "Holdings HRID" for "Holdings" which moved from one "Instance" to another will return only one record. (promin)',
       {
-        tags: ['extendedPath', 'spitfire', 'C366108'],
+        tags: ['extendedPath', 'promin', 'C366108'],
       },
       () => {
         cy.login(user.username, user.password, {

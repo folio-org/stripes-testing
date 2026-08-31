@@ -63,8 +63,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C553018 Filter "Instance" records by "Date range" filter using one box ("From" / "To") (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C553018'] },
+        'C553018 Filter "Instance" records by "Date range" filter using one box ("From" / "To") (promin)',
+        { tags: ['criticalPath', 'promin', 'C553018'] },
         () => {
           InventoryInstances.searchByTitle(testData.searchQuery);
           testData.allDates1.forEach((date) => {

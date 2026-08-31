@@ -122,8 +122,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C422019 Search Instances using "Contains any" search modifier/matcher (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C422019'] },
+      'C422019 Search Instances using "Contains any" search modifier/matcher (promin)',
+      { tags: ['extendedPath', 'promin', 'C422019'] },
       () => {
         InventoryInstances.clickAdvSearchButton();
         advSearchData.forEach((data, index) => {

@@ -152,8 +152,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C553010 Verify that facets options are available after "Date" sort was applied to the result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C553010'] },
+      'C553010 Verify that facets options are available after "Date" sort was applied to the result list (promin)',
+      { tags: ['criticalPath', 'promin', 'C553010'] },
       () => {
         InventoryInstances.searchByTitle(testData.searchQuery);
         InventoryInstances.checkColumnHeaderSort(INVENTORY_DEFAULT_SORT_OPTIONS.TITLE);

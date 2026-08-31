@@ -255,8 +255,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C432305 Verify "Suppress from discovery" option is set True when Instances, Holdings and items are not suppressed from discovery (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C432305'] },
+      'C432305 Verify "Suppress from discovery" option is set True when Instances, Holdings and items are not suppressed from discovery (athena)',
+      { tags: ['criticalPath', 'athena', 'C432305'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.verifyRecordIdentifiers(instanceIdentifiers);

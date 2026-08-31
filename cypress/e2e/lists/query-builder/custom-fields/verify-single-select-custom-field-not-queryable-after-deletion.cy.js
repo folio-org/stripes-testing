@@ -73,8 +73,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C648497 Verify that the Single select custom field is not queryable after deleting it (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C648497'] },
+        'C648497 Verify that the Single select custom field is not queryable after deleting it (athena)',
+        { tags: ['criticalPath', 'athena', 'C648497'] },
         () => {
           listName = getTestEntityValue('C648497_List');
 

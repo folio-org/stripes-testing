@@ -117,8 +117,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C380562 Verify generated Logs files for Users Local are hidden without "UI-Users" capability set (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C380562'] },
+        'C380562 Verify generated Logs files for Users Local are hidden without "UI-Users" capability set (athena)',
+        { tags: ['criticalPath', 'athena', 'C380562'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
           BulkEditSearchPane.uploadFile(userUUIDsFileName);

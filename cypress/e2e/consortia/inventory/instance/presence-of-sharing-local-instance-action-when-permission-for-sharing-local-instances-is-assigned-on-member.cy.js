@@ -56,8 +56,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C404512 (CONSORTIA) Verify presence of sharing local instance action when the permission for sharing local instances is assigned on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C404512'] },
+        'C404512 (CONSORTIA) Verify presence of sharing local instance action when the permission for sharing local instances is assigned on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C404512'] },
         () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventoryInstances.waitContentLoading();

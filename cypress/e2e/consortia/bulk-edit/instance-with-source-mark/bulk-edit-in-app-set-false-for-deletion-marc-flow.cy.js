@@ -96,8 +96,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C831963 ECS | Verify Set false for deletion of Instances via MARC flow in Central tenant (Logs) (consortia) (firebird)',
-        { tags: ['smokeECS', 'firebird', 'C831963'] },
+        'C831963 ECS | Verify Set false for deletion of Instances via MARC flow in Central tenant (Logs) (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C831963'] },
         () => {
           // Step 1: Uncheck columns under "Show columns" subsection
           BulkEditActions.openActions();

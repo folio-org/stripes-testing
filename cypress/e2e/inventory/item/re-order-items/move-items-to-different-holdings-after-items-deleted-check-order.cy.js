@@ -114,9 +114,9 @@ describe('Inventory', () => {
       });
 
       it(
-        'C916232 Create/Move 3rd Item in Holdings after 1st and 2nd Items were deleted (spitfire)',
+        'C916232 Create/Move 3rd Item in Holdings after 1st and 2nd Items were deleted (promin)',
         {
-          tags: ['extendedPath', 'spitfire', 'C916232'],
+          tags: ['extendedPath', 'promin', 'C916232'],
         },
         () => {
           cy.login(user.username, user.password, {

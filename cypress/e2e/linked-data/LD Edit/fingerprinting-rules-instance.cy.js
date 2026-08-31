@@ -16,7 +16,7 @@ import {
 
 let user;
 
-describe('Citation: Fingerprinting rules for Instance', () => {
+describe('Promin: Fingerprinting rules for Instance', () => {
   const testData = {
     workId: null,
     resourceTitle: `Data Science in Practice ${getRandomPostfix()}`,
@@ -68,8 +68,8 @@ describe('Citation: Fingerprinting rules for Instance', () => {
   });
 
   it(
-    'C1282818 - Update fingerprinting rules for Instance (citation)',
-    { tags: ['criticalPath', 'citation', 'C1282818', 'marigold'] },
+    'C1282818 - Update fingerprinting rules for Instance (promin)',
+    { tags: ['criticalPath', 'promin', 'C1282818', 'marigold'] },
     () => {
       let currentInstanceId;
 

@@ -46,8 +46,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C407009 Display "Authority" information on "Data import" log page when import successful (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C407009'] },
+      'C407009 Display "Authority" information on "Data import" log page when import successful (promin)',
+      { tags: ['extendedPath', 'promin', 'C407009'] },
       () => {
         // Step 1-3: Upload MARC Authority file and run with Default - Create SRS MARC Authority
         DataImport.verifyUploadState();

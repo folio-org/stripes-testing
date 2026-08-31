@@ -204,8 +204,8 @@ describe(
         });
 
         it(
-          'C435891 Verify generated Logs files for Instances suppressed from discovery (Set false) (firebird)',
-          { tags: ['extendedPath', 'firebird', 'C435891'] },
+          'C435891 Verify generated Logs files for Instances suppressed from discovery (Set false) (athena)',
+          { tags: ['extendedPath', 'athena', 'C435891'] },
           () => {
             // Step 1: Select radio and identifier
             BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(

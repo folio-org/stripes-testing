@@ -117,8 +117,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C350678'] },
+      'C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (promin)',
+      { tags: ['criticalPath', 'promin', 'C350678'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();

@@ -31,8 +31,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C424000 User without permission "Settings (MARC authority): View authority files" cannot see "Settings >> MARC authority" page (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C424000'] },
+        'C424000 User without permission "Settings (MARC authority): View authority files" cannot see "Settings >> MARC authority" page (promin)',
+        { tags: ['extendedPath', 'promin', 'C424000'] },
         () => {
           cy.login(user.username, user.password, {
             path: TopMenu.settingsPath,

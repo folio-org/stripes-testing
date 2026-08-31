@@ -181,8 +181,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422233 MARC Authority plug-in | Verify that "LCCN" search option searches by "$a" and "$z" subfields of "010" field only (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C422233'] },
+        'C422233 MARC Authority plug-in | Verify that "LCCN" search option searches by "$a" and "$z" subfields of "010" field only (promin)',
+        { tags: ['extendedPath', 'promin', 'C422233'] },
         () => {
           InventoryInstances.searchByTitle(createdBibId);
           InventoryInstances.selectInstanceById(createdBibId);

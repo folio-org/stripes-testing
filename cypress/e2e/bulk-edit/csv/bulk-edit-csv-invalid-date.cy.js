@@ -50,8 +50,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C388498 Negative: Verify Local updating records with invalid date (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C388498'] },
+      'C388498 Negative: Verify Local updating records with invalid date (athena)',
+      { tags: ['extendedPath', 'athena', 'C388498'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

@@ -78,7 +78,7 @@ describe('Inventory', () => {
 
     it(
       'C959225 API | Create multiple Items using POST /item-storage/batch/synchronous with / without upsert=true parameter',
-      { tags: ['extendedPath', 'spitfire', 'C959225'] },
+      { tags: ['extendedPath', 'promin', 'C959225'] },
       () => {
         // Step 1. Send POST ‘/item-storage/batch/synchronous’ with following body (without item “id” and without "upsert=true" parameter)
         const itemRecordsWithoutIdsOne = [

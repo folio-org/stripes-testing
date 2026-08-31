@@ -80,8 +80,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375951 GetRecord:Verify that deleted SRS are harvested (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375951'] },
+      'C375951 GetRecord:Verify that deleted SRS are harvested (athena)',
+      { tags: ['extendedPath', 'athena', 'C375951'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.id);
         InventoryInstances.selectInstance();

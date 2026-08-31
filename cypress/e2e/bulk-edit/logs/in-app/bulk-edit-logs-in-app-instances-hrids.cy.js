@@ -113,8 +113,8 @@ describe(
         });
 
         it(
-          'C423990 Verify generated Logs files for Instances staff suppress (Set false) (firebird)',
-          { tags: ['extendedPath', 'firebird', 'C423990'] },
+          'C423990 Verify generated Logs files for Instances staff suppress (Set false) (athena)',
+          { tags: ['extendedPath', 'athena', 'C423990'] },
           () => {
             BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
               'Instance',

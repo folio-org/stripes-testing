@@ -63,8 +63,8 @@ describe('Lists', () => {
       });
 
       it(
-        "C648491 Verify that it's possible to update the checkbox custom fields, and all existing queries are still available (corsair)",
-        { tags: ['criticalPath', 'corsair', 'C648491'] },
+        "C648491 Verify that it's possible to update the checkbox custom fields, and all existing queries are still available (athena)",
+        { tags: ['criticalPath', 'athena', 'C648491'] },
         () => {
           listName = getTestEntityValue('C648491_List');
 

@@ -94,8 +94,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C451503 [Instance] Verify that Non-Queryable array type fields are part of exported .csv files and column selection (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C451503'] },
+      'C451503 [Instance] Verify that Non-Queryable array type fields are part of exported .csv files and column selection (athena)',
+      { tags: ['extendedPath', 'athena', 'C451503'] },
       () => {
         // Define columns to verify
         const arrayTypeColumns = [

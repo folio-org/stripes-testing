@@ -50,8 +50,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C421995 (NON-CONSORTIA) Verify the action profile options (Folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C421995'] },
+      'C421995 (NON-CONSORTIA) Verify the action profile options (Promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C421995'] },
       () => {
         const actionCreate = ACTION_NAMES_IN_ACTION_PROFILE.CREATE;
         const actionModify = ACTION_NAMES_IN_ACTION_PROFILE.MODIFY;

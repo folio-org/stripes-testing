@@ -62,8 +62,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C543781 Check the "Delete" action in "Settings (Inventory): Create, edit, delete subject types" permission for linked to Instance subject type (folijet)',
-        { tags: ['extendedPath', 'folijet', 'C543781'] },
+        'C543781 Check the "Delete" action in "Settings (Inventory): Create, edit, delete subject types" permission for linked to Instance subject type (promin)',
+        { tags: ['extendedPath', 'promin', 'C543781'] },
         () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
           SettingsInventory.goToSettingsInventory();

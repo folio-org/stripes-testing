@@ -56,8 +56,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C347618 Overlaying with single record import creates does not duplicate control fields (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C347618'] },
+      'C347618 Overlaying with single record import creates does not duplicate control fields (promin)',
+      { tags: ['criticalPath', 'promin', 'C347618'] },
       () => {
         InventoryInstances.importWithOclc(oclcNumber);
         InventoryInstance.checkCalloutMessage(

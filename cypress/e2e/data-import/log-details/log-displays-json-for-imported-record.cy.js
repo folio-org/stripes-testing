@@ -38,8 +38,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C282197 Data Import log displays error message when trying to view record JSON details (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C282197'] },
+      'C282197 Data Import log displays error message when trying to view record JSON details (promin)',
+      { tags: ['extendedPath', 'promin', 'C282197'] },
       () => {
         // Step 1: Upload file; verify redirected to Choose jobs page
         DataImport.verifyUploadState();

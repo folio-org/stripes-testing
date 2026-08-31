@@ -191,8 +191,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C594346 Verify user-friendly optimistic locking error message for Item in Central tenant (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C594346'] },
+        'C594346 Verify user-friendly optimistic locking error message for Item in Central tenant (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C594346'] },
         () => {
           // Step 2: Download matched records (CSV)
           BulkEditActions.downloadMatchedResults();

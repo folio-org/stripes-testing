@@ -216,8 +216,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C388642 All linkable fields are NOT linked after clicking on the "Link headings" button when derive "MARC bib" except already linked fields (spitfire) (TaaS)',
-          { tags: ['criticalPathFlaky', 'spitfire', 'C388642'] },
+          'C388642 All linkable fields are NOT linked after clicking on the "Link headings" button when derive "MARC bib" except already linked fields (promin) (TaaS)',
+          { tags: ['criticalPathFlaky', 'promin', 'C388642'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();

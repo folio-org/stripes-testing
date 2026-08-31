@@ -53,8 +53,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350407 Verify that a user cannot trigger the DATA EXPORT using invalid job profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C350407'] },
+      'C350407 Verify that a user cannot trigger the DATA EXPORT using invalid job profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C350407'] },
       () => {
         ExportFileHelper.uploadFile(fileName);
         ExportFileHelper.exportWithDefaultJobProfile(fileName, 'Default holdings', 'Holdings');

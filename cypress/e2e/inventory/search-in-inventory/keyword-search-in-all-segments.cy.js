@@ -51,8 +51,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C9308 Verify an identical search on "Keyword (title, contributor, identifier, HRID, UUID)" in all three segments (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C9308'] },
+      'C9308 Verify an identical search on "Keyword (title, contributor, identifier, HRID, UUID)" in all three segments (promin)',
+      { tags: ['extendedPath', 'promin', 'C9308'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(keywordOptions.instance);

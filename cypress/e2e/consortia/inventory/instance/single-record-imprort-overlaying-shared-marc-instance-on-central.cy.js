@@ -67,8 +67,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C418588 (CONSORTIA) Verify Inventory Single Record Import and log on central tenant when overlaying Shared Source = MARC Instance (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C418588'] },
+        'C418588 (CONSORTIA) Verify Inventory Single Record Import and log on central tenant when overlaying Shared Source = MARC Instance (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C418588'] },
         () => {
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();

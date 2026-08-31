@@ -154,8 +154,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C1292051 Verify that MARC bib record edits do not clear FOLIO fields in Instance record (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C1292051'] },
+        'C1292051 Verify that MARC bib record edits do not clear FOLIO fields in Instance record (promin)',
+        { tags: ['criticalPath', 'promin', 'C1292051'] },
         () => {
           // Preconditions: Open the linked Instance detail view via Inventory
           InventoryInstances.searchByTitle(instanceId);

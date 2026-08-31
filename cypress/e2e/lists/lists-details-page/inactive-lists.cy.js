@@ -53,7 +53,7 @@ describe('Lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411840 Inactive lists (corsair)', { tags: ['extendedPath', 'corsair', 'C411840'] }, () => {
+    it('C411840 Inactive lists (athena)', { tags: ['extendedPath', 'athena', 'C411840'] }, () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,

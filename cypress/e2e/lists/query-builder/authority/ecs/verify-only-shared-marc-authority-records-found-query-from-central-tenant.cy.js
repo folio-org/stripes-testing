@@ -97,8 +97,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C1312668 Verify that only Shared MARC authority records are found by query from Central tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C1312668'] },
+          'C1312668 Verify that only Shared MARC authority records are found by query from Central tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C1312668'] },
           () => {
             // Login to Central tenant (user's primary affiliation)
             cy.resetTenant();

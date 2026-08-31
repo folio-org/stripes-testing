@@ -73,8 +73,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C345417 ListRecords: Harvest instances and holdings without items (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C345417'] },
+      'C345417 ListRecords: Harvest instances and holdings without items (athena)',
+      { tags: ['criticalPath', 'athena', 'C345417'] },
       () => {
         OaiPmh.listRecordsRequest('marc21_withholdings').then((response) => {
           OaiPmh.verifyMarcField(

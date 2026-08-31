@@ -199,8 +199,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C651499 Bulk edit administrative data and marc fields (041) for all records (MARC & FOLIO, Query) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C651499'] },
+      'C651499 Bulk edit administrative data and marc fields (041) for all records (MARC & FOLIO, Query) (athena)',
+      { tags: ['criticalPath', 'athena', 'C651499'] },
       () => {
         // Step 1: Hide Languages and Statistical code columns
         BulkEditActions.openActions();

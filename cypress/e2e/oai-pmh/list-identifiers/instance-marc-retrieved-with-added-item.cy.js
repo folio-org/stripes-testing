@@ -65,8 +65,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C380627 verb=ListIdentifiers: Verify that Instance MARC is retrieved in case added Item to it (marc21_withholdings) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C380627'] },
+      'C380627 verb=ListIdentifiers: Verify that Instance MARC is retrieved in case added Item to it (marc21_withholdings) (athena)',
+      { tags: ['extendedPath', 'athena', 'C380627'] },
       () => {
         afterHoldingCreationTimestamp = DateTools.getCurrentDateForOaiPmh();
         // Step 1: Go to Inventory app and find created MARC bib

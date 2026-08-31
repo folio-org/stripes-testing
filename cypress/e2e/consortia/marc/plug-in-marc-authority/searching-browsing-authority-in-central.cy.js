@@ -118,8 +118,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C404417 Searching/browsing for "MARC Authority" records in "MARC Authority" plug-in on Central tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'C404417'] },
+      'C404417 Searching/browsing for "MARC Authority" records in "MARC Authority" plug-in on Central tenant (consortia) (promin)',
+      { tags: ['criticalPathECS', 'promin', 'C404417'] },
       () => {
         // 1 Click "Actions" button in the third pane → Select "Edit MARC bibliographic record" option.
         InventoryInstance.editMarcBibliographicRecord();

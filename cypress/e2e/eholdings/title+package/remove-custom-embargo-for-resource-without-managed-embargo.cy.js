@@ -46,8 +46,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C421982 Remove "Custom Embargo" period for "Resource" that doesn\'t have specified "Managed embargo period" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C421982'] },
+      'C421982 Remove "Custom Embargo" period for "Resource" that doesn\'t have specified "Managed embargo period" (promin)',
+      { tags: ['extendedPath', 'promin', 'C421982'] },
       () => {
         EHoldingsResourceView.waitLoading();
         EHoldingsResourceView.verifyCustomEmbargoExists();

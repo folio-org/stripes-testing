@@ -64,8 +64,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C422057 (CONSORTIA) Verify the sharing of imported instance via ISRI (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C422057'] },
+        'C422057 (CONSORTIA) Verify the sharing of imported instance via ISRI (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C422057'] },
         () => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.importWithOclc(testData.oclcNumberForImport);

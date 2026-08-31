@@ -117,8 +117,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C415365 Update MARC Authority via Data Import/incoming record does not have an 005 (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C415365'] },
+      'C415365 Update MARC Authority via Data Import/incoming record does not have an 005 (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C415365'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(testData.editedFileNameForCreate, testData.fileNameForCreate);

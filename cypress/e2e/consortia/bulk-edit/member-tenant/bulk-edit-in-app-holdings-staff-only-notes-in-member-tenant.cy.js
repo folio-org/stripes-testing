@@ -159,8 +159,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566155 Verify "Staff only" action for Holdings notes in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566155'] },
+        'C566155 Verify "Staff only" action for Holdings notes in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566155'] },
         () => {
           // Step 1-3: Upload UUIDs and verify preview
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');

@@ -94,8 +94,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476758 Filter "Instance" records by Holdings "Source" filter (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C476758'] },
+        'C476758 Filter "Instance" records by Holdings "Source" filter (promin)',
+        { tags: ['criticalPath', 'promin', 'C476758'] },
         () => {
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();

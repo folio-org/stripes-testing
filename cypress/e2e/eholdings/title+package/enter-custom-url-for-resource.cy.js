@@ -62,8 +62,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C345387 Enter a custom URL for "eHoldings" Title+Package (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C345387'] },
+      'C345387 Enter a custom URL for "eHoldings" Title+Package (promin)',
+      { tags: ['extendedPath', 'promin', 'C345387'] },
       () => {
         EHoldingsResourceView.verifyCustomUrl(testData.customUrl);
 

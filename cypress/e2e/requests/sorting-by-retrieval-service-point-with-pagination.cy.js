@@ -87,8 +87,8 @@ describe('Requests', () => {
     });
 
     it(
-      'C627454 Sorting requests by "Retrieval service point" and pagination with applied sorting (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C627454'] },
+      'C627454 Sorting requests by "Retrieval service point" and pagination with applied sorting (vega)',
+      { tags: ['extendedPath', 'vega', 'C627454'] },
       () => {
         // Step 1: Perform search to retrieve at least 201 requests
         Requests.selectRetrievalServicePointColumnInActions(true);

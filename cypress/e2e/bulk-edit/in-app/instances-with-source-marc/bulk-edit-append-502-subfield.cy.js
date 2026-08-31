@@ -108,8 +108,8 @@ describe(
       });
 
       it(
-        'C506676 Append subfield to MARC field (502) mapped to Inventory Instance (MARC) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C506676'] },
+        'C506676 Append subfield to MARC field (502) mapped to Inventory Instance (MARC) (athena)',
+        { tags: ['criticalPath', 'athena', 'C506676'] },
         () => {
           // Step 1: Check columns for Source and Dissertation note
           BulkEditActions.openActions();

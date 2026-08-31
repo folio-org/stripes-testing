@@ -32,7 +32,7 @@ import Users from '../../support/fragments/users/users';
 
 let user;
 
-describe('Citation: MARC Authority integration', () => {
+describe('Promin: MARC Authority integration', () => {
   const randomDigits = `${randomFourDigitNumber()}${randomFourDigitNumber()}`;
   const testData = {
     // lde related test data
@@ -123,8 +123,8 @@ describe('Citation: MARC Authority integration', () => {
   });
 
   it(
-    'C633470 [User journey] Marigold - Create new MARC authority (citation)',
-    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C633470', 'marigold'] },
+    'C633470 [User journey] Marigold - Create new MARC authority (promin)',
+    { tags: ['criticalPath', 'shiftLeft', 'promin', 'C633470', 'marigold'] },
     () => {
       // create new authority via UI
       MarcAuthorities.clickActionsAndNewAuthorityButton();

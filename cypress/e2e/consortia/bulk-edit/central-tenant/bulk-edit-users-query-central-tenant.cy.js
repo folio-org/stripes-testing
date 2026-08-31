@@ -71,8 +71,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C503058 Verify bulk edit actions for Users in Central tenant - Query (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C503058'] },
+        'C503058 Verify bulk edit actions for Users in Central tenant - Query (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C503058'] },
         () => {
           // Step 1: Click "Run query" button
           QueryModal.clickRunQuery();

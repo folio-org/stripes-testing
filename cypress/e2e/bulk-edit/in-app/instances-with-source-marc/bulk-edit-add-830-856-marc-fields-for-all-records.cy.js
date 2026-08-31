@@ -177,8 +177,8 @@ describe(
       });
 
       it(
-        'C663269 Bulk edit marc fields (830, 856) for all records (MARC, Query) (firebird)',
-        { tags: ['smoke', 'firebird', 'C663269'] },
+        'C663269 Bulk edit marc fields (830, 856) for all records (MARC, Query) (athena)',
+        { tags: ['smoke', 'athena', 'C663269'] },
         () => {
           BulkEditSearchPane.verifyBulkEditQueryPaneExists();
           BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('1 instance');

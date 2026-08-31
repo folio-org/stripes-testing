@@ -48,8 +48,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C356808 Verify uploading file with Item former identifiers (firebird)',
-      { tags: ['smoke', 'firebird', 'C356808'] },
+      'C356808 Verify uploading file with Item former identifiers (athena)',
+      { tags: ['smoke', 'athena', 'C356808'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item former identifiers');

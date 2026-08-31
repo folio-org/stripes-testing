@@ -90,8 +90,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808501 Delete "Item" with filled "order" field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C808501'] },
+        'C808501 Delete "Item" with filled "order" field (promin)',
+        { tags: ['extendedPath', 'promin', 'C808501'] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.login(user.username, user.password, {

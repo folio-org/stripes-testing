@@ -210,8 +210,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514912 Cannot create MARC bib record without required standard / local subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C514912', 'nonParallel'] },
+        'C514912 Cannot create MARC bib record without required standard / local subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'promin', 'C514912', 'nonParallel'] },
         () => {
           // Step 1: Open new MARC bib record editor
           InventoryInstance.newMarcBibRecord();

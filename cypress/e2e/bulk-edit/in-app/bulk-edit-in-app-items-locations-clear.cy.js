@@ -63,8 +63,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C353636 Verify in-app bulk edit clear location option (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C353636'] },
+      'C353636 Verify in-app bulk edit clear location option (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C353636'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

@@ -146,8 +146,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C405566 Search and browse for "MARC authority" records in "Select MARC authority" plug-in on Member tenant (from Shared "MARC bib") (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C405566'] },
+        'C405566 Search and browse for "MARC authority" records in "Select MARC authority" plug-in on Member tenant (from Shared "MARC bib") (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C405566'] },
         () => {
           cy.setTenant(Affiliations.College);
           cy.login(testData.user.username, testData.user.password, {

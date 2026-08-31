@@ -76,8 +76,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C357067 Negative: Verify populating preview on the "Are you sure" form (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C357067'] },
+      'C357067 Negative: Verify populating preview on the "Are you sure" form (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C357067'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

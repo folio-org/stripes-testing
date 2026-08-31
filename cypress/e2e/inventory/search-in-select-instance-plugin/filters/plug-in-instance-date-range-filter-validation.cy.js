@@ -163,8 +163,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C553058 "Select Instance" plugin | Validation of "From" / "To" boxes in "Date range" filter (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C553058'] },
+        'C553058 "Select Instance" plugin | Validation of "From" / "To" boxes in "Date range" filter (promin)',
+        { tags: ['extendedPath', 'promin', 'C553058'] },
         () => {
           SelectInstanceModal.searchByName(instanceTitlePrefix);
           date1Values.forEach((date) => {

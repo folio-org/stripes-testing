@@ -42,8 +42,8 @@ describe('MARC Bibliographic Validation Rules - Create Local Field (repeatable, 
   });
 
   it(
-    'C490915 Create Local Field (repeatable, required, deprecated) for MARC bib spec (API) (spitfire)',
-    { tags: ['C490915', 'extendedPath', 'spitfire'] },
+    'C490915 Create Local Field (repeatable, required, deprecated) for MARC bib spec (API) (promin)',
+    { tags: ['C490915', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

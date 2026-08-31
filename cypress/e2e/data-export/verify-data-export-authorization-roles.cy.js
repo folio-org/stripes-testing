@@ -57,8 +57,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C877101 Verify data export authorization roles (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C877101'] },
+    'C877101 Verify data export authorization roles (athena)',
+    { tags: ['extendedPath', 'athena', 'C877101'] },
     () => {
       // Step 1: Search for the following system defined authorization roles: "Data Export", "Data Export Admin"
       const rolesToSearch = ['Data Export', 'Data Export Admin'];

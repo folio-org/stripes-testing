@@ -108,8 +108,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C446087 Verify generated Logs files for Holdings (Query) (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C446087'] },
+        'C446087 Verify generated Logs files for Holdings (Query) (athena)',
+        { tags: ['extendedPath', 'athena', 'C446087'] },
         () => {
           BulkEditSearchPane.openQuerySearch();
           BulkEditSearchPane.checkHoldingsRadio();

@@ -128,8 +128,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C490935 Copy instance classification number using "Clipboard" icon (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C490935'] },
+      'C490935 Copy instance classification number using "Clipboard" icon (promin)',
+      { tags: ['extendedPath', 'promin', 'C490935'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

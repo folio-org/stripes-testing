@@ -40,8 +40,8 @@ describe('Notes', () => {
   });
 
   it(
-    'C527 Notes: Can create notes (spitfire)',
-    { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C527'] },
+    'C527 Notes: Can create notes (promin)',
+    { tags: ['criticalPath', 'promin', 'shiftLeft', 'C527'] },
     () => {
       const note = {
         title: `Test Title ${getRandomPostfix()}`,
@@ -56,8 +56,8 @@ describe('Notes', () => {
   );
 
   it(
-    'C1245 Notes: Can view notes (spitfire)',
-    { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C1245'] },
+    'C1245 Notes: Can view notes (promin)',
+    { tags: ['criticalPath', 'promin', 'shiftLeft', 'C1245'] },
     () => {
       const note = {
         title: `Test Title ${getRandomPostfix()}`,
@@ -85,8 +85,8 @@ describe('Notes', () => {
   );
 
   it(
-    'C526 Notes: Can edit a note (spitfire)',
-    { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C526'] },
+    'C526 Notes: Can edit a note (promin)',
+    { tags: ['criticalPath', 'promin', 'shiftLeft', 'C526'] },
     () => {
       const note = {
         title: `Test Title ${getRandomPostfix()}`,
@@ -106,8 +106,8 @@ describe('Notes', () => {
   );
 
   it(
-    'C528 Notes: Can delete notes (spitfire)',
-    { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C528'] },
+    'C528 Notes: Can delete notes (promin)',
+    { tags: ['criticalPath', 'promin', 'shiftLeft', 'C528'] },
     () => {
       const note = {
         title: `Test Title ${getRandomPostfix()}`,

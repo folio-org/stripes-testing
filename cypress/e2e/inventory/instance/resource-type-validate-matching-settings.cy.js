@@ -63,8 +63,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C613 Descriptive Data --> Resource Type --> (Validate matching settings) (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C613'] },
+      'C613 Descriptive Data --> Resource Type --> (Validate matching settings) (promin)',
+      { tags: ['extendedPath', 'promin', 'C613'] },
       () => {
         // Steps 1-2: Open the created FOLIO instance
         InventoryInstances.searchByTitle(testData.instanceId);

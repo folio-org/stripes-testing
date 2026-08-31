@@ -60,8 +60,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C360110 Export of single "Package" record that doesn\'t have "Titles" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C360110'] },
+      'C360110 Export of single "Package" record that doesn\'t have "Titles" (promin)',
+      { tags: ['extendedPath', 'promin', 'C360110'] },
       () => {
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.customPackageName);

@@ -47,8 +47,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C805763 Creating FOLIO instances bulk edit profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C805763'] },
+      'C805763 Creating FOLIO instances bulk edit profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C805763'] },
       () => {
         // Step 1: Click "Instances bulk edit profiles" category under "Inventory profiles" group
         SettingsPane.selectSettingsTab(APPLICATION_NAMES.BULK_EDIT);

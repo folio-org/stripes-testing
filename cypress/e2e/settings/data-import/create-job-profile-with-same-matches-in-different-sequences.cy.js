@@ -77,8 +77,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C399081 Verify the ability to create job profile with the same matches in different sequences (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C399081'] },
+      'C399081 Verify the ability to create job profile with the same matches in different sequences (promin)',
+      { tags: ['criticalPath', 'promin', 'C399081'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);

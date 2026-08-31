@@ -149,9 +149,9 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808504 Move holdings within different instances (spitfire)',
+        'C808504 Move holdings within different instances (promin)',
         {
-          tags: ['extendedPath', 'spitfire', 'C808504'],
+          tags: ['extendedPath', 'promin', 'C808504'],
         },
         () => {
           cy.login(user.username, user.password, {

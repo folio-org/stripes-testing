@@ -215,8 +215,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C566564 Trigger validation errors for linked field (saved link) on "Edit MARC record" pane (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C566564'] },
+          'C566564 Trigger validation errors for linked field (saved link) on "Edit MARC record" pane (promin)',
+          { tags: ['criticalPath', 'promin', 'nonParallel', 'C566564'] },
           () => {
             cy.then(() => {
               // Update validation rules to make $e and $q required in field 700

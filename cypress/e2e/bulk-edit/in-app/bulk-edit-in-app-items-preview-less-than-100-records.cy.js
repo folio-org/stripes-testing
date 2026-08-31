@@ -130,8 +130,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C358976 Verify preview after updating less than 100 records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C358976'] },
+      'C358976 Verify preview after updating less than 100 records (athena)',
+      { tags: ['extendedPath', 'athena', 'C358976'] },
       () => {
         // Step 1: Select "Inventory-items" option from "Record types" accordion
         // => Select "Item barcode" from "Record Identifier" dropdown

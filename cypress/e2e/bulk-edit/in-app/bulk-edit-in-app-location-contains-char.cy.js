@@ -74,8 +74,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C357064 Verify Items bulk edit if the location name contains "/" (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C357064'] },
+      'C357064 Verify Items bulk edit if the location name contains "/" (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C357064'] },
       () => {
         cy.viewport(2560, 1440);
         // Select "Inventory-items" record type => Select "Items barcode" from "Record identifier" dropdown

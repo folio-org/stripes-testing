@@ -105,8 +105,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C376596 Add/Edit/Delete "$z" subfield in "010" field of linked "MARC authority" record when "010" = "$0" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C376596'] },
+        'C376596 Add/Edit/Delete "$z" subfield in "010" field of linked "MARC authority" record when "010" = "$0" (promin)',
+        { tags: ['criticalPath', 'promin', 'C376596'] },
         () => {
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
           MarcAuthorities.selectFirst(marcFiles[1].authorityHeading);

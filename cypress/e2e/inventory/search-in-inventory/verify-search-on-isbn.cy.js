@@ -80,8 +80,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C2321 Search: Verify search on ISBN (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C2321'] },
+      'C2321 Search: Verify search on ISBN (promin)',
+      { tags: ['extendedPath', 'promin', 'C2321'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

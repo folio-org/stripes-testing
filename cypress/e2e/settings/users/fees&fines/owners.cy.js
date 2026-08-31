@@ -43,8 +43,8 @@ describe('Fees&Fines', () => {
     });
 
     // it.skip(
-    //   'C350616 Fee/Fine Owners are not required to have a Service Point (volaris)',
-    //   { tags: ['smokeObsolete', 'volaris', 'shiftLeftObsolete', 'C350616', 'eurekaPhase1'] },
+    //   'C350616 Fee/Fine Owners are not required to have a Service Point (vega)',
+    //   { tags: ['smokeObsolete', 'vega', 'shiftLeftObsolete', 'C350616', 'eurekaPhase1'] },
     //   () => {
     //     const name = `Automation owner $${getRandomPostfix()}`;
     //     ownerNames.push(name);
@@ -58,8 +58,8 @@ describe('Fees&Fines', () => {
     // );
 
     it(
-      'C350615 The "Shared" Fee/Fine Owner is not allowed to have Service Points (volaris)',
-      { tags: ['smoke', 'volaris', 'shiftLeft', 'C350615', 'eurekaPhase1'] },
+      'C350615 The "Shared" Fee/Fine Owner is not allowed to have Service Points (vega)',
+      { tags: ['smoke', 'vega', 'shiftLeft', 'C350615', 'eurekaPhase1'] },
       () => {
         const name = 'Shared';
 

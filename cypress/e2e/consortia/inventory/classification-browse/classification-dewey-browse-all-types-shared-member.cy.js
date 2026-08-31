@@ -206,8 +206,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C468280 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Dewey Decimal classification" option when Dewey, Additional Dewey and local (shared) are selected in settings, from Member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C468280'] },
+        'C468280 Classifications of each identifier type from Shared Instances could be found in the browse result list by "Dewey Decimal classification" option when Dewey, Additional Dewey and local (shared) are selected in settings, from Member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C468280'] },
         () => {
           cy.resetTenant();
           cy.login(user.username, user.password, {

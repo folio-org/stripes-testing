@@ -62,8 +62,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411814 (Multiple users): Export list (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411814'] },
+      'C411814 (Multiple users): Export list (athena)',
+      { tags: ['criticalPath', 'athena', 'C411814'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -91,8 +91,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411815 (Multiple users): Export list when refresh is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411815'] },
+      'C411815 (Multiple users): Export list when refresh is in progress (athena)',
+      { tags: ['criticalPath', 'athena', 'C411815'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -120,8 +120,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411816 (Multiple users): Export list when another user make the list Private (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411816'] },
+      'C411816 (Multiple users): Export list when another user make the list Private (athena)',
+      { tags: ['criticalPath', 'athena', 'C411816'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -149,8 +149,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411832 (Multiple users): Export list when another user make the list Inactive (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411832'] },
+      'C411832 (Multiple users): Export list when another user make the list Inactive (athena)',
+      { tags: ['criticalPath', 'athena', 'C411832'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -178,8 +178,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411817 (Multiple users): Export list when someone removes the list (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411817'] },
+      'C411817 (Multiple users): Export list when someone removes the list (athena)',
+      { tags: ['criticalPath', 'athena', 'C411817'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

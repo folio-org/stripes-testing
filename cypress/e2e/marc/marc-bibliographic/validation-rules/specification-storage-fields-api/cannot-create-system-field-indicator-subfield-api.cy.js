@@ -56,8 +56,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C490912 Cannot create System Field, Indicator, Subfield for MARC bib spec (API) (spitfire)',
-        { tags: ['extendedPath', 'C490912', 'spitfire'] },
+        'C490912 Cannot create System Field, Indicator, Subfield for MARC bib spec (API) (promin)',
+        { tags: ['extendedPath', 'C490912', 'promin'] },
         () => {
           // Step 1: Attempt to create field with "system" scope - should automatically convert to "local"
           const systemScopeFieldPayload = {

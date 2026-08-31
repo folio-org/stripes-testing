@@ -81,8 +81,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C627457 Select all available "Call number type" when edit "Call number browse" option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C627457'] },
+        'C627457 Select all available "Call number type" when edit "Call number browse" option (promin)',
+        { tags: ['extendedPath', 'promin', 'C627457'] },
         () => {
           // Step 1: Click on the "Edit" (pencil) icon next to any Call number browse option
           CallNumberBrowseSettings.validateCallNumberBrowseRowInTable(

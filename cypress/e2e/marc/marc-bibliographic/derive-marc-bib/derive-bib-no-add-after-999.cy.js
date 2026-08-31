@@ -66,8 +66,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C494040 User cannot add a new field below "999 ff" field on "Derive a new MARC bib record" pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C494040'] },
+        'C494040 User cannot add a new field below "999 ff" field on "Derive a new MARC bib record" pane (promin)',
+        { tags: ['extendedPath', 'promin', 'C494040'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

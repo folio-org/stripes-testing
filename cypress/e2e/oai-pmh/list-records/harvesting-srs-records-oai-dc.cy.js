@@ -98,8 +98,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C376986 ListRecords: SRS: Verify that changes to instances are triggering harvesting by verb=ListRecords with oai_dc (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C376986'] },
+      'C376986 ListRecords: SRS: Verify that changes to instances are triggering harvesting by verb=ListRecords with oai_dc (athena)',
+      { tags: ['extendedPath', 'athena', 'C376986'] },
       () => {
         // Step 1-5: Edit instance title using QuickMARC
         InventoryInstances.searchByTitle(marcInstance.title);

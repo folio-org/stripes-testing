@@ -70,8 +70,8 @@ describe('MARC Bibliographic Validation Rules - Update Local Field Duplicate Lab
   });
 
   it(
-    'C490943 Update Local Field with duplicate "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C490943', 'spitfire'] },
+    'C490943 Update Local Field with duplicate "label" for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C490943', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

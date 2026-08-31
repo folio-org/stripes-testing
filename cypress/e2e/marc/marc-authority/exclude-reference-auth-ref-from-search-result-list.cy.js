@@ -71,8 +71,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C409481 Exclude "Reference" and "Auth/Ref" records from search result list using "Reference" filter (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C409481'] },
+        'C409481 Exclude "Reference" and "Auth/Ref" records from search result list using "Reference" filter (promin)',
+        { tags: ['extendedPath', 'promin', 'C409481'] },
         () => {
           // Step 1-2: Search with keyword that returns all auth ref types
           MarcAuthoritiesSearch.searchBy('Keyword', testData.searchQuery);

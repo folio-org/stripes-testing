@@ -143,8 +143,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C410758 Subjects from "Shared" and "Local" (for current tenant) Instance records are shown in the browse result list on Member tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C410758'] },
+        'C410758 Subjects from "Shared" and "Local" (for current tenant) Instance records are shown in the browse result list on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C410758'] },
         () => {
           cy.resetTenant();
           cy.login(user.username, user.password);

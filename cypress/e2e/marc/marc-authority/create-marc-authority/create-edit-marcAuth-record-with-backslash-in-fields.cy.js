@@ -85,8 +85,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C877079 Create/Edit MARC authority record with backslash ("\\") character in some fields and check detail view pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C877079'] },
+        'C877079 Create/Edit MARC authority record with backslash ("\\") character in some fields and check detail view pane (promin)',
+        { tags: ['extendedPath', 'promin', 'C877079'] },
         () => {
           // Step 1: Open new MARC authority record form
           MarcAuthorities.clickActionsAndNewAuthorityButton();

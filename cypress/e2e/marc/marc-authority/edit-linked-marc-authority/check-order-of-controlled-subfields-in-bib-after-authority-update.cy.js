@@ -187,8 +187,8 @@ describe('MARC', () => {
       });
 
       it(
-        "C605927 Check order of controlled subfields in MARC bib's field after update of linked 'MARC authority' record via 'quickMARC' (spitfire)",
-        { tags: ['extendedPath', 'spitfire', 'C605927'] },
+        "C605927 Check order of controlled subfields in MARC bib's field after update of linked 'MARC authority' record via 'quickMARC' (promin)",
+        { tags: ['extendedPath', 'promin', 'C605927'] },
         () => {
           // Step 1: Login and navigate to MARC Authorities app, open authority 2 detail view
           cy.login(userData.username, userData.password, {

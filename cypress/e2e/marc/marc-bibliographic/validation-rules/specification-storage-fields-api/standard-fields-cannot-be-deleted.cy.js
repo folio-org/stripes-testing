@@ -39,8 +39,8 @@ describe('MARC Bibliographic Validation Rules - Standard Fields', () => {
   });
 
   it(
-    'C499836 Cannot delete a standard MARC field (API) (spitfire)',
-    { tags: ['smoke', 'C499836', 'spitfire'] },
+    'C499836 Cannot delete a standard MARC field (API) (promin)',
+    { tags: ['smoke', 'C499836', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

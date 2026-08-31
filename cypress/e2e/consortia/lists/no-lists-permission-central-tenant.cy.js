@@ -66,8 +66,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C526776 No cross tenant queries are supported, when "List" app permissions are missing in the Central tenant - Consortium (consortia) (corsair)',
-      { tags: ['criticalPathECS', 'corsair', 'C526776'] },
+      'C526776 No cross tenant queries are supported, when "List" app permissions are missing in the Central tenant - Consortium (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C526776'] },
       () => {
         Login.verifyWelcomeTextExists();
 

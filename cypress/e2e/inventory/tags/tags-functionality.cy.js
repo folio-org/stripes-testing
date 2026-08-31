@@ -82,8 +82,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C358962 Assign tags to an Instance record when unlinked preceding/succeeding titles present 2: Source = FOLIO (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C358962'] },
+      'C358962 Assign tags to an Instance record when unlinked preceding/succeeding titles present 2: Source = FOLIO (vega)',
+      { tags: ['extendedPath', 'vega', 'C358962'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry('marcFileForC358962.mrc', testData.fileName);
@@ -112,8 +112,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C358961 Assign tags to an Instance record when unlinked preceding/succeeding titles present 3: quickMARC (volaris)',
-      { tags: ['extendedPathFlaky', 'volaris', 'C358961'] },
+      'C358961 Assign tags to an Instance record when unlinked preceding/succeeding titles present 3: quickMARC (vega)',
+      { tags: ['extendedPathFlaky', 'vega', 'C358961'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: SettingsMenu.tagsGeneralPath,
@@ -170,8 +170,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C367962 Verify that user can add more than 1 tag to "Holdings" record with source "MARC" (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C367962'] },
+      'C367962 Verify that user can add more than 1 tag to "Holdings" record with source "MARC" (vega)',
+      { tags: ['extendedPath', 'vega', 'C367962'] },
       () => {
         cy.loginAsAdmin({
           path: TopMenu.inventoryPath,
@@ -282,8 +282,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C196770 Assign tags to a Holdings record (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C196770', 'eurekaPhase1'] },
+      'C196770 Assign tags to a Holdings record (vega)',
+      { tags: ['extendedPath', 'vega', 'C196770', 'eurekaPhase1'] },
       () => {
         const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
         InventorySearchAndFilter.switchToHoldings();
@@ -306,8 +306,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C367961 Verify that user can add more than 1 tag to "Holdings" record with source "Folio" (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C367961', 'eurekaPhase1'] },
+      'C367961 Verify that user can add more than 1 tag to "Holdings" record with source "Folio" (vega)',
+      { tags: ['extendedPath', 'vega', 'C367961', 'eurekaPhase1'] },
       () => {
         const tags = [...Array(5)].map(() => `tag${getRandomStringCode(5)}`.toLowerCase());
         InventorySearchAndFilter.switchToHoldings();
@@ -332,8 +332,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C196771 Assign tags to an Item record (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C196771', 'eurekaPhase1'] },
+      'C196771 Assign tags to an Item record (vega)',
+      { tags: ['extendedPath', 'vega', 'C196771', 'eurekaPhase1'] },
       () => {
         const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
         InventorySearchAndFilter.switchToItem();
@@ -407,8 +407,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C196769 Assign tags to an Instance record (folijet)',
-      { tags: ['smoke', 'folijet', 'C196769', 'shiftLeft'] },
+      'C196769 Assign tags to an Instance record (promin)',
+      { tags: ['smoke', 'promin', 'C196769', 'shiftLeft'] },
       () => {
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
@@ -431,8 +431,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C358144 Assign tags to an Instance record when unlinked preceding/succeeding titles present 1: Import (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C358144'] },
+      'C358144 Assign tags to an Instance record when unlinked preceding/succeeding titles present 1: Import (vega)',
+      { tags: ['extendedPath', 'vega', 'C358144'] },
       () => {
         InventorySearchAndFilter.verifyTagCount();
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
@@ -508,8 +508,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C343216 Filter Holdings by Tags (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C343216'] },
+      'C343216 Filter Holdings by Tags (vega)',
+      { tags: ['extendedPath', 'vega', 'C343216'] },
       () => {
         const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
         InventorySearchAndFilter.switchToHoldings();
@@ -528,8 +528,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C343217 Filter Items by Tags (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C343217'] },
+      'C343217 Filter Items by Tags (vega)',
+      { tags: ['extendedPath', 'vega', 'C343217'] },
       () => {
         const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
         InventorySearchAndFilter.switchToItem();
@@ -585,8 +585,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C343215 Filter instances by tags (volaris)',
-      { tags: ['smoke', 'volaris', 'shiftLeft', 'C343215', 'eurekaPhase1'] },
+      'C343215 Filter instances by tags (vega)',
+      { tags: ['smoke', 'vega', 'shiftLeft', 'C343215', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.verifyPanesExist();
         InventorySearchAndFilter.searchInstanceByTitle(instanceRecord.instanceTitle);
@@ -698,8 +698,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C380422 Find Tag with special characters using API (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C380422', 'eurekaPhase1'] },
+      'C380422 Find Tag with special characters using API (vega)',
+      { tags: ['extendedPath', 'vega', 'C380422', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
         InventorySearchAndFilter.verifySearchResult(instanceData.title);
@@ -773,8 +773,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C397329 Verify that permission: "Settings (Tags): Can enable or disable tags for all apps" works as expected (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C397329'] },
+      'C397329 Verify that permission: "Settings (Tags): Can enable or disable tags for all apps" works as expected (vega)',
+      { tags: ['criticalPath', 'vega', 'C397329'] },
       () => {
         TagsGeneral.changeEnableTagsStatus('disable');
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
@@ -854,8 +854,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C490907 Verify that user can quickly add more than 1 tag to "Instance" record with source "MARC" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C490907'] },
+      'C490907 Verify that user can quickly add more than 1 tag to "Instance" record with source "MARC" (promin)',
+      { tags: ['extendedPath', 'promin', 'C490907'] },
       () => {
         // Search for and open the instance
         InventoryInstances.searchByTitle(instanceId);
@@ -969,8 +969,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C490906 Verify that user can quickly add more than 1 tag to "Instance" record with source "Folio" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C490906'] },
+      'C490906 Verify that user can quickly add more than 1 tag to "Instance" record with source "Folio" (promin)',
+      { tags: ['extendedPath', 'promin', 'C490906'] },
       () => {
         // Search for and open the instance
         InventoryInstances.searchByTitle(instanceId);
@@ -1077,8 +1077,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C490909 Verify that user can quickly add more than 1 tag to Item record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C490909'] },
+        'C490909 Verify that user can quickly add more than 1 tag to Item record (promin)',
+        { tags: ['extendedPath', 'promin', 'C490909'] },
         () => {
           // 1. Go to "Inventory" app → Search by title for the Instance created as precondition
           InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstanceTitle);

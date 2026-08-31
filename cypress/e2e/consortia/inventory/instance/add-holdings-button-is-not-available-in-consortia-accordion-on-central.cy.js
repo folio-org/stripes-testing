@@ -86,8 +86,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411685 (CONSORTIA) Verify that the Add holdings button is not available in the Consortial accordion on Central tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411685'] },
+        'C411685 (CONSORTIA) Verify that the Add holdings button is not available in the Consortial accordion on Central tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411685'] },
         () => {
           InventoryInstances.searchByTitle(testData.testInstanceIds.instanceId);
           InventoryInstances.selectInstance();

@@ -113,8 +113,8 @@ describe('MARC Bibliographic Validation Rules - Update Subfield Code Boolean Fla
   });
 
   it(
-    'C511228 Update Subfield Code of Local field "required", "repeatable", "deprecated" flags for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C511228', 'spitfire'] },
+    'C511228 Update Subfield Code of Local field "required", "repeatable", "deprecated" flags for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C511228', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

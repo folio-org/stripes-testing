@@ -72,8 +72,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C357068 Negative: Verify Items status update (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C357068'] },
+      'C357068 Negative: Verify Items status update (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C357068'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

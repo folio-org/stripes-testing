@@ -37,7 +37,7 @@ describe('Inventory', () => {
       });
     });
 
-    it('C617 Subjects (folijet)', { tags: ['extendedPath', 'folijet', 'C617'] }, () => {
+    it('C617 Subjects (promin)', { tags: ['extendedPath', 'promin', 'C617'] }, () => {
       InventoryInstances.searchByTitle(testData.instance.instanceId);
       InventoryInstances.selectInstance();
       InstanceRecordView.verifyInstancePaneExists();

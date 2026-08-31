@@ -24,8 +24,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C423390 Check that checkboxes and checkbox actions for Job profile are suppressed (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C423390'] },
+      'C423390 Check that checkboxes and checkbox actions for Job profile are suppressed (promin)',
+      { tags: ['extendedPath', 'promin', 'C423390'] },
       () => {
         // Step 1: Verify checkboxes are NOT present in the Job profiles list
         JobProfiles.verifyNoCheckboxesInList();

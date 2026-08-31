@@ -137,8 +137,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446104 Find Instance plugin | Staff suppress facet is off by default when user has permission to use facet (search by "Identifier (all)") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C446104'] },
+        'C446104 Find Instance plugin | Staff suppress facet is off by default when user has permission to use facet (search by "Identifier (all)") (promin)',
+        { tags: ['extendedPath', 'promin', 'C446104'] },
         () => {
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();

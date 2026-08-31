@@ -31,8 +31,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C410707 Verify error notification after creating file extension with already existing name (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C410707'] },
+      'C410707 Verify error notification after creating file extension with already existing name (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C410707'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FILE_EXTENSIONS);

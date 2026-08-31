@@ -91,8 +91,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C543878 Select Instance plugin | Default sort is applied to search result list in "Inventory" app according to selected option in settings ("Relevance" case) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C543878'] },
+      'C543878 Select Instance plugin | Default sort is applied to search result list in "Inventory" app according to selected option in settings ("Relevance" case) (promin)',
+      { tags: ['extendedPath', 'promin', 'nonParallel', 'C543878'] },
       () => {
         // Step 1: Search; verify Relevance sort — no column sorted, no sortby in request
         cy.intercept('/search/instances*').as('searchInstances');

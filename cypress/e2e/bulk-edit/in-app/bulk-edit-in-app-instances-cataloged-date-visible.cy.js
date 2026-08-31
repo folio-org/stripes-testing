@@ -60,8 +60,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C648513 Verify Cataloged date is shown in Bulk edit query preview and in "Are you sure?" form for instance Bulk edits (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C648513'] },
+      'C648513 Verify Cataloged date is shown in Bulk edit query preview and in "Are you sure?" form for instance Bulk edits (athena)',
+      { tags: ['extendedPath', 'athena', 'C648513'] },
       () => {
         // Step 1: Select "Inventory - instances" radio button => Select "Instance UUIDs" option
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

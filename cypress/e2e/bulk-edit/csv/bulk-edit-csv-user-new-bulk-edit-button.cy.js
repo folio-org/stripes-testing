@@ -69,8 +69,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C353551 Verify absence of "New bulk edit" button (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C353551'] },
+      'C353551 Verify absence of "New bulk edit" button (athena)',
+      { tags: ['extendedPath', 'athena', 'C353551'] },
       () => {
         BulkEditActions.verifyNoNewBulkEditButton();
         TopMenuNavigation.navigateToApp('Bulk edit');
@@ -82,8 +82,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C353650 Verify new bulk edit with changed identifiers (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C353650'] },
+      'C353650 Verify new bulk edit with changed identifiers (athena)',
+      { tags: ['extendedPath', 'athena', 'C353650'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

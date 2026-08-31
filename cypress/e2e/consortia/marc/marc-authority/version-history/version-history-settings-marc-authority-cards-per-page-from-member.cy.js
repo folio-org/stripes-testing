@@ -131,8 +131,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C655285 Edit "Cards to display per page on Version history" on "Settings >> MARC authority >> Version history" page from Member tenant (consortia) (spitfire)',
-            { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C655285'] },
+            'C655285 Edit "Cards to display per page on Version history" on "Settings >> MARC authority >> Version history" page from Member tenant (consortia) (promin)',
+            { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C655285'] },
             () => {
               cy.setTenant(Affiliations.College);
               cy.login(testUser.username, testUser.password, {

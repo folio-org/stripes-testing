@@ -205,8 +205,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C1375790 Executing bulk edit job using Items bulk edit profile (Query, Logs) (firebird)',
-      { tags: ['smoke', 'firebird', 'C1375790'] },
+      'C1375790 Executing bulk edit job using Items bulk edit profile (Query, Logs) (athena)',
+      { tags: ['smoke', 'athena', 'C1375790'] },
       () => {
         // Step 1: Click "Actions" menu
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);

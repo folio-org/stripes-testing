@@ -121,8 +121,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C387485 Exact match result is found when browse for call number which has (at least) 25 preceding call numbers using "Library of Congress classification" browse option (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C387485'] },
+      'C387485 Exact match result is found when browse for call number which has (at least) 25 preceding call numbers using "Library of Congress classification" browse option (promin)',
+      { tags: ['extendedPath', 'promin', 'C387485'] },
       () => {
         [...callNumbers, ...precedingCallNumbers].forEach((callNumber) => {
           BrowseCallNumber.waitForCallNumberToAppear(callNumber, true, callNumberBrowseCode);

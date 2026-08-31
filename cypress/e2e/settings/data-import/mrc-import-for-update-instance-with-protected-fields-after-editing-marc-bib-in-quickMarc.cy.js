@@ -139,8 +139,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C356829 Test field protections when importing to update instance, after editing the MARC Bib in quickMARC (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C356829'] },
+      'C356829 Test field protections when importing to update instance, after editing the MARC Bib in quickMARC (promin)',
+      { tags: ['criticalPath', 'promin', 'C356829'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsInventory.goToSettingsInventory();

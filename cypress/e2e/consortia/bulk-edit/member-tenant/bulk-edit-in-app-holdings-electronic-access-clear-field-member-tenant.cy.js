@@ -162,8 +162,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566156 Verify "Clear field" action for Holdings electronic access in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566156'] },
+        'C566156 Verify "Clear field" action for Holdings electronic access in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566156'] },
         () => {
           // Step 1: Select record type and identifier
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');

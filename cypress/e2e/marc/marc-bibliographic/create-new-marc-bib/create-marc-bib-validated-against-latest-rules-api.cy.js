@@ -99,8 +99,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C552451 Verify that created MARC bib record is checked against the last version of MARC validation rules (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C552451', 'nonParallel'] },
+        'C552451 Verify that created MARC bib record is checked against the last version of MARC validation rules (promin)',
+        { tags: ['criticalPath', 'promin', 'C552451', 'nonParallel'] },
         () => {
           // Step 1: Open "Create a new MARC bib record" window
           InventoryInstance.newMarcBibRecord();

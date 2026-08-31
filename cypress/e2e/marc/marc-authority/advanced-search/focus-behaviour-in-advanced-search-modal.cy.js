@@ -70,8 +70,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C468270 Focus behaviour in "Advanced search" modal of "MARC authority" app (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C468270'] },
+        'C468270 Focus behaviour in "Advanced search" modal of "MARC authority" app (promin)',
+        { tags: ['extendedPath', 'promin', 'C468270'] },
         () => {
           // Step 1: Select "Advanced search" search option
           MarcAuthoritiesSearch.selectSearchOption(MARC_AUTHORITY_SEARCH_OPTIONS.ADVANCED_SEARCH);

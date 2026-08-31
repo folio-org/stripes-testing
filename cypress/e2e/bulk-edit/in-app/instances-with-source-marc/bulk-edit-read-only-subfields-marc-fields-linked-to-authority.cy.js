@@ -176,8 +176,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C663262 Bulk edit read-only subfields (a, 9) of marc fields (610, 240) linked to authority record (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C663262'] },
+      'C663262 Bulk edit read-only subfields (a, 9) of marc fields (610, 240) linked to authority record (athena)',
+      { tags: ['criticalPath', 'athena', 'C663262'] },
       () => {
         // Step 1: Check "Subject" checkbox to show column
         BulkEditActions.openActions();

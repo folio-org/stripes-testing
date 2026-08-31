@@ -22,8 +22,8 @@ describe('Tags', () => {
   });
 
   it(
-    'C347893 Change focus for Tags settings (folijet)',
-    { tags: ['extendedPath', 'folijet', 'C347893'] },
+    'C347893 Change focus for Tags settings (promin)',
+    { tags: ['extendedPath', 'promin', 'C347893'] },
     () => {
       // Step 1: Go to Settings → Settings nav pane has focus
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);

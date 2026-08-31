@@ -94,8 +94,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1292063 Build query using Authority — Notes — Note type, Note (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1292063'] },
+        'C1292063 Build query using Authority — Notes — Note type, Note (promin)',
+        { tags: ['extendedPath', 'promin', 'C1292063'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

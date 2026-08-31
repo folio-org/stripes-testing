@@ -118,8 +118,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C411613 ListRecords: SRS: Verify that bound-with items are retrieved in response (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C411613'] },
+      'C411613 ListRecords: SRS: Verify that bound-with items are retrieved in response (athena)',
+      { tags: ['extendedPath', 'athena', 'C411613'] },
       () => {
         // Step 1: Send ListRecords request with marc21_withholdings
         const fromDate = DateTools.getCurrentDateForOaiPmh(-2);

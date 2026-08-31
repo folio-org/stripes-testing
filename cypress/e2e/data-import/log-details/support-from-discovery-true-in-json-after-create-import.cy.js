@@ -79,8 +79,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C594482 Suppress from discovery = TRUE in JSON after create import (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C594482'] },
+      'C594482 Suppress from discovery = TRUE in JSON after create import (promin)',
+      { tags: ['criticalPath', 'promin', 'C594482'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

@@ -50,8 +50,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1282798 Users with manual blocks - deleted manual blocks (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C1282798'] },
+        'C1282798 Users with manual blocks - deleted manual blocks (athena)',
+        { tags: ['criticalPath', 'athena', 'C1282798'] },
         () => {
           // Step 1: Click "New" button, select "Users with manual blocks" record type
           Lists.openNewListPane();

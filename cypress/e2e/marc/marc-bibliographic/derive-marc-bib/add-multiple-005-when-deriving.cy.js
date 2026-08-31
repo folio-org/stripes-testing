@@ -60,8 +60,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C496210 Add multiple 005s when deriving "MARC Bibliographic" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C496210'] },
+        'C496210 Add multiple 005s when deriving "MARC Bibliographic" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C496210'] },
         () => {
           // #1 Open the "Instance" record view and derive new MARC bib
           InventoryInstances.searchByTitle(createdRecordIDs[0]);

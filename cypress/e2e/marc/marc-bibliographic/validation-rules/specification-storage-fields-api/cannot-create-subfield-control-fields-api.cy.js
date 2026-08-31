@@ -83,8 +83,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Subfields for Cont
   });
 
   it(
-    'C499721 Cannot create Subfield code for Local fields 002, 004, 009 of MARC bib spec (API) (spitfire)',
-    { tags: ['C499721', 'extendedPath', 'spitfire'] },
+    'C499721 Cannot create Subfield code for Local fields 002, 004, 009 of MARC bib spec (API) (promin)',
+    { tags: ['C499721', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

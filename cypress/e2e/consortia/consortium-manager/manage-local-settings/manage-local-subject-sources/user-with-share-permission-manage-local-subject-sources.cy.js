@@ -97,8 +97,8 @@ describe('Consortia', () => {
         });
 
         it(
-          'C594436 User with "Consortium manager: Can share settings to all members" permission is able to manage local subject sources of selected affiliated tenants in "Consortium manager" app (consortia) (folijet)',
-          { tags: ['extendedPathECS', 'folijet', 'C594436'] },
+          'C594436 User with "Consortium manager: Can share settings to all members" permission is able to manage local subject sources of selected affiliated tenants in "Consortium manager" app (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C594436'] },
           () => {
             // Step 1: Navigate to Consortium manager app and select all members
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);

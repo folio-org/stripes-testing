@@ -138,8 +138,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C410754 Link Local MARC bib with Shared/Local MARC auth on Member tenant in Create screen (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C410754'] },
+          'C410754 Link Local MARC bib with Shared/Local MARC auth on Member tenant in Create screen (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C410754'] },
           () => {
             cy.resetTenant();
             cy.login(user.username, user.password, {

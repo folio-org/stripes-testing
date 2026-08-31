@@ -46,8 +46,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C397328 Verify that no error appears after switch from Item Edit screen to another app and back (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C397328'] },
+      'C397328 Verify that no error appears after switch from Item Edit screen to another app and back (promin)',
+      { tags: ['extendedPath', 'promin', 'C397328'] },
       () => {
         // Step 1: Find instance, open item, navigate to Edit page
         InventoryInstances.searchByTitle(testData.instanceId);

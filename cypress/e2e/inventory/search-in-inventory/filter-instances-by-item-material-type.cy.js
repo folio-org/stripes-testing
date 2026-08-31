@@ -153,8 +153,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476761 Filter "Instance" records by Item\'s "Material type" facet (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C476761'] },
+        'C476761 Filter "Instance" records by Item\'s "Material type" facet (promin)',
+        { tags: ['criticalPath', 'promin', 'C476761'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(testData.materialTypeAccordionName);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(

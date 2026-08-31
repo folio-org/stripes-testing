@@ -67,8 +67,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C411845 Verify the "Instance - Shared" is always "Shared" when the "Instance — Tenant ID" is "consortium" (consortia) (corsair)',
-        { tags: ['criticalPathECS', 'corsair', 'C411845'] },
+        'C411845 Verify the "Instance - Shared" is always "Shared" when the "Instance — Tenant ID" is "consortium" (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C411845'] },
         () => {
           // Step 1: Create new list with Instances record type and open Query builder
           Lists.openNewListPane();

@@ -165,8 +165,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C423588 Verify Bulk Edit actions for Items notes - columns titles (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C423588'] },
+        'C423588 Verify Bulk Edit actions for Items notes - columns titles (athena)',
+        { tags: ['extendedPath', 'athena', 'C423588'] },
         () => {
           // Step 1: Select the "Inventory - items" radio button on the "Record types" accordion => Select "Item HRIDs" option from the "Record identifier" dropdown
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item HRIDs');

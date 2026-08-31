@@ -86,8 +86,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466124 Verify status of restricted item (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C466124'] },
+      'C466124 Verify status of restricted item (promin)',
+      { tags: ['extendedPath', 'promin', 'C466124'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();

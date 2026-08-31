@@ -40,8 +40,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468247 Check alphabetical sorting during browsing for Classification using "Classification (all)" option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468247'] },
+      'C468247 Check alphabetical sorting during browsing for Classification using "Classification (all)" option (promin)',
+      { tags: ['criticalPath', 'promin', 'C468247'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

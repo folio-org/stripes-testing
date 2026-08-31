@@ -275,8 +275,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411789 Search for Shared/Local records by "Advanced search" search option from "Item" tab in "Central" and "Member 1" tenants ("Note" and "Barcode" search options) (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411789'] },
+        'C411789 Search for Shared/Local records by "Advanced search" search option from "Item" tab in "Central" and "Member 1" tenants ("Note" and "Barcode" search options) (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411789'] },
         () => {
           function verifyAdvancedSearch(expectedIndexes) {
             InventoryInstances.clickAdvSearchButton();

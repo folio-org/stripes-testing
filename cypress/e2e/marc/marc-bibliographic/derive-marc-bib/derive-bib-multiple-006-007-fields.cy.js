@@ -65,8 +65,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C499607 Derive existing "MARC bib" record with multiple "006" and "007" fields (which are "system" and repeatable) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C499607'] },
+        'C499607 Derive existing "MARC bib" record with multiple "006" and "007" fields (which are "system" and repeatable) (promin)',
+        { tags: ['extendedPath', 'promin', 'C499607'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

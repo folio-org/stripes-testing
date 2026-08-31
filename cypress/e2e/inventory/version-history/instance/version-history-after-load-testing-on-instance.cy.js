@@ -64,8 +64,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651461 Check "Version history" after load testing on Instance (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C651461'] },
+        'C651461 Check "Version history" after load testing on Instance (promin)',
+        { tags: ['criticalPath', 'promin', 'C651461'] },
         () => {
           InventoryInstances.addNewInventory();
           InventoryNewInstance.fillResourceTitle(testData.instance.title);

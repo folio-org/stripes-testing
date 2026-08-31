@@ -93,8 +93,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C543846 Verify export FOLIO Instance set for deletion (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C543846'] },
+      'C543846 Verify export FOLIO Instance set for deletion (athena)',
+      { tags: ['criticalPath', 'athena', 'C543846'] },
       () => {
         ExportFileHelper.uploadFile(fileName);
         ExportFileHelper.exportWithDefaultJobProfile(fileName, 'Default instances', 'Instances');

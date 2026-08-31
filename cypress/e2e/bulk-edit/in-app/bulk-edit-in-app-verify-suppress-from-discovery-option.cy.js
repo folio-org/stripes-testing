@@ -73,8 +73,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C402323 Verify "Suppress from discovery" option in case Holdings not suppressed Items suppressed  (Set false) (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C402323'] },
+      'C402323 Verify "Suppress from discovery" option in case Holdings not suppressed Items suppressed  (Set false) (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C402323'] },
       () => {
         // Select the "Inventory-holdings" radio button on  the "Record types" accordion => Select "Instance HRIDs" option from the "Record identifier" dropdown
 

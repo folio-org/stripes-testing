@@ -33,8 +33,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C651406 Verify that the value remains populated after changing the operator from equals to not equal to (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C651406'] },
+      'C651406 Verify that the value remains populated after changing the operator from equals to not equal to (athena)',
+      { tags: ['criticalPath', 'athena', 'C651406'] },
       () => {
         // Step 1: Create new list with Instances record type and open Build query form
         Lists.openNewListPane();

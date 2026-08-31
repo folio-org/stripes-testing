@@ -97,8 +97,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C503027 Query - Verify "Preview of record matched" when querying by valid Users identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C503027'] },
+        'C503027 Query - Verify "Preview of record matched" when querying by valid Users identifiers in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C503027'] },
         () => {
           // Step 1: Select "Users" radio button and click "Build query" button
           BulkEditSearchPane.checkUsersRadio();

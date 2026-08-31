@@ -72,8 +72,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C515002 Edit MARC bib record with multiple repeatable standard / local subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C515002'] },
+        'C515002 Edit MARC bib record with multiple repeatable standard / local subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C515002'] },
         () => {
           cy.then(() => {
             // Create user and MARC bib FIRST (before setting up validation rules)

@@ -148,8 +148,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C407730 Advanced search of "MARC authority" records using "Starts with" operator (Identifier, Genre, Children subject heading, Keyword, Boolean ops) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C407730'] },
+        'C407730 Advanced search of "MARC authority" records using "Starts with" operator (Identifier, Genre, Children subject heading, Keyword, Boolean ops) (promin)',
+        { tags: ['extendedPath', 'promin', 'C407730'] },
         () => {
           testData.searchSteps.forEach((step, index) => {
             MarcAuthorities.clickAdvancedSearchButton();

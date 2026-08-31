@@ -95,8 +95,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C692069 "Version history" pane is displayed on "View source" pane of "MARC bibliographic" record derived via "quickmarc" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C692069'] },
+        'C692069 "Version history" pane is displayed on "View source" pane of "MARC bibliographic" record derived via "quickmarc" (promin)',
+        { tags: ['extendedPath', 'promin', 'C692069'] },
         () => {
           InventoryInstances.searchByTitle(testData.derivedInstanceId);
           InventoryInstances.selectInstance();

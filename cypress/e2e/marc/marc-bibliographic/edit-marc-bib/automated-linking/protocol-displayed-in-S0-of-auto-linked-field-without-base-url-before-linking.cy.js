@@ -184,8 +184,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C436814 Protocol is displayed in subfield "$0" of automatically linked field when field has no base URL before linking (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C436814'] },
+          'C436814 Protocol is displayed in subfield "$0" of automatically linked field when field has no base URL before linking (promin)',
+          { tags: ['criticalPath', 'promin', 'C436814'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

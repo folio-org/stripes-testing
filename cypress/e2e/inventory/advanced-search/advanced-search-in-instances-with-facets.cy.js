@@ -81,8 +81,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C409421 Search Instances using advanced search in combination with search facets (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C409421'] },
+      'C409421 Search Instances using advanced search in combination with search facets (promin)',
+      { tags: ['extendedPath', 'promin', 'C409421'] },
       () => {
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(

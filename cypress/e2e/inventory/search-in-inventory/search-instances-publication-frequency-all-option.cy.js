@@ -77,8 +77,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584426 Search for Instances by "Publication frequency" field using "All" search option (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C584426'] },
+      'C584426 Search for Instances by "Publication frequency" field using "All" search option (promin)',
+      { tags: ['extendedPath', 'promin', 'C584426'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

@@ -149,8 +149,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C491290 Check Acquisition accordion for shared Item with linked central and member tenants (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C491290'] },
+        'C491290 Check Acquisition accordion for shared Item with linked central and member tenants (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C491290'] },
         () => {
           const centralPolNumber = `${testData.centralOrder.poNumber}-1`;
 

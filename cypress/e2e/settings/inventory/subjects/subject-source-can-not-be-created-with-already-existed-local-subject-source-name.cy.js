@@ -49,8 +49,8 @@ describe('Inventory', () => {
       });
 
       it(
-        "C543861 Check that Subject source can't be created with already existed local subject source name (folijet)",
-        { tags: ['extendedPath', 'folijet', 'C543861'] },
+        "C543861 Check that Subject source can't be created with already existed local subject source name (promin)",
+        { tags: ['extendedPath', 'promin', 'C543861'] },
         () => {
           SubjectSources.create(localSubjectSource.name);
           SubjectSources.validateNameFieldWithError(testData.errorMessage);

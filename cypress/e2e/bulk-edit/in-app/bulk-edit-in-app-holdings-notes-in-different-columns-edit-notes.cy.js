@@ -169,8 +169,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C422221 Verify separating notes in different columns - edit notes (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C422221'] },
+      'C422221 Verify separating notes in different columns - edit notes (athena)',
+      { tags: ['criticalPath', 'athena', 'C422221'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);

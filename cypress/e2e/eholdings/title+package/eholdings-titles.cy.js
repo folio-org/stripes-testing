@@ -29,8 +29,8 @@ describe(
   () => {
     describe('Title+Package', () => {
       it(
-        'C16994 Add a title in a package to holdings (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C16994'] },
+        'C16994 Add a title in a package to holdings (promin)',
+        { tags: ['smoke', 'promin', 'shiftLeft', 'C16994'] },
         () => {
           cy.getAdminToken();
           cy.createTempUser([
@@ -66,8 +66,8 @@ describe(
       );
 
       it(
-        'C700 Title: Add or Edit custom coverage (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C700'], retries: 1 },
+        'C700 Title: Add or Edit custom coverage (promin)',
+        { tags: ['smoke', 'promin', 'shiftLeft', 'C700'], retries: 1 },
         () => {
           cy.getAdminToken();
           cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
@@ -124,8 +124,8 @@ describe(
       );
 
       it(
-        'C691 Remove a title in a package from your holdings (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C691'] },
+        'C691 Remove a title in a package from your holdings (promin)',
+        { tags: ['smoke', 'promin', 'shiftLeft', 'C691'] },
         () => {
           cy.getAdminToken();
           cy.createTempUser([
@@ -157,8 +157,8 @@ describe(
       );
 
       it(
-        'C693 Create a custom title. (spitfire)',
-        { tags: ['smoke', 'spitfire', 'shiftLeft', 'C693'] },
+        'C693 Create a custom title. (promin)',
+        { tags: ['smoke', 'promin', 'shiftLeft', 'C693'] },
         () => {
           cy.getAdminToken();
           cy.createTempUser([
@@ -180,8 +180,8 @@ describe(
       );
 
       it(
-        'C157916 Title - Packages accordion - Filter by Holding Status (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C157916'] },
+        'C157916 Title - Packages accordion - Filter by Holding Status (promin)',
+        { tags: ['criticalPath', 'promin', 'C157916'] },
         () => {
           cy.getAdminToken();
           cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
@@ -204,8 +204,8 @@ describe(
       );
 
       it(
-        'C17090 Title Record - Packages accordion - Filter packages list (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C17090'] },
+        'C17090 Title Record - Packages accordion - Filter packages list (promin)',
+        { tags: ['criticalPath', 'promin', 'C17090'] },
         () => {
           cy.getAdminToken();
           cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {

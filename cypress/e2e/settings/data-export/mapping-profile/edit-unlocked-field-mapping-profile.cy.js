@@ -80,8 +80,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C15826 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to edit unlocked mapping profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C15826'] },
+      'C15826 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to edit unlocked mapping profile (athena)',
+      { tags: ['criticalPath', 'athena', 'shiftLeft', 'C15826'] },
       () => {
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[0]);
         SingleFieldMappingProfilePane.verifyActionOptions();

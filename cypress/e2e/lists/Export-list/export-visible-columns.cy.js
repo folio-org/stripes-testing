@@ -58,8 +58,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C552377 Verify that "Export visible columns (CSV)" exports only the visible columns (corsair)',
-      { tags: ['smoke', 'corsair', 'shiftLeft', 'C552377'] },
+      'C552377 Verify that "Export visible columns (CSV)" exports only the visible columns (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C552377'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

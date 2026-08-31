@@ -159,8 +159,8 @@ describe('Patron notices', () => {
   });
 
   it(
-    'C414969 Patron notices: Correct (latest) value sent on loan.additionalInfo token (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C414969'] },
+    'C414969 Patron notices: Correct (latest) value sent on loan.additionalInfo token (vega)',
+    { tags: ['extendedPath', 'vega', 'C414969'] },
     () => {
       noticeTemplates.forEach((template, index) => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);

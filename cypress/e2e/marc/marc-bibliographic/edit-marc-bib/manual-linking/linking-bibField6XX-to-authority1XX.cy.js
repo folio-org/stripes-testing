@@ -271,8 +271,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C377026 Link "Subjects" fields (with all subfields) when MARC authority 1XXs have all subfields and different subfields selected as linkable in config (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C377026'] },
+          'C377026 Link "Subjects" fields (with all subfields) when MARC authority 1XXs have all subfields and different subfields selected as linkable in config (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C377026'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordIDs[0]);
             InventoryInstances.selectInstance();

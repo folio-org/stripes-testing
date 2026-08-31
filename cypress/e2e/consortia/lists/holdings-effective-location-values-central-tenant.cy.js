@@ -123,8 +123,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C784464 Holdings effective location / library are showing aggregated values in ECS (corsair)',
-      { tags: ['criticalPathECS', 'corsair', 'C784464'] },
+      'C784464 Holdings effective location / library are showing aggregated values in ECS (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C784464'] },
       () => {
         cy.setTenant(Affiliations.Consortia);
         cy.login(testData.user.username, testData.user.password, {

@@ -24,8 +24,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C788714 Verify SRS Authority entity type availability via API with correct permissions (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C788714'] },
+      'C788714 Verify SRS Authority entity type availability via API with correct permissions (athena)',
+      { tags: ['extendedPath', 'athena', 'C788714'] },
       () => {
         // #1 Login to the FOLIO using the user from pre-condition
         cy.login(userData.username, userData.password);

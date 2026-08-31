@@ -91,8 +91,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C380443 Verify the correctness of the Bulk Edit job status in Logs tab (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird', 'C380443'] },
+        'C380443 Verify the correctness of the Bulk Edit job status in Logs tab (athena) (TaaS)',
+        { tags: ['extendedPath', 'athena', 'C380443'] },
         () => {
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

@@ -97,8 +97,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C400665 Verify that title appeared in log details when Instance is not updated due to non-match (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C400665'] },
+      'C400665 Verify that title appeared in log details when Instance is not updated due to non-match (promin)',
+      { tags: ['criticalPath', 'promin', 'C400665'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();

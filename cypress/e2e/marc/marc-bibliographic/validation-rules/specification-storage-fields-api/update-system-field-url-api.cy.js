@@ -41,8 +41,8 @@ describe('MARC Bibliographic Validation Rules - Update System Field URL API', ()
   });
 
   it(
-    'C499786 Update System Field "url" for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C499786', 'spitfire'] },
+    'C499786 Update System Field "url" for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C499786', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

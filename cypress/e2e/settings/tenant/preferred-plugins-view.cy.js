@@ -29,8 +29,8 @@ describe('Tenant', () => {
     });
 
     it(
-      'C410761 Settings - UI-Tenant-Settings Settings - View: Preferred Plugins (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C410761'] },
+      'C410761 Settings - UI-Tenant-Settings Settings - View: Preferred Plugins (athena)',
+      { tags: ['extendedPath', 'athena', 'C410761'] },
       () => {
         // Step 2: Click on the "Tenant" option — verify General + Location setup items
         TenantPane.goToTenantTab();

@@ -76,8 +76,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C405519 Imported "MARC authority" record from Member tenant is not discoverable in Central tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C405519'] },
+        'C405519 Imported "MARC authority" record from Member tenant is not discoverable in Central tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C405519'] },
         () => {
           DataImport.verifyUploadState();
           DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);

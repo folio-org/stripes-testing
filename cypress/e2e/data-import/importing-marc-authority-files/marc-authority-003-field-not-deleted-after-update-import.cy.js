@@ -158,8 +158,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C1003530 Verify that 003 field in authority record is not deleted/changed after the update import (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C1003530'] },
+      'C1003530 Verify that 003 field in authority record is not deleted/changed after the update import (promin)',
+      { tags: ['criticalPath', 'promin', 'C1003530'] },
       () => {
         // Step 1: Search for authority record, select and export
         MarcAuthorities.searchBeats(testData.authorityHeading);

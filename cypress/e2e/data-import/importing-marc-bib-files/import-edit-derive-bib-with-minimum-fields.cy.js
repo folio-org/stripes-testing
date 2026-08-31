@@ -57,8 +57,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C387435 Import and edit/derive "MARC Bib" record having only required fields (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'C387435'] },
+      'C387435 Import and edit/derive "MARC Bib" record having only required fields (promin)',
+      { tags: ['criticalPathFlaky', 'promin', 'C387435'] },
       () => {
         DataImport.waitLoading();
         DataImport.verifyUploadState();

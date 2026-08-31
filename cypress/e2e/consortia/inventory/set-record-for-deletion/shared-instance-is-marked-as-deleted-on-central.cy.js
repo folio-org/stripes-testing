@@ -81,8 +81,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C656323 Verify that the shared instance is marked as deleted on the Central tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C656323'] },
+        'C656323 Verify that the shared instance is marked as deleted on the Central tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C656323'] },
         () => {
           InstanceRecordView.waitLoading();
           InstanceRecordView.clickActionsButton();

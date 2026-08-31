@@ -106,8 +106,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C648487 Verify that the custom field with a type Single select dropdown is queryable (corsair)',
-          { tags: ['criticalPath', 'corsair', 'C648487'] },
+          'C648487 Verify that the custom field with a type Single select dropdown is queryable (athena)',
+          { tags: ['criticalPath', 'athena', 'C648487'] },
           () => {
             listName = getTestEntityValue('C648487_List');
 
@@ -193,8 +193,8 @@ describe('Lists', () => {
         });
 
         it(
-          "C648492 Verify that it's possible to update the Single select custom fields, and all existing queries are still available (corsair)",
-          { tags: ['criticalPath', 'corsair', 'C648492'] },
+          "C648492 Verify that it's possible to update the Single select custom fields, and all existing queries are still available (athena)",
+          { tags: ['criticalPath', 'athena', 'C648492'] },
           () => {
             listName = getTestEntityValue('C648492_List');
 
@@ -294,8 +294,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C648496 Verify that the checkbox custom field is not queryable after deleting it (corsair)',
-          { tags: ['criticalPath', 'corsair', 'C648496'] },
+          'C648496 Verify that the checkbox custom field is not queryable after deleting it (athena)',
+          { tags: ['criticalPath', 'athena', 'C648496'] },
           () => {
             listName = getTestEntityValue('C648496_List');
 

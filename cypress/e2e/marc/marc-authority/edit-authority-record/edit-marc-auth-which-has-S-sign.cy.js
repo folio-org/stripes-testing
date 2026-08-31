@@ -69,8 +69,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C451558 Edit "MARC authority" record which has "$" sign ("{dollar}" code) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeftBroken', 'C451558'] },
+        'C451558 Edit "MARC authority" record which has "$" sign ("{dollar}" code) (promin)',
+        { tags: ['criticalPath', 'promin', 'shiftLeftBroken', 'C451558'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.searchText);
           MarcAuthorities.selectItem(testData.title, false);

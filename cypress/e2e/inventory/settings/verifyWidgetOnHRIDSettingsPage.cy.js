@@ -26,8 +26,8 @@ describe('Inventory', () => {
 
     // this test we can't run in parallel, so it is skipped and moved to manual
     it(
-      'C369055 Verify created/updated by widget on HRID Settings page (folijet) (TaaS)',
-      { tags: ['extendedPathBroken', 'folijet', 'C369055'] },
+      'C369055 Verify created/updated by widget on HRID Settings page (promin) (TaaS)',
+      { tags: ['extendedPathBroken', 'promin', 'C369055'] },
       () => {
         cy.visit(SettingsMenu.hridHandlingPath);
         HridHandling.waitloading();

@@ -92,8 +92,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C523574 Create MARC authority record with value in "010 $a" subfield which matches to other records "010 $a" and "010 $z" when duplicate LCCN check is disabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C523574'] },
+          'C523574 Create MARC authority record with value in "010 $a" subfield which matches to other records "010 $a" and "010 $z" when duplicate LCCN check is disabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C523574'] },
           () => {
             // Step 1: Click on "Actions" button in second pane >> Select "+ New" option
             MarcAuthorities.clickActionsAndNewAuthorityButton();

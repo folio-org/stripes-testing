@@ -100,8 +100,8 @@ describe('Check out', () => {
   });
 
   it(
-    'C430 Make sure user can checkout in a timely manner using any scannable ID (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C430'] },
+    'C430 Make sure user can checkout in a timely manner using any scannable ID (vega)',
+    { tags: ['extendedPath', 'vega', 'C430'] },
     () => {
       // Step 1-2: Enter the patron barcode and verify user information is displayed
       CheckOutActions.checkOutUser(userData.barcode);

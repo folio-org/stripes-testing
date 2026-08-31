@@ -18,7 +18,7 @@ import {
 
 let user;
 
-describe('Citation: duplicate work', () => {
+describe('Promin: duplicate work', () => {
   const testData = {
     firstWorkId: null,
     secondWorkId: null,
@@ -66,8 +66,8 @@ describe('Citation: duplicate work', () => {
   });
 
   it(
-    'C552501 Marigold - Duplicate work (citation)',
-    { tags: ['criticalPath', 'citation', 'C552501', 'marigold'] },
+    'C552501 Marigold - Duplicate work (promin)',
+    { tags: ['criticalPath', 'promin', 'C552501', 'marigold'] },
     () => {
       // Create first work
       Marigold.openNewResourceForm();

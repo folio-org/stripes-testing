@@ -52,8 +52,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C288432 Check the default mapping of 647 Subject heading field from the MARC record to the Inventory Instance Subjects field (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C288432'] },
+      'C288432 Check the default mapping of 647 Subject heading field from the MARC record to the Inventory Instance Subjects field (promin)',
+      { tags: ['extendedPath', 'promin', 'C288432'] },
       () => {
         // Step 1-2: File imported via API in before hook using default job profile
         // Step 3-4: Search for imported instance by UUID; verify 647 subject (subfields a c d g v x y z)

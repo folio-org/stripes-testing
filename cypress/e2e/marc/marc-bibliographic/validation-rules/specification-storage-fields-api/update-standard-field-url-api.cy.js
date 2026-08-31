@@ -41,8 +41,8 @@ describe('MARC Bibliographic Validation Rules - Update Standard Field URL API', 
   });
 
   it(
-    'C499818 Cannot update Standard field with invalid "url" for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C499818', 'spitfire'] },
+    'C499818 Cannot update Standard field with invalid "url" for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C499818', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

@@ -180,8 +180,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C407698 Verify that exact match result will be returned during browse for call number with suffix and specified Call number type (NLM, LC, Dewey) (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'nonParallel', 'C407698'] },
+      'C407698 Verify that exact match result will be returned during browse for call number with suffix and specified Call number type (NLM, LC, Dewey) (promin)',
+      { tags: ['criticalPathFlaky', 'promin', 'nonParallel', 'C407698'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();

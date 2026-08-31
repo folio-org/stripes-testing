@@ -85,8 +85,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C844251 Verify that it\'s possible to run queries using the field "Instance source URI" (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C844251'] },
+        'C844251 Verify that it\'s possible to run queries using the field "Instance source URI" (athena)',
+        { tags: ['extendedPath', 'athena', 'C844251'] },
         () => {
           // Step 1: Create new list with Instances record type and open Build query form
           Lists.openNewListPane();

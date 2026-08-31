@@ -112,8 +112,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C376599 Add controllable subfields to linked field of a "MARC bib" record after updating "1XX" in linked "MARC authority" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C376599'] },
+      'C376599 Add controllable subfields to linked field of a "MARC bib" record after updating "1XX" in linked "MARC authority" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C376599'] },
       () => {
         InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();

@@ -55,8 +55,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C519973 Create MARC bib record with undefined 1XX field when Undefined rules are enabled" (spitfire)',
-        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C519973'] },
+        'C519973 Create MARC bib record with undefined 1XX field when Undefined rules are enabled" (promin)',
+        { tags: ['extendedPathFlaky', 'promin', 'nonParallel', 'C519973'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.updateLDR06And07Positions();

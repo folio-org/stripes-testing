@@ -49,8 +49,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C422095 Click on "X" button in "New fast add record" pane (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C422095'] },
+      'C422095 Click on "X" button in "New fast add record" pane (promin)',
+      { tags: ['extendedPath', 'promin', 'C422095'] },
       () => {
         InventoryActions.openNewFastAddRecordForm();
         FastAddNewRecord.waitLoading();

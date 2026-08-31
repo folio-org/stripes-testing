@@ -82,8 +82,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C378892 Verify that "Identifier (all)" option search by "naturalId" field when it\'s filled from "001" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C378892'] },
+      'C378892 Verify that "Identifier (all)" option search by "naturalId" field when it\'s filled from "001" (promin)',
+      { tags: ['extendedPath', 'promin', 'C378892'] },
       () => {
         // Steps 1-3: Select "Identifier (all)" option from dropdown,
         // Fill in search box with identifier from 001 field without spaces (n79041362) and click Search

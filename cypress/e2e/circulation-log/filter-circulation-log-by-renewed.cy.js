@@ -83,8 +83,8 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C17005 Filter circulation log by renewed (volaris) (TaaS)',
-    { tags: ['criticalPath', 'volaris', 'C17005'] },
+    'C17005 Filter circulation log by renewed (vega) (TaaS)',
+    { tags: ['criticalPath', 'vega', 'C17005'] },
     () => {
       const searchResultsData = {
         userBarcode: userData.barcode,

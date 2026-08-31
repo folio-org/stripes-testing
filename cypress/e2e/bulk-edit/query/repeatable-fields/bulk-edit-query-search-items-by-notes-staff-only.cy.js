@@ -215,8 +215,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C805784 Search items by Items — Notes — Staff only (all operators for true/false field) (firebird)',
-        { tags: ['smoke', 'firebird', 'C805784'] },
+        'C805784 Search items by Items — Notes — Staff only (all operators for true/false field) (athena)',
+        { tags: ['smoke', 'athena', 'C805784'] },
         () => {
           // Get note type name for verification
           const noteTypeName = ITEM_NOTE_TYPES.ACTION_NOTE;

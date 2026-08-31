@@ -242,8 +242,8 @@ describe('Bulk-edit', () => {
         });
 
         it(
-          'C477646 Verify "Add note" action for Holdings in Central tenant (consortia) (firebird)',
-          { tags: ['smokeECS', 'firebird', 'C477646'] },
+          'C477646 Verify "Add note" action for Holdings in Central tenant (consortia) (athena)',
+          { tags: ['smokeECS', 'athena', 'C477646'] },
           () => {
             QueryModal.clickRunQuery();
             QueryModal.verifyClosed();

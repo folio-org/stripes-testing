@@ -158,8 +158,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C388560 Auto-linking fields having "$0" when creating new "MARC Bib" record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C388560'] },
+          'C388560 Auto-linking fields having "$0" when creating new "MARC Bib" record (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C388560'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(

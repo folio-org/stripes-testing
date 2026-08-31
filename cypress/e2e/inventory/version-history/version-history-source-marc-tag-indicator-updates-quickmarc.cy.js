@@ -93,8 +93,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C692101 Check "Version history" pane after Update of MARC tag and subfield\'s indicator in "MARC bibliographic" record via "quickmarc" (spitfire)',
-        { tags: ['Extended', 'spitfire', 'C692101'] },
+        'C692101 Check "Version history" pane after Update of MARC tag and subfield\'s indicator in "MARC bibliographic" record via "quickmarc" (promin)',
+        { tags: ['Extended', 'promin', 'C692101'] },
         () => {
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.waitLoading();

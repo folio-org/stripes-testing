@@ -205,8 +205,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C401728 Verify that "Shared" facet is not displayed in "Central" tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C401728'] },
+          'C401728 Verify that "Shared" facet is not displayed in "Central" tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C401728'] },
           () => {
             InventorySearchAndFilter.verifyAccordionExistance(sharedAccordionName, false);
 

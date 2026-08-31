@@ -43,8 +43,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C543742 Transformation form validation (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C543742'] },
+      'C543742 Transformation form validation (athena)',
+      { tags: ['extendedPath', 'athena', 'C543742'] },
       () => {
         // Step 1: Click "New" button in the top right corner of "Field mapping profiles" pane
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();

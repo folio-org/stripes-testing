@@ -100,8 +100,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C553007 Select Instance plugin | Default sort is applied to search result list in "Inventory" app according to selected option in settings ("Date" case) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C553007'] },
+      'C553007 Select Instance plugin | Default sort is applied to search result list in "Inventory" app according to selected option in settings ("Date" case) (promin)',
+      { tags: ['extendedPath', 'promin', 'nonParallel', 'C553007'] },
       () => {
         // Step 1: Search; verify results sorted by Date column
         SelectInstanceModal.searchByName(titlePrefix);

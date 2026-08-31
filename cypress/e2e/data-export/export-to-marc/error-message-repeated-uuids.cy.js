@@ -75,8 +75,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C476789 Error message for repeated UUIDs in the .csv file (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C476789'] },
+      'C476789 Error message for repeated UUIDs in the .csv file (athena)',
+      { tags: ['criticalPath', 'athena', 'C476789'] },
       () => {
         // Step 1: Trigger the data export by clicking on "or choose file" button and submitting .csv file
         ExportFileHelper.uploadFile(csvFileName);

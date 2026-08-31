@@ -67,8 +67,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C1045400 Create MARC bibliographic record with 003 and 035 fields (verify normalization) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C1045400'] },
+        'C1045400 Create MARC bibliographic record with 003 and 035 fields (verify normalization) (promin)',
+        { tags: ['criticalPath', 'promin', 'C1045400'] },
         () => {
           // Step 1: Click on "Actions" button → Select "+ New MARC bibliographic record" option
           InventoryInstances.createNewMarcBibRecord();

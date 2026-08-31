@@ -39,8 +39,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C368047 Verify that absence of not editable fields values should not prevent bulk editing (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C368047'] },
+      'C368047 Verify that absence of not editable fields values should not prevent bulk editing (athena)',
+      { tags: ['extendedPath', 'athena', 'C368047'] },
       () => {
         // Step 1: Create patron group with special symbols
         cy.createUserGroupApi({

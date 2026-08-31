@@ -82,8 +82,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C1292049 Verify Bulk Edit actions for Items notes - change note type to circulation note (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C1292049'] },
+      'C1292049 Verify Bulk Edit actions for Items notes - change note type to circulation note (athena)',
+      { tags: ['criticalPath', 'athena', 'C1292049'] },
       () => {
         // Step 1: Select "Inventory - items" radio button => Select "Item barcodes" from "Record identifier" dropdown
         BulkEditSearchPane.checkItemsRadio();

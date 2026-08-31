@@ -65,8 +65,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10972 Verify Instance UUID mapping (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C10972'] },
+      'C10972 Verify Instance UUID mapping (athena)',
+      { tags: ['extendedPath', 'athena', 'C10972'] },
       () => {
         // Step 1: Go to the "Data export" app
         DataExportLogs.verifyDragAndDropAreaExists();

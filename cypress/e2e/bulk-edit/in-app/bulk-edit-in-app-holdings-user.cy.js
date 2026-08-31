@@ -68,8 +68,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C360114 Verify that User can upload file with Holdings UUIDs (firebird)',
-      { tags: ['smoke', 'firebird', 'C360114'] },
+      'C360114 Verify that User can upload file with Holdings UUIDs (athena)',
+      { tags: ['smoke', 'athena', 'C360114'] },
       () => {
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -95,8 +95,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C367984 Verify that visual clue on the "Are you sure?" form does not provide 0 records (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C367984'] },
+      'C367984 Verify that visual clue on the "Are you sure?" form does not provide 0 records (athena)',
+      { tags: ['criticalPath', 'athena', 'C367984'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
         BulkEditSearchPane.checkHoldingsRadio();

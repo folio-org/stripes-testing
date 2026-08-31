@@ -20,7 +20,7 @@ import {
 
 let user;
 
-describe('Citation: check title parts MARC codes', () => {
+describe('Promin: check title parts MARC codes', () => {
   const testData = {
     marcFilePath: 'marcFileForC466260.mrc',
     modifiedMarcFile: `C466260 editedMarcFile${getRandomPostfix()}.mrc`,
@@ -33,7 +33,7 @@ describe('Citation: check title parts MARC codes', () => {
     inventoryTitle: `${testData.uniqueMainTitle} Principles, Technologies, and Applications Vol. 1 Foundations and Architecture`,
     resourceTitle: testData.uniqueMainTitle,
     marc245: `$a ${testData.uniqueMainTitle} $b Principles, Technologies, and Applications $n Vol. 1 $p Foundations and Architecture`,
-    marc246: `$a ${testData.uniqueVariantTitle} $b DLKS $f 2024 $i Alternative title used in conference citations $n Volume 1 $p Architecture of Modern Digital Libraries`,
+    marc246: `$a ${testData.uniqueVariantTitle} $b DLKS $f 2024 $i Alternative title used in conference promins $n Volume 1 $p Architecture of Modern Digital Libraries`,
     mainTitlePreferred: testData.uniqueMainTitle,
     mainTitleNonSortNum: '2',
     mainTitlePartNumber: 'Vol. 1',
@@ -45,7 +45,7 @@ describe('Citation: check title parts MARC codes', () => {
     variantTitleOther: 'DLKS',
     variantTitleDate: '2024',
     variantTitleType: '-',
-    variantTitleNote: 'Alternative title used in conference citations',
+    variantTitleNote: 'Alternative title used in conference promins',
   };
 
   const previewFields = {
@@ -112,8 +112,8 @@ describe('Citation: check title parts MARC codes', () => {
   });
 
   it(
-    'C466260 Marigold - Verify View MARC option and page / Work preview (citation)',
-    { tags: ['criticalPath', 'citation', 'C466260', 'marigold'] },
+    'C466260 Marigold - Verify View MARC option and page / Work preview (promin)',
+    { tags: ['criticalPath', 'promin', 'C466260', 'marigold'] },
     () => {
       // Edit instance
       InventoryInstances.searchByTitle(testData.uniqueMainTitle);

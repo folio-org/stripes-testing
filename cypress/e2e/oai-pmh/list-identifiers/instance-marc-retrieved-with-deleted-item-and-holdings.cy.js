@@ -87,8 +87,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C385648 verb=ListIdentifiers: Verify that Instance MARC is retrieved when both Item and Holdings are deleted (marc21) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C385648'] },
+      'C385648 verb=ListIdentifiers: Verify that Instance MARC is retrieved when both Item and Holdings are deleted (marc21) (athena)',
+      { tags: ['extendedPath', 'athena', 'C385648'] },
       () => {
         afterItemCreatedTimestamp = DateTools.getCurrentDateForOaiPmh();
 

@@ -70,8 +70,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C2333 Duplicate an existing job profile (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C2333'] },
+      'C2333 Duplicate an existing job profile (promin)',
+      { tags: ['extendedPath', 'promin', 'C2333'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);

@@ -198,8 +198,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C422189 Consortia | SRS+Inventory | GetRecord | Marked as Deleted shared MARC Instances from Central tenant is retrieved in the response of single tenant harvest (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C422189', 'nonParallel'] },
+        'C422189 Consortia | SRS+Inventory | GetRecord | Marked as Deleted shared MARC Instances from Central tenant is retrieved in the response of single tenant harvest (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C422189', 'nonParallel'] },
         () => {
           // Step 1-3: Mark shared MARC instance as deleted from Central tenant
           InventoryInstances.searchByTitle(testData.sharedMarcInstance.uuid);

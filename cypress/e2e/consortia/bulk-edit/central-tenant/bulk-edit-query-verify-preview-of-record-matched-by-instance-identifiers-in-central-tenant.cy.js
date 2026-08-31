@@ -77,8 +77,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C503012 Query - Verify "Preview of record matched" when querying by valid Instance identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C503012'] },
+        'C503012 Query - Verify "Preview of record matched" when querying by valid Instance identifiers in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C503012'] },
         () => {
           const parameters = [
             {

@@ -57,8 +57,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C736772 Verify that the "Affiliation name" is not displayed for the entity types in non-ECS environments (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C736772'] },
+      'C736772 Verify that the "Affiliation name" is not displayed for the entity types in non-ECS environments (athena)',
+      { tags: ['extendedPath', 'athena', 'C736772'] },
       () => {
         // Step 1: Open new list pane, set name, select first record type and open Build query form
         Lists.openNewListPane();

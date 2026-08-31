@@ -67,8 +67,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C959219 Create/Edit Item with empty fields (administrativeNotes, statisticalCodeIds, yearCaption, formerIds) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C959219'] },
+      'C959219 Create/Edit Item with empty fields (administrativeNotes, statisticalCodeIds, yearCaption, formerIds) (promin)',
+      { tags: ['extendedPath', 'promin', 'C959219'] },
       () => {
         // User is on the detail view pane of Instance record
         InventorySearchAndFilter.searchInstanceByTitle(instanceTitlePrefix);

@@ -87,8 +87,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C552457 Verify that edited MARC authority record is checked against the last version of MARC validation rules (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C552457', 'nonParallel'] },
+        'C552457 Verify that edited MARC authority record is checked against the last version of MARC validation rules (promin)',
+        { tags: ['criticalPath', 'promin', 'C552457', 'nonParallel'] },
         () => {
           cy.then(() => {
             toggleAllUndefinedValidationRules(authSpecId, { enable: false });

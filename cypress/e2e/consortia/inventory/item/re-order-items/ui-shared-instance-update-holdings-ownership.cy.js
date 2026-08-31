@@ -154,8 +154,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C808509 Update ownership of "Holdings" record and check Item\'s "order" fields (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C808509'] },
+          'C808509 Update ownership of "Holdings" record and check Item\'s "order" fields (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C808509'] },
           () => {
             cy.resetTenant();
             cy.waitForAuthRefresh(() => {

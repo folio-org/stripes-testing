@@ -87,8 +87,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C6709 Import a file with lots of diacritics or non-Roman alphabet records (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C6709'] },
+      'C6709 Import a file with lots of diacritics or non-Roman alphabet records (promin)',
+      { tags: ['criticalPath', 'promin', 'C6709'] },
       () => {
         // upload a marc file for creating of the new instance
         DataImport.verifyUploadState();

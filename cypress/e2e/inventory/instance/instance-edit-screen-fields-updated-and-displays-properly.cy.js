@@ -51,8 +51,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C601 Test that editable sections of the edit screen can be updated and displays data properly after saving (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C601'] },
+      'C601 Test that editable sections of the edit screen can be updated and displays data properly after saving (promin)',
+      { tags: ['extendedPath', 'promin', 'C601'] },
       () => {
         const todayDate = DateTools.getFormattedDate({ date: new Date() });
 

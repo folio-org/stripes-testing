@@ -85,8 +85,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C407678 Optimistic locking error appears when Local "MARC authority" record opened at Member tenant has been edited at the same Member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C407678'] },
+          'C407678 Optimistic locking error appears when Local "MARC authority" record opened at Member tenant has been edited at the same Member tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C407678'] },
           () => {
             // Steps 1-4: User A (College) opens the local authority record for editing
             cy.setTenant(Affiliations.College);

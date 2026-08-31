@@ -69,8 +69,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C398016 Switch from "Search" to "Browse" and back when only one record is displayed in search result pane (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C398016'] },
+      'C398016 Switch from "Search" to "Browse" and back when only one record is displayed in search result pane (promin)',
+      { tags: ['extendedPath', 'promin', 'C398016'] },
       () => {
         InventorySearchAndFilter.selectSearchOption(testData.searchOption);
         InventorySearchAndFilter.verifyDefaultSearchOptionSelected(testData.searchOption);

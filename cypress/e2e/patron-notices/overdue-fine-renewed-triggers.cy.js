@@ -316,8 +316,8 @@ describe('Patron notices', () => {
       });
 
       it(
-        'C347875 Overdue fine, renewed triggers (volaris)',
-        { tags: ['criticalPath', 'volaris', 'shiftLeft', 'C347875'] },
+        'C347875 Overdue fine, renewed triggers (vega)',
+        { tags: ['criticalPath', 'vega', 'shiftLeft', 'C347875'] },
         () => {
           noticeTemplates.forEach((template, index) => {
             NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);

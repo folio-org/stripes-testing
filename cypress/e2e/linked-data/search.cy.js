@@ -9,7 +9,7 @@ import Marigold from '../../support/fragments/linked-data/marigold';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
-describe('Citation: Search Linked data resources', () => {
+describe('Promin: Search Linked data resources', () => {
   const testData = {
     marcFilePath: 'marcBibFileForC451572.mrc',
     modifiedMarcFile: `C451572 editedMarcFile${getRandomPostfix()}.mrc`,
@@ -78,8 +78,8 @@ describe('Citation: Search Linked data resources', () => {
 
   describe('Linked-data Search', () => {
     it(
-      'C451572 Linked-data Search: Basic search by title (citation)',
-      { tags: ['draft', 'citation'] },
+      'C451572 Linked-data Search: Basic search by title (promin)',
+      { tags: ['draft', 'promin'] },
       () => {
         SearchAndFilter.waitLoading();
         SearchAndFilter.searchResourceByTitle(testData.uniqueTitle);
@@ -88,8 +88,8 @@ describe('Citation: Search Linked data resources', () => {
     );
 
     it(
-      'C451572 Linked-data Search: Basic search by ISBN (citation)',
-      { tags: ['draft', 'citation'] },
+      'C451572 Linked-data Search: Basic search by ISBN (promin)',
+      { tags: ['draft', 'promin'] },
       () => {
         SearchAndFilter.waitLoading();
         SearchAndFilter.searchResourceByIsbn(testData.uniqueIsbn);
@@ -98,8 +98,8 @@ describe('Citation: Search Linked data resources', () => {
     );
 
     it(
-      'C451572 Linked-data Search: Basic search by Contributor (citation)',
-      { tags: ['draft', 'citation'] },
+      'C451572 Linked-data Search: Basic search by Contributor (promin)',
+      { tags: ['draft', 'promin'] },
       () => {
         SearchAndFilter.waitLoading();
         SearchAndFilter.searchResourceByContributor(testData.uniqueCreator);

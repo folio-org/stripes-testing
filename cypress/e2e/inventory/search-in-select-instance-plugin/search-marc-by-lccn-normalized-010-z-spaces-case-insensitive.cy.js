@@ -159,8 +159,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C442824 "Select instance" plug-in | Search for "MARC bibliographic" by "LCCN, normalized" option using a query with lower, UPPER case when "LCCN" (010 $z) has (leading, internal, trailing) spaces (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C442824'] },
+      'C442824 "Select instance" plug-in | Search for "MARC bibliographic" by "LCCN, normalized" option using a query with lower, UPPER case when "LCCN" (010 $z) has (leading, internal, trailing) spaces (promin)',
+      { tags: ['extendedPath', 'promin', 'C442824'] },
       () => {
         // Navigate to Orders and open the Select Instance plugin
         cy.login(testData.user.username, testData.user.password, {

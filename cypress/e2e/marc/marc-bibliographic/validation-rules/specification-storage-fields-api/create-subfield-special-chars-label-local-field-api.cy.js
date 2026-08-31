@@ -65,8 +65,8 @@ describe('MARC Bibliographic Validation Rules - Create Subfield with Special Cha
   });
 
   it(
-    'C499717 Create Subfield code of Local field with special characters in "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['C499717', 'extendedPath', 'spitfire'] },
+    'C499717 Create Subfield code of Local field with special characters in "label" for MARC bib spec (API) (promin)',
+    { tags: ['C499717', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

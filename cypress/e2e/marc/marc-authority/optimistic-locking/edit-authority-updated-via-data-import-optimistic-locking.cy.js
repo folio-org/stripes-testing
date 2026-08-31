@@ -167,8 +167,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C353224 Editing the "MARC Authority" record updated via "Data import" app (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C353224'] },
+        'C353224 Editing the "MARC Authority" record updated via "Data import" app (promin)',
+        { tags: ['extendedPath', 'promin', 'C353224'] },
         () => {
           // Steps 1-3: User A logs in and exports the authority record to .mrc via Data Export
           cy.login(userA.username, userA.password, {

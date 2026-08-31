@@ -67,8 +67,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C360101 Verify that updates are saved after clicking "Save & keep editing" button in the editing window of "MARC Holdings" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C360101'] },
+        'C360101 Verify that updates are saved after clicking "Save & keep editing" button in the editing window of "MARC Holdings" (promin)',
+        { tags: ['extendedPath', 'promin', 'C360101'] },
         () => {
           InventoryInstances.searchByTitle(recordId);
           InventoryInstances.selectInstanceById(recordId);

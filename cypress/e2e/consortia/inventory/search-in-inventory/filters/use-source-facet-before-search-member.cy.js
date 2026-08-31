@@ -148,8 +148,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C404403 Use "Source" facet when Search was not executed in a member tenant ("Instance" tab) (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C404403'] },
+          'C404403 Use "Source" facet when Search was not executed in a member tenant ("Instance" tab) (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C404403'] },
           () => {
             InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
             InventorySearchAndFilter.clickAccordionByName(heldbyAccordionName);

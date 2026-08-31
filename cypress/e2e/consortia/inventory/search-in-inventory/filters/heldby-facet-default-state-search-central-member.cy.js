@@ -145,8 +145,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C844199 Check default state of "Held by" facet after switching affiliation to Central/Member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C844199'] },
+          'C844199 Check default state of "Held by" facet after switching affiliation to Central/Member tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C844199'] },
           () => {
             function searchAndCheckHeldBy(isMember = true) {
               const expectedIndexes = isMember

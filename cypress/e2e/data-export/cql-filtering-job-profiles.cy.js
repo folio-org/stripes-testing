@@ -35,8 +35,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C396382 CQL: Verify filtering job profiles on the "Select job profile to run the export" pane (firebird) (Taas)',
-    { tags: ['firebird', 'extendedPath', 'C396382'] },
+    'C396382 CQL: Verify filtering job profiles on the "Select job profile to run the export" pane (athena) (Taas)',
+    { tags: ['athena', 'extendedPath', 'C396382'] },
     () => {
       const defaultAuthority = 'Default authority export job profile';
       const jobProfile = 'Job profile';

@@ -29,8 +29,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C358980 Checking "FOLIO record type" option when create a new action profile (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C358980'] },
+      'C358980 Checking "FOLIO record type" option when create a new action profile (promin)',
+      { tags: ['extendedPath', 'promin', 'C358980'] },
       () => {
         const { CREATE, MODIFY, UPDATE } = ACTION_NAMES_IN_ACTION_PROFILE;
 

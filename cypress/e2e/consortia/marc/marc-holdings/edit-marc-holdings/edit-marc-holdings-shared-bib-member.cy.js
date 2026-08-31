@@ -168,8 +168,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C788741 Edit MARC holdings record on Shared MARC bib from Member 1 tenant, verify in detail and source view (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C788741'] },
+          'C788741 Edit MARC holdings record on Shared MARC bib from Member 1 tenant, verify in detail and source view (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C788741'] },
           () => {
             InventoryInstance.openHoldingView();
             HoldingsRecordView.checkHoldingRecordViewOpened();

@@ -126,8 +126,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C436913 Verify generated Logs files for Items (Query) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C436913'] },
+        'C436913 Verify generated Logs files for Items (Query) (athena)',
+        { tags: ['criticalPath', 'athena', 'C436913'] },
         () => {
           // Step 1: Check "Inventory - items" checkbox on "Record types" filter accordion
           BulkEditSearchPane.openLogsSearch();

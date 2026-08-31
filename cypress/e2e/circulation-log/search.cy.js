@@ -126,8 +126,8 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C17010 Filter circulation log by service points (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C17010'] },
+    'C17010 Filter circulation log by service points (vega)',
+    { tags: ['criticalPath', 'vega', 'C17010'] },
     () => {
       SearchPane.searchByServicePoint(servicePointName);
       SearchPane.verifyResultCells();
@@ -136,8 +136,8 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C16979 Check item details from filtering Circulation log by checked-out (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C16979'] },
+    'C16979 Check item details from filtering Circulation log by checked-out (vega)',
+    { tags: ['criticalPath', 'vega', 'C16979'] },
     () => {
       SearchPane.searchByItemBarcode(ITEM_BARCODE);
       SearchResults.clickOnCell(ITEM_BARCODE, 0);
@@ -148,8 +148,8 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C16976 Filter circulation log by date (volaris)',
-    { tags: ['smoke', 'volaris', 'C16976'] },
+    'C16976 Filter circulation log by date (vega)',
+    { tags: ['smoke', 'vega', 'C16976'] },
     () => {
       const verifyDate = true;
 
@@ -160,8 +160,8 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C16978 Filter circulation log by checked-out (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C16978'] },
+    'C16978 Filter circulation log by checked-out (vega)',
+    { tags: ['criticalPath', 'vega', 'C16978'] },
     () => {
       SearchPane.searchByCheckedOut();
       SearchPane.verifyResult(ITEM_BARCODE);
@@ -176,8 +176,8 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C15853 Filter circulation log on description (volaris)',
-    { tags: ['smoke', 'volaris', 'C15853'] },
+    'C15853 Filter circulation log on description (vega)',
+    { tags: ['smoke', 'vega', 'C15853'] },
     () => {
       // login with user that has all permissions
       cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
@@ -204,8 +204,8 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C16975 Check the Actions button from filtering Circulation log by description (User details) (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C16975'] },
+    'C16975 Check the Actions button from filtering Circulation log by description (User details) (athena)',
+    { tags: ['criticalPath', 'athena', 'C16975'] },
     () => {
       SearchPane.goToUserDetails();
       SearchPane.userDetailIsOpen();
@@ -213,8 +213,8 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C16980 Filter circulation log by changed due date (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C16980'] },
+    'C16980 Filter circulation log by changed due date (vega)',
+    { tags: ['criticalPath', 'vega', 'C16980'] },
     () => {
       cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
 
@@ -234,8 +234,8 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C16981 Check the Actions button from filtering Circulation log by changed due date (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C16981'] },
+    'C16981 Check the Actions button from filtering Circulation log by changed due date (vega)',
+    { tags: ['criticalPath', 'vega', 'C16981'] },
     () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CIRCULATION_LOG);
       SearchPane.searchByChangedDueDate();

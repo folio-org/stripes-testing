@@ -86,8 +86,8 @@ describe('Calendar', () => {
       });
 
       it(
-        'C569610 Users do not see actions on DCB Calendar (volaris)',
-        { tags: ['extendedPath', 'volaris', 'C569610'] },
+        'C569610 Users do not see actions on DCB Calendar (vega)',
+        { tags: ['extendedPath', 'vega', 'C569610'] },
         () => {
           PaneActions.allCalendarsPane.openAllCalendarsPane();
           PaneActions.allCalendarsPane.checkCalendarExists(DCB_CALENDAR_NAME);

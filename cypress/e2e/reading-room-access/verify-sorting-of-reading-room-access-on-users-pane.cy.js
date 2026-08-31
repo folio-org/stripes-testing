@@ -121,8 +121,8 @@ describe('Reading Room Access', () => {
   });
 
   it(
-    'C476796 Verify Sorting of reading room access on users pane (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C476796'] },
+    'C476796 Verify Sorting of reading room access on users pane (vega)',
+    { tags: ['extendedPath', 'vega', 'C476796'] },
     () => {
       UsersCard.waitLoading();
 

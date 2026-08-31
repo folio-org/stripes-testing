@@ -70,8 +70,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514982 Update MARC bib record with not-repeatable / multiple repeatable fields (Standard and Local) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C514982', 'nonParallel'] },
+        'C514982 Update MARC bib record with not-repeatable / multiple repeatable fields (Standard and Local) (promin)',
+        { tags: ['criticalPath', 'promin', 'C514982', 'nonParallel'] },
         () => {
           cy.then(() => {
             // Create user and MARC bib FIRST (before setting up validation rules)

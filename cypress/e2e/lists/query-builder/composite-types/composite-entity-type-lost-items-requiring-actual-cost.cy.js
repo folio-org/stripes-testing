@@ -137,8 +137,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1282801 Composite ET: Lost items requiring actual cost (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C1282801'] },
+        'C1282801 Composite ET: Lost items requiring actual cost (athena)',
+        { tags: ['criticalPath', 'athena', 'C1282801'] },
         () => {
           // Step 1: Click "New" button, enter list name, select "Lost items requiring actual cost" record type
           Lists.openNewListPane();

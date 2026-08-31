@@ -61,8 +61,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C494037 User cannot add a new field below "999 ff" field on "Create a new MARC authority record" pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C494037'] },
+        'C494037 User cannot add a new field below "999 ff" field on "Create a new MARC authority record" pane (promin)',
+        { tags: ['extendedPath', 'promin', 'C494037'] },
         () => {
           // Step 1: Click on "Actions" button → Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();

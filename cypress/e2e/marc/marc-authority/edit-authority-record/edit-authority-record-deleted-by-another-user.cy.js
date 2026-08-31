@@ -76,8 +76,8 @@ describe('MARC', () => {
 
       // Will FAIL until this is fixed: https://folio-org.atlassian.net/browse/UIMARCAUTH-545
       it(
-        'C353637 Editing the "MARC Authority" record deleted by another user (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C353637'] },
+        'C353637 Editing the "MARC Authority" record deleted by another user (promin)',
+        { tags: ['extendedPath', 'promin', 'C353637'] },
         () => {
           // Steps 1-4: User A searches for the record and opens it for editing
           cy.login(userA.username, userA.password, {

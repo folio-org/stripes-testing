@@ -70,8 +70,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514978 Create MARC authority record with required / not required fields (Standard and Local) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C514978'] },
+        'C514978 Create MARC authority record with required / not required fields (Standard and Local) (promin)',
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C514978'] },
         () => {
           cy.then(() => {
             MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C514978_');

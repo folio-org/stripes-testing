@@ -63,8 +63,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C471493 Remove an Agreement from Package record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C471493'] },
+      'C471493 Remove an Agreement from Package record (promin)',
+      { tags: ['extendedPath', 'promin', 'C471493'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.searchQuery);
         EHoldingsPackages.openPackage();

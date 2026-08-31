@@ -103,8 +103,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584548 Browsing the multiple instances with the exact same 6xx fields linked to Authority (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C584548'] },
+      'C584548 Browsing the multiple instances with the exact same 6xx fields linked to Authority (promin)',
+      { tags: ['extendedPath', 'promin', 'C584548'] },
       () => {
         BrowseSubjects.waitForSubjectToAppear(subjectValue, true, true);
         BrowseSubjects.waitForSubjectToAppear(subjectValue, true, false);

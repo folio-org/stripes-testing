@@ -260,8 +260,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C377006 Update linked "MARC bib" record with multiple "$0" in repeatable and not repeanable fields >> and open it for edit/derive (added "$0" not matching existing link) (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C377006'] },
+      'C377006 Update linked "MARC bib" record with multiple "$0" in repeatable and not repeanable fields >> and open it for edit/derive (added "$0" not matching existing link) (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C377006'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

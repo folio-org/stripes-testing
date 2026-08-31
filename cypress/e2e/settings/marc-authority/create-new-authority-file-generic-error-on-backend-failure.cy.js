@@ -40,8 +40,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C451651 Generic error shows when not handled error is returned from back-end side during creation of new "Authority file" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C451651'] },
+        'C451651 Generic error shows when not handled error is returned from back-end side during creation of new "Authority file" (promin)',
+        { tags: ['extendedPath', 'promin', 'C451651'] },
         () => {
           // Step 1: Click "+New", verify new editable row
           ManageAuthorityFiles.clickNewButton();

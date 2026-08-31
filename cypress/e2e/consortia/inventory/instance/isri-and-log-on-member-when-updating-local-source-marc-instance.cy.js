@@ -71,8 +71,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C418586 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when updating Local Source = MARC Instance (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C418586'] },
+        'C418586 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when updating Local Source = MARC Instance (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C418586'] },
         () => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.importWithOclc(testData.oclcNumberForImport);

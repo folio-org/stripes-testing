@@ -39,8 +39,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C710369 Inventory | Use "Reset all" in "Advanced search" modal (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C710369'] },
+      'C710369 Inventory | Use "Reset all" in "Advanced search" modal (promin)',
+      { tags: ['extendedPath', 'promin', 'C710369'] },
       () => {
         InventoryInstances.clickAdvSearchButton();
         // TO DO: check reset button disabled after STCOM-1468 is done

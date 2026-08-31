@@ -53,8 +53,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C421990 (CONSORTIA) Verify the match profile options on Central tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C421990'] },
+        'C421990 (CONSORTIA) Verify the match profile options on Central tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C421990'] },
         () => {
           TopMenuNavigation.navigateToApp(
             APPLICATION_NAMES.SETTINGS,

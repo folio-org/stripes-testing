@@ -297,8 +297,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C407645 Consortia | Make instances shared and export with Default instances job profile (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C407645'] },
+      'C407645 Consortia | Make instances shared and export with Default instances job profile (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C407645'] },
       () => {
         // Step 1-2: Search for local instances from preconditions and share them to central tenant
         InventorySearchAndFilter.clearDefaultFilter('Held by');

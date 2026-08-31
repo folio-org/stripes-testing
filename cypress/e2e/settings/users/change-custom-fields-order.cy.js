@@ -78,8 +78,8 @@ describe('Settings (Users) - Custom Fields', () => {
   });
 
   it(
-    'C15701 Change custom fields order (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C15701'] },
+    'C15701 Change custom fields order (vega)',
+    { tags: ['extendedPath', 'vega', 'C15701'] },
     () => {
       // Step 1: Go to "Settings" -> "Users" -> "Custom fields"
 

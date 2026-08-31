@@ -253,8 +253,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C11123 Export from Inventory, edit file, and re-import to update items (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C11123'] },
+      'C11123 Export from Inventory, edit file, and re-import to update items (promin)',
+      { tags: ['criticalPath', 'promin', 'C11123'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventoryInstance.checkIsInstancePresented(

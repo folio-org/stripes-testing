@@ -160,8 +160,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C476729 Updating of multiple result instance with marc-to-Instance 010$z match and instance submatch (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C476729'] },
+        'C476729 Updating of multiple result instance with marc-to-Instance 010$z match and instance submatch (promin)',
+        { tags: ['criticalPath', 'promin', 'C476729'] },
         () => {
           InventorySearchAndFilter.searchInstanceByTitle(testData.instanceIds[0]);
           InstanceRecordView.waitLoading();

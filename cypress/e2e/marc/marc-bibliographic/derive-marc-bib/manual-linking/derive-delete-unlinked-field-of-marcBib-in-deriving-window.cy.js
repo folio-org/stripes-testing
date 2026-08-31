@@ -150,8 +150,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C366579 Derive | Delete unlinked field of "MARC Bib" record in deriving window (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C366579'] },
+          'C366579 Derive | Delete unlinked field of "MARC Bib" record in deriving window (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C366579'] },
           () => {
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
             InventoryInstances.selectInstance();

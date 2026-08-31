@@ -119,8 +119,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C478261 Browse for call number which has (at least) 25 preceding call numbers with the same first 10 characters using "Call numbers (all)" browse option - LC type (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C478261'] },
+      'C478261 Browse for call number which has (at least) 25 preceding call numbers with the same first 10 characters using "Call numbers (all)" browse option - LC type (promin)',
+      { tags: ['extendedPath', 'promin', 'C478261'] },
       () => {
         callNumbers.forEach((callNumber) => {
           BrowseCallNumber.waitForCallNumberToAppear(callNumber);

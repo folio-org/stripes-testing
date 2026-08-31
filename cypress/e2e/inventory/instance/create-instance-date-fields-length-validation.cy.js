@@ -42,8 +42,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C552518 Cannot create Instance with more or less than 4 characters in "Date 1" and "Date 2" fields (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C552518'] },
+      'C552518 Cannot create Instance with more or less than 4 characters in "Date 1" and "Date 2" fields (promin)',
+      { tags: ['criticalPath', 'promin', 'C552518'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(testData.instanceTitle);

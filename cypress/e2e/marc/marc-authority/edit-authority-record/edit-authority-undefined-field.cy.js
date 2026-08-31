@@ -70,8 +70,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514996 Edit MARC authority record with field which is not defined in validation rules and check "Last updated" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C514996'] },
+        'C514996 Edit MARC authority record with field which is not defined in validation rules and check "Last updated" field (promin)',
+        { tags: ['criticalPath', 'promin', 'C514996'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);

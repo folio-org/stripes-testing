@@ -74,8 +74,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375196 GetRecord: Verify Item FOLIO suppressed from discovery in case -- Skip suppressed from discovery records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375196', 'nonParallel'] },
+      'C375196 GetRecord: Verify Item FOLIO suppressed from discovery in case -- Skip suppressed from discovery records (athena)',
+      { tags: ['extendedPath', 'athena', 'C375196', 'nonParallel'] },
       () => {
         // Step 1: Click on the "Add item" button in the "Holdings" accordion
         InventorySearchAndFilter.searchInstanceByTitle(folioInstance.title);

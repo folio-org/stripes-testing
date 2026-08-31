@@ -96,8 +96,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C466151 Search by "Classification" field is case-insensitive (spitfire)',
-        { tags: ['extendedPathFlaky', 'spitfire', 'C466151'] },
+        'C466151 Search by "Classification" field is case-insensitive (promin)',
+        { tags: ['extendedPathFlaky', 'promin', 'C466151'] },
         () => {
           testData.searchQueries.forEach((query, index) => {
             cy.ifConsortia(true, () => {

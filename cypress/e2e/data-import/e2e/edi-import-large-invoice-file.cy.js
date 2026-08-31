@@ -78,8 +78,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C347615 Import a large EDIFACT invoice file (folijet)',
-      { tags: ['smoke', 'folijet', 'C347615'] },
+      'C347615 Import a large EDIFACT invoice file (promin)',
+      { tags: ['smoke', 'promin', 'C347615'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);

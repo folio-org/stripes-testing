@@ -179,11 +179,11 @@ describe('Inventory', () => {
     });
 
     it(
-      'C451466 C451468 C451469 C451470 Call number of not valid format and with selected call number type can be found via browse (spitfire)',
+      'C451466 C451468 C451469 C451470 Call number of not valid format and with selected call number type can be found via browse (promin)',
       {
         tags: [
           'criticalPathFlaky',
-          'spitfire',
+          'promin',
           'nonParallel',
           'C451468',
           'C451466',

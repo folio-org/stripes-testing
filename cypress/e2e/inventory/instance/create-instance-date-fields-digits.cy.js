@@ -42,8 +42,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C552504 Create Instance with selected Date type and fields Date 1, Date 2 filled by digits (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C552504'] },
+      'C552504 Create Instance with selected Date type and fields Date 1, Date 2 filled by digits (promin)',
+      { tags: ['criticalPath', 'promin', 'C552504'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(testData.instanceTitle);

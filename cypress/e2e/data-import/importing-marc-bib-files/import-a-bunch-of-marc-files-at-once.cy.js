@@ -32,8 +32,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C6707 Import a bunch of MARC files at once (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C6707'] },
+      'C6707 Import a bunch of MARC files at once (promin)',
+      { tags: ['criticalPath', 'promin', 'C6707'] },
       () => {
         [
           {

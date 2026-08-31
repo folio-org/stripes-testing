@@ -111,8 +111,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C663320 Check "Version history" pane after Update of "LDR" and "008" fields in "MARC authority" record via "quickmarc" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C663320'] },
+        'C663320 Check "Version history" pane after Update of "LDR" and "008" fields in "MARC authority" record via "quickmarc" (promin)',
+        { tags: ['criticalPath', 'promin', 'C663320'] },
         () => {
           MarcAuthority.verifyVersionHistoryButtonShown();
           MarcAuthority.edit();

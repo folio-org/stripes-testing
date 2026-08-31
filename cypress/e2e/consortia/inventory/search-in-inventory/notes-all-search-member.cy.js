@@ -240,8 +240,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411628 Search for Shared/Local records by "Instance notes (all)" search option from "Member" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411628'] },
+        'C411628 Search for Shared/Local records by "Instance notes (all)" search option from "Member" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411628'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter(helbyAccordionName);
 

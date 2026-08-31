@@ -92,8 +92,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C648489 Verify that the custom field with a type textbox is queryable (corsair)',
-          { tags: ['criticalPath', 'corsair', 'C648489'] },
+          'C648489 Verify that the custom field with a type textbox is queryable (athena)',
+          { tags: ['criticalPath', 'athena', 'C648489'] },
           () => {
             listName = getTestEntityValue('C648489_List');
             cy.clearLocalStorage();
@@ -130,8 +130,8 @@ describe('Lists', () => {
         );
 
         it(
-          "C648494 Verify that it's possible to update the textbox custom fields, and all existing queries are still available (corsair)",
-          { tags: ['criticalPath', 'corsair', 'C648494'] },
+          "C648494 Verify that it's possible to update the textbox custom fields, and all existing queries are still available (athena)",
+          { tags: ['criticalPath', 'athena', 'C648494'] },
           () => {
             cy.clearLocalStorage();
             listName = getTestEntityValue('C648494_List');
@@ -192,8 +192,8 @@ describe('Lists', () => {
         );
 
         it(
-          'C648499 Verify that the textbox custom field is not queryable after deleting it (corsair)',
-          { tags: ['extendedPath', 'corsair', 'C648499'] },
+          'C648499 Verify that the textbox custom field is not queryable after deleting it (athena)',
+          { tags: ['extendedPath', 'athena', 'C648499'] },
           () => {
             listName = getTestEntityValue('C648499_List');
             cy.clearLocalStorage();

@@ -57,8 +57,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C1046001 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to create locked mapping profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C1046001'] },
+      'C1046001 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to create locked mapping profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C1046001'] },
       () => {
         // Step 1: Click "New" button in the header of "Field mapping profiles" pane
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();

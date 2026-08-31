@@ -92,8 +92,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C436944 (CONSORTIA) Check "Expand All/Collapse all" button for Consortial holdings accordion on Shadow Instance from Member Tenant on another Member Tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C436944'] },
+        'C436944 (CONSORTIA) Check "Expand All/Collapse all" button for Consortial holdings accordion on Shadow Instance from Member Tenant on another Member Tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C436944'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);

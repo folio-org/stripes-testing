@@ -222,8 +222,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C402358 "Select instance" plugin | Check the "Held by" facet for search from "Central" tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C402358'] },
+          'C402358 "Select instance" plugin | Check the "Held by" facet for search from "Central" tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C402358'] },
           () => {
             Orders.selectOrderByPONumber(order.poNumber);
             OrderDetails.selectAddPOLine();

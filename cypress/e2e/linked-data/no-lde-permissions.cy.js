@@ -9,7 +9,7 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import Users from '../../support/fragments/users/users';
 import CapabilitySets from '../../support/dictionary/capabilitySets';
 
-describe('Citation: No LDE permissions', () => {
+describe('Promin: No LDE permissions', () => {
   const testData = {
     marcFilePath: 'marcBibFileForC451572.mrc',
     modifiedMarcFile: `C451572 editedMarcFile${getRandomPostfix()}.mrc`,
@@ -64,8 +64,8 @@ describe('Citation: No LDE permissions', () => {
   });
 
   it(
-    'C651425 [User journey] Marigold - no LDE permissions for the User (citation)',
-    { tags: ['criticalPath', 'citation', 'C651425', 'marigold', 'shiftLeft'] },
+    'C651425 [User journey] Marigold - no LDE permissions for the User (promin)',
+    { tags: ['criticalPath', 'promin', 'C651425', 'marigold', 'shiftLeft'] },
     () => {
       // search inventory instance
       InventoryInstances.searchByTitle(testData.uniqueTitle);

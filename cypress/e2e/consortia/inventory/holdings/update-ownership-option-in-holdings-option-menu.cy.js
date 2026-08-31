@@ -105,8 +105,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C490891 Check "Update ownership" option in Holdings option menu (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C490891'] },
+        'C490891 Check "Update ownership" option in Holdings option menu (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C490891'] },
         () => {
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();

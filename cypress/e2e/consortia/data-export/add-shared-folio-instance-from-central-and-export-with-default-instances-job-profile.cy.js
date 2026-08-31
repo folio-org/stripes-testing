@@ -343,8 +343,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C407649 Consortia | Add shared FOLIO instance from central and export with Default instances job profile (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C407649'] },
+      'C407649 Consortia | Add shared FOLIO instance from central and export with Default instances job profile (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C407649'] },
       () => {
         // Step 1: Go to "Inventory" app => Select "Actions" => Select "New shared record" button
         InventoryInstances.addNewInventory();

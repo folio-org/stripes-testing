@@ -124,8 +124,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C365111 Navigation from "Browse" page to default page for Search in "Inventory" app (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C365111'] },
+      'C365111 Navigation from "Browse" page to default page for Search in "Inventory" app (promin)',
+      { tags: ['extendedPath', 'promin', 'C365111'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

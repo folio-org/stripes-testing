@@ -85,8 +85,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C367956 Verify that CRUD actions with fields from "Derive MARC Bib" window will save in new record (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire', 'C367956'] },
+        'C367956 Verify that CRUD actions with fields from "Derive MARC Bib" window will save in new record (promin) (TaaS)',
+        { tags: ['criticalPath', 'promin', 'C367956'] },
         () => {
           cy.visit(`${TopMenu.inventoryPath}/view/${instanceId}`);
           InventoryInstance.deriveNewMarcBib();

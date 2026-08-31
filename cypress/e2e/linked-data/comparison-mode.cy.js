@@ -20,7 +20,7 @@ import Users from '../../support/fragments/users/users';
 
 let user;
 
-describe('Citation: comparison mode', () => {
+describe('Promin: comparison mode', () => {
   const testData = {
     marcFilePath: 'marcBibFileForC451572.mrc',
     modifiedMarcFile: `C624280 editedMarcFile${getRandomPostfix()}.mrc`,
@@ -103,8 +103,8 @@ describe('Citation: comparison mode', () => {
   });
 
   it(
-    'C692195 [User journey] Marigold - Edit existing instance using comparison mode (citation)',
-    { tags: ['criticalPath', 'citation', 'C692195', 'marigold'] },
+    'C692195 [User journey] Marigold - Edit existing instance using comparison mode (promin)',
+    { tags: ['criticalPath', 'promin', 'C692195', 'marigold'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);

@@ -74,8 +74,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C594394 "Select Instance" plugin | "Reset all" button clears Date filters filled with invalid values (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C594394'] },
+        'C594394 "Select Instance" plugin | "Reset all" button clears Date filters filled with invalid values (promin)',
+        { tags: ['extendedPath', 'promin', 'C594394'] },
         () => {
           SelectInstanceModal.searchByName('*');
 

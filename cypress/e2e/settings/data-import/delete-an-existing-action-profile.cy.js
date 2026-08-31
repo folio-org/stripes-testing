@@ -71,8 +71,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C2346 Delete an existing action profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C2346'] },
+      'C2346 Delete an existing action profile (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C2346'] },
       () => {
         SettingsActionProfiles.search(profile.createActionProfile.name);
         SettingsActionProfiles.selectActionProfileFromList(profile.createActionProfile.name);

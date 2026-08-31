@@ -305,8 +305,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C692124 Check "Version history" pane after CRUD fields, subfields, indicators in MARC bib record updated via "Data import" app (spitfire)',
-        { tags: ['criticalPathFlaky', 'spitfire', 'C692124'] },
+        'C692124 Check "Version history" pane after CRUD fields, subfields, indicators in MARC bib record updated via "Data import" app (promin)',
+        { tags: ['criticalPathFlaky', 'promin', 'C692124'] },
         () => {
           DataImport.verifyUploadState();
           DataImport.uploadFileAndRetry(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);

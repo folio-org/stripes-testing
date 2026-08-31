@@ -86,8 +86,8 @@ describe('MARC Authority Validation Rules - Local Fields Indicators API', () => 
   });
 
   it(
-    'C499696 Create Indicators of Local field for MARC authority spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C499696', 'spitfire'] },
+    'C499696 Create Indicators of Local field for MARC authority spec (API) (promin)',
+    { tags: ['extendedPath', 'C499696', 'promin'] },
     () => {
       let firstIndicatorId;
       let secondIndicatorId;
@@ -170,8 +170,8 @@ describe('MARC Authority Validation Rules - Local Fields Indicators API', () => 
   );
 
   it(
-    'C499698 Cannot create Indicators for Local Field 002, 004, 009 of MARC authority spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C499698', 'spitfire'] },
+    'C499698 Cannot create Indicators for Local Field 002, 004, 009 of MARC authority spec (API) (promin)',
+    { tags: ['extendedPath', 'C499698', 'promin'] },
     () => {
       const controlFieldIds = {};
 
@@ -278,8 +278,8 @@ describe('MARC Authority Validation Rules - Local Fields Indicators API', () => 
   );
 
   it(
-    'C502995 Update Indicator of Local field for MARC authority spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C502995', 'spitfire'] },
+    'C502995 Update Indicator of Local field for MARC authority spec (API) (promin)',
+    { tags: ['extendedPath', 'C502995', 'promin'] },
     () => {
       // Create an indicator for the local field
       const createIndicatorPayload = {

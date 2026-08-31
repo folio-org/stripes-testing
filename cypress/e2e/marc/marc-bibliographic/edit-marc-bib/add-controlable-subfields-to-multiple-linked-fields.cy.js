@@ -147,8 +147,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C503234 Add controllable subfields to multiple linked fields in "MARC bib" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C503234'] },
+      'C503234 Add controllable subfields to multiple linked fields in "MARC bib" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C503234'] },
       () => {
         InventoryInstances.searchByTitle(testData.bibFile.instanceTitle);
         InventoryInstances.selectInstance();

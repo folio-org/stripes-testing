@@ -23,8 +23,8 @@ describe('Permissions', () => {
     });
 
     it(
-      'C494346 Check that "+ New" button active on Z39.50 profiles with "Settings (Inventory): Configure single-record import" permission (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C494346'] },
+      'C494346 Check that "+ New" button active on Z39.50 profiles with "Settings (Inventory): Configure single-record import" permission (promin)',
+      { tags: ['criticalPath', 'promin', 'C494346'] },
       () => {
         Z3950TargetProfiles.verifyTargetProfilesListDisplayed();
         Z3950TargetProfiles.verifyNewButtonState();

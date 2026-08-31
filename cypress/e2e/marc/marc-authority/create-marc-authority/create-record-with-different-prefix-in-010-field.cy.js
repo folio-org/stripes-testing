@@ -53,8 +53,8 @@ describe('MARC', () => {
 
       it(
         `C423540 Create a new MARC authority record with "FOLIO" authority file selected 
-            and added "010" field with prefix of different "FOLIO" authority file (spitfire)`,
-        { tags: ['criticalPath', 'spitfire', 'C423540'] },
+            and added "010" field with prefix of different "FOLIO" authority file (promin)`,
+        { tags: ['criticalPath', 'promin', 'C423540'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);

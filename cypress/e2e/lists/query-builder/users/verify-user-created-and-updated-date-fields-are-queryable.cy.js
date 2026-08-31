@@ -41,8 +41,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C991328 Verify "User created date" and "User updated date" fields are queryable (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C991328'] },
+        'C991328 Verify "User created date" and "User updated date" fields are queryable (athena)',
+        { tags: ['criticalPath', 'athena', 'C991328'] },
         () => {
           // Step 1: Open new list pane, set name, and select Users record type
           Lists.openNewListPane();

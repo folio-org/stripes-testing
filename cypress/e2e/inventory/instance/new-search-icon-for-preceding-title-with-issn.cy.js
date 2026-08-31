@@ -50,8 +50,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C496129 Check new search icon for Preceding title with ISSN (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C496129'] },
+      'C496129 Check new search icon for Preceding title with ISSN (promin)',
+      { tags: ['extendedPath', 'promin', 'C496129'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceId);
         InventoryInstances.selectInstance();

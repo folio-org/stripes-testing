@@ -74,8 +74,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C422227 Verify Bulk Edit for Holding populated "Material specified" in electronic access (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C422227'] },
+      'C422227 Verify Bulk Edit for Holding populated "Material specified" in electronic access (athena)',
+      { tags: ['criticalPath', 'athena', 'C422227'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

@@ -71,8 +71,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C423375 Create new "Authority file" at "Settings >> MARC authority>>Manage authority files" pane of Central tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C423375'] },
+          'C423375 Create new "Authority file" at "Settings >> MARC authority>>Manage authority files" pane of Central tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C423375'] },
           () => {
             // Step 1: User A in Central
             cy.resetTenant();

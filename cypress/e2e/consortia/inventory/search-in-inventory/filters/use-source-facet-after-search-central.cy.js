@@ -173,8 +173,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C404394 Use "Source" facet when Search was executed in "Central" tenant ("Instance" tab) (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C404394'] },
+          'C404394 Use "Source" facet when Search was executed in "Central" tenant ("Instance" tab) (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C404394'] },
           () => {
             InventorySearchAndFilter.fillInSearchQuery(instancePrefix);
             InventorySearchAndFilter.clickSearch();

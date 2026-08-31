@@ -38,8 +38,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C446166 Column "User expiration date" is blank for users with not populated expiration date (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C446166'] },
+        'C446166 Column "User expiration date" is blank for users with not populated expiration date (athena)',
+        { tags: ['extendedPath', 'athena', 'C446166'] },
         () => {
           // Step 1-2: Create new list with Users record type
           Lists.openNewListPane();

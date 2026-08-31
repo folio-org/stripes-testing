@@ -54,8 +54,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C506693 API | View Date types (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C506693'] },
+        'C506693 API | View Date types (promin)',
+        { tags: ['criticalPath', 'promin', 'C506693'] },
         () => {
           cy.getInstanceDateTypesViaAPI().then((response) => {
             dateTypesData.forEach((expectedDateType) => {
@@ -115,8 +115,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C506694 Update of Date type\'s "name" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C506694'] },
+        'C506694 Update of Date type\'s "name" (promin)',
+        { tags: ['criticalPath', 'promin', 'C506694'] },
         () => {
           cy.getUserToken(user.username, user.password);
           cy.patchInstanceDateTypeViaAPI(
@@ -206,8 +206,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C506695 Cannot update "code", "delimiter", "keepDelimiter", "source" of Date type (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C506695'] },
+        'C506695 Cannot update "code", "delimiter", "keepDelimiter", "source" of Date type (promin)',
+        { tags: ['criticalPath', 'promin', 'C506695'] },
         () => {
           cy.getUserToken(user.username, user.password);
           cy.patchInstanceDateTypeViaAPI(

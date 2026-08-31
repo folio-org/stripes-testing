@@ -134,8 +134,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C432317 Retrieve UUIDs of deleted MARC authority records using "Authority file" filter via API (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C432317'] },
+      'C432317 Retrieve UUIDs of deleted MARC authority records using "Authority file" filter via API (promin)',
+      { tags: ['criticalPath', 'promin', 'C432317'] },
       () => {
         testData.authorityHeadings.forEach((heading) => {
           MarcAuthoritiesSearch.searchBy(testData.searchOption, heading);

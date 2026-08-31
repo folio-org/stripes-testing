@@ -69,8 +69,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C357016 Check the filter in summary table with "create + no action + error" actions for the Holdings column (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C357016'] },
+      'C357016 Check the filter in summary table with "create + no action + error" actions for the Holdings column (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C357016'] },
       () => {
         // create field mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();

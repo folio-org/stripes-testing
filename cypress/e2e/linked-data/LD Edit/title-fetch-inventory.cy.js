@@ -21,7 +21,7 @@ import {
 
 let user;
 
-describe('Citation: check long title, local vocabularies, inventory view', () => {
+describe('Promin: check long title, local vocabularies, inventory view', () => {
   const longTitle =
     'Title of the item described in the record and variant and former titles that also apply to that item. Field 245 (Title Statement) contains the title as it appears on the chief title source for an item (or substitute for such, formulated according to cataloging guidelines). The uniform title is the primary collecting title for items appearing under multiple titles and the key title is a special unique title for serials. These fields may be used to generate access points and display notes for the various titles, frequently guided by indicator values associated with the fields when entered under a name heading.';
   const testData = {
@@ -73,8 +73,8 @@ describe('Citation: check long title, local vocabularies, inventory view', () =>
   });
 
   it(
-    'C446070 Marigold - Work/Instance edit page / Local vocabularies (citation)',
-    { tags: ['criticalPath', 'citation', 'C446070', 'marigold'] },
+    'C446070 Marigold - Work/Instance edit page / Local vocabularies (promin)',
+    { tags: ['criticalPath', 'promin', 'C446070', 'marigold'] },
     () => {
       // Create work and instance
       Marigold.openNewResourceForm();

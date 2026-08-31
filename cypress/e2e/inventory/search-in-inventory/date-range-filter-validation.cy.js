@@ -137,8 +137,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C553027 Validation of "From" / "To" boxes in "Date range" filter (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C553027'] },
+        'C553027 Validation of "From" / "To" boxes in "Date range" filter (promin)',
+        { tags: ['criticalPath', 'promin', 'C553027'] },
         () => {
           InventoryInstances.searchByTitle(testData.searchQuery);
           filterData.forEach((filterDatum) => {

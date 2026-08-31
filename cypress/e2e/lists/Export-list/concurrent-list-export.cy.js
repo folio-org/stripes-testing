@@ -57,8 +57,8 @@ describe('Lists', () => {
 
     // NOTE: Test case is depandable on the number of instances on the environment that returns in query
     it(
-      'C411767 (Multiple users) Edit list when export is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411767'] },
+      'C411767 (Multiple users) Edit list when export is in progress (athena)',
+      { tags: ['criticalPath', 'athena', 'C411767'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -88,8 +88,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411775 (Multiple users): Delete list when export is in progress (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411775'] },
+      'C411775 (Multiple users): Delete list when export is in progress (athena)',
+      { tags: ['criticalPath', 'athena', 'C411775'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -118,8 +118,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411828 (Multiple users): Refresh list when someone export the list (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411828'] },
+      'C411828 (Multiple users): Refresh list when someone export the list (athena)',
+      { tags: ['criticalPath', 'athena', 'C411828'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

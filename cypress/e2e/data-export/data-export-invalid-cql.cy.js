@@ -40,8 +40,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C397323 C831974 Verify trigger Data export of Instances, Authorities with invalid CQL (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C397323', 'C831974'] },
+    'C397323 C831974 Verify trigger Data export of Instances, Authorities with invalid CQL (athena)',
+    { tags: ['criticalPath', 'athena', 'C397323', 'C831974'] },
     () => {
       const checkedProfiles = [
         { name: 'Default instances', recordType: 'Instances' },

@@ -62,8 +62,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C10950 Edit and save a MARC record in quickMARC (spitfire)',
-          { tags: ['smoke', 'spitfire', 'shiftLeft', 'C10950'] },
+          'C10950 Edit and save a MARC record in quickMARC (promin)',
+          { tags: ['smoke', 'promin', 'shiftLeft', 'C10950'] },
           () => {
             InventoryInstance.goToEditMARCBiblRecord();
             QuickMarcEditor.waitLoading();
@@ -85,8 +85,8 @@ describe('MARC', () => {
         );
 
         it(
-          'C10924 Add a field to a record using quickMARC (spitfire)',
-          { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C10924'] },
+          'C10924 Add a field to a record using quickMARC (promin)',
+          { tags: ['smoke', 'promin', 'shiftLeftBroken', 'C10924'] },
           () => {
             InventoryInstance.goToEditMARCBiblRecord();
             QuickMarcEditor.waitLoading();
@@ -109,8 +109,8 @@ describe('MARC', () => {
         );
 
         it(
-          'C10928 Delete a field(s) from a record in quickMARC (spitfire)',
-          { tags: ['smoke', 'spitfire', 'shiftLeft', 'C10928'] },
+          'C10928 Delete a field(s) from a record in quickMARC (promin)',
+          { tags: ['smoke', 'promin', 'shiftLeft', 'C10928'] },
           () => {
             InventoryInstance.goToEditMARCBiblRecord();
             QuickMarcEditor.waitLoading();
@@ -124,8 +124,8 @@ describe('MARC', () => {
         );
 
         it(
-          'C10957 Attempt to delete a required field (spitfire)',
-          { tags: ['smoke', 'spitfire', 'shiftLeft', 'C10957'] },
+          'C10957 Attempt to delete a required field (promin)',
+          { tags: ['smoke', 'promin', 'shiftLeft', 'C10957'] },
           () => {
             InventoryInstance.goToEditMARCBiblRecord();
             QuickMarcEditor.waitLoading();
@@ -134,8 +134,8 @@ describe('MARC', () => {
         );
 
         it(
-          'C10951 Add a 5XX field to a marc record in quickMARC (spitfire)',
-          { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C10951'] },
+          'C10951 Add a 5XX field to a marc record in quickMARC (promin)',
+          { tags: ['smoke', 'promin', 'shiftLeftBroken', 'C10951'] },
           () => {
             InventoryInstance.startOverlaySourceBibRecord();
             InventoryActions.fillImportFields(InventoryInstance.validOCLC.id);

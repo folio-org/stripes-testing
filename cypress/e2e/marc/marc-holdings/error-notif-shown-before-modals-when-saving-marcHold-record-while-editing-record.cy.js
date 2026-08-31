@@ -112,8 +112,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C375187 Error notifications shown before modals when saving "MARC holdings" record while editing record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C375187'] },
+      'C375187 Error notifications shown before modals when saving "MARC holdings" record while editing record (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C375187'] },
       () => {
         InventoryInstances.searchByTitle(testData.instanceID);
         InventoryInstances.selectInstance();

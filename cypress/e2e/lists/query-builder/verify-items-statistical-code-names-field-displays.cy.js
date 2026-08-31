@@ -50,8 +50,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C451494 [Items] Verify that the field "Items — Statistical code" shown in the Query Builder for "Items" entity type (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C451494'] },
+      'C451494 [Items] Verify that the field "Items — Statistical code" shown in the Query Builder for "Items" entity type (athena)',
+      { tags: ['criticalPath', 'athena', 'C451494'] },
       () => {
         // Step 1: Create new list with Items record type
         Lists.openNewListPane();

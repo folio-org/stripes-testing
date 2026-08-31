@@ -72,8 +72,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C1332491 Import MARC holdings record with empty positions 00-05 of 008 MARC field (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1332491'] },
+      'C1332491 Import MARC holdings record with empty positions 00-05 of 008 MARC field (promin)',
+      { tags: ['extendedPath', 'promin', 'C1332491'] },
       () => {
         const todayDateYYMMDD = DateTools.getCurrentDateYYMMDD();
 

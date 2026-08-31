@@ -188,8 +188,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C566565 Delete required subfield from linked MARC bib field by automated linked update triggered from MARC authority record (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C566565', 'nonParallel'] },
+          'C566565 Delete required subfield from linked MARC bib field by automated linked update triggered from MARC authority record (promin)',
+          { tags: ['extendedPath', 'promin', 'C566565', 'nonParallel'] },
           () => {
             // Step 1: Navigate to MARC Authority app and search for the authority
             cy.login(userData.username, userData.password, {

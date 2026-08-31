@@ -49,8 +49,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503056 Cannot derive "MARC bib" record without a value in "245" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C503056'] },
+        'C503056 Cannot derive "MARC bib" record without a value in "245" field (promin)',
+        { tags: ['criticalPath', 'promin', 'C503056'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstanceById(createdRecordIDs[0]);

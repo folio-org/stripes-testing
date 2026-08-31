@@ -344,8 +344,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C380757 Verify sorting in "Data export" logs table without clicking "View all" button (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C380757'] },
+    'C380757 Verify sorting in "Data export" logs table without clicking "View all" button (athena)',
+    { tags: ['extendedPath', 'athena', 'C380757'] },
     () => {
       // Step 1: Navigate to the "Data export" app by clicking button in the header
       DataExportLogs.verifyViewAllLogsButtonEnabled();

@@ -131,8 +131,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C514849 Create MARC bib record with "LCCN" which matches to other records "LCCN", "Canceled LCCN" when duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C514849'] },
+          'C514849 Create MARC bib record with "LCCN" which matches to other records "LCCN", "Canceled LCCN" when duplicate LCCN check is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C514849'] },
           () => {
             // Step 1: Click on "Actions" - "+ New MARC bibliographic record" option
             InventoryInstance.newMarcBibRecord();

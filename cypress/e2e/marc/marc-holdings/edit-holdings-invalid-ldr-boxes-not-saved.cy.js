@@ -90,8 +90,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C353984 Verify that invalid values at 10, 11, 20-23 positions of "LDR" field change to valid when user edit "MARC Holdings" record. (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C353984'] },
+        'C353984 Verify that invalid values at 10, 11, 20-23 positions of "LDR" field change to valid when user edit "MARC Holdings" record. (promin)',
+        { tags: ['extendedPath', 'promin', 'C353984'] },
         () => {
           // Steps 1-2: Navigate to holdings record
           InventoryInstances.searchByTitle(instanceId);

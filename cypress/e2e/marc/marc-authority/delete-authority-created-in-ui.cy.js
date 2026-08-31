@@ -51,8 +51,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436897 Delete created from UI "MARC authority" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C436897'] },
+        'C436897 Delete created from UI "MARC authority" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C436897'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           MarcAuthority.setValid008DropdownValues();

@@ -52,8 +52,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C423414 "New shared MARC authority record" pane is opened after clicking on "+ New" option at Central tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C423414'] },
+          'C423414 "New shared MARC authority record" pane is opened after clicking on "+ New" option at Central tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C423414'] },
           () => {
             // 1 Click on "Actions" button in second pane
             MarcAuthorities.clickActionsButton();

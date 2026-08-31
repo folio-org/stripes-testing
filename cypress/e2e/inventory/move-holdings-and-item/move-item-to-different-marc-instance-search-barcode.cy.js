@@ -88,9 +88,9 @@ describe('Inventory', () => {
     });
 
     it(
-      'C365636 Verify that search by "Barcode" for "Item" which moved from one "Instance" (source "MARC") to another (source "MARC") will return only one record. (spitfire)',
+      'C365636 Verify that search by "Barcode" for "Item" which moved from one "Instance" (source "MARC") to another (source "MARC") will return only one record. (promin)',
       {
-        tags: ['extendedPath', 'spitfire', 'C365636'],
+        tags: ['extendedPath', 'promin', 'C365636'],
       },
       () => {
         cy.login(user.username, user.password, {

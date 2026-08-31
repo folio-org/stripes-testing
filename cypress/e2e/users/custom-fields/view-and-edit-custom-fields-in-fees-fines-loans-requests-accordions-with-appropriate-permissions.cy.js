@@ -337,7 +337,7 @@ describe('Users', () => {
 
     it(
       'C812849 - View and edit Custom fields in Fees/fines, Loans, Requests accordions with appropriate permissions',
-      { tags: ['extendedPath', 'volaris', 'C812849'] },
+      { tags: ['extendedPath', 'vega', 'C812849'] },
       () => {
         const distributedCustomFields = getDistributedCustomFields();
 

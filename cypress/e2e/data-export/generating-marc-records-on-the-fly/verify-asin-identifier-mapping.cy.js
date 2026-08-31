@@ -78,8 +78,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350438 Verify appending subfields to 1 any Identifier of ASIN, BNB, Local identifiers, StEdNL, UKMac. (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C350438'] },
+      'C350438 Verify appending subfields to 1 any Identifier of ASIN, BNB, Local identifiers, StEdNL, UKMac. (athena)',
+      { tags: ['extendedPath', 'athena', 'C350438'] },
       () => {
         // Step 1: Go to the "Data Export" app (already logged in from before block)
         DataExportLogs.verifyDragAndDropAreaExists();

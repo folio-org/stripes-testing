@@ -78,8 +78,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C350696 Edit the imported MARC Authority record via MARC Authority app multiple times (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C350696'] },
+        'C350696 Edit the imported MARC Authority record via MARC Authority app multiple times (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C350696'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
           MarcAuthorities.select(createdAuthorityID[0]);

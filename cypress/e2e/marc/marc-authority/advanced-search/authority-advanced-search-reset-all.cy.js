@@ -38,8 +38,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C710368 MARC authority | Use "Reset all" in "Advanced search" modal (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C710368'] },
+        'C710368 MARC authority | Use "Reset all" in "Advanced search" modal (promin)',
+        { tags: ['extendedPath', 'promin', 'C710368'] },
         () => {
           MarcAuthorities.clickAdvancedSearchButton();
           MarcAuthorities.checkResetAllButtonInAdvSearchModalEnabled(false);

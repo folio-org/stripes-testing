@@ -114,8 +114,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476754 Filter "Instance" records by Holdings "Statistical code" facet (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C476754'] },
+        'C476754 Filter "Instance" records by Holdings "Statistical code" facet (promin)',
+        { tags: ['criticalPath', 'promin', 'C476754'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(testData.statisticalCodeAccordionName);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(

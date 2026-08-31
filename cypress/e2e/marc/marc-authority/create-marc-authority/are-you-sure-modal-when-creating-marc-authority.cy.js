@@ -40,8 +40,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423523 Close "Create a new MARC authority record" window without save using "ESC" keyboard button (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423523'] },
+        'C423523 Close "Create a new MARC authority record" window without save using "ESC" keyboard button (promin)',
+        { tags: ['extendedPath', 'promin', 'C423523'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);

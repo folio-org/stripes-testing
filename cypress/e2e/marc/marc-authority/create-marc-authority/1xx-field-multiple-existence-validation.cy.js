@@ -72,8 +72,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503061 "1XX" multiple field existence validation in "Create a new MARC authority record" pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C503061'] },
+        'C503061 "1XX" multiple field existence validation in "Create a new MARC authority record" pane (promin)',
+        { tags: ['extendedPath', 'promin', 'C503061'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.waitLoading();

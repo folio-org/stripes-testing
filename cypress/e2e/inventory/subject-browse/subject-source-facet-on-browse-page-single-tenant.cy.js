@@ -85,8 +85,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C569603 Check "Subject source" facet on "Browse" page (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C569603'] },
+      'C569603 Check "Subject source" facet on "Browse" page (promin)',
+      { tags: ['extendedPath', 'promin', 'C569603'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseSubjects.select();

@@ -41,8 +41,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C1259793 Package detail record: Select which title data columns to display (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1259793'] },
+      'C1259793 Package detail record: Select which title data columns to display (promin)',
+      { tags: ['extendedPath', 'promin', 'C1259793'] },
       () => {
         // Step 1: Verify all default columns are displayed in the Titles accordion
         EHoldingsPackageView.clickActionsButtonInTitlesSection();

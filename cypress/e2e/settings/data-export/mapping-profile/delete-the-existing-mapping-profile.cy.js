@@ -28,8 +28,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C15828 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to delete unlocked mapping profile not referenced in job profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C15828'] },
+      'C15828 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to delete unlocked mapping profile not referenced in job profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C15828'] },
       () => {
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();

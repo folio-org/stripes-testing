@@ -326,8 +326,8 @@ describe('Patron notices', () => {
     });
 
     it(
-      'C347867 Item recalled + Recall request + Awaiting pickup + Hold shelf expiration triggers (volaris)',
-      { tags: ['criticalPathFlaky', 'volaris', 'C347867'] },
+      'C347867 Item recalled + Recall request + Awaiting pickup + Hold shelf expiration triggers (vega)',
+      { tags: ['criticalPathFlaky', 'vega', 'C347867'] },
       () => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.itemRecaled);
         NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.itemRecaled);

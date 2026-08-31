@@ -54,8 +54,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C2317 Search for Item by barcode field using "Keyword" and "Barcode" search options (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C2317'] },
+      'C2317 Search for Item by barcode field using "Keyword" and "Barcode" search options (promin)',
+      { tags: ['extendedPath', 'promin', 'C2317'] },
       () => {
         // Step 1: Search for item with simple barcode using "Keyword" search option
         InventorySearchAndFilter.switchToItem();

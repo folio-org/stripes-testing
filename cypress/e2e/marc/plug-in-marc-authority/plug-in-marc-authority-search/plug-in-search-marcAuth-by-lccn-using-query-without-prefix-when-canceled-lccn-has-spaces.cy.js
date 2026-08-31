@@ -92,8 +92,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C440122 MARC Authority plug-in | Search by "LCCN" option using a query without prefix (numbers only) when "Canceled LCCN" (010 $z) has (leading, internal, trailing) spaces. (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C440122'], retries: 1 },
+        'C440122 MARC Authority plug-in | Search by "LCCN" option using a query without prefix (numbers only) when "Canceled LCCN" (010 $z) has (leading, internal, trailing) spaces. (promin)',
+        { tags: ['criticalPath', 'promin', 'shiftLeft', 'C440122'], retries: 1 },
         () => {
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();

@@ -248,8 +248,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422234 Shared and Local (for current tenant) "MARC authority" records are found in "MARC authority" app from Member tenant by "LCCN" (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C422234'] },
+          'C422234 Shared and Local (for current tenant) "MARC authority" records are found in "MARC authority" app from Member tenant by "LCCN" (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C422234'] },
           () => {
             // Precondition: Check both checkboxes in References accordion
             MarcAuthoritiesSearch.selectExcludeReferencesFilter(

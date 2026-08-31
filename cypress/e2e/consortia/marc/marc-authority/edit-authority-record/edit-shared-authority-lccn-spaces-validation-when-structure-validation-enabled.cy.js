@@ -130,8 +130,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569536 Spaces are added automatically in LCCN during saving on "Edit MARC authority record" pane when LCCN structure validation is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C569536'] },
+          'C569536 Spaces are added automatically in LCCN during saving on "Edit MARC authority record" pane when LCCN structure validation is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C569536'] },
           () => {
             // Step 0: User is on detail view pane of record
             MarcAuthorities.searchBeats(sharedMarcAuthorityHeadingToBeEdited);

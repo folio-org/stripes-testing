@@ -150,8 +150,8 @@ describe('Users', () => {
     });
 
     it(
-      'C375239 Verify text on fee/fines popup (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C375239'] },
+      'C375239 Verify text on fee/fines popup (vega)',
+      { tags: ['extendedPath', 'vega', 'C375239'] },
       () => {
         UsersSearchPane.searchByKeywords(testData.targetUser.username);
         UsersSearchPane.selectUserFromList(testData.targetUser.username);

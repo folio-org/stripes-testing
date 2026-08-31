@@ -69,8 +69,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C466257 Import of file with 035 OCLC field with prefix and leading zeros with duplicates and additional subfields (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C466257'] },
+        'C466257 Import of file with 035 OCLC field with prefix and leading zeros with duplicates and additional subfields (promin)',
+        { tags: ['criticalPath', 'promin', 'C466257'] },
         () => {
           // upload a marc file
           DataImport.verifyUploadState();

@@ -173,8 +173,8 @@ describe('Consortia', () => {
         });
 
         it(
-          'C594407 User with all Consortium manager permission (view, create, share) is able to create shared subject type via "Consortium manager" app (folijet)',
-          { tags: ['criticalPathECS', 'folijet', 'C594407'] },
+          'C594407 User with all Consortium manager permission (view, create, share) is able to create shared subject type via "Consortium manager" app (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C594407'] },
           () => {
             // Step 1: Navigate to Consortium manager app and select all members
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);

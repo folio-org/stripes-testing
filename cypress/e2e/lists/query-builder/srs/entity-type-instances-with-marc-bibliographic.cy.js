@@ -61,8 +61,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C1259778 Entity Type - Instances with MARC bibliographic (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C1259778'] },
+      'C1259778 Entity Type - Instances with MARC bibliographic (athena)',
+      { tags: ['criticalPath', 'athena', 'C1259778'] },
       () => {
         Lists.openNewListPane();
         Lists.setName(listName);

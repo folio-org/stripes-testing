@@ -136,8 +136,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C1030059 Advanced search | Verify ISBN search (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1030059'] },
+      'C1030059 Advanced search | Verify ISBN search (promin)',
+      { tags: ['extendedPath', 'promin', 'C1030059'] },
       () => {
         searchData.forEach(({ queries, modifier, results }) => {
           InventoryInstances.clickAdvSearchButton();

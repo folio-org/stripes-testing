@@ -92,8 +92,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C594478 (CONSORTIA) "Move holdings/items to another instance" option is visible for shared instances (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C594478'] },
+        'C594478 (CONSORTIA) "Move holdings/items to another instance" option is visible for shared instances (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C594478'] },
         () => {
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();

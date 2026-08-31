@@ -90,8 +90,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422139 Updating tag in controlling field of "MARC Authority" record while "MARC Bib" record being created (NOT saved link) (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C422139'] },
+          'C422139 Updating tag in controlling field of "MARC Authority" record while "MARC Bib" record being created (NOT saved link) (promin)',
+          { tags: ['extendedPath', 'promin', 'C422139'] },
           () => {
             // Steps 1-2 (Inventory tab): Create new MARC bib, fill 245
             InventoryInstance.newMarcBibRecord();

@@ -97,8 +97,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584515 Check filtering by Subject Source and Subject type (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C584515'] },
+      'C584515 Check filtering by Subject Source and Subject type (promin)',
+      { tags: ['extendedPath', 'promin', 'C584515'] },
       () => {
         subjectValues.forEach((subjectValue) => {
           BrowseSubjects.waitForSubjectToAppear(subjectValue);

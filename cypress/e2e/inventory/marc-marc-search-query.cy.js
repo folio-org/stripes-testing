@@ -53,8 +53,8 @@ describe(
     });
 
     it(
-      'C514901 Check MARC-MARC search query (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C514901'] },
+      'C514901 Check MARC-MARC search query (promin)',
+      { tags: ['criticalPath', 'promin', 'C514901'] },
       () => {
         InventoryInstances.verifyRecordsMatchingViaApi();
       },

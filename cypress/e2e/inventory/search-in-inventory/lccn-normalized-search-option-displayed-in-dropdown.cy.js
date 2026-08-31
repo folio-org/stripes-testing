@@ -31,8 +31,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C442839 "LCCN, normalized" search option is displayed in the search option dropdown of "Inventory" app (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C442839'] },
+      'C442839 "LCCN, normalized" search option is displayed in the search option dropdown of "Inventory" app (promin)',
+      { tags: ['criticalPath', 'promin', 'C442839'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.clickSearchOptionSelect();

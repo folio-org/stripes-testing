@@ -62,8 +62,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C353232 Verify error accordion during matching (In app approach) (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C353232'] },
+      'C353232 Verify error accordion during matching (In app approach) (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C353232'] },
       () => {
         BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -79,8 +79,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C350941 Verify uploading file with identifiers -- In app approach (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C350941'] },
+      'C350941 Verify uploading file with identifiers -- In app approach (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C350941'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(
           'Items',
@@ -113,8 +113,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C350943 Verify Record identifiers dropdown -- Inventory-Items app (firebird)',
-      { tags: ['smoke', 'firebird', 'C350943'] },
+      'C350943 Verify Record identifiers dropdown -- Inventory-Items app (athena)',
+      { tags: ['smoke', 'athena', 'C350943'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.isItemsRadioChecked(true);
@@ -149,8 +149,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C357035 Verify elements of the bulk edit app -- In app approach (firebird)',
-      { tags: ['smoke', 'firebird', 'C357035'] },
+      'C357035 Verify elements of the bulk edit app -- In app approach (athena)',
+      { tags: ['smoke', 'athena', 'C357035'] },
       () => {
         BulkEditSearchPane.clickToBulkEditMainButton();
         BulkEditSearchPane.verifyDefaultFilterState();

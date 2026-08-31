@@ -45,8 +45,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C496229 Save existing "MARC bib" record without "006" and "007" fields (which are "system" and not required) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C496229'] },
+        'C496229 Save existing "MARC bib" record without "006" and "007" fields (which are "system" and not required) (promin)',
+        { tags: ['extendedPath', 'promin', 'C496229'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

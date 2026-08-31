@@ -78,8 +78,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422092 User can edit and save "MARC authority" with less than 2500 characters in heading (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C422092'] },
+        'C422092 User can edit and save "MARC authority" with less than 2500 characters in heading (promin)',
+        { tags: ['extendedPath', 'promin', 'C422092'] },
         () => {
           MarcAuthorities.searchBeats(commonSearchPrefix);
           MarcAuthorities.checkRowsCount(testRecords.length);

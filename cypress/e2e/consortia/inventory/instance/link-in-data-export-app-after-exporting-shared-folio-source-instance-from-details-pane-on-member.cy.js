@@ -54,8 +54,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C422081 (CONSORTIA) Verify the link in Data export app after exporting shared FOLIO Source Instance from Instance details pane on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C422081'] },
+        'C422081 (CONSORTIA) Verify the link in Data export app after exporting shared FOLIO Source Instance from Instance details pane on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C422081'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instance.instanceTitle);

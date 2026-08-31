@@ -99,8 +99,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C449369 Authority file which had assigned Local "MARC authority" records in the past cannot be deleted because of Retention policy (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C449369'] },
+          'C449369 Authority file which had assigned Local "MARC authority" records in the past cannot be deleted because of Retention policy (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C449369'] },
           () => {
             cy.resetTenant();
             cy.login(user.username, user.password);

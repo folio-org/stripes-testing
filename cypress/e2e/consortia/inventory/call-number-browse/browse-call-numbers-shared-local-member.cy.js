@@ -413,8 +413,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C410763 Call numbers from "Shared" and "Local" (for current tenant) Instance records are shown in the browse result list on Member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C410763'] },
+        'C410763 Call numbers from "Shared" and "Local" (for current tenant) Instance records are shown in the browse result list on Member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C410763'] },
         () => {
           cy.resetTenant();
           cy.login(testData.userProperties.username, testData.userProperties.password).then(() => {

@@ -89,8 +89,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Indicators Invalid
   });
 
   it(
-    'C502979 Cannot update Indicators of Local field with invalid "label" length for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C502979', 'spitfire'] },
+    'C502979 Cannot update Indicators of Local field with invalid "label" length for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C502979', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

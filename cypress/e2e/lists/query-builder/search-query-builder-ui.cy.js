@@ -185,8 +185,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C451507 Search for "organizations" in the query builder using "Status" field (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C451507'] },
+        'C451507 Search for "organizations" in the query builder using "Status" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C451507'] },
         () => {
           listName = getTestEntityValue('C451507_List');
           openQueryBuilder(recordType);
@@ -202,8 +202,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C613149 Query builder value dropdown options are filtered case-insensitively by search text (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C613149'] },
+        'C613149 Query builder value dropdown options are filtered case-insensitively by search text (athena)',
+        { tags: ['extendedPath', 'athena', 'C613149'] },
         () => {
           listName = getTestEntityValue('C613149_List');
           openQueryBuilder(recordType);
@@ -239,8 +239,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C451553 Verify that grouped fields display within a list row for "POL — Fund distribution" column (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C451553'] },
+        'C451553 Verify that grouped fields display within a list row for "POL — Fund distribution" column (athena)',
+        { tags: ['criticalPath', 'athena', 'C451553'] },
         () => {
           listName = getTestEntityValue('C451553_List');
           openQueryBuilder(recordType);
@@ -272,8 +272,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C451548 Verify the operator null/empty with "True" value (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C451548'] },
+        'C451548 Verify the operator null/empty with "True" value (athena)',
+        { tags: ['criticalPath', 'athena', 'C451548'] },
         () => {
           listName = getTestEntityValue('C451548_List');
           openQueryBuilder(recordType);
@@ -290,8 +290,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C613148 Verify that we can search for the fields that contain symbols (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C613148'] },
+        'C613148 Verify that we can search for the fields that contain symbols (athena)',
+        { tags: ['extendedPath', 'athena', 'C613148'] },
         () => {
           listName = getTestEntityValue('C613148_List');
           openQueryBuilder(recordType);
@@ -311,31 +311,31 @@ describe('Lists', () => {
       const customFieldNamePostfix = getCurrentTimestamp();
       const customFieldSpecs = {
         multiSelect: {
-          fieldLabel: 'Corsair - multi select',
+          fieldLabel: 'Athena - multi select',
           generator: generateMultiSelectCustomFieldData,
           multiSelect: true,
           valueType: 'multiselect',
           options: [
-            { id: 'opt_0', value: 'Corsair - multi select1', default: false },
-            { id: 'opt_1', value: 'Corsair - multi select2', default: false },
+            { id: 'opt_0', value: 'Athena - multi select1', default: false },
+            { id: 'opt_1', value: 'Athena - multi select2', default: false },
           ],
         },
         singleSelect: {
-          fieldLabel: 'Corsair - single select',
+          fieldLabel: 'Athena - single select',
           generator: generateSingleSelectCustomFieldData,
           multiSelect: false,
           options: [
-            { id: 'opt_0', value: 'Corsair - single select1', default: false },
-            { id: 'opt_1', value: 'Corsair - single select2', default: false },
+            { id: 'opt_0', value: 'Athena - single select1', default: false },
+            { id: 'opt_1', value: 'Athena - single select2', default: false },
           ],
         },
         radioButton: {
-          fieldLabel: 'Corsair - radio button',
+          fieldLabel: 'Athena - radio button',
           generator: generateRadioButtonCustomFieldData,
           multiSelect: false,
           options: [
-            { id: 'opt_0', value: 'Corsair - radio button1', default: false },
-            { id: 'opt_1', value: 'Corsair - radio button2', default: false },
+            { id: 'opt_0', value: 'Athena - radio button1', default: false },
+            { id: 'opt_1', value: 'Athena - radio button2', default: false },
           ],
         },
       };
@@ -419,8 +419,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C831957 Verify custom field option labels in the user-friendly query (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C831957'] },
+        'C831957 Verify custom field option labels in the user-friendly query (athena)',
+        { tags: ['extendedPath', 'athena', 'C831957'] },
         () => {
           const multiSelectInRow = getQueryRow('multiSelect', QUERY_OPERATIONS.IN);
           const equalsQueryRows = queryCustomFieldKeys.map((key) => getQueryRow(key, QUERY_OPERATIONS.EQUAL));
@@ -488,7 +488,7 @@ describe('Lists', () => {
         customField: generateDatePickerCustomFieldData({
           testNumber,
           data: {
-            name: `AT_C831970_Corsair_date_${getCurrentTimestamp()}`,
+            name: `AT_C831970_Athena_date_${getCurrentTimestamp()}`,
           },
         }),
       };
@@ -536,8 +536,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C831970 Verify that the custom field with a type Date picker is queryable (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C831970'] },
+        'C831970 Verify that the custom field with a type Date picker is queryable (athena)',
+        { tags: ['criticalPath', 'athena', 'C831970'] },
         () => {
           const customFieldLabel = `User — ${testData.customField.name}`;
 
@@ -655,8 +655,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C829880 Verify that the fields "Item effective library — Code" and "Item effective library — Name" have correct labels in the user-friendly query for the "Items" ET (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C829880'] },
+        'C829880 Verify that the fields "Item effective library — Code" and "Item effective library — Name" have correct labels in the user-friendly query for the "Items" ET (athena)',
+        { tags: ['extendedPath', 'athena', 'C829880'] },
         () => {
           const expectedCodeQuery = `(${testData.effectiveLibraryCodeFieldName} in [${testData.effectiveLibraryCodeLabels.join(', ')}])`;
           const expectedFullQuery = `${expectedCodeQuery} AND (${testData.effectiveLibraryNameFieldName} in [${testData.effectiveLibraryNameLabels.join(', ')}])`;
@@ -827,8 +827,8 @@ describe('Lists', () => {
       };
 
       it(
-        'C451549 Verify the operator null/empty with "False" value (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C451549'] },
+        'C451549 Verify the operator null/empty with "False" value (athena)',
+        { tags: ['criticalPath', 'athena', 'C451549'] },
         () => {
           listName = getTestEntityValue('C451549_List');
           openQueryBuilder(recordType);
@@ -845,8 +845,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C1259783 Verify that no undefined values are displayed when editing a query (corsair)',
-        { tags: ['smoke', 'corsair', 'C1259783'] },
+        'C1259783 Verify that no undefined values are displayed when editing a query (athena)',
+        { tags: ['smoke', 'athena', 'C1259783'] },
         () => {
           const language = 'English';
           const recordAmount = 1;
@@ -907,8 +907,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C808493 Verify query with "Instance — Flag for deletion" returns records after opening edit query (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C808493'] },
+        'C808493 Verify query with "Instance — Flag for deletion" returns records after opening edit query (athena)',
+        { tags: ['criticalPath', 'athena', 'C808493'] },
         () => {
           const recordAmount = 1;
           const verifyDeletedInstancePreview = () => {
@@ -967,8 +967,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C446019 The IN operator is rendered correctly in the query builder when editing existing queries (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C446019'] },
+        'C446019 The IN operator is rendered correctly in the query builder when editing existing queries (athena)',
+        { tags: ['criticalPath', 'athena', 'C446019'] },
         () => {
           const recordAmount = 3;
           const instanceIds = testData.instanceIds;
@@ -1026,8 +1026,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C613147 Search instances in the query builder by localized language name (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C613147'] },
+        'C613147 Search instances in the query builder by localized language name (athena)',
+        { tags: ['criticalPath', 'athena', 'C613147'] },
         () => {
           listName = getTestEntityValue('C_lists_query_builder_localized_language_list');
 
@@ -1099,8 +1099,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C594516 Search instances in the query builder by classification identifier type (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C594516'] },
+        'C594516 Search instances in the query builder by classification identifier type (athena)',
+        { tags: ['criticalPath', 'athena', 'C594516'] },
         () => {
           listName = getTestEntityValue('C_lists_query_builder_classification_list');
           openQueryBuilder(recordType);

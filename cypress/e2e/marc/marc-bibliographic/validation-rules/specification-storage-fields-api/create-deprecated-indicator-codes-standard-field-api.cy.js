@@ -63,8 +63,8 @@ describe('MARC Bibliographic Validation Rules - Create Deprecated Indicator Code
   });
 
   it(
-    'C499704 Create Deprecated Indicator code of Standard field for MARC bib spec (API) (spitfire)',
-    { tags: ['C499704', 'extendedPath', 'spitfire'] },
+    'C499704 Create Deprecated Indicator code of Standard field for MARC bib spec (API) (promin)',
+    { tags: ['C499704', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

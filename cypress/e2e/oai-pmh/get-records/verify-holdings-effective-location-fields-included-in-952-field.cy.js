@@ -89,8 +89,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C656281 GetRecord: SRS - Verify that Holdings "Effective location" fields are properly included in "952" field of response (subfields "a", "b", "c", "d", "s") (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C656281'] },
+      'C656281 GetRecord: SRS - Verify that Holdings "Effective location" fields are properly included in "952" field of response (subfields "a", "b", "c", "d", "s") (athena)',
+      { tags: ['extendedPath', 'athena', 'C656281'] },
       () => {
         // Step 1: Copy Instance UUID from the address bar
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);

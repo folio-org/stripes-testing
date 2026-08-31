@@ -121,8 +121,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C523659 Find and remove MARC field (532, 932) - extended scenarios (MARC) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C523659'] },
+      'C523659 Find and remove MARC field (532, 932) - extended scenarios (MARC) (athena)',
+      { tags: ['criticalPath', 'athena', 'C523659'] },
       () => {
         // Step 1: Show Source and Accessibility note columns
         BulkEditActions.openActions();

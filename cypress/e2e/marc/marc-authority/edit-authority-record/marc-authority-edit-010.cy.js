@@ -73,8 +73,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375127 Unable to save imported "MARC authority" record with multiple "010" fields when editing (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C375127'] },
+        'C375127 Unable to save imported "MARC authority" record with multiple "010" fields when editing (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C375127'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);
           MarcAuthorities.select(`${createdAuthorityIDs[0]}${authorityPostfix}`);

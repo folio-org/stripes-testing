@@ -85,8 +85,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C407727 Search for Instance by "Contributor" search option using "Advanced search" modal (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C407727'] },
+      'C407727 Search for Instance by "Contributor" search option using "Advanced search" modal (promin)',
+      { tags: ['criticalPath', 'promin', 'C407727'] },
       () => {
         InventoryInstances.clickAdvSearchButton();
         InventoryInstances.fillAdvSearchRow(

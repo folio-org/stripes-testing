@@ -68,8 +68,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1322609 Build query to find MARC authority records by Authority — Subject heading code and Authority — Source (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1322609'] },
+        'C1322609 Build query to find MARC authority records by Authority — Subject heading code and Authority — Source (promin)',
+        { tags: ['extendedPath', 'promin', 'C1322609'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

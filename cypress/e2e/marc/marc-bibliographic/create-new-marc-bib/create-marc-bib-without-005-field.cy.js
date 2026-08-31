@@ -43,8 +43,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C916264 Create MARC bibliographic record without "005" field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C916264'] },
+        'C916264 Create MARC bibliographic record without "005" field (promin)',
+        { tags: ['extendedPath', 'promin', 'C916264'] },
         () => {
           // Step 1: Click on "Actions" button >> Select "New MARC bibliographic record" option
           InventoryInstance.newMarcBibRecord();

@@ -43,8 +43,8 @@ describe('Users', () => {
     });
 
     it(
-      'C418594 Verify that final custom field can be removed (volaris) (TaaS)',
-      { tags: ['extendedPath', 'volaris', 'C418594', 'eurekaPhase1'] },
+      'C418594 Verify that final custom field can be removed (vega) (TaaS)',
+      { tags: ['extendedPath', 'vega', 'C418594', 'eurekaPhase1'] },
       () => {
         CustomFields.openTabFromInventorySettingsList();
         CustomFields.addCustomTextField(fieldData);

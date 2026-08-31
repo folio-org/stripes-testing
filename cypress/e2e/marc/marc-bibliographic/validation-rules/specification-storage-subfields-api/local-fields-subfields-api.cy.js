@@ -68,8 +68,8 @@ describe('Specification Storage - Local Fields Subfield API', () => {
   });
 
   it(
-    'C499708 Create Subfield code of Local field (not repeatable, not required, not deprecated) for MARC bib spec (API) (spitfire)',
-    { tags: ['C499708', 'criticalPath', 'spitfire'] },
+    'C499708 Create Subfield code of Local field (not repeatable, not required, not deprecated) for MARC bib spec (API) (promin)',
+    { tags: ['C499708', 'criticalPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
       const subfieldPayload = {
@@ -117,8 +117,8 @@ describe('Specification Storage - Local Fields Subfield API', () => {
   );
 
   it(
-    'C499709 Create Subfield code of Local field (repeatable, not required, not deprecated selected by default) for MARC bib spec (API) (spitfire)',
-    { tags: ['C499709', 'criticalPath', 'spitfire'] },
+    'C499709 Create Subfield code of Local field (repeatable, not required, not deprecated selected by default) for MARC bib spec (API) (promin)',
+    { tags: ['C499709', 'criticalPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
       const subfieldPayload = {
@@ -163,8 +163,8 @@ describe('Specification Storage - Local Fields Subfield API', () => {
   );
 
   it(
-    'C499705 Cannot create Subfield code of Local field with empty "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['C499705', 'criticalPath', 'spitfire'] },
+    'C499705 Cannot create Subfield code of Local field with empty "label" for MARC bib spec (API) (promin)',
+    { tags: ['C499705', 'criticalPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

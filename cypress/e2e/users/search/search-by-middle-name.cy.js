@@ -47,8 +47,8 @@ describe('Users', () => {
   });
 
   it(
-    'C389464 Search by middle name (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C389464', 'eurekaPhase1'] },
+    'C389464 Search by middle name (vega)',
+    { tags: ['criticalPath', 'vega', 'C389464', 'eurekaPhase1'] },
     () => {
       UsersSearchPane.searchByKeywords(testData.user.personal.middleName);
       Users.verifyMiddleNameOnUserDetailsPane(testData.user.personal.middleName);

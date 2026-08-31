@@ -52,8 +52,8 @@ describe('Users', () => {
   });
 
   it(
-    'C503212 Date in "Expiration date" field can be picked after clearing the field with "x" icon on user create page (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C503212'] },
+    'C503212 Date in "Expiration date" field can be picked after clearing the field with "x" icon on user create page (vega)',
+    { tags: ['extendedPath', 'vega', 'C503212'] },
     () => {
       // Step 1: Click "Actions" -> "New" on users app main page
       Users.clickNewButton();

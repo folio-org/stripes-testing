@@ -57,8 +57,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C496233 Create "MARC bib" record with multiple "006" and "007" fields (which are "system", repeatable) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C496233'] },
+        'C496233 Create "MARC bib" record with multiple "006" and "007" fields (which are "system", repeatable) (promin)',
+        { tags: ['extendedPath', 'promin', 'C496233'] },
         () => {
           // Step 1: Click on "Actions" button → Select "+ New MARC bibliographic record" option
           InventoryInstance.newMarcBibRecord();

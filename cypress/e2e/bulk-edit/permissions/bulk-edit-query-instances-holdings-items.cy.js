@@ -117,8 +117,8 @@ describe(
       });
 
       it(
-        'C423696 Verify Query tab capability sets (In app Instances, Holdings, Items) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C423696'] },
+        'C423696 Verify Query tab capability sets (In app Instances, Holdings, Items) (athena)',
+        { tags: ['criticalPath', 'athena', 'C423696'] },
         () => {
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,

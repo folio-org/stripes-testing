@@ -113,8 +113,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466213 Browse for call numbers which are in format which matches to some CN but without call number type specified using exact match query and "Call numbers (all)" browse option (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C466213'] },
+      'C466213 Browse for call numbers which are in format which matches to some CN but without call number type specified using exact match query and "Call numbers (all)" browse option (promin)',
+      { tags: ['extendedPath', 'promin', 'C466213'] },
       () => {
         callNumbers.forEach((callNumber) => {
           BrowseCallNumber.waitForCallNumberToAppear(callNumber);
@@ -127,8 +127,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C477647 Browse for call numbers which are in format which matches to some CN but without call number type specified using non-exact match query and "Call numbers (all)" browse option (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C477647'] },
+      'C477647 Browse for call numbers which are in format which matches to some CN but without call number type specified using non-exact match query and "Call numbers (all)" browse option (promin)',
+      { tags: ['extendedPath', 'promin', 'C477647'] },
       () => {
         queriesC477647.forEach((query, index) => {
           BrowseCallNumber.waitForCallNumberToAppear(callNumbers[index]);

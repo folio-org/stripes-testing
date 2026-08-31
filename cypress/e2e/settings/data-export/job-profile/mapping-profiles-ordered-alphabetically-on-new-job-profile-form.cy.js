@@ -52,8 +52,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C345413 Mapping profiles are ordered alphabetically on new job profile form (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C345413'] },
+      'C345413 Mapping profiles are ordered alphabetically on new job profile form (athena)',
+      { tags: ['extendedPath', 'athena', 'C345413'] },
       () => {
         // Step 1: Open "Settings" app by clicking "Settings" button in the header
         SettingsPane.waitLoading();

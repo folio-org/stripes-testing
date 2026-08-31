@@ -45,8 +45,8 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C519 Settings - UI-Tenant-Settings Settings Service Points - Manage (firebird)',
-    { tags: ['extendedPath', 'firebird', 'C519'] },
+    'C519 Settings - UI-Tenant-Settings Settings Service Points - Manage (athena)',
+    { tags: ['extendedPath', 'athena', 'C519'] },
     () => {
       // Step 6: Open Settings App and navigate to Tenant settings --> Service Points
       // 7.1) See "Service points" menu option

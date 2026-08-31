@@ -128,8 +128,8 @@ describe(
         });
 
         it(
-          'C375298 Verify generated Logs files for Holdings In app -- valid and invalid records (firebird)',
-          { tags: ['smoke', 'firebird', 'C375298'] },
+          'C375298 Verify generated Logs files for Holdings In app -- valid and invalid records (athena)',
+          { tags: ['smoke', 'athena', 'C375298'] },
           () => {
             BulkEditSearchPane.checkHoldingsRadio();
             BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');

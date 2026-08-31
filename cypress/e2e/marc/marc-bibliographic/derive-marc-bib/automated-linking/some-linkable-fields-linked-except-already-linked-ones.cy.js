@@ -219,8 +219,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C388643 Some of linkable fields are linked (and some are not) after clicking on the "Link headings" button when derive "MARC bib", except already linked fields (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C388643'] },
+          'C388643 Some of linkable fields are linked (and some are not) after clicking on the "Link headings" button when derive "MARC bib", except already linked fields (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C388643'] },
           () => {
             // Step 1: Find and open detail view of MARC Bib record
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);

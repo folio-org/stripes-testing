@@ -28,8 +28,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C422026 Verify that clicking on "Reset all" button will return focus and cursor to the Search box (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C422026'] },
+      'C422026 Verify that clicking on "Reset all" button will return focus and cursor to the Search box (promin)',
+      { tags: ['extendedPath', 'promin', 'C422026'] },
       () => {
         MarcAuthorities.searchBeats(searchOption);
         MarcAuthorities.verifySearchResultTabletIsAbsent(false);
@@ -42,8 +42,8 @@ describe('MARC', () => {
     );
 
     it(
-      'C594393 "Reset all" button clears Date filters filled with invalid values (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C594393'] },
+      'C594393 "Reset all" button clears Date filters filled with invalid values (promin)',
+      { tags: ['extendedPath', 'promin', 'C594393'] },
       () => {
         MarcAuthorities.switchToBrowse();
         MarcAuthorities.switchToSearch();

@@ -38,8 +38,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C523588 "MARC validation rules check" modal appears during create of MARC bib record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C523588'] },
+        'C523588 "MARC validation rules check" modal appears during create of MARC bib record (promin)',
+        { tags: ['extendedPath', 'promin', 'C523588'] },
         () => {
           InventoryInstance.newMarcBibRecord();
 

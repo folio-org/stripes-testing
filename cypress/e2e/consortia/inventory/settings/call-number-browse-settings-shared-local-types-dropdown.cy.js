@@ -104,8 +104,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C627464 Only Shared "Call numbe types" are displayed in "Call number types" multi-select dropdown on Central and Member tenants (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C627464'] },
+          'C627464 Only Shared "Call numbe types" are displayed in "Call number types" multi-select dropdown on Central and Member tenants (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C627464'] },
           () => {
             // Step 1: Click on the "Edit" icon next to a Call number browse option
             CallNumberBrowseSettings.clickEditButtonForItem(browseOption);

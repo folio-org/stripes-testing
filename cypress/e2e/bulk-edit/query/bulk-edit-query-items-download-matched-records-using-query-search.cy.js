@@ -56,8 +56,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C356812 Verify download matched records using Query search -- Items (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C356812'] },
+      'C356812 Verify download matched records using Query search -- Items (athena)',
+      { tags: ['extendedPath', 'athena', 'C356812'] },
       () => {
         let iterationNumber = 1;
 

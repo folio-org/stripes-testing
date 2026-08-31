@@ -92,8 +92,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C648490 Verify that the custom field with a type text area is queryable (corsair)',
-          { tags: ['criticalPath', 'corsair', 'C648490'] },
+          'C648490 Verify that the custom field with a type text area is queryable (athena)',
+          { tags: ['criticalPath', 'athena', 'C648490'] },
           () => {
             listName = getTestEntityValue('C648490_List');
 
@@ -130,8 +130,8 @@ describe('Lists', () => {
         );
 
         it(
-          "C648495 Verify that it's possible to update the textarea custom fields, and all existing queries are still available (corsair)",
-          { tags: ['criticalPath', 'corsair', 'C648495'] },
+          "C648495 Verify that it's possible to update the textarea custom fields, and all existing queries are still available (athena)",
+          { tags: ['criticalPath', 'athena', 'C648495'] },
           () => {
             listName = getTestEntityValue('C648495_List');
 
@@ -189,8 +189,8 @@ describe('Lists', () => {
         );
 
         it(
-          'C648500 Verify that the textarea custom field is not queryable after deleting it (corsair)',
-          { tags: ['criticalPath', 'corsair', 'C648500'] },
+          'C648500 Verify that the textarea custom field is not queryable after deleting it (athena)',
+          { tags: ['criticalPath', 'athena', 'C648500'] },
           () => {
             listName = getTestEntityValue('C648500_List');
 

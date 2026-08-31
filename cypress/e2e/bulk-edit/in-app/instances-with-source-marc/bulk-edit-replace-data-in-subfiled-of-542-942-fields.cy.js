@@ -127,8 +127,8 @@ describe(
       });
 
       it(
-        'C543744 Replace data in the subfield of MARC field (542, 942) - extended scenarios (MARC) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C543744'] },
+        'C543744 Replace data in the subfield of MARC field (542, 942) - extended scenarios (MARC) (athena)',
+        { tags: ['criticalPath', 'athena', 'C543744'] },
         () => {
           // Step 1: Show Source and Information related to Copyright Status columns
           BulkEditActions.openActions();

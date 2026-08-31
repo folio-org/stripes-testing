@@ -31,8 +31,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C451497 [Organizations] Verify that array type fields are not shown in the Query Builder (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C451497'] },
+      'C451497 [Organizations] Verify that array type fields are not shown in the Query Builder (athena)',
+      { tags: ['criticalPath', 'athena', 'C451497'] },
       () => {
         // Step 1: Create new list with Organizations record type and open Build query form
         Lists.openNewListPane();

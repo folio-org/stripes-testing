@@ -183,8 +183,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566152 Verify "Remove all" action for Holdings notes in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566152'] },
+        'C566152 Verify "Remove all" action for Holdings notes in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566152'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Item barcodes');
           BulkEditSearchPane.uploadFile(itemBarcodesFileName);

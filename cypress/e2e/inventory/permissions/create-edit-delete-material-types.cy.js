@@ -30,8 +30,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C505 Settings (Inventory): Create, edit, delete material types (folijet)',
-      { tags: ['smoke', 'folijet', 'shiftLeft', 'C505'] },
+      'C505 Settings (Inventory): Create, edit, delete material types (promin)',
+      { tags: ['smoke', 'promin', 'shiftLeft', 'C505'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsInventory.goToSettingsInventory();

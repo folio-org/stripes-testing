@@ -93,8 +93,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C1030057 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to edit locked job profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C1030057'] },
+      'C1030057 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to edit locked job profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C1030057'] },
       () => {
         // Step 1: Select existing job profile from Preconditions: unlocked job profile not referenced in an existing export job
         ExportJobProfiles.goToJobProfilesTab();

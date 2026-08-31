@@ -135,8 +135,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C788740 Create MARC holdings record on Local MARC bib from Member tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C788740'] },
+          'C788740 Create MARC holdings record on Local MARC bib from Member tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C788740'] },
           () => {
             InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
             InventoryInstances.searchByTitle(createdInstanceId);

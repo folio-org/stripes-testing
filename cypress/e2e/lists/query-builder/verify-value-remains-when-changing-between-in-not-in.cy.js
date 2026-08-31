@@ -33,8 +33,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C651408 Verify that the value remains populated after changing the operator from IN to NOT IN and vice versa (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C651408'] },
+      'C651408 Verify that the value remains populated after changing the operator from IN to NOT IN and vice versa (athena)',
+      { tags: ['criticalPath', 'athena', 'C651408'] },
       () => {
         // Step 1: Create new list with Items record type and open Build query form
         Lists.openNewListPane();

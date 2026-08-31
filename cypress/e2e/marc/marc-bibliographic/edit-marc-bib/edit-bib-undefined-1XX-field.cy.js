@@ -61,8 +61,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C519975 Edit MARC bib record with undefined 1XX field when Undefined rules are enabled (spitfire)',
-        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C519975'] },
+        'C519975 Edit MARC bib record with undefined 1XX field when Undefined rules are enabled (promin)',
+        { tags: ['extendedPathFlaky', 'promin', 'nonParallel', 'C519975'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

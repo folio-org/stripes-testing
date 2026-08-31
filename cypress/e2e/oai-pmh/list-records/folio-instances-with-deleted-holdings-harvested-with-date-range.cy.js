@@ -78,8 +78,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375943 ListRecords: FOLIO instances with deleted Holdings are harvested with start and end date (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375943', 'nonParallel'] },
+      'C375943 ListRecords: FOLIO instances with deleted Holdings are harvested with start and end date (athena)',
+      { tags: ['extendedPath', 'athena', 'C375943', 'nonParallel'] },
       () => {
         // Step 1: Search for FOLIO instance with holdings by Source filter
         InventoryInstances.searchByTitle(testData.instanceTitle);

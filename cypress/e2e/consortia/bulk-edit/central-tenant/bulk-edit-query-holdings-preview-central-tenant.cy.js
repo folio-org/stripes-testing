@@ -185,8 +185,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C503016 Query - Verify "Preview of record matched" when querying by valid Holdings identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C503016'] },
+        'C503016 Query - Verify "Preview of record matched" when querying by valid Holdings identifiers in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C503016'] },
         () => {
           cy.intercept('GET', '/query/**').as('query');
           cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('preview');

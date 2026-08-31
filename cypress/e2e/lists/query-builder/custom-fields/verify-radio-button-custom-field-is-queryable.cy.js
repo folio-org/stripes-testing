@@ -103,8 +103,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C648488 Verify that the custom field with a type Radio button is queryable (corsair)',
-          { tags: ['criticalPath', 'corsair', 'C648488'] },
+          'C648488 Verify that the custom field with a type Radio button is queryable (athena)',
+          { tags: ['criticalPath', 'athena', 'C648488'] },
           () => {
             listName = getTestEntityValue('C648488_List');
 
@@ -190,8 +190,8 @@ describe('Lists', () => {
         });
 
         it(
-          "C648493 Verify that it's possible to update the Radio custom fields, and all existing queries are still available (corsair)",
-          { tags: ['criticalPath', 'corsair', 'C648493'] },
+          "C648493 Verify that it's possible to update the Radio custom fields, and all existing queries are still available (athena)",
+          { tags: ['criticalPath', 'athena', 'C648493'] },
           () => {
             listName = getTestEntityValue('C648493_List');
 
@@ -306,8 +306,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C648498 Verify that the Radio custom field is not queryable after deleting it (corsair)',
-          { tags: ['extendedPath', 'corsair', 'C648498'] },
+          'C648498 Verify that the Radio custom field is not queryable after deleting it (athena)',
+          { tags: ['extendedPath', 'athena', 'C648498'] },
           () => {
             listName = getTestEntityValue('C648498_List');
 

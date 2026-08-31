@@ -172,8 +172,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C405559 Link Local MARC bib with Shared MARC Authority in Member tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C405559'] },
+          'C405559 Link Local MARC bib with Shared MARC Authority in Member tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C405559'] },
           () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventoryInstances.searchByTitle(createdRecordIDs[2]);

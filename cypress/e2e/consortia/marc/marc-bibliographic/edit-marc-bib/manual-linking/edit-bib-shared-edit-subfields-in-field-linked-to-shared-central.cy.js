@@ -226,8 +226,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C407692 Edit subfields in a linked field of "MARC Bib" in Central tenant (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C407692'] },
+            'C407692 Edit subfields in a linked field of "MARC Bib" in Central tenant (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C407692'] },
             () => {
               InventoryInstances.searchByTitle(createdInstanceId);
               InventoryInstances.selectInstanceById(createdInstanceId);
