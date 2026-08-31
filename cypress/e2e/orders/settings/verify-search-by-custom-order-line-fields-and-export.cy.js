@@ -552,22 +552,17 @@ describe('Orders', () => {
           { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.IS_RUSH, value: false },
           { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.LOCATIONS, value: '' },
           { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.MEMBERSHIP, value: '' },
-          { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.MULTI_YEAR_PREPAYMENT, value: false },
           // Order format and payment
           { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.ORDER_FORMAT, value: 'Other' },
           { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.PAYMENT_STATUS, value: 'Pending' },
-          { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.PAYMENT_TERMS, value: '' },
           { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.PHYSICAL_EXPECTED_RECEIPT_DATE, value: '' },
           ...headerValuesToVerifyInFile.slice(5, 9), // POL standard fields (PO line number, title, updated at, UUID)
           // Additional POL fields
-          { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.PREPAYMENT_TERM, value: '' },
           { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.PUBLICATION_DATE, value: '' },
           { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.PUBLISHER, value: '' },
           { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.RECEIPT_DATE, value: '' },
           { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.RECEIPT_STATUS, value: 'Pending' },
-          { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.SELECTOR, value: '' },
           { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.SOURCE, value: 'User' },
-          { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.STARTING_FISCAL_YEAR, value: '' },
           { header: PURCHASE_ORDER_LINES_CSV_FIELDS.POL.TAGS, value: '' },
           // POL user fields
           {

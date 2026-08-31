@@ -377,7 +377,7 @@ export default {
     if (isCheckBox) {
       cy.expect(
         customFieldsAccordion
-          .find(KeyValue({ label: customFieldName }))
+          .find(KeyValue(customFieldName))
           .find(Checkbox())
           .has({ checked: customFieldValue, disabled: true }),
       );
