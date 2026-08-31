@@ -103,8 +103,14 @@ const landingPageColumnSortOptions = {
     comparator: numericComparator,
   },
   'Last updated': {
-    getSortableValue: (value) => (value ? new Date(value).getTime() : -Infinity),
+    // The backend sorts this column by the list's `updatedDate` (last metadata edit),
+    // but the cell displays `successRefresh.refreshEndDate` (blank if never refreshed).
+    // Those two timestamps can legitimately diverge, so a blank-displayed list can sort
+    // ahead of or behind a list with a real displayed value. Only assert ordering among
+    // the lists that do have a value; a list with no value has nothing to compare here.
+    getSortableValue: (value) => new Date(value).getTime(),
     comparator: numericComparator,
+    filterValues: (value) => Boolean(value),
   },
 };
 

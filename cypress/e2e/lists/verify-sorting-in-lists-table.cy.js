@@ -1,3 +1,4 @@
+import { recurse } from 'cypress-recurse';
 import Permissions from '../../support/dictionary/permissions';
 import { Lists } from '../../support/fragments/lists/lists';
 import TopMenu from '../../support/fragments/topMenu';
@@ -5,82 +6,127 @@ import Users from '../../support/fragments/users/users';
 import { SORT_DIRECTIONS } from '../../support/constants';
 import getRandomPostfix from '../../support/utils/stringTools';
 
+function clickColumnHeaderAndSettle(column) {
+  Lists.clickLandingPageColumnHeader(column);
+  cy.wait(1000);
+}
+
+function waitForRefreshToComplete(listId) {
+  return recurse(
+    () => Lists.getListByIdViaApi(listId),
+    (body) => Boolean(body.successRefresh) && body.successRefresh.status === 'SUCCESS',
+    { limit: 40, timeout: 180 * 1000, delay: 5000 },
+  );
+}
+
 describe('Lists', () => {
   describe('Lists landing page', () => {
     let userData;
     const createdListNames = [];
+    const postfix = getRandomPostfix();
 
-    function createListsBatch({ labelPrefix, recordType, fqlQuery, isActive, count }) {
-      const listIds = [];
-      for (let i = 1; i <= count; i++) {
-        const listName = `AT_C1434659_${labelPrefix}_${i}_${getRandomPostfix()}`;
-        createdListNames.push(listName);
-        Lists.createViaApi({
-          name: listName,
-          description: 'Test list for C1434659',
-          recordType,
-          fqlQuery,
-          isActive,
-          isPrivate: true,
-        }).then((body) => {
-          listIds.push(body.id);
+    const permissions = [
+      Permissions.listsAll.gui,
+      Permissions.uiUsersView.gui,
+      Permissions.uiUsersViewLoans.gui,
+      Permissions.inventoryAll.gui,
+      Permissions.uiOrdersView.gui,
+      Permissions.uiOrdersCreate.gui,
+      Permissions.uiOrdersEdit.gui,
+      Permissions.uiOrdersDelete.gui,
+      Permissions.uiOrganizationsViewEditCreate.gui,
+      Permissions.uiOrganizationsViewEditDelete.gui,
+    ];
+
+    // Creates `count` lists sharing the same recordType/fqlQuery/isActive and returns
+    // their ids. Active lists auto-refresh on creation, so each id's refresh is
+    // awaited individually - refresh completion order does not match creation order.
+    function createListsBatch(namePrefix, listBase, count) {
+      const ids = [];
+
+      const width = String(count).length;
+      const names = Array.from(
+        { length: count },
+        (_, i) => `${namePrefix}_${String(i + 1).padStart(width, '0')}_${postfix}`,
+      );
+      createdListNames.push(...names);
+
+      return cy
+        .wrap(names)
+        .each((name) => Lists.createViaApi({ ...listBase, name }).then((body) => ids.push(body.id)))
+        .then(() => {
+          if (!listBase.isActive) return ids;
+          return cy
+            .wrap(ids)
+            .each((id) => Lists.refreshViaApi(id))
+            .then(() => cy.wrap(ids).each((id) => waitForRefreshToComplete(id)));
         });
-      }
-      // Only active lists get refreshed, so wait for the last one in the batch
-      // to complete, giving the server time to compute Records/Last updated.
-      if (isActive) {
-        cy.then(() => Lists.waitForListToCompleteRefreshViaApi(listIds[listIds.length - 1]));
-      }
     }
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.listsAll.gui,
-        Permissions.uiUsersView.gui,
-        Permissions.uiOrdersCreate.gui,
-        Permissions.inventoryAll.gui,
-        Permissions.uiUsersViewLoans.gui,
-        Permissions.uiOrganizationsViewEditCreate.gui,
-      ]).then((userProperties) => {
+      cy.createTempUser(permissions).then((userProperties) => {
         userData = userProperties;
 
         cy.getUserToken(userData.username, userData.password).then(() => {
-          Lists.buildQueryOnActiveUsersWithZeroRecords().then(({ query: zeroRecordsQuery }) => {
-            createListsBatch({
-              labelPrefix: 'zero_active',
-              recordType: 'Users',
-              fqlQuery: zeroRecordsQuery.fqlQuery,
-              isActive: true,
-              count: 30,
-            });
-            createListsBatch({
-              labelPrefix: 'zero_inactive',
-              recordType: 'Users',
-              fqlQuery: zeroRecordsQuery.fqlQuery,
-              isActive: false,
-              count: 15,
-            });
+          // ~40 Active "Users" lists with Records = 0
+          Lists.buildQueryOnActiveUsersWithZeroRecords().then(({ query }) => {
+            createListsBatch(
+              'AT_C1434659_zero',
+              {
+                description: `Test list for C1434659 ${postfix}`,
+                recordType: 'Users',
+                fqlQuery: query.fqlQuery,
+                isActive: true,
+                isPrivate: true,
+              },
+              40,
+            );
           });
 
-          Lists.buildQueryOnActiveUsers().then(({ query: activeUsersQuery }) => {
-            createListsBatch({
-              labelPrefix: 'active_users',
-              recordType: 'Users',
-              fqlQuery: activeUsersQuery.fqlQuery,
-              isActive: true,
-              count: 30,
-            });
+          // ~30 Active "Users" lists with Records > 0
+          Lists.buildQueryOnActiveUsers().then(({ query }) => {
+            createListsBatch(
+              'AT_C1434659_activeUsers',
+              {
+                description: `Test list for C1434659 ${postfix}`,
+                recordType: 'Users',
+                fqlQuery: query.fqlQuery,
+                isActive: true,
+                isPrivate: true,
+              },
+              30,
+            );
           });
 
-          Lists.buildQueryOnAllInstances().then(({ query: instancesQuery }) => {
-            createListsBatch({
-              labelPrefix: 'all_instances',
-              recordType: 'Instances',
-              fqlQuery: instancesQuery.fqlQuery,
-              isActive: true,
-              count: 30,
-            });
+          // ~20 Active "Instances" lists with a larger Records count
+          Lists.buildQueryOnAllInstances().then(({ query }) => {
+            createListsBatch(
+              'AT_C1434659_instances',
+              {
+                description: `Test list for C1434659 ${postfix}`,
+                recordType: 'Instances',
+                fqlQuery: query.fqlQuery,
+                isActive: true,
+                isPrivate: true,
+              },
+              20,
+            );
+          });
+
+          // ~15 Inactive lists, never refreshed - Records/Last updated are null
+          Lists.buildQueryOnActiveUsersWithZeroRecords().then(({ query }) => {
+            createListsBatch(
+              'AT_C1434659_inactive',
+              {
+                description: `Test list for C1434659 ${postfix}`,
+                recordType: 'Users',
+                fqlQuery: query.fqlQuery,
+                isActive: false,
+                isPrivate: true,
+              },
+              15,
+            );
           });
         });
       });
@@ -96,7 +142,7 @@ describe('Lists', () => {
     });
 
     it(
-      'C1434659 Verify sorting in the "Lists" table (athena) (TaaS)',
+      'C1434659 Verify sorting in the "Lists" table (athena)',
       { tags: ['extendedPath', 'athena', 'C1434659'] },
       () => {
         cy.login(userData.username, userData.password, {
@@ -104,11 +150,17 @@ describe('Lists', () => {
           waiter: Lists.waitLoading,
         });
 
-        // #1 Default sort: "List name" ascending
+        // The landing page shows every list in the shared tenant, not just the ones this
+        // test creates. Scope the view to this run's own lists so sort verification isn't
+        // affected by unrelated pre-existing/other-suite lists (e.g. never-refreshed ones
+        // with a blank "Last updated" that legitimately have nothing to do with this test).
+        Lists.searchLists(postfix);
+
+        // #1 Landing page opens sorted by "List name" ascending by default
         Lists.verifyLandingPageColumnSortDirection('List name', SORT_DIRECTIONS.ASCENDING);
         Lists.verifyLandingPageColumnValuesSorted('List name', SORT_DIRECTIONS.ASCENDING);
 
-        // #2 Sortable/non-sortable column icons
+        // #2 Only "Records" and "Last updated" columns are sortable
         Lists.verifyLandingPageColumnSortable('Records', true);
         Lists.verifyLandingPageColumnSortable('Last updated', true);
         Lists.verifyLandingPageColumnSortable('Record type', false);
@@ -116,52 +168,55 @@ describe('Lists', () => {
         Lists.verifyLandingPageColumnSortable('Source', false);
         Lists.verifyLandingPageColumnSortable('Visibility', false);
 
-        // #3 Click "List name" -> descending
-        Lists.clickLandingPageColumnHeader('List name');
+        // #3 Click "List name" header -> descending
+        clickColumnHeaderAndSettle('List name');
         Lists.verifyLandingPageColumnSortDirection('List name', SORT_DIRECTIONS.DESCENDING);
         Lists.verifyLandingPageColumnValuesSorted('List name', SORT_DIRECTIONS.DESCENDING);
 
-        // #4 Click "List name" again -> ascending
-        Lists.clickLandingPageColumnHeader('List name');
+        // #4 Click "List name" header again -> back to ascending
+        clickColumnHeaderAndSettle('List name');
         Lists.verifyLandingPageColumnSortDirection('List name', SORT_DIRECTIONS.ASCENDING);
         Lists.verifyLandingPageColumnValuesSorted('List name', SORT_DIRECTIONS.ASCENDING);
 
-        // #5 Click "Records" -> ascending, null lists first, "List name" no longer active
-        Lists.clickLandingPageColumnHeader('Records');
+        // #5 Click "Records" header -> ascending, null (never refreshed) lists come first,
+        // "List name" is no longer the active sort column
+        clickColumnHeaderAndSettle('Records');
         Lists.verifyLandingPageColumnSortDirection('List name', 'none');
         Lists.verifyLandingPageColumnSortDirection('Records', SORT_DIRECTIONS.ASCENDING);
         Lists.verifyLandingPageColumnValuesSorted('Records', SORT_DIRECTIONS.ASCENDING);
 
-        // #6 Reload the page -> sorting is preserved
+        // #6 Reload the page (F5) -> sorting by "Records" is preserved
         cy.reload();
         Lists.waitLoading();
         Lists.verifyLandingPageColumnSortDirection('Records', SORT_DIRECTIONS.ASCENDING);
         Lists.verifyLandingPageColumnValuesSorted('Records', SORT_DIRECTIONS.ASCENDING);
 
-        // #7 Click "Records" again -> descending, null lists last
-        Lists.clickLandingPageColumnHeader('Records');
+        // #7 Click "Records" header again -> descending, null lists come last
+        clickColumnHeaderAndSettle('Records');
         Lists.verifyLandingPageColumnSortDirection('Records', SORT_DIRECTIONS.DESCENDING);
         Lists.verifyLandingPageColumnValuesSorted('Records', SORT_DIRECTIONS.DESCENDING);
 
-        // #8 Click "Last updated" -> ascending, oldest on top
-        Lists.clickLandingPageColumnHeader('Last updated');
+        // #8 Click "Last updated" header -> ascending, oldest jobs on top,
+        // "Records" is no longer the active sort column
+        clickColumnHeaderAndSettle('Last updated');
         Lists.verifyLandingPageColumnSortDirection('Records', 'none');
         Lists.verifyLandingPageColumnSortDirection('Last updated', SORT_DIRECTIONS.ASCENDING);
         Lists.verifyLandingPageColumnValuesSorted('Last updated', SORT_DIRECTIONS.ASCENDING);
 
-        // #9 Click "Last updated" again -> most recent on top
-        Lists.clickLandingPageColumnHeader('Last updated');
+        // #9 Click "Last updated" header again -> descending, most recent jobs on top
+        clickColumnHeaderAndSettle('Last updated');
         Lists.verifyLandingPageColumnSortDirection('Last updated', SORT_DIRECTIONS.DESCENDING);
         Lists.verifyLandingPageColumnValuesSorted('Last updated', SORT_DIRECTIONS.DESCENDING);
 
-        // #10 Clear "Status" filter -> filters applied, sort preserved, "Reset all" enabled
+        // #10 Clear the "Status" filter -> filtered lists update, sorting is preserved,
+        // "Reset all" becomes enabled
         Lists.verifyClearFilterButton('Status');
         Lists.clickOnClearFilterButton('Status');
         Lists.verifyResetAllButtonEnabled();
         Lists.verifyLandingPageColumnSortDirection('Last updated', SORT_DIRECTIONS.DESCENDING);
         Lists.verifyLandingPageColumnValuesSorted('Last updated', SORT_DIRECTIONS.DESCENDING);
 
-        // #11 Navigate through pages -> sort preserved
+        // #11 Navigate to the next/previous page -> sorting is preserved on both pages
         Lists.clickLandingPageNextButton();
         Lists.verifyLandingPageColumnSortDirection('Last updated', SORT_DIRECTIONS.DESCENDING);
         Lists.verifyLandingPageColumnValuesSorted('Last updated', SORT_DIRECTIONS.DESCENDING);
@@ -169,7 +224,7 @@ describe('Lists', () => {
         Lists.verifyLandingPageColumnSortDirection('Last updated', SORT_DIRECTIONS.DESCENDING);
         Lists.verifyLandingPageColumnValuesSorted('Last updated', SORT_DIRECTIONS.DESCENDING);
 
-        // #12 Click "Reset all" -> sort preserved
+        // #12 Click "Reset all" -> filters are reset, sorting is preserved
         Lists.resetAllFilters();
         Lists.verifyLandingPageColumnSortDirection('Last updated', SORT_DIRECTIONS.DESCENDING);
         Lists.verifyLandingPageColumnValuesSorted('Last updated', SORT_DIRECTIONS.DESCENDING);
