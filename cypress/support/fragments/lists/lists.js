@@ -1,5 +1,6 @@
 import { recurse } from 'cypress-recurse';
 import uuid from 'uuid';
+import { embeddedTableHeadersMap, embeddedFields } from '../bulk-edit/query-modal';
 import {
   Accordion,
   Button,
@@ -1432,6 +1433,60 @@ const QueryBuilder = {
         }
         return 0;
       });
+  },
+
+  verifyEmbeddedTableInResultsRow(tableType, identifier, expectedData) {
+    const headers = embeddedTableHeadersMap[tableType];
+    if (!headers) {
+      throw new Error(
+        `Unknown table type: ${tableType}. Available types: ${Object.keys(embeddedTableHeadersMap).join(', ')}`,
+      );
+    }
+
+    // Normalize input to always be an array
+    const dataToVerify = Array.isArray(expectedData) ? expectedData : [expectedData];
+
+    cy.then(() => resultViewerTable.find(MultiColumnListCell(identifier)).row()).then(
+      (rowIndex) => {
+        // Find the DynamicTable specifically within this row
+        cy.get(`[data-row-index="row-${rowIndex}"]`).within(() => {
+          // Verify table headers
+          cy.get('[class^="DynamicTable-"]')
+            .find('tr')
+            .eq(0)
+            .then((headerRow) => {
+              const headerCells = headerRow.find('th');
+
+              headers.forEach((header, index) => {
+                cy.wrap(headerCells.eq(index)).should('have.text', header);
+              });
+            });
+
+          // Verify each expected row exists
+          dataToVerify.forEach((dataObj) => {
+            const expectedValues = embeddedFields[tableType]
+              ? embeddedFields[tableType].map((field) => dataObj[field])
+              : Object.values(dataObj);
+
+            cy.get('[class^="DynamicTable-"]')
+              .find('tbody tr')
+              .should(($rows) => {
+                const matchingRow = Array.from($rows).find((row) => {
+                  const rowText = Cypress.$(row).text().trim();
+                  const expectedRowText = expectedValues.join('').trim();
+                  return rowText === expectedRowText;
+                });
+
+                if (!matchingRow) {
+                  throw new Error(
+                    `Could not find a row in table "${tableType}" containing all values: [${expectedValues.join(', ')}] for entity with identifier "${identifier}"`,
+                  );
+                }
+              });
+          });
+        });
+      },
+    );
   },
 };
 

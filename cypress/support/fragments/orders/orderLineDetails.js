@@ -52,6 +52,7 @@ const addRoutingListButton = Button('Add routing list');
 const relatedInvoiceLinesSection = orderLineDetailsSection.find(
   Section({ id: 'relatedInvoiceLines' }),
 );
+const customFieldsAccordion = orderLineDetailsSection.find(Section({ id: 'customFieldsPOLine' }));
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -625,5 +626,22 @@ export default {
         this.checkRelatedInvoiceLineColumnItem(index, 'Comment', record.comment);
       }
     });
+  },
+
+  verifyValuesInCustomFieldsAccordion(customFieldName, customFieldValue, isCheckBox = false) {
+    if (isCheckBox) {
+      cy.expect(
+        customFieldsAccordion
+          .find(KeyValue(customFieldName))
+          .find(Checkbox())
+          .has({ checked: customFieldValue, disabled: true }),
+      );
+    } else {
+      cy.expect(
+        customFieldsAccordion
+          .find(KeyValue(customFieldName))
+          .has({ value: including(customFieldValue) }),
+      );
+    }
   },
 };
