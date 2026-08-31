@@ -86,8 +86,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C466143 No empty value created for absent 949$n for Nature of Content field (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C466143'] },
+      'C466143 No empty value created for absent 949$n for Nature of Content field (promin)',
+      { tags: ['criticalPath', 'promin', 'C466143'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);

@@ -113,8 +113,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C651491 Browse for same call numbers with different copy numbers (enumeration data) which belongs to same instance (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C651491'] },
+      'C651491 Browse for same call numbers with different copy numbers (enumeration data) which belongs to same instance (promin)',
+      { tags: ['criticalPath', 'promin', 'C651491'] },
       () => {
         cy.login(testData.user.username, testData.user.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

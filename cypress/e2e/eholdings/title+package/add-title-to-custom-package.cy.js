@@ -50,8 +50,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C689 Add a title to a custom package (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C689'] },
+      'C689 Add a title to a custom package (promin)',
+      { tags: ['extendedPath', 'promin', 'C689'] },
       () => {
         EHoldingsSearch.switchToTitles();
         EHoldingsTitlesSearch.byTitle(testData.titleName);

@@ -9,7 +9,7 @@ export const typeActions = {
   edit: 'edit',
   trash: 'trash',
 };
-const newButton = Button('+ New');
+const newButton = Button('New');
 
 export default {
   createViaApi(type) {

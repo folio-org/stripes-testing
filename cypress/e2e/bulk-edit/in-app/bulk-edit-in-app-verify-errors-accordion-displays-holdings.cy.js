@@ -65,8 +65,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C369051 Verify that Errors accordion displays correct identifier on the confirmation screen (Holdings UUIDs) (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C369051'] },
+      'C369051 Verify that Errors accordion displays correct identifier on the confirmation screen (Holdings UUIDs) (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C369051'] },
       () => {
         // Navigate to the "Bulk edit" app => Select the "Inventory-holdings" radio button on  the "Record types" accordion => Select  "Holdings UUIDs" option from the "Record identifier" dropdon
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');

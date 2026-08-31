@@ -855,6 +855,21 @@ export default {
     cy.expect(subjectAccordion.find(HTML('The list contains no items')).exists());
   },
 
+  verifyOnlyEmptySubjectRow: () => {
+    cy.expect([
+      subjectAccordion.find(MultiColumnList()).has({ rowCount: 1 }),
+      subjectAccordion
+        .find(MultiColumnListCell({ content: 'No value set-', columnIndex: 0 }))
+        .exists(),
+      subjectAccordion
+        .find(MultiColumnListCell({ content: 'No value set-', columnIndex: 1 }))
+        .exists(),
+      subjectAccordion
+        .find(MultiColumnListCell({ content: 'No value set-', columnIndex: 2 }))
+        .exists(),
+    ]);
+  },
+
   verifyHoldingsListIsEmpty(instanceId) {
     cy.expect(
       Section({ id: `consortialHoldings.${instanceId}` })
@@ -947,10 +962,17 @@ export default {
     );
   },
 
-  verifyLastUpdatedDateAndTime(updatedDate) {
-    cy.expect(
-      adminDataAccordion.find(HTML(including(`Record last updated: ${updatedDate}`))).exists(),
-    );
+  verifyLastUpdatedDateAndTime(updatedDate, { matches = true } = {}) {
+    if (matches) {
+      cy.expect(
+        adminDataAccordion.find(HTML(including(`Record last updated: ${updatedDate}`))).exists(),
+      );
+    } else {
+      cy.expect([
+        adminDataAccordion.find(HTML(including('Record last updated:'))).exists(),
+        adminDataAccordion.find(HTML(including(`Record last updated: ${updatedDate}`))).absent(),
+      ]);
+    }
   },
 
   verifyNoteTextAbsentInInstanceAccordion(noteText) {

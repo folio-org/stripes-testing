@@ -38,8 +38,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Local Field with I
   });
 
   it(
-    'C490933 Cannot create Local Field with invalid value in "required" field for MARC bib spec (API) (spitfire)',
-    { tags: ['C490933', 'extendedPath', 'spitfire'] },
+    'C490933 Cannot create Local Field with invalid value in "required" field for MARC bib spec (API) (promin)',
+    { tags: ['C490933', 'extendedPath', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

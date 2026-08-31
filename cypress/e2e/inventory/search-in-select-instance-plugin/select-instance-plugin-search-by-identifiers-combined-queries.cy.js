@@ -146,8 +146,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C1051451 Select instance plugin | Verify keyword search behavior with identifiers using combined search queries (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1051451'] },
+      'C1051451 Select instance plugin | Verify keyword search behavior with identifiers using combined search queries (promin)',
+      { tags: ['extendedPath', 'promin', 'C1051451'] },
       () => {
         Orders.selectOrderByPONumber(testData.order.poNumber);
         OrderDetails.selectAddPOLine();

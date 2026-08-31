@@ -75,8 +75,8 @@ describe('Specification Storage - Create Field API', () => {
   });
 
   it(
-    'C490917 Create Local Field (not repeatable, not required, not deprecated) for MARC bib spec (API) (spitfire)',
-    { tags: ['C490917', 'criticalPath', 'spitfire'] },
+    'C490917 Create Local Field (not repeatable, not required, not deprecated) for MARC bib spec (API) (promin)',
+    { tags: ['C490917', 'criticalPath', 'promin'] },
     () => {
       const payload = {
         tag: BASE_FIELD_TAG,
@@ -102,8 +102,8 @@ describe('Specification Storage - Create Field API', () => {
   );
 
   it(
-    'C490918 Create Local Field (not repeatable, not required, not deprecated selected as default) for MARC bib spec (API) (spitfire)',
-    { tags: ['C490918', 'criticalPath', 'spitfire'] },
+    'C490918 Create Local Field (not repeatable, not required, not deprecated selected as default) for MARC bib spec (API) (promin)',
+    { tags: ['C490918', 'criticalPath', 'promin'] },
     () => {
       const payload = {
         tag: BASE_FIELD_TAG,
@@ -129,8 +129,8 @@ describe('Specification Storage - Create Field API', () => {
   );
 
   it(
-    'C490928 Create Local Field with duplicate "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['C490928', 'criticalPath', 'spitfire'] },
+    'C490928 Create Local Field with duplicate "label" for MARC bib spec (API) (promin)',
+    { tags: ['C490928', 'criticalPath', 'promin'] },
     () => {
       const labels = ['Control Number', 'Title Statement', 'Local'];
       labels.forEach((label) => {
@@ -155,8 +155,8 @@ describe('Specification Storage - Create Field API', () => {
   );
 
   it(
-    'C490951 Update all fields in Local Field for MARC bib spec (API) (spitfire)',
-    { tags: ['C490951', 'criticalPath', 'spitfire'] },
+    'C490951 Update all fields in Local Field for MARC bib spec (API) (promin)',
+    { tags: ['C490951', 'criticalPath', 'promin'] },
     () => {
       // Step 1: Create a Local MARC field with all flags true
       const initialPayload = {
@@ -243,8 +243,8 @@ describe('Specification Storage - Create Field API', () => {
   );
 
   it(
-    'C490936 Cannot update Local field for MARC bib spec without required permission (API) (spitfire)',
-    { tags: ['C490936', 'criticalPath', 'spitfire'] },
+    'C490936 Cannot update Local field for MARC bib spec without required permission (API) (promin)',
+    { tags: ['C490936', 'criticalPath', 'promin'] },
     () => {
       // Step 1: Create a user with only GET and POST permissions (no PUT)
       cy.getAdminToken();

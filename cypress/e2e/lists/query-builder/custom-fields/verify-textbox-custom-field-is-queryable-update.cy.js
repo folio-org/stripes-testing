@@ -45,7 +45,7 @@ describe('Lists', () => {
                   userData = userProperties;
                 });
             })
-            .then(() => Lists.waitForCustomFieldToBeQueryable(recordType, testData.customFieldLabel));
+            .then(() => Lists.waitForCustomFieldToBeQueryable(testData.customFieldLabel, recordType));
 
           cy.createTempUser([]).then((user) => {
             loginUser = user;
@@ -75,8 +75,8 @@ describe('Lists', () => {
         });
 
         it(
-          "C648494 Verify that it's possible to update the textbox custom fields, and all existing queries are still available (corsair)",
-          { tags: ['criticalPath', 'corsair', 'C648494'] },
+          "C648494 Verify that it's possible to update the textbox custom fields, and all existing queries are still available (athena)",
+          { tags: ['criticalPath', 'athena', 'C648494'] },
           () => {
             listName = getTestEntityValue('C648494_List');
 
@@ -111,7 +111,7 @@ describe('Lists', () => {
             testData.customField.name = testData.updatedFieldName;
 
             // Wait ~5-6 min for the update to propagate to the entity type
-            Lists.waitForCustomFieldToBeQueryable(recordType, testData.updatedFieldLabel);
+            Lists.waitForCustomFieldToBeQueryable(testData.updatedFieldLabel, recordType);
 
             // #4 Go to the "Lists" app and open the list that uses the updated custom field
             cy.login(loginUser.username, loginUser.password, {

@@ -8,7 +8,6 @@ import {
   including,
 } from '../../../../../interactors';
 import { COMMON_BUTTON_LABELS, DEFAULT_WAIT_TIME } from '../../../constants';
-import SearchHelper from '../../finance/financeHelper';
 
 const selectOrganizationModal = Modal(including('Select Organization'));
 const filtersPane = selectOrganizationModal.find(Pane('Search & filter'));
@@ -31,9 +30,12 @@ export default {
   verifyModalView() {
     cy.expect([closeButton.has({ disabled: false, visible: true })]);
   },
+  selectFromResultsList: (rowNumber = 0) => {
+    cy.do(selectOrganizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
+  },
   findOrganization(organizationName) {
     searchOrganization(organizationName);
-    SearchHelper.selectFromResultsList();
+    this.selectFromResultsList();
   },
   filterByOrganizationStatus(status) {
     cy.do(filtersPane.find(Checkbox(status)).click());

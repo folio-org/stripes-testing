@@ -150,8 +150,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C476804 Run search for "MARC authority" records by "010" field values from "Edit MARC authority record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476804'] },
+        'C476804 Run search for "MARC authority" records by "010" field values from "Edit MARC authority record" window (promin)',
+        { tags: ['extendedPath', 'promin', 'C476804'] },
         () => {
           function goToEditAuth(field010Content) {
             MarcAuthorities.searchByParameter(

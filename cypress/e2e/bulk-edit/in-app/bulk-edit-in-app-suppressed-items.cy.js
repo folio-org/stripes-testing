@@ -51,8 +51,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C380641 Verify "Suppress from discovery" behaviour in Bulk Editing Items (firebird)',
-      { tags: ['smoke', 'firebird', 'C380641'] },
+      'C380641 Verify "Suppress from discovery" behaviour in Bulk Editing Items (athena)',
+      { tags: ['smoke', 'athena', 'C380641'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');

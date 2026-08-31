@@ -75,8 +75,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C418584 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when overlaying Local Source = MARC Instance (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C418584'] },
+        'C418584 (CONSORTIA) Verify Inventory Single Record Import and log on member tenant when overlaying Local Source = MARC Instance (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C418584'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instanceId);

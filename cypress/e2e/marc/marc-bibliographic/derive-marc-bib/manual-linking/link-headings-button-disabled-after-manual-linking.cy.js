@@ -134,8 +134,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C388640 "Link headings" button disabled after manual linking of linkable fields if no linkable fields with "$0" left (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C388640'] },
+          'C388640 "Link headings" button disabled after manual linking of linkable fields if no linkable fields with "$0" left (promin)',
+          { tags: ['extendedPath', 'promin', 'C388640'] },
           () => {
             // Step 1: Find and open detail view of imported record
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);

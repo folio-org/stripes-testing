@@ -29,13 +29,13 @@ describe('eHoldings', () => {
       cy.getAdminToken();
     });
     afterEach(() => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Users.deleteViaApi(userId);
     });
 
     it(
-      'C3463 Add two tags to package [Edinburgh Scholarship Online] (spitfire)',
-      { tags: ['smoke', 'spitfire', 'shiftLeft', 'C3463'] },
+      'C3463 Add two tags to package [Edinburgh Scholarship Online] (promin)',
+      { tags: ['smoke', 'promin', 'shiftLeft', 'C3463'] },
       () => {
         // TODO: "Tags: All permissions" doesn't have displayName. It's the reason why there is related permission name in response, see https://issues.folio.org/browse/UITAG-51
         cy.createTempUser([
@@ -48,7 +48,7 @@ describe('eHoldings', () => {
             waiter: EHoldingsTitlesSearch.waitLoading,
           });
           EHoldingSearch.switchToPackages();
-          EHoldingsPackagesSearch.byName();
+          EHoldingsPackagesSearch.byName('wiley');
           EHoldingsPackages.openPackage().then((selectedPackage) => {
             const addedTag1 = EHoldingsPackage.addTag();
             const addedTag2 = EHoldingsPackage.addTag();
@@ -64,8 +64,8 @@ describe('eHoldings', () => {
     );
 
     it(
-      'C3464 Update package proxy (spitfire)',
-      { tags: ['criticalPathBroken', 'spitfire', 'C3464'] },
+      'C3464 Update package proxy (promin)',
+      { tags: ['criticalPathBroken', 'promin', 'C3464'] },
       () => {
         cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -89,8 +89,8 @@ describe('eHoldings', () => {
     );
 
     it(
-      'C690 Remove a package from your holdings (spitfire)',
-      { tags: ['smokeBroken', 'spitfire', 'C690'] },
+      'C690 Remove a package from your holdings (promin)',
+      { tags: ['smokeBroken', 'promin', 'C690'] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
@@ -119,8 +119,8 @@ describe('eHoldings', () => {
     );
 
     it(
-      'C695 Package Record: Search all titles included in a package (spitfire)',
-      { tags: ['criticalPathBroken', 'spitfire', 'C695'] },
+      'C695 Package Record: Search all titles included in a package (promin)',
+      { tags: ['criticalPathBroken', 'promin', 'C695'] },
       () => {
         cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -183,8 +183,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C699 Add or edit package custom coverage (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C699'] },
+      'C699 Add or edit package custom coverage (promin)',
+      { tags: ['extendedPath', 'promin', 'C699'] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
@@ -219,8 +219,8 @@ describe('eHoldings', () => {
     );
 
     it(
-      'C3466 Edit/Add a token to the Gale Academic OneFile (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C3466'] },
+      'C3466 Edit/Add a token to the Gale Academic OneFile (promin)',
+      { tags: ['extendedPath', 'promin', 'C3466'] },
       () => {
         cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -245,8 +245,8 @@ describe('eHoldings', () => {
     );
 
     it(
-      'C703 Set [Show titles in package to patrons] to Hide (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C703'] },
+      'C703 Set [Show titles in package to patrons] to Hide (promin)',
+      { tags: ['extendedPath', 'promin', 'C703'] },
       () => {
         const titleName = `AT_C703_Title_${getRandomPostfix()}`;
         cy.createTempUser([
@@ -273,7 +273,7 @@ describe('eHoldings', () => {
                 EHoldingsPackagesSearch.bySelectionStatus('Selected');
                 EHoldingsPackages.openPackage();
                 EHoldingsPackage.editProxyActions();
-                EHoldingsPackageView.patronRadioButton('No');
+                EHoldingsPackageView.chooseExclusionOptions({ pf: true, ftf: true, marc: true });
                 EHoldingsPackage.saveAndClose();
                 EHoldingsPackageView.waitLoading();
                 EHoldingsPackage.waitForTitlesState({
@@ -285,7 +285,7 @@ describe('eHoldings', () => {
                 EHoldingsPackageView.waitLoading();
                 EHoldingsPackage.verifyTitleFound(titleName);
                 EHoldingsPackage.verifyTitleFound('SelectedTitle is set to hide');
-                EHoldingsPackageView.verifyAlternativeRadio('No');
+                EHoldingsPackageView.verifyExclusionOptions({ pf: true, ftf: true, marc: true });
               });
           });
         });

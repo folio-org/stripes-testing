@@ -64,8 +64,8 @@ describe('Permissions', () => {
       });
 
       it(
-        'C396357 Verify that new permission to view all the Tags settings is added (volaris)',
-        { tags: ['criticalPath', 'volaris', 'C396357', 'eurekaPhase1'] },
+        'C396357 Verify that new permission to view all the Tags settings is added (vega)',
+        { tags: ['criticalPath', 'vega', 'C396357', 'eurekaPhase1'] },
         () => {
           TagsGeneral.changeEnableTagsStatus('enable');
           topMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);

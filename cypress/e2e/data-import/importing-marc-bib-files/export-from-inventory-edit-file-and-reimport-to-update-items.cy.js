@@ -226,7 +226,7 @@ describe('Data Import', () => {
       FileManager.deleteFileFromDownloadsByMask(nameMarcFileForUpload);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       FileManager.deleteFileFromDownloadsByMask(nameForCSVFile);
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         Users.deleteViaApi(userId);
         Users.deleteViaApi(preconditionUserId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.name);
@@ -253,8 +253,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C11123 Export from Inventory, edit file, and re-import to update items (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C11123'] },
+      'C11123 Export from Inventory, edit file, and re-import to update items (promin)',
+      { tags: ['criticalPath', 'promin', 'C11123'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventoryInstance.checkIsInstancePresented(
@@ -281,7 +281,7 @@ describe('Data Import', () => {
 
           // download exported marc file
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
-          cy.getAdminToken();
+          cy.getAdminToken(false);
           ExportFile.uploadFile(nameForCSVFile);
           ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
           ExportFile.getRecordHridOfExportedFile(nameForCSVFile).then((req) => {

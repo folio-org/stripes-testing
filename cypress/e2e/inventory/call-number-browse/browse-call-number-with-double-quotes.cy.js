@@ -92,8 +92,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C347915 Browse for call number with double quotes and check input field when deleting characters (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C347915'] },
+      'C347915 Browse for call number with double quotes and check input field when deleting characters (promin)',
+      { tags: ['extendedPath', 'promin', 'C347915'] },
       () => {
         // Wait for call number to appear in browse
         BrowseCallNumber.waitForCallNumberToAppear(callNumberData.callNumber);

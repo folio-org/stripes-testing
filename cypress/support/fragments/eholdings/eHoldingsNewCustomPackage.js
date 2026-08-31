@@ -7,6 +7,8 @@ const addDateRangeButton = Button('Add date range');
 const startDateField = TextField('Start date');
 const endDateField = TextField('End date');
 const deleteDateRangeButton = Button({ icon: 'trash' });
+const addAlternateNameButton = Button('Add name');
+const alternateNameField = (index = 0) => TextField({ name: `customAltNames[${index}].altName` });
 
 export default {
   waitLoading: () => {
@@ -71,5 +73,15 @@ export default {
 
   checkPackageUpdatedCallout() {
     cy.expect(HTML(including('Package saved.')).exists());
+  },
+
+  clickAddAlternateNameButton: () => {
+    cy.do(addAlternateNameButton.click());
+    cy.expect(alternateNameField().exists());
+  },
+
+  addAlternateName(alternateName, { index = 0, clickAddButton = true } = {}) {
+    if (clickAddButton) this.clickAddAlternateNameButton();
+    cy.do(alternateNameField(index).fillIn(alternateName));
   },
 };

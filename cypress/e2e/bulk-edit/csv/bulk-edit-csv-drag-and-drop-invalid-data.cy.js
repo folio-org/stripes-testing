@@ -41,8 +41,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C353651 Verify "New bulk edit" button with invalid data (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C353651'] },
+      'C353651 Verify "New bulk edit" button with invalid data (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C353651'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         BulkEditSearchPane.uploadFile(invalidIdentifiersFileName);

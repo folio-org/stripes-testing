@@ -1,4 +1,4 @@
-import { Pane, NavListItem } from '../../../../../interactors';
+import { Pane, NavListItem, PaneHeader } from '../../../../../interactors';
 import FastAddNewRecord from '../../inventory/fastAddNewRecord';
 
 const inventoryPane = Pane('Inventory');
@@ -24,6 +24,10 @@ export const INVENTORY_SETTINGS_TABS = {
 };
 
 export default {
+  waitLoading() {
+    cy.expect(inventoryPane.exists());
+  },
+
   selectSettingsTab(settingsTab) {
     cy.do(NavListItem(settingsTab).click());
 
@@ -55,5 +59,13 @@ export default {
     } else {
       cy.expect(inventoryPane.find(NavListItem(name)).absent());
     }
+  },
+
+  checkInventoryNavPaneFocused() {
+    cy.expect(
+      inventoryPane
+        .find(PaneHeader({ id: 'paneHeaderapp-settings-nav-pane' }))
+        .has({ focused: true }),
+    );
   },
 };

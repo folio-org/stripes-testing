@@ -16,7 +16,7 @@ describe('Eureka', () => {
         capabilitySets: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Calendar',
+            resource: 'UI-Calendar',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
@@ -28,47 +28,7 @@ describe('Eureka', () => {
         capabilitiesInSets: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Calendar Endpoint Calendars',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Calendar Endpoint Calendars AllOpenings',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Calendar Endpoint Calendars CalendarId',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Calendar Endpoint Calendars SurroundingOpenings',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Links Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Notes Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Notes Item',
+            resource: 'UI-Calendar',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
@@ -76,32 +36,22 @@ describe('Eureka', () => {
             resource: 'UI-Notes Item',
             action: CAPABILITY_ACTIONS.VIEW,
           },
-          {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Module Notes Enabled',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
         ],
         capabilities: [
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Owners Item',
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'UI-Orders Settings Order-Templates',
             action: CAPABILITY_ACTIONS.CREATE,
           },
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Roles Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
             table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Settings Tags Enabled',
+            resource: 'UI-Users Settings',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Configuration Entries Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
+            resource: 'Organizations Settings',
+            action: CAPABILITY_ACTIONS.MANAGE,
           },
         ],
         capabSetIds: [],

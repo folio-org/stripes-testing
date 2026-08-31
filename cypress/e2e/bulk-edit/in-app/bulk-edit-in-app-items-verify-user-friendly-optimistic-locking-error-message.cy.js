@@ -119,8 +119,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C468230 Verify user-friendly error message for optimistic locking - items (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C468230'] },
+      'C468230 Verify user-friendly error message for optimistic locking - items (athena)',
+      { tags: ['extendedPath', 'athena', 'C468230'] },
       () => {
         // Step 1: Select "Inventory - items" radio button => Click "Build query" button
         BulkEditSearchPane.openQuerySearch();

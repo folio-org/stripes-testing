@@ -212,8 +212,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411730 Search for Shared/Local records by "Query search" search options from "Central" and "Member 1" tenant (Electronic access) (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411730'] },
+        'C411730 Search for Shared/Local records by "Query search" search options from "Central" and "Member 1" tenant (Electronic access) (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411730'] },
         () => {
           InventorySearchAndFilter.fillInSearchQuery(searchQuery);
           InventorySearchAndFilter.clickSearch();

@@ -67,8 +67,8 @@ describe('MARC Bibliographic Validation Rules - Create Indicators with Special C
   });
 
   it(
-    'C499660 Create Indicators of Local field with special characters in "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['C499660', 'extendedPath', 'spitfire'] },
+    'C499660 Create Indicators of Local field with special characters in "label" for MARC bib spec (API) (promin)',
+    { tags: ['C499660', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

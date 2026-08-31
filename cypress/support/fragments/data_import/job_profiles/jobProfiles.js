@@ -29,6 +29,9 @@ const modalNoButton = Button('No, do not delete');
 const modalYesButton = Button('Yes, delete');
 const jobProfilesList = MultiColumnList({ id: 'job-profiles-list' });
 const newJobProfileButton = Button('New job profile');
+const runJobModal = Modal('Are you sure you want to run this job?');
+const cancelButton = Button('Cancel');
+const runButtonInRunJobModal = Button({ id: 'clickable-run-job-profile-modal-confirm' });
 
 const openNewJobProfileForm = () => {
   cy.expect(Pane('Job profiles').exists());
@@ -103,8 +106,8 @@ export default {
   runImportFile: () => {
     cy.wait(5000);
     cy.do([actionsButton.click(), runButton.click()]);
-    cy.expect(Modal('Are you sure you want to run this job?').find(runButton).exists());
-    cy.do(Modal('Are you sure you want to run this job?').find(runButton).click());
+    cy.expect(runJobModal.find(runButton).exists());
+    cy.do(runJobModal.find(runButton).click());
   },
 
   waitFileIsImported: (fileName) => {
@@ -227,5 +230,29 @@ export default {
     ]);
     cy.do(paneResults.find(actionsButton).click());
     cy.expect(DropdownMenu().absent());
+  },
+
+  openRunJobModal() {
+    cy.wait(5000);
+    cy.do([actionsButton.click(), runButton.click()]);
+    cy.expect(runButtonInRunJobModal.exists());
+  },
+
+  verifyRunJobModal: (profileName) => {
+    cy.expect([
+      runJobModal
+        .find(HTML(including(`"${profileName}" job profile to Run the uploaded files`)))
+        .exists(),
+      runJobModal.find(cancelButton).exists(),
+      runButtonInRunJobModal.exists(),
+    ]);
+  },
+
+  clickRunInRunJobModal: () => {
+    cy.do(runButtonInRunJobModal.click());
+  },
+
+  verifyRunButtonDisabledInRunJobModal: () => {
+    cy.expect(runButtonInRunJobModal.has({ disabled: true }));
   },
 };

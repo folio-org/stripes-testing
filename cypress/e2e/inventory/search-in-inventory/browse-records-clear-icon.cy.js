@@ -129,8 +129,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C423624 Call numbers browse | Check the "x" icon in the Inventory app search box (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423624'] },
+      'C423624 Call numbers browse | Check the "x" icon in the Inventory app search box (promin)',
+      { tags: ['extendedPath', 'promin', 'C423624'] },
       () => {
         BrowseCallNumber.waitForCallNumberToAppear(testData.query);
         InventorySearchAndFilter.selectBrowseCallNumbers();
@@ -140,8 +140,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C423626 Contributors browse | Check the "x" icon in the Inventory app search box (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423626'] },
+      'C423626 Contributors browse | Check the "x" icon in the Inventory app search box (promin)',
+      { tags: ['extendedPath', 'promin', 'C423626'] },
       () => {
         BrowseContributors.waitForContributorToAppear(testData.query);
         BrowseContributors.select();
@@ -151,8 +151,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C423627 Subjects browse | Check the "x" icon in the Inventory app search box (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C423627'] },
+      'C423627 Subjects browse | Check the "x" icon in the Inventory app search box (promin)',
+      { tags: ['extendedPath', 'promin', 'C423627'] },
       () => {
         BrowseSubjects.waitForSubjectToAppear(testData.query);
         BrowseSubjects.select();

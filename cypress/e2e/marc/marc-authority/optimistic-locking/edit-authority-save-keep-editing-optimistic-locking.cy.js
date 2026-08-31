@@ -65,8 +65,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C360095 Editing same "MARC Authority" record by 2 different users (use "Save & keep editing" button) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C360095'] },
+        'C360095 Editing same "MARC Authority" record by 2 different users (use "Save & keep editing" button) (promin)',
+        { tags: ['extendedPath', 'promin', 'C360095'] },
         () => {
           // Steps 1-4: User A logs in, searches for and opens the authority record for editing
           cy.login(userA.username, userA.password, {

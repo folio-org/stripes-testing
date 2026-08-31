@@ -55,8 +55,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C523595 "MARC validation rules check" modal appears during edit of MARC authority record (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C523595'] },
+        'C523595 "MARC validation rules check" modal appears during edit of MARC authority record (promin)',
+        { tags: ['criticalPath', 'promin', 'C523595'] },
         () => {
           MarcAuthorities.searchBy(testData.searchOption, testData.title);
           MarcAuthorities.selectFirstRecord();

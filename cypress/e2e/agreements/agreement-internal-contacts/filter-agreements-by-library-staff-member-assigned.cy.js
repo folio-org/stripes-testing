@@ -12,7 +12,7 @@ const user = {
   active: true,
   username: `at_c3460_user_first_${randomDigits}`,
   personal: {
-    preferredContactTypeId: '002',
+    preferredContactTypeIds: ['002'],
     firstName: `firstUserFirstName_${randomDigits}`,
     middleName: `firstUserMiddleName_${randomDigits}`,
     lastName: `firstUserLastName_${randomDigits}`,

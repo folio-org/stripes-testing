@@ -156,8 +156,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C805771 Update shadow record without new "Data-Import Central-Record-Update" capability with MARC-Instance update (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C805771'] },
+        'C805771 Update shadow record without new "Data-Import Central-Record-Update" capability with MARC-Instance update (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C805771'] },
         () => {
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.verifySelectedRecords(1);

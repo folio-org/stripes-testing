@@ -2,7 +2,6 @@ import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import TopMenu from '../../../../support/fragments/topMenu';
 import AuthorizationRoles from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
-import Capabilities from '../../../../support/dictionary/capabilities';
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 
 describe('Eureka', () => {
@@ -15,12 +14,9 @@ describe('Eureka', () => {
         const testData = {
           roleAName: `AT_C627403_UserRole_A_${randomPostfix}`,
           roleBName: `AT_C627403_UserRole_B_${randomPostfix}`,
-          promotePath: '/users-keycloak/auth-users',
         };
 
         const capabSetsToAssign = [CapabilitySets.uiAuthorizationRolesUsersSettingsManage];
-
-        const capabsToAssign = [Capabilities.settingsEnabled];
 
         before('Create data', () => {
           cy.getAdminToken();
@@ -35,7 +31,7 @@ describe('Eureka', () => {
                   lastName: `AT_C627403_LastName_${i}_${randomPostfix}`,
                   firstName: `AT_C627403_FirstName_${i}_${randomPostfix}`,
                   email: 'AT_C627403@test.com',
-                  preferredContactTypeId: '002',
+                  preferredContactTypeIds: ['002'],
                 },
               });
             }
@@ -46,15 +42,15 @@ describe('Eureka', () => {
             cy.ifConsortia(true, () => {
               userBodies[0].type = 'patron';
             });
-            cy.createUserWithoutKeycloakInEurekaApi(userBodies[0]).then((userId) => {
-              testData.userAId = userId;
-              userIds.push(userId);
+            Users.createViaApi(userBodies[0]).then((user) => {
+              testData.userAId = user.id;
+              userIds.push(user.id);
             });
-            cy.createUserWithoutKeycloakInEurekaApi(userBodies[1]).then((userId) => {
-              testData.userBId = userId;
-              userIds.push(userId);
+            Users.createViaApi(userBodies[1]).then((user) => {
+              testData.userBId = user.id;
+              userIds.push(user.id);
             });
-            Users.createViaApi(userBodies[2]).then((user) => {
+            Users.createViaApi(userBodies[2], { keycloak: true }).then((user) => {
               testData.userCId = user.id;
               userIds.push(user.id);
             });
@@ -66,11 +62,7 @@ describe('Eureka', () => {
             });
             cy.createTempUser([]).then((createdUserProperties) => {
               testData.tempUser = createdUserProperties;
-              cy.assignCapabilitiesToExistingUser(
-                testData.tempUser.userId,
-                capabsToAssign,
-                capabSetsToAssign,
-              );
+              cy.assignCapabilitiesToExistingUser(testData.tempUser.userId, [], capabSetsToAssign);
               cy.login(testData.tempUser.username, testData.tempUser.password, {
                 path: TopMenu.settingsAuthorizationRoles,
                 waiter: AuthorizationRoles.waitContentLoading,
@@ -101,25 +93,8 @@ describe('Eureka', () => {
             AuthorizationRoles.selectUserInModal(userBodies[1].username);
             AuthorizationRoles.selectUserInModal(userBodies[2].username);
             AuthorizationRoles.clickSaveInAssignModal();
-            AuthorizationRoles.checkPromoteUsersModal([testData.userAId, testData.userBId], true);
-            cy.intercept(`${testData.promotePath}/${testData.userBId}`).as('promoteB');
-            AuthorizationRoles.clickConfirmInPromoteUsersModal();
-            cy.wait('@promoteB').its('response.statusCode').should('eq', 201);
             AuthorizationRoles.checkNoUsernameErrorCallout();
-            AuthorizationRoles.verifyAssignedUsersAccordion();
-            AuthorizationRoles.checkUsersAccordion(2);
-            AuthorizationRoles.verifyAssignedUser(
-              userBodies[1].personal.lastName,
-              userBodies[1].personal.firstName,
-              true,
-              testData.userCGroupName,
-            );
-            AuthorizationRoles.verifyAssignedUser(
-              userBodies[2].personal.lastName,
-              userBodies[2].personal.firstName,
-              true,
-              testData.userCGroupName,
-            );
+            AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
 
             AuthorizationRoles.searchRole(testData.roleBName);
             AuthorizationRoles.clickOnRoleName(testData.roleBName, false);
@@ -127,10 +102,6 @@ describe('Eureka', () => {
             AuthorizationRoles.clickAssignUsersButton();
             AuthorizationRoles.selectUserInModal(userBodies[0].personal.lastName);
             AuthorizationRoles.clickSaveInAssignModal();
-            AuthorizationRoles.checkPromoteUsersModal([testData.userAId]);
-            cy.intercept(`${testData.promotePath}/${testData.userAId}`).as('promoteA');
-            AuthorizationRoles.clickConfirmInPromoteUsersModal();
-            cy.wait('@promoteA').its('response.statusCode').should('eq', 400);
             AuthorizationRoles.checkNoUsernameErrorCallout();
             AuthorizationRoles.verifyAssignedUsersAccordionEmpty();
           },

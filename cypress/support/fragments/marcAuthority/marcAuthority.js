@@ -19,6 +19,7 @@ import {
   matching,
   not,
   or,
+  and,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import QuickMarcEditorWindow from '../quickMarcEditor';
@@ -617,5 +618,14 @@ export default {
 
   saveWithShortcut() {
     cy.get('input[name="records[2].tag"]').should('not.be.disabled').focus().type('{ctrl}s');
+  },
+
+  checkRowExistsWithTagAndValue(tag, value, isExist = true) {
+    const spacesAfterTag = tag === 'LEADER' ? ' ' : '  ';
+    const targetRow = rootSection.find(
+      TableRow({ innerText: and(including(`${tag}${spacesAfterTag}`), including(value)) }),
+    );
+    if (isExist) cy.expect(targetRow.exists());
+    else cy.expect(targetRow.absent());
   },
 };

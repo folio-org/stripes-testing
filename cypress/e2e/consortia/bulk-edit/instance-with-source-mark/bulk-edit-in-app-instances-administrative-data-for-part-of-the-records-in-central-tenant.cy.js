@@ -170,8 +170,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C663252 ECS | Bulk edit administrative data for part of the records in Central tenant (MARC & FOLIO) (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C663252'] },
+        'C663252 ECS | Bulk edit administrative data for part of the records in Central tenant (MARC & FOLIO) (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C663252'] },
         () => {
           BulkEditActions.openActions();
           BulkEditSearchPane.uncheckShowColumnCheckbox(

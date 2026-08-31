@@ -57,8 +57,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422120 Verify focus behavior when using field level action icons upon creation of a new "MARC bib" record (spitfire) (TaaS)',
-        { tags: ['criticalPath', 'spitfire', 'C422120'] },
+        'C422120 Verify focus behavior when using field level action icons upon creation of a new "MARC bib" record (promin) (TaaS)',
+        { tags: ['criticalPath', 'promin', 'C422120'] },
         () => {
           // Open New Marc Bibliographic record editor
           InventoryInstance.newMarcBibRecord();

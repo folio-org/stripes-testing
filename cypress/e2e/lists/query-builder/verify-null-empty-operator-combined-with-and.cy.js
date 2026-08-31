@@ -35,8 +35,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C451550 Verify the operator null/empty combined with AND (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C451550'] },
+      'C451550 Verify the operator null/empty combined with AND (athena)',
+      { tags: ['criticalPath', 'athena', 'C451550'] },
       () => {
         // Step 1: Navigate to Lists app and verify initial state
         Lists.openNewListPane();
@@ -51,15 +51,15 @@ describe('Lists', () => {
         // Step 2: Select first field "User — Mobile phone"
         QueryModal.selectField(usersFieldValues.userMobilePhone);
         QueryModal.verifySelectedField(usersFieldValues.userMobilePhone);
-        QueryModal.verifyQueryAreaContent('(users.mobile_phone  )');
+        QueryModal.verifyQueryAreaContent('');
 
         // Step 3: Verify operator dropdown options for "User — Mobile phone" field
         QueryModal.verifyOperatorsList(STRING_OPERATORS);
 
         // Step 4: Select operator "is null/empty" for first field
         QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
-        QueryModal.verifySelectedOperator(` ${QUERY_OPERATIONS.IS_NULL}`);
-        QueryModal.verifyQueryAreaContent('(users.mobile_phone  is null/empty )');
+        QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IS_NULL);
+        QueryModal.verifyQueryAreaContent('(users.mobile_phone is null/empty )');
 
         // Step 5: Verify value dropdown options
         QueryModal.verifyOptionsInValueSelect(['True', 'False']);
@@ -67,7 +67,7 @@ describe('Lists', () => {
         // Step 6: Select value "True" for first field
         QueryModal.selectValueFromSelect('True');
         QueryModal.verifySelectedValue('True');
-        QueryModal.verifyQueryAreaContent('(users.mobile_phone  is null/empty true)');
+        QueryModal.verifyQueryAreaContent('(users.mobile_phone is null/empty True)');
 
         // Step 7: Click "+" button to add second query row
         QueryModal.addNewRow();
@@ -78,18 +78,16 @@ describe('Lists', () => {
         // Step 8: Select second field "User — First name"
         QueryModal.selectField(usersFieldValues.firstName, 1);
         QueryModal.verifySelectedField(usersFieldValues.firstName, 1);
-        QueryModal.verifyQueryAreaContent(
-          '(users.mobile_phone  is null/empty true) AND (users.first_name  )',
-        );
+        QueryModal.verifyQueryAreaContent('(users.mobile_phone is null/empty True)');
         QueryModal.verifyOperatorsList(STRING_OPERATORS, 1);
         QueryModal.testQueryDisabled();
         QueryModal.runQueryAndSaveDisabled();
 
         // Step 9: Select operator "is null/empty" for second field
         QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL, 1);
-        QueryModal.verifySelectedOperator(` ${QUERY_OPERATIONS.IS_NULL}`, 1);
+        QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IS_NULL, 1);
         QueryModal.verifyQueryAreaContent(
-          '(users.mobile_phone  is null/empty true) AND (users.first_name  is null/empty )',
+          '(users.mobile_phone is null/empty True) AND (users.first_name is null/empty )',
         );
         QueryModal.verifyOptionsInValueSelect(['True', 'False'], 1);
         QueryModal.testQueryDisabled();
@@ -99,7 +97,7 @@ describe('Lists', () => {
         QueryModal.selectValueFromSelect('False', 1);
         QueryModal.verifySelectedValue('False', 1);
         QueryModal.verifyQueryAreaContent(
-          '(users.mobile_phone  is null/empty true) AND (users.first_name  is null/empty false)',
+          '(users.mobile_phone is null/empty True) AND (users.first_name is null/empty False)',
         );
         // Add third query row to filter by precondition user's username
         QueryModal.addNewRow(1);
@@ -111,7 +109,7 @@ describe('Lists', () => {
         QueryModal.verifySelectedOperator(QUERY_OPERATIONS.EQUAL, 2);
         QueryModal.fillInValueTextfield(user.username, 2);
         QueryModal.verifyQueryAreaContent(
-          `(users.mobile_phone  is null/empty true) AND (users.first_name  is null/empty false) AND (users.username == ${user.username})`,
+          `(users.mobile_phone is null/empty True) AND (users.first_name is null/empty False) AND (users.username == ${user.username})`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.cancelDisabled(false);
@@ -161,7 +159,7 @@ describe('Lists', () => {
         // Step 17: Verify saved query and column data in list details
         Lists.getQueryText().then((actualSavedQuery) => {
           expect(actualSavedQuery).to.eq(
-            `Query: (users.mobile_phone  is null/empty true) AND (users.first_name  is null/empty false) AND (users.username == ${user.username})`,
+            `Query: (users.mobile_phone is null/empty True) AND (users.first_name is null/empty False) AND (users.username == ${user.username})`,
           );
         });
 

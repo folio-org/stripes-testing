@@ -60,8 +60,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422184 Advanced search MARC: support search for "naturalId" field using "Children subject heading" search option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C422184'] },
+        'C422184 Advanced search MARC: support search for "naturalId" field using "Children subject heading" search option (promin)',
+        { tags: ['extendedPath', 'promin', 'C422184'] },
         () => {
           MarcAuthorities.clickAdvancedSearchButton();
 

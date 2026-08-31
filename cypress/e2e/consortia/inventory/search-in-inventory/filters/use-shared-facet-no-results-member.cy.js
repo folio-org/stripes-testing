@@ -72,8 +72,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C402328 Use "Shared" facet when no records found during Search in "Member" tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C402328'] },
+          'C402328 Use "Shared" facet when no records found during Search in "Member" tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C402328'] },
           () => {
             function searchAndCheckSharedFacet() {
               InventorySearchAndFilter.verifyAccordionExistance(sharedAccordionName, true);

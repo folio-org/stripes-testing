@@ -45,6 +45,7 @@ import SelectInstanceModal from './modals/selectInstanceModal';
 import SelectLocationModal from './modals/selectLocationModal';
 import SelectDonorModal from './modals/selectDonorModal';
 import OrderLineDetails from './orderLineDetails';
+import SelectOrganizationModal from './modals/selectOrganizationModal';
 
 const path = require('path');
 
@@ -62,7 +63,6 @@ const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
 const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderFormat' });
 const buttonFVendorFilter = Button({ id: 'accordion-toggle-button-purchaseOrder.vendor' });
 const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
-const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
 const physicalUnitPrice = '10';
 const quantityPhysical = '5';
 const electronicUnitPrice = '10';
@@ -120,6 +120,7 @@ const donorsInformationSection = Section({ id: 'donorsInformation' });
 // Results pane
 const searchResultsPane = Pane({ id: 'order-lines-results-pane' });
 const locationLookUpButton = Button('Location look-up');
+const organizationLookupTrigger = Button('Organization look-up');
 
 // Edit form
 // PO Line details section
@@ -127,7 +128,6 @@ const lineDetails = Section({ id: 'lineDetails' });
 const poLineDetails = {
   receiptStatus: lineDetails.find(Select('Receipt status')),
 };
-const selectLocationsModal = Modal('Select locations');
 const submitOrderLine = () => {
   cy.wait(4000);
   const submitButton = Button('Submit');
@@ -143,6 +143,7 @@ const submitOrderLine = () => {
     }
   });
 };
+const titleLookupTrigger = Button({ id: 'find-instance-trigger' });
 
 // Filters
 const donorFilterAccordion = Accordion(ORDER_LINE_FILTER_LABELS.DONOR);
@@ -334,8 +335,8 @@ export default {
     cy.do(Button({ id: 'accordion-toggle-button-linkedInstances' }).click());
   },
 
-  addPackageTitle: () => {
-    cy.do(Button({ id: 'find-instance-trigger' }).click());
+  clickInstanceTitleLookup() {
+    cy.do(titleLookupTrigger.click());
   },
 
   varifyAddingInstanceTPackageTitle: (instanceTitle, polNumber) => {
@@ -1215,7 +1216,7 @@ export default {
     cy.do(searchResultsPane.find(Link(POlinenumber)).click());
   },
 
-  varifyOrderlineInResultsList: (POlinenumber) => {
+  verifyOrderLineInResultsList: (POlinenumber) => {
     cy.expect(searchResultsPane.find(Link(POlinenumber)).exists());
   },
 
@@ -1805,16 +1806,6 @@ export default {
     cy.do(Checkbox({ id: 'clickable-filter-paymentStatus-ongoing' }).click());
   },
 
-  selectFilterSubscriptionFromPOL: (newDate) => {
-    cy.do([
-      buttonSubscriptionFromFilter.click(),
-      TextField('From').fillIn(newDate),
-      TextField('To').fillIn(newDate),
-      Button('Apply').click(),
-      buttonSubscriptionFromFilter.click(),
-    ]);
-  },
-
   selectPOLInOrder: (index = 0) => {
     cy.do(
       polListingAccordion
@@ -2034,7 +2025,7 @@ export default {
   selectRandomInstanceInTitleLookUP: (instanceName, rowNumber = 0) => {
     cy.wait(4000);
     cy.do([
-      Button({ id: 'find-instance-trigger' }).click(),
+      titleLookupTrigger.click(),
       selectInstanceModal.find(TextField({ name: 'query' })).fillIn(instanceName),
       selectInstanceModal.find(searchButton).click(),
       selectInstanceModal.find(MultiColumnListRow({ index: rowNumber })).click(),
@@ -2691,19 +2682,18 @@ export default {
     submitOrderLine();
   },
 
-  selectLocationInFilters: (locationName) => {
-    cy.wait(4000);
-    cy.do([
-      Button({ id: 'accordion-toggle-button-pol-location-filter' }).click(),
-      locationLookUpButton.click(),
-      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
-      Button('Search').click(),
-    ]);
-    cy.wait(2000);
-    cy.do([
-      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
-      selectLocationsModal.find(Button('Save')).click(),
-    ]);
+  selectLocationInFilters(locationName, options = {}) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(locationLookUpButton.click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectLocation(locationName, { multiselect: true, ...options });
+  },
+
+  selectMultipleLocationsInFilters(locationNames) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(locationLookUpButton.click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectMultipleLocations(locationNames);
   },
 
   selectOrders: () => {
@@ -2797,11 +2787,28 @@ export default {
   },
 
   sortOrderLinesBy(columnName) {
-    MultiColumnListHelper.sortListBy(searchResultsPane, columnName);
+    MultiColumnListHelper.sortListBy(searchResultsPane.find(orderLineList), columnName);
+  },
+
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(filtersPane, { disabled });
+  },
+
+  clearSearchField() {
+    cy.get('#order-lines-filters-pane-content').find('#input-record-search').clear();
+  },
+
+  clearAllFilters(filterLabel) {
+    FiltersPaneHelper.clearAllFilters(filtersPane, filterLabel);
+    this.assertResetAllButtonState({ disabled: true });
   },
 
   clearFilter(filterLabel) {
     FiltersPaneHelper.clearFilter(filtersPane, filterLabel);
+  },
+
+  filterByDateRange(filterLabel, { from, to }) {
+    FiltersPaneHelper.filterByDateRange(filtersPane, filterLabel, { from, to });
   },
 
   filterByCheckboxOptions(filterLabel, options = []) {
@@ -2820,6 +2827,10 @@ export default {
     this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.FUND_CODE, codes);
   },
 
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, tags);
+  },
+
   removeMultiSelectChips(filterLabel, values = []) {
     FiltersPaneHelper.removeMultiSelectChips(filtersPane, filterLabel, values);
   },
@@ -2835,22 +2846,49 @@ export default {
     SelectDonorModal.assertModalClosed();
   },
 
+  filterByVendor(vendor) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.VENDOR);
+    cy.expect(organizationLookupTrigger.exists());
+    cy.do(organizationLookupTrigger.click());
+    SelectOrganizationModal.verifyModalView();
+    SelectOrganizationModal.findOrganization(vendor);
+  },
+
+  filterByOrderFormats(formatLabels = []) {
+    this.filterByCheckboxOptions(ORDER_LINE_FILTER_LABELS.ORDER_FORMAT, formatLabels);
+  },
+
+  filterBySubscriptionFrom({ from, to }) {
+    this.filterByDateRange(ORDER_LINE_FILTER_LABELS.SUBSCRIPTION_FROM, { from, to });
+  },
+
   assertNoFiltersApplied() {
     cy.expect(searchResultsPane.find(HTML(including(RESULTS_PANE_CHOOSE_FILTER_MESSAGE))).exists());
   },
 
   assertResultsCount(expectedCount) {
-    searchResultsPane
-      .find(
-        PaneHeader({ subtitle: `${expectedCount} record${expectedCount === 1 ? '' : 's'} found` }),
-      )
-      .exists();
+    cy.expect(
+      searchResultsPane
+        .find(
+          PaneHeader({
+            subtitle: `${expectedCount} record${expectedCount === 1 ? '' : 's'} found`,
+          }),
+        )
+        .exists(),
+    );
   },
 
   assertOrderLinesResults(rowsConfig) {
     cy.expect(searchResultsPane.exists());
     MultiColumnListHelper.assertRowsCellsContent(searchResultsPane, rowsConfig);
     this.assertResultsCount(rowsConfig.length);
+  },
+
+  assertTitlesInResults(titles = []) {
+    titles.forEach((title) => {
+      cy.expect(searchResultsPane.find(MultiColumnListCell({ content: title })).exists());
+    });
+    this.assertResultsCount(titles.length);
   },
 
   assertResultsActionIsDisabled(actionButtonName, expectedDisabledState = true) {

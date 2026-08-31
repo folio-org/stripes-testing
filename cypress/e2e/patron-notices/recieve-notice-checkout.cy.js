@@ -70,6 +70,8 @@ describe('Patron notices', () => {
       noticePolicyTemplate = {
         ...NewNoticePolicyTemplate.getDefaultUI(),
         category: NOTICE_CATEGORIES.loan,
+        noticeFormat: 'Email',
+        body: NewNoticePolicyTemplate.getDefaultUI().body + '{{item.title}}',
       };
       noticePolicy = {
         ...NewNoticePolicy.getDefaultUI(),
@@ -250,13 +252,11 @@ describe('Patron notices', () => {
     });
 
     it(
-      'C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button (volaris)',
-      { tags: ['smoke', 'volaris', 'shiftLeft', 'C347621'] },
+      'C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button (vega)',
+      { tags: ['smoke', 'vega', 'shiftLeft', 'C347621'] },
       () => {
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();
-        NewNoticePolicyTemplate.addToken(testData.noticePolicyTemplateToken);
-        noticePolicyTemplate.body += '{{item.title}}';
         NewNoticePolicyTemplate.create(noticePolicyTemplate);
         NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
         NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
@@ -306,13 +306,11 @@ describe('Patron notices', () => {
     );
 
     it(
-      'C347622 Check that user can receive notice with multiple items after finishing the session "Check out" by setting automatic end (volaris)',
-      { tags: ['smoke', 'volaris', 'shiftLeft', 'C347622'] },
+      'C347622 Check that user can receive notice with multiple items after finishing the session "Check out" by setting automatic end (vega)',
+      { tags: ['smoke', 'vega', 'shiftLeft', 'C347622'] },
       () => {
         NewNoticePolicyTemplate.startAdding();
         NewNoticePolicyTemplate.checkInitialState();
-        NewNoticePolicyTemplate.addToken(testData.noticePolicyTemplateToken);
-        noticePolicyTemplate.body += '{{item.title}}';
         NewNoticePolicyTemplate.create(noticePolicyTemplate);
         NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
         NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);

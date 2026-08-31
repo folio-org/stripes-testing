@@ -80,8 +80,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C440112 Search for "MARC authority" by "LCCN" option using a query with asterisk when "LCCN" (010 $a) has (leading, internal, trailing) spaces". (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C440112'] },
+      'C440112 Search for "MARC authority" by "LCCN" option using a query with asterisk when "LCCN" (010 $a) has (leading, internal, trailing) spaces". (promin)',
+      { tags: ['criticalPath', 'promin', 'C440112'] },
       () => {
         searchQueries.forEach((query) => {
           MarcAuthorities.searchByParameter(testData.searchOption, query);

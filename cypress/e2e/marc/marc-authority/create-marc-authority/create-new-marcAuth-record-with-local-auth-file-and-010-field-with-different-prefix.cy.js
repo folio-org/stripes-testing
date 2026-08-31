@@ -89,8 +89,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423531 Create a new MARC authority record with "Local" authority file selected and added "010" field with prefix of different "Local" authority file (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423531'] },
+        'C423531 Create a new MARC authority record with "Local" authority file selected and added "010" field with prefix of different "Local" authority file (promin)',
+        { tags: ['extendedPath', 'promin', 'C423531'] },
         () => {
           // Step 1: Open new MARC authority record form
           MarcAuthorities.clickActionsAndNewAuthorityButton();

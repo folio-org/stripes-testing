@@ -112,8 +112,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C663249 Verify multiple edits to Instance statistical codes in one bulk edit job (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C663249'] },
+      'C663249 Verify multiple edits to Instance statistical codes in one bulk edit job (athena)',
+      { tags: ['criticalPath', 'athena', 'C663249'] },
       () => {
         const instances = [folioInstance, marcInstance];
 

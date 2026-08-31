@@ -166,10 +166,11 @@ export default {
     cy.expect(resetButton.is({ disabled: true }));
   },
 
+  /* Request interceptors */
+
   interceptTransactionsRequest() {
     cy.intercept('GET', '/finance/transactions*').as('getTransactions');
   },
-
   waitForTransactionsRequestCompletion() {
     cy.wait('@getTransactions');
   },
@@ -177,8 +178,44 @@ export default {
   interceptFundsRequest() {
     cy.intercept('GET', '/finance/funds*').as('getFunds');
   },
-
   waitForFundsRequestCompletion() {
     cy.wait('@getFunds');
+  },
+
+  interceptGetFiscalYearsRequest() {
+    cy.intercept('GET', '/finance/fiscal-years*').as('waiterForGetFiscalYearsRequestCompletion');
+  },
+  waitForGetFiscalYearsRequestCompletion() {
+    cy.wait('@waiterForGetFiscalYearsRequestCompletion');
+  },
+
+  interceptGetLedgersRequest() {
+    cy.intercept('GET', '/finance/ledgers*').as('waiterForGetLedgersRequestCompletion');
+  },
+  waitForGetLedgersRequestCompletion() {
+    cy.wait('@waiterForGetLedgersRequestCompletion');
+  },
+
+  interceptGetGroupsRequest() {
+    cy.intercept('GET', '/finance/groups*').as('waiterForGetGroupsRequestCompletion');
+  },
+  waitForGetGroupsRequestCompletion() {
+    cy.wait('@waiterForGetGroupsRequestCompletion');
+  },
+
+  interceptGetExpenseClassesRequest() {
+    cy.intercept('GET', '/finance/expense-classes*').as(
+      'waiterForGetExpenseClassesRequestCompletion',
+    );
+  },
+  waitForGetExpenseClassesRequestCompletion() {
+    cy.wait('@waiterForGetExpenseClassesRequestCompletion');
+  },
+
+  interceptGetFundTypesRequest() {
+    cy.intercept('GET', '/finance/fund-types*').as('waiterForGetFundTypesRequestCompletion');
+  },
+  waitForGetFundTypesRequestCompletion() {
+    cy.wait('@waiterForGetFundTypesRequestCompletion');
   },
 };

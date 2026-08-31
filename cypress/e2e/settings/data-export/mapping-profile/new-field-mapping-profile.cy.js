@@ -44,8 +44,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10984 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to create unlocked mapping profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C10984'] },
+      'C10984 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to create unlocked mapping profile (athena)',
+      { tags: ['criticalPath', 'athena', 'shiftLeft', 'C10984'] },
       () => {
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
         ExportNewFieldMappingProfile.clickNewButton();

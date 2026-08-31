@@ -76,8 +76,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C421991 (CONSORTIA) Verify the match profile options on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C421991'] },
+        'C421991 (CONSORTIA) Verify the match profile options on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C421991'] },
         () => {
           MatchProfiles.clickCreateNewMatchProfile();
           NewMatchProfile.verifyExistingRecordSection(detailsOptions);

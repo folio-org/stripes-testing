@@ -34,8 +34,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C466233 Check that "select" is not overlaps "Name" field on Action profile (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C466233'] },
+      'C466233 Check that "select" is not overlaps "Name" field on Action profile (promin)',
+      { tags: ['extendedPath', 'promin', 'C466233'] },
       () => {
         // Step 1: Open default "Create instance" action profile
         ActionProfiles.search(actionProfileName);

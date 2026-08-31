@@ -53,8 +53,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C418650 Lists (Edit): Can create, edit, and refresh lists (corsair)',
-      { tags: ['smoke', 'corsair', 'shiftLeft', 'C418650'] },
+      'C418650 Lists (Edit): Can create, edit, and refresh lists (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C418650'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

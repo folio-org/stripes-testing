@@ -34,6 +34,7 @@ import {
 } from '../../../constants';
 
 const rolesPane = Pane('Authorization roles');
+// "+ New" in Settings, "New" in Consortium manager:
 const newButton = Button(or('+ New', 'New'));
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
@@ -101,7 +102,8 @@ const promoteUsersModal = Modal('Create user records in Keycloak');
 const confirmButton = Button('Confirm');
 const promoteUsersModalText =
   'This operation will create new records in Keycloak for the following users:';
-const noUsernameCalloutText = 'User without username cannot be created in Keycloak';
+const noUsernameCalloutText =
+  'User assignment aborted.  This operation requires all users involved to have a username.';
 const createAccessErrorText = 'Role could not be created: Access Denied';
 const clearFieldButton = Button({ icon: 'times-circle-solid' });
 const noAccessErrorText = or(
@@ -153,11 +155,14 @@ const expectedCapabilityTableActions = {
   [CAPABILITY_TYPES.PROCEDURAL]: [CAPABILITY_ACTIONS.EXECUTE],
 };
 const unselectSetConfirmModal = Modal({ id: 'unselect-capability-set-confirmation-modal' });
+const showHiddenCapabilitiesCheckbox = Checkbox('Show hidden capabilities');
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
 export const defaultRoleCrudErrorMessage =
   'Default role cannot be created, updated or deleted via roles API.';
+export const nameSlashErrorText = 'Role name cannot contain the "/" character';
+export const nameRequiredErrorText = 'Please fill this in to continue';
 
 export default {
   capabilitiesAccordion,
@@ -181,17 +186,23 @@ export default {
     cy.do(newButton.click());
     cy.expect([
       createRolePane.exists(),
+      roleNameInput.exists(),
       capabilitiesAccordion.has({ open: true }),
       capabilitySetsAccordion.exists(),
       saveButton.has({ disabled: true }),
+      cancelButton.exists(),
       selectApplicationButton.exists(),
       Spinner().absent(),
     ]);
     cy.wait(2000);
   },
 
-  fillRoleNameDescription: (roleName, roleDescription = '') => {
+  fillRoleNameDescription(roleName, roleDescription = '') {
     cy.do([roleNameInput.fillIn(roleName), roleDescriptionInput.fillIn(roleDescription)]);
+    this.verifyNameDescriptionInEditForm(roleName, roleDescription);
+  },
+
+  verifyNameDescriptionInEditForm(roleName, roleDescription = '') {
     cy.expect([
       roleNameInput.has({ value: roleName }),
       roleDescriptionInput.has({ value: roleDescription }),
@@ -865,7 +876,7 @@ export default {
   duplicateRole(roleName, capabilitiesShown = true) {
     const currentDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
     const duplicatedTitleRegExp = new RegExp(
-      `^${roleName} \\(duplicate\\) - ${currentDate.replace('/', '\\/')}, \\d{1,2}:\\d{2}:\\d{2} (A|P)M$`,
+      `^${roleName} \\(duplicate\\) - ${currentDate.replace(/\//g, '-')}, \\d{1,2}:\\d{2}:\\d{2} (A|P)M$`,
     );
     this.clickActionsButton(roleName);
     this.clickDuplicateButton();
@@ -1293,5 +1304,25 @@ export default {
   closeConfirmShareModal: () => {
     cy.do(shareToAllModal.find(cancelButton).click());
     cy.expect(shareToAllModal.absent());
+  },
+
+  checkErrorForNameField({ isError = false, errorText = nameRequiredErrorText } = {}) {
+    if (isError) cy.expect(roleNameInput.has({ error: errorText }));
+    else cy.expect(roleNameInput.has({ error: undefined }));
+  },
+
+  focusOnNameField({ isFocused = true } = {}) {
+    if (isFocused) cy.do(roleNameInput.focus());
+    else cy.do(roleNameInput.blur());
+    cy.expect(roleNameInput.has({ focused: isFocused }));
+    cy.wait(500);
+  },
+
+  toggleShowHiddenCapabilities({ show = true } = {}) {
+    cy.expect(showHiddenCapabilitiesCheckbox.has({ disabled: false }));
+    if (show) cy.do(showHiddenCapabilitiesCheckbox.checkIfNotSelected());
+    else cy.do(showHiddenCapabilitiesCheckbox.uncheckIfSelected());
+    cy.expect(showHiddenCapabilitiesCheckbox.has({ checked: show }));
+    cy.wait(500);
   },
 };

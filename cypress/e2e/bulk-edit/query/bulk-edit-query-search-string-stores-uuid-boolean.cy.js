@@ -44,8 +44,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C436741 Query builder - Search users that has preferred contact type and have "Active" status ("String stores UUID" and "Boolean" property types) ("String stores UUID" and "Boolean" property types) (firebird)',
-      { tags: ['smoke', 'firebird', 'C436741'] },
+      'C436741 Query builder - Search users that has preferred contact type and have "Active" status ("String stores UUID" and "Boolean" property types) ("String stores UUID" and "Boolean" property types) (athena)',
+      { tags: ['smoke', 'athena', 'C436741'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkUsersRadio();
@@ -55,7 +55,7 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(usersFieldValues.preferredContactType);
         QueryModal.verifySelectedField(usersFieldValues.preferredContactType);
-        QueryModal.verifyQueryAreaContent('(users.preferred_contact_type  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(STRING_STORES_UUID_OPERATORS.EQUAL);
         QueryModal.verifyOperatorsList(STRING_STORES_UUID_OPERATORS);
@@ -111,7 +111,7 @@ describe('Bulk-edit', () => {
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, false);
         QueryModal.verifyQueryAreaContent(
-          `(users.preferred_contact_type in [${preferredContactTypeEmail}]) AND (  )`,
+          `(users.preferred_contact_type in [${preferredContactTypeEmail}])`,
         );
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();

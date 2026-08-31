@@ -212,7 +212,7 @@ describe('Invoices', () => {
 
   it(
     'C388645 Save invoice fiscal year after fund distribution change if FY was undefined and pay invoice against previous FY (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'C388645'] },
+    { tags: ['criticalPath', 'thunderjet', 'C388645', 'nonParallel'] },
     () => {
       Invoices.createDefaultInvoiceWithoutAddress(testData.invoice);
       Invoices.checkCreatedInvoice({
@@ -343,14 +343,14 @@ describe('Invoices', () => {
       FinanceHelper.searchByName(fiscalYears.second.name);
       FiscalYears.selectFY(fiscalYears.second.name);
       FiscalYears.editFiscalYearDetails();
-      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+      FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(
         periodStartForSecondFY,
         periodEndForSecondFY,
       );
       FinanceHelper.searchByName(fiscalYears.third.name);
       FiscalYears.selectFY(fiscalYears.third.name);
       FiscalYears.editFiscalYearDetails();
-      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+      FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(
         periodStartForThirdFY,
         periodEndForThirdFY,
       );

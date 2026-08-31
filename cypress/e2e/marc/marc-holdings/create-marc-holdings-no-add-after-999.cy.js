@@ -83,8 +83,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C494043 User cannot add a new field below "999 ff" field on "Create a new MARC Holdings record" pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C494043'] },
+        'C494043 User cannot add a new field below "999 ff" field on "Create a new MARC Holdings record" pane (promin)',
+        { tags: ['extendedPath', 'promin', 'C494043'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

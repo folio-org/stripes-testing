@@ -103,8 +103,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C729566 Select Instance plugin | Search for Instance by item\'s barcode field using "Keyword" and "Barcode" search options (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C729566'] },
+      'C729566 Select Instance plugin | Search for Instance by item\'s barcode field using "Keyword" and "Barcode" search options (promin)',
+      { tags: ['extendedPath', 'promin', 'C729566'] },
       () => {
         searchOptions.forEach((searchOption) => {
           SelectInstanceModal.chooseSearchOption(searchOption);

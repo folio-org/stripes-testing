@@ -421,8 +421,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C468211 ECS | Export Instances from Central tenant with custom Instance & Holdings & Item profile (file with cql query) (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C468211'] },
+      'C468211 ECS | Export Instances from Central tenant with custom Instance & Holdings & Item profile (file with cql query) (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C468211'] },
       () => {
         const cqlQuery = `(id=="${testData.marcInstance.uuid}" or id=="${testData.folioInstance.uuid}") sortby title`;
 

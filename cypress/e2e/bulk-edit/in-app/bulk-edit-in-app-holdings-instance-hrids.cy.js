@@ -65,8 +65,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C380576 Verify that Holdings records are displayed in the Errors with "No change in value required" reason if no changes were made (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C380576'] },
+      'C380576 Verify that Holdings records are displayed in the Errors with "No change in value required" reason if no changes were made (athena)',
+      { tags: ['criticalPath', 'athena', 'C380576'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');

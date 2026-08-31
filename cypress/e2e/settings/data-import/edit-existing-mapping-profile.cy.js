@@ -44,8 +44,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C2351 Edit an existing field mapping profile (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C2351'] },
+      'C2351 Edit an existing field mapping profile (promin)',
+      { tags: ['criticalPath', 'promin', 'C2351'] },
       () => {
         const calloutMessage = `The field mapping profile "${mappingProfile.name}" was successfully updated`;
 

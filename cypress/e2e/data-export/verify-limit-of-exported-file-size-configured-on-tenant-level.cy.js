@@ -35,11 +35,6 @@ describe('Data Export', () => {
   };
 
   before('Create test data', () => {
-    cy.getAdminToken();
-
-    // Configure slice_size limit via API
-    cy.configureDataExportFileLimit('slice_size', sliceSize);
-
     cy.createTempUser([
       permissions.dataExportUploadExportDownloadFileViewLogs.gui,
       permissions.inventoryAll.gui,
@@ -125,16 +120,11 @@ describe('Data Export', () => {
             });
         });
       });
-
-      cy.login(user.username, user.password, {
-        path: TopMenu.dataExportPath,
-        waiter: DataExportLogs.waitLoading,
-      });
     });
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken();
+    cy.getAdminToken(false);
 
     // Reset slice_size to default
     cy.configureDataExportFileLimit('slice_size', defaultSliceSize);
@@ -161,9 +151,16 @@ describe('Data Export', () => {
   });
 
   it(
-    'C432316 Verify that limit of exported file size is configured on tenant level (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C432316'] },
+    'C432316 Verify that limit of exported file size is configured on tenant level (athena)',
+    { tags: ['criticalPath', 'athena', 'C432316', 'nonParallel'] },
     () => {
+      cy.getAdminToken();
+      // Configure slice_size limit via API
+      cy.configureDataExportFileLimit('slice_size', sliceSize);
+      cy.login(user.username, user.password, {
+        path: TopMenu.dataExportPath,
+        waiter: DataExportLogs.waitLoading,
+      });
       // Test Instances export
       ExportFileHelper.uploadFile(csvFiles.instances);
       ExportFileHelper.exportWithDefaultJobProfile(csvFiles.instances, jobProfiles.instances);

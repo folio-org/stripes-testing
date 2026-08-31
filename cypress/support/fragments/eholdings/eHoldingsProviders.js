@@ -2,6 +2,9 @@ import {
   Accordion,
   Button,
   ListItem,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
   PaneHeader,
   RadioButton,
   Section,
@@ -13,6 +16,7 @@ import {
   HTML,
   ValueChipRoot,
   DropdownMenu,
+  Checkbox,
 } from '../../../../interactors';
 import eHoldingsProviderView from './eHoldingsProviderView';
 import { FILTER_STATUSES } from './eholdingsConstants';
@@ -28,6 +32,7 @@ const packagesActionsButton = packagesSection.find(Button('Actions'));
 const packagesAccordion = Button({
   id: 'accordion-toggle-button-providerShowProviderList',
 });
+const packagesList = MultiColumnList({ id: 'provider-package-list' });
 const tagsAccordion = Button({ id: 'accordion-toggle-button-providerShowTags' });
 const providerAccordion = Button({
   id: 'accordion-toggle-button-providerShowProviderSettings',
@@ -102,8 +107,12 @@ export default {
 
   verifyOnlySelectedPackagesInResults() {
     cy.expect([
-      packagesSection.find(ListItem({ text: including(FILTER_STATUSES.SELECTED) })).exists(),
-      packagesSection.find(ListItem({ text: including(FILTER_STATUSES.NOT_SELECTED) })).absent(),
+      packagesList
+        .find(MultiColumnListCell({ content: including(FILTER_STATUSES.SELECTED) }))
+        .exists(),
+      packagesList
+        .find(MultiColumnListCell({ content: including(FILTER_STATUSES.NOT_SELECTED) }))
+        .absent(),
     ]);
   },
 
@@ -116,12 +125,7 @@ export default {
   },
 
   verifyPackagesAvailable(rowNumber = 0) {
-    cy.expect(
-      packagesSection
-        .find(ListItem({ className: including('list-item-'), index: rowNumber }))
-        .find(Button())
-        .exists(),
-    );
+    cy.expect(packagesList.find(MultiColumnListRow({ index: rowNumber })).exists());
   },
 
   packageAccordionClick() {
@@ -156,12 +160,12 @@ export default {
   },
 
   verifyPackageWithTag(packageName, tagName) {
-    cy.get('[id="providerShowProviderList"]')
-      .contains(packageName)
-      .parent()
-      .parent()
-      .parent()
-      .should('contain', tagName);
+    cy.expect(
+      packagesList
+        .find(MultiColumnListRow({ content: including(packageName), isContainer: false }))
+        .find(MultiColumnListCell({ content: including(tagName) }))
+        .exists(),
+    );
   },
 
   verifyExistingTags: (...expectedTags) => {
@@ -205,5 +209,13 @@ export default {
             name: provider.attributes.name,
           }));
       });
+  },
+
+  toggleShowColumnsOption(columnName, { isChecked = true } = {}) {
+    this.clickActionsButtonInPackagesSection();
+    const targetCheckbox = DropdownMenu().find(Checkbox(columnName));
+    cy.do(isChecked ? targetCheckbox.checkIfNotSelected() : targetCheckbox.uncheckIfSelected());
+    cy.do(packagesActionsButton.click());
+    cy.expect(DropdownMenu().absent());
   },
 };

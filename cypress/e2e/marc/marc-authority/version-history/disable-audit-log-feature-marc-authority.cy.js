@@ -86,8 +86,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C655300 Disable "Audit log" feature and check detail view pane of "MARC authority" record (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C655300'] },
+          'C655300 Disable "Audit log" feature and check detail view pane of "MARC authority" record (promin)',
+          { tags: ['extendedPath', 'promin', 'C655300'] },
           () => {
             cy.login(testUser.username, testUser.password, {
               path: TopMenu.marcAuthorities,

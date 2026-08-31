@@ -139,8 +139,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C773212 Bulk edit marc fields (260, 264) for all records (MARC) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C773212'] },
+      'C773212 Bulk edit marc fields (260, 264) for all records (MARC) (athena)',
+      { tags: ['criticalPath', 'athena', 'C773212'] },
       () => {
         // Step 1: Click "Actions" menu and check "Publication" checkbox
         BulkEditActions.openActions();

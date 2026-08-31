@@ -107,8 +107,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C552453 Verify that edited MARC bib record is checked against the last version of MARC validation rules (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C552453', 'nonParallel'] },
+        'C552453 Verify that edited MARC bib record is checked against the last version of MARC validation rules (promin)',
+        { tags: ['criticalPath', 'promin', 'C552453', 'nonParallel'] },
         () => {
           cy.then(() => {
             cy.createTempUser([
@@ -117,6 +117,9 @@ describe('MARC', () => {
               Permissions.specificationStorageGetSpecificationFields.gui,
               Permissions.specificationStorageCreateSpecificationField.gui,
               Permissions.specificationStorageUpdateSpecificationField.gui,
+
+              Permissions.specificationStorageSpecificationRulesCollectionGet.gui,
+              Permissions.specificationStorageSpecificationRulesItemPatch.gui,
             ]).then((userProperties) => {
               user = userProperties;
 
@@ -130,6 +133,7 @@ describe('MARC', () => {
 
                   // Enable undefined validation rules after creating bib
                   toggleAllUndefinedValidationRules(specId, { enable: true });
+                  cy.wait(12000);
                 },
               );
             });
@@ -156,6 +160,7 @@ describe('MARC', () => {
                 testData.field245UpdatedContent1,
               );
               QuickMarcEditor.checkContentByTag(testData.tag245, testData.field245UpdatedContent1);
+              cy.wait(2000);
 
               // Step 3: Click "Save & keep editing" - should show warning for undefined field 948
               QuickMarcEditor.clickSaveAndKeepEditingButton();
@@ -229,7 +234,7 @@ describe('MARC', () => {
             })
             .then(() => {
               // Restore user authorization after API changes
-              cy.wait(2000);
+              cy.wait(14000);
               cy.getToken(user.username, user.password);
 
               // Step 8: Work in UI after API changes - Click "Save & close"

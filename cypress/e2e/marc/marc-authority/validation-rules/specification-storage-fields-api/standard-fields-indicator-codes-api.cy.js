@@ -109,8 +109,8 @@ describe('MARC Authority Validation Rules - Standard Fields Indicator Codes API'
   });
 
   it(
-    'C499699 Create Local Indicator code of Standard Field for MARC authority spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C499699', 'spitfire'] },
+    'C499699 Create Local Indicator code of Standard Field for MARC authority spec (API) (promin)',
+    { tags: ['extendedPath', 'C499699', 'promin'] },
     () => {
       let createdIndicatorCode1Id;
       let createdIndicatorCode2Id;
@@ -264,8 +264,8 @@ describe('MARC Authority Validation Rules - Standard Fields Indicator Codes API'
   );
 
   it(
-    'C502993 Cannot update Indicator Code of Standard Field for MARC authority spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C502993', 'spitfire'] },
+    'C502993 Cannot update Indicator Code of Standard Field for MARC authority spec (API) (promin)',
+    { tags: ['criticalPath', 'C502993', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);
@@ -308,8 +308,8 @@ describe('MARC Authority Validation Rules - Standard Fields Indicator Codes API'
   );
 
   it(
-    'C502994 Update Local Indicator code of Standard field for MARC authority spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C502994', 'spitfire'] },
+    'C502994 Update Local Indicator code of Standard field for MARC authority spec (API) (promin)',
+    { tags: ['extendedPath', 'C502994', 'promin'] },
     () => {
       let createdIndicatorCodeId;
       cy.getUserToken(user.username, user.password);

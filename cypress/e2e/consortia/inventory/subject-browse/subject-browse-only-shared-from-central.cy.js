@@ -123,8 +123,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C410757 Only subjects from "Shared" Instance records are shown in the browse result list on Central tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C410757'] },
+        'C410757 Only subjects from "Shared" Instance records are shown in the browse result list on Central tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C410757'] },
         () => {
           cy.resetTenant();
           cy.login(user.username, user.password, {

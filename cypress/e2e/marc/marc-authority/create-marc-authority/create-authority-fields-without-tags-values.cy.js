@@ -91,8 +91,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423480 Fields without tag and subfield values are deleted during saving (create MARC authority) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423480'] },
+        'C423480 Fields without tag and subfield values are deleted during saving (create MARC authority) (promin)',
+        { tags: ['extendedPath', 'promin', 'C423480'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           MarcAuthority.setValid008DropdownValues();

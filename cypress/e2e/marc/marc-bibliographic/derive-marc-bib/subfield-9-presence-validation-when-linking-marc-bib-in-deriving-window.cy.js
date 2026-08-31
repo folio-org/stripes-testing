@@ -171,8 +171,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375117 Subfield "$9" presence validation when linking "MARC Bibliographic" record in deriving window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C375117'] },
+        'C375117 Subfield "$9" presence validation when linking "MARC Bibliographic" record in deriving window (promin)',
+        { tags: ['extendedPath', 'promin', 'C375117'] },
         () => {
           InventoryInstance.deriveNewMarcBibRecord();
           QuickMarcEditor.checkDerivePaneheader();

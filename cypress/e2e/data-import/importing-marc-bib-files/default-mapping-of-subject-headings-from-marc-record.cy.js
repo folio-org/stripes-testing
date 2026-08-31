@@ -50,8 +50,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C6692 Check the default mapping of Subject headings from the MARC record to the Inventory Instance Subjects field (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C6692'] },
+      'C6692 Check the default mapping of Subject headings from the MARC record to the Inventory Instance Subjects field (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C6692'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);

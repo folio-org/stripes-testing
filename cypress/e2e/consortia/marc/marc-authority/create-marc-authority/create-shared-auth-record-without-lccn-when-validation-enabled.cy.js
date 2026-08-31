@@ -65,8 +65,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C523561 Create "MARC authority" record without "010" field when duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C523561'] },
+          'C523561 Create "MARC authority" record without "010" field when duplicate LCCN check is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C523561'] },
           () => {
             // Step 1: Click on "Actions" button in second pane >> Select "+ New" option
             MarcAuthorities.clickActionsAndNewAuthorityButton();

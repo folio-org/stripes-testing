@@ -139,8 +139,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C543818 ECS | Verify bulk edit actions for Instance MARC fields in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C543818'] },
+        'C543818 ECS | Verify bulk edit actions for Instance MARC fields in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C543818'] },
         () => {
           BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(

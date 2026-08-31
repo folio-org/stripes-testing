@@ -109,8 +109,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C409495 Filters section: Users filter (firebird) (TaaS)',
-        { tags: ['extendedPath', 'firebird', 'C409495'] },
+        'C409495 Filters section: Users filter (athena) (TaaS)',
+        { tags: ['extendedPath', 'athena', 'C409495'] },
         () => {
           BulkEditSearchPane.openLogsSearch();
           BulkEditLogs.verifyLogsPane();

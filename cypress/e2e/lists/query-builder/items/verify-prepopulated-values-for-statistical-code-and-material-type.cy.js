@@ -51,8 +51,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C540400 The field "Items — Statistical code" has prepopulated values in the "Value" dropdown (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C540400'] },
+        'C540400 The field "Items — Statistical code" has prepopulated values in the "Value" dropdown (athena)',
+        { tags: ['extendedPath', 'athena', 'C540400'] },
         () => {
           // Step 1: Click "New" button, add list name, select "Items" record type
           Lists.openNewListPane();
@@ -70,7 +70,7 @@ describe('Lists', () => {
           // Step 3: Click "Select field" dropdown and select "Item — Statistical codes" option
           QueryModal.selectField(itemFieldValues.statisticalCodeNames);
           QueryModal.verifySelectedField(itemFieldValues.statisticalCodeNames);
-          QueryModal.verifyQueryAreaContent('(items.statistical_code_names  )');
+          QueryModal.verifyQueryAreaContent('');
 
           // Step 4: Click on "Select operator" dropdown
           QueryModal.verifyOperatorsList(enumOperators);
@@ -89,7 +89,7 @@ describe('Lists', () => {
           // Expected: Field changed to Material type, query updated
           QueryModal.verifySelectedField(itemFieldValues.materialTypeName);
           QueryModal.verifySelectedOperator('Select operator');
-          QueryModal.verifyQueryAreaContent('(mtypes.name  )');
+          QueryModal.verifyQueryAreaContent('');
 
           // Step 8: Click on "Select operator" dropdown
           // Expected: Operators listed for Material type field

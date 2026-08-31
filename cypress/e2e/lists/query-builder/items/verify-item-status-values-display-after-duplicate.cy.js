@@ -154,8 +154,8 @@ describe('Lists', () => {
       });
 
       it(
-        "C442830 Existing 'Item status' values correctly displays in the Query Builder after duplicating not-canned and canned lists (corsair)",
-        { tags: ['criticalPath', 'corsair', 'C442830'] },
+        "C442830 Existing 'Item status' values correctly displays in the Query Builder after duplicating not-canned and canned lists (athena)",
+        { tags: ['criticalPath', 'athena', 'C442830'] },
         () => {
           // Step 1: Create new list with Items record type
           Lists.openNewListPane();
@@ -173,7 +173,7 @@ describe('Lists', () => {
           // Step 3: Select "Item — Status" field
           QueryModal.selectField(itemFieldValues.itemStatus);
           QueryModal.verifySelectedField(itemFieldValues.itemStatus);
-          QueryModal.verifyQueryAreaContent('(items.status_name  )');
+          QueryModal.verifyQueryAreaContent('');
 
           // Step 4: Select "IN" operator
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
@@ -190,9 +190,7 @@ describe('Lists', () => {
 
           // Add AND condition
           QueryModal.addNewRow();
-          QueryModal.verifyQueryAreaContent(
-            `(items.status_name in [${itemStatuses.join(', ')}]) AND (  )`,
-          );
+          QueryModal.verifyQueryAreaContent(`(items.status_name in [${itemStatuses.join(', ')}])`);
 
           // Select Instance title field
           QueryModal.selectField(itemFieldValues.instanceTitle, 1);

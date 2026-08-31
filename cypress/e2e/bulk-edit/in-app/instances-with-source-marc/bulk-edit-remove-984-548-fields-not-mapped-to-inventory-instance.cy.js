@@ -106,8 +106,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C506686 Remove MARC field (984, 548) not mapped to Inventory Instance (MARC) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C506686'] },
+      'C506686 Remove MARC field (984, 548) not mapped to Inventory Instance (MARC) (athena)',
+      { tags: ['criticalPath', 'athena', 'C506686'] },
       () => {
         // Step 1: Show Source, hide General note
         BulkEditActions.openActions();

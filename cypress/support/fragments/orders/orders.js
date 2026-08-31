@@ -4,7 +4,6 @@ import {
   Button,
   Callout,
   calloutTypes,
-  Card,
   Checkbox,
   KeyValue,
   Link,
@@ -26,11 +25,14 @@ import {
   matching,
 } from '../../../../interactors';
 import {
+  COMMON_BUTTON_LABELS,
   DEFAULT_WAIT_TIME,
+  ORDER_AND_ORDER_LINE_BUTTONS,
   ORDER_FILTER_LABELS,
   ORDER_SYSTEM_CLOSING_REASONS,
   RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
 } from '../../constants';
+import AcqVersionHistory from '../acqVersionHistory';
 import FiltersPaneHelper from '../filtersPane';
 import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
@@ -44,6 +46,7 @@ import OrderDetails from './orderDetails';
 import OrderEditForm from './orderEditForm';
 import OrderLines from './orderLines';
 import OrderStates from './orderStates';
+import orderLineEditForm from './orderLineEditForm';
 
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorders-results-pane-subtitle"]/span';
 const actionsButton = Button('Actions');
@@ -126,17 +129,21 @@ export default {
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then(({ body }) => {
           orderLine.acquisitionMethod = body.acquisitionMethods[0].id;
           orderLine.purchaseOrderId = order.id;
-          OrderLines.createOrderLineViaApi(orderLine);
+          OrderLines.createOrderLineViaApi(orderLine).then((r) => {
+            cy.wrap(r).as('orderLine');
+          });
         });
       } else {
         orderLine.purchaseOrderId = order.id;
-        OrderLines.createOrderLineViaApi(orderLine);
+        OrderLines.createOrderLineViaApi(orderLine).then((r) => {
+          cy.wrap(r).as('orderLine');
+        });
       }
     });
     return cy.get('@order');
   },
 
-  updateOrderViaApi(order, deleteHoldings = false) {
+  updateOrderViaApi(order, deleteHoldings = false, failOnStatusCode = true) {
     cy.wait(2000);
     return cy.okapiRequest({
       method: 'PUT',
@@ -144,6 +151,7 @@ export default {
       body: order,
       searchParams: deleteHoldings ? { deleteHoldings: true } : {},
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
 
@@ -482,9 +490,7 @@ export default {
   },
 
   checkOrderIsNotOpened: (fundCode) => {
-    InteractorsTools.checkCalloutErrorMessage(
-      `One or more fund distributions on this order can not be encumbered, because there is not enough money in [${fundCode}].`,
-    );
+    InteractorsTools.checkCalloutErrorMessage(OrderStates.notEnoughMoneyInFundError(fundCode));
   },
 
   checkInvalidLocationErrorMessage: (polNumber) => {
@@ -823,6 +829,52 @@ export default {
     }
   },
 
+  verifyHeaderAndValuesInCsvFileByIdentifier(
+    exportedFileName,
+    identifierHeader,
+    identifierValue,
+    targetValues,
+  ) {
+    const fileName = `${exportedFileName}.csv`;
+
+    return FileManager.convertCsvToJson(fileName).then((jsonDataArray) => {
+      // eslint-disable-next-line no-unused-expressions
+      expect(jsonDataArray).to.be.an('array').and.not.be.empty;
+
+      const targetRow = jsonDataArray.find((row) => row[identifierHeader] === identifierValue);
+
+      // eslint-disable-next-line no-unused-expressions
+      expect(targetRow).to.exist;
+
+      targetValues.forEach((pair) => {
+        const actualValue = targetRow[pair.header];
+
+        expect(actualValue).to.equal(pair.value);
+      });
+    });
+  },
+
+  verifyColumnHeaderExistsInCsvFile(fileName, columnHeaders, isExist = true) {
+    return FileManager.convertCsvToJson(fileName).then((jsonDataArray) => {
+      if (!jsonDataArray || jsonDataArray.length === 0) {
+        throw new Error(`CSV file is empty or could not be converted to JSON: ${fileName}`);
+      }
+
+      // Get actual column headers from the first row's keys
+      const actualHeaders = Object.keys(jsonDataArray[0]);
+
+      if (isExist) {
+        columnHeaders.forEach((columnHeader) => {
+          expect(actualHeaders).to.include(columnHeader);
+        });
+      } else {
+        columnHeaders.forEach((columnHeader) => {
+          expect(actualHeaders).to.not.include(columnHeader);
+        });
+      }
+    });
+  },
+
   verifySaveCSVQueryFileName(actualName) {
     // valid name example: order-export-2022-06-24-12_08.csv
     const expectedFileNameMask = /order-export-\d{4}-\d{2}-\d{2}-\d{2}_\d{2}.csv/gm;
@@ -865,9 +917,31 @@ export default {
   checkPurchaseOrderLineLimitReachedModal: () => {
     cy.expect([
       purchaseOrderLineLimitReachedModal.exists(),
-      purchaseOrderLineLimitReachedModal.find(Button('Ok')).exists(),
-      purchaseOrderLineLimitReachedModal.find(Button('Create new purchase order')).exists(),
+      purchaseOrderLineLimitReachedModal.has({ header: 'Purchase order line limit reached' }),
+      purchaseOrderLineLimitReachedModal.has({
+        content: including(
+          'This would exceed the maximum number of purchase order lines permitted by system settings.For more information contact your system administrator.',
+        ),
+      }),
+      purchaseOrderLineLimitReachedModal.find(Button(COMMON_BUTTON_LABELS.OK)).exists(),
+      purchaseOrderLineLimitReachedModal
+        .find(Button(ORDER_AND_ORDER_LINE_BUTTONS.CREATE_NEW_PURCHASE_ORDER))
+        .exists(),
     ]);
+  },
+
+  clickOkinPOLLimitModal: () => {
+    cy.do(purchaseOrderLineLimitReachedModal.find(Button(COMMON_BUTTON_LABELS.OK)).click());
+    cy.expect(purchaseOrderLineLimitReachedModal.absent());
+  },
+
+  clickCreateNewOrderInPOLLimitModal: () => {
+    cy.do(
+      purchaseOrderLineLimitReachedModal
+        .find(Button(ORDER_AND_ORDER_LINE_BUTTONS.CREATE_NEW_PURCHASE_ORDER))
+        .click(),
+    );
+    cy.expect(orderLineEditForm.waitLoading());
   },
 
   openVersionHistory() {
@@ -884,30 +958,21 @@ export default {
     ]);
   },
 
-  checkVersionHistoryCard(date, textInformation) {
-    cy.expect([
-      Section({ id: 'versions-history-pane-order' })
-        .find(Card({ headerStart: date }))
-        .has({ text: textInformation }),
-    ]);
+  checkVersionHistoryCard(eventDate, { changedFields, isCurrent, source }) {
+    AcqVersionHistory.assertVersionHistoryCard('order', {
+      changedFields,
+      eventDate,
+      isCurrent,
+      source,
+    });
   },
 
-  selectVersionHistoryCard(date) {
-    cy.do([
-      Section({ id: 'versions-history-pane-order' })
-        .find(Card({ headerStart: date }))
-        .find(Button({ icon: 'clock' }))
-        .click(),
-    ]);
+  selectVersionHistoryCard(eventDate) {
+    AcqVersionHistory.selectVersionHistoryCard('order', { eventDate });
   },
 
   closeVersionHistory: () => {
-    cy.do(
-      Section({ id: 'versions-history-pane-order' })
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
-    cy.wait(2000);
+    AcqVersionHistory.closeVersionHistory('order');
     cy.expect([
       Section({ id: 'POListing' }).exists(),
       Section({ id: 'relatedInvoices' }).exists(),
@@ -1072,8 +1137,13 @@ export default {
     this.assertMultiSelectFilterOptions(ORDER_FILTER_LABELS.FUND_CODE, expectedOptions, options);
   },
 
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(ordersFiltersPane, { disabled });
+  },
+
   resetAllFilters() {
     FiltersPaneHelper.clearAllFilters(ordersFiltersPane);
+    this.assertResetAllButtonState({ disabled: true });
   },
 
   clearFilter(filterLabel) {
@@ -1086,8 +1156,16 @@ export default {
     FiltersPaneHelper.filterByMultiSelectOptions(ordersFiltersPane, filterLabel, options);
   },
 
+  filterByTextField(filterLabel, value, options) {
+    FiltersPaneHelper.filterByTextField(ordersFiltersPane, filterLabel, value, options);
+  },
+
   filterByFundCodes(codes = []) {
     this.filterByMultiSelectOptions(ORDER_FILTER_LABELS.FUND_CODE, codes);
+  },
+
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_FILTER_LABELS.TAGS, tags);
   },
 
   removeMultiSelectChips(filterLabel, values = []) {

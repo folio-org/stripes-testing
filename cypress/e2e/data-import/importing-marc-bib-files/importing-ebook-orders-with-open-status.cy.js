@@ -103,7 +103,7 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -112,8 +112,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C375989 Verify the importing of eBook orders with open status (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C375989'] },
+      'C375989 Verify the importing of eBook orders with open status (promin)',
+      { tags: ['criticalPath', 'promin', 'C375989'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);

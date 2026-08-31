@@ -16,6 +16,7 @@ import InstanceRecordView from '../../../../../support/fragments/inventory/insta
 import Locations from '../../../../../support/fragments/settings/tenant/location-setup/locations';
 import Location from '../../../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import { CallNumberBrowseSettings } from '../../../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -96,6 +97,10 @@ describe('MARC', () => {
                 Locations.createViaApi(locations[Affiliations.Consortia]);
 
                 cy.setTenant(Affiliations.University);
+                CallNumberBrowseSettings.assignCallNumberTypesViaApi({
+                  name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+                  callNumberTypes: [],
+                });
                 cy.assignPermissionsToExistingUser(
                   testData.user.userId,
                   userPermissions.university,
@@ -115,6 +120,10 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.College);
+              CallNumberBrowseSettings.assignCallNumberTypesViaApi({
+                name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+                callNumberTypes: [],
+              });
               cy.login(testData.user.username, testData.user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
@@ -144,8 +153,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C784586 Create MARC holdings record on Shared MARC bib from Member tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C784586'] },
+          'C784586 Create MARC holdings record on Shared MARC bib from Member tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C784586'] },
           () => {
             InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
             InventoryInstances.searchByTitle(createdInstanceId);

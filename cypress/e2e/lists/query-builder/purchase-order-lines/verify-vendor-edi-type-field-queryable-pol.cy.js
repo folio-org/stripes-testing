@@ -95,8 +95,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C446061 Vendor type can be selected independently in the UI (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C446061'] },
+        'C446061 Vendor type can be selected independently in the UI (athena)',
+        { tags: ['criticalPath', 'athena', 'C446061'] },
         () => {
           // Step 1: Create new list with Purchase order lines record type
           Lists.openNewListPane();
@@ -114,7 +114,7 @@ describe('Lists', () => {
           // Step 3: Select "Vendor org — EDI vendor type" field
           QueryModal.selectField(purchaseOrderLinesFieldValues.vendorOrgEdiType);
           QueryModal.verifySelectedField(purchaseOrderLinesFieldValues.vendorOrgEdiType);
-          QueryModal.verifyQueryAreaContent('(vendor_organization.edi_vendor_edi_type  )');
+          QueryModal.verifyQueryAreaContent('');
 
           // Step 4: Verify operators available for Vendor org — EDI vendor type field
           QueryModal.verifyOperatorsList(enumOperators);

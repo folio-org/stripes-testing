@@ -226,8 +226,8 @@ describe('Inventory', () => {
 
       // May fail due to https://folio-org.atlassian.net/browse/UIIN-3520
       it(
-        'C411750 Search for Shared/Local records by "Barcode" search options from "Central" and "Member 1" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411750'] },
+        'C411750 Search for Shared/Local records by "Barcode" search options from "Central" and "Member 1" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411750'] },
         () => {
           InventorySearchAndFilter.switchToItem();
           InventorySearchAndFilter.itemTabIsDefault();

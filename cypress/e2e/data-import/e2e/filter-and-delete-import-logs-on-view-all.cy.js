@@ -105,8 +105,8 @@ describe('Data Import', () => {
 
     // bug report https://folio-org.atlassian.net/browse/MODSOURMAN-1218
     it(
-      'C358136 A user can filter and delete import logs from the "View all" page (folijet)',
-      { tags: ['smokeFlaky', 'folijet', 'nonParallel'] },
+      'C358136 A user can filter and delete import logs from the "View all" page (promin)',
+      { tags: ['smokeFlaky', 'promin', 'nonParallel', 'C358136'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();

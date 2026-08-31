@@ -36,8 +36,8 @@ describe('Settings: Tenant', () => {
   // Marked as flaky because it changes global Tenant settings and causes failures in other tests during parallel runs.
 
   it(
-    'C377044 Verify that the interface language is changed if user choose Numbering system has a value (firebird) (TaaS)',
-    { tags: ['extendedPathFlaky', 'firebird', 'C377044', 'eurekaPhase1'] },
+    'C377044 Verify that the interface language is changed if user choose Numbering system has a value (athena) (TaaS)',
+    { tags: ['extendedPathFlaky', 'athena', 'C377044', 'eurekaPhase1'] },
     () => {
       // Select "Language and localization" option
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);

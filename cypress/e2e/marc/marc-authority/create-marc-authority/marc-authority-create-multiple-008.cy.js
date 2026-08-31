@@ -58,8 +58,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423506 Create a new MARC authority record with multiple "008" field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423506'] },
+        'C423506 Create a new MARC authority record with multiple "008" field (promin)',
+        { tags: ['extendedPath', 'promin', 'C423506'] },
         () => {
           // Step 1: Open new authority record pane
           MarcAuthorities.clickActionsAndNewAuthorityButton();

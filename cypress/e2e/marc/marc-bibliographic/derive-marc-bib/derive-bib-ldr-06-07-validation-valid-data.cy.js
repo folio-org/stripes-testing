@@ -85,8 +85,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C353611 Verify "LDR" validation rules with valid data for positions 06 and 07 when deriving record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C353611'] },
+        'C353611 Verify "LDR" validation rules with valid data for positions 06 and 07 when deriving record (promin)',
+        { tags: ['extendedPath', 'promin', 'C353611'] },
         () => {
           // Navigate to source instance
           InventoryInstances.searchByTitle(sourceInstanceId);

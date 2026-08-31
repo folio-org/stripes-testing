@@ -27,7 +27,7 @@ describe('Lists', () => {
               testData.customField = createdCustomField;
               testData.customFieldLabel = `User — ${createdCustomField.name}`;
             })
-            .then(() => Lists.waitForCustomFieldToBeQueryable(recordType, testData.customFieldLabel));
+            .then(() => Lists.waitForCustomFieldToBeQueryable(testData.customFieldLabel, recordType));
 
           cy.createTempUser([]).then((user) => {
             loginUser = user;
@@ -50,8 +50,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C648496 Verify that the checkbox custom field is not queryable after deleting it (corsair)',
-          { tags: ['criticalPath', 'corsair', 'C648496'] },
+          'C648496 Verify that the checkbox custom field is not queryable after deleting it (athena)',
+          { tags: ['criticalPath', 'athena', 'C648496'] },
           () => {
             listName = getTestEntityValue('C648496_List');
 
@@ -84,7 +84,7 @@ describe('Lists', () => {
             testData.customField = null;
 
             // Wait ~5-6 min for the deletion to propagate to the entity type
-            Lists.waitForFieldLabelToBeAbsent(recordType, testData.customFieldLabel);
+            Lists.waitForFieldLabelToBeAbsent(testData.customFieldLabel, recordType);
 
             // #2 Go to the "Lists" app and open the list that contained the checkbox custom field
             cy.login(loginUser.username, loginUser.password, {

@@ -85,8 +85,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423550 Change selection of authority file from "Local" to different "Local" and create a new MARC authority record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423550'] },
+        'C423550 Change selection of authority file from "Local" to different "Local" and create a new MARC authority record (promin)',
+        { tags: ['extendedPath', 'promin', 'C423550'] },
         () => {
           // Step 1: Open new MARC authority record form
           MarcAuthorities.clickActionsAndNewAuthorityButton();

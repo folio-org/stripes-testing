@@ -234,8 +234,8 @@ describe('Data Import', () => {
       };
 
       it(
-        'C357552 Check item update via match by status (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C357552'] },
+        'C357552 Check item update via match by status (promin)',
+        { tags: ['criticalPath', 'promin', 'C357552'] },
         () => {
           mappingProfileForCreateHoldings(collectionOfMappingAndActionProfiles[0].mappingProfile);
           FieldMappingProfiles.checkMappingProfilePresented(

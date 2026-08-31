@@ -97,8 +97,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C405507 User can edit shared "MARC Bib" in member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C405507'] },
+        'C405507 User can edit shared "MARC Bib" in member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C405507'] },
         () => {
           cy.login(users.userAProperties.username, users.userAProperties.password, {
             path: TopMenu.inventoryPath,

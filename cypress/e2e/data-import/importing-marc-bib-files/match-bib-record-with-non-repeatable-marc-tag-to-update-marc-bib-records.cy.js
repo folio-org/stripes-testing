@@ -226,8 +226,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C350694 MARC to MARC matching: Match a bib record with a non-repeatable MARC tag to update MARC bib records (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C350694'] },
+      'C350694 MARC to MARC matching: Match a bib record with a non-repeatable MARC tag to update MARC bib records (promin)',
+      { tags: ['criticalPath', 'promin', 'C350694'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();

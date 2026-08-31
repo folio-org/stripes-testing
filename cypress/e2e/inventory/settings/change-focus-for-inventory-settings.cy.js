@@ -23,16 +23,17 @@ describe('Inventory', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    // bug report https://folio-org.atlassian.net/browse/STRIPES-1024
     it(
-      'C350397 Change focus for Inventory settings (folijet)',
-      { tags: ['extendedPathFlaky', 'folijet'] },
+      'C350397 Change focus for Inventory settings (promin)',
+      { tags: ['extendedPathFlaky', 'promin', 'C350397'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsPane.waitLoading();
-        SettingsPane.checkAppSettingsNavPaneFocused();
+        SettingsPane.checkSettingsNavPaneFocused();
+
         SettingsInventory.goToSettingsInventory();
-        SettingsPane.checkAppSettingsNavPaneFocused();
+        SettingsInventory.waitLoading();
+        SettingsInventory.checkInventoryNavPaneFocused();
       },
     );
   });

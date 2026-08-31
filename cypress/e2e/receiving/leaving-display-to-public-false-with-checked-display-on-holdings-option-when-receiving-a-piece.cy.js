@@ -1,163 +1,269 @@
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  HOLDING_RECEIVING_HISTORY,
+  ITEM_STATUS_NAMES,
+  INVENTORY_ITEMS,
+  LOCATION_NAMES,
+  ORDER_SEARCH_OPTIONS,
   ORDER_STATUSES,
-  POL_CREATE_INVENTORY_SETTINGS,
+  RECEIVING_PIECE_FORM_FIELD_LABELS,
 } from '../../support/constants';
-import permissions from '../../support/dictionary/permissions';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../support/fragments/finance/funds/funds';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import EditPieceModal from '../../support/fragments/receiving/modals/editPieceModal';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
+import { ItemRecordView } from '../../support/fragments/inventory';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
+import {
+  BasicOrderLine,
+  NewOrder,
+  OrderDetails,
+  OrderLines,
+  Orders,
+} from '../../support/fragments/orders';
+import getRandomPostfix from '../../support/utils/stringTools';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import Permissions from '../../support/dictionary/permissions';
 import Receiving from '../../support/fragments/receiving/receiving';
-import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import getRandomPostfix from '../../support/utils/stringTools';
+
+const PIECE_DETAILS_TO_FILL = {
+  displaySummary: 'Autotest display summary',
+  copyNumber: '1',
+  enumeration: 'v.1',
+  chronology: '2024',
+  comment: 'Autotest comment',
+  barcode: `autotest-barcode-${getRandomPostfix()}`,
+  callNumber: `autotest-call-number-${getRandomPostfix()}`,
+  accessionNumber: `autotest-accession-number-${getRandomPostfix()}`,
+};
 
 describe('Receiving', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const firstFund = { ...Funds.defaultUiFund };
-  const secondFund = {
-    name: `autotest_fund2_${getRandomPostfix()}`,
-    code: getRandomPostfix(),
-    externalAccountNo: getRandomPostfix(),
-    fundStatus: 'Active',
-    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
+  const testData = {
+    organization: NewOrganization.getDefaultOrganization(),
+    location: {},
+    materialType: {},
+    acquisitionMethod: {},
+    order: {},
+    orderLine: {},
+    user: {},
   };
-  const firstOrder = {
-    ...NewOrder.defaultOneTimeOrder,
-    approved: true,
-    reEncumber: true,
+
+  const createOrganization = () => {
+    return Organizations.createOrganizationViaApi(testData.organization).then((organizationId) => {
+      testData.organization.id = organizationId;
+    });
   };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
-  const firstBudget = {
-    ...Budgets.getDefaultBudget(),
-    allocated: 1000,
-  };
-  const displayNameTitle = `displayNameTitle_1${getRandomPostfix()}`;
-  let user;
-  let firstOrderNumber;
-  let servicePointId;
-  let location;
-  let firstOrderLine;
 
-  before(() => {
-    cy.getAdminToken();
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      firstBudget.fiscalYearId = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        firstFund.ledgerId = defaultLedger.id;
-        secondFund.ledgerId = defaultLedger.id;
-
-        Funds.createViaApi(firstFund).then((fundResponse) => {
-          firstFund.id = fundResponse.fund.id;
-          firstBudget.fundId = fundResponse.fund.id;
-          Budgets.createViaApi(firstBudget);
-
-          ServicePoints.getViaApi().then((servicePoint) => {
-            servicePointId = servicePoint[0].id;
-            NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-              location = res;
-
-              MaterialTypes.createMaterialTypeViaApi(MaterialTypes.getDefaultMaterialType()).then(
-                (mtypes) => {
-                  cy.getAcquisitionMethodsApi({
-                    query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-                  }).then((params) => {
-                    Organizations.createOrganizationViaApi(organization).then(
-                      (responseOrganizations) => {
-                        organization.id = responseOrganizations;
-                        firstOrder.vendor = organization.id;
-                        firstOrderLine = {
-                          ...BasicOrderLine.defaultOrderLine,
-                          cost: {
-                            listUnitPrice: 100.0,
-                            currency: 'USD',
-                            discountType: 'percentage',
-                            quantityPhysical: 1,
-                            poLineEstimatedPrice: 100.0,
-                          },
-                          fundDistribution: [
-                            { code: firstFund.code, fundId: firstFund.id, value: 100 },
-                          ],
-                          locations: [
-                            { locationId: location.id, quantity: 1, quantityPhysical: 1 },
-                          ],
-                          acquisitionMethod: params.body.acquisitionMethods[0].id,
-                          physical: {
-                            createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
-                            materialType: mtypes.body.id,
-                            materialSupplier: responseOrganizations,
-                            volumes: [],
-                          },
-                        };
-                        Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
-                          firstOrder.id = firstOrderResponse.id;
-                          firstOrderNumber = firstOrderResponse.poNumber;
-                          firstOrderLine.purchaseOrderId = firstOrderResponse.id;
-                          OrderLines.createOrderLineViaApi(firstOrderLine);
-                          Orders.updateOrderViaApi({
-                            ...firstOrderResponse,
-                            workflowStatus: ORDER_STATUSES.OPEN,
-                          });
-                        });
-                      },
-                    );
-                  });
-                },
-              );
-            });
-          });
-        });
+  const fetchReferenceData = () => {
+    return cy
+      .getLocations({ limit: 1, query: `name=${LOCATION_NAMES.MAIN_LIBRARY_UI}` })
+      .then((location) => {
+        testData.location = location;
+      })
+      .then(() => cy.getBookMaterialType())
+      .then((materialType) => {
+        testData.materialType = materialType;
+      })
+      .then(() => cy.getAcquisitionMethodsApi({
+        query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+      }))
+      .then(({ body }) => {
+        testData.acquisitionMethod = body.acquisitionMethods[0];
       });
+  };
+
+  const createOrderWithOrderLine = () => {
+    return Orders.createOrderViaApi({
+      ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
+      reEncumber: true,
+    })
+      .then((orderResponse) => {
+        testData.order = orderResponse;
+
+        return OrderLines.createOrderLineViaApi(
+          BasicOrderLine.getDefaultOrderLine({
+            purchaseOrderId: orderResponse.id,
+            acquisitionMethod: testData.acquisitionMethod.id,
+            specialLocationId: testData.location.id,
+            specialMaterialTypeId: testData.materialType.id,
+          }),
+        );
+      })
+      .then((orderLineResponse) => {
+        testData.orderLine = orderLineResponse;
+      });
+  };
+
+  const openOrder = () => {
+    return Orders.updateOrderViaApi({
+      ...testData.order,
+      workflowStatus: ORDER_STATUSES.OPEN,
+    })
+      .then(() => OrderLines.getOrderLineByIdViaApi(testData.orderLine.id))
+      .then((orderLine) => {
+        testData.orderLine = orderLine;
+      });
+  };
+
+  before('Create test data', () => {
+    cy.getAdminToken().then(() => {
+      createOrganization().then(fetchReferenceData).then(createOrderWithOrderLine).then(openOrder);
     });
 
     cy.createTempUser([
-      permissions.uiOrdersEdit.gui,
-      permissions.uiReceivingViewEditCreate.gui,
-      permissions.uiInventoryViewInstances.gui,
+      Permissions.uiInventoryViewInstances.gui,
+      Permissions.uiOrdersView.gui,
+      Permissions.uiReceivingViewEdit.gui,
     ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
+      testData.user = userProperties;
+
+      cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
       });
     });
   });
 
-  after(() => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
+  after('Delete test data', () => {
+    cy.getAdminToken().then(() => {
+      Receiving.getPiecesViaApi(testData.orderLine.id).then((pieces) => {
+        Receiving.unreceivePiecesViaApi({
+          poLineId: testData.orderLine.id,
+          pieceIds: pieces.map((piece) => piece.id),
+        }).then(() => {
+          Orders.updateOrderViaApi(
+            {
+              ...testData.order,
+              workflowStatus: ORDER_STATUSES.PENDING,
+            },
+            true,
+            false,
+          );
+          Orders.deleteOrderByOrderNumberViaApi(testData.order.poNumber);
+          InventoryInstance.deleteInstanceViaApi(testData.orderLine.instanceId);
+          Organizations.deleteOrganizationViaApi(testData.organization.id);
+          Users.deleteViaApi(testData.user.userId);
+        });
+      });
+    });
   });
 
   it(
-    'C464323 Leaving "Display to public" false with checked "Display on holdings" option when receiving a piece (thunderjet)',
+    'C464323 Fields become filled in Item record after populating in Piece record with "Display to public" false and "Display on holdings" true when receiving a piece (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C464323'] },
     () => {
-      Orders.searchByParameter('PO number', firstOrderNumber);
-      Orders.selectFromResultsList(firstOrderNumber);
+      // Steps 1-2: Search for the order, open it, and receive it
+      Orders.searchByParameter(ORDER_SEARCH_OPTIONS.PO_NUMBER, testData.order.poNumber);
+      Orders.selectFromResultsList(testData.order.poNumber);
+      OrderDetails.waitLoading();
       Orders.receiveOrderViaActions();
-      Receiving.selectLinkFromResultsList();
+      Receiving.selectFromResultsList(testData.orderLine.titleOrPackage);
+
+      // Step 3: Click on the piece and verify checkboxes presence and state
       Receiving.selectRecordInExpectedList();
-      Receiving.receiveDisplayOnHoldingPiece(displayNameTitle);
-      Receiving.selectInstanceInReceive(firstOrderLine.titleOrPackage);
+      EditPieceModal.waitLoading();
+      EditPieceModal.verifyModalView();
+      EditPieceModal.verifyCheckboxPresent(
+        RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_ON_HOLDING,
+        true,
+      );
+      EditPieceModal.verifyCheckboxPresent(
+        RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_TO_PUBLIC,
+        false,
+      );
+
+      // Step 4: Check "Display on holdings" and verify "Display to public" checkbox becomes visible
+      EditPieceModal.checkDisplayOnHoldingCheckbox();
+      EditPieceModal.verifyCheckboxPresent(
+        RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_TO_PUBLIC,
+        true,
+      );
+      EditPieceModal.verifyCheckboxState(
+        RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_ON_HOLDING,
+        true,
+      );
+
+      // Step 5-6: Fill in piece details
+      EditPieceModal.fillPieceDetails({
+        [RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_SUMMARY]: PIECE_DETAILS_TO_FILL.displaySummary,
+        [RECEIVING_PIECE_FORM_FIELD_LABELS.COPY_NUMBER]: PIECE_DETAILS_TO_FILL.copyNumber,
+        [RECEIVING_PIECE_FORM_FIELD_LABELS.ENUMERATION]: PIECE_DETAILS_TO_FILL.enumeration,
+        [RECEIVING_PIECE_FORM_FIELD_LABELS.CHRONOLOGY]: PIECE_DETAILS_TO_FILL.chronology,
+        [RECEIVING_PIECE_FORM_FIELD_LABELS.COMMENTS]: PIECE_DETAILS_TO_FILL.comment,
+        [RECEIVING_PIECE_FORM_FIELD_LABELS.BARCODE]: PIECE_DETAILS_TO_FILL.barcode,
+        [RECEIVING_PIECE_FORM_FIELD_LABELS.CALL_NUMBER]: PIECE_DETAILS_TO_FILL.callNumber,
+        [RECEIVING_PIECE_FORM_FIELD_LABELS.ACCESSION_NUMBER]: PIECE_DETAILS_TO_FILL.accessionNumber,
+      });
+
+      // Step 7: Receive the piece
+      EditPieceModal.openActionsMenu();
+      Receiving.quickReceivePieceFromDropdown();
+
+      // Step 8: Click Title link and verify holding table content
+      Receiving.selectInstanceInReceive(testData.orderLine.titleOrPackage);
+      InventoryInstance.checkHoldingsTableContent({
+        name: LOCATION_NAMES.MAIN_LIBRARY_UI,
+        records: [
+          {
+            barcode: PIECE_DETAILS_TO_FILL.barcode,
+            status: ITEM_STATUS_NAMES.IN_PROCESS,
+            copyNumber: PIECE_DETAILS_TO_FILL.copyNumber,
+            enumeration: PIECE_DETAILS_TO_FILL.enumeration,
+            chronology: PIECE_DETAILS_TO_FILL.chronology,
+          },
+        ],
+      });
+
+      // Step 9: Open item record and verify item details
+      InventoryInstance.openItemByBarcode(PIECE_DETAILS_TO_FILL.barcode);
+      ItemRecordView.checkItemRecordDetails({
+        administrativeData: [
+          { label: INVENTORY_ITEMS.BARCODE, conditions: { value: PIECE_DETAILS_TO_FILL.barcode } },
+          {
+            label: INVENTORY_ITEMS.ACCESSION_NUMBER,
+            conditions: { value: PIECE_DETAILS_TO_FILL.accessionNumber },
+          },
+        ],
+        itemData: [
+          {
+            label: INVENTORY_ITEMS.CALL_NUMBER,
+            conditions: { value: PIECE_DETAILS_TO_FILL.callNumber },
+          },
+          {
+            label: INVENTORY_ITEMS.COPY_NUMBER,
+            conditions: { value: PIECE_DETAILS_TO_FILL.copyNumber },
+          },
+        ],
+        enumerationData: [
+          {
+            label: INVENTORY_ITEMS.DISPLAY_SUMMARY,
+            conditions: { value: PIECE_DETAILS_TO_FILL.displaySummary },
+          },
+          {
+            label: INVENTORY_ITEMS.CHRONOLOGY,
+            conditions: { value: PIECE_DETAILS_TO_FILL.chronology },
+          },
+          {
+            label: INVENTORY_ITEMS.ENUMERATION,
+            conditions: { value: PIECE_DETAILS_TO_FILL.enumeration },
+          },
+        ],
+      });
+
+      // Step 10-11: Open holding record and verify "Receiving history" accordion
+      ItemRecordView.closeDetailView();
       InventoryInstance.viewHoldings();
-      HoldingsRecordView.checkPublicDisplayCheckboxState('false');
+      HoldingsRecordView.waitLoading();
+      HoldingsRecordView.checkReceivingHistoryValues({
+        displaySummary: PIECE_DETAILS_TO_FILL.displaySummary,
+        copyNumber: PIECE_DETAILS_TO_FILL.copyNumber,
+        enumeration: PIECE_DETAILS_TO_FILL.enumeration,
+        chronology: PIECE_DETAILS_TO_FILL.chronology,
+        comment: PIECE_DETAILS_TO_FILL.comment,
+        receiptDate: new Date().toLocaleDateString('en-US'),
+        publicDisplay: false,
+        source: HOLDING_RECEIVING_HISTORY.RECEIVING,
+      });
     },
   );
 });

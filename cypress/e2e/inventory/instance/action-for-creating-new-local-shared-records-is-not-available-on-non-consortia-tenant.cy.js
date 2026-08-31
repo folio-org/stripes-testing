@@ -25,8 +25,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C405565 (NON-CONSORTIA) Verify the action for creating new local/shared records is NOT available on Non-consortia tenant (folijet) (TaaS)',
-      { tags: ['criticalPath', 'folijet', 'C405565', 'shiftLeft'] },
+      'C405565 (NON-CONSORTIA) Verify the action for creating new local/shared records is NOT available on Non-consortia tenant (promin) (TaaS)',
+      { tags: ['criticalPath', 'promin', 'C405565', 'shiftLeft'] },
       () => {
         InventorySearchAndFilter.verifyPanesExist();
         InventorySearchAndFilter.instanceTabIsDefault();

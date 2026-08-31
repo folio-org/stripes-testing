@@ -291,8 +291,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C422193 Consortia | SRS+Inventory | ListRecords | Suppressed with flag | Skip suppressed: Edit Item of shared MARC and shared FOLIO instances from Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C422193', 'nonParallel'] },
+        'C422193 Consortia | SRS+Inventory | ListRecords | Suppressed with flag | Skip suppressed: Edit Item of shared MARC and shared FOLIO instances from Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C422193', 'nonParallel'] },
         () => {
           const fromDate = DateTools.getCurrentDateForOaiPmh();
 
@@ -330,7 +330,6 @@ describe('OAI-PMH', () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.marcInstance.uuid);
-          InventoryInstance.waitInstanceRecordViewOpened(testData.marcInstance.title);
           InventoryInstance.openHoldingsAccordion(testData.college.locationName);
           InventoryInstance.openItemByBarcode(testData.college.marcItemBarcode);
           ItemRecordView.waitLoading();
@@ -342,7 +341,6 @@ describe('OAI-PMH', () => {
 
           // Step 8-10: Member-1 - Edit Item of shared FOLIO instance to suppress from discovery
           InventoryInstances.searchByTitle(testData.folioInstance.uuid);
-          InventoryInstance.waitInstanceRecordViewOpened(testData.folioInstance.title);
           InventoryInstance.openHoldingsAccordion(testData.college.locationName);
           InventoryInstance.openItemByBarcode(testData.college.folioItemBarcode);
           ItemRecordView.waitLoading();
@@ -358,7 +356,6 @@ describe('OAI-PMH', () => {
           // Edit MARC item in University tenant
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.marcInstance.uuid);
-          InventoryInstance.waitInstanceRecordViewOpened(testData.marcInstance.title);
           InventoryInstance.openHoldingsAccordion(testData.university.locationName);
           InventoryInstance.openItemByBarcode(testData.university.marcItemBarcode);
           ItemRecordView.waitLoading();
@@ -371,7 +368,6 @@ describe('OAI-PMH', () => {
 
           // Edit FOLIO item in University tenant
           InventoryInstances.searchByTitle(testData.folioInstance.uuid);
-          InventoryInstance.waitInstanceRecordViewOpened(testData.folioInstance.title);
           InventoryInstance.openHoldingsAccordion(testData.university.locationName);
           InventoryInstance.openItemByBarcode(testData.university.folioItemBarcode);
           ItemRecordView.waitLoading();

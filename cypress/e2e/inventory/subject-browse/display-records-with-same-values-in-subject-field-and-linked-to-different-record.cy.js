@@ -1,145 +1,129 @@
-import { including } from '@interactors/html';
-import { DEFAULT_JOB_PROFILE_NAMES, APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
-import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-
-const testData = {
-  user: {},
-  recordIDs: [],
-  tags: ['650'],
-  instanceRecords: [
-    "Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
-    'Black Panther : the Intergalactic Empire of Wakanda',
-  ],
-  searchAuthorityQueries: ['Good and evil'],
-  browseQueries: ['Good and Evil'],
-  subjectHeading: ['Good and evil'],
-
-  marcFiles: [
-    {
-      marc: 'marcBibC375224.mrc',
-      fileName: `testMarcFileC375224.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
-      numberOfRecords: 2,
-      propertyName: 'instance',
-    },
-    {
-      marc: 'marcAuth_1C375224.mrc',
-      fileName: `testMarcFileAuth_1C375224.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-      numberOfRecords: 1,
-      propertyName: 'authority',
-    },
-    {
-      marc: 'marcAuth_2C375224.mrc',
-      fileName: `testMarcFileAuth_2C375224.${randomFourDigitNumber()}.mrc`,
-      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-      numberOfRecords: 1,
-      propertyName: 'authority',
-    },
-  ],
-};
+import getRandomPostfix, { randomNDigitNumber } from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Subject Browse', () => {
+    const randomPostfix = getRandomPostfix();
+    const randomDigits = randomNDigitNumber(10);
+    const authorityHeading = `AT_C375224_MarcAuthority_${randomPostfix}`;
+    const instanceTitlePrefix = `AT_C375224_MarcBibInstance_${randomPostfix}`;
+    const precedingSubjectPrefix = 'aaa_C375224_preceding';
+
+    const testData = {
+      user: {},
+      instanceId1: null,
+      instanceId2: null,
+      authorityId1: null,
+      authorityId2: null,
+    };
+
+    const tags = {
+      tag008: '008',
+      tag245: '245',
+      tag600: '600',
+      tag650: '650',
+      tag150: '150',
+    };
+
+    const authorityFields = [
+      { tag: tags.tag150, content: `$a ${authorityHeading}`, indicators: ['\\', '\\'] },
+    ];
+
+    const marcBibFields = (title) => [
+      { tag: tags.tag008, content: QuickMarcEditor.defaultValid008Values },
+      { tag: tags.tag245, content: `$a ${title}`, indicators: ['1', '1'] },
+      { tag: tags.tag650, content: '$a Field650', indicators: ['\\', '0'] },
+    ];
+
+    // to make sure our target subject value is 6th in the browse result list
+    const precedingSubjectValues = Array.from(
+      { length: 5 },
+      (_, i) => `${precedingSubjectPrefix}${i + 1}`,
+    );
+    const precedingSubjectFields = precedingSubjectValues.map((value) => ({
+      tag: tags.tag650,
+      content: `$a ${value}`,
+      indicators: ['\\', '0'],
+    }));
+
     before('Create test data', () => {
-      cy.getAdminToken()
+      cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C375224_');
+      InventoryInstances.deleteInstanceByTitleViaApi('C375224_');
+
+      cy.then(() => {
+        MarcAuthorities.createMarcAuthorityViaAPI(
+          '',
+          `375224${randomDigits}1`,
+          authorityFields,
+        ).then((id) => {
+          testData.authorityId1 = id;
+        });
+        MarcAuthorities.createMarcAuthorityViaAPI(
+          '',
+          `375224${randomDigits}2`,
+          authorityFields,
+        ).then((id) => {
+          testData.authorityId2 = id;
+        });
+        cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, [
+          ...marcBibFields(`${instanceTitlePrefix}_1`),
+          ...precedingSubjectFields,
+        ]).then((id) => {
+          testData.instanceId1 = id;
+        });
+        cy.createMarcBibliographicViaAPI(
+          QuickMarcEditor.defaultValidLdr,
+          marcBibFields(`${instanceTitlePrefix}_2`),
+        ).then((id) => {
+          testData.instanceId2 = id;
+        });
+      })
         .then(() => {
-          InventoryInstances.getInstancesViaApi({
-            limit: 100,
-            query: 'title="Black Panther"',
-          }).then((instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-            testData.searchAuthorityQueries.forEach((query) => {
-              MarcAuthorities.getMarcAuthoritiesViaApi({
-                limit: 100,
-                query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
-              }).then((authorities) => {
-                if (authorities) {
-                  authorities.forEach(({ id }) => {
-                    MarcAuthority.deleteViaAPI(id, true);
-                  });
-                }
-              });
-            });
-          });
-          testData.marcFiles.forEach((marcFile) => {
-            DataImport.uploadFileViaApi(
-              marcFile.marc,
-              marcFile.fileName,
-              marcFile.jobProfileToRun,
-            ).then((response) => {
-              response.forEach((record) => {
-                testData.recordIDs.push(record[marcFile.propertyName].id);
-              });
-            });
+          QuickMarcEditor.linkMarcRecordsViaApi({
+            bibId: testData.instanceId1,
+            authorityIds: [testData.authorityId1],
+            bibFieldTags: [tags.tag650],
+            authorityFieldTags: [tags.tag150],
+            finalBibFieldContents: [`$a ${authorityHeading}`],
           });
         })
         .then(() => {
-          cy.waitForAuthRefresh(() => {
-            cy.loginAsAdmin();
-            TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
-          for (let i = 0; i < testData.instanceRecords.length; i++) {
-            cy.ifConsortia(true, () => {
-              InventorySearchAndFilter.byShared('No');
-            });
-            InventoryInstances.searchByTitle(testData.recordIDs[i]);
-            InventoryInstances.selectInstance();
-            InventoryInstance.editMarcBibliographicRecord();
-            InventoryInstance.verifyAndClickLinkIcon(testData.tags[0]);
-            MarcAuthorities.switchToSearch();
-            InventoryInstance.verifySelectMarcAuthorityModal();
-            InventoryInstance.searchResults(testData.searchAuthorityQueries[0]);
-            cy.ifConsortia(true, () => {
-              MarcAuthorities.clickAccordionByName('Shared');
-              MarcAuthorities.actionsSelectCheckbox('No');
-            });
-            MarcAuthoritiesSearch.selectExcludeReferencesFilter();
-            MarcAuthoritiesSearch.selectAuthorityByIndex(i);
-            InventoryInstance.clickLinkButton();
-            QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[0]);
-            QuickMarcEditor.pressSaveAndClose();
-
-            InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[0]));
-            InventoryInstances.resetAllFilters();
-          }
-          cy.wait(3000);
-          cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-            testData.user = userProperties;
+          QuickMarcEditor.linkMarcRecordsViaApi({
+            bibId: testData.instanceId2,
+            authorityIds: [testData.authorityId2],
+            bibFieldTags: [tags.tag650],
+            authorityFieldTags: [tags.tag150],
+            finalBibFieldContents: [`$a ${authorityHeading}`],
           });
         });
+
+      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+        testData.user = userProperties;
+      });
     });
 
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.recordIDs[0]);
-      InventoryInstance.deleteInstanceViaApi(testData.recordIDs[1]);
-      MarcAuthority.deleteViaAPI(testData.recordIDs[2]);
-      MarcAuthority.deleteViaAPI(testData.recordIDs[3]);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceId1);
+      InventoryInstance.deleteInstanceViaApi(testData.instanceId2);
+      MarcAuthority.deleteViaAPI(testData.authorityId1, true);
+      MarcAuthority.deleteViaAPI(testData.authorityId2, true);
     });
 
     it(
-      'C375224 Browse | Display records with same values in "Subject" field and linked to different "MARC authority" records (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C375224'] },
+      'C375224 Browse | Display records with same values in "Subject" field and linked to different "MARC authority" records (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C375224'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
@@ -147,18 +131,13 @@ describe('Inventory', () => {
         });
 
         InventorySearchAndFilter.selectBrowseSubjects();
-        BrowseSubjects.waitForSubjectToAppear(testData.searchAuthorityQueries[0], true, true, {
-          allLinked: true,
+        precedingSubjectValues.forEach((value) => {
+          BrowseSubjects.waitForSubjectToAppear(value);
         });
-        InventorySearchAndFilter.browseSearch(testData.browseQueries[0]);
-        BrowseSubjects.checkAuthorityIconAndValueDisplayedForRow(
-          5,
-          testData.searchAuthorityQueries[0],
-        );
-        BrowseSubjects.checkAuthorityIconAndValueDisplayedForRow(
-          6,
-          testData.searchAuthorityQueries[0],
-        );
+        BrowseSubjects.waitForSubjectToAppear(authorityHeading, true, true, { allLinked: true });
+        InventorySearchAndFilter.browseSearch(authorityHeading);
+        BrowseSubjects.checkAuthorityIconAndValueDisplayedForRow(5, authorityHeading);
+        BrowseSubjects.checkAuthorityIconAndValueDisplayedForRow(6, authorityHeading);
         BrowseSubjects.verifyNumberOfTitlesForRow(5, 1);
         BrowseSubjects.verifyNumberOfTitlesForRow(6, 1);
       },

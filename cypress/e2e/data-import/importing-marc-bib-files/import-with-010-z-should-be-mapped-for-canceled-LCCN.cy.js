@@ -50,8 +50,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C468223 Import of file with 010$z should be mapped for canceled LCCN (folijet)',
-      { tags: ['edgeCases', 'folijet', 'C468223'] },
+      'C468223 Import of file with 010$z should be mapped for canceled LCCN (promin)',
+      { tags: ['edgeCases', 'promin', 'C468223'] },
       () => {
         // Step 1-2: Upload MARC Bib file and run job profile
         DataImport.verifyUploadState();

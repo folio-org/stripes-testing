@@ -43,7 +43,7 @@ describe('Lists', () => {
                   userData = userProperties;
                 });
             })
-            .then(() => Lists.waitForCustomFieldToBeQueryable(recordType, testData.customFieldLabel));
+            .then(() => Lists.waitForCustomFieldToBeQueryable(testData.customFieldLabel, recordType));
 
           cy.createTempUser([]).then((user) => {
             loginUser = user;
@@ -73,8 +73,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C648489 Verify that the custom field with a type textbox is queryable (corsair)',
-          { tags: ['criticalPath', 'corsair', 'C648489'] },
+          'C648489 Verify that the custom field with a type textbox is queryable (athena)',
+          { tags: ['criticalPath', 'athena', 'C648489'] },
           () => {
             listName = getTestEntityValue('C648489_List');
 

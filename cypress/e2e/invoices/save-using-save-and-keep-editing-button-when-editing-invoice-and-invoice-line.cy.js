@@ -1,5 +1,5 @@
 import {
-  INVOICE_AND_INVOICE_LINE_BUTTONS,
+  COMMON_BUTTON_LABELS,
   INVOICE_LINE_VIEW_FIELDS,
   INVOICE_VIEW_FIELDS,
 } from '../../support/constants';
@@ -39,20 +39,20 @@ describe('Invoices', () => {
 
   const buttonConditions = {
     saveCloseEnabled: [
-      { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
+      { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
       {
-        label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
+        label: COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING,
         conditions: { disabled: false },
       },
-      { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: false } },
+      { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: false } },
     ],
     saveCloseDisabled: [
-      { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
+      { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
       {
-        label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
+        label: COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING,
         conditions: { disabled: true },
       },
-      { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: true } },
+      { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: true } },
     ],
   };
 

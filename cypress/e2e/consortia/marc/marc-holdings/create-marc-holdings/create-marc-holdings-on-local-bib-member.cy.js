@@ -15,6 +15,7 @@ import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../../../support/constants';
 import Locations from '../../../../../support/fragments/settings/tenant/location-setup/locations';
 import Location from '../../../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import { CallNumberBrowseSettings } from '../../../../../support/fragments/settings/inventory/instances/callNumberBrowse';
 
 describe('MARC', () => {
   describe('MARC Holdings', () => {
@@ -109,6 +110,10 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.College);
+              CallNumberBrowseSettings.assignCallNumberTypesViaApi({
+                name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
+                callNumberTypes: [],
+              });
               cy.login(testData.user.username, testData.user.password, {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
@@ -135,8 +140,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C788740 Create MARC holdings record on Local MARC bib from Member tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C788740'] },
+          'C788740 Create MARC holdings record on Local MARC bib from Member tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C788740'] },
           () => {
             InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);
             InventoryInstances.searchByTitle(createdInstanceId);

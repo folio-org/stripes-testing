@@ -61,8 +61,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466152 Search by "Classification, normalized" search option using wildcards (truncation) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466152'] },
+      'C466152 Search by "Classification, normalized" search option using wildcards (truncation) (promin)',
+      { tags: ['criticalPath', 'promin', 'C466152'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectSearchOption(testData.classificationOption);

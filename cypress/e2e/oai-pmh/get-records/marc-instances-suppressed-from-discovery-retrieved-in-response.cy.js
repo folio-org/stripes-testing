@@ -41,8 +41,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375185 GetRecord: Verify MARC instances suppressed from discovery in case Transfer suppressed records with discovery flag (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375185'] },
+      'C375185 GetRecord: Verify MARC instances suppressed from discovery in case Transfer suppressed records with discovery flag (athena)',
+      { tags: ['extendedPath', 'athena', 'C375185'] },
       () => {
         OaiPmh.getRecordRequest(marcInstanceId).then((response) => {
           OaiPmh.verifyMarcField(

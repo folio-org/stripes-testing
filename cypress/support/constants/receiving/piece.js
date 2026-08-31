@@ -41,6 +41,7 @@ export const RECEIVING_PIECE_FORM_FIELD_LABELS = {
   COPY_NUMBER: 'Copy number',
   CREATE_ITEM: 'Create item',
   DISPLAY_ON_HOLDING: 'Display on holding',
+  DISPLAY_TO_PUBLIC: 'Display to public',
   DISPLAY_SUMMARY: 'Display summary',
   ENUMERATION: 'Enumeration',
   EXPECTED_RECEIPT_DATE: 'Expected receipt date',

@@ -20,7 +20,7 @@ describe('Inventory', () => {
   describe('Call Number Browse', () => {
     describe('Sorting', () => {
       const randomPostfix = getRandomPostfix();
-      const randomLetters = `H${getRandomLetters(7).toUpperCase()}`;
+      const randomLetters = `H${getRandomLetters(7).toUpperCase()}A`;
       const lcTypeCode = callNumbersIds[BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS];
       const instanceTitle = `AT_C387487_FolioInstance_${randomPostfix}`;
       const callNumbers = [
@@ -211,8 +211,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C387487 Call numbers are sorted by "LC" type when using "Library of Congress classification" browse option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C387487'] },
+        'C387487 Call numbers are sorted by "LC" type when using "Library of Congress classification" browse option (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C387487'] },
         () => {
           callNumberValuesInApi.forEach((callNumber) => {
             BrowseCallNumber.waitForCallNumberToAppear(callNumber, true, lcTypeCode);

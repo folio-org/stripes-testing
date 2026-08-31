@@ -7,8 +7,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('eHoldings', () => {
   describe('Title+Package', () => {
     const testData = {
-      resourcePath: '/resources/19-166-60764',
-      resourceId: '19-166-60764',
+      resourcePath: '/resources/19-166-115237081',
+      resourceId: '19-166-115237081',
       labelAValue: `Test value ${getRandomPostfix()}`,
     };
 

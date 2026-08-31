@@ -25,8 +25,8 @@ describe('OAI-PMH', () => {
   });
 
   it(
-    'C367985 Verify that "Record Source" dropdown is added to Behavior page (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C367985'] },
+    'C367985 Verify that "Record Source" dropdown is added to Behavior page (athena)',
+    { tags: ['criticalPath', 'athena', 'C367985'] },
     () => {
       OaiPmh.checkSectionListItems();
       OaiPmh.selectSection(SECTIONS.BEHAVIOR);

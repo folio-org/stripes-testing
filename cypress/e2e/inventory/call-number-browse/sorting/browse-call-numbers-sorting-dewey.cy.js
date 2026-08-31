@@ -111,8 +111,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C388548 Browse call numbers - Correct sorting for Dewey type call numbers (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C388548'] },
+      'C388548 Browse call numbers - Correct sorting for Dewey type call numbers (promin) (TaaS)',
+      { tags: ['criticalPath', 'promin', 'C388548'] },
       () => {
         const exactMatchQuery = '331';
         const nonExactMatchQuery = '330.999999';

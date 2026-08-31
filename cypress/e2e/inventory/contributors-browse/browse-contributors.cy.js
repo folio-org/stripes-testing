@@ -76,8 +76,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C353999 Verify that the "Instance" record with same "Contributor name", but different "Name type"and "Relator terms" displayed as 2 rows. (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C353999', 'eurekaPhase1'] },
+      'C353999 Verify that the "Instance" record with same "Contributor name", but different "Name type"and "Relator terms" displayed as 2 rows. (promin)',
+      { tags: ['criticalPath', 'promin', 'C353999', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.item.instanceName);
         InventorySearchAndFilter.selectSearchResultItem();
@@ -109,7 +109,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.switchToBrowseTab();
 
         BrowseContributors.select();
-        BrowseContributors.waitForContributorToAppear(testData.contributor.name);
+        BrowseContributors.waitForContributorToAppear(testData.contributor.name, true, false, 3);
         BrowseContributors.browse(testData.contributor.name);
         BrowseContributors.checkSearchResultRow(
           testData.contributor.name,
@@ -133,8 +133,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C353660 Verify that the "Contributor name" from the same "Instance" record", with the same "Name type", but different "Relator terms" counted once at browse result list. (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C353660', 'eurekaPhase1'] },
+      'C353660 Verify that the "Contributor name" from the same "Instance" record", with the same "Name type", but different "Relator terms" counted once at browse result list. (promin)',
+      { tags: ['criticalPath', 'promin', 'C353660', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.item.instanceName);
         InventorySearchAndFilter.selectSearchResultItem();
@@ -179,8 +179,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C356837 Verify that deleted Contributor on instance record with source = Folio does not display on browse result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C356837', 'eurekaPhase1'] },
+      'C356837 Verify that deleted Contributor on instance record with source = Folio does not display on browse result list (promin)',
+      { tags: ['criticalPath', 'promin', 'C356837', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.item.instanceName);
         InventorySearchAndFilter.selectSearchResultItem();
@@ -226,8 +226,8 @@ describe('Inventory', () => {
     );
 
     it(
-      "C358148 Verify that switching between browse options doesn't submit a form (spitfire)",
-      { tags: ['criticalPath', 'spitfire', 'C358148', 'eurekaPhase1'] },
+      "C358148 Verify that switching between browse options doesn't submit a form (promin)",
+      { tags: ['criticalPath', 'promin', 'C358148', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         BrowseContributors.select();

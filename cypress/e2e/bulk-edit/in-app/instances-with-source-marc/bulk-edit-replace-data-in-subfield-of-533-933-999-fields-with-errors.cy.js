@@ -144,8 +144,8 @@ describe(
       });
 
       it(
-        'C543814 Replace data in the subfield of MARC field (533, 933, 999) with errors (MARC & FOLIO) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C543814'] },
+        'C543814 Replace data in the subfield of MARC field (533, 933, 999) with errors (MARC & FOLIO) (athena)',
+        { tags: ['criticalPath', 'athena', 'C543814'] },
         () => {
           // Step 1: Show Source column
           BulkEditActions.openActions();

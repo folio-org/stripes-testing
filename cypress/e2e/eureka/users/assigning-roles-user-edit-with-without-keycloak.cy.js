@@ -65,7 +65,7 @@ describe(
                   lastName: `AT_C584520_LastName_${i}_${randomPostfix}`,
                   firstName: `AT_C584520_FirstName_${i}_${randomPostfix}`,
                   email: 'AT_C584520@test.com',
-                  preferredContactTypeId: '002',
+                  preferredContactTypeIds: ['002'],
                 },
               });
             }
@@ -73,13 +73,13 @@ describe(
             cy.ifConsortia(true, () => {
               userBodies[1].type = 'patron';
             });
-            cy.createUserWithoutKeycloakInEurekaApi(userBodies[0]).then((userId) => {
-              userIds.push(userId);
+            Users.createViaApi(userBodies[0]).then((user) => {
+              userIds.push(user.id);
             });
-            cy.createUserWithoutKeycloakInEurekaApi(userBodies[1]).then((userId) => {
-              userIds.push(userId);
+            Users.createViaApi(userBodies[1]).then((user) => {
+              userIds.push(user.id);
             });
-            Users.createViaApi(userBodies[2]).then((user) => {
+            Users.createViaApi(userBodies[2], { keycloak: true }).then((user) => {
               userIds.push(user.id);
             });
             cy.createTempUser([]).then((createdUserProperties) => {

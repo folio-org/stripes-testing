@@ -185,8 +185,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C422190 Consortia | SRS+Inventory | GetRecord | ListRecords | Make local MARC Shared from Member and mark as Deleted (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C422190', 'nonParallel'] },
+        'C422190 Consortia | SRS+Inventory | GetRecord | ListRecords | Make local MARC Shared from Member and mark as Deleted (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C422190', 'nonParallel'] },
         () => {
           // Step 1: Search for shared-from-member MARC Instance with holdings in member-1
           InventorySearchAndFilter.clearDefaultHeldbyFilter();

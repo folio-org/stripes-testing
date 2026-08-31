@@ -34,8 +34,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C377049 Verify elements on the "Build query" form (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C377049'] },
+      'C377049 Verify elements on the "Build query" form (athena)',
+      { tags: ['extendedPath', 'athena', 'C377049'] },
       () => {
         // Step 1: Click "Query" tab in the top left corner
         BulkEditSearchPane.openQuerySearch();
@@ -64,7 +64,7 @@ describe('Bulk-edit', () => {
         QueryModal.verifyBooleanColumn(1);
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, false);
-        QueryModal.verifyQueryAreaContent(' AND (  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.testQueryDisabled(true);
         QueryModal.runQueryDisabled(true);
 

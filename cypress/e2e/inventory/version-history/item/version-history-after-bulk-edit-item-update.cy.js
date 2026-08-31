@@ -120,8 +120,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C656332 Check "Version history" of Item is populated after update in "Bulk edit" app (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C656332'] },
+        'C656332 Check "Version history" of Item is populated after update in "Bulk edit" app (promin)',
+        { tags: ['criticalPath', 'promin', 'C656332'] },
         () => {
           // Precondition: update the item through Bulk edit.
           BulkEditSearchPane.checkItemsRadio();

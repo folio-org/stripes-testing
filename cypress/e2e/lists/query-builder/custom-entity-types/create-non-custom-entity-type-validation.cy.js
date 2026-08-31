@@ -39,8 +39,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C825348 Verify that the appropriate validation message exists if the user tries to create a non-custom entity type (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C825348'] },
+        'C825348 Verify that the appropriate validation message exists if the user tries to create a non-custom entity type (athena)',
+        { tags: ['extendedPath', 'athena', 'C825348'] },
         () => {
           cy.getUserToken(userData.username, userData.password);
 

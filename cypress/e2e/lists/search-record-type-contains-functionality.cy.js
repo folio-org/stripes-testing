@@ -24,8 +24,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C476720 "Search record types" functionality works with "Contains" operator (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C476720'] },
+      'C476720 "Search record types" functionality works with "Contains" operator (athena)',
+      { tags: ['extendedPath', 'athena', 'C476720'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -49,8 +49,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C466317 Verify that displays correct message when there are no available record types (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C466317'] },
+      'C466317 Verify that displays correct message when there are no available record types (athena)',
+      { tags: ['extendedPath', 'athena', 'C466317'] },
       () => {
         cy.loginAsAdmin({
           path: TopMenu.listsPath,

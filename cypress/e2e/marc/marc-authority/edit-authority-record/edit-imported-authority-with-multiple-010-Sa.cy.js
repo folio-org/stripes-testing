@@ -58,8 +58,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C376612 Editing imported "MARC Authority" record with two subfields "$a" in "010" field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C376612'] },
+        'C376612 Editing imported "MARC Authority" record with two subfields "$a" in "010" field (promin)',
+        { tags: ['extendedPath', 'promin', 'C376612'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);

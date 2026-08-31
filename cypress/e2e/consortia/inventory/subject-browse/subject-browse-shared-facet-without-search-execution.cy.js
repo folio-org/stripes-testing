@@ -117,8 +117,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C402757 Apply "Shared" facet when Browse for same subject without executed search (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C402757'] },
+        'C402757 Apply "Shared" facet when Browse for same subject without executed search (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C402757'] },
         () => {
           cy.resetTenant();
           cy.login(user.username, user.password);

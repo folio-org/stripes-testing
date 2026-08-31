@@ -1,8 +1,4 @@
-import {
-  APPLICATION_NAMES,
-  DEFAULT_JOB_PROFILE_NAMES,
-  LOCATION_NAMES,
-} from '../../../../support/constants';
+import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -31,6 +27,7 @@ describe('Inventory', () => {
         Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
       ];
+      let servicePoint;
 
       before('Create test data', () => {
         cy.getAdminToken();
@@ -45,15 +42,15 @@ describe('Inventory', () => {
           cy.resetTenant();
           cy.setTenant(Affiliations.College)
             .then(() => {
-              cy.getLocations({ query: `name="${LOCATION_NAMES.DCB_UI}"` }).then((res) => {
-                testData.location = res;
+              cy.getLocations({ query: '(name<>"*auto*" and name<>"AT_*")' }).then((res) => {
+                testData.locationCollege = res;
               });
             })
             .then(() => {
               cy.createSimpleMarcHoldingsViaAPI(
                 testData.instanceId,
                 testData.instanceHrid,
-                testData.location.code,
+                testData.locationCollege.code,
               ).then(() => {
                 cy.getHoldings({ limit: 1, query: `"instanceId"="${testData.instanceId}"` }).then(
                   (holdings) => {
@@ -65,12 +62,14 @@ describe('Inventory', () => {
         });
 
         cy.withinTenant(Affiliations.University, () => {
-          ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
-            testData.location = Locations.getDefaultLocation({
+          servicePoint = ServicePoints.getDefaultServicePoint();
+          ServicePoints.createViaApi(servicePoint);
+          cy.then(() => {
+            testData.locationUniversity = Locations.getDefaultLocation({
               servicePointId: servicePoint.id,
             }).location;
-            Locations.createViaApi(testData.location).then((location) => {
-              testData.location.id = location.id;
+            Locations.createViaApi(testData.locationUniversity).then((location) => {
+              testData.locationUniversity.id = location.id;
             });
           });
         });
@@ -99,10 +98,12 @@ describe('Inventory', () => {
       });
 
       after('Delete test data', () => {
-        cy.getAdminToken();
+        cy.resetTenant();
+        cy.getAdminToken(false);
         cy.setTenant(Affiliations.University);
         cy.deleteHoldingRecordViaApi(testData.holding.id);
-        Locations.deleteViaApi(testData.location);
+        Locations.deleteViaApi(testData.locationUniversity);
+        ServicePoints.deleteViaApi(servicePoint.id);
         cy.withinTenant(Affiliations.Consortia, () => {
           cy.getAdminToken();
           InventoryInstance.deleteInstanceViaApi(testData.instanceId);
@@ -111,8 +112,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C788750 Update ownership of MARC holdings record which belongs to Shared MARC bib (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C788750'] },
+        'C788750 Update ownership of MARC holdings record which belongs to Shared MARC bib (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C788750'] },
         () => {
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();
@@ -125,7 +126,7 @@ describe('Inventory', () => {
               action,
               testData.holding.hrid,
               tenantNames.college,
-              testData.location.name,
+              testData.locationUniversity.name,
             );
           });
           InstanceRecordView.waitLoading();
@@ -134,11 +135,12 @@ describe('Inventory', () => {
           InstanceRecordView.verifyMemberSubHoldingsAccordionAbsent(Affiliations.College);
           InstanceRecordView.verifyMemberSubHoldingsAccordion(Affiliations.University);
           InstanceRecordView.expandMemberSubHoldings(tenantNames.university);
-          InstanceRecordView.verifyIsHoldingsCreated([`${testData.location.name} >`]);
+          InstanceRecordView.verifyIsHoldingsCreated([`${testData.locationUniversity.name} >`]);
           InstanceRecordView.openHoldingView();
           HoldingsRecordView.checkHoldingRecordViewOpened();
           HoldingsRecordView.editInQuickMarc();
           QuickMarcEditor.waitLoading();
+          QuickMarcEditor.checkContentByTag('852', `$b ${testData.locationUniversity.code}`);
         },
       );
     });

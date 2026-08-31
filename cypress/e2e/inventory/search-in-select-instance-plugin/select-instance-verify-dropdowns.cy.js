@@ -111,8 +111,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476770 "Select instance" plugin | Check what filters and facets display in the three segments (Instance, Holdings, Item) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476770'] },
+        'C476770 "Select instance" plugin | Check what filters and facets display in the three segments (Instance, Holdings, Item) (promin)',
+        { tags: ['extendedPath', 'promin', 'C476770'] },
         () => {
           SelectInstanceModal.verifyFiltersOrder(testData.filtersOrder.instance);
           SelectInstanceModal.switchToHoldings();

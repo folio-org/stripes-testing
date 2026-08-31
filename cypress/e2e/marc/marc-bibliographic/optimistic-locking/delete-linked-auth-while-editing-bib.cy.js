@@ -116,8 +116,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C397353 Delete linked "MARC Authority" record while "MARC Bib" record being edited (saved link) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C397353'] },
+        'C397353 Delete linked "MARC Authority" record while "MARC Bib" record being edited (saved link) (promin)',
+        { tags: ['extendedPath', 'promin', 'C397353'] },
         () => {
           // Step 1: User logs in, searches for MARC bib record, opens for editing
           cy.login(user.username, user.password, {

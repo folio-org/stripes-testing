@@ -113,8 +113,8 @@ describe.skip('DCB', () => {
   });
 
   it(
-    'C422200 (DCB) Lending Flow (volaris)',
-    { tags: ['criticalPathExclude', 'volarisExclude', 'C422200Exclude'] },
+    'C422200 (DCB) Lending Flow (vega)',
+    { tags: ['criticalPathExclude', 'vegaExclude', 'C422200Exclude'] },
     () => {
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);

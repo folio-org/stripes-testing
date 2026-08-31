@@ -68,8 +68,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C359238 MARC Authority | Displaying of placeholder message when user deletes a row (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C359238'] },
+        'C359238 MARC Authority | Displaying of placeholder message when user deletes a row (promin)',
+        { tags: ['criticalPath', 'promin', 'C359238'] },
         () => {
           MarcAuthorities.searchAndVerify(
             testData.authorityB.searchOption,

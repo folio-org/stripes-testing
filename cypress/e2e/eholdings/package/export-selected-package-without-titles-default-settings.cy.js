@@ -52,8 +52,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C356414 Export of selected "Package" without titles and with default settings (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C356414'] },
+      'C356414 Export of selected "Package" without titles and with default settings (promin)',
+      { tags: ['extendedPath', 'promin', 'C356414'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.searchQuery);
         EHoldingsPackagesSearch.bySelectionStatus(testData.selectedStatus);

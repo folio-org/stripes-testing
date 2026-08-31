@@ -180,8 +180,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566145 Verify "Change note type" action for Holdings in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566145'] },
+        'C566145 Verify "Change note type" action for Holdings in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566145'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
           BulkEditSearchPane.uploadFile(holdingUUIDsFileName);

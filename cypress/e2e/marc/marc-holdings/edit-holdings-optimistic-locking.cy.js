@@ -94,8 +94,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C353227 Editing same "MARC Holdings" record by 2 different users (Optimistic locking) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C353227'] },
+      'C353227 Editing same "MARC Holdings" record by 2 different users (Optimistic locking) (promin)',
+      { tags: ['extendedPath', 'promin', 'C353227'] },
       () => {
         // Steps 1-2: User A logs in, opens holdings record for editing
         cy.login(testData.userA.username, testData.userA.password, {

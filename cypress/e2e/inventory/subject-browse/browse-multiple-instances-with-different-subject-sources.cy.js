@@ -67,11 +67,12 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584546 Browsing the multiple instances with different subject sources (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C584546'] },
+      'C584546 Browsing the multiple instances with different subject sources (promin)',
+      { tags: ['criticalPath', 'promin', 'C584546'] },
       () => {
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventorySearchAndFilter.switchToBrowseTab();
+        BrowseSubjects.waitForSubjectToAppear(testData.subject.name, true, false, { quantity: 2 });
         cy.wait(5000);
         BrowseSubjects.searchBrowseSubjects(testData.subject.name);
         cy.wait(3000);

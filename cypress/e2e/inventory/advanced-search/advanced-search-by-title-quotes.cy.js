@@ -144,8 +144,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C605895 Search for Instance record which has quotes in title using "Advanced search" modal (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C605895'] },
+      'C605895 Search for Instance record which has quotes in title using "Advanced search" modal (promin)',
+      { tags: ['extendedPath', 'promin', 'C605895'] },
       () => {
         searches.forEach((search) => {
           InventoryInstances.clickAdvSearchButton();

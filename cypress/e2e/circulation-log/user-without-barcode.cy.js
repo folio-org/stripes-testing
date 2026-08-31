@@ -79,8 +79,8 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C360554 Verify that "-" shown if User does not have barcode (volaris) (TaaS)',
-    { tags: ['extendedPath', 'volaris', 'C360554'] },
+    'C360554 Verify that "-" shown if User does not have barcode (vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C360554'] },
     () => {
       const itemBarcode = testData.folioInstances[0].barcodes[0];
       // Navigate to the "Check in" app and check in the Item (step 2)

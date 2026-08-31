@@ -20,8 +20,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C350936 Verify "Bulk Edit: In app - View inventory records" permissions (firebird)',
-      { tags: ['smoke', 'firebird', 'C350936'] },
+      'C350936 Verify "Bulk Edit: In app - View inventory records" permissions (athena)',
+      { tags: ['smoke', 'athena', 'C350936'] },
       () => {
         cy.login(userWithInAppViewPermission.username, userWithInAppViewPermission.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);

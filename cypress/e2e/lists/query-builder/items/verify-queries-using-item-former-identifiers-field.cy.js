@@ -110,8 +110,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C844252 Verify that it\'s possible to run queries using the field "Item — Former identifiers" (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C844252'] },
+        'C844252 Verify that it\'s possible to run queries using the field "Item — Former identifiers" (athena)',
+        { tags: ['criticalPath', 'athena', 'C844252'] },
         () => {
           // Step 1: Create new list with Items record type and build query
           Lists.openNewListPane();
@@ -128,15 +128,15 @@ describe('Lists', () => {
           // Step 2: Select "Item — Former identifiers" field
           QueryModal.selectField(itemFieldValues.itemFormerIdentifiers);
           QueryModal.verifySelectedField(itemFieldValues.itemFormerIdentifiers);
-          QueryModal.verifyQueryAreaContent('(items.former_ids  )');
+          QueryModal.verifyQueryAreaContent('');
           QueryModal.verifyOperatorsList(STRING_OPERATORS);
 
           // Step 3: Test with "is null/empty" operator
           QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
-          QueryModal.verifySelectedOperator(` ${QUERY_OPERATIONS.IS_NULL}`);
-          QueryModal.verifyQueryAreaContent('(items.former_ids  is null/empty )');
+          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IS_NULL);
+          QueryModal.verifyQueryAreaContent('(items.former_ids is null/empty )');
           QueryModal.selectValueFromSelect('False');
-          QueryModal.verifyQueryAreaContent('(items.former_ids  is null/empty false)');
+          QueryModal.verifyQueryAreaContent('(items.former_ids is null/empty False)');
           QueryModal.testQueryDisabled(false);
           QueryModal.clickTestQuery();
 

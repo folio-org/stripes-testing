@@ -104,8 +104,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476825 "Select Instance" plugin | Filter "Instance" records by "Suppress from discovery" filter in the "Holdings" segment (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476825'] },
+        'C476825 "Select Instance" plugin | Filter "Instance" records by "Suppress from discovery" filter in the "Holdings" segment (promin)',
+        { tags: ['extendedPath', 'promin', 'C476825'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(suppressFromDiscoveryAccordionName);
           InventorySearchAndFilter.verifyCheckboxesWithCountersExistInAccordion(

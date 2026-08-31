@@ -54,7 +54,7 @@ describe('Lists', () => {
                   userData = userProperties;
                 });
             })
-            .then(() => Lists.waitForCustomFieldToBeQueryable(recordType, testData.customFieldLabel));
+            .then(() => Lists.waitForCustomFieldToBeQueryable(testData.customFieldLabel, recordType));
 
           cy.createTempUser([]).then((user) => {
             loginUser = user;
@@ -80,8 +80,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C648498 Verify that the Radio custom field is not queryable after deleting it (corsair)',
-          { tags: ['extendedPath', 'corsair', 'C648498'] },
+          'C648498 Verify that the Radio custom field is not queryable after deleting it (athena)',
+          { tags: ['extendedPath', 'athena', 'C648498'] },
           () => {
             listName = getTestEntityValue('C648498_List');
 
@@ -114,7 +114,7 @@ describe('Lists', () => {
             testData.customField = null;
 
             // Wait ~5-6 min for the deletion to propagate to the entity type
-            Lists.waitForFieldLabelToBeAbsent(recordType, testData.customFieldLabel);
+            Lists.waitForFieldLabelToBeAbsent(testData.customFieldLabel, recordType);
 
             // #2 Go to the "Lists" app and open the list that contained the radio button custom field
             cy.login(loginUser.username, loginUser.password, {

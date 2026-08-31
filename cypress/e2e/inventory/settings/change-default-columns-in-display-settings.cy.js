@@ -52,8 +52,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C813581 Change user preferences of Inventory "Default columns" at the "Settings" >> "Inventory" >> "Display settings" pane (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C813581'] },
+      'C813581 Change user preferences of Inventory "Default columns" at the "Settings" >> "Inventory" >> "Display settings" pane (promin)',
+      { tags: ['extendedPath', 'promin', 'nonParallel', 'C813581'] },
       () => {
         // Step 1: Go to Settings > Inventory > Display settings
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);

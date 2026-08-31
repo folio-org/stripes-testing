@@ -28,7 +28,7 @@ describe('Lists', () => {
               testData.customField = createdCustomField;
               testData.customFieldLabel = `User — ${createdCustomField.name}`;
             })
-            .then(() => Lists.waitForCustomFieldToBeQueryable(recordType, testData.customFieldLabel));
+            .then(() => Lists.waitForCustomFieldToBeQueryable(testData.customFieldLabel, recordType));
 
           cy.createTempUser([]).then((user) => {
             loginUser = user;
@@ -51,8 +51,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C648499 Verify that the textbox custom field is not queryable after deleting it (corsair)',
-          { tags: ['extendedPath', 'corsair', 'C648499'] },
+          'C648499 Verify that the textbox custom field is not queryable after deleting it (athena)',
+          { tags: ['extendedPath', 'athena', 'C648499'] },
           () => {
             listName = getTestEntityValue('C648499_List');
 
@@ -85,7 +85,7 @@ describe('Lists', () => {
             testData.customField = null;
 
             // Wait ~5-6 min for the deletion to propagate to the entity type
-            Lists.waitForFieldLabelToBeAbsent(recordType, testData.customFieldLabel);
+            Lists.waitForFieldLabelToBeAbsent(testData.customFieldLabel, recordType);
 
             // #3 Go to the "Lists" app and open the list that contained the textbox custom field
             cy.login(loginUser.username, loginUser.password, {

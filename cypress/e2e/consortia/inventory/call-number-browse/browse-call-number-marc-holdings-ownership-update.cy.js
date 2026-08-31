@@ -5,6 +5,7 @@ import InventoryHoldings from '../../../../support/fragments/inventory/holdings/
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -73,7 +74,7 @@ describe('Inventory', () => {
             cy.setTenant(Affiliations.College);
             cy.getLocations({
               limit: 1,
-              query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
+              query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
             }).then((res) => {
               testData.holdings.location = res;
             });
@@ -174,8 +175,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C877098 Verify that call numbers are still browsable after "MARC holdings" ownership update (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C877098'] },
+        'C877098 Verify that call numbers are still browsable after "MARC holdings" ownership update (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C877098'] },
         () => {
           callNumbers.forEach((callNumber) => {
             BrowseCallNumber.waitForCallNumberToAppear(callNumber);
@@ -194,6 +195,9 @@ describe('Inventory', () => {
             testData.holdings.locationUniversity.name,
           );
           InstanceRecordView.waitLoading();
+          cy.reload();
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
           InstanceRecordView.verifyConsortiaHoldingsAccordion(testData.instance.instanceId, false);
           InstanceRecordView.expandConsortiaHoldings();
           InstanceRecordView.verifyMemberSubHoldingsAccordionAbsent(Affiliations.College);

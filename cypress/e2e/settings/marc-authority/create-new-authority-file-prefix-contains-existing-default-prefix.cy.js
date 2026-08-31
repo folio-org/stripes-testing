@@ -45,8 +45,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423994 Create new "Authority file" with "Prefix" field filled with value which contain existing default prefix (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423994'] },
+        'C423994 Create new "Authority file" with "Prefix" field filled with value which contain existing default prefix (promin)',
+        { tags: ['extendedPath', 'promin', 'C423994'] },
         () => {
           // Step 1: Click "+New", verify new editable row
           ManageAuthorityFiles.clickNewButton();

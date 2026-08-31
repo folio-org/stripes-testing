@@ -76,8 +76,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C11094 Filter package results by an access status type (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C11094'] },
+      'C11094 Filter package results by an access status type (promin)',
+      { tags: ['extendedPath', 'promin', 'C11094'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.customPackageName);
         EHoldingsPackages.openPackageWithExpectedName(testData.customPackageName);

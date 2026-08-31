@@ -81,8 +81,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Indicators for 00X
   });
 
   it(
-    'C494365 Cannot create Indicators for local fields 002, 004, 009 of MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C494365', 'spitfire'] },
+    'C494365 Cannot create Indicators for local fields 002, 004, 009 of MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C494365', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password).then(() => {
         CONTROL_FIELDS.forEach(({ tag, expectedOrder }) => {

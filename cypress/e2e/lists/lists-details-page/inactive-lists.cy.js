@@ -26,9 +26,10 @@ describe('Lists', () => {
         Permissions.uiOrganizationsViewEditCreate.gui,
         Permissions.loansAll.gui,
         Permissions.inventoryAll.gui,
-      ]).then((userProperties) => {
-        userData = userProperties;
-      })
+      ])
+        .then((userProperties) => {
+          userData = userProperties;
+        })
         .then(() => {
           Lists.buildQueryOnActiveUsers().then(({ query, fields, uiQuery }) => {
             listUiQuery = uiQuery;
@@ -37,11 +38,10 @@ describe('Lists', () => {
               listData.fqlQuery = createdQuery.fqlQuery;
               listData.fields = fields;
 
-              Lists.createViaApi(listData)
-                .then((body) => {
-                  listData.version = body.version;
-                  listData.id = body.id;
-                });
+              Lists.createViaApi(listData).then((body) => {
+                listData.version = body.version;
+                listData.id = body.id;
+              });
             });
           });
         });
@@ -53,7 +53,7 @@ describe('Lists', () => {
       Users.deleteViaApi(userData.userId);
     });
 
-    it('C411840 Inactive lists (corsair)', { tags: ['extendedPath', 'corsair', 'C411840'] }, () => {
+    it('C411840 Inactive lists (athena)', { tags: ['extendedPath', 'athena', 'C411840'] }, () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.listsPath,
         waiter: Lists.waitLoading,

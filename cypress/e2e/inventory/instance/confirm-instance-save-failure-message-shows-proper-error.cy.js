@@ -57,8 +57,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C423488 Confirm instance save failure message shows proper error (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C423488'] },
+      'C423488 Confirm instance save failure message shows proper error (promin)',
+      { tags: ['extendedPath', 'promin', 'C423488'] },
       () => {
         // Step 1-2: Find and open instance; instance details shown (simulates both browser tabs pointing to same instance)
         InventoryInstances.searchByTitle(testData.instanceId);

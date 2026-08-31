@@ -131,8 +131,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422149 Link certain fields manually and then use auto-linking when creating new "MARC Bib" record (spitfire)',
-          { tags: ['smoke', 'spitfire', 'shiftLeftBroken', 'C422149'] },
+          'C422149 Link certain fields manually and then use auto-linking when creating new "MARC Bib" record (promin)',
+          { tags: ['smoke', 'promin', 'shiftLeftBroken', 'C422149'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.verifyDisabledLinkHeadingsButton();

@@ -86,8 +86,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C476707 Windows | Nothing happens when user with edit permission uses shortcut "Ctrl + Shift + E" on the detail view pane of "Holdings" record with source = "FOLIO" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C476707'] },
+      'C476707 Windows | Nothing happens when user with edit permission uses shortcut "Ctrl + Shift + E" on the detail view pane of "Holdings" record with source = "FOLIO" (promin)',
+      { tags: ['extendedPath', 'promin', 'C476707'] },
       () => {
         InventoryInstances.searchByTitle(createdInstanceId);
         InventoryInstances.selectInstanceById(createdInstanceId);

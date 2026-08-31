@@ -137,8 +137,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350443 Verify appending subfields to Identifiers (CODEN, Report number, ISMN, UPC) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C350443'] },
+      'C350443 Verify appending subfields to Identifiers (CODEN, Report number, ISMN, UPC) (athena)',
+      { tags: ['extendedPath', 'athena', 'C350443'] },
       () => {
         // Step 1: Trigger the data export by submitting .csv file with UUIDs of inventory instances
         ExportFile.uploadFile(csvFileName);

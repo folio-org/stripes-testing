@@ -119,7 +119,7 @@ describe('Invoices', () => {
   // may be flaky due to concurrency issues because 'Approve and pay in one click' is set to 'true'
   it(
     'C446069 Pay invoice related to order with acquisition unit (user is not included into such unit) (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'C446069'] },
+    { tags: ['criticalPath', 'thunderjet', 'C446069', 'nonParallel'] },
     () => {
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
       Orders.selectOrdersPane();

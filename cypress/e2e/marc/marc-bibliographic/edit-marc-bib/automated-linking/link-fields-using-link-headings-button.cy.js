@@ -234,13 +234,13 @@ describe('MARC', () => {
           Users.deleteViaApi(testData.userProperties.userId);
           InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
           createdAuthorityIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
           });
         });
 
         it(
-          'C388536 Some of linkable fields are linked (and some are not) after clicking on the "Link headings" button when edit "MARC bib" except already linked fields (spitfire)',
-          { tags: ['smoke', 'spitfire', 'C388536'] },
+          'C388536 Some of linkable fields are linked (and some are not) after clicking on the "Link headings" button when edit "MARC bib" except already linked fields (promin)',
+          { tags: ['smoke', 'promin', 'C388536'] },
           () => {
             InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();

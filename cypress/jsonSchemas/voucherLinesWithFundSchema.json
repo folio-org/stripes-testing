@@ -222,7 +222,7 @@
             "type": ["number", "null"]
           },
           "ledger.acquisition_unit": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "ledger.acq_unit_ids": {
             "type": ["array", "null"],

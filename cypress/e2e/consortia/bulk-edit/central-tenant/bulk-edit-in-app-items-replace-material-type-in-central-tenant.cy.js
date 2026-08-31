@@ -200,8 +200,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C1373048 Verify "Replace with" action for Items material type in Central tenant (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C1373048'] },
+        'C1373048 Verify "Replace with" action for Items material type in Central tenant (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C1373048'] },
         () => {
           // Precondition: upload .csv file with valid Item barcodes
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea(

@@ -88,8 +88,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C663316 Check "Version history" pane after Create, Update, Delete multiple repeatable field in "MARC authority" record via "quickmarc" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C663316'] },
+        'C663316 Check "Version history" pane after Create, Update, Delete multiple repeatable field in "MARC authority" record via "quickmarc" (promin)',
+        { tags: ['extendedPath', 'promin', 'C663316'] },
         () => {
           MarcAuthority.edit();
           QuickMarcEditor.waitLoading();

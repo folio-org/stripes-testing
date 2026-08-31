@@ -108,8 +108,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C655287 Edit "Cards to display per page on Version history" on "Settings >> MARC authority >> Version history" page (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C655287'] },
+          'C655287 Edit "Cards to display per page on Version history" on "Settings >> MARC authority >> Version history" page (promin)',
+          { tags: ['criticalPath', 'promin', 'C655287'] },
           () => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.settingsPath,

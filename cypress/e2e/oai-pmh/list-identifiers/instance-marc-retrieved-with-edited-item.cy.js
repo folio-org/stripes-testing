@@ -88,8 +88,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C380630 verb=ListIdentifiers: Verify that Instance MARC is retrieved in case its Item is edited (marc21_withholdings) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C380630'] },
+      'C380630 verb=ListIdentifiers: Verify that Instance MARC is retrieved in case its Item is edited (marc21_withholdings) (athena)',
+      { tags: ['extendedPath', 'athena', 'C380630'] },
       () => {
         afterItemCreatedTimestamp = DateTools.getCurrentDateForOaiPmh();
 

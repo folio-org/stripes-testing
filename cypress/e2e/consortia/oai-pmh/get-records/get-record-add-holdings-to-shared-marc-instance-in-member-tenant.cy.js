@@ -108,8 +108,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C402372 Consortia | SRS | GetRecord: Add FOLIO holdings to shared MARC instance in Member tenant is retrieved in the response of single tenant harvest (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C402372', 'nonParallel'] },
+        'C402372 Consortia | SRS | GetRecord: Add FOLIO holdings to shared MARC instance in Member tenant is retrieved in the response of single tenant harvest (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C402372', 'nonParallel'] },
         () => {
           // Step 1: Search for shared MARC instance and open detailed view
           InventorySearchAndFilter.clearDefaultHeldbyFilter();

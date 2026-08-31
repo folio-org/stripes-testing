@@ -50,8 +50,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C365617 Verify that In app bulk edit form for holdings records contains "Select option" placeholder for Options dropdown (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C365617'] },
+      'C365617 Verify that In app bulk edit form for holdings records contains "Select option" placeholder for Options dropdown (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C365617'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Item barcodes');
 

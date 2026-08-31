@@ -20,7 +20,7 @@ describe('Data Import', () => {
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const instanceTitle = 'Mistapim in Cambodia [microform]. Photos. by the author.';
     const error =
-      'org.folio.processing.exceptions.EventProcessingException: A new Instance was not created because the incoming record already contains a 999ff$s or 999ff$i field';
+      'A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field';
     const nameMarcFileForCreate = `C359012 autotestFile${getRandomPostfix()}.mrc`;
 
     before('Create test user and login', () => {
@@ -46,8 +46,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C359012 Checking the import of the MARC Bib file, that has records with 999 ff and without the 999 ff field (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C359012'] },
+      'C359012 Checking the import of the MARC Bib file, that has records with 999 ff and without the 999 ff field (promin)',
+      { tags: ['criticalPath', 'promin', 'C359012'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC359012.mrc', nameMarcFileForCreate);
@@ -75,7 +75,7 @@ describe('Data Import', () => {
           RECORD_STATUSES.ERROR,
           FileDetails.columnNameInResultList.error,
         );
-        FileDetails.openJsonScreen('The Journal of ecclesiastical history.');
+        FileDetails.openJsonScreen('No content');
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(error);
       },

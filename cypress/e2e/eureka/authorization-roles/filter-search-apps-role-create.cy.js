@@ -30,7 +30,7 @@ describe(
             originalApplications: ['app-platform-minimal', 'app-platform-complete'],
             searchQuery: 'Complete',
             tenant: Cypress.env('OKAPI_TENANT'),
-            roleCapabilities: [Capabilities.circulationRulesView, Capabilities.capabilitiesManage],
+            roleCapabilities: [Capabilities.uiTagsManage, Capabilities.uiCalendarView],
             capabIds: [],
           };
 

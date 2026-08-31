@@ -96,6 +96,10 @@ describe('Inventory', () => {
       searchQueries.forEach((searchQuery) => {
         InventoryInstances.deleteInstanceByTitleViaApi(searchQuery);
       });
+      InventoryInstances.deleteInstanceByTitleViaApi('C369042*');
+      InventoryInstances.deleteInstanceByTitleViaApi(
+        'MSEARCH-466 Title 1 Search by "Alternative title"',
+      );
 
       cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
@@ -115,6 +119,7 @@ describe('Inventory', () => {
     });
 
     beforeEach('Login', () => {
+      cy.wait(3000);
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
@@ -122,7 +127,7 @@ describe('Inventory', () => {
     });
 
     after('Deleting user, records', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(true);
       Users.deleteViaApi(testData.userProperties.userId);
       createdRecordIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
@@ -130,8 +135,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C369042 Search for "Instance" with "diacritic - Korean" symbol in the "Resource title" field using "Keyword" search option (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'C369042'] },
+      'C369042 Search for "Instance" with "diacritic - Korean" symbol in the "Resource title" field using "Keyword" search option (promin)',
+      { tags: ['criticalPathFlaky', 'promin', 'C369042'] },
       () => {
         testData.searchQueries.forEach((query, index) => {
           InventoryInstances.searchByTitle(query);
@@ -141,13 +146,18 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifyInstanceDisplayed(expectedTitle);
           });
           InventorySearchAndFilter.checkRowsCount(expectedTitles[index].length);
+          if (expectedTitles[index].length === 1) {
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
+            InventoryInstance.checkInstanceTitle(expectedTitles[index][0]);
+          }
         });
       },
     );
 
     it(
-      'C368038 Search for "Instance" by "Alternative title" field with special characters using "Keyword" search option (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'C368038'] },
+      'C368038 Search for "Instance" by "Alternative title" field with special characters using "Keyword" search option (promin)',
+      { tags: ['criticalPathFlaky', 'promin', 'C368038'] },
       () => {
         InventoryInstances.waitContentLoading();
         expectedTitlesC368038.forEach((expectedTitlesSet, index) => {

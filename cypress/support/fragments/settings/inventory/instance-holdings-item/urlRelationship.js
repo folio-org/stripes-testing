@@ -16,7 +16,7 @@ const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
 };
-const newButton = Button('+ New');
+const newButton = Button('New');
 const nameTextfield = TextField('Name 0');
 const saveButton = Button('Save');
 const deleteIcon = Button({ icon: 'trash' });

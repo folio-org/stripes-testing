@@ -35,7 +35,7 @@ describe('Lists', () => {
             type: 'patron',
             personal: {
               lastName: testData.userWithBarcode.username,
-              preferredContactTypeId: '002',
+              preferredContactTypeIds: ['002'],
             },
           },
           [],
@@ -52,7 +52,7 @@ describe('Lists', () => {
             type: 'patron',
             personal: {
               lastName: testData.userWithoutBarcode.username,
-              preferredContactTypeId: '002',
+              preferredContactTypeIds: ['002'],
             },
           },
           [],
@@ -82,8 +82,8 @@ describe('Lists', () => {
     });
 
     it(
-      "C740218 Null/Empty values are returned with the 'not equal to' operator for the string types (corsair)",
-      { tags: ['criticalPath', 'corsair', 'C740218'] },
+      "C740218 Null/Empty values are returned with the 'not equal to' operator for the string types (athena)",
+      { tags: ['criticalPath', 'athena', 'C740218'] },
       () => {
         // Step 1: Create new list and open query builder
         Lists.openNewListPane();

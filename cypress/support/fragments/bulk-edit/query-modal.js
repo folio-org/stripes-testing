@@ -19,6 +19,7 @@ import {
   Calendar,
   Pane,
   or,
+  not,
 } from '../../../../interactors';
 import { pluralize } from '../../utils/stringTools';
 
@@ -28,7 +29,7 @@ const testQueryButton = buildQueryModal.find(Button('Test query'));
 const cancelButton = buildQueryModal.find(Button('Cancel'));
 const runQueryButton = buildQueryModal.find(Button(or('Run query', 'Run query & save')));
 const runQueryAndSave = buildQueryModal.find(Button('Run query & save'));
-const xButton = buildQueryModal.find(Button({ icon: 'times' }));
+const xButton = buildQueryModal.find(Button({ ariaLabel: 'Close ' }));
 const previewTable = buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' }));
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
@@ -40,7 +41,7 @@ const fieldSelection = Selection({ id: including('field-option-') });
 const booleanValues = ['AND'];
 
 // Embedded table headers mapping for different table types
-const embeddedTableHeadersMap = {
+export const embeddedTableHeadersMap = {
   electronicAccess: [
     'URL relationship',
     'URI',
@@ -75,6 +76,7 @@ const embeddedTableHeadersMap = {
     'Distribution type',
     'Value',
   ],
+  polLocations: ['Name', 'Code', 'Quantity electronic', 'Quantity physical'],
   userAddress: [
     'City',
     'Region',
@@ -85,6 +87,31 @@ const embeddedTableHeadersMap = {
     'Primary address',
     'Line 2',
   ],
+  organizationAddresses: [
+    'Address line 1',
+    'Address line 2',
+    'City',
+    'State/region',
+    'Zip code',
+    'Country',
+    'Categories',
+  ],
+  organizationUrls: ['URL', 'Description', 'Categories', 'Notes'],
+  organizationAccounts: [
+    'Name',
+    'Account number',
+    'Description',
+    'Accounting code',
+    'Payment method',
+    'Status',
+    'Contact info',
+    'Library code',
+    'Library EDI code',
+    'Notes',
+    'Acquisition unit names',
+  ],
+  organizationEmails: ['Email', 'Description', 'Categories'],
+  organizationPhoneNumbers: ['Phone number', 'Categories', 'Type'],
   additionalCallNumbers: ['Call number', 'Prefix', 'Suffix', 'Type'],
 };
 
@@ -151,28 +178,42 @@ export const holdingsFieldValues = {
   holdingsStatisticalCodeNames: 'Holdings — Statistical codes',
   holdingsTags: 'Holdings — Tags',
   affiliationName: 'Holdings — Affiliation name',
+  holdingsAdditionalCallNumbersCallNumber:
+    'Holdings — Holdings additional call numbers — Call number',
+  holdingsAdditionalCallNumbersPrefix: 'Holdings — Holdings additional call numbers — Prefix',
+  holdingsAdditionalCallNumbersSuffix: 'Holdings — Holdings additional call numbers — Suffix',
+  holdingsAdditionalCallNumbersType: 'Holdings — Holdings additional call numbers — Type',
+  holdingsTypeType: 'Holdings type — Type',
 };
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
+  affiliationName: 'Instance — Affiliation name',
   instanceId: 'Instance — Instance UUID',
   instanceTenantId: 'Instance — Tenant ID',
   instanceHrid: 'Instance — Instance HRID',
+  indexTitle: 'Instance — Index title',
   instanceResourceTitle: 'Instance — Resource title',
+  resourceType: 'Instance — Resource type',
   instanceSource: 'Instance — Source',
+  instanceSourceUri: 'Instance — Instance source URI',
   instanceStatusCode: 'Instance status — Code',
+  instanceStatusTerm: 'Instance status — Term',
   staffSuppress: 'Instance — Staff suppress',
   suppressFromDiscovery: 'Instance — Suppress from discovery',
   flagForDeletion: 'Instance — Flag for deletion',
   previouslyHeld: 'Instance — Previously held',
+  recordVersion: 'Instance — Record version',
   createdDate: 'Instance — Created date',
   updatedDate: 'Instance — Updated date',
   catalogedDate: 'Instance — Cataloged date',
   date1: 'Instance — Date 1',
+  date2: 'Instance — Date 2',
   instanceDateTypeName: 'Instance date type — Name',
   statisticalCodeNames: 'Instance — Statistical codes',
   statisticalCodeUuids: 'Instance — Statistical code UUIDs',
   languages: 'Instance — Languages',
   formatNames: 'Instance — Format names',
+  modeOfIssuance: 'Instance — Mode of issuance',
   noteType: 'Instance — Notes — Note type',
   note: 'Instance — Notes — Note',
   noteStaffOnly: 'Instance — Notes — Staff only',
@@ -208,6 +249,9 @@ export const instanceFieldValues = {
   electronicAccessURLRelationship: 'Instance — Electronic access — URL relationship',
   tags: 'Instance — Tags',
   series: 'Instance — Series',
+  marcBibliographicMarcJsonb: 'MARC bibliographic — MARC jsonb',
+  marcBibliographicState: 'MARC bibliographic — State',
+  instanceShared: 'Instance — Shared',
 };
 export const itemFieldValues = {
   instanceId: 'Instance — Instance UUID',
@@ -220,6 +264,7 @@ export const itemFieldValues = {
   itemCheckOutNotesStaffOnly: 'Item — Check out notes — Staff only',
   itemCheckInNotesNote: 'Item — Check in notes — Note',
   itemCheckInNotesStaffOnly: 'Item — Check in notes — Staff only',
+  itemCreatedDate: 'Item — Created date',
   itemStatus: 'Item — Status',
   itemHrid: 'Item — Item HRID',
   itemUuid: 'Item — Item UUID',
@@ -270,7 +315,9 @@ export const usersFieldValues = {
   preferredContactType: 'User — Preferred contact type',
   userActive: 'User — Active',
   userBarcode: 'User — Barcode',
+  userDepartmentNames: 'User — Department names',
   userCreatedDate: 'User — User created date',
+  userUpdatedDate: 'User — User updated date',
   userId: 'User — User UUID',
   userName: 'User — Username',
   userType: 'User — Type',
@@ -283,6 +330,8 @@ export const usersFieldValues = {
   userAddressCity: 'User — Address — City',
   userAddressLine1: 'User — Address — Line 1',
   userAddressLine2: 'User — Address — Line 2',
+  userAddressCountry: 'User — Address — Country',
+  userAddressPrimaryAddress: 'User — Address — Primary address',
 };
 export const transactionFieldValues = {
   encumbranceAmountCredited: 'Transaction — Encumbrance amount credited',
@@ -291,6 +340,7 @@ export const transactionFieldValues = {
 export const organizationFieldValues = {
   code: 'Organization — Code',
   name: 'Organization — Name',
+  uuid: 'Organization — UUID',
 };
 export const purchaseOrderLinesFieldValues = {
   poNumber: 'PO — PO number',
@@ -300,8 +350,10 @@ export const purchaseOrderLinesFieldValues = {
   uuid: 'POL — UUID',
   costCurrency: 'POL — Cost currency',
   costPOLEstimatedPrice: 'POL — Cost PO line estimated price',
+  locationsCode: 'POL — Locations — Code',
   vendorOrgEdiType: 'Vendor org — EDI vendor type',
   vendorOrgName: 'Vendor org — Name',
+  acquisitionUnitNames: 'PO — Acquisition unit names',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -463,6 +515,7 @@ export default {
   },
 
   clickSelectFieldButton() {
+    cy.wait(300);
     cy.do(selectFieldButton.click());
   },
 
@@ -473,6 +526,7 @@ export default {
       RepeatableFieldItem({ index: row }).find(Selection()).filter(string),
     ]);
     cy.do(RepeatableFieldItem({ index: row }).find(Selection()).chooseWithoutVerification(string));
+    cy.wait(500);
   },
 
   filterFieldSelectionList(string, row = 0) {
@@ -618,6 +672,24 @@ export default {
   },
 
   verifyAllAvailableFieldOptions(expectedFields, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+    cy.do(targetSelection.open());
+    expectedFields.forEach((field) => {
+      cy.expect(SelectionList().has({ optionList: including(field) }));
+    });
+    this.closeOpenedSelection();
+  },
+
+  verifyFieldOptionAbsent(expectedFields, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+    cy.do(targetSelection.open());
+    expectedFields.forEach((field) => {
+      cy.expect(SelectionList().has({ optionList: not(including(field)) }));
+    });
+    this.closeOpenedSelection();
+  },
+
+  verifyFieldOptionExists(expectedFields, row = 0) {
     const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
     cy.do(targetSelection.open());
     expectedFields.forEach((field) => {
@@ -787,6 +859,19 @@ export default {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
   },
 
+  verifExactListOfOptionsInMultiselectMenu(arrayOfExpectedOptions, row = 0) {
+    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
+    cy.then(() => MultiSelectMenu().optionList()).then((actualOptions) => {
+      const sortedActualOptions = [...actualOptions].sort();
+      const sortedExpectedOptions = [...arrayOfExpectedOptions].sort();
+      expect(
+        sortedActualOptions,
+        `Expected options to match: [${sortedExpectedOptions.join(', ')}]`,
+      ).to.deep.equal(sortedExpectedOptions);
+    });
+    cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).toggle()]);
+  },
+
   verifySelectedMultiselectValue(expectedValue, row = 0) {
     const selected = Array.isArray(expectedValue) ? expectedValue : [expectedValue];
 
@@ -951,6 +1036,15 @@ export default {
     cy.expect(buildQueryModal.find(MultiColumnList()).has({ rowCount: expectedNumberOfRows }));
   },
 
+  verifyPreviewTableContainsRowWithValuesInOrder(expectedText) {
+    cy.get('[id="results-viewer-table"] [data-row-index]').then(($rows) => {
+      const rowTexts = $rows.toArray().map((row) => row.innerText.trim());
+      const found = rowTexts.some((text) => text === expectedText.trim());
+      // eslint-disable-next-line no-unused-expressions
+      expect(found, `Expected a row with exact text: "${expectedText}"`).to.be.true;
+    });
+  },
+
   verifyRecordWithContent(content) {
     cy.expect(buildQueryModal.find(MultiColumnListCell({ content })).exists());
   },
@@ -1109,6 +1203,19 @@ export default {
     });
   },
 
+  verifyMatchedRecordInMultipleColumnsByIdentifier(identifier, columnHeaderAndValues) {
+    cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnHeaderAndValues.forEach((pair) => {
+        cy.expect(
+          buildQueryModal
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
+    });
+  },
+
   verifyRecordWithIdentifierAbsentInResultTable(identifier, timeout = 2000) {
     cy.wait(timeout);
     cy.expect(buildQueryModal.find(MultiColumnListCell(identifier)).absent());
@@ -1230,8 +1337,40 @@ export default {
           dataObj.primaryAddress,
           dataObj.line2,
         ];
+      case 'organizationAddresses':
+        return [
+          dataObj.addressLine1,
+          dataObj.addressLine2,
+          dataObj.city,
+          dataObj.stateRegion,
+          dataObj.zipCode,
+          dataObj.country,
+          dataObj.categories,
+        ];
       case 'additionalCallNumbers':
         return [dataObj.callNumber, dataObj.prefix, dataObj.suffix, dataObj.type];
+      case 'polLocations':
+        return [dataObj.name, dataObj.code, dataObj.quantityElectronic, dataObj.quantityPhysical];
+      case 'organizationUrls':
+        return [dataObj.url, dataObj.description, dataObj.categories, dataObj.notes];
+      case 'organizationAccounts':
+        return [
+          dataObj.name,
+          dataObj.accountNumber,
+          dataObj.description,
+          dataObj.accountingCode,
+          dataObj.paymentMethod,
+          dataObj.status,
+          dataObj.contactInfo,
+          dataObj.libraryCode,
+          dataObj.libraryEdiCode,
+          dataObj.notes,
+          dataObj.acquisitionUnitNames,
+        ];
+      case 'organizationEmails':
+        return [dataObj.email, dataObj.description, dataObj.categories];
+      case 'organizationPhoneNumbers':
+        return [dataObj.phoneNumber, dataObj.categories, dataObj.type];
       default:
         throw new Error(`Unknown table type: ${tableType}`);
     }
@@ -1335,6 +1474,30 @@ export default {
     this.verifyEmbeddedTableInQueryModal('userAddress', identifier, expectedUserAddress);
   },
 
+  verifyOrganizationAddressesEmbeddedTableInQueryModal(identifier, expectedAddresses) {
+    this.verifyEmbeddedTableInQueryModal('organizationAddresses', identifier, expectedAddresses);
+  },
+
+  verifyOrganizationUrlsEmbeddedTableInQueryModal(identifier, expectedUrls) {
+    this.verifyEmbeddedTableInQueryModal('organizationUrls', identifier, expectedUrls);
+  },
+
+  verifyOrganizationAccountsEmbeddedTableInQueryModal(identifier, expectedAccounts) {
+    this.verifyEmbeddedTableInQueryModal('organizationAccounts', identifier, expectedAccounts);
+  },
+
+  verifyOrganizationEmailsEmbeddedTableInQueryModal(identifier, expectedEmails) {
+    this.verifyEmbeddedTableInQueryModal('organizationEmails', identifier, expectedEmails);
+  },
+
+  verifyOrganizationPhoneNumbersEmbeddedTableInQueryModal(identifier, expectedPhoneNumbers) {
+    this.verifyEmbeddedTableInQueryModal(
+      'organizationPhoneNumbers',
+      identifier,
+      expectedPhoneNumbers,
+    );
+  },
+
   verifyAdditionalCallNumbersEmbeddedTableInQueryModal(
     itemIdentifier,
     expectedAdditionalCallNumbers, // Can be a single call number object or array of objects, ex: { callNumber: '170495a', prefix: 'call_Num_a.170495', suffix: '170495.call_Num_a', type: 'Dewey Decimal classification' }
@@ -1344,6 +1507,13 @@ export default {
       itemIdentifier,
       expectedAdditionalCallNumbers,
     );
+  },
+
+  verifyPOLLocationsEmbeddedTableInQueryModal(
+    polIdentifier,
+    expectedLocations, // Can be a single location object or array of objects, ex: { name: 'Main Library', code: 'KU/CC/DI/A', quantityElectronic: '0', quantityPhysical: '1' }
+  ) {
+    this.verifyEmbeddedTableInQueryModal('polLocations', polIdentifier, expectedLocations);
   },
 
   clickShowColumnsButton() {
@@ -1365,6 +1535,22 @@ export default {
 
   selectCheckboxInShowColumns(columnName) {
     cy.do(Checkbox(columnName).checkIfNotSelected());
+  },
+
+  uncheckAllShowColumns() {
+    // Re-query on each iteration to handle re-renders after each click
+    const uncheckNext = () => {
+      cy.get('body').then(($body) => {
+        const checked = $body.find('[id^="clickable-filter-"][type="checkbox"]:checked');
+        if (checked.length > 0) {
+          // eslint-disable-next-line cypress/no-force
+          cy.wrap(checked.first()).click({ force: true });
+          cy.wait(300);
+          uncheckNext();
+        }
+      });
+    };
+    uncheckNext();
   },
 
   verifyCheckboxInShowColumnsChecked(columnName, isChecked = true) {

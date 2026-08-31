@@ -67,8 +67,8 @@ describe('MARC Bibliographic Validation Rules - Local Fields Indicators Label Va
   });
 
   it(
-    'C502977 Cannot update Indicators of Local field with empty "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C502977', 'spitfire'] },
+    'C502977 Cannot update Indicators of Local field with empty "label" for MARC bib spec (API) (promin)',
+    { tags: ['criticalPath', 'C502977', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

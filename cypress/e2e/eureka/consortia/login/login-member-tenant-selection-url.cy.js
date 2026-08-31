@@ -27,9 +27,10 @@ describe('Eureka', () => {
         Users.deleteViaApi(user.userId);
       });
 
+      // Test is only applicable in case of tenant selection screen which is not present on regular testing envs
       it(
-        'C740245 Log in in ECS member tenant using copied URL with preselected tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'eureka', 'spitfire', 'C740245'] },
+        'C740245 Log in in ECS member tenant using copied URL with preselected tenant (consortia) (promin)',
+        { tags: ['criticalPathECSSkip', 'eureka', 'promin', 'C740245'] },
         () => {
           cy.visit('/');
           cy.verifyDefaultTenantSelectionPage();

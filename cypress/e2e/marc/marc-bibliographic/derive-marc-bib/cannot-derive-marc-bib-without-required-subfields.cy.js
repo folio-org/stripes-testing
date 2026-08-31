@@ -232,8 +232,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514913 Cannot derive MARC bib record without required standard / local subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C514913', 'nonParallel'] },
+        'C514913 Cannot derive MARC bib record without required standard / local subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'promin', 'C514913', 'nonParallel'] },
         () => {
           // Step 1: Click on "Actions" button >> Select "Derive new MARC bibliographic record" option
           InventoryInstances.searchByTitle(createdInstanceId);

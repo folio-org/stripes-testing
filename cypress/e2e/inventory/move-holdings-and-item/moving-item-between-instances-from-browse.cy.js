@@ -103,9 +103,9 @@ describe('Inventory', () => {
     });
 
     it(
-      'C411508 Verify that "Move holdings/items to another instance" option works as expected when opening record from Browse (spitfire)',
+      'C411508 Verify that "Move holdings/items to another instance" option works as expected when opening record from Browse (promin)',
       {
-        tags: ['extendedPath', 'spitfire', 'C411508'],
+        tags: ['extendedPath', 'promin', 'C411508'],
       },
       () => {
         cy.login(user.username, user.password, {

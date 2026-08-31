@@ -58,8 +58,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C408810 Verify that "addressType" is shown in the Previews _ Locals (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C408810'] },
+      'C408810 Verify that "addressType" is shown in the Previews _ Locals (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C408810'] },
       () => {
         UsersSearchPane.searchByUsername(user.username);
         UserEdit.openEdit();

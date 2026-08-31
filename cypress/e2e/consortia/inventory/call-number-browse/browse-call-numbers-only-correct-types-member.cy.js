@@ -269,8 +269,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C656321 Call number of each type which belong to Shared Instances could be found by call number browse and "Held by" filter from Central and Member tenants (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C656321'] },
+        'C656321 Call number of each type which belong to Shared Instances could be found by call number browse and "Held by" filter from Central and Member tenants (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C656321'] },
         () => {
           function browseWithHeldByAndCheck(clearHeldByDefault) {
             [

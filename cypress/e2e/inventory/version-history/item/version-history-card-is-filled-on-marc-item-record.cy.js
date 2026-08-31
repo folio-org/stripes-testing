@@ -160,8 +160,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651536 Check "Version History" card is filled on Item record created via "Data Import" (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C651536'] },
+        'C651536 Check "Version History" card is filled on Item record created via "Data Import" (promin)',
+        { tags: ['criticalPath', 'promin', 'C651536'] },
         () => {
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();

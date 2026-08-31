@@ -13,7 +13,7 @@ describe('Eureka', () => {
         personal: {
           lastName: `AT_C451631_LastName_${getRandomPostfix()}`,
           email: 'AT_C451631@test.com',
-          preferredContactTypeId: '002',
+          preferredContactTypeIds: ['002'],
         },
       },
       password: 'MyComplicatedPwd1$%',
@@ -41,20 +41,20 @@ describe('Eureka', () => {
         });
         console.log('BEFORE block: After ifConsortia check');
 
-        cy.createUserWithoutKeycloakInEurekaApi(userA).then((userId) => {
+        Users.createViaApi(userA).then((user) => {
           console.log('BEFORE block: After creating user A without Keycloak');
-          testData.userAId = userId;
-          userIds.push(userId);
+          testData.userAId = user.id;
+          userIds.push(user.id);
         });
 
-        cy.createUserWithoutKeycloakInEurekaApi(userB).then((userId) => {
+        Users.createViaApi(userB).then((user) => {
           console.log('BEFORE block: After creating user B without Keycloak');
-          testData.userBId = userId;
-          userIds.push(userId);
+          testData.userBId = user.id;
+          userIds.push(user.id);
         });
 
-        Users.createViaApi(userC).then((user) => {
-          console.log('BEFORE block: After creating user C via API');
+        Users.createViaApi(userC, { keycloak: true }).then((user) => {
+          console.log('BEFORE block: After creating user C via API with Keycloak');
           testData.userCId = user.id;
           userIds.push(user.id);
         });

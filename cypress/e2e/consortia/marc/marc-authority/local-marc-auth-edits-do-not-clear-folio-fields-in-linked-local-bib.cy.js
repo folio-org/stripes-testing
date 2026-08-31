@@ -135,17 +135,6 @@ describe('MARC', () => {
           })
             .then(() => {
               cy.setTenant(Affiliations.College);
-              QuickMarcEditor.linkMarcRecordsViaApi({
-                bibId: localInstanceId,
-                authorityIds: [authorityId],
-                bibFieldTags: [testData.tag700],
-                authorityFieldTags: [testData.tag100],
-                finalBibFieldContents: [linkingTagAndValue.value],
-                bibFieldIndexes: [linkingTagAndValue.bibFieldIndex],
-              });
-            })
-            .then(() => {
-              cy.setTenant(Affiliations.College);
               cy.getInstanceById(localInstanceId).then((instanceData) => {
                 InstanceStatusTypes.getViaApi({
                   query: `name=="${testData.instanceStatusTerm}"`,
@@ -193,6 +182,17 @@ describe('MARC', () => {
                   });
                 });
               });
+            })
+            .then(() => {
+              cy.setTenant(Affiliations.College);
+              QuickMarcEditor.linkMarcRecordsViaApi({
+                bibId: localInstanceId,
+                authorityIds: [authorityId],
+                bibFieldTags: [testData.tag700],
+                authorityFieldTags: [testData.tag100],
+                finalBibFieldContents: [linkingTagAndValue.value],
+                bibFieldIndexes: [linkingTagAndValue.bibFieldIndex],
+              });
             });
 
           // Create user with permissions in Member tenant only
@@ -224,25 +224,29 @@ describe('MARC', () => {
 
         after('Delete test data', () => {
           cy.resetTenant();
-          cy.getAdminToken();
+          cy.getAdminToken(false);
           Users.deleteViaApi(testData.userProperties.userId);
           cy.setTenant(Affiliations.College);
           MarcAuthority.deleteViaAPI(authorityId, true);
-          cy.getInstanceById(localInstanceId).then((instanceData) => {
-            cy.updateInstance({
-              ...instanceData,
-              parentInstances: [],
-              childInstances: [],
+          cy.wait(3000);
+          cy.then(() => {
+            cy.getInstanceById(localInstanceId).then((instanceData) => {
+              cy.updateInstance({
+                ...instanceData,
+                parentInstances: [],
+                childInstances: [],
+              });
             });
+          }).then(() => {
+            InventoryInstance.deleteInstanceViaApi(localInstanceId);
+            InventoryInstance.deleteInstanceViaApi(localParentInstanceId);
+            InventoryInstance.deleteInstanceViaApi(localChildInstanceId);
           });
-          InventoryInstance.deleteInstanceViaApi(localInstanceId);
-          InventoryInstance.deleteInstanceViaApi(localParentInstanceId);
-          InventoryInstance.deleteInstanceViaApi(localChildInstanceId);
         });
 
         it(
-          'C1307994 Verify that Local MARC authority record edits do not clear FOLIO fields in linked Local MARC bib records (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C1307994'] },
+          'C1307994 Verify that Local MARC authority record edits do not clear FOLIO fields in linked Local MARC bib records (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C1307994'] },
           () => {
             // Step 1. Open Local MARC authority record - click Actions > Edit
             MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading);

@@ -53,8 +53,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C414511 Browse for Call number with browse query which contain only 1 letter (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C414511'] },
+      'C414511 Browse for Call number with browse query which contain only 1 letter (promin)',
+      { tags: ['extendedPath', 'promin', 'C414511'] },
       () => {
         InventorySearchAndFilter.selectBrowseCallNumbers();
         InventorySearchAndFilter.checkBrowseOptionSelected(

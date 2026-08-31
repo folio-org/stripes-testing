@@ -73,8 +73,8 @@ describe('Citation: check long title, local vocabularies, inventory view', () =>
   });
 
   it(
-    'C446070 Marigold - Work/Instance edit page / Local vocabularies (citation)',
-    { tags: ['criticalPath', 'citation', 'C446070', 'marigold'] },
+    'C446070 Marigold - Work/Instance edit page / Local vocabularies (promin)',
+    { tags: ['criticalPath', 'promin', 'C446070', 'marigold'] },
     () => {
       // Create work and instance
       Marigold.openNewResourceForm();

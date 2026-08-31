@@ -51,8 +51,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C356765 Search for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C356765'] },
+        'C356765 Search for record without subfield "t" (personalNameTitle and sftPersonalName) (promin)',
+        { tags: ['criticalPath', 'promin', 'C356765'] },
         () => {
           DataImport.uploadFileViaApi('marcFileForC356765.mrc', fileName, jobProfileToRun).then(
             (response) => {

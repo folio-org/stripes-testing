@@ -75,8 +75,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C375952 ListRecords: Verify that deleted SRS HOLDINGS are harvested (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C375952'] },
+        'C375952 ListRecords: Verify that deleted SRS HOLDINGS are harvested (athena)',
+        { tags: ['extendedPath', 'athena', 'C375952'] },
         () => {
           // Step 1: Go to Inventory app, select Holdings tab, search for SRS instance with MARC Holdings
           InventoryInstances.searchByTitle(marcInstance.title);

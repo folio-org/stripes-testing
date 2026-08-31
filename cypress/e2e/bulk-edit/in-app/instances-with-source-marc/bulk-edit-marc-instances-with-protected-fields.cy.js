@@ -226,8 +226,8 @@ describe(
       });
 
       it(
-        'C569592 Verify bulk edit actions with protected MARC fields (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C569592', 'nonParallel'] },
+        'C569592 Verify bulk edit actions with protected MARC fields (athena)',
+        { tags: ['extendedPath', 'athena', 'C569592', 'nonParallel'] },
         () => {
           // Step 1: Check "Source" column checkbox
           BulkEditActions.openActions();

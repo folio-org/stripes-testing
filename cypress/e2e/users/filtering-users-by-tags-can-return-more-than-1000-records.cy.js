@@ -25,7 +25,7 @@ describe('Users', () => {
       firstName: `AT_C844850_FirstName_${index}`,
       lastName: `${testData.commonUserName}_${index}`,
       email: `AT_C844850_${index}_${randomPostfix}@folio.org`,
-      preferredContactTypeId: '002',
+      preferredContactTypeIds: ['002'],
     },
     patronGroup: testData.patronGroupId,
     type: 'staff',
@@ -67,8 +67,8 @@ describe('Users', () => {
   });
 
   it(
-    'C844850 Filtering users by Tags can return more than 1000 records (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C844850'] },
+    'C844850 Filtering users by Tags can return more than 1000 records (vega)',
+    { tags: ['extendedPath', 'vega', 'C844850'] },
     () => {
       // Step 1: Select the tag assigned to 1101 users in the "Tags" filter
       UsersSearchPane.chooseTagOption(testData.tagLabel);

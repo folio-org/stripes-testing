@@ -106,8 +106,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C471477 Deleted Classification values cannot be found in browse classifications result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C471477'] },
+      'C471477 Deleted Classification values cannot be found in browse classifications result list (promin)',
+      { tags: ['criticalPath', 'promin', 'C471477'] },
       () => {
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
         BrowseClassifications.waitForClassificationNumberToAppear(
@@ -313,8 +313,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468158 Browse for classification which has the same value but different classification types using "Classification (all)" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468158'] },
+      'C468158 Browse for classification which has the same value but different classification types using "Classification (all)" browse option (promin)',
+      { tags: ['criticalPath', 'promin', 'C468158'] },
       () => {
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
         BrowseClassifications.waitForClassificationNumberToAppear(
@@ -503,8 +503,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468159 Browse for classification which has the same value but different classification types using "Dewey Decimal classification" browse option when only "Dewey" classification type is selected in Settings (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468159'] },
+      'C468159 Browse for classification which has the same value but different classification types using "Dewey Decimal classification" browse option when only "Dewey" classification type is selected in Settings (promin)',
+      { tags: ['criticalPath', 'promin', 'C468159'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
@@ -684,8 +684,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468160 Browse for classification which has the same value but different classification types using "Library of Congress classification" browse option when only "LC" and "Local" classification types are selected in Settings (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468159'] },
+      'C468160 Browse for classification which has the same value but different classification types using "Library of Congress classification" browse option when only "LC" and "Local" classification types are selected in Settings (promin)',
+      { tags: ['criticalPath', 'promin', 'C468159'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           testData.classificationOption,
@@ -804,8 +804,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468255 Browse for classification using "Classification (all)" option is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468255'] },
+      'C468255 Browse for classification using "Classification (all)" option is case-insensitive (promin)',
+      { tags: ['criticalPath', 'promin', 'C468255'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
@@ -914,8 +914,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468258 Browse for classification using "Dewey Decimal classification" option is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468258'] },
+      'C468258 Browse for classification using "Dewey Decimal classification" option is case-insensitive (promin)',
+      { tags: ['criticalPath', 'promin', 'C468258'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
@@ -1020,8 +1020,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468256 Browse for classification using "Library of Congress classification" option is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468256'] },
+      'C468256 Browse for classification using "Library of Congress classification" option is case-insensitive (promin)',
+      { tags: ['criticalPath', 'promin', 'C468256'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
@@ -1189,8 +1189,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468178 Browse for classifications of Instance which has each classification type using "Classification (all)" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468178'] },
+      'C468178 Browse for classifications of Instance which has each classification type using "Classification (all)" browse option (promin)',
+      { tags: ['criticalPath', 'promin', 'C468178'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
@@ -1349,8 +1349,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468180 Browse for classifications of Instance which has each classification type using "Library of Congress classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468180'] },
+      'C468180 Browse for classifications of Instance which has each classification type using "Library of Congress classification" browse option (promin)',
+      { tags: ['criticalPath', 'promin', 'C468180'] },
       () => {
         callNumbersToBeFound.forEach((callNumber) => {
           BrowseClassifications.waitForClassificationNumberToAppear(
@@ -1568,8 +1568,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468147 Each Classification identifier type could be found in the browse result list by "Classification (all)" browse option and empty settings (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468147'] },
+      'C468147 Each Classification identifier type could be found in the browse result list by "Classification (all)" browse option and empty settings (promin)',
+      { tags: ['criticalPath', 'promin', 'C468147'] },
       () => {
         testData.folioInstances.forEach((folioInstance) => {
           search(folioInstance.classificationValue, folioInstance.classificationValue);
@@ -1700,8 +1700,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468151 Each Classification identifier type could be found in the browse result list by "Dewey Decimal classification" browse option and empty settings (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C468151'] },
+      'C468151 Each Classification identifier type could be found in the browse result list by "Dewey Decimal classification" browse option and empty settings (promin)',
+      { tags: ['extendedPath', 'promin', 'C468151'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
@@ -1894,8 +1894,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468152 Each Classification identifier type could be found in the browse result list by "Dewey Decimal classification" browse option when all identifier types are selected in settings (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C468152'] },
+      'C468152 Each Classification identifier type could be found in the browse result list by "Dewey Decimal classification" browse option when all identifier types are selected in settings (promin)',
+      { tags: ['extendedPath', 'promin', 'C468152'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
@@ -2085,8 +2085,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468153 Each Classification identifier type could be found in the browse result list by "Library of Congress classification" browse option and empty settings (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C468153'] },
+      'C468153 Each Classification identifier type could be found in the browse result list by "Library of Congress classification" browse option and empty settings (promin)',
+      { tags: ['extendedPath', 'promin', 'C468153'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
@@ -2279,8 +2279,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468154 Each Classification identifier type could be found in the browse result list by "Library of Congress classification" browse option when all identifier types are selected in settings (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C468154'] },
+      'C468154 Each Classification identifier type could be found in the browse result list by "Library of Congress classification" browse option when all identifier types are selected in settings (promin)',
+      { tags: ['extendedPath', 'promin', 'C468154'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
@@ -2387,8 +2387,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468250 Select classification number which belongs to staff suppressed Instance in Classification browse result list by "Classification (all)" browse option (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C468250'] },
+      'C468250 Select classification number which belongs to staff suppressed Instance in Classification browse result list by "Classification (all)" browse option (promin)',
+      { tags: ['extendedPath', 'promin', 'C468250'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           BROWSE_CLASSIFICATION_OPTIONS.CALL_NUMBERS_ALL,
@@ -2547,8 +2547,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468263 Browse for classification number which belongs to Instance which has "Holdings" and "Items" with filled "Call number" field, by "Classification (all)" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468263'] },
+      'C468263 Browse for classification number which belongs to Instance which has "Holdings" and "Items" with filled "Call number" field, by "Classification (all)" browse option (promin)',
+      { tags: ['criticalPath', 'promin', 'C468263'] },
       () => {
         cy.getAdminToken();
         // Reset "all" browse option to default
@@ -2583,8 +2583,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C468264 Browse for classification number which belongs to Instance which has "Holdings" and "Items" with filled "Call number" field, by "Library of Congress classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468264'] },
+      'C468264 Browse for classification number which belongs to Instance which has "Holdings" and "Items" with filled "Call number" field, by "Library of Congress classification" browse option (promin)',
+      { tags: ['criticalPath', 'promin', 'C468264'] },
       () => {
         cy.getAdminToken();
         // Set LC browse option types
@@ -2768,8 +2768,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C468265 Browse for classification number which belongs to Instance which has "Holdings" and "Items" with filled "Call number" field, by "Dewey Decimal classification" browse option (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C468265'] },
+      'C468265 Browse for classification number which belongs to Instance which has "Holdings" and "Items" with filled "Call number" field, by "Dewey Decimal classification" browse option (promin)',
+      { tags: ['criticalPath', 'promin', 'C468265'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
@@ -2894,8 +2894,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C594477 Browse for classification which has (at least) 25 preceding classifications with the same first 10 characters using "Classification (all)" browse option - LC type (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C594477'] },
+      'C594477 Browse for classification which has (at least) 25 preceding classifications with the same first 10 characters using "Classification (all)" browse option - LC type (promin)',
+      { tags: ['extendedPath', 'promin', 'C594477'] },
       () => {
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           BROWSE_CLASSIFICATION_OPTIONS.CALL_NUMBERS_ALL,
@@ -3087,8 +3087,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C805650 Browse for classification which exists only in 1 Instance with 0/1 contributor (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C805650'] },
+      'C805650 Browse for classification which exists only in 1 Instance with 0/1 contributor (promin)',
+      { tags: ['criticalPath', 'promin', 'C805650'] },
       () => {
         InventorySearchAndFilter.browseSearch(classificationNumbers[0]);
         BrowseClassifications.verifyValueInResultTableIsHighlighted(classificationNumbers[0]);
@@ -3107,8 +3107,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C805745 Browse for classification which exists only in 1 Instance with multiple contributors (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C805745'] },
+      'C805745 Browse for classification which exists only in 1 Instance with multiple contributors (promin)',
+      { tags: ['criticalPath', 'promin', 'C805745'] },
       () => {
         InventorySearchAndFilter.browseSearch(classificationNumbers[2]);
         BrowseClassifications.verifyValueInResultTableIsHighlighted(classificationNumbers[2]);
@@ -3122,8 +3122,8 @@ describe('Inventory', () => {
     );
 
     it(
-      'C805746 Browse for classification which exists in multiple Instances with same/multiple different contributors (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C805746'] },
+      'C805746 Browse for classification which exists in multiple Instances with same/multiple different contributors (promin)',
+      { tags: ['extendedPath', 'promin', 'C805746'] },
       () => {
         new Set(classificationNumbersC805746).forEach((classificationNumber) => {
           InventorySearchAndFilter.browseSearch(classificationNumber);
@@ -3262,8 +3262,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C805747 Browse for classification which exists in multiple Instances when classifications have different types (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C805747'] },
+      'C805747 Browse for classification which exists in multiple Instances when classifications have different types (promin)',
+      { tags: ['extendedPath', 'promin', 'C805747'] },
       () => {
         InventorySearchAndFilter.browseSearch(testData.classificationNumber);
         BrowseClassifications.checkRowValues(
@@ -3410,8 +3410,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C805748 Browse for classification which exists in Instance with long title and more than 15 contributors (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C805748'] },
+      'C805748 Browse for classification which exists in Instance with long title and more than 15 contributors (promin)',
+      { tags: ['extendedPath', 'promin', 'C805748'] },
       () => {
         InventorySearchAndFilter.browseSearch(testData.classificationNumber);
         BrowseClassifications.verifyValueInResultTableIsHighlighted(testData.classificationNumber);

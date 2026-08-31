@@ -61,8 +61,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C10935 Cannot save existing MARC bibliographic record without or with multiple 245 fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C10935'] },
+        'C10935 Cannot save existing MARC bibliographic record without or with multiple 245 fields (promin)',
+        { tags: ['extendedPath', 'promin', 'C10935'] },
         () => {
           InventoryInstances.searchByTitle(instanceId[0]);
           InventoryInstances.selectInstance();

@@ -92,8 +92,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808500 Edit "Item" with filled "order" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C808500'] },
+        'C808500 Edit "Item" with filled "order" field (promin)',
+        { tags: ['criticalPath', 'promin', 'C808500'] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.login(user.username, user.password, {

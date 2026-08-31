@@ -55,8 +55,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C655267 Check "Version history" after editing Instance via quickMarc (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C655267'] },
+        'C655267 Check "Version history" after editing Instance via quickMarc (promin)',
+        { tags: ['criticalPath', 'promin', 'C655267'] },
         () => {
           InstanceRecordView.clickVersionHistoryButton();
           VersionHistorySection.waitLoading();

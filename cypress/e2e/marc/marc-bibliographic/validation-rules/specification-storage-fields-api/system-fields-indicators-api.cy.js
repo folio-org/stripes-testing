@@ -41,8 +41,8 @@ describe('MARC Bibliographic Validation Rules - System Fields Indicators API', (
   });
 
   it(
-    'C499898 Cannot update Indicator of System field for MARC bib spec (API) (spitfire)',
-    { tags: ['criticalPath', 'C499898', 'spitfire'] },
+    'C499898 Cannot update Indicator of System field for MARC bib spec (API) (promin)',
+    { tags: ['criticalPath', 'C499898', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

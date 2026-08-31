@@ -107,8 +107,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C808444 Verify prevent of updating SRS record if an error occurs during Instance record update (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C808444'] },
+      'C808444 Verify prevent of updating SRS record if an error occurs during Instance record update (athena)',
+      { tags: ['criticalPath', 'athena', 'C808444'] },
       () => {
         // Step 1: Navigate to Inventory to edit the instance and create version conflict
         BulkEditActions.openActions();

@@ -143,8 +143,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C825245 Search instances by Format names, Languages (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C825245'] },
+        'C825245 Search instances by Format names, Languages (athena)',
+        { tags: ['criticalPath', 'athena', 'C825245'] },
         () => {
           // Step 1: Search instances by "Instance — Format names" field using "equals" operator
           BulkEditSearchPane.openQuerySearch();

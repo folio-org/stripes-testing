@@ -37,8 +37,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C365132 Verify that Bulk edit modal DOES NOT Start Bulk Edit (Local) from confirmation screen (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C365132'] },
+      'C365132 Verify that Bulk edit modal DOES NOT Start Bulk Edit (Local) from confirmation screen (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C365132'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

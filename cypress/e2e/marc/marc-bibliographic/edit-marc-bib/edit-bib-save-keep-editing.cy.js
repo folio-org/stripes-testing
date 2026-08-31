@@ -74,8 +74,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C360096 Verify that click on the "Save & keep editing" button doesn\'t close the editing window of "MARC Bib" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C360096'] },
+        'C360096 Verify that click on the "Save & keep editing" button doesn\'t close the editing window of "MARC Bib" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C360096'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

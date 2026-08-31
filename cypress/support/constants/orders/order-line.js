@@ -1,6 +1,17 @@
-export const ORDER_LINE_SEARCH_OPTIONS = {
+export const ORDER_LINE_SEARCH_INDEX_LABELS = {
+  CONTRIBUTOR: 'Contributor',
+  DONOR_DEPRECATED: 'Donor (Deprecated)',
   KEYWORD: 'Keyword',
   POL_NUMBER: 'PO line number',
+  PRODUCT_ID: 'Product ID',
+  PRODUCT_ID_ISBN: 'Product ID ISBN',
+  PUBLISHER: 'Publisher',
+  REQUESTER: 'Requester',
+  SELECTOR: 'Selector',
+  TITLE_OR_PACKAGE: 'Title or package name',
+  VENDOR_ACCOUNT: 'Vendor account',
+  VENDOR_REF_NUMBER: 'Vendor reference number',
+  VOLUMES: 'Volumes',
 };
 
 export const ORDER_LINE_ACCORDION_NAMES = {
@@ -132,6 +143,8 @@ export const POL_CREATE_INVENTORY_SETTINGS_VIEW = {
 };
 
 export const POLINE_DETAILS_FIELDS = {
+  TITLE: 'Title',
+  ACQUISITION_METHOD: 'Acquisition method',
   ORDER_FORMAT: 'Order format',
   RECEIPT_STATUS: 'Receipt status',
   PAYMENT_STATUS: 'Payment status',
@@ -145,6 +158,7 @@ export const POLINE_DETAILS_FIELDS = {
   CURRENCY: 'Currency',
   EXCHANGE_RATE: 'Exchange rate',
   USER_LIMIT: 'User limit',
+  RECEIVING_NOTE: 'Receiving note',
 };
 
 export const ORDER_LINE_RESULTS_ACTIONS_LABELS = {
@@ -260,4 +274,9 @@ export const ORDER_LINE_FILTER_LABELS = {
   TRIAL: 'Trial',
   UPDATED_BY: 'Updated by',
   VENDOR: 'Vendor',
+};
+
+export const ORDER_LINE_DISCOUNT_TYPES = {
+  PERCENTAGE: 'percentage',
+  AMOUNT: 'amount',
 };

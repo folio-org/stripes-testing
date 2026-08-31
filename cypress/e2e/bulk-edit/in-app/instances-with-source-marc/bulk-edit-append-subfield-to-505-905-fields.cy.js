@@ -241,8 +241,8 @@ describe(
       });
 
       it(
-        'C523610 Append subfield to MARC field (505, 905) - extended scenarios (MARC, Query, Logs) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C523610'] },
+        'C523610 Append subfield to MARC field (505, 905) - extended scenarios (MARC, Query, Logs) (athena)',
+        { tags: ['criticalPath', 'athena', 'C523610'] },
         () => {
           // Step 1: Show Source and Formatted Contents Note columns
           BulkEditActions.openActions();

@@ -48,8 +48,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C6691 Check the default mapping of publisher info (260/264) from the MARC record to the Inventory Instance Publication fields (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C6691'] },
+      'C6691 Check the default mapping of publisher info (260/264) from the MARC record to the Inventory Instance Publication fields (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C6691'] },
       () => {
         const publisherInfo = {
           publisher: 'Crown House Publishing',

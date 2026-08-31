@@ -61,93 +61,99 @@ describe('MARC', () => {
         const createdInstanceIds = [];
         let user;
 
-        before('Create test data', () => {
-          cy.then(() => {
-            cy.resetTenant();
-            cy.getAdminToken();
-            InventoryInstances.deleteInstanceByTitleViaApi('AT_C514877');
-            cy.createTempUser([
-              Permissions.inventoryAll.gui,
-              Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-              Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
-            ]).then((createdUser) => {
-              user = createdUser;
-
-              cy.createMarcBibliographicViaAPI(
-                QuickMarcEditor.defaultValidLdr,
-                marcInstanceFields[0],
-              ).then((instanceId) => {
-                createdInstanceIds.push(instanceId);
-              });
-
-              cy.setTenant(Affiliations.College);
-              cy.createMarcBibliographicViaAPI(
-                QuickMarcEditor.defaultValidLdr,
-                marcInstanceFields[1],
-              ).then((instanceId) => {
-                createdInstanceIds.push(instanceId);
-              });
-
-              cy.resetTenant();
-              cy.toggleLccnDuplicateCheck({ enable: true });
-            });
-          }).then(() => {
-            cy.resetTenant();
-            cy.login(user.username, user.password, {
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            });
-          });
-        });
-
         after('Cleanup', () => {
           cy.resetTenant();
           cy.getAdminToken();
+          cy.toggleLccnDuplicateCheck({ enable: false });
           Users.deleteViaApi(user.userId);
           InventoryInstances.deleteInstanceByTitleViaApi(sharedMarcInstanceTitle);
           InventoryInstances.deleteInstanceByTitleViaApi(newSharedMarcInstanceTitle);
-          cy.toggleLccnDuplicateCheck({ enable: false });
           cy.setTenant(Affiliations.College);
           InventoryInstances.deleteInstanceByTitleViaApi(localMarcInstanceTitle);
         });
 
         it(
-          'C514877 Duplicate LCCN ("010 $a") prevents Shared MARC bib record creation when check is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C514877'] },
+          'C514877 Duplicate LCCN ("010 $a") prevents Shared MARC bib record creation when check is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C514877'] },
           () => {
-            // Step 1: Click on "Actions" - "+ New MARC bibliographic record" option
-            InventoryInstance.newMarcBibRecord();
+            cy.then(() => {
+              cy.resetTenant();
+              cy.getAdminToken();
+              InventoryInstances.deleteInstanceByTitleViaApi('AT_C514877');
+              cy.createTempUser([
+                Permissions.inventoryAll.gui,
+                Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+                Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
+              ]).then((createdUser) => {
+                user = createdUser;
 
-            // Steps 2-3: Fill in LDR and 008 fields
-            QuickMarcEditor.updateLDR06And07Positions();
+                cy.createMarcBibliographicViaAPI(
+                  QuickMarcEditor.defaultValidLdr,
+                  marcInstanceFields[0],
+                ).then((instanceId) => {
+                  createdInstanceIds.push(instanceId);
+                });
 
-            // Step 4: Fill in 245 field
-            QuickMarcEditor.updateExistingField('245', `$a ${newSharedMarcInstanceTitle}`);
+                cy.setTenant(Affiliations.College);
+                cy.createMarcBibliographicViaAPI(
+                  QuickMarcEditor.defaultValidLdr,
+                  marcInstanceFields[1],
+                ).then((instanceId) => {
+                  createdInstanceIds.push(instanceId);
+                });
 
-            // Step 5: Add "010 $a" which matches to "LCCN" of existing Shared record and save
-            QuickMarcEditor.addNewField('010', `$a ${lccnNumberOfSharedInstance}`, 4);
-            QuickMarcEditor.checkContentByTag('010', `$a ${lccnNumberOfSharedInstance}`);
-            QuickMarcEditor.pressSaveAndCloseButton();
-            QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
-            QuickMarcEditor.verifyValidationCallout();
-            QuickMarcEditor.closeAllCallouts();
+                cy.resetTenant();
+                cy.toggleLccnDuplicateCheck({ enable: true });
+              });
+            })
+              .then(() => {
+                cy.resetTenant();
+                cy.login(user.username, user.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+              })
+              .then(() => {
+                // Step 1: Click on "Actions" - "+ New MARC bibliographic record" option
+                InventoryInstance.newMarcBibRecord();
 
-            // Step 6: Update "010 $a" value with which matches to "Canceled LCCN" of existing Shared record and save
-            QuickMarcEditor.updateExistingField('010', `$a ${canceledLccnNumberOfSharedInstance}`);
-            QuickMarcEditor.checkContentByTag('010', `$a ${canceledLccnNumberOfSharedInstance}`);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
+                // Steps 2-3: Fill in LDR and 008 fields
+                QuickMarcEditor.updateLDR06And07Positions();
 
-            // Step 7: Repeat steps 1-4
-            InventoryInstance.newMarcBibRecord();
-            QuickMarcEditor.updateLDR06And07Positions();
-            QuickMarcEditor.updateExistingField('245', `$a ${newSharedMarcInstanceTitle} 2nd`);
+                // Step 4: Fill in 245 field
+                QuickMarcEditor.updateExistingField('245', `$a ${newSharedMarcInstanceTitle}`);
 
-            // Step 8: Add "010 $a" which matches to "LCCN" of existing Local record and save
-            QuickMarcEditor.addNewField('010', `$a ${lccnNumberOfLocalInstance}`, 4);
-            QuickMarcEditor.checkContentByTag('010', `$a ${lccnNumberOfLocalInstance}`);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
+                // Step 5: Add "010 $a" which matches to "LCCN" of existing Shared record and save
+                QuickMarcEditor.addNewField('010', `$a ${lccnNumberOfSharedInstance}`, 4);
+                QuickMarcEditor.checkContentByTag('010', `$a ${lccnNumberOfSharedInstance}`);
+                QuickMarcEditor.pressSaveAndCloseButton();
+                QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
+                QuickMarcEditor.verifyValidationCallout();
+                QuickMarcEditor.closeAllCallouts();
+
+                // Step 6: Update "010 $a" value with which matches to "Canceled LCCN" of existing Shared record and save
+                QuickMarcEditor.updateExistingField(
+                  '010',
+                  `$a ${canceledLccnNumberOfSharedInstance}`,
+                );
+                QuickMarcEditor.checkContentByTag(
+                  '010',
+                  `$a ${canceledLccnNumberOfSharedInstance}`,
+                );
+                QuickMarcEditor.pressSaveAndClose();
+                QuickMarcEditor.checkAfterSaveAndClose();
+
+                // Step 7: Repeat steps 1-4
+                InventoryInstance.newMarcBibRecord();
+                QuickMarcEditor.updateLDR06And07Positions();
+                QuickMarcEditor.updateExistingField('245', `$a ${newSharedMarcInstanceTitle} 2nd`);
+
+                // Step 8: Add "010 $a" which matches to "LCCN" of existing Local record and save
+                QuickMarcEditor.addNewField('010', `$a ${lccnNumberOfLocalInstance}`, 4);
+                QuickMarcEditor.checkContentByTag('010', `$a ${lccnNumberOfLocalInstance}`);
+                QuickMarcEditor.pressSaveAndClose();
+                QuickMarcEditor.checkAfterSaveAndClose();
+              });
           },
         );
       });

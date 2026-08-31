@@ -132,8 +132,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C402764 "New fast add record" and "In transit items report (CSV)" actions are not displayed in "Inventory" app - "Central" tenant (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C402764'] },
+        'C402764 "New fast add record" and "In transit items report (CSV)" actions are not displayed in "Inventory" app - "Central" tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C402764'] },
         () => {
           function checkOptionsShown(areShown) {
             InventoryInstances.clickActionsButton();
@@ -179,6 +179,7 @@ describe('Inventory', () => {
 
           InventorySearchAndFilter.switchToHoldings();
           InventorySearchAndFilter.holdingsTabIsDefault();
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(searchQuery);
           InventorySearchAndFilter.verifyResultListExists();
           checkOptionsShown(true);

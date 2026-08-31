@@ -60,8 +60,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C402775 (NON-CONSORTIA) Verify the Source of a MARC Instance on non-consortial tenant (folijet) (TaaS)',
-        { tags: ['criticalPath', 'folijet', 'C402775', 'shiftLeft'] },
+        'C402775 (NON-CONSORTIA) Verify the Source of a MARC Instance on non-consortial tenant (promin) (TaaS)',
+        { tags: ['criticalPath', 'promin', 'C402775', 'shiftLeft'] },
         () => {
           InventorySearchAndFilter.verifyPanesExist();
           InventorySearchAndFilter.instanceTabIsDefault();

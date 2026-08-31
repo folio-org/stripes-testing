@@ -145,8 +145,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C692245 Browse for same call number which exists in two holdings (with different locations) of the same Instance (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C692245'] },
+      'C692245 Browse for same call number which exists in two holdings (with different locations) of the same Instance (promin)',
+      { tags: ['criticalPath', 'promin', 'C692245'] },
       () => {
         cy.login(testData.user.username, testData.user.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);

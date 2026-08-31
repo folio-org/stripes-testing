@@ -38,8 +38,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C440078 Render preview after query executed (Users - Edit Local) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C440078'] },
+      'C440078 Render preview after query executed (Users - Edit Local) (athena)',
+      { tags: ['extendedPath', 'athena', 'C440078'] },
       () => {
         // Step 1: Select "Users" radio button and click "Build query" button
         BulkEditSearchPane.openQuerySearch();
@@ -51,8 +51,8 @@ describe('Bulk-edit', () => {
         QueryModal.selectField(usersFieldValues.patronGroup);
         QueryModal.verifySelectedField(usersFieldValues.patronGroup);
         QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-        QueryModal.chooseFromValueMultiselect(patronGroupNames.STAFF);
-        QueryModal.chooseFromValueMultiselect(patronGroupNames.FACULTY);
+        QueryModal.chooseFromValueMultiselect(patronGroupNames.STAFF, 0, { exactMatch: true });
+        QueryModal.chooseFromValueMultiselect(patronGroupNames.FACULTY, 0, { exactMatch: true });
         QueryModal.addNewRow();
         QueryModal.selectField(usersFieldValues.userBarcode, 1);
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);

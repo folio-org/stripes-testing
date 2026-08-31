@@ -101,8 +101,8 @@ describe('Staff slips', () => {
   });
 
   it(
-    'C375293 Add "requester.patronGroup" as staff slip token in Settings (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C375293'] },
+    'C375293 Add "requester.patronGroup" as staff slip token in Settings (vega)',
+    { tags: ['criticalPath', 'vega', 'C375293'] },
     () => {
       EditStaffClips.editTransit();
       EditStaffClips.addToken(['requester.patronGroup']);
@@ -114,8 +114,8 @@ describe('Staff slips', () => {
   );
 
   it(
-    'C387442 Add "Departments" as staff slip token in Settings (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C387442'] },
+    'C387442 Add "Departments" as staff slip token in Settings (vega)',
+    { tags: ['criticalPath', 'vega', 'C387442'] },
     () => {
       EditStaffClips.editTransit();
       EditStaffClips.addToken(['requester.departments']);
@@ -130,8 +130,8 @@ describe('Staff slips', () => {
   );
 
   it(
-    'C388508 Verify that token "currentDateTime" is populated in the pick slip (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C388508'] },
+    'C388508 Verify that token "currentDateTime" is populated in the pick slip (vega)',
+    { tags: ['criticalPath', 'vega', 'C388508'] },
     () => {
       EditStaffClips.editPickslip();
       EditStaffClips.addToken(['staffSlip.currentDateTime']);

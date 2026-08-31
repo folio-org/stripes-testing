@@ -73,8 +73,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C359176 MARC Authority | Verify that deleted MARC Field will display at the same position after restoring (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C359176'] },
+        'C359176 MARC Authority | Verify that deleted MARC Field will display at the same position after restoring (promin)',
+        { tags: ['extendedPath', 'promin', 'C359176'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);

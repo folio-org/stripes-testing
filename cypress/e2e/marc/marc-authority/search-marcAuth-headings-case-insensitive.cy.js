@@ -71,8 +71,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C466093 Search by "Children\'s subject heading" field is case-insensitive (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466093'] },
+      'C466093 Search by "Children\'s subject heading" field is case-insensitive (promin)',
+      { tags: ['criticalPath', 'promin', 'C466093'] },
       () => {
         testData.headingsC466093.forEach((query) => {
           MarcAuthorities.searchBeats(query);

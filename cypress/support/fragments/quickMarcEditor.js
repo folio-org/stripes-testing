@@ -1392,6 +1392,47 @@ export default {
     }
   },
 
+  verifyRowLinkedByTag(tag, { isLinked = true, contentPart = null } = {}) {
+    const targetRow = contentPart
+      ? QuickMarcEditorRow({ tagValue: tag, content: including(contentPart) })
+      : QuickMarcEditorRow({ tagValue: tag });
+    const textBoxes = {
+      content: targetRow.find(TextArea({ name: including('].content') })),
+      controlled: targetRow.find(TextArea({ name: including('].subfieldGroups.controlled') })),
+      uncontrolledAlpha: targetRow.find(
+        TextArea({ name: including('].subfieldGroups.uncontrolledAlpha') }),
+      ),
+      zeroSubfield: targetRow.find(TextArea({ name: including('].subfieldGroups.zeroSubfield') })),
+      uncontrolledNumber: targetRow.find(
+        TextArea({ name: including('].subfieldGroups.uncontrolledNumber') }),
+      ),
+    };
+    if (isLinked) {
+      cy.expect([
+        textBoxes.content.absent(),
+        textBoxes.controlled.exists(),
+        textBoxes.uncontrolledAlpha.exists(),
+        textBoxes.zeroSubfield.exists(),
+        textBoxes.uncontrolledNumber.exists(),
+        targetRow.find(unlinkIconButton).exists(),
+        targetRow.find(viewAuthorityIconButton).exists(),
+        targetRow.find(linkToMarcRecordButton).absent(),
+      ]);
+    } else {
+      cy.expect([
+        textBoxes.content.exists(),
+        textBoxes.controlled.absent(),
+        textBoxes.uncontrolledAlpha.absent(),
+        textBoxes.zeroSubfield.absent(),
+        textBoxes.uncontrolledNumber.absent(),
+        targetRow.find(unlinkIconButton).absent(),
+        targetRow.find(viewAuthorityIconButton).absent(),
+        targetRow.find(linkToMarcRecordButton).exists(),
+      ]);
+    }
+    cy.expect(targetRow.find(Spinner()).absent());
+  },
+
   verifyTagFieldAfterLinking(
     rowIndex,
     tag,
@@ -1673,14 +1714,16 @@ export default {
     );
   },
 
-  verifyDropdownOptionChecked(tag, dropdownLabel, option, row = null) {
+  verifyDropdownOptionChecked(tag, dropdownLabel, option, row = null, index = null) {
     const targetRow =
       row === null ? getRowInteractorByTagName(tag) : getRowInteractorByRowNumber(row);
-    cy.expect(
-      targetRow
-        .find(Select({ label: including(dropdownLabel) }))
-        .has({ checkedOptionText: option }),
-    );
+    const matcher = {
+      label: matching(new RegExp(`^${dropdownLabel}\\**$`)),
+    };
+    if (index !== null) {
+      matcher.name = matching(new RegExp(`\\[${index}\\]$`));
+    }
+    cy.expect(targetRow.find(Select(matcher)).has({ checkedOptionText: option }));
   },
 
   verifyDropdownHoverText(id, hoverText) {

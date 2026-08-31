@@ -224,8 +224,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C663332 Check "Version history" pane after Update of 20 unique fields of "MARC authority" record via "quickmarc" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C663332'] },
+        'C663332 Check "Version history" pane after Update of 20 unique fields of "MARC authority" record via "quickmarc" (promin)',
+        { tags: ['extendedPath', 'promin', 'C663332'] },
         () => {
           MarcAuthority.edit();
           QuickMarcEditor.waitLoading();

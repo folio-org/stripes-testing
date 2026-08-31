@@ -179,8 +179,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C584552 Filter "Instance" records by combination of filters "Date range" + "Shared" + "Held by" (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C584552'] },
+          'C584552 Filter "Instance" records by combination of filters "Date range" + "Shared" + "Held by" (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C584552'] },
           () => {
             InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
             InventorySearchAndFilter.clickAccordionByName(heldbyAccordionName);

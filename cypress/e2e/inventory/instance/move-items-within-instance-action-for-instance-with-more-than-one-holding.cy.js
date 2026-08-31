@@ -90,8 +90,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C519985 Check "Move items within an Instance" action for Instance with more than one holding (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C519985'] },
+      'C519985 Check "Move items within an Instance" action for Instance with more than one holding (promin)',
+      { tags: ['extendedPath', 'promin', 'C519985'] },
       () => {
         InventoryInstances.searchByTitle(testData.testInstanceIds.instanceId);
         InventoryInstances.selectInstance();

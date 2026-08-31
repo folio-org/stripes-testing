@@ -54,8 +54,8 @@ describe('eHoldings', () => {
   });
 
   it(
-    'C376613 Added tags shown in search filter for Packages, Titles, Providers (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C376613'] },
+    'C376613 Added tags shown in search filter for Packages, Titles, Providers (promin)',
+    { tags: ['extendedPath', 'promin', 'C376613'] },
     () => {
       EHoldingSearch.switchToProviders();
       EHoldingsProvidersSearch.byProvider('a');

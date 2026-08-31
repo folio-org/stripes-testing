@@ -123,8 +123,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C387450 "008" field existence validation when create new "MARC Holdings" (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C387450'], retries: 1 },
+      'C387450 "008" field existence validation when create new "MARC Holdings" (promin)',
+      { tags: ['criticalPath', 'promin', 'C387450'], retries: 1 },
       () => {
         InventoryInstances.searchByTitle(instanceIds[0]);
         InventoryInstances.selectInstance();
@@ -172,8 +172,8 @@ describe('MARC', () => {
     );
 
     it(
-      'C350646 Create a new MARC Holdings record for existing "Instance" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'shiftLeft', 'C350646'] },
+      'C350646 Create a new MARC Holdings record for existing "Instance" record (promin)',
+      { tags: ['criticalPath', 'promin', 'shiftLeft', 'C350646'] },
       () => {
         InventoryInstances.searchByTitle(instanceIds[1]);
         InventoryInstances.selectInstanceById(instanceIds[1]);
@@ -209,8 +209,8 @@ describe('MARC', () => {
     );
 
     it(
-      'C350757 MARC fields behavior when creating "MARC Holdings" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C350757'] },
+      'C350757 MARC fields behavior when creating "MARC Holdings" record (promin)',
+      { tags: ['criticalPath', 'promin', 'C350757'] },
       () => {
         InventoryInstances.searchByTitle(instanceIds[2]);
         InventoryInstances.selectInstanceById(instanceIds[2]);
@@ -260,8 +260,8 @@ describe('MARC', () => {
     );
 
     it(
-      'C359242 Create MARC Holdings | Displaying of placeholder message when user deletes a row (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C359242'] },
+      'C359242 Create MARC Holdings | Displaying of placeholder message when user deletes a row (promin)',
+      { tags: ['criticalPath', 'promin', 'C359242'] },
       () => {
         cy.ifConsortia(true, () => {
           InventorySearchAndFilter.byShared('No');

@@ -101,8 +101,8 @@ describe('Permissions', () => {
       });
 
       it(
-        'C396393 Verify that new permission to view all user settings are added (volaris)',
-        { tags: ['extendedPath', 'volaris', 'C396393'] },
+        'C396393 Verify that new permission to view all user settings are added (vega)',
+        { tags: ['extendedPath', 'vega', 'C396393'] },
         () => {
           cy.visit(SettingsMenu.permissionSets);
           cy.wait(waitTimeout);
@@ -175,8 +175,8 @@ describe('Permissions', () => {
       );
 
       it(
-        'C407702 User with "Settings (Users): View all settings" permission only can view "Manual Charges" page on "Users > Settings" - when system has no configured Fee/Fine owners (volaris)',
-        { tags: ['extendedPath', 'volaris', 'C407702'] },
+        'C407702 User with "Settings (Users): View all settings" permission only can view "Manual Charges" page on "Users > Settings" - when system has no configured Fee/Fine owners (vega)',
+        { tags: ['extendedPath', 'vega', 'C407702'] },
         () => {
           cy.visit(SettingsMenu.manualCharges);
           cy.wait(waitTimeout);
@@ -186,8 +186,8 @@ describe('Permissions', () => {
       );
 
       it(
-        'C402752 Verify that "Settings (Users): View all settings" works as expected Scenario 2 (volaris)',
-        { tags: ['extendedPath', 'volaris', 'C402752'] },
+        'C402752 Verify that "Settings (Users): View all settings" works as expected Scenario 2 (vega)',
+        { tags: ['extendedPath', 'vega', 'C402752'] },
         () => {
           cy.visit(SettingsMenu.usersOwnersPath);
           cy.wait(waitTimeout);
@@ -221,8 +221,8 @@ describe('Permissions', () => {
       );
 
       it(
-        'C402779 Verify that "Settings(users):View all settings " allows to only view Templates (volaris)',
-        { tags: ['extendedPath', 'volaris', 'C402779'] },
+        'C402779 Verify that "Settings(users):View all settings " allows to only view Templates (vega)',
+        { tags: ['extendedPath', 'vega', 'C402779'] },
         () => {
           cy.visit(SettingsMenu.patronBlockTemplates);
           cy.wait(waitTimeout);
@@ -232,8 +232,8 @@ describe('Permissions', () => {
       );
 
       it(
-        'C404380 Verify that "Settings (Users): View all settings" works as expected Scenario 4 (volaris)',
-        { tags: ['extendedPath', 'volaris', 'C404380'] },
+        'C404380 Verify that "Settings (Users): View all settings" works as expected Scenario 4 (vega)',
+        { tags: ['extendedPath', 'vega', 'C404380'] },
         () => {
           cy.visit(SettingsMenu.limitsPath);
           cy.wait(waitTimeout);
@@ -243,8 +243,8 @@ describe('Permissions', () => {
       );
 
       it(
-        'C404383 Verify that "Settings (Users): View all settings" works as expected Scenario 5 (volaris)',
-        { tags: ['extendedPathFlaky', 'volaris', 'C404383'] },
+        'C404383 Verify that "Settings (Users): View all settings" works as expected Scenario 5 (vega)',
+        { tags: ['extendedPathFlaky', 'vega', 'C404383'] },
         () => {
           cy.visit(SettingsMenu.conditionsPath);
           cy.wait(waitTimeout);

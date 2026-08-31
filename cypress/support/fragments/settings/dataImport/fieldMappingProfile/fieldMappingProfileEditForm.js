@@ -8,8 +8,11 @@ import {
   DecoratorWrapper,
   Form,
   KeyValue,
+  Modal,
   MultiColumnList,
+  MultiColumnListCell,
   MultiColumnListHeader,
+  MultiColumnListRow,
   Option,
   Section,
   Select,
@@ -29,6 +32,9 @@ const actionProfilesSection = mappingProfileForm.find(
   Section({ id: 'mappingProfileFormAssociatedActionProfileAccordion' }),
 );
 const editAssociatedList = MultiColumnList({ id: 'edit-associated-actionProfiles-list' });
+const unlinkConfirmModal = Modal('Confirm removal');
+const confirmButton = Button('Confirm');
+const unlinkIcon = Button({ title: 'Unlink this profile' });
 
 const itemDetails = {
   administrativeData: adminDataSection,
@@ -235,7 +241,7 @@ const formFields = {
 
 export default {
   waitLoading() {
-    cy.expect(mappingProfileForm.exists());
+    cy.expect([mappingProfileForm.exists(), mappingProfileForm.find(Button('Actions')).absent()]);
   },
   verifyFormView({ type } = {}) {
     cy.expect([summarySection.exists(), actionProfilesSection.exists()]);
@@ -752,6 +758,41 @@ export default {
     });
   },
 
+  clickUnlinkActionProfile(actionProfileName) {
+    cy.do(
+      actionProfilesSection
+        .find(editAssociatedList)
+        .find(
+          MultiColumnListRow({
+            innerText: including(`${actionProfileName}\n`),
+            isContainer: false,
+          }),
+        )
+        .find(unlinkIcon)
+        .click(),
+    );
+  },
+
+  confirmUnlinkActionProfile() {
+    cy.do(unlinkConfirmModal.find(confirmButton).click());
+    cy.expect(unlinkConfirmModal.absent());
+  },
+
+  verifyAssociatedActionProfileAbsent(actionProfileName) {
+    cy.expect(
+      actionProfilesSection
+        .find(editAssociatedList)
+        .find(MultiColumnListCell({ content: actionProfileName }))
+        .absent(),
+    );
+  },
+
+  unlinkActionProfile(actionProfileName) {
+    this.clickUnlinkActionProfile(actionProfileName);
+    this.confirmUnlinkActionProfile();
+    this.verifyAssociatedActionProfileAbsent(actionProfileName);
+  },
+
   verifySectionOverrideProtectedFields() {
     cy.expect([
       Accordion({ id: 'mapping-profile-details' }).exists(),
@@ -775,5 +816,9 @@ export default {
     cy.get('#edit-override-protected-section input[type="checkbox"]').each(($checkbox) => {
       cy.wrap($checkbox).should('not.be.disabled');
     });
+  },
+
+  verifyName(name) {
+    summaryFields.name.has({ value: name });
   },
 };

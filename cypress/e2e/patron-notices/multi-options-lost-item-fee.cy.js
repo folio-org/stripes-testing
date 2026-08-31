@@ -93,8 +93,8 @@ describe('Patron notices', () => {
     });
 
     it(
-      'C385643 User can select Multiples options for "Lost item fee(s) charged" (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C385643'] },
+      'C385643 User can select Multiples options for "Lost item fee(s) charged" (vega)',
+      { tags: ['extendedPath', 'vega', 'C385643'] },
       () => {
         noticeTemplates.forEach((template, index) => {
           NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);

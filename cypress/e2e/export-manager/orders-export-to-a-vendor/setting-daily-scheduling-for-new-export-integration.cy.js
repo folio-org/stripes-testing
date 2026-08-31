@@ -1,5 +1,6 @@
 import moment from 'moment';
 
+import { DEFAULT_WAIT_TIME } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import ExportDetails from '../../../support/fragments/exportManager/exportDetails';
@@ -95,10 +96,28 @@ describe('Export Manager', () => {
         ExportManagerSearchPane.waitLoading();
 
         ExportManagerSearchPane.selectOrganizationsSearch();
-
         ExportManagerSearchPane.selectExportMethod(integrationName);
 
+        /*
+          It may take some time for the export job to be created and displayed in the list after the integration is saved.
+          This function implements an exponential backoff strategy to repeatedly check for the presence of the export job in the list, reloading the page and waiting longer between attempts if the job is not found.
+        */
+        cy.recurse(
+          () => cy.get('[data-test-results-pane] [data-test-pane-header-sub]'),
+          ($el) => {
+            // If the export job is found in the list, return true to stop the recursion.
+            if ($el.text().includes('record')) {
+              return true;
+            }
+
+            cy.reload();
+            return false;
+          },
+          { delay: DEFAULT_WAIT_TIME },
+        );
+
         ExportManagerSearchPane.selectJobByIntegrationInList(integrationName);
+
         ExportDetails.checkExportJobDetails({
           exportInformation: [
             { key: 'Status', value: 'Failed' },

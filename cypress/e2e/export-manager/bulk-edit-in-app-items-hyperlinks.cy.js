@@ -55,7 +55,7 @@ describe.skip('Export Manager', () => {
   });
 
   it(
-    'C365105 Verify hyperlink on the "JobID" column -- Items in app approach (firebird) (TaaS)',
+    'C365105 Verify hyperlink on the "JobID" column -- Items in app approach (athena) (TaaS)',
     { tags: [] },
     () => {
       BulkEditSearchPane.checkItemsRadio();

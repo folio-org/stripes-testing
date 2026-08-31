@@ -44,7 +44,7 @@ describe('Lists', () => {
               testData.updatedFieldName = `${createdCustomField.name}_Updated`;
               testData.updatedFieldLabel = `User — ${testData.updatedFieldName}`;
             })
-            .then(() => Lists.waitForCustomFieldToBeQueryable(recordType, testData.customFieldLabel));
+            .then(() => Lists.waitForCustomFieldToBeQueryable(testData.customFieldLabel, recordType));
 
           cy.createTempUser([]).then((user) => {
             loginUser = user;
@@ -70,8 +70,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C648492 Verify that it\'s possible to update the Single select custom fields, and all existing queries are still available (corsair)',
-          { tags: ['criticalPath', 'corsair', 'C648492'] },
+          'C648492 Verify that it\'s possible to update the Single select custom fields, and all existing queries are still available (athena)',
+          { tags: ['criticalPath', 'athena', 'C648492'] },
           () => {
             listName = getTestEntityValue('C648492_List');
 
@@ -121,7 +121,7 @@ describe('Lists', () => {
             });
 
             // Wait ~5-6 min for the update to propagate to the entity type
-            Lists.waitForCustomFieldToBeQueryable(recordType, testData.updatedFieldLabel);
+            Lists.waitForCustomFieldToBeQueryable(testData.updatedFieldLabel, recordType);
 
             // #3 Go to the "Lists" app and open the list that uses the updated custom field
             cy.login(loginUser.username, loginUser.password, {

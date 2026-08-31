@@ -87,7 +87,7 @@ describe('Inventory', () => {
 
         after('Delete user, data', () => {
           cy.resetTenant();
-          cy.getAdminToken();
+          cy.getAdminToken(false);
           cy.setTenant(Affiliations.College);
           InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
 
@@ -97,8 +97,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C1009050 Verify that 50 holdings created individually are successfully indexed (spitfire) (TaaS)',
-          { tags: ['criticalPathECS', 'spitfire', 'C1009050'] },
+          'C1009050 Verify that 50 holdings created individually are successfully indexed (promin) (TaaS)',
+          { tags: ['criticalPathECS', 'promin', 'C1009050'] },
           () => {
             InventorySearchAndFilter.fillInSearchQuery(instancePrefix);
             InventorySearchAndFilter.clickSearch();
@@ -134,6 +134,7 @@ describe('Inventory', () => {
                   });
                 }
               }).then(() => {
+                cy.wait(5000); // Wait for holdings to be indexed in search
                 // Verify "Held by" counter
                 InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
                 InventoryInstances.waitContentLoading();
@@ -157,6 +158,7 @@ describe('Inventory', () => {
                   InventorySearchAndFilter.verifySearchResult(instanceTitles[i]);
                   InventorySearchAndFilter.verifyNumberOfSearchResults(1);
                   InventoryInstance.waitLoading();
+                  InventoryInstance.waitInstanceRecordViewOpened();
                 });
               });
             }

@@ -102,8 +102,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C543837 Indicator boxes validation during deriving of MARC bib record (spitfire)',
-        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C543837'] },
+        'C543837 Indicator boxes validation during deriving of MARC bib record (promin)',
+        { tags: ['extendedPathFlaky', 'promin', 'nonParallel', 'C543837'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

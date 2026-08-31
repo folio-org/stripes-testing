@@ -43,31 +43,10 @@ describe('Data Import', () => {
         instanceTitle: 'C407696 Marvel comics direct distributors meeting / Marvel Comics Group.',
         marcAuthIcon: 'Linked to MARC authority',
       };
-      function replace999SubfieldsInPreupdatedFile(
-        exportedFileName,
-        preUpdatedFileName,
-        finalFileName,
-      ) {
-        FileManager.readFile(`cypress/fixtures/${exportedFileName}`).then((actualContent) => {
-          const lines = actualContent.split('');
-          const field999data = lines[lines.length - 2];
-          FileManager.readFile(`cypress/fixtures/${preUpdatedFileName}`).then((updatedContent) => {
-            const content = updatedContent.split('\n');
-            let firstString = content[0].slice();
-            firstString = firstString.replace(
-              'ffi7b966b3d-c0ca-41db-8c35-90dc2e251a85s55f6796c-ac92-4986-a31a-1438baea640e',
-              field999data,
-            );
-            content[0] = firstString;
-            FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
-          });
-        });
-      }
       // unique file name to upload
       const nameForUpdatedMarcFile = `C407696autotestFile${getRandomPostfix()}.mrc`;
       const nameForExportedMarcFile = `C407696autotestFile${getRandomPostfix()}.mrc`;
       const nameForCSVFile = `C407696autotestFile${getRandomPostfix()}.csv`;
-      const nameForPreUpdatedMarcBibFile = 'C407696MarcBibPreUpdated.mrc';
       const marcFiles = [
         {
           marc: 'marcBibFileForC407696.mrc',
@@ -249,14 +228,13 @@ describe('Data Import', () => {
                 });
               },
             );
-            cy.waitForAuthRefresh(() => {
-              cy.resetTenant();
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-              cy.reload();
-            }, 20_000);
+
+            cy.resetTenant();
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
+
             InventoryInstances.waitContentLoading();
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
             InventoryInstances.waitContentLoading();
@@ -283,8 +261,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C407696 Updating "$0" in linked fields of shared "MARC Bib" in member tenant via Data Import (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C407696'] },
+        'C407696 Updating "$0" in linked fields of shared "MARC Bib" in member tenant via Data Import (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C407696'] },
         () => {
           cy.setTenant(Affiliations.College);
           InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
@@ -302,11 +280,16 @@ describe('Data Import', () => {
           FileManager.deleteFolder(Cypress.config('downloadsFolder'));
           cy.log('#####End Of Export#####');
 
-          // add 999 subfield values from exported file to pre-updated file with field 100 deleted
-          replace999SubfieldsInPreupdatedFile(
+          DataImport.editMarcFile(
             nameForExportedMarcFile,
-            nameForPreUpdatedMarcBibFile,
             nameForUpdatedMarcFile,
+            [
+              'tComiCon',
+              '0800269554076962',
+              '0http://id.loc.gov/authorities/subjects/sh850952994076963',
+              'n93094742407696',
+            ],
+            ['tComiket', '0800269554076962001', '', 'n930947424076960123456333'],
           );
 
           // upload the exported marc file with 999.f.f.s fields
@@ -328,13 +311,13 @@ describe('Data Import', () => {
 
           InventoryInstance.viewSource();
           InventoryViewSource.contains(
-            '\t630\t0 7\t$a C407696 Marvel comics $t Comiket $v Periodicals. $z United States $w 830 $0 800269554076962001 $2 fast',
+            '\t630\t   \t$a C407696 Marvel comics $t Comiket $v Periodicals. $z United States $w 830 $0 800269554076962001 $2 fast',
           );
           InventoryViewSource.contains(
-            '\t650\t  7\t$a C407696 Speaking Oratory $b debating $2 fast',
+            '\t650\t   \t$a C407696 Speaking Oratory $b debating $2 fast',
           );
           InventoryViewSource.contains(
-            `${testData.marcAuthIcon}\n\t710\t2  \t$a C407696 Radio "Vaticana". $b Hrvatski program $0 http://id.loc.gov/authorities/names/n93094742407696 $9`,
+            `${testData.marcAuthIcon}\n\t710\t   \t$a C407696 Radio "Vaticana". $b Hrvatski program $0 http://id.loc.gov/authorities/names/n93094742407696 $9`,
           );
           InventoryViewSource.close();
 
@@ -345,23 +328,23 @@ describe('Data Import', () => {
           InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.verifyTagFieldAfterUnlinking(
-            linkingTagAndValues[0].rowIndex + 1,
+            linkingTagAndValues[0].rowIndex,
             linkingTagAndValues[0].tag,
-            '0',
-            '7',
+            '\\',
+            '\\',
             linkingTagAndValues[0].content,
           );
           QuickMarcEditor.verifyTagFieldAfterUnlinking(
-            linkingTagAndValues[1].rowIndex + 1,
+            linkingTagAndValues[1].rowIndex,
             linkingTagAndValues[1].tag,
             '\\',
-            '7',
+            '\\',
             linkingTagAndValues[1].content,
           );
           QuickMarcEditor.verifyTagFieldAfterLinking(
-            linkingTagAndValues[2].rowIndex + 1,
+            linkingTagAndValues[2].rowIndex,
             linkingTagAndValues[2].tag,
-            '2',
+            '\\',
             '\\',
             linkingTagAndValues[2].boxFourth,
             linkingTagAndValues[2].boxFifth,

@@ -116,8 +116,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C651436 Verify records with "Retrieving records" status are correctly labeled in Bulk edit Logs (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C651436'] },
+      'C651436 Verify records with "Retrieving records" status are correctly labeled in Bulk edit Logs (athena)',
+      { tags: ['extendedPath', 'athena', 'C651436'] },
       () => {
         // Step 1: Select the "Inventory - items" radio button and "Item barcodes" identifier
         BulkEditSearchPane.checkItemsRadio();
@@ -126,7 +126,7 @@ describe('Bulk-edit', () => {
 
         // Step 2: Upload a .csv file with valid Item barcodes
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
-        BulkEditSearchPane.checkForUploading(itemBarcodesFileName);
+        BulkEditSearchPane.verifyRetrievingRecordsStatus(itemBarcodesFileName);
 
         // Step 3: Immediately switch to Logs to catch "Retrieving records" status
         BulkEditSearchPane.openLogsSearch();

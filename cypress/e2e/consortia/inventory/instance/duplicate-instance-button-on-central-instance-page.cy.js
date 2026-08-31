@@ -43,8 +43,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C409468 (CONSORTIA) Verify the "Duplicate instance" button on Central tenant Instance page (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C409468'] },
+        'C409468 (CONSORTIA) Verify the "Duplicate instance" button on Central tenant Instance page (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C409468'] },
         () => {
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();

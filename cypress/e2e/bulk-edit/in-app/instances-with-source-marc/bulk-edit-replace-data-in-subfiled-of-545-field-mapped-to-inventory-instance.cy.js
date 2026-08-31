@@ -108,8 +108,8 @@ describe(
       });
 
       it(
-        'C506681 Replace data in the subfield of MARC field (545) mapped to Inventory Instance (MARC) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C506681'] },
+        'C506681 Replace data in the subfield of MARC field (545) mapped to Inventory Instance (MARC) (athena)',
+        { tags: ['criticalPath', 'athena', 'C506681'] },
         () => {
           // Step 1: Show Source and Biographical or Historical Data columns
           BulkEditActions.openActions();

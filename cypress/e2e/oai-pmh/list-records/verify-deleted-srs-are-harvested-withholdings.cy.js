@@ -57,8 +57,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375967 ListRecords: Verify that deleted SRS are harvested (marc21_withholdings) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C375967'] },
+      'C375967 ListRecords: Verify that deleted SRS are harvested (marc21_withholdings) (athena)',
+      { tags: ['extendedPath', 'athena', 'C375967'] },
       () => {
         // Step 1: Search for any SRS inventory instance by selecting "MARC" option from "Source" filter
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);

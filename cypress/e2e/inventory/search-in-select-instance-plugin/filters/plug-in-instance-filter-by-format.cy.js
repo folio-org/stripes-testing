@@ -119,8 +119,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476808 "Select Instance" plugin | Filter "Instance" records by "Format" filter/facet (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476808'] },
+        'C476808 "Select Instance" plugin | Filter "Instance" records by "Format" filter/facet (promin)',
+        { tags: ['extendedPath', 'promin', 'C476808'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(formatAccordionName);
           SelectInstanceModal.checkOptionsWithCountersExistInAccordion(formatAccordionName);

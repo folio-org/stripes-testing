@@ -22,14 +22,13 @@ describe('Inventory', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    // bug report https://folio-org.atlassian.net/browse/STRIPES-1024
     it(
-      'C350406 Change focus for Settings (folijet)',
-      { tags: ['extendedPathFlaky', 'folijet'] },
+      'C350406 Change focus for Settings (promin)',
+      { tags: ['extendedPathFlaky', 'promin', 'C350406'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsPane.waitLoading();
-        SettingsPane.checkAppSettingsNavPaneFocused();
+        SettingsPane.checkSettingsNavPaneFocused();
       },
     );
   });

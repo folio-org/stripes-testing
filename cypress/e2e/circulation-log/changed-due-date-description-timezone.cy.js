@@ -240,8 +240,8 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C770448 "Description" field displays time according to current time zone in Circulation log for Changed due date (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C770448'] },
+    'C770448 "Description" field displays time according to current time zone in Circulation log for Changed due date (vega)',
+    { tags: ['extendedPath', 'vega', 'C770448'] },
     () => {
       // Step 1: Check out item and verify due date/time are shown in the selected timezone
       CheckOutActions.checkOutUser(testData.user.barcode);

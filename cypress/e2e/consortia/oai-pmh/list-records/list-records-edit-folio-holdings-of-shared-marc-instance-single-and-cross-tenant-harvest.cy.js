@@ -141,8 +141,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C409411 Consortia | SRS | ListRecords | ListIdentifiers: Edit FOLIO Holdings of the shared MARC instance in Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C409411', 'nonParallel'] },
+        'C409411 Consortia | SRS | ListRecords | ListIdentifiers: Edit FOLIO Holdings of the shared MARC instance in Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C409411', 'nonParallel'] },
         () => {
           const fromDate = DateTools.getCurrentDateForOaiPmh();
 

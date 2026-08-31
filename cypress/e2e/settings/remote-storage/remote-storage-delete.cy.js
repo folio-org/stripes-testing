@@ -27,9 +27,9 @@ describe('remote-storage-configuration', () => {
   });
 
   it(
-    'C163921 Delete remote storage configuration (volaris) (TaaS)',
+    'C163921 Delete remote storage configuration (vega) (TaaS)',
     {
-      tags: ['criticalPathFlaky', 'volaris', 'C163921'],
+      tags: ['criticalPathFlaky', 'vega', 'C163921'],
       retries: 2,
     },
     () => {

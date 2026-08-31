@@ -22,8 +22,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C540397 Verify that displays proper validation message when the user does not have permission to do the action (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C540397'] },
+      'C540397 Verify that displays proper validation message when the user does not have permission to do the action (athena)',
+      { tags: ['extendedPath', 'athena', 'C540397'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

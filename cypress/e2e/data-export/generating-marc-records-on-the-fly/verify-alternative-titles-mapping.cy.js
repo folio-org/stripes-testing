@@ -85,8 +85,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350405 Verify Alternative titles conditionally replacing keys with values (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C350405'] },
+      'C350405 Verify Alternative titles conditionally replacing keys with values (athena)',
+      { tags: ['extendedPath', 'athena', 'C350405'] },
       () => {
         // Step 1: Go to the "Data Export" app
         DataExportLogs.verifyDragAndDropAreaExists();

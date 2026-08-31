@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { POL_CREATE_INVENTORY_SETTINGS } from '../../support/constants';
+import { ORDER_LINE_FILTER_LABELS, POL_CREATE_INVENTORY_SETTINGS } from '../../support/constants';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
@@ -11,11 +11,19 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { PaneRequestWaiter } from '../../support/utils';
+import {
+  PANE_REQUEST_PHASES,
+  PANE_REQUEST_PROFILE_NAMES,
+} from '../../support/utils/paneRequestWaiter';
+
+const { FUND_CODE, LOCATION, ORDER_FORMAT, RUSH, SUBSCRIPTION_FROM, VENDOR } =
+  ORDER_LINE_FILTER_LABELS;
 
 describe('Orders', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const today = new Date();
-  const subcriptionDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
+  const subscriptionDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = {
     ...BasicOrderLine.defaultOrderLine,
@@ -36,6 +44,7 @@ describe('Orders', () => {
     publisher: `Autotest Publishing_${getRandomPostfix()}`,
     requester: `Autotest requester_${getRandomPostfix()}`,
     selector: `Autotest selector_${getRandomPostfix()}`,
+    rush: true,
     fundDistribution: [
       {
         code: 'USHIST',
@@ -67,6 +76,7 @@ describe('Orders', () => {
   let orderLineNumber;
 
   before(() => {
+    cy.clearLocalStorage();
     cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
@@ -95,7 +105,6 @@ describe('Orders', () => {
         });
       });
       cy.visit(TopMenu.ordersPath);
-      Orders.selectOrderLines();
     });
   });
 
@@ -105,46 +114,58 @@ describe('Orders', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  [
-    {
-      name: 'Location',
-      filterActions: Orders.selectFilterMainLibraryLocationsPOL,
+  it(
+    'C6720 Test the POL filters [except tags] (thunderjet)',
+    { tags: ['smoke', 'thunderjet', 'C6720'] },
+    () => {
+      const CASES = [
+        {
+          name: LOCATION,
+          filterActions: () => OrderLines.selectLocationInFilters(OrdersHelper.mainLibraryLocation),
+        },
+        {
+          name: FUND_CODE,
+          filterActions: () => OrderLines.filterByFundCodes([orderLine.fundDistribution[0].code]),
+        },
+        {
+          name: ORDER_FORMAT,
+          filterActions: () => OrderLines.filterByOrderFormats([BasicOrderLine.defaultOrderLine.orderFormat]),
+        },
+        {
+          name: VENDOR,
+          filterActions: () => OrderLines.filterByVendor(invoice.vendorName),
+        },
+        {
+          name: SUBSCRIPTION_FROM,
+          filterActions: () => OrderLines.filterBySubscriptionFrom({ from: subscriptionDate, to: subscriptionDate }),
+        },
+        {
+          name: RUSH,
+          filterActions: () => OrderLines.filterByRush(['Yes']),
+        },
+      ];
+
+      PaneRequestWaiter.waitForPaneRequests({
+        pane: PANE_REQUEST_PROFILE_NAMES.ORDER_LINES,
+        phase: PANE_REQUEST_PHASES.FILTERS,
+        trigger: () => {
+          Orders.selectOrderLines();
+          OrderLines.waitLoading();
+        },
+      });
+
+      cy.wrap(CASES).each(({ name, filterActions }) => {
+        cy.log(`<--- FILTER: ${name} --->`);
+        OrderLines.clearAllFilters();
+        PaneRequestWaiter.waitForPaneRequests({
+          pane: PANE_REQUEST_PROFILE_NAMES.ORDER_LINES,
+          trigger: () => filterActions(),
+        });
+        OrderLines.assertResetAllButtonState({ disabled: false });
+        OrderLines.verifyOrderLineInResultsList(orderLineNumber);
+      });
+
+      OrderLines.clearAllFilters();
     },
-    {
-      name: 'Fund code',
-      filterActions: Orders.selectFilterFundCodeUSHISTPOL,
-    },
-    {
-      name: 'Order format',
-      filterActions: Orders.selectFilterOrderFormatPhysicalResourcePOL,
-    },
-    {
-      name: 'Vendor',
-      filterActions: () => {
-        Orders.selectFilterVendorPOL(invoice);
-      },
-    },
-    {
-      name: 'Subscription from',
-      filterActions: () => {
-        Orders.selectFilterSubscriptionFromPOL(subcriptionDate);
-      },
-    },
-    {
-      name: 'Rush',
-      filterActions: Orders.selectFilterNoInRushPOL,
-    },
-  ].forEach((filter) => {
-    it(
-      `C6720 Test the POL filters [except tags]: ${filter.name} (thunderjet)`,
-      { tags: ['smoke', 'thunderjet', 'C6720'] },
-      () => {
-        Orders.searchByParameter('PO line number', orderLineNumber);
-        Orders.resetFilters();
-        filter.filterActions();
-        OrderLines.varifyOrderlineInResultsList(orderLineNumber);
-        Orders.resetFilters();
-      },
-    );
-  });
+  );
 });

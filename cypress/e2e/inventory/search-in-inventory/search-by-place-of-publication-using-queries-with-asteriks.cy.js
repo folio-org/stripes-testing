@@ -61,8 +61,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C496180 Search for Instance by "Place of publication" field using queries with asterisk (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C496180'] },
+      'C496180 Search for Instance by "Place of publication" field using queries with asterisk (promin)',
+      { tags: ['criticalPath', 'promin', 'C496180'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
 

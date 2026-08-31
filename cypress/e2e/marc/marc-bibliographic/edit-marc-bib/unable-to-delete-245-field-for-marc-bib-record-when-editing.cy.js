@@ -66,8 +66,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375124 User unable to delete "245" field for "MARC bibliographic" record when editing record (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C375124'] },
+        'C375124 User unable to delete "245" field for "MARC bibliographic" record when editing record (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C375124'] },
         () => {
           InventoryInstances.searchByTitle(testData.title);
           InventoryInstances.selectInstance();

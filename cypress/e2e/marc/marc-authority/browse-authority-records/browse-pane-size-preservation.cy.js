@@ -68,8 +68,8 @@ describe('MARC', () => {
       });
 
       it(
-        "C367960 Browse | Verify that panes size doesn't change while the loading pane is visible (spitfire)",
-        { tags: ['extendedPath', 'spitfire', 'C367960'] },
+        "C367960 Browse | Verify that panes size doesn't change while the loading pane is visible (promin)",
+        { tags: ['extendedPath', 'promin', 'C367960'] },
         () => {
           // Step 1: Fill in the search box
           MarcAuthoritiesSearch.fillSearchInput(testData.searchQuery);

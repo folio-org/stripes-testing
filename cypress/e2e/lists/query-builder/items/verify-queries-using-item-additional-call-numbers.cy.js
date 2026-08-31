@@ -156,8 +156,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C844261 Query Builder - Item — Item additional call numbers (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C844261'] },
+        'C844261 Query Builder - Item — Item additional call numbers (athena)',
+        { tags: ['criticalPath', 'athena', 'C844261'] },
         () => {
           // Step 1: Create new list with Items record type and build query
           Lists.openNewListPane();
@@ -209,7 +209,7 @@ describe('Lists', () => {
           // Step 3: Add new row
           QueryModal.addNewRow();
           QueryModal.verifyQueryAreaContent(
-            `(items.additional_call_numbers[*]->call_number == ${testData.callNumber1.callNumber}) AND (  )`,
+            `(items.additional_call_numbers[*]->call_number == ${testData.callNumber1.callNumber})`,
           );
 
           // Step 4: Query by "Prefix" contains "um_b.170495"

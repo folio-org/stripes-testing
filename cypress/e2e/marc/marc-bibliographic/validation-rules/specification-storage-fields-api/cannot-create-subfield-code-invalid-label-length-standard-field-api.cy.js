@@ -57,8 +57,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Subfield Code Inva
   });
 
   it(
-    'C499734 Cannot create Subfield code of Standard field with invalid "label" length for MARC bib spec (API) (spitfire)',
-    { tags: ['C499734', 'extendedPath', 'spitfire'] },
+    'C499734 Cannot create Subfield code of Standard field with invalid "label" length for MARC bib spec (API) (promin)',
+    { tags: ['C499734', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

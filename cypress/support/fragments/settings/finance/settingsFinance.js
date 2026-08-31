@@ -22,7 +22,7 @@ const ExpenseClassesListItem = NavListItem('Expense classes');
 const ExportCodeListItem = NavListItem('Export fund and expense class codes');
 const ExchangeRateSourceListItem = NavListItem('Exchange rate sources');
 const actions = Button('Actions');
-const newButton = Button('+ New');
+const newButton = Button('New');
 function getEditableListRow(rowNumber) {
   return EditableListRow({ index: +rowNumber.split('-')[1] });
 }

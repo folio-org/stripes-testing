@@ -47,8 +47,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C357007 Export [Package] Verify that values of "Title" record placed in correct column, when "Package" record has no assigned "Notes" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C357007'] },
+      'C357007 Export [Package] Verify that values of "Title" record placed in correct column, when "Package" record has no assigned "Notes" (promin)',
+      { tags: ['extendedPath', 'promin', 'C357007'] },
       () => {
         EHoldingSearch.switchToPackages();
         cy.wait(3000);

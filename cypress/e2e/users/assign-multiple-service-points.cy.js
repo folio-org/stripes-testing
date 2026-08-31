@@ -49,8 +49,8 @@ describe('Users', () => {
   });
 
   it(
-    'C424 Service Points: Assign multiple service points to a user (volaris)',
-    { tags: ['criticalPath', 'volaris', 'C424'] },
+    'C424 Service Points: Assign multiple service points to a user (vega)',
+    { tags: ['criticalPath', 'vega', 'C424'] },
     () => {
       UsersSearchPane.searchByUsername(testData.testUser.username);
       UserEdit.openEdit();

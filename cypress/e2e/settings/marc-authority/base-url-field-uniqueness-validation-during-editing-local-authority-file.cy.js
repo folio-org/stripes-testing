@@ -77,8 +77,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C440090 Uniqueness "Base URL" field validation during editing local "Authority file" (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C440090'] },
+        'C440090 Uniqueness "Base URL" field validation during editing local "Authority file" (promin)',
+        { tags: ['criticalPath', 'promin', 'C440090'] },
         () => {
           nonUniqueBaseUrls.forEach((nonUniqueBaseUrl) => {
             ManageAuthorityFiles.clickEditButton(localAuthorityFiles[0].name);

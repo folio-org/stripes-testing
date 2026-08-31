@@ -129,8 +129,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C397343 Link Shared MARC bib with Shared MARC authority from Member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C397343'] },
+        'C397343 Link Shared MARC bib with Shared MARC authority from Member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C397343'] },
         () => {
           cy.wait(15_000);
           InventorySearchAndFilter.clearDefaultFilter(testData.heldbyAccordionName);

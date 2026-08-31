@@ -143,8 +143,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C553060 "Select Instance" plugin | Verify that "Date range" filter is working on computed field from "Date 1" field (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C553060'] },
+        'C553060 "Select Instance" plugin | Verify that "Date range" filter is working on computed field from "Date 1" field (promin)',
+        { tags: ['extendedPath', 'promin', 'C553060'] },
         () => {
           SelectInstanceModal.searchByName(instanceTitlePrefix);
           instanceTitles.forEach((title) => {

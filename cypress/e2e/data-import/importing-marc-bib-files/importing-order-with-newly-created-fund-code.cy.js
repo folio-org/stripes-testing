@@ -112,7 +112,8 @@ describe('Data Import', () => {
     after('Delete test data', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${marcFile.modifiedMarcFile}`);
-      cy.getAdminToken().then(() => {
+      FileManager.deleteFile(`cypress/fixtures/${marcFile.marcFileName}`);
+      cy.getAdminToken(false).then(() => {
         Users.deleteViaApi(testData.user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -121,8 +122,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C584529 Importing order with newly created fund code (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C584529'] },
+      'C584529 Importing order with newly created fund code (promin)',
+      { tags: ['criticalPath', 'promin', 'C584529'] },
       () => {
         const fundAndExpenseClassData = [
           {
@@ -156,6 +157,8 @@ describe('Data Import', () => {
           ['expenseClassCode', 'fundCode'],
           [testData.expenseClass.code, testData.fund.code],
         );
+
+        cy.wait(15000);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();

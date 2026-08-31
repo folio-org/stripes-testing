@@ -34,8 +34,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C446067 Verify the "Run query" button, when the query returns 0 - holdings (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C446067'] },
+      'C446067 Verify the "Run query" button, when the query returns 0 - holdings (athena)',
+      { tags: ['criticalPath', 'athena', 'shiftLeft', 'C446067'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkHoldingsRadio();
@@ -45,7 +45,7 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(holdingsFieldValues.instanceUuid);
         QueryModal.verifySelectedField(holdingsFieldValues.instanceUuid);
-        QueryModal.verifyQueryAreaContent('(holdings.instance_id  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(holdings.instance_id == )');

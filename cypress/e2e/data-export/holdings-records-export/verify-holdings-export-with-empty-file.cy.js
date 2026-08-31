@@ -33,8 +33,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C543857 Negative: Verify EXPORT HOLDINGS using empty file (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C543857'] },
+      'C543857 Negative: Verify EXPORT HOLDINGS using empty file (athena)',
+      { tags: ['extendedPath', 'athena', 'C543857'] },
       () => {
         // Step 1: Go to the Data Export app (already navigated in before hook)
         DataExportViewAllLogs.verifyLogsTable();

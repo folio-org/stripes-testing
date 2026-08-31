@@ -33,8 +33,8 @@ describe('Lists', () => {
     });
 
     it(
-      "C436810 Verify that selections from 'Show columns' are persisted to a new list (corsair)",
-      { tags: ['extendedPath', 'corsair', 'C436810'] },
+      "C436810 Verify that selections from 'Show columns' are persisted to a new list (athena)",
+      { tags: ['extendedPath', 'athena', 'C436810'] },
       () => {
         // Step 1: Create new list
         Lists.openNewListPane();

@@ -76,8 +76,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350403 Generate MARC bib record additional fields are populated in accordance with the recommended mapping (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C350403'] },
+      'C350403 Generate MARC bib record additional fields are populated in accordance with the recommended mapping (athena)',
+      { tags: ['extendedPath', 'athena', 'C350403'] },
       () => {
         // Step 1: Go to "Inventory" app
         InventorySearchAndFilter.verifySearchAndFilterPane();

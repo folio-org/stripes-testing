@@ -77,8 +77,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C503024 Cannot save existing MARC holdings record with not valid value in "008" fields (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C503024'] },
+      'C503024 Cannot save existing MARC holdings record with not valid value in "008" fields (promin)',
+      { tags: ['extendedPath', 'promin', 'C503024'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventorySearchAndFilter.selectViewHoldings();

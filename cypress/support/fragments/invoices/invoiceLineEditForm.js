@@ -8,7 +8,7 @@ import {
   TextField,
   including,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME, INVOICE_LINE_VIEW_FIELDS } from '../../constants';
+import { COMMON_BUTTON_LABELS, DEFAULT_WAIT_TIME, INVOICE_LINE_VIEW_FIELDS } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
 import areYouSureModal from '../settings/bulk-edit/areYouSureModal';
@@ -20,9 +20,9 @@ const informationSection = invoiceLineEditFormRoot.find(
 );
 const fundDistributionSection = Section({ id: 'invoiceLineForm-fundDistribution' });
 
-const cancelButtom = Button('Cancel');
-const saveButton = Button('Save & close');
-const saveAndKeepEditingButton = Button('Save & keep editing');
+const cancelButtom = Button(COMMON_BUTTON_LABELS.CANCEL);
+const saveButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_CLOSE);
+const saveAndKeepEditingButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING);
 const clearButton = Button({ icon: 'times-circle-solid' });
 const unsavedChangesMessage = 'There are unsaved changes';
 const subTotalSelector = '#subTotal';
@@ -46,8 +46,8 @@ const fundFields = {
 const buttons = {
   'Release encumbrance': infoFields.releaseEncumbrance,
   Cancel: cancelButtom,
-  'Save & close': saveButton,
-  'Save & keep editing': saveAndKeepEditingButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_CLOSE]: saveButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING]: saveAndKeepEditingButton,
 };
 
 const requiredFields = [

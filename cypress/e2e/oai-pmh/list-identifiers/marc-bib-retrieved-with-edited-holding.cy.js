@@ -70,8 +70,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C380621 verb=ListIdentifiers: Verify that MARC BIB is retrieved in case its Holding MARC is edited (marc21_withholdings) (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C380621'] },
+      'C380621 verb=ListIdentifiers: Verify that MARC BIB is retrieved in case its Holding MARC is edited (marc21_withholdings) (athena)',
+      { tags: ['extendedPath', 'athena', 'C380621'] },
       () => {
         afterHoldingCreatedTimestamp = DateTools.getCurrentDateForOaiPmh();
 

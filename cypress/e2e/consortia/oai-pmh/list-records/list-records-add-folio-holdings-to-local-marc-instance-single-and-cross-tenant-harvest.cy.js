@@ -119,8 +119,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C409413 Consortia | SRS | ListRecords |ListIdentifiers: Add FOLIO holdings to local MARC instance in Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C409413', 'nonParallel'] },
+        'C409413 Consortia | SRS | ListRecords |ListIdentifiers: Add FOLIO holdings to local MARC instance in Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C409413', 'nonParallel'] },
         () => {
           const fromDate = DateTools.getCurrentDateForOaiPmh();
 

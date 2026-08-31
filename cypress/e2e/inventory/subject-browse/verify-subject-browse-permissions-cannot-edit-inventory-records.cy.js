@@ -74,8 +74,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C375064 Verify that Users with Subject browse permissions cannot edit inventory records (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C375064'] },
+      'C375064 Verify that Users with Subject browse permissions cannot edit inventory records (promin)',
+      { tags: ['extendedPath', 'promin', 'C375064'] },
       () => {
         // Step 1: Select "Subjects" browse option from the dropdown and verify UI state
         InventorySearchAndFilter.switchToBrowseTab();

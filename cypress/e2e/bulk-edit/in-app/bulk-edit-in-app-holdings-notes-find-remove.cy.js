@@ -161,8 +161,8 @@ describe(
       });
 
       it(
-        'C422058 Verify Bulk Edit actions for Holdings notes - Find-Remove (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C422058'] },
+        'C422058 Verify Bulk Edit actions for Holdings notes - Find-Remove (athena)',
+        { tags: ['criticalPath', 'athena', 'C422058'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Instance HRIDs');
           BulkEditSearchPane.uploadFile(instanceHRIDFileName);

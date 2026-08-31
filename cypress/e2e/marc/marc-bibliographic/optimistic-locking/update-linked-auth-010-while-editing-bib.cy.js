@@ -206,8 +206,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C397340 Updating "010 $a" value in linked "MARC authority" record while "MARC Bib" record being edited (saved link; "$0" = "010 $a") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C397340'] },
+        'C397340 Updating "010 $a" value in linked "MARC authority" record while "MARC Bib" record being edited (saved link; "$0" = "010 $a") (promin)',
+        { tags: ['extendedPath', 'promin', 'C397340'] },
         () => {
           // Step 1: User logs in, searches for MARC bib record, opens for editing
           cy.login(user.username, user.password, {

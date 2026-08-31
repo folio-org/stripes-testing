@@ -102,8 +102,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Indicators with In
   });
 
   it(
-    'C499658 Cannot create Indicators of Local field with invalid "label" length for MARC bib spec (API) (spitfire)',
-    { tags: ['C499658', 'extendedPath', 'spitfire'] },
+    'C499658 Cannot create Indicators of Local field with invalid "label" length for MARC bib spec (API) (promin)',
+    { tags: ['C499658', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

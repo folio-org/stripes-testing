@@ -52,6 +52,7 @@ describe('Data Import', () => {
       // First set to a random number, to make sure "Save" button is clickable
       OrderLinesLimit.setPOLLimit(defaultPurchaseOrderLinesLimit);
       SettingsOrders.verifyPurchaseOrderLinesLimit();
+      SettingsOrders.verifyPurchaseOrderLinesLimitValue(defaultPurchaseOrderLinesLimit);
 
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
@@ -68,13 +69,14 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
+      OrderLinesLimit.setPOLLimitViaApi(1);
       Users.deleteViaApi(testData.user.userId);
       SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.newName);
     });
 
     it(
-      'C375211 Order field mapping profile: Verify Receiving Workflow value is not deleted when default order line limit setting is changed (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C375211'] },
+      'C375211 Order field mapping profile: Verify Receiving Workflow value is not deleted when default order line limit setting is changed (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C375211'] },
       () => {
         // #1 Go to "Settings" application -> Select "Orders" setting -> Select "Purchase order lines limit"
         SettingsOrders.selectContentInGeneralOrders('Purchase order lines limit');

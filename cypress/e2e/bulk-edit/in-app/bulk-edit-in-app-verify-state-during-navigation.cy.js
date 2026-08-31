@@ -54,8 +54,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C374151 Verify Bulk edit state when navigating to another app and back-Holdings (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C374151'] },
+      'C374151 Verify Bulk edit state when navigating to another app and back-Holdings (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C374151'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
 

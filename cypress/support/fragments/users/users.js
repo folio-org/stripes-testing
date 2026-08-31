@@ -20,6 +20,7 @@ import {
   TextField,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import UserEdit from './userEdit';
 
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const contactInformationAccordion = Accordion('Contact information');
@@ -31,7 +32,6 @@ const deleteYesButton = Button({ id: 'delete-user-button' });
 const zeroResultsFoundText = '0 records found';
 const numberOfSearchResultsHeader = '//p[@id="paneHeaderusers-search-results-pane-subtitle"]';
 
-const usersApiPath = Cypress.env('eureka') ? 'users-keycloak/users' : 'users';
 const createUserPane = Pane('Create User');
 
 const actionsButton = Button('Actions');
@@ -46,7 +46,7 @@ const defaultUser = {
   barcode: undefined,
   personal: {
     preferredFirstName: 'preferredName',
-    preferredContactTypeId: '002',
+    preferredContactTypeIds: ['002'],
     firstName: 'testPermFirst',
     middleName: 'testMiddleName',
     lastName: defaultUserName,
@@ -76,10 +76,10 @@ export default {
 
     return user;
   },
-  createViaApi: (user) => cy
+  createViaApi: (user, { keycloak = false } = {}) => cy
     .okapiRequest({
       method: 'POST',
-      path: usersApiPath,
+      path: keycloak ? 'users-keycloak/users' : 'users',
       body: user,
       isDefaultSearchParamsRequired: false,
     })
@@ -252,7 +252,7 @@ export default {
     );
   },
 
-  createViaUi: (userData) => {
+  createViaUi: (userData, { isKeycloak = false } = {}) => {
     return cy
       .do([
         Section({ id: 'users-search-results-pane' })
@@ -273,6 +273,11 @@ export default {
       .then(() => {
         cy.wait(10000);
         cy.do(Button({ id: 'clickable-save' }).click());
+
+        if (isKeycloak) {
+          UserEdit.checkPromoteUserModal(userData.personal?.lastName);
+          UserEdit.clickConfirmInPromoteUserModal();
+        }
       })
       .then(() => {
         cy.intercept('/users').as('user');
@@ -280,7 +285,7 @@ export default {
       });
   },
 
-  createViaUiIncomplete: (userData) => {
+  createViaUiIncomplete: (userData, { submit = true } = {}) => {
     return cy
       .do([
         Dropdown('Actions').find(Button()).click(),
@@ -296,8 +301,10 @@ export default {
         Select({ id: 'type' }).choose(userData.userType ? userData.userType : 'Staff'),
       ])
       .then(() => {
-        cy.wait(10000);
-        cy.do(Button({ id: 'clickable-save' }).click());
+        if (submit) {
+          cy.wait(10000);
+          cy.do(Button({ id: 'clickable-save' }).click());
+        }
       });
   },
 
@@ -432,7 +439,7 @@ export default {
   saveCreatedUser() {
     cy.intercept('POST', /\/users|\/users-keycloak\/users/).as('createUser');
     cy.do(Button({ id: 'clickable-save' }).click());
-    cy.wait('@createUser', { timeout: 130000 });
+    return cy.wait('@createUser', { timeout: 130000 });
   },
 
   checkZeroSearchResultsHeader: () => {

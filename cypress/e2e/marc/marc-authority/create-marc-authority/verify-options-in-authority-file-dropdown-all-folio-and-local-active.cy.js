@@ -65,8 +65,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422241 Verify options displayed in "Select authority file" dropdown in "Create a new MARC authority record" window when all authority files (FOLIO and LOCAL) have the "Active" checkbox selected in the settings (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C422241'] },
+        'C422241 Verify options displayed in "Select authority file" dropdown in "Create a new MARC authority record" window when all authority files (FOLIO and LOCAL) have the "Active" checkbox selected in the settings (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C422241'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateNewMarcAuthorityRecord);

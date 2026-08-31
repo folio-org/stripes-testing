@@ -64,8 +64,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476739 Filter "Instance" records by "Source" filter (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C476739'] },
+        'C476739 Filter "Instance" records by "Source" filter (promin)',
+        { tags: ['criticalPath', 'promin', 'C476739'] },
         () => {
           InventorySearchAndFilter.verifyAccordionExistance(sourceAccordionName, true);
           InventorySearchAndFilter.toggleAccordionByName(sourceAccordionName);

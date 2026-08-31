@@ -162,8 +162,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476776 "Select Instance" plugin | Filter "Instance" records by "Effective location (item)" facet in "Holdings" tab (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476776'] },
+        'C476776 "Select Instance" plugin | Filter "Instance" records by "Effective location (item)" facet in "Holdings" tab (promin)',
+        { tags: ['extendedPath', 'promin', 'C476776'] },
         () => {
           InventorySearchAndFilter.toggleAccordionByName(locationAccordionName);
           SelectInstanceModal.checkOptionsWithCountersExistInAccordion(locationAccordionName);

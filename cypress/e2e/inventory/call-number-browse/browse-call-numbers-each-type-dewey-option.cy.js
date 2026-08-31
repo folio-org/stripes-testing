@@ -109,8 +109,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C627499 Call number of each type could be found in the browse result list by "Dewey Decimal classification" browse option when browse config is empty (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C627499'] },
+        'C627499 Call number of each type could be found in the browse result list by "Dewey Decimal classification" browse option when browse config is empty (promin)',
+        { tags: ['extendedPath', 'promin', 'C627499'] },
         () => {
           callNumbers.forEach((cn) => {
             InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(

@@ -99,8 +99,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C594392 "Reset all" button clears Date filters filled with invalid values (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C594392'] },
+        'C594392 "Reset all" button clears Date filters filled with invalid values (promin)',
+        { tags: ['extendedPath', 'promin', 'C594392'] },
         () => {
           InventorySearchAndFilter.executeSearch(instancesTitlePrefix);
           InventorySearchAndFilter.verifyNumberOfSearchResults(instanceTitles.length);

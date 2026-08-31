@@ -64,8 +64,8 @@ describe('Citation: No LDE permissions', () => {
   });
 
   it(
-    'C651425 [User journey] Marigold - no LDE permissions for the User (citation)',
-    { tags: ['criticalPath', 'citation', 'C651425', 'marigold', 'shiftLeft'] },
+    'C651425 [User journey] Marigold - no LDE permissions for the User (promin)',
+    { tags: ['criticalPath', 'promin', 'C651425', 'marigold', 'shiftLeft'] },
     () => {
       // search inventory instance
       InventoryInstances.searchByTitle(testData.uniqueTitle);

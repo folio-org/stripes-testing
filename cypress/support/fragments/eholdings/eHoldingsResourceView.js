@@ -11,6 +11,7 @@ import {
   MultiSelect,
   MultiSelectOption,
   Link,
+  MultiColumnListRow,
 } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
@@ -136,6 +137,21 @@ export default {
       /^cypress\/downloads\/\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_\d+_\d+-\d+-\d+_resource\.csv$/,
     );
   },
+  createNewAgreement() {
+    cy.window().then((win) => {
+      cy.stub(win, 'open').callsFake((url) => {
+        // eslint-disable-next-line no-param-reassign
+        win.location.href = url;
+      });
+    });
+    cy.do(
+      agreementsSection.find(Button('New')).perform((element) => {
+        element.removeAttribute('target');
+        element.click();
+      }),
+    );
+  },
+
   openSelectAgreementModal() {
     cy.do(agreementsSection.find(Button('Add')).click());
     SelectAgreementModal.waitLoading();
@@ -168,6 +184,25 @@ export default {
       }
     });
   },
+
+  assertAgreementLinesList(rows = []) {
+    rows.forEach((row) => {
+      const columnsEntries = Object.entries(row).map(([k, v]) => [
+        `list-column-${k.toLocaleLowerCase()}`,
+        v,
+      ]);
+
+      columnsEntries.forEach(([columnId, value]) => {
+        cy.expect(
+          agreementsSection
+            .find(MultiColumnListRow({ content: including(row.name), isContainer: false }))
+            .find(MultiColumnListCell({ columnId, content: including(value) }))
+            .exists(),
+        );
+      });
+    });
+  },
+
   closeHoldingsResourceView() {
     cy.do(closeViewButton.click());
   },

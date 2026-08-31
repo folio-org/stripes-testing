@@ -137,8 +137,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C411506 Browse (contributor): Show instance result in third pane when Number of titles = 1 (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C411506'] },
+      'C411506 Browse (contributor): Show instance result in third pane when Number of titles = 1 (promin)',
+      { tags: ['extendedPath', 'promin', 'C411506'] },
       () => {
         Object.values(contributorValues).forEach((value) => {
           BrowseContributors.waitForContributorToAppear(value);

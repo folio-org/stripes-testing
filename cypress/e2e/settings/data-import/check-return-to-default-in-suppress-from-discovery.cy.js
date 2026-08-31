@@ -46,8 +46,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C377016 Verify the possibility to return to the defaults values in dropdown with "Delete all existing values" for Items (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C377016'] },
+      'C377016 Verify the possibility to return to the defaults values in dropdown with "Delete all existing values" for Items (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C377016'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
@@ -118,8 +118,8 @@ describe('Data Import', () => {
     );
 
     it(
-      'C377017 Verify the possibility to return to the defaults values in dropdown with "Delete all existing values" for Holdings (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C377017'] },
+      'C377017 Verify the possibility to return to the defaults values in dropdown with "Delete all existing values" for Holdings (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C377017'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);
@@ -190,8 +190,8 @@ describe('Data Import', () => {
     );
 
     it(
-      'C377018 Verify the possibility to return to the defaults values in dropdown with "Delete all existing values" for Instance (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C377018'] },
+      'C377018 Verify the possibility to return to the defaults values in dropdown with "Delete all existing values" for Instance (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C377018'] },
       () => {
         // Go to Settings application-> Data import-> Field mapping profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILES);

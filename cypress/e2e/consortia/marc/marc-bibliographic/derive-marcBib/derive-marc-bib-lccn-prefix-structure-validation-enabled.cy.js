@@ -46,37 +46,6 @@ describe('MARC', () => {
         const createdInstanceIds = [];
         let user;
 
-        before('Create test data', () => {
-          cy.resetTenant();
-          cy.getAdminToken();
-          InventoryInstances.deleteInstanceByTitleViaApi('AT_C569540');
-
-          cy.createTempUser([
-            Permissions.inventoryAll.gui,
-            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
-          ])
-            .then((createdUser) => {
-              user = createdUser;
-
-              cy.createMarcBibliographicViaAPI(
-                QuickMarcEditor.defaultValidLdr,
-                marcInstanceFields[0],
-              ).then((instanceId) => {
-                createdInstanceIds.push(instanceId);
-              });
-
-              InventoryInstances.toggleMarcBibLccnValidationRule({ enable: true });
-            })
-            .then(() => {
-              cy.resetTenant();
-              cy.login(user.username, user.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
-            });
-        });
-
         after('Cleanup', () => {
           cy.resetTenant();
           cy.getAdminToken();
@@ -88,26 +57,58 @@ describe('MARC', () => {
         });
 
         it(
-          'C569540 LCCN prefix case validation on "Derive a new MARC bib record" pane when "LCCN structure validation" rule is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C569540'] },
+          'C569540 LCCN prefix case validation on "Derive a new MARC bib record" pane when "LCCN structure validation" rule is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C569540'] },
           () => {
-            // Step 0: User is on the detail view pane of "MARC bibliographic" record
-            InventoryInstances.searchByTitle(marcInstanceTitle);
-            InventoryInstances.selectInstanceByTitle(marcInstanceTitle);
-            InventoryInstance.waitLoading();
+            cy.then(() => {
+              cy.resetTenant();
+              cy.getAdminToken();
+              InventoryInstances.deleteInstanceByTitleViaApi('AT_C569540');
+              InventoryInstances.toggleMarcBibLccnValidationRule({ enable: false });
 
-            // Step 1: Click on the "Actions" button >> "Derive new MARC bibliographic record"
-            InventoryInstance.deriveNewMarcBibRecord();
-            QuickMarcEditor.updateLDR06And07Positions();
+              cy.createTempUser([
+                Permissions.inventoryAll.gui,
+                Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+                Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
+              ])
+                .then((createdUser) => {
+                  user = createdUser;
 
-            // Steps 2-10: Verify validation on invalid LCCN values
-            invalidLccnValues.forEach((lccn) => {
-              QuickMarcEditor.updateExistingField('010', `$a ${lccn}`);
-              QuickMarcEditor.checkContentByTag('010', `$a ${lccn}`);
-              QuickMarcEditor.pressSaveAndCloseButton();
-              QuickMarcEditor.verifyValidationCallout();
-              QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
-              QuickMarcEditor.closeAllCallouts();
+                  cy.createMarcBibliographicViaAPI(
+                    QuickMarcEditor.defaultValidLdr,
+                    marcInstanceFields[0],
+                  ).then((instanceId) => {
+                    createdInstanceIds.push(instanceId);
+                  });
+
+                  InventoryInstances.toggleMarcBibLccnValidationRule({ enable: true });
+                })
+                .then(() => {
+                  cy.resetTenant();
+                  cy.login(user.username, user.password, {
+                    path: TopMenu.inventoryPath,
+                    waiter: InventoryInstances.waitContentLoading,
+                  });
+                });
+            }).then(() => {
+              // Step 0: User is on the detail view pane of "MARC bibliographic" record
+              InventoryInstances.searchByTitle(marcInstanceTitle);
+              InventoryInstances.selectInstanceByTitle(marcInstanceTitle);
+              InventoryInstance.waitLoading();
+
+              // Step 1: Click on the "Actions" button >> "Derive new MARC bibliographic record"
+              InventoryInstance.deriveNewMarcBibRecord();
+              QuickMarcEditor.updateLDR06And07Positions();
+
+              // Steps 2-10: Verify validation on invalid LCCN values
+              invalidLccnValues.forEach((lccn) => {
+                QuickMarcEditor.updateExistingField('010', `$a ${lccn}`);
+                QuickMarcEditor.checkContentByTag('010', `$a ${lccn}`);
+                QuickMarcEditor.pressSaveAndCloseButton();
+                QuickMarcEditor.verifyValidationCallout();
+                QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
+                QuickMarcEditor.closeAllCallouts();
+              });
             });
           },
         );

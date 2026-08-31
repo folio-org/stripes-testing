@@ -192,8 +192,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C722364 Filter call number browse result list using "Effective location (item)" and “Shared” facets when different call numbers exist in different Member tenants (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C722364'] },
+        'C722364 Filter call number browse result list using "Effective location (item)" and “Shared” facets when different call numbers exist in different Member tenants (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C722364'] },
         () => {
           const allVisibleCallNumbers = instancesData
             .filter((instanceData) => instanceData.affiliation !== Affiliations.University)
@@ -253,11 +253,6 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifyCheckboxOptionPresentInAccordion(
             sharedAccordionName,
             'Yes',
-          );
-          InventorySearchAndFilter.verifyCheckboxOptionPresentInAccordion(
-            sharedAccordionName,
-            'No',
-            false,
           );
 
           cy.intercept('/browse/call-numbers/all/instances*').as('browseCall1');

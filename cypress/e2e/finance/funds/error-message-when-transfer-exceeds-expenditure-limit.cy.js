@@ -8,13 +8,18 @@ import {
   Ledgers,
 } from '../../../support/fragments/finance';
 import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
+import States from '../../../support/fragments/finance/states';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import States from '../../../support/fragments/finance/states';
-import InteractorsTools from '../../../support/utils/interactorsTools';
+import { NumberTools } from '../../../support/utils';
+
+const toNormalizedMoney = (value, locale) => {
+  return NumberTools.formatCurrency(Number(value), locale).replaceAll(/[^0-9.-]/g, '');
+};
 
 describe('Finance', () => {
   describe('Funds', () => {
+    let locale;
     const testData = {
       user: {},
     };
@@ -51,6 +56,10 @@ describe('Finance', () => {
         Budgets.createViaApi(budgetB);
       });
 
+      cy.getTenantLocaleApi().then((tenantLocale) => {
+        locale = tenantLocale;
+      });
+
       cy.createTempUser([
         Permissions.uiFinanceCreateTransfers.gui,
         Permissions.uiFinanceViewFundAndBudget.gui,
@@ -77,31 +86,35 @@ describe('Finance', () => {
         Funds.selectFund(fundA.name);
         const BudgetDetails = FundDetails.openCurrentBudgetDetails();
         BudgetDetails.checkBudgetDetails({
-          summary: [{ key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS, value: '$0.00' }],
+          summary: [
+            {
+              key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS,
+              value: toNormalizedMoney(0, locale),
+            },
+          ],
         });
 
         const AddTransferModal = BudgetDetails.openAddTransferModal();
         AddTransferModal.verifyFromFieldValue('');
         AddTransferModal.verifyToFieldValue(fundA.name);
-        AddTransferModal.fillTransferDetails({
-          fromFund: fundB.name,
-          amount: '200',
-        });
-        AddTransferModal.verifyConfirmButtonDisabled(false);
 
-        AddTransferModal.clickConfirmButton({
-          confirmNegative: { confirm: true },
-          expectError: true,
+        AddTransferModal.fillTransferDetails({
+          amount: '200',
+          description: 'C825296 Test transfer',
+          fromFund: fundB.name,
         });
         AddTransferModal.verifyModalView();
-        InteractorsTools.checkCalloutMessage(
-          States.exceedExpenditureLimitError('200', budgetA.name, budgetB.name),
-          'error',
-        );
+        AddTransferModal.verifyConfirmButtonDisabled(true);
+        AddTransferModal.expectErrorPresent(States.totalAllocationCannotBeLessThanZero);
 
         AddTransferModal.closeModal();
         BudgetDetails.checkBudgetDetails({
-          summary: [{ key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS, value: '$0.00' }],
+          summary: [
+            {
+              key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS,
+              value: toNormalizedMoney(0, locale),
+            },
+          ],
         });
       },
     );

@@ -168,8 +168,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C404373 Apply "Shared" facet when Browse for call number without executed search (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C404373'] },
+        'C404373 Apply "Shared" facet when Browse for call number without executed search (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C404373'] },
         () => {
           callNumbers.forEach((callNumber) => {
             BrowseCallNumber.waitForCallNumberToAppear(callNumber);

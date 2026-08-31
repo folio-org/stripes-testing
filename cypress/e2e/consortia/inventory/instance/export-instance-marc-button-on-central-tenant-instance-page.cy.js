@@ -44,8 +44,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C409470 (CONSORTIA) Verify the "Export instance (MARC)" button on Central tenant Instance page (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C409470'] },
+        'C409470 (CONSORTIA) Verify the "Export instance (MARC)" button on Central tenant Instance page (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C409470'] },
         () => {
           InventoryInstances.searchByTitle(testData.instanceId);
           InventoryInstances.selectInstance();

@@ -47,8 +47,8 @@ describe('Users', () => {
     });
 
     it(
-      'C442805 Verify that profile picture displays on user record for users with Users: Can view profile pictures (volaris)',
-      { tags: ['smoke', 'volaris', 'C442805'] },
+      'C442805 Verify that profile picture displays on user record for users with Users: Can view profile pictures (vega)',
+      { tags: ['smoke', 'vega', 'C442805'] },
       () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
         UsersCard.waitLoading();

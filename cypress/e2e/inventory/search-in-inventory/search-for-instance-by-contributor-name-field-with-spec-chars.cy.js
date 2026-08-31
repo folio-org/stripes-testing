@@ -70,8 +70,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C368043 Search for "Instance" by "Contributor name" field with special characters using "Keyword" search option (spitfire) (TaaS)',
-      { tags: ['criticalPath', 'spitfire', 'C368043', 'eurekaPhase1'] },
+      'C368043 Search for "Instance" by "Contributor name" field with special characters using "Keyword" search option (promin) (TaaS)',
+      { tags: ['criticalPath', 'promin', 'C368043', 'eurekaPhase1'] },
       () => {
         testData.searchQueries.forEach((query) => {
           InventoryInstances.searchByTitle(query);

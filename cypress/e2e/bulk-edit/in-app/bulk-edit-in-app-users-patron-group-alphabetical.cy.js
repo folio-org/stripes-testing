@@ -37,8 +37,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C491300 Verify Users Patron group options ordered alphabetically (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C491300'] },
+      'C491300 Verify Users Patron group options ordered alphabetically (athena)',
+      { tags: ['extendedPath', 'athena', 'C491300'] },
       () => {
         // Step 1-2: Select "Users" radio button on the "Record types" accordion =>
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');

@@ -138,6 +138,7 @@ describe('MARC', () => {
                 ]);
               })
               .then(() => {
+                cy.wait(2000);
                 cy.setTenant(Affiliations.College);
                 cy.login(user.username, user.password, {
                   path: TopMenu.inventoryPath,
@@ -157,8 +158,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C407679 Add "$t" to a field in shared linked "MARC Authority" record in Member tenant while local "MARC Bib" record being edited in another Member tenant (NOT saved link) (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C407679'] },
+            'C407679 Add "$t" to a field in shared linked "MARC Authority" record in Member tenant while local "MARC Bib" record being edited in another Member tenant (NOT saved link) (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C407679'] },
             () => {
               cy.then(() => {
                 // Steps 1-2: Edit local MARC bib in Member 1 and start linking

@@ -78,8 +78,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436885 Keyboard shortcut - Create a new MARC authority record (Windows) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C436885'] },
+        'C436885 Keyboard shortcut - Create a new MARC authority record (Windows) (promin)',
+        { tags: ['extendedPath', 'promin', 'C436885'] },
         () => {
           openCreateViaShortcutAndCheck();
           closeCreateAndCheck();

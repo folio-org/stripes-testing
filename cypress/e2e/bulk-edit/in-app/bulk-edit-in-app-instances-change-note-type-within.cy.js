@@ -137,8 +137,8 @@ describe(
       });
 
       it(
-        'C466315 Bulk edit Instance fields - change note type within the group (firebird)',
-        { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C466315'] },
+        'C466315 Bulk edit Instance fields - change note type within the group (athena)',
+        { tags: ['criticalPath', 'athena', 'shiftLeft', 'C466315'] },
         () => {
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
           BulkEditSearchPane.uploadFile(instanceUUIDsFileName);

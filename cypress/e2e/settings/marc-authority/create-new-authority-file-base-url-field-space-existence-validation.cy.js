@@ -43,8 +43,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C442814 "Base URL" field "space" existence validation during creation of new "Authority file" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C442814'] },
+        'C442814 "Base URL" field "space" existence validation during creation of new "Authority file" (promin)',
+        { tags: ['extendedPath', 'promin', 'C442814'] },
         () => {
           // 1. Space in the middle
           ManageAuthorityFiles.clickNewButton();

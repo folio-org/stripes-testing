@@ -219,7 +219,7 @@ describe('Finance', () => {
     // may be flaky due to concurrency issues because 'Approve and pay in one click' is set to 'true'
     it(
       'C496167 Invoice with three invoice lines (including credit) can NOT be paid when available expenditure balance is less that invoice total  (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'C496167'] },
+      { tags: ['criticalPath', 'thunderjet', 'C496167', 'nonParallel'] },
       () => {
         Invoices.searchByNumber(testData.thirdInvoice.vendorInvoiceNo);
         Invoices.selectInvoice(testData.thirdInvoice.vendorInvoiceNo);

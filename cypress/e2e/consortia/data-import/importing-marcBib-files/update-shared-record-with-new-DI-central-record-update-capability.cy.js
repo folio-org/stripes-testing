@@ -140,8 +140,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C805767 Update shared record with new "Data-Import Central-Record-Update" capability (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C805767'] },
+        'C805767 Update shared record with new "Data-Import Central-Record-Update" capability (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C805767'] },
         () => {
           InventorySearchAndFilter.selectResultCheckboxes(1);
           InventorySearchAndFilter.verifySelectedRecords(1);

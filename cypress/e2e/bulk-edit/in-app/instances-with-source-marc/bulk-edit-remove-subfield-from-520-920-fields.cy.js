@@ -147,8 +147,8 @@ describe(
       });
 
       it(
-        'C523628 Find and remove subfield from MARC field (520, 920) - extended scenarios (MARC) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C523628'] },
+        'C523628 Find and remove subfield from MARC field (520, 920) - extended scenarios (MARC) (athena)',
+        { tags: ['criticalPath', 'athena', 'C523628'] },
         () => {
           // Step 1: Show Source and Summary columns
           BulkEditActions.openActions();

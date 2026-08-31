@@ -239,16 +239,16 @@ describe('Circulation log', () => {
       });
     });
     it(
-      'C16995 Check the Actions button from filtering Circulation log by Checked out through override (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C16995'] },
+      'C16995 Check the Actions button from filtering Circulation log by Checked out through override (vega)',
+      { tags: ['criticalPath', 'vega', 'C16995'] },
       () => {
         checkActionsButton('Checked out through override');
       },
     );
 
     it(
-      'C16982 Filter Circulation log by Checked out through override (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C16982'] },
+      'C16982 Filter Circulation log by Checked out through override (vega)',
+      { tags: ['criticalPath', 'vega', 'C16982'] },
       () => {
         filterByAction({
           circAction: 'Checked out through override',
@@ -258,8 +258,8 @@ describe('Circulation log', () => {
     );
 
     it(
-      'C45935 Check the Actions button from filtering Circulation log by renewed through override (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C45935'] },
+      'C45935 Check the Actions button from filtering Circulation log by renewed through override (vega)',
+      { tags: ['criticalPath', 'vega', 'C45935'] },
       () => {
         UserLoans.renewItemViaApi({
           id: uuid(),
@@ -312,8 +312,8 @@ describe('Circulation log', () => {
     });
 
     it(
-      'C17006 Check the Actions button from filtering Circulation log by renewed (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C17006'] },
+      'C17006 Check the Actions button from filtering Circulation log by renewed (vega)',
+      { tags: ['criticalPath', 'vega', 'C17006'] },
       () => {
         UserLoans.renewItemViaApi({
           id: uuid(),
@@ -325,8 +325,8 @@ describe('Circulation log', () => {
     );
 
     it(
-      'C17007 Filter circulation log by aged to lost (volaris)',
-      { tags: ['criticalPathBroken', 'volaris', 'C17007'] },
+      'C17007 Filter circulation log by aged to lost (vega)',
+      { tags: ['criticalPathBroken', 'vega', 'C17007'] },
       () => {
         UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
           const loanData = userLoans.loans[0];
@@ -361,8 +361,8 @@ describe('Circulation log', () => {
     );
 
     it(
-      'C17004 Check the Actions button from filtering Circulation log by recall requested (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C17004'] },
+      'C17004 Check the Actions button from filtering Circulation log by recall requested (vega)',
+      { tags: ['criticalPath', 'vega', 'C17004'] },
       () => {
         Requests.createNewRequestViaApi({
           fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
@@ -384,8 +384,8 @@ describe('Circulation log', () => {
     );
 
     it(
-      'C17003 Filter circulation log by recall requested (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C17003'] },
+      'C17003 Filter circulation log by recall requested (vega)',
+      { tags: ['criticalPath', 'vega', 'C17003'] },
       () => {
         filterByAction({
           circAction: 'Recall requested',

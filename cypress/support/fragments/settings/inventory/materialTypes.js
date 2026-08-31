@@ -43,7 +43,7 @@ export default {
     return { id: uuid(), name: `autotest_material_type_${getRandomPostfix()}`, source: 'local' };
   },
   createMaterialType(materialTypeName) {
-    cy.do(Button('+ New').click());
+    cy.do(Button('New').click());
     cy.do(TextField({ placeholder: 'name' }).fillIn(materialTypeName));
     cy.do(Button('Save').click());
   },

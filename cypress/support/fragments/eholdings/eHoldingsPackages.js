@@ -248,11 +248,12 @@ export default {
     );
   },
 
-  verifyCustomPackage(packageName, contentType = undefined, calloutMessage) {
+  verifyCustomPackage(packageName, contentType = undefined, calloutMessage, alternateName) {
     cy.do(addNewPackageButton.click());
     eHoldingsNewCustomPackage.waitLoading();
     eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
     if (contentType !== undefined) eHoldingsNewCustomPackage.chooseContentType(contentType);
+    if (alternateName !== undefined) eHoldingsNewCustomPackage.addAlternateName(alternateName);
     eHoldingsNewCustomPackage.saveAndClose();
     eHoldingsNewCustomPackage.checkPackageCreatedCallout(calloutMessage);
   },
@@ -286,16 +287,38 @@ export default {
     return cy.okapiRequest({
       method: 'GET',
       path: 'eholdings/packages',
-      searchParams: { q: packageName },
+      searchParams: { q: packageName, include: 'resources' },
       isDefaultSearchParamsRequired: false,
     });
   },
 
-  getPackageDataViaApi(packageId) {
+  getPackageByIdViaApi(packageId, { searchParams } = {}) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `eholdings/packages/${packageId}`,
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  getPackagesViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'eholdings/packages',
+        contentTypeHeader: 'application/vnd.api+json',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
+
+  getPackageDataViaApi(packageId, { searchParams } = {}) {
     return cy.okapiRequest({
       method: 'GET',
       path: `eholdings/packages/${packageId}`,
       isDefaultSearchParamsRequired: false,
+      searchParams,
     });
   },
 
@@ -315,7 +338,23 @@ export default {
     this.getPackageViaApi(packageName).then((searchResponse) => {
       this.getPackageDataViaApi(searchResponse.body.data[0].id).then(({ body: { data } }) => {
         data.attributes.isSelected = false;
-        data.attributes.visibilityData.isHidden = isHidden;
+        data.attributes.visibility = [
+          {
+            category: 'PF',
+            reason: '',
+            hidden: isHidden,
+          },
+          {
+            category: 'FTF',
+            reason: '',
+            hidden: isHidden,
+          },
+          {
+            category: 'MARC',
+            reason: '',
+            hidden: isHidden,
+          },
+        ];
         data.attributes.customCoverage = {
           beginCoverage: '',
           endCoverage: '',
@@ -422,5 +461,13 @@ export default {
         this.updatePackageViaApi(data);
       });
     });
+  },
+
+  checkNoResultsFound(query) {
+    cy.expect(
+      HTML(
+        including(`No packages found for "${query}". Please check your spelling and filters.`),
+      ).exists(),
+    );
   },
 };

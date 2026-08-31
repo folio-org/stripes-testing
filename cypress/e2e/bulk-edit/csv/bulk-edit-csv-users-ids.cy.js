@@ -41,8 +41,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C353233 Verify number of updated records (firebird)',
-      { tags: ['smoke', 'firebird', 'C353233'] },
+      'C353233 Verify number of updated records (athena)',
+      { tags: ['smoke', 'athena', 'C353233'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');
         // Upload file
@@ -72,8 +72,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C357034 Verify elements of the bulk edit app -- Local app (firebird)',
-      { tags: ['smoke', 'firebird', 'C357034'] },
+      'C357034 Verify elements of the bulk edit app -- Local app (athena)',
+      { tags: ['smoke', 'athena', 'C357034'] },
       () => {
         BulkEditSearchPane.clickToBulkEditMainButton();
         BulkEditSearchPane.verifyDefaultFilterState();

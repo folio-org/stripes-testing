@@ -334,7 +334,7 @@ describe('Invoices', () => {
 
   it(
     'C396376 User is not able to approve and pay Invoice created in the past when associated previous budget is closed Extended (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C396376'] },
+    { tags: ['extendedPath', 'thunderjet', 'C396376', 'nonParallel'] },
     () => {
       Invoices.selectTagsFilter([testData.tag.label]);
       Invoices.checkSearchResultsContent({

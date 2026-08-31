@@ -69,8 +69,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C374704 Value in "Subject" column is a hyperlink (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C374704'] },
+      'C374704 Value in "Subject" column is a hyperlink (promin)',
+      { tags: ['extendedPath', 'promin', 'C374704'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

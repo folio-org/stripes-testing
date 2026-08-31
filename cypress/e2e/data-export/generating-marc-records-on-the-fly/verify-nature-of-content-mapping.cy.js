@@ -74,8 +74,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10971 Verify Nature of Content mapping (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C10971'] },
+      'C10971 Verify Nature of Content mapping (athena)',
+      { tags: ['extendedPath', 'athena', 'C10971'] },
       () => {
         // Step 1: Go to the "Data export" app
         DataExportLogs.verifyDragAndDropAreaExists();

@@ -64,8 +64,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C399061 Verify "Suppress from discovery" (Set false) option in Bulk Editing Holdings (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C399061'] },
+      'C399061 Verify "Suppress from discovery" (Set false) option in Bulk Editing Holdings (athena)',
+      { tags: ['criticalPath', 'athena', 'C399061'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');

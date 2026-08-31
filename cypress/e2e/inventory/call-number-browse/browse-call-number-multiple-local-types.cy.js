@@ -152,8 +152,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C414983 Browse for "Local" call numbers when more than 2 "Local" call number types exist (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C414983'] },
+      'C414983 Browse for "Local" call numbers when more than 2 "Local" call number types exist (promin)',
+      { tags: ['extendedPath', 'promin', 'C414983'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

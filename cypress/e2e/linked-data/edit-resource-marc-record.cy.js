@@ -112,8 +112,8 @@ describe('Citation: MARC Authority integration', () => {
   });
 
   it(
-    'C627245 [User journey] Marigold - Edit existing resource | create MARC derived record (citation)',
-    { tags: ['criticalPath', 'citation', 'C627245', 'marigold', 'shiftLeft'] },
+    'C627245 [User journey] Marigold - Edit existing resource | create MARC derived record (promin)',
+    { tags: ['criticalPath', 'promin', 'C627245', 'marigold', 'shiftLeft'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);

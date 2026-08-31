@@ -112,8 +112,8 @@ describe('Citation: check title parts MARC codes', () => {
   });
 
   it(
-    'C466260 Marigold - Verify View MARC option and page / Work preview (citation)',
-    { tags: ['criticalPath', 'citation', 'C466260', 'marigold'] },
+    'C466260 Marigold - Verify View MARC option and page / Work preview (promin)',
+    { tags: ['criticalPath', 'promin', 'C466260', 'marigold'] },
     () => {
       // Edit instance
       InventoryInstances.searchByTitle(testData.uniqueMainTitle);

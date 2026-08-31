@@ -13,7 +13,7 @@ import InteractorsTools from '../../../utils/interactorsTools';
 const organizationsSettingsSection = Section({ id: 'settings-nav-pane' });
 const enableBankingInformationCheckbox = Checkbox('Enable banking information');
 const saveButton = Button('Save');
-const newCategory = Button('+ New');
+const newCategory = Button('New');
 const defaultCategories = {
   id: uuid(),
   value: `autotest_category_name_${getRandomPostfix()}`,
@@ -186,6 +186,16 @@ export default {
         method: 'POST',
         path: 'organizations-storage/categories',
         body: categories,
+      })
+      .then(({ body }) => body);
+  },
+
+  getCategoriesViaApi(query) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'organizations-storage/categories',
+        searchParams: query ? { query } : {},
       })
       .then(({ body }) => body);
   },

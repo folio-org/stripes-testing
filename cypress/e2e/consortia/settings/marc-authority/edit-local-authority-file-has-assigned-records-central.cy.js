@@ -97,8 +97,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C436904 Edit all fields of Local "Authority file" which has assigned "MARC authority" records at Central tenant only, from Central tenant (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C436904'] },
+          'C436904 Edit all fields of Local "Authority file" which has assigned "MARC authority" records at Central tenant only, from Central tenant (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C436904'] },
           () => {
             // Step 1: Go to Manage authority files in Central
             cy.resetTenant();

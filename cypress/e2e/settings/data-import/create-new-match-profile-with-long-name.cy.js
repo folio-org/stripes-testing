@@ -42,8 +42,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C2337 Create a new match profile with a long name (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C2337'] },
+      'C2337 Create a new match profile with a long name (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C2337'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);

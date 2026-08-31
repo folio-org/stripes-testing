@@ -97,8 +97,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C375157 Browse | Authorized indicator is shown for "Subject" from "611" "MARC Bib" field controlled by "MARC authority" record (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C375157'] },
+      'C375157 Browse | Authorized indicator is shown for "Subject" from "611" "MARC Bib" field controlled by "MARC authority" record (promin)',
+      { tags: ['criticalPath', 'promin', 'C375157'] },
       () => {
         // Step 1: Select "Subjects" in browse options dropdown
         BrowseSubjects.select();

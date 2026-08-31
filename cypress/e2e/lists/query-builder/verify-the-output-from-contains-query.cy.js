@@ -57,8 +57,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C446042 The output from the “contains” query contains at least all of the results from the “==” query (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C446042'] },
+      'C446042 The output from the “contains” query contains at least all of the results from the “==” query (athena)',
+      { tags: ['extendedPath', 'athena', 'C446042'] },
       () => {
         // Step 1: Create new list
         Lists.openNewListPane();
@@ -74,7 +74,7 @@ describe('Lists', () => {
         // Step 3: Click on "Select field" dropdown, select the option "Instance — Resource title"
         QueryModal.selectField(instanceFieldValues.instanceResourceTitle);
         QueryModal.verifySelectedField(instanceFieldValues.instanceResourceTitle);
-        QueryModal.verifyQueryAreaContent('(instance.title  )');
+        QueryModal.verifyQueryAreaContent('');
 
         // Step 4: Click on "Select operator" dropdown
         const expectedOperators = Object.values(STRING_OPERATORS);

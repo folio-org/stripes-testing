@@ -126,8 +126,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C350445 Verify Holdings export based on provided UUIDs (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C350445'] },
+      'C350445 Verify Holdings export based on provided UUIDs (athena)',
+      { tags: ['extendedPath', 'athena', 'C350445'] },
       () => {
         // Step 1: Trigger the data export by submitting .csv file with Holdings UUIDs
         ExportFile.uploadFile(fileName);

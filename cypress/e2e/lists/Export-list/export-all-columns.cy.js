@@ -62,8 +62,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C552378 Verify that "Export all columns (CSV)" exports all the columns of the proper entity types (corsair)',
-        { tags: ['smoke', 'corsair', 'shiftLeft', 'C552378'] },
+        'C552378 Verify that "Export all columns (CSV)" exports all the columns of the proper entity types (athena)',
+        { tags: ['smoke', 'athena', 'shiftLeft', 'C552378'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

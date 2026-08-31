@@ -230,8 +230,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C376967 Delete uncontrolled subfields of linked "MARC Bib" field which is controlled by "MARC Authority" record (spitfire) (TaaS)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'C376967'] },
+      'C376967 Delete uncontrolled subfields of linked "MARC Bib" field which is controlled by "MARC Authority" record (promin) (TaaS)',
+      { tags: ['criticalPathFlaky', 'promin', 'C376967'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

@@ -36,8 +36,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C347881 Users | Downloading matching records (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C347881'] },
+      'C347881 Users | Downloading matching records (athena)',
+      { tags: ['extendedPath', 'athena', 'C347881'] },
       () => {
         // Step 1: Select "Users" radio button and "User Barcodes" identifier
         BulkEditSearchPane.checkUsersRadio();

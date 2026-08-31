@@ -55,8 +55,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C358530 Verify the hit count on Subject browse list (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C358530'] },
+      'C358530 Verify the hit count on Subject browse list (promin)',
+      { tags: ['extendedPath', 'promin', 'C358530'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password, {

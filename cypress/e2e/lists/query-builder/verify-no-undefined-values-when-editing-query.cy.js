@@ -60,8 +60,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C1259783 Verify that no undefined values are displayed when editing a query (corsair)',
-      { tags: ['smoke', 'corsair', 'C1259783'] },
+      'C1259783 Verify that no undefined values are displayed when editing a query (athena)',
+      { tags: ['smoke', 'athena', 'C1259783'] },
       () => {
         // Step 1: Create new list with Instances record type
         Lists.openNewListPane();

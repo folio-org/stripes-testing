@@ -57,8 +57,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423543 Copied "001" field value of created MARC authority record doesn\'t change when "010" field is deleted from edit window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C423543'] },
+        'C423543 Copied "001" field value of created MARC authority record doesn\'t change when "010" field is deleted from edit window (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C423543'] },
         () => {
           // Step 1: Open new MARC authority record form
           MarcAuthorities.clickActionsAndNewAuthorityButton();

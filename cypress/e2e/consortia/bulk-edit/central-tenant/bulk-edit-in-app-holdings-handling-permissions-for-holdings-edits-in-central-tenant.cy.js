@@ -217,8 +217,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566498 Handling permissions for Holdings edits from the Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566498'] },
+        'C566498 Handling permissions for Holdings edits from the Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566498'] },
         () => {
           // Step 1: Select "Inventory - holdings" radio button, select "Holdings UUIDs" identifier
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');

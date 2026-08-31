@@ -125,8 +125,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C466155 Search for "Instance" by "Classification, normalized" option using "Advanced search" modal (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C466155'] },
+      'C466155 Search for "Instance" by "Classification, normalized" option using "Advanced search" modal (promin)',
+      { tags: ['criticalPath', 'promin', 'C466155'] },
       () => {
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.selectSearchOption(testData.classificationNormalized);

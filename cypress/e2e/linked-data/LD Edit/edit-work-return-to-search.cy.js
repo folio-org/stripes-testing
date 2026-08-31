@@ -50,8 +50,8 @@ describe('Citation: return to search results - Work', () => {
   });
 
   it(
-    'C466101 Marigold - Returning to search results after closing/canceling/saving Work (citation)',
-    { tags: ['criticalPath', 'citation', 'C466101', 'marigold'] },
+    'C466101 Marigold - Returning to search results after closing/canceling/saving Work (promin)',
+    { tags: ['criticalPath', 'promin', 'C466101', 'marigold'] },
     () => {
       // Precondition: create Work via UI
       Marigold.openNewResourceForm();

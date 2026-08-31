@@ -14,7 +14,7 @@ const REQUIRED_MESSAGE = 'Please fill this in to continue';
 const UNIQUE_MESSAGE = 'Category name must be unique';
 
 const categoriesPane = Pane({ id: 'controlled-vocab-pane' });
-const newButton = Button('+ New');
+const newButton = Button('New');
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');
 const unsavedModal = Modal('Are you sure?');

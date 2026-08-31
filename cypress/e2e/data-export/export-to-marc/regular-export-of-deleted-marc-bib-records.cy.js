@@ -115,8 +115,8 @@ describe(
       });
 
       it(
-        'C494361 Regular export of deleted MARC bib records (firebird)',
-        { tags: ['smoke', 'firebird', 'C494361'] },
+        'C494361 Regular export of deleted MARC bib records (athena)',
+        { tags: ['smoke', 'athena', 'C494361'] },
         () => {
           InventorySearchAndFilter.searchInstanceByTitle(marcInstances[0].title);
           InventoryInstances.selectInstance();

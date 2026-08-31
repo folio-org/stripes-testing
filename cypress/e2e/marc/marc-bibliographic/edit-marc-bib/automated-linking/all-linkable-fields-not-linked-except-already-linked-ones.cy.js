@@ -220,8 +220,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C388535 All linkable fields are NOT linked after clicking on the "Link headings" button when edit "MARC bib" except already linked fields (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C388535'] },
+          'C388535 All linkable fields are NOT linked after clicking on the "Link headings" button when edit "MARC bib" except already linked fields (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C388535'] },
           () => {
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);
             InventoryInstances.selectInstance();

@@ -55,8 +55,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C709269 Create MARC bib record with using "Save & keep editing" button (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C709269'] },
+        'C709269 Create MARC bib record with using "Save & keep editing" button (promin)',
+        { tags: ['extendedPath', 'promin', 'C709269'] },
         () => {
           InventoryInstance.newMarcBibRecord();
           QuickMarcEditor.waitLoading();

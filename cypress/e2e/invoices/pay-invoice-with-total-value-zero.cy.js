@@ -205,7 +205,7 @@ describe('Invoices', () => {
 
   it(
     'C357038 Pay Invoice with total value = 0 (one of the fund distribution has negative amount) (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'C357038'] },
+    { tags: ['extendedPath', 'thunderjet', 'C357038', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);

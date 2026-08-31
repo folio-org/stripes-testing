@@ -133,8 +133,8 @@ describe('MARC', () => {
       });
 
       it(
-        "C422065 Edit '010' value (don't add valid prefix in '$a') of linked 'MARC authority' record when '001' controls '$0' of MARC bib's field (spitfire) (TaaS)",
-        { tags: ['extendedPath', 'spitfire', 'C422065'] },
+        "C422065 Edit '010' value (don't add valid prefix in '$a') of linked 'MARC authority' record when '001' controls '$0' of MARC bib's field (promin) (TaaS)",
+        { tags: ['extendedPath', 'promin', 'C422065'] },
         () => {
           MarcAuthorities.searchAndVerify(
             marcAuthRecordData.searchOption,

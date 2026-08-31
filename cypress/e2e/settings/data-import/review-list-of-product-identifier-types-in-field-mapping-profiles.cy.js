@@ -27,8 +27,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C376008 Order field mapping profile: Confirm the list of Product identifier types (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C376008'] },
+      'C376008 Order field mapping profile: Confirm the list of Product identifier types (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C376008'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.addFolioRecordType(FOLIO_RECORD_TYPE.ORDER);

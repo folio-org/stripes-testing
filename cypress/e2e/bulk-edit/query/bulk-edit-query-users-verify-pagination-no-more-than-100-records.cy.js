@@ -53,8 +53,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C436767 Users | Verify pagination with no more than 100 records - Query tab (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C436767'] },
+      'C436767 Users | Verify pagination with no more than 100 records - Query tab (athena)',
+      { tags: ['extendedPath', 'athena', 'C436767'] },
       () => {
         // Step 1-3: Verify that Paginator is displayed at the bottom of "Preview of record matched"
         BulkEditSearchPane.verifyPaginatorInMatchedRecords(1);

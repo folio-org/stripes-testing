@@ -135,8 +135,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C663274 Disable "Audit log" feature from Member tenant and check detail view panes of Shared and Local "MARC authority" records (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C663274'] },
+            'C663274 Disable "Audit log" feature from Member tenant and check detail view panes of Shared and Local "MARC authority" records (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C663274'] },
             () => {
               cy.setTenant(memberTenant.affiliation);
               cy.login(testUser.username, testUser.password, {

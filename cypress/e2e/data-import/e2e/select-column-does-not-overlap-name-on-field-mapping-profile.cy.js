@@ -37,8 +37,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C466232 Check that "select" is not overlaps "Name" field on Field mapping profile (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C466232'] },
+      'C466232 Check that "select" is not overlaps "Name" field on Field mapping profile (promin)',
+      { tags: ['extendedPath', 'promin', 'C466232'] },
       () => {
         // Step 1: Open default "Create instance" field mapping profile
         FieldMappingProfiles.search(fieldMappingProfileName);

@@ -52,8 +52,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436841 Edit "Base URL" field of Local "Authority file" which doesn not have assigned "MARC authority" records (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C436841'] },
+        'C436841 Edit "Base URL" field of Local "Authority file" which doesn not have assigned "MARC authority" records (promin)',
+        { tags: ['criticalPath', 'promin', 'C436841'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
           cy.login(user.username, user.password, {

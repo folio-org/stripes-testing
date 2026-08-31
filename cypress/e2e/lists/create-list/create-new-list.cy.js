@@ -33,13 +33,13 @@ describe('Lists', () => {
     afterEach('Delete a user', () => {
       cy.getUserToken(userData.username, userData.password);
       Lists.deleteListByNameViaApi(listData.name);
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Users.deleteViaApi(userData.userId);
     });
 
     it(
-      'C411704 Create new lists: Private list (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411704', 'shiftLeft', 'eurekaPhase1'] },
+      'C411704 Create new lists: Private list (athena)',
+      { tags: ['criticalPath', 'athena', 'C411704', 'shiftLeft', 'eurekaPhase1'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Private';
@@ -64,8 +64,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411706 C414979 Create new lists: Shared lists (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411706', 'C414979', 'eurekaPhase1'] },
+      'C411706 C414979 Create new lists: Shared lists (athena)',
+      { tags: ['criticalPath', 'athena', 'C411706', 'C414979', 'eurekaPhase1'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Shared';
@@ -111,8 +111,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411707 Create new lists: Active lists (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411707', 'eurekaPhase1'] },
+      'C411707 Create new lists: Active lists (athena)',
+      { tags: ['criticalPath', 'athena', 'C411707', 'eurekaPhase1'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Shared';
@@ -137,8 +137,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411708 Create new lists: Inactive lists (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411708', 'eurekaPhase1'] },
+      'C411708 Create new lists: Inactive lists (athena)',
+      { tags: ['criticalPath', 'athena', 'C411708', 'eurekaPhase1'] },
       () => {
         listData.status = 'Inactive';
         listData.visibility = 'Shared';

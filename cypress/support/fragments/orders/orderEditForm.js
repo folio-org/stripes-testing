@@ -12,9 +12,15 @@ import {
   matching,
   KeyValue,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  ORDER_AND_ORDER_LINE_BUTTONS,
+  ORDER_VIEW_FIELD_LABELS,
+} from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import SearchHelper from '../finance/financeHelper';
+import areYouSureModal from './modals/areYouSureModal';
 import OrderStates from './orderStates';
 
 const orderEditFormRoot = Section({ id: 'pane-poForm' });
@@ -23,10 +29,14 @@ const orderInfoSection = orderEditFormRoot.find(Section({ id: 'purchaseOrder' })
 const ongoingInformationSection = orderEditFormRoot.find(Section({ id: 'ongoing' }));
 const orderSummarySection = orderEditFormRoot.find(Section({ id: 'poSummary' }));
 
-const collapseAllButton = orderEditFormRoot.find(Button('Collapse all'));
-const cancelButton = orderEditFormRoot.find(Button('Cancel'));
-const saveAndCloseButton = orderEditFormRoot.find(Button('Save & close'));
-const addPoLineButton = orderEditFormRoot.find(Button('Add POL'));
+const collapseAllButton = orderEditFormRoot.find(Button(COMMON_BUTTON_LABELS.COLLAPSE_ALL));
+const clearFieldButton = Button({ icon: 'times-circle-solid' });
+const cancelButton = orderEditFormRoot.find(Button(COMMON_BUTTON_LABELS.CANCEL));
+const saveAndCloseButton = orderEditFormRoot.find(Button(COMMON_BUTTON_LABELS.SAVE_AND_CLOSE));
+const saveAndKeepEditingButton = orderEditFormRoot.find(
+  Button(COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING),
+);
+const addPoLineButton = orderEditFormRoot.find(Button(ORDER_AND_ORDER_LINE_BUTTONS.ADD_POL));
 
 const infoSectionFields = {
   poNumberPrefix: orderInfoSection.find(Select({ name: 'poNumberPrefix' })),
@@ -52,10 +62,16 @@ const sections = {
 };
 
 const buttons = {
-  Cancel: cancelButton,
-  'Save & close': saveAndCloseButton,
-  'Add POL': addPoLineButton,
+  [COMMON_BUTTON_LABELS.CANCEL]: cancelButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_CLOSE]: saveAndCloseButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING]: saveAndKeepEditingButton,
+  [ORDER_AND_ORDER_LINE_BUTTONS.ADD_POL]: addPoLineButton,
 };
+
+const requiredFields = [
+  { fieldName: ORDER_VIEW_FIELD_LABELS.VENDOR, field: infoSectionFields.vendor },
+  { fieldName: ORDER_VIEW_FIELD_LABELS.ORDER_TYPE, field: infoSectionFields.orderType },
+];
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -165,9 +181,54 @@ export default {
   cliskCollapseAllButton() {
     cy.do(collapseAllButton.click());
   },
-  clickCancelButton() {
+  clickCancelButton(shouldModalExist = false) {
     cy.do(cancelButton.click());
-    cy.expect(orderEditFormRoot.absent());
+
+    if (!shouldModalExist) {
+      cy.expect(orderEditFormRoot.absent());
+    }
+  },
+  cancelWithUnsavedChanges({ keepEditing = false } = {}) {
+    this.clickCancelButton(true);
+    areYouSureModal.verifyAreYouSureForm(true);
+
+    if (keepEditing) {
+      areYouSureModal.clickKeepEditingButton();
+      cy.expect(orderEditFormRoot.exists());
+    } else {
+      areYouSureModal.clickCloseWithoutSavingButton();
+      areYouSureModal.verifyAreYouSureForm(false);
+      cy.expect(orderEditFormRoot.absent());
+    }
+  },
+
+  clickSaveAndKeepEditingButton({ isSaved = true } = {}) {
+    cy.expect(saveAndKeepEditingButton.has({ disabled: false }));
+    cy.do(saveAndKeepEditingButton.click());
+    this.waitLoading();
+
+    if (isSaved) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(OrderStates.orderSavedSuccessfully)),
+      );
+    }
+  },
+
+  checkButtonsNotDisplayed(buttonsNotDisplayed = []) {
+    buttonsNotDisplayed.forEach((label) => {
+      cy.expect(buttons[label].absent());
+    });
+  },
+
+  checkRequiredFields(fields = []) {
+    fields.forEach((field) => {
+      const requiredFieldsConfig = requiredFields.find((f) => f.fieldName === field);
+      if (!requiredFieldsConfig) throw new Error(`Unknown field: ${field}`);
+      cy.expect(requiredFieldsConfig.field.has({ error: 'Required!' }));
+    });
+  },
+  clearVendorField() {
+    cy.do(infoSectionFields.vendor.find(clearFieldButton).click());
   },
   clickAddPolButton({ orderSaved = true } = {}) {
     this.clickCreateOrder({ button: addPoLineButton, orderSaved });

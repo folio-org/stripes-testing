@@ -168,8 +168,8 @@ describe(
       });
 
       it(
-        'C543770 Remove MARC field (526, 926) - extended scenarios (MARC) (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C543770'] },
+        'C543770 Remove MARC field (526, 926) - extended scenarios (MARC) (athena)',
+        { tags: ['extendedPath', 'athena', 'C543770'] },
         () => {
           // Step 1: Check columns for Source and Study Program Information note
           BulkEditActions.openActions();

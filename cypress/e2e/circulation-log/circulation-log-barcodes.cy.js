@@ -25,7 +25,7 @@ describe('Circulation log', () => {
     active: true,
     username: `secondusername ${getRandomPostfix()}`,
     personal: {
-      preferredContactTypeId: '002',
+      preferredContactTypeIds: ['002'],
       firstName: 'secondUserFirstName',
       lastName: 'secondUserLastName',
       email: 'test2@folio.org',
@@ -123,8 +123,8 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C17094 Verify User barcode appears in Circulation log (volaris) (TaaS)',
-    { tags: ['criticalPath', 'volaris', 'C17094'] },
+    'C17094 Verify User barcode appears in Circulation log (vega) (TaaS)',
+    { tags: ['criticalPath', 'vega', 'C17094'] },
     () => {
       const firstItemSearchResultsData = {
         userBarcode: firstUser.barcode,

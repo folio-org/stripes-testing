@@ -31,7 +31,7 @@ describe('Orders', () => {
 
     it(
       'C196751 Export orders based on orders lines search (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'C196751'] },
+      { tags: ['criticalPath', 'thunderjet', 'C196751', 'nonParallel'] },
       () => {
         const ctx = Object.fromEntries(flow.context);
 

@@ -181,8 +181,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C410701 Adding child or parent "Instance" in "Inventory" app: Use "Shared" facet in "Member" tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C410701'] },
+          'C410701 Adding child or parent "Instance" in "Inventory" app: Use "Shared" facet in "Member" tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C410701'] },
           () => {
             InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
             InventoryInstances.searchByTitle(testInstanceId);

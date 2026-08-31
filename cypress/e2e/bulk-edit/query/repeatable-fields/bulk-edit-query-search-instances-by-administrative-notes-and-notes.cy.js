@@ -198,8 +198,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C808445 Search instances by Administrative notes, Note, Staff only (firebird)',
-        { tags: ['smoke', 'firebird', 'C808445'] },
+        'C808445 Search instances by Administrative notes, Note, Staff only (athena)',
+        { tags: ['smoke', 'athena', 'C808445'] },
         () => {
           // Get note type name for verification
           const noteTypeName = INSTANCE_NOTE_TYPES.ACTION_NOTE;

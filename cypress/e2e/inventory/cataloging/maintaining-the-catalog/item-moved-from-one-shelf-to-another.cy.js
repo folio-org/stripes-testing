@@ -55,8 +55,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C3500 An item is being moved from one shelf to another. Change the call number of the associated holdings record! (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C3500'] },
+      'C3500 An item is being moved from one shelf to another. Change the call number of the associated holdings record! (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C3500'] },
       () => {
         // Find the instance from precondition
         InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);

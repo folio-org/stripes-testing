@@ -87,8 +87,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C446037 Verify export MARC Holdings with edited SRS (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C446037'] },
+      'C446037 Verify export MARC Holdings with edited SRS (athena)',
+      { tags: ['extendedPath', 'athena', 'C446037'] },
       () => {
         // Step 1: Trigger the data export by submitting .csv file with Holdings UUID
         ExportFile.uploadFile(fileName);

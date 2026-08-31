@@ -94,9 +94,10 @@ describe('Bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        Locations.getViaApiAnyDefault().then((locations) => {
-          locationId = locations[0].id;
-          locationName = locations[0].name;
+        Locations.getViaApiAnyDefault(2).then((locations) => {
+          const location = locations.find((loc) => loc.name !== LOCATION_NAMES.MAIN_LIBRARY_UI);
+          locationId = location.id;
+          locationName = location.name;
 
           UrlRelationship.getViaApi().then((relationships) => {
             const resourceRelationship = relationships.find(
@@ -169,8 +170,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C423499 Verify rendering Holdings electronic access properties while bulk edit Holdings permanent location  (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C423499'] },
+      'C423499 Verify rendering Holdings electronic access properties while bulk edit Holdings permanent location  (athena)',
+      { tags: ['criticalPath', 'athena', 'C423499'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings HRIDs');
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);

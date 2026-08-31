@@ -335,4 +335,12 @@ export default {
   verifyFocusOnDetailsPane: (auName) => {
     cy.expect(auPaneDetails.find(HTML(including(auName))).exists());
   },
+
+  /* Request interceptors */
+  interceptGetAcquisitionUnits() {
+    cy.intercept('GET', '/acquisitions-units/units*').as('waiterForAcquisitionUnitsQueryCompleted');
+  },
+  waitForAcquisitionUnitsQueryCompleted() {
+    cy.wait('@waiterForAcquisitionUnitsQueryCompleted');
+  },
 };

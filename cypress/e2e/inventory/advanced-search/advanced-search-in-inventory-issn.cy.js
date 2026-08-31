@@ -123,8 +123,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C1030060 Advanced search | Verify ISSN search (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1030060'] },
+      'C1030060 Advanced search | Verify ISSN search (promin)',
+      { tags: ['extendedPath', 'promin', 'C1030060'] },
       () => {
         searchData.forEach(({ queries, modifier, results }) => {
           InventoryInstances.clickAdvSearchButton();

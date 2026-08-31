@@ -58,8 +58,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C353938 Verify that the search option dropdown doesnt reset selected value after user cleared search box (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C353938', 'eurekaPhase1'] },
+      'C353938 Verify that the search option dropdown doesnt reset selected value after user cleared search box (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C353938', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.selectSearchOptions(
           testData.searchOptions.titleAllSearchOption,

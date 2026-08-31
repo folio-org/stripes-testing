@@ -43,6 +43,10 @@ export default {
     cy.expect(dataImportPane.exists());
   },
   checkDataImportNavPaneFocused() {
-    cy.expect(PaneHeader({ id: 'paneHeaderapp-settings-nav-pane' }).has({ focused: true }));
+    cy.expect(
+      dataImportPane
+        .find(PaneHeader({ id: 'paneHeaderapp-settings-nav-pane' }))
+        .has({ focused: true }),
+    );
   },
 };

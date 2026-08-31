@@ -32,8 +32,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C387517 Verify that "proxiedUrl" field is displayed when at "Package+Title" ("Resource") record (response check) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C387517'] },
+      'C387517 Verify that "proxiedUrl" field is displayed when at "Package+Title" ("Resource") record (response check) (promin)',
+      { tags: ['extendedPath', 'promin', 'C387517'] },
       () => {
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.packageName);

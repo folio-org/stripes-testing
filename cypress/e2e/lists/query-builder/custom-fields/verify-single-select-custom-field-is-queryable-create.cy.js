@@ -56,7 +56,7 @@ describe('Lists', () => {
                   userData = userProperties;
                 });
             })
-            .then(() => Lists.waitForCustomFieldToBeQueryable(recordType, testData.customFieldLabel));
+            .then(() => Lists.waitForCustomFieldToBeQueryable(testData.customFieldLabel, recordType));
 
           cy.createTempUser([]).then((user) => {
             loginUser = user;
@@ -86,8 +86,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C648487 Verify that the custom field with a type Single select dropdown is queryable (corsair)',
-          { tags: ['criticalPath', 'corsair', 'C648487'] },
+          'C648487 Verify that the custom field with a type Single select dropdown is queryable (athena)',
+          { tags: ['criticalPath', 'athena', 'C648487'] },
           () => {
             listName = getTestEntityValue('C648487_List');
 

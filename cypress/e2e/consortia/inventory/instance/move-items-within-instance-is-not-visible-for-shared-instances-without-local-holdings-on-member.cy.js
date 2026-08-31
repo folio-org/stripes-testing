@@ -34,15 +34,17 @@ describe('Inventory', () => {
 
           cy.setTenant(Affiliations.College)
             .then(() => {
-              ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
-                const collegeLocationData = Locations.getDefaultLocation({
-                  servicePointId: servicePoint.id,
-                }).location;
-                Locations.createViaApi(collegeLocationData).then((location) => {
-                  testData.locationId = location.id;
-                  testData.locationName = location.name;
-                });
-              });
+              ServicePoints.getViaApi({ limit: 1, query: 'name<>"*auto*"' }).then(
+                (servicePoints) => {
+                  const collegeLocationData = Locations.getDefaultLocation({
+                    servicePointId: servicePoints[0].id,
+                  }).location;
+                  Locations.createViaApi(collegeLocationData).then((location) => {
+                    testData.locationId = location.id;
+                    testData.locationName = location.name;
+                  });
+                },
+              );
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                 testData.holdings.sourceId = folioSource.id;
               });
@@ -107,8 +109,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C594480 (CONSORTIA) "Move items within an instance" is not visible for shared instances without local holdings on member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C594480'] },
+        'C594480 (CONSORTIA) "Move items within an instance" is not visible for shared instances without local holdings on member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C594480'] },
         () => {
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();

@@ -38,8 +38,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C376963 GetRecord: Verify that SRS records with LDR05 set to "s" are harvested without "deleted" mark (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C376963'] },
+      'C376963 GetRecord: Verify that SRS records with LDR05 set to "s" are harvested without "deleted" mark (athena)',
+      { tags: ['extendedPath', 'athena', 'C376963'] },
       () => {
         // Send OAI-PMH GetRecord request with marc21 metadata prefix
         cy.getAdminToken();

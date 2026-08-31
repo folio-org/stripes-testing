@@ -46,8 +46,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C411414 Move 006, 007, 852 fields when creating new "MARC Holdings" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C411414'] },
+        'C411414 Move 006, 007, 852 fields when creating new "MARC Holdings" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C411414'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

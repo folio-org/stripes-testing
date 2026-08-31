@@ -166,8 +166,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C590844 Verify user-friendly optimistic locking error message for Item in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C590844'] },
+        'C590844 Verify user-friendly optimistic locking error message for Item in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C590844'] },
         () => {
           // Step 1: Run the Query and capture file names
           QueryModal.clickRunQuery();

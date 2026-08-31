@@ -25,8 +25,8 @@ describe('OAI-PMH', () => {
   });
 
   it(
-    'C422242 "Settings (OAI-PMH): Can view" permission for OAI-PMH (firebird)',
-    { tags: ['smoke', 'firebird', 'shiftLeft', 'C422242'] },
+    'C422242 "Settings (OAI-PMH): Can view" permission for OAI-PMH (athena)',
+    { tags: ['smoke', 'athena', 'shiftLeft', 'C422242'] },
     () => {
       TopMenuNavigation.navigateToApp('Settings', 'OAI-PMH');
       OaiPmh.checkSectionListItems();

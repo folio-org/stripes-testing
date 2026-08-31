@@ -119,8 +119,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808506 Create "Item" record via "Orders" app and check "order" field (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C808506'] },
+        'C808506 Create "Item" record via "Orders" app and check "order" field (promin)',
+        { tags: ['criticalPath', 'promin', 'C808506'] },
         () => {
           InventoryInstances.searchByTitle(testData.instanceTitle);
           InventoryInstances.selectInstanceByTitle(testData.instanceTitle);

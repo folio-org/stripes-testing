@@ -161,8 +161,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503159 Save existing "MARC bib" record with multiple Local control fields (002, 004, 009) which don\'t have or have subfield "$a" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C503159', 'nonParallel'] },
+        'C503159 Save existing "MARC bib" record with multiple Local control fields (002, 004, 009) which don\'t have or have subfield "$a" (promin)',
+        { tags: ['extendedPath', 'promin', 'C503159', 'nonParallel'] },
         () => {
           // Open imported instance
           InventoryInstances.searchByTitle(testData.instanceTitle);

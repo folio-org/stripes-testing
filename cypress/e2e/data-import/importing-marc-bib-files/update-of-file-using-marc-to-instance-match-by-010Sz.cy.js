@@ -132,8 +132,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C476724 Update of file using marc-to-instance match by 010$z (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C476724'] },
+      'C476724 Update of file using marc-to-instance match by 010$z (promin)',
+      { tags: ['criticalPath', 'promin', 'C476724'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.instanceId);
         InstanceRecordView.waitLoading();

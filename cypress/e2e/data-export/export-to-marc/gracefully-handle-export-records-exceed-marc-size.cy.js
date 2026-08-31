@@ -280,8 +280,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C345414 Gracefully handle export of the records that exceed MARC record size (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C345414'] },
+      'C345414 Gracefully handle export of the records that exceed MARC record size (athena)',
+      { tags: ['extendedPath', 'athena', 'C345414'] },
       () => {
         // Step 1: Export a large record using custom job/mapping profiles with holdings and items data
         ExportFile.uploadFile(csvFileName);

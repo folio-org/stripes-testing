@@ -31,8 +31,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C468161 User can view the job profile details when file is still uploading (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C468161'] },
+      'C468161 User can view the job profile details when file is still uploading (promin)',
+      { tags: ['extendedPath', 'promin', 'C468161'] },
       () => {
         // Step 1: Upload MARC Bib file
         DataImport.verifyUploadState();

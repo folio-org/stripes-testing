@@ -146,8 +146,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C656282 Check "Version history" of Item with non-default time zone (folijet)',
-        { tags: ['extendedPath', 'folijet', 'C656282'] },
+        'C656282 Check "Version history" of Item with non-default time zone (promin)',
+        { tags: ['extendedPath', 'promin', 'C656282'] },
         () => {
           // Precondition: open the instance and update the item at least twice.
           openInstanceDetails();

@@ -73,9 +73,9 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808496 Create "Item" with empty "order" field (default state) (spitfire)',
+        'C808496 Create "Item" with empty "order" field (default state) (promin)',
         {
-          tags: ['criticalPath', 'spitfire', 'C808496'],
+          tags: ['criticalPath', 'promin', 'C808496'],
         },
         () => {
           cy.waitForAuthRefresh(() => {

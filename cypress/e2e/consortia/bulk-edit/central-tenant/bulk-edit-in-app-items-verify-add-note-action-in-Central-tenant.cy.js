@@ -281,8 +281,8 @@ describe(
         });
 
         it(
-          'C477648 Verify "Add note" action for Items in Central tenant (consortia) (firebird)',
-          { tags: ['smokeECS', 'firebird', 'C477648'] },
+          'C477648 Verify "Add note" action for Items in Central tenant (consortia) (athena)',
+          { tags: ['smokeECS', 'athena', 'C477648'] },
           () => {
             BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Item UUIDs');
             BulkEditSearchPane.uploadFile(itemUUIDsFileName);

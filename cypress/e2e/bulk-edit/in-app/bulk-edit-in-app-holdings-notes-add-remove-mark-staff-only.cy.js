@@ -124,8 +124,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C422033 Verify Bulk Edit actions for Holdings notes - add mark Staff only and remove mark staff only (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C422033'] },
+      'C422033 Verify Bulk Edit actions for Holdings notes - add mark Staff only and remove mark staff only (athena)',
+      { tags: ['criticalPath', 'athena', 'C422033'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');
         BulkEditSearchPane.uploadFile(holdingUUIDsFileName);

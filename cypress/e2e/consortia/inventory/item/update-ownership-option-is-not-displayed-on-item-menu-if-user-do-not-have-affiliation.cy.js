@@ -35,15 +35,17 @@ describe('Inventory', () => {
 
           cy.setTenant(Affiliations.College)
             .then(() => {
-              ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
-                const collegeLocationData = Locations.getDefaultLocation({
-                  servicePointId: servicePoint.id,
-                }).location;
-                Locations.createViaApi(collegeLocationData).then((location) => {
-                  locationId = location.id;
-                  testData.locationName = location.name;
-                });
-              });
+              ServicePoints.getViaApi({ limit: 1, query: 'name<>"*auto*"' }).then(
+                (servicePoints) => {
+                  const collegeLocationData = Locations.getDefaultLocation({
+                    servicePointId: servicePoints[0].id,
+                  }).location;
+                  Locations.createViaApi(collegeLocationData).then((location) => {
+                    locationId = location.id;
+                    testData.locationName = location.name;
+                  });
+                },
+              );
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                 testData.holdings.sourceId = folioSource.id;
               });
@@ -118,8 +120,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C477589 "Update ownership" option is not displayed on Item menu if user don\'t have affiliation for second Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C477589'] },
+        'C477589 "Update ownership" option is not displayed on Item menu if user don\'t have affiliation for second Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C477589'] },
         () => {
           InstanceRecordView.openHoldingItem({
             name: testData.locationName,

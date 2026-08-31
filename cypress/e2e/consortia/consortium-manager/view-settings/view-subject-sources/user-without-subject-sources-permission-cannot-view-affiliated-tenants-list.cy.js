@@ -29,17 +29,17 @@ describe('Consortia', () => {
         const localSubjectSourceOnCentral = {
           name: `C594422 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibraries: 'Consortium',
+          memberLibraries: tenantNames.central,
         };
         const localSubjectSourceOnCollege = {
           name: `C594422 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibraries: 'College',
+          memberLibraries: tenantNames.college,
         };
         const localSubjectSourceOnUniversity = {
           name: `C594422 autotestSubjectTypeName${getRandomPostfix()}`,
           source: 'local',
-          memberLibraries: 'University',
+          memberLibraries: tenantNames.university,
         };
         const settingsList = Object.values(settingsItems);
 
@@ -125,8 +125,8 @@ describe('Consortia', () => {
         };
 
         it(
-          'C594422 User without "inventory-storage.subject-sources.collection.get" permission is NOT able to view the list of subject sources of affiliated tenants in "Consortium manager" app (consortia) (folijet)',
-          { tags: ['extendedPathECS', 'folijet', 'C594422'] },
+          'C594422 User without "inventory-storage.subject-sources.collection.get" permission is NOT able to view the list of subject sources of affiliated tenants in "Consortium manager" app (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C594422'] },
           () => {
             SelectMembersModal.selectAllMembers();
             ConsortiumManager.verifyStatusOfConsortiumManager(2);

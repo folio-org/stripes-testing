@@ -11,7 +11,7 @@ describe('Eureka', () => {
         personal: {
           lastName: `AT_C627444_LastName_${getRandomPostfix()}`,
           email: 'AT_C627444@test.com',
-          preferredContactTypeId: '002',
+          preferredContactTypeIds: ['002'],
         },
       },
       noKeycloakErrorMessage: "Keycloak user doesn't exist",
@@ -34,23 +34,23 @@ describe('Eureka', () => {
       cy.getUserGroups().then((groupId) => {
         userA.patronGroup = groupId;
         userB.patronGroup = groupId;
-        cy.createUserWithoutKeycloakInEurekaApi(userA).then((userId) => {
-          testData.userAId = userId;
-          userIds.push(userId);
+        Users.createViaApi(userA).then((user) => {
+          testData.userAId = user.id;
+          userIds.push(user.id);
         });
-        cy.createUserWithoutKeycloakInEurekaApi(userB).then((userId) => {
-          testData.userBId = userId;
-          userIds.push(userId);
+        Users.createViaApi(userB).then((user) => {
+          testData.userBId = user.id;
+          userIds.push(user.id);
         });
-        cy.createUserWithoutKeycloakInEurekaApi(userC).then((userId) => {
-          testData.userCId = userId;
-          userIds.push(userId);
+        Users.createViaApi(userC).then((user) => {
+          testData.userCId = user.id;
+          userIds.push(user.id);
         });
-        Users.createViaApi(userD).then((user) => {
+        Users.createViaApi(userD, { keycloak: true }).then((user) => {
           testData.userDId = user.id;
           userIds.push(user.id);
         });
-        Users.createViaApi(userE).then((user) => {
+        Users.createViaApi(userE, { keycloak: true }).then((user) => {
           testData.userEId = user.id;
           userIds.push(user.id);
         });

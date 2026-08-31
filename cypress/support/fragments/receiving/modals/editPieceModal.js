@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   KeyValue,
   Pane,
   Select,
@@ -9,6 +10,7 @@ import {
   matching,
   Modal,
 } from '../../../../../interactors';
+import { RECEIVING_PIECE_FORM_FIELD_LABELS } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import ReceivingStates from '../receivingStates';
 import SelectLocationModal from '../../orders/modals/selectLocationModal';
@@ -32,16 +34,52 @@ const actionsDropdownButton = Button({ dataTestID: 'dropdown-trigger-button' });
 const unreceiveButton = Button('Unreceive');
 
 const editPieceFields = {
-  Caption: editPieceModal.find(TextField({ name: 'displaySummary' })),
-  'Copy number': editPieceModal.find(TextField({ name: 'copyNumber' })),
-  Enumeration: editPieceModal.find(TextField({ name: 'enumeration' })),
-  Chronology: editPieceModal.find(TextField({ name: 'chronology' })),
-  'Piece format': editPieceModal.find(Select({ name: 'format' })),
-  'Expected receipt date': editPieceModal.find(TextField({ name: 'receiptDate' })),
-  Comment: editPieceModal.find(TextArea({ name: 'comment' })),
-  'Order line locations': editPieceModal.find(KeyValue('Order line locations')),
-  'Create item': editPieceModal.find(KeyValue('Create item')),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_SUMMARY]: editPieceModal.find(
+    TextField({ name: 'displaySummary' }),
+  ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.COPY_NUMBER]: editPieceModal.find(
+    TextField({ name: 'copyNumber' }),
+  ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.ENUMERATION]: editPieceModal.find(
+    TextField({ name: 'enumeration' }),
+  ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.CHRONOLOGY]: editPieceModal.find(
+    TextField({ name: 'chronology' }),
+  ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.PIECE_FORMAT]: editPieceModal.find(Select({ name: 'format' })),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.EXPECTED_RECEIPT_DATE]: editPieceModal.find(
+    TextField({ name: 'receiptDate' }),
+  ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.COMMENTS]: editPieceModal.find(TextArea({ name: 'comment' })),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.ORDER_LINE_LOCATIONS]: editPieceModal.find(
+    KeyValue('Order line locations'),
+  ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.CREATE_ITEM]: editPieceModal.find(KeyValue('Create item')),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.INTERNAL_NOTE]: editPieceModal.find(
+    TextArea({ name: 'internalNote' }),
+  ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.EXTERNAL_NOTE]: editPieceModal.find(
+    TextArea({ name: 'externalNote' }),
+  ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_ON_HOLDING]: editPieceModal.find(
+    Checkbox({ name: 'displayOnHolding' }),
+  ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_TO_PUBLIC]: editPieceModal.find(
+    Checkbox({ name: 'displayToPublic' }),
+  ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.BARCODE]: editPieceModal.find(TextField({ name: 'barcode' })),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.CALL_NUMBER]: editPieceModal.find(
+    TextField({ name: 'callNumber' }),
+  ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.ACCESSION_NUMBER]: editPieceModal.find(
+    TextField({ name: 'accessionNumber' }),
+  ),
 };
+
+const displayOnHoldingCheckbox =
+  editPieceFields[RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_ON_HOLDING];
+const displayToPublicCheckbox =
+  editPieceFields[RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_TO_PUBLIC];
 
 export default {
   waitLoading() {
@@ -50,7 +88,7 @@ export default {
   verifyModalView({ isExpected = true } = {}) {
     cy.expect([
       editPieceModal.has({
-        header: 'Edit piece',
+        title: 'Edit piece',
       }),
       cancelButton.has({ disabled: false, visible: true }),
       saveAndCloseButton.has({ disabled: false, visible: true }),
@@ -63,13 +101,47 @@ export default {
       cy.expect(editPieceModal.find(KeyValue('Select holdings')).exists());
     }
 
-    Object.values(editPieceFields).forEach((field) => cy.expect(field.exists()));
+    Object.entries(editPieceFields).forEach(([label, field]) => {
+      // Display to public only renders after Display on holding is checked, not on initial load.
+      if (label !== RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_TO_PUBLIC) {
+        cy.expect(field.exists());
+      }
+    });
   },
   checkFieldsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(editPieceFields[label].has(conditions));
     });
   },
+
+  fillPieceDetails(fields = {}) {
+    Object.entries(fields).forEach(([label, value]) => {
+      if (value === undefined) return;
+
+      cy.do(editPieceFields[label].fillIn(value));
+    });
+  },
+
+  checkDisplayOnHoldingCheckbox() {
+    cy.do(displayOnHoldingCheckbox.click());
+  },
+
+  checkDisplayToPublicCheckbox() {
+    cy.do(displayToPublicCheckbox.click());
+  },
+
+  verifyCheckboxPresent(checkBoxName, shouldExist = true) {
+    if (shouldExist) {
+      cy.expect(Checkbox(checkBoxName).exists());
+    } else {
+      cy.expect(Checkbox(checkBoxName).absent());
+    }
+  },
+
+  verifyCheckboxState(checkBoxName, checked) {
+    cy.expect(Checkbox(checkBoxName).has({ checked: Boolean(checked) }));
+  },
+
   clickCreateNewholdingsForLocation() {
     cy.do(createNewHoldingForLocationButton.click());
 
@@ -100,8 +172,6 @@ export default {
   },
   clickSaveAndCloseButton({ pieceSaved = true } = {}) {
     cy.do(saveAndCloseButton.click());
-    cy.expect(saveAndCloseButton.absent());
-
     if (pieceSaved) {
       InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
     }

@@ -77,8 +77,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C543868 Default sort is applied to search result list in "Inventory" app according to selected option in settings ("Title" case) (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C543868'] },
+      'C543868 Default sort is applied to search result list in "Inventory" app according to selected option in settings ("Title" case) (promin)',
+      { tags: ['extendedPath', 'promin', 'C543868'] },
       () => {
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,

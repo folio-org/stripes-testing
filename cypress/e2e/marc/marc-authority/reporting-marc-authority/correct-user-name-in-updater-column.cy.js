@@ -69,8 +69,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C449390 Correct User\'s name is displayed in "Updater" column of "MARC authority headings updates (CSV)" report for first and second update of "MARC authority" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C449390'] },
+        'C449390 Correct User\'s name is displayed in "Updater" column of "MARC authority headings updates (CSV)" report for first and second update of "MARC authority" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C449390'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.marcAuthorities,

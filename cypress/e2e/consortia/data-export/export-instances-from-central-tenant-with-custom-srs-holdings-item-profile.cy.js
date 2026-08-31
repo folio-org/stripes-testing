@@ -1,6 +1,10 @@
 /* eslint-disable no-unused-expressions */
 import permissions from '../../../support/dictionary/permissions';
-import { ELECTRONIC_ACCESS_RELATIONSHIP_NAME, ITEM_STATUS_NAMES } from '../../../support/constants';
+import {
+  ELECTRONIC_ACCESS_RELATIONSHIP_NAME,
+  ITEM_STATUS_NAMES,
+  LOCATION_NAMES,
+} from '../../../support/constants';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -211,7 +215,7 @@ function addHoldingsAndItems(instance, tenantAffiliation) {
     cy.getMaterialTypes({ limit: 1 }).then((res) => {
       tenantMaterialTypeId = res.id;
     });
-    cy.getLocations({ query: 'name="Main Library"' }).then((locations) => {
+    cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((locations) => {
       tenantLocationId = locations.id;
       tenantLocationCode = locations.code;
     });
@@ -490,8 +494,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C468204 ECS | Export Instances from Central tenant with custom SRS & Holdings & Item profile (file with Instances UUIDs) (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C468204'] },
+      'C468204 ECS | Export Instances from Central tenant with custom SRS & Holdings & Item profile (file with Instances UUIDs) (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C468204'] },
       () => {
         // Step 1: Upload .csv file with Instances UUIDs
         ExportFile.uploadFile(instanceUUIDsFileName);

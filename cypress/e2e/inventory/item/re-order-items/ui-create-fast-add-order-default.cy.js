@@ -63,9 +63,9 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808498 Create Instance+Holdings+Item with empty "order" field (default state) using "New fast add record" feature (spitfire)',
+        'C808498 Create Instance+Holdings+Item with empty "order" field (default state) using "New fast add record" feature (promin)',
         {
-          tags: ['extendedPath', 'spitfire', 'C808498'],
+          tags: ['extendedPath', 'promin', 'C808498'],
         },
         () => {
           cy.waitForAuthRefresh(() => {

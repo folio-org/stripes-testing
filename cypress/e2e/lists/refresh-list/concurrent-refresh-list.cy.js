@@ -71,8 +71,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411825 (Multiple users): Refresh list (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411825'] },
+      'C411825 (Multiple users): Refresh list (athena)',
+      { tags: ['criticalPath', 'athena', 'C411825'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -99,8 +99,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411826 (Multiple users): Refresh list when another user modifies the list (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411826'] },
+      'C411826 (Multiple users): Refresh list when another user modifies the list (athena)',
+      { tags: ['criticalPath', 'athena', 'C411826'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -134,8 +134,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411829 (Multiple users): Cancel refresh (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411829'] },
+      'C411829 (Multiple users): Cancel refresh (athena)',
+      { tags: ['criticalPath', 'athena', 'C411829'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -156,8 +156,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411835 (Multiple users): Refresh list when another user make the list Private (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411835'] },
+      'C411835 (Multiple users): Refresh list when another user make the list Private (athena)',
+      { tags: ['criticalPath', 'athena', 'C411835'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -184,8 +184,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411836 (Multiple users): Refresh list when another user make the list Inactive (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411836'] },
+      'C411836 (Multiple users): Refresh list when another user make the list Inactive (athena)',
+      { tags: ['criticalPath', 'athena', 'C411836'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -212,8 +212,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411827 (Multiple users): Refresh list when someone removes the list (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C411827'] },
+      'C411827 (Multiple users): Refresh list when someone removes the list (athena)',
+      { tags: ['criticalPath', 'athena', 'C411827'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

@@ -57,8 +57,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C957373 Verify value retention when changing operators for repeatable fields (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C957373'] },
+        'C957373 Verify value retention when changing operators for repeatable fields (athena)',
+        { tags: ['extendedPath', 'athena', 'C957373'] },
         () => {
           // Step 1: Select a free text repeatable field (Instance — Notes — Note)
           QueryModal.selectField(instanceFieldValues.note);

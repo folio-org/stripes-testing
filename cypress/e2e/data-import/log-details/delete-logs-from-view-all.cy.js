@@ -50,8 +50,8 @@ describe('Data Import', () => {
 
     // TODO added tag broken FAT-12393
     it(
-      'C367923 A user can delete logs from the Import app "View all" page (folijet)',
-      { tags: ['criticalPathBroken', 'folijet', 'C367923'] },
+      'C367923 A user can delete logs from the Import app "View all" page (promin)',
+      { tags: ['criticalPathBroken', 'promin', 'C367923'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();

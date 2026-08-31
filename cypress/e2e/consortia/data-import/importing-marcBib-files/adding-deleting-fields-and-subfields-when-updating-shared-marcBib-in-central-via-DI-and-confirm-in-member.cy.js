@@ -112,6 +112,7 @@ describe('Data Import', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
+        InventoryInstances.deleteInstanceByTitleViaApi('C405531');
         NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile).then(
           (mappingProfileResponse) => {
             NewActionProfile.createActionProfileViaApi(
@@ -179,8 +180,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C405531 Check adding/deleting fields and subfields when updating shared "MARC Bib" in Central tenant via Data import and confirm in member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C405531'] },
+        'C405531 Check adding/deleting fields and subfields when updating shared "MARC Bib" in Central tenant via Data import and confirm in member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C405531'] },
         () => {
           InventoryInstances.waitContentLoading();
           InventoryInstances.searchByTitle(testData.instanceId);
@@ -239,6 +240,8 @@ describe('Data Import', () => {
           InventoryViewSource.notContains(`${testData.tag700.tag}\t`);
           InventoryViewSource.close();
           InventorySearchAndFilter.switchToBrowseTab();
+          BrowseSubjects.waitForSubjectToAppear(testData.subjects[1].name);
+          BrowseSubjects.waitForSubjectToAppear(testData.subjects[2].name);
           BrowseSubjects.searchBrowseSubjects(testData.subjects[2].name);
           BrowseSubjects.checkSearchResultRecord(testData.subjects[2].name);
           BrowseSubjects.searchBrowseSubjects(testData.subjects[1].name);
@@ -276,6 +279,8 @@ describe('Data Import', () => {
 
           InventorySearchAndFilter.switchToBrowseTab();
           BrowseContributors.select();
+          cy.setTenant(Affiliations.College);
+          BrowseContributors.waitForContributorToAppear(testData.contributorName);
           BrowseContributors.browse(testData.contributorName);
           BrowseContributors.checkSearchResultRecord(testData.contributorName);
           BrowseContributors.browse(testData.absentContributorName);

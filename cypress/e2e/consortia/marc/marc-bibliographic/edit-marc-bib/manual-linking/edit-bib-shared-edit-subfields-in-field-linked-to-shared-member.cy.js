@@ -227,8 +227,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C407691 Edit subfields in a linked field of "MARC Bib" in member tenant (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C407691'] },
+            'C407691 Edit subfields in a linked field of "MARC Bib" in member tenant (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C407691'] },
             () => {
               InventorySearchAndFilter.clearDefaultHeldbyFilter();
               InventoryInstances.searchByTitle(createdInstanceId);

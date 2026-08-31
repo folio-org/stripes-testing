@@ -190,8 +190,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566170 Verify "Staff only" action for Items notes in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566170'] },
+        'C566170 Verify "Staff only" action for Items notes in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566170'] },
         () => {
           // Step 1: Select record type and identifier
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Items', 'Holdings UUIDs');

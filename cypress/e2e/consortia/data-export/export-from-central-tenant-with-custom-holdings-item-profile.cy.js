@@ -482,8 +482,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C468212 ECS | Export from Central tenant with custom Holdings & Item profile (file with Instances UUIDs) (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C468212'] },
+      'C468212 ECS | Export from Central tenant with custom Holdings & Item profile (file with Instances UUIDs) (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C468212'] },
       () => {
         // Step 1: Upload .csv file with Instances UUIDs
         ExportFile.uploadFile(instanceUUIDsFileName);

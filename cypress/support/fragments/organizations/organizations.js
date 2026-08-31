@@ -31,10 +31,11 @@ import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
 import SearchHelper from '../finance/financeHelper';
 import OrganizationDetails from './organizationDetails';
+import { COMMON_BUTTON_LABELS } from '../../constants';
 
-const buttonNew = Button('New');
-const saveAndClose = Button('Save & close');
-const saveAndKeepEditingButton = Button('Save & keep editing');
+const buttonNew = Button(COMMON_BUTTON_LABELS.NEW);
+const saveAndClose = Button(COMMON_BUTTON_LABELS.SAVE_AND_CLOSE);
+const saveAndKeepEditingButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING);
 const summaryAccordionId = 'summarySection';
 const rootSection = PaneContent({ id: 'organizations-results-pane-content' });
 const organizationList = rootSection.find(MultiColumnList({ id: 'organizations-list' }));
@@ -62,7 +63,7 @@ const resetButton = Button('Reset all');
 const openContactSectionButton = Button({
   id: 'accordion-toggle-button-contactPeopleSection',
 });
-const newButton = Button('+ New');
+const newButton = Button('New');
 const addContacsModal = Modal('Add contacts');
 const lastNameField = TextField({ name: 'lastName' });
 const firstNameField = TextField({ name: 'firstName' });
@@ -1008,14 +1009,14 @@ export default {
       return response.body.organizations[0];
     }),
 
-  createOrganizationViaApi: (organization) => cy
+  createOrganizationViaApi: (organization, { returnBody = false } = {}) => cy
     .okapiRequest({
       method: 'POST',
       path: 'organizations/organizations',
       body: organization,
       isDefaultSearchParamsRequired: false,
     })
-    .then((response) => response.body.id),
+    .then((response) => (returnBody ? response.body : response.body.id)),
 
   createBankingInformationViaApi: (bankingInformation) => cy
     .okapiRequest({
@@ -1994,14 +1995,6 @@ export default {
       .then((t) => expect(t.trim()).to.eq(expected));
   },
 
-  interceptGetOrganizations() {
-    cy.intercept('GET', '/organizations/organizations*').as('waiterForOrganizationsQueryCompleted');
-  },
-
-  waitForOrganizationsQueryCompleted() {
-    cy.wait('@waiterForOrganizationsQueryCompleted');
-  },
-
   addAU(acqUnits = []) {
     cy.wait(4000);
     cy.do([
@@ -2020,5 +2013,22 @@ export default {
 
   verifyAcqUnitSelected(auName) {
     cy.expect(orgAcqUnitsMultiSelect.find(ValueChipRoot(auName)).exists());
+  },
+
+  /* Request interceptors */
+  interceptGetOrganizations() {
+    cy.intercept('GET', '/organizations/organizations*').as('waiterForOrganizationsQueryCompleted');
+  },
+  waitForOrganizationsQueryCompleted() {
+    cy.wait('@waiterForOrganizationsQueryCompleted');
+  },
+
+  interceptGetOrganizationTypes() {
+    cy.intercept('GET', '/organizations-storage/organization-types*').as(
+      'waiterForOrganizationTypesQueryCompleted',
+    );
+  },
+  waitForOrganizationTypesQueryCompleted() {
+    cy.wait('@waiterForOrganizationTypesQueryCompleted');
   },
 };

@@ -36,8 +36,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C353545 Verify that Download matched records is hidden in case Errors only (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C353545'] },
+      'C353545 Verify that Download matched records is hidden in case Errors only (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C353545'] },
       () => {
         // Navigate to the Bulk edit app => Select Inventory-Items
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);

@@ -41,8 +41,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C651409 Verify that the value resets after changing the operator from equals to null/empty and vice versa (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C651409'] },
+      'C651409 Verify that the value resets after changing the operator from equals to null/empty and vice versa (athena)',
+      { tags: ['criticalPath', 'athena', 'C651409'] },
       () => {
         // Step 1: Create new list with Organizations record type and open Build query form
         Lists.openNewListPane();
@@ -63,7 +63,7 @@ describe('Lists', () => {
         // Step 3: Change operator from "equals" to "is null/empty" - value SHOULD reset
         QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
         QueryModal.verifySelectedValue('Select value');
-        QueryModal.verifyQueryAreaContent('(organization.code  is null/empty )');
+        QueryModal.verifyQueryAreaContent('(organization.code is null/empty )');
         QueryModal.verifyQueryAreaDoesNotContain(testData.organization.code);
       },
     );

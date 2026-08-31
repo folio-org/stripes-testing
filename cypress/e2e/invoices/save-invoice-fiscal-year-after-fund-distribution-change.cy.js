@@ -169,7 +169,7 @@ describe('Invoices', () => {
 
   it(
     'C396360 Save invoice fiscal year after fund distribution change to fund using different ledger if FY was undefined (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet', 'C396360'] },
+    { tags: ['criticalPath', 'thunderjet', 'C396360', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
@@ -199,14 +199,14 @@ describe('Invoices', () => {
       FinanceHelp.searchByName(firstFiscalYear.name);
       FiscalYears.selectFY(firstFiscalYear.name);
       FiscalYears.editFiscalYearDetails();
-      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+      FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(
         periodStartForFirstFY,
         periodEndForFirstFY,
       );
       FinanceHelp.searchByName(secondFiscalYear.name);
       FiscalYears.selectFY(secondFiscalYear.name);
       FiscalYears.editFiscalYearDetails();
-      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+      FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(
         periodStartForSecondFY,
         periodEndForSecondFY,
       );

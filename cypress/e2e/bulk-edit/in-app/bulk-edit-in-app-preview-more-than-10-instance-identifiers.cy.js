@@ -81,8 +81,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C423686 Verify "Preview of record matched" in case of uploading more than 10 Instance identifiers (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C423686'] },
+      'C423686 Verify "Preview of record matched" in case of uploading more than 10 Instance identifiers (athena)',
+      { tags: ['extendedPath', 'athena', 'C423686'] },
       () => {
         // Step 1: Select "Inventory - instances" radio button and "Instance UUIDs" identifier
         BulkEditSearchPane.checkInstanceRadio();

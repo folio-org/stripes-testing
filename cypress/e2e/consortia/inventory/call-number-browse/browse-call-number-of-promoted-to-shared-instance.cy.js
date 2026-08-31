@@ -127,8 +127,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C1045429 Verify that call numbers are browsable after sharing a local instance (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C1045429'] },
+        'C1045429 Verify that call numbers are browsable after sharing a local instance (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C1045429'] },
         () => {
           // Step 1: Browse for each call number value from preconditions
           InventorySearchAndFilter.switchToBrowseTab();

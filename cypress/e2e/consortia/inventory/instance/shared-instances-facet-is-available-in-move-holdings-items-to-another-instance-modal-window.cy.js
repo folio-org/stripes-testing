@@ -118,8 +118,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C594479 (CONSORTIA) Shared instances facet is available in "Move holdings/items to another instance" modal window (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C594479'] },
+        'C594479 (CONSORTIA) Shared instances facet is available in "Move holdings/items to another instance" modal window (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C594479'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.localInstance.id);

@@ -83,8 +83,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C808480 API | Create "Item" with duplicated / last in the sequence / out of the sequence "order" value (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C808480'] },
+        'C808480 API | Create "Item" with duplicated / last in the sequence / out of the sequence "order" value (promin)',
+        { tags: ['extendedPath', 'promin', 'C808480'] },
         () => {
           cy.getToken(user.username, user.password);
 

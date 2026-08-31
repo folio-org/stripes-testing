@@ -55,8 +55,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C365584 Verify  "Save & close" button on the "Location look-up" (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C365584'] },
+      'C365584 Verify  "Save & close" button on the "Location look-up" (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C365584'] },
       () => {
         // Select "Inventory-Items" app => Select ""Items barcode" from "Record identifier" dropdown
         BulkEditSearchPane.checkItemsRadio();

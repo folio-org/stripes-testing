@@ -97,8 +97,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C375270 "Number of titles" link in "MARC authority" app opens linked "MARC bib" record with controlled "650" field (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C375270'] },
+      'C375270 "Number of titles" link in "MARC authority" app opens linked "MARC bib" record with controlled "650" field (promin)',
+      { tags: ['extendedPath', 'promin', 'C375270'] },
       () => {
         MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
         MarcAuthorities.checkRow(testData.marcValue);

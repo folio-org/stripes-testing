@@ -89,8 +89,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C411642 Verify update Holdings with multiple Items associated (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C411642'] },
+      'C411642 Verify update Holdings with multiple Items associated (athena)',
+      { tags: ['criticalPath', 'athena', 'C411642'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcodes');

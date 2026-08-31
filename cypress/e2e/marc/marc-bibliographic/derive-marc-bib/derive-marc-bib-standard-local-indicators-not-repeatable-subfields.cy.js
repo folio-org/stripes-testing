@@ -220,8 +220,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514907 Derive MARC bib record with standard / local indicators, not repeatable subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C514907', 'nonParallel'] },
+        'C514907 Derive MARC bib record with standard / local indicators, not repeatable subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'promin', 'C514907', 'nonParallel'] },
         () => {
           // Step 1: Navigate to imported record and derive
           InventoryInstances.searchByTitle(instanceId);

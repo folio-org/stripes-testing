@@ -167,7 +167,7 @@ describe('Inventory', () => {
         });
         [Affiliations.College, Affiliations.Consortia].forEach((tenant) => {
           cy.withinTenant(tenant, () => {
-            ServicePoints.getViaApi({ query: 'name=Circ Desk' }).then((servicePoints) => {
+            ServicePoints.getViaApi({ query: 'name<>"*auto*"' }).then((servicePoints) => {
               testData.defaultLocation[tenant] = Location.getDefaultLocation(servicePoints[0].id);
               Location.createViaApi(testData.defaultLocation[tenant]);
             });
@@ -265,8 +265,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C651515 Call number of each type which belong to Shared and Local Instances could be found by call number browse from Member tenant (consortia) (spitfire)',
-      { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C651515'] },
+      'C651515 Call number of each type which belong to Shared and Local Instances could be found by call number browse from Member tenant (consortia) (promin)',
+      { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C651515'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         folioInstancesShared.forEach((instance) => {

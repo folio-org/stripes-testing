@@ -24,10 +24,10 @@ describe('Data Import', () => {
         source: 'USER',
       },
       secondProtectedFieldData: {
-        field: '600',
-        indicator1: '*',
-        indicator2: '*',
-        subfield: 'a',
+        field: '601',
+        indicator1: 'm',
+        indicator2: 'n',
+        subfield: 'x',
         data: '*',
         source: 'USER',
       },
@@ -70,8 +70,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C366101 MARC Authority field protections display but disallow override on field mapping create/edit page (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C366101'] },
+      'C366101 MARC Authority field protections display but disallow override on field mapping create/edit page (promin)',
+      { tags: ['extendedPath', 'promin', 'C366101'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         FieldMappingProfiles.checkNewMappingProfileFormIsOpened();

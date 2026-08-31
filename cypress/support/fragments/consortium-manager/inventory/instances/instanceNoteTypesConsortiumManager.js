@@ -5,7 +5,7 @@ import ConsortiumManagerApp from '../../consortiumManagerApp';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
 const id = uuid();
-const newButton = Button('+ New');
+const newButton = Button('New');
 
 export default {
   createViaApi(type) {

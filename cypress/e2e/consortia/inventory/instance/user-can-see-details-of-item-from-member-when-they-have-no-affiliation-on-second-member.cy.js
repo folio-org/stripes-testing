@@ -103,8 +103,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C422239 (CONSORTIA) User can see the details of the item from Member tenant when they have no affiliation on second member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C422239'] },
+        'C422239 (CONSORTIA) User can see the details of the item from Member tenant when they have no affiliation on second member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C422239'] },
         () => {
           InventoryInstances.searchByTitle(testData.instanceIds.instanceId);
           InventoryInstance.waitLoading();

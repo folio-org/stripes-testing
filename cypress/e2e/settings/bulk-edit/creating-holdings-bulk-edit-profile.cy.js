@@ -47,8 +47,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C805762 Creating Holdings bulk edit profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C805762'] },
+      'C805762 Creating Holdings bulk edit profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C805762'] },
       () => {
         // Step 1: Click "Holdings bulk edit profiles" category under "Inventory profiles" group
         SettingsPane.selectSettingsTab(APPLICATION_NAMES.BULK_EDIT);

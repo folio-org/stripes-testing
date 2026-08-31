@@ -122,8 +122,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C397387 Removing "010" field in linked "MARC Authority" record while "MARC Bib" record being edited (NOT saved link; "$0" = "010 $a") (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C397387'] },
+          'C397387 Removing "010" field in linked "MARC Authority" record while "MARC Bib" record being edited (NOT saved link; "$0" = "010 $a") (promin)',
+          { tags: ['extendedPath', 'promin', 'C397387'] },
           () => {
             // Step 1: Open Edit MARC bib record
             InventoryInstances.searchByTitle(testInstanceId);

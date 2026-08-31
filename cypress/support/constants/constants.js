@@ -2,6 +2,7 @@ export const APPLICATION_NAMES = {
   AGREEMENTS: 'Agreements',
   BULK_EDIT: 'Bulk edit',
   CLAIMING: 'Claiming',
+  DASHBOARD: 'Dashboard',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
   EXPORT_MANAGER: 'Export manager',
@@ -134,6 +135,7 @@ export const FOLIO_RECORD_TYPE = {
   INVOICE: 'Invoice',
   MARCBIBLIOGRAPHIC: 'MARC Bibliographic',
   MARCAUTHORITY: 'MARC Authority',
+  LINKEDDATA: 'Linked data',
 };
 
 export const PAYMENT_METHOD = {
@@ -240,6 +242,7 @@ export const EXISTING_RECORD_NAMES = {
   ITEM: 'ITEM',
   MARC_BIBLIOGRAPHIC: 'MARC_BIBLIOGRAPHIC',
   MARC_AUTHORITY: 'MARC_AUTHORITY',
+  MARC_HOLDINGS: 'MARC_HOLDINGS',
   INVOICE: 'INVOICE',
   ORDER: 'ORDER',
 };
@@ -660,6 +663,26 @@ export const INVENTORY_008_FIELD_DTST_DROPDOWN = {
   S: 's - Single known date/probable date',
   T: 't - Publication date and copyright date',
   U: 'u - Continuing resource status unknown',
+};
+
+export const INVENTORY_008_FIELD_ILLS_DROPDOWN = {
+  NO: '| - No attempt to code',
+  NONE: '\\ - No illustrations',
+  A: 'a - Illustrations',
+  B: 'b - Maps',
+  C: 'c - Portraits',
+  D: 'd - Charts',
+  E: 'e - Plans',
+  F: 'f - Plates',
+  G: 'g - Music',
+  H: 'h - Facsimiles',
+  I: 'i - Coats of arms',
+  J: 'j - Genealogical tables',
+  K: 'k - Forms',
+  L: 'l - Samples',
+  M: 'm - Phonodisc, phonowire, etc.',
+  O: 'o - Photographs',
+  P: 'p - Illuminations',
 };
 
 export const INVENTORY_008_FIELD_CONF_DROPDOWN = {
@@ -1777,17 +1800,26 @@ export const COMMON_BUTTON_LABELS = {
   APPLY: 'Apply',
   CANCEL: 'Cancel',
   CLOSE: 'Close',
+  COLLAPSE_ALL: 'Collapse all',
   CONFIRM: 'Confirm',
+  CREATE: 'Create',
+  DELETE: 'Delete',
+  EDIT: 'Edit',
   NEXT: 'Next',
+  NEW: 'New',
+  OK: 'Ok',
   PREVIOUS: 'Previous',
   REMOVE: 'Remove',
   RESET_ALL: 'Reset all',
   SAVE: 'Save',
   SAVE_AND_CLOSE: 'Save & close',
+  SAVE_AND_CREATE_ANOTHER: 'Save & create another',
+  SAVE_AND_KEEP_EDITING: 'Save & keep editing',
   SEARCH: 'Search',
   SUBMIT: 'Submit',
   YES: 'Yes',
   NO: 'No',
+  DUPLICATE: 'Duplicate',
 };
 
 export const RESULTS_PANE_NOT_FOUND_MESSAGE = 'No results found. Please check your filters.';
@@ -1819,6 +1851,8 @@ export const FILE_TYPES = {
 
 export const CUSTOM_FIELD_ENTITY_TYPES = {
   USER: 'user',
+  PURCHASE_ORDER: 'purchase_order',
+  PO_LINE: 'po_line',
 };
 
 export const CUSTOM_FIELD_TYPES = {
@@ -1840,4 +1874,45 @@ export const INSTANCE_RELATIONSHIP_TYPES = {
 export const TIMER_TYPES = {
   USER: 'USER',
   SYSTEM: 'SYSTEM',
+};
+
+export const SEARCH_AND_FILTER_PANE_TITLE = 'Search & filter';
+
+export const THE_LIST_CONTAINS_NO_ITEMS = 'The list contains no items';
+
+export const HOLDING_RECEIVING_HISTORY = {
+  DISPLAY_SUMMARY: 'Display summary',
+  COPY_NUMBER: 'Copy number',
+  ENUMERATION: 'Enumeration',
+  CHRONOLOGY: 'Chronology',
+  RECEIPT_DATE: 'Receipt date',
+  COMMENT: 'Comment',
+  PUBLIC_DISPLAY: 'Public display',
+  SOURCE: 'Source',
+  USER: 'User',
+  RECEIVING: 'Receiving',
+};
+
+export const INVENTORY_ITEMS = {
+  EFFECTIVE_CALL_NUMBER: 'Effective call number',
+  CALL_NUMBER: 'Call number',
+  BARCODE: 'Item barcode',
+  ACCESSION_NUMBER: 'Accession number',
+  MATERIAL_TYPE: 'Material type',
+  COPY_NUMBER: 'Copy number',
+  SHELVING_ORDER: 'Shelving order',
+  ENUMERATION: 'Enumeration',
+  CHRONOLOGY: 'Chronology',
+  VOLUME: 'Volume',
+  DISPLAY_SUMMARY: 'Display summary',
+};
+
+export const HOLDING_TABLE_CONTENT = {
+  HOLDINGS: 'Holdings:',
+  ITEM_BARCODE: 'Item: barcode',
+  STATUS: 'Status',
+  COPY_NUMBER: 'Copy number',
+  ENUMERATION: 'Enumeration',
+  CHRONOLOGY: 'Chronology',
+  EFFECTIVE_LOCATION: 'Effective location',
 };

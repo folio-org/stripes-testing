@@ -89,8 +89,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C740236 Editing Users bulk edit profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C740236'] },
+      'C740236 Editing Users bulk edit profile (athena)',
+      { tags: ['criticalPath', 'athena', 'C740236'] },
       () => {
         // Step 1: Click on the row with users bulk edit profile from Preconditions
         UsersBulkEditProfilesPane.clickProfileRow(testData.originalProfileName);

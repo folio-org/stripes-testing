@@ -21,71 +21,6 @@ describe('Eureka', () => {
         ],
         originalCapabilitiesInSets: [
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Locale Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Mod-Settings Entries Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Mod-Settings Global Read Stripes-Core Prefs',
-            action: CAPABILITY_ACTIONS.MANAGE,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Mod-Settings Owner Read Stripes-Core Prefs',
-            action: CAPABILITY_ACTIONS.MANAGE,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Links Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Links Collection',
-            action: CAPABILITY_ACTIONS.EDIT,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Notes Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Notes Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'UI-Notes Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Module Notes Enabled',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Stripes-Core Settings',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
             table: CAPABILITY_TYPES.PROCEDURAL,
             resource: 'UI-Notes Item Assign-Unassign',
             action: CAPABILITY_ACTIONS.EXECUTE,
@@ -94,12 +29,12 @@ describe('Eureka', () => {
         originalCapabilities: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Login Event Collection',
+            resource: 'UI-Tags',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Licenses Admin Action',
+            resource: 'UI-Licenses Licenses File',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
@@ -110,40 +45,20 @@ describe('Eureka', () => {
         },
         newCapabilitiesInSet: [
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Finance Budgets-Expense-Classes-Totals Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Finance Expense-Classes Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Finance Fiscal-Years Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Finance Fiscal-Years Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Finance Fund-Types Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'UI-Finance',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         newCapabilities: [
           {
             table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Module Finance Enabled',
+            resource: 'UI-Finance Settings',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Invoice Item Cancel',
+            resource: 'UI-Invoice Invoice Cancel',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
@@ -152,8 +67,8 @@ describe('Eureka', () => {
             Procedural: 2,
           },
           capabilities: {
-            Data: 16,
-            Settings: 3,
+            Data: 2,
+            Settings: 1,
             Procedural: 4,
           },
         },

@@ -72,8 +72,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C451650 Only Shared "Classification identifier types" are displayed in "Classification identifier types" multi-select dropdown on Central and Member tenants (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C451650'] },
+        'C451650 Only Shared "Classification identifier types" are displayed in "Classification identifier types" multi-select dropdown on Central and Member tenants (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C451650'] },
         () => {
           ClassificationBrowse.clickEditButtonInBrowseOption(testData.classificationBrowseOption);
           ClassificationBrowse.checkClassificationIdentifierTypesExistsInBrowseoption(

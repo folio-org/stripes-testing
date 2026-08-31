@@ -163,8 +163,8 @@ describe('Data Import', () => {
       });
 
       it(
-        'C449362 (CONSORTIA) Title of shared instance is not updated with protected field on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C449362'] },
+        'C449362 (CONSORTIA) Title of shared instance is not updated with protected field on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C449362'] },
         () => {
           // change file
           // we change instance hrid because using existing file

@@ -163,8 +163,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C451567 Automated linking of "MARC bib" field with "MARC authority" record which has "$" sign ("{dollar}" code) (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C451567'] },
+          'C451567 Automated linking of "MARC bib" field with "MARC authority" record which has "$" sign ("{dollar}" code) (promin)',
+          { tags: ['extendedPath', 'promin', 'C451567'] },
           () => {
             InventoryInstances.searchByTitle(createdInstanceId);
             InventoryInstances.selectInstanceById(createdInstanceId);

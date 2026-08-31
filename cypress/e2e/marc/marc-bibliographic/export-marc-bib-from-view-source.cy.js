@@ -72,8 +72,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C543799 Export "MARC bibliographic" record from "View source" pane in "Inventory" app (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C543799'] },
+      'C543799 Export "MARC bibliographic" record from "View source" pane in "Inventory" app (promin)',
+      { tags: ['extendedPath', 'promin', 'C543799'] },
       () => {
         InventoryInstances.searchByTitle(createdInstanceId);
         InventoryInstances.selectInstanceById(createdInstanceId);

@@ -238,7 +238,8 @@ describe('Data Import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken().then(() => {
+      cy.wait(2000);
+      cy.getAdminToken(false).then(() => {
         const itemBarcode = Helper.getRandomBarcode();
 
         // delete created files
@@ -330,8 +331,8 @@ describe('Data Import', () => {
     };
 
     it(
-      'C350590 Match on POL and update related Instance, Holdings, Item (folijet)',
-      { tags: ['smoke', 'folijet', 'C350590'] },
+      'C350590 Match on POL and update related Instance, Holdings, Item (promin)',
+      { tags: ['smoke', 'promin', 'C350590'] },
       () => {
         // create the first PO with POL
         Orders.createOrderWithOrderLineViaApi(

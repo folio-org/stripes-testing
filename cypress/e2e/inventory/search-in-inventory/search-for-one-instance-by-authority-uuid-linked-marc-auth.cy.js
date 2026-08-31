@@ -118,8 +118,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C367973 Search for one "Instance" record by "Authority UUID" value of linked "MARC Authority" record (spitfire) (TaaS)',
-      { tags: ['extendedPath', 'spitfire', 'C367973'] },
+      'C367973 Search for one "Instance" record by "Authority UUID" value of linked "MARC Authority" record (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C367973'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(testData.user.username, testData.user.password, {

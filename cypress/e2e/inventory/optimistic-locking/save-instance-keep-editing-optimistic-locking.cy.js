@@ -49,8 +49,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C399070 Saving record using "Save & keep editing" button when "Instance" record is being edited by two users (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C399070'] },
+      'C399070 Saving record using "Save & keep editing" button when "Instance" record is being edited by two users (promin)',
+      { tags: ['extendedPath', 'promin', 'C399070'] },
       () => {
         // Steps 1-2: User A logs in, finds the instance and opens it for editing
         cy.login(userA.username, userA.password, {

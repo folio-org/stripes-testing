@@ -69,8 +69,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C396396 Verify the inability to save empty statistical code field on Holdings create/edit page (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C396396'] },
+      'C396396 Verify the inability to save empty statistical code field on Holdings create/edit page (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C396396'] },
       () => {
         InventoryInstances.searchByTitle(testData.item.instanceName);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.item.instanceName);

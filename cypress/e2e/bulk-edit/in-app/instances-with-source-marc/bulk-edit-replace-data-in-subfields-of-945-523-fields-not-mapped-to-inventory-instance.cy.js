@@ -101,8 +101,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C506682 Replace data in the subfields of MARC fields (945, 523) not mapped to Inventory Instance (MARC) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C506682'] },
+      'C506682 Replace data in the subfields of MARC fields (945, 523) not mapped to Inventory Instance (MARC) (athena)',
+      { tags: ['criticalPath', 'athena', 'C506682'] },
       () => {
         // Step 1: Check columns for Source and General note
         BulkEditActions.openActions();

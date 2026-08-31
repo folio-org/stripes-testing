@@ -71,8 +71,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C490890 Saving record using "Save & keep editing" button when "Holdings" record is being edited by two users (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C490890'] },
+      'C490890 Saving record using "Save & keep editing" button when "Holdings" record is being edited by two users (promin)',
+      { tags: ['extendedPath', 'promin', 'C490890'] },
       () => {
         // Steps 1-3: User A logs in, navigates to the holding and opens it for editing
         cy.login(userA.username, userA.password, {

@@ -42,8 +42,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C1385649 User with "data - UI-Bulk-Edit Users - delete" and "data - UI-Users - view" permissions is NOT able to start bulk edit and to start bulk delete of Users (firebird)',
-      { tags: ['smoke', 'firebird', 'C1385649'] },
+      'C1385649 User with "data - UI-Bulk-Edit Users - delete" and "data - UI-Users - view" permissions is NOT able to start bulk edit and to start bulk delete of Users (athena)',
+      { tags: ['smoke', 'athena', 'C1385649'] },
       () => {
         // Step 1-2: Upload a .csv file with User UUIDs
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');

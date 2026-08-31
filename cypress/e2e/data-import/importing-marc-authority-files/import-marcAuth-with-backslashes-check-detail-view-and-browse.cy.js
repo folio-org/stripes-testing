@@ -64,8 +64,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C877083 Import MARC authority record with backslash character in some fields and check Authority detail view pane / browse pane (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C877083'] },
+      'C877083 Import MARC authority record with backslash character in some fields and check Authority detail view pane / browse pane (promin)',
+      { tags: ['extendedPath', 'promin', 'C877083'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);

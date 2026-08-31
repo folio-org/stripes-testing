@@ -74,9 +74,13 @@ describe('MARC', () => {
       });
 
       it(
-        'C436851 Edit "Prefix" field of Local "Authority file" which has assigned "MARC authority" records (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C436851'] },
+        'C436851 Edit "Prefix" field of Local "Authority file" which has assigned "MARC authority" records (promin)',
+        { tags: ['extendedPath', 'promin', 'C436851'] },
         () => {
+          // Forcing increased limit for UI to show more rows
+          cy.intercept('GET', /\/authority-source-files\?.*limit=\d+/, (req) => {
+            req.url = req.url.replace(/limit=\d+/, 'limit=200');
+          });
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
           cy.login(user.username, user.password, {
             path: TopMenu.settingsAuthorityFilesPath,

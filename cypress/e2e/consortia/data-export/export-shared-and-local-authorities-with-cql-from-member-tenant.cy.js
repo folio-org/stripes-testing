@@ -128,8 +128,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C805755 ECS | Export shared and local Authorities with CQL query in Member tenant (consortia) (firebird)',
-      { tags: ['extendedPathECS', 'firebird', 'C805755'] },
+      'C805755 ECS | Export shared and local Authorities with CQL query in Member tenant (consortia) (athena)',
+      { tags: ['extendedPathECS', 'athena', 'C805755'] },
       () => {
         // Step 1: Upload saved CQL query file
         ExportFileHelper.uploadFile(downloadedCQLFile);

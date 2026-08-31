@@ -61,8 +61,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C404389 Verify Bulk edit app without permissions for view Users and Inventory records (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C404389'] },
+      'C404389 Verify Bulk edit app without permissions for view Users and Inventory records (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C404389'] },
       () => {
         BulkEditSearchPane.verifyBulkEditPaneItems();
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs');

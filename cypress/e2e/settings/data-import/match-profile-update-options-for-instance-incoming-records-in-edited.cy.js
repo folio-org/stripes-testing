@@ -50,8 +50,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C411691 Match profile: update options for Instance "Incoming records" in Edited Match Profile (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C411691'] },
+      'C411691 Match profile: update options for Instance "Incoming records" in Edited Match Profile (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C411691'] },
       () => {
         // Go to "Settings" application-> "Data import" section-> "Match profiles" section
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);

@@ -47,6 +47,17 @@ const temporaryLocationList = SelectionList({ id: 'sl-container-additem_temporar
 
 const permanentLocationDropdown = Button({ id: 'additem_permanentlocation' });
 const permanentLocationList = SelectionList({ id: 'sl-container-additem_permanentlocation' });
+const boundWithAndAnalyticsAccordion = Accordion('Bound-with and analytics');
+const addBoundWithAndAnalyticsButton = boundWithAndAnalyticsAccordion.find(
+  Button('Add Bound-with and analytics'),
+);
+const addBoundWithAndAnalyticsModal = Modal('Add Bound-with and analytics');
+const buttonCancel = Button('Cancel');
+const buttonSaveAndClose = Button('Save & close');
+const boundWithModalInput = (index = 0) => TextField({ testid: 'bound-with-modal-input', dataIndex: `${index}` });
+const instanceHridField = (index) => TextField({ name: `boundWithTitles[${index}].briefInstance.hrid` });
+const instanceTitleField = (index) => TextField({ name: `boundWithTitles[${index}].briefInstance.title` });
+const holdingsHridField = (index) => TextField({ name: `boundWithTitles[${index}].briefHoldingsRecord.hrid` });
 
 function clickAddStatisticalCodeButton() {
   cy.do(Button('Add statistical code').click());
@@ -131,7 +142,18 @@ export default {
     cy.wait(2000);
   },
 
-  fillItemRecordFields({ barcode, materialType, copyNumber, loanType } = {}) {
+  fillItemRecordFields({
+    barcode,
+    materialType,
+    copyNumber,
+    loanType,
+    callNumberPrefix,
+    callNumber,
+    callNumberSuffix,
+    volume,
+    enumeration,
+    chronology,
+  } = {}) {
     if (barcode) {
       cy.do(adminDataFields.barcode.fillIn(barcode));
     }
@@ -146,6 +168,26 @@ export default {
 
     if (loanType) {
       cy.do(loanDataFields.loanType.choose(loanType));
+    }
+
+    if (callNumberPrefix && callNumber) {
+      this.addEffectiveCallNumber(callNumberPrefix, callNumber);
+    }
+
+    if (callNumberSuffix) {
+      this.addCallNumberSuffix(callNumberSuffix);
+    }
+
+    if (volume) {
+      this.addVolume(volume);
+    }
+
+    if (enumeration) {
+      this.addEnumeration(enumeration);
+    }
+
+    if (chronology) {
+      this.addChronology(chronology);
     }
   },
   chooseItemPermanentLoanType: (permanentLoanType) => {
@@ -244,6 +286,14 @@ export default {
     cy.do(TextArea('Chronology').fillIn(value));
   },
 
+  addCallNumberSuffix(value) {
+    cy.do(TextArea('Call number suffix').fillIn(value));
+  },
+
+  addVolume(value) {
+    cy.do(TextField('Volume').fillIn(value));
+  },
+
   checkErrorMessageForStatisticalCode: (isPresented = true) => {
     if (isPresented) {
       cy.expect(statisticalCodeFieldSet.has({ error: 'Please select to continue' }));
@@ -255,5 +305,45 @@ export default {
         }).absent(),
       );
     }
+  },
+
+  clickAddBoundWithAndAnalyticsButton() {
+    cy.do(addBoundWithAndAnalyticsButton.click());
+    cy.expect(addBoundWithAndAnalyticsModal.exists());
+  },
+
+  verifyAddBoundWithAndAnalyticsModal(itemHrid, itemBarcode) {
+    cy.expect([
+      addBoundWithAndAnalyticsModal
+        .find(HTML(`Item HRID:${itemHrid}\nBarcode:${itemBarcode}`))
+        .exists(),
+      addBoundWithAndAnalyticsModal.find(buttonCancel).exists(),
+      addBoundWithAndAnalyticsModal.find(buttonSaveAndClose).exists(),
+      addBoundWithAndAnalyticsModal.find(boundWithModalInput()).exists(),
+    ]);
+  },
+
+  fillHridAddBoundWithAndAnalyticsModal(holdingsHrid, index = 0) {
+    cy.do(addBoundWithAndAnalyticsModal.find(boundWithModalInput(`${index}`)).fillIn(holdingsHrid));
+    cy.expect(
+      addBoundWithAndAnalyticsModal
+        .find(boundWithModalInput(`${index}`))
+        .has({ value: holdingsHrid }),
+    );
+  },
+
+  saveAddBoundWithAndAnalyticsModal() {
+    cy.do(addBoundWithAndAnalyticsModal.find(buttonSaveAndClose).click());
+    cy.expect(addBoundWithAndAnalyticsModal.absent());
+  },
+
+  verifyBoundWithAndAnalyticsRow(instanceHrid, instanceTitle, holdingsHrid, rowIndex = 0) {
+    cy.expect([
+      boundWithAndAnalyticsAccordion.find(instanceHridField(rowIndex)).has({ value: instanceHrid }),
+      boundWithAndAnalyticsAccordion
+        .find(instanceTitleField(rowIndex))
+        .has({ value: instanceTitle }),
+      boundWithAndAnalyticsAccordion.find(holdingsHridField(rowIndex)).has({ value: holdingsHrid }),
+    ]);
   },
 };

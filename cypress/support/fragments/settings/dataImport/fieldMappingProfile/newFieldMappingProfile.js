@@ -17,6 +17,7 @@ import {
   Option,
   Pane,
   Popover,
+  RepeatableFieldItem,
   SearchField,
   Select,
   TextArea,
@@ -616,6 +617,13 @@ export default {
     if (profile.organizationName) {
       selectOrganizationByName(profile.organizationName);
     }
+    if (profile.accountingCode) {
+      cy.do(
+        Accordion('Vendor information')
+          .find(TextField('Accounting code'))
+          .fillIn(`${profile.accountingCode}`),
+      );
+    }
     // Extended information section
     if (profile.paymentMethod) {
       cy.do(paymentMethodField.fillIn(profile.paymentMethod));
@@ -1023,6 +1031,24 @@ export default {
     ]);
   },
 
+  addNextCheckInCheckOutNote: (noteType, note, staffOnly, rowIndex) => {
+    const targetRow = loanAndAvailabilityAccordion.find(RepeatableFieldItem({ index: rowIndex }));
+
+    cy.do(Button('Add check in / check out note').click());
+    cy.do([targetRow.find(noteTypeField).fillIn(noteType), targetRow.find(noteField).fillIn(note)]);
+    cy.expect([
+      targetRow.find(noteTypeField).has({ value: noteType }),
+      targetRow.find(noteField).has({ value: note }),
+    ]);
+    cy.do([
+      targetRow.find(Select(including('Staff only'))).focus(),
+      targetRow.find(Select(including('Staff only'))).choose(staffOnly),
+    ]);
+    cy.expect(
+      targetRow.find(Select(including('Staff only'))).has({ checkedOptionText: staffOnly }),
+    );
+  },
+
   fillVendorName: (vendorName) => {
     cy.do([
       organizationLookUpButton.click(),
@@ -1246,6 +1272,11 @@ export default {
             name: profile.name,
             incomingRecordType: INCOMING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
             existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+            mappingDetails: {
+              name: 'instance',
+              recordType: EXISTING_RECORD_NAMES.INSTANCE,
+              mappingFields: [],
+            },
           },
         },
         isDefaultSearchParamsRequired: false,

@@ -57,8 +57,8 @@ describe('Notes - Note Types Limit', () => {
   });
 
   it(
-    'C721673 Verify limit for "Note types" (spitfire)',
-    { tags: ['criticalPath', 'spitfire', 'C721673'] },
+    'C721673 Verify limit for "Note types" (promin)',
+    { tags: ['criticalPath', 'promin', 'C721673'] },
     () => {
       const updatedNoteTypeName = `${testData.allExistingNotes[0]}${editedSuffix}`;
 

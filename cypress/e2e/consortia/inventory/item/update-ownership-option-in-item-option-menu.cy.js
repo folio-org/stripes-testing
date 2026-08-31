@@ -58,15 +58,17 @@ describe('Inventory', () => {
             .then(({ instanceData }) => {
               testData.collegeTenant.instance = instanceData;
 
-              ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
-                const collegeLocationData = Locations.getDefaultLocation({
-                  servicePointId: servicePoint.id,
-                }).location;
-                Locations.createViaApi(collegeLocationData).then((location) => {
-                  testData.collegeTenant.location = location;
-                  testData.collegeTenant.locationName = location.name;
-                });
-              });
+              ServicePoints.getViaApi({ limit: 1, query: 'name<>"*auto*"' }).then(
+                (servicePoints) => {
+                  const collegeLocationData = Locations.getDefaultLocation({
+                    servicePointId: servicePoints[0].id,
+                  }).location;
+                  Locations.createViaApi(collegeLocationData).then((location) => {
+                    testData.collegeTenant.location = location;
+                    testData.collegeTenant.locationName = location.name;
+                  });
+                },
+              );
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                 testData.collegeTenant.holdings.sourceId = folioSource.id;
               });
@@ -107,13 +109,13 @@ describe('Inventory', () => {
 
         cy.resetTenant();
         cy.setTenant(Affiliations.University);
-        ServicePoints.getCircDesk1ServicePointViaApi()
-          .then((servicePoint) => {
+        ServicePoints.getViaApi({ limit: 1, query: 'name<>"*auto*"' })
+          .then((servicePoints) => {
             const universityFirstLocationData = Locations.getDefaultLocation({
-              servicePointId: servicePoint.id,
+              servicePointId: servicePoints[0].id,
             }).location;
             const universitySecondLocationData = Locations.getDefaultLocation({
-              servicePointId: servicePoint.id,
+              servicePointId: servicePoints[0].id,
             }).location;
             Locations.createViaApi(universityFirstLocationData).then((location) => {
               testData.universityTenant.location1 = location;
@@ -216,8 +218,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C553015 Check "Update ownership" option in Item option menu (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C553015'] },
+        'C553015 Check "Update ownership" option in Item option menu (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C553015'] },
         () => {
           InstanceRecordView.openHoldingItem({
             name: testData.collegeTenant.locationName,

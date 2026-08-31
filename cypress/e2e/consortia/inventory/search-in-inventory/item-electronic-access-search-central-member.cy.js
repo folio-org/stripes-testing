@@ -227,8 +227,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411788 Search for Shared/Local records by "Query search" search options from "Item" tab" in "Central" and "Member 1" tenant (Electronic access) (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411788'] },
+        'C411788 Search for Shared/Local records by "Query search" search options from "Item" tab" in "Central" and "Member 1" tenant (Electronic access) (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411788'] },
         () => {
           function searchAndVerify(query, expectedIndexes) {
             InventorySearchAndFilter.fillInSearchQuery(query);

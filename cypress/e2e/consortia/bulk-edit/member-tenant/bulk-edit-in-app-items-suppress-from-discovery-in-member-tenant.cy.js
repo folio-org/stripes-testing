@@ -182,8 +182,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566174 Verify "Suppress from discovery" action for Items in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566174'] },
+        'C566174 Verify "Suppress from discovery" action for Items in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566174'] },
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();

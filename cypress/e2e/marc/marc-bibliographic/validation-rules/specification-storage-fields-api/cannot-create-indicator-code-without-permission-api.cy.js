@@ -81,8 +81,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Create Indicator Code wit
   });
 
   it(
-    'C499652 Cannot create Indicator code of Local field for MARC bib spec without required permission (API) (spitfire)',
-    { tags: ['C499652', 'extendedPath', 'spitfire'] },
+    'C499652 Cannot create Indicator code of Local field for MARC bib spec without required permission (API) (promin)',
+    { tags: ['C499652', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

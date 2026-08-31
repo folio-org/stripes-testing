@@ -29,8 +29,8 @@ describe('Lists', () => {
       });
     });
     it(
-      'C411768 Delete list: Positive case (corsair)',
-      { tags: ['smoke', 'corsair', 'C411768'] },
+      'C411768 Delete list: Positive case (athena)',
+      { tags: ['smoke', 'athena', 'C411768'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,
@@ -51,8 +51,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411772 Delete list: "Edit list" mode (corsair)',
-      { tags: ['criticalPath', 'corsair', 'shiftLeft', 'C411772', 'eurekaPhase1'] },
+      'C411772 Delete list: "Edit list" mode (athena)',
+      { tags: ['criticalPath', 'athena', 'shiftLeft', 'C411772', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

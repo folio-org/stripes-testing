@@ -67,14 +67,18 @@ describe('Orders: orders', () => {
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
-      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
       OrderLines.backToEditingOrder();
       Orders.editOrder();
       Orders.approveOrder();
     });
     cy.then(() => {
       firstDate = DateTools.getCurrentUTCTime();
-      firstCard = `${firstDate}\nView this version\nSource: ${adminSourceRecord}\nCurrent version\nChanged\nApproved\nnextPolNumber`;
+      firstCard = {
+        source: adminSourceRecord,
+        isCurrent: true,
+        changedFields: ['Approved', 'nextPolNumber'],
+      };
     });
     // Need to wait for the next card in the order history to be created with a difference of a minute.
     cy.wait(70000);
@@ -106,7 +110,12 @@ describe('Orders: orders', () => {
       Orders.editOrderToManual(orderNumber);
       cy.then(() => {
         const secondDate = DateTools.getCurrentUTCTime();
-        const secondCard = `${secondDate}\nView this version\nSource: ${user.username}, ${user.firstName}\nCurrent version\nChanged\nManual`;
+        const secondCard = {
+          source: `${user.username}, ${user.firstName}`,
+          isCurrent: true,
+          changedFields: ['Manual'],
+        };
+
         Orders.openVersionHistory();
         Orders.checkVersionHistoryCard(secondDate, secondCard);
         Orders.closeVersionHistory();
@@ -115,7 +124,11 @@ describe('Orders: orders', () => {
         cy.then(() => {
           Orders.openOrder();
           const thirdDate = DateTools.getCurrentUTCTime();
-          const thirdCard = `${thirdDate}\nView this version\nSource: ${user.username}, ${user.firstName}\nCurrent version\nChanged\nApproval date\nApproved by\nDate opened\nWorkflow status`;
+          const thirdCard = {
+            source: `${user.username}, ${user.firstName}`,
+            isCurrent: true,
+            changedFields: ['Approved', 'Approval date', 'Approved by', 'Date opened'],
+          };
           Orders.openVersionHistory();
           Orders.checkVersionHistoryCard(thirdDate, thirdCard);
           Orders.closeVersionHistory();
@@ -124,7 +137,12 @@ describe('Orders: orders', () => {
           Orders.closeOrder('Cancelled');
           cy.then(() => {
             const forthDate = DateTools.getCurrentUTCTime();
-            const forthCard = `${forthDate}\nView this version\nSource: ${user.username}, ${user.firstName}\nCurrent version\nChanged\nNotes on closure\nReason for closure\nWorkflow status`;
+            const forthCard = {
+              source: `${user.username}, ${user.firstName}`,
+              isCurrent: true,
+              changedFields: ['Notes on closure', 'Reason for closure', 'Workflow status'],
+            };
+
             Orders.openVersionHistory();
             Orders.checkVersionHistoryCard(forthDate, forthCard);
             Orders.selectVersionHistoryCard(firstDate);

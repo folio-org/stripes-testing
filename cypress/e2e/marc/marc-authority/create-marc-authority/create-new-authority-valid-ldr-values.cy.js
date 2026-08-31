@@ -104,8 +104,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423415 Verify that valid value can be entered in "LDR" field in "Create a new MARC authority record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'nonParallel', 'C423415'] },
+        'C423415 Verify that valid value can be entered in "LDR" field in "Create a new MARC authority record" window (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C423415'] },
         () => {
           dropdownData.status.options.forEach((_, recordIndex) => {
             MarcAuthorities.clickActionsAndNewAuthorityButton();

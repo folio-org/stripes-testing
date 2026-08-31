@@ -100,8 +100,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C514874 Cannot save existing MARC authority record with value in "010 $a" subfield which matches to Multiple records "010 $a" when duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C514874'] },
+          'C514874 Cannot save existing MARC authority record with value in "010 $a" subfield which matches to Multiple records "010 $a" when duplicate LCCN check is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C514874'] },
           () => {
             // Step 0: User is on detail view pane of record
             MarcAuthorities.searchBeats(sharedMarcAuthorityHeadingToBeEdited);

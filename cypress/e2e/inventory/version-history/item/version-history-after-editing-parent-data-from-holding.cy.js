@@ -56,8 +56,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C656254 Check "Version history" after editing parent data from holding (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C656254'] },
+        'C656254 Check "Version history" after editing parent data from holding (promin)',
+        { tags: ['criticalPath', 'promin', 'C656254'] },
         () => {
           InventoryInstance.pressAddHoldingsButton();
           HoldingsRecordEdit.waitLoading();

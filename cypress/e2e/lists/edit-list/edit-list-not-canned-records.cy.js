@@ -36,15 +36,15 @@ describe('Lists', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Lists.deleteListByNameViaApi(listData.name);
       Lists.deleteListByNameViaApi(editListData.name);
       Users.deleteViaApi(userData.userId);
     });
 
     it(
-      'C411732 Edit lists: Not canned records (corsair)',
-      { tags: ['smoke', 'corsair', 'shiftLeft', 'C411732', 'eurekaPhase1'] },
+      'C411732 Edit lists: Not canned records (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C411732', 'eurekaPhase1'] },
       () => {
         cy.login(userData.username, userData.password, {
           path: TopMenu.listsPath,

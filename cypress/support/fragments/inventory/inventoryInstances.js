@@ -45,7 +45,7 @@ const inventoriesList = MultiColumnList({ id: or('list-inventory', 'list-plugin-
 const resultsPaneContent = PaneContent({ id: 'pane-results-content' });
 const actionsButton = rootSection.find(Button('Actions'));
 const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-select' }).find(
-  Checkbox({ ariaLabel: 'Select instance' }),
+  Checkbox({ ariaLabel: including(' results') }),
 );
 const instanceCheckbox = (idx) => inventoriesList
   .find(MultiColumnListRow({ index: idx }))
@@ -1593,8 +1593,12 @@ export default {
   },
 
   checkColumnHeaderSort(headerName, isAscending = true) {
-    const sort = isAscending ? 'ascending' : 'descending';
-    cy.expect(inventoriesList.find(MultiColumnListHeader(headerName, { sort })).exists());
+    if (isAscending === null) {
+      cy.expect(inventoriesList.find(MultiColumnListHeader(headerName, { sort: 'none' })).exists());
+    } else {
+      const sort = isAscending ? 'ascending' : 'descending';
+      cy.expect(inventoriesList.find(MultiColumnListHeader(headerName, { sort })).exists());
+    }
   },
 
   getResultsCount() {

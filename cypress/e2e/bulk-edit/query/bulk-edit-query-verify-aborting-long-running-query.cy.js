@@ -35,8 +35,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C389573 Query builder - Verify Aborting long running query (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C389573'] },
+      'C389573 Query builder - Verify Aborting long running query (athena)',
+      { tags: ['extendedPath', 'athena', 'C389573'] },
       () => {
         // Step 1: Select "Users" radio button under "Record types" accordion => Click "Build query" button
         BulkEditSearchPane.openQuerySearch();
@@ -47,7 +47,7 @@ describe('Bulk-edit', () => {
         // Step 2: Click "Select field" dropdown in "Field" column => Select "User - Active" option
         QueryModal.selectField(usersFieldValues.userActive);
         QueryModal.verifySelectedField(usersFieldValues.userActive);
-        QueryModal.verifyQueryAreaContent('(users.active  )');
+        QueryModal.verifyQueryAreaContent('');
 
         // Step 3: Click "Select operator" dropdown in "Operator" column
         QueryModal.verifyOperatorsList(booleanOperators);
@@ -69,7 +69,7 @@ describe('Bulk-edit', () => {
         // Step 8: While query is running click on the "User active" option in "Field" column => Change it to another option
         QueryModal.selectField(usersFieldValues.firstName);
         QueryModal.verifySelectedField(usersFieldValues.firstName);
-        QueryModal.verifyQueryAreaContent('(users.first_name  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyResultsTableAbsent();
         QueryModal.verifyHeadlineQueryWouldReturnAbsent();
         QueryModal.testQueryDisabled(true);

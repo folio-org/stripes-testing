@@ -128,31 +128,33 @@ describe('Invoices', () => {
       Orders.newInvoiceFromOrder();
       Invoices.createInvoiceFromOrder(secondInvoice, defaultFiscalYear.code);
     });
-
-    cy.createTempUser([
-      permissions.uiInvoicesApproveInvoices.gui,
-      permissions.uiInvoicesPayInvoices.gui,
-      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
-      permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
-      permissions.uiOrdersEdit.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
+    cy.getAdminToken().then(() => {
+      cy.wait(3000);
+      cy.createTempUser([
+        permissions.uiInvoicesApproveInvoices.gui,
+        permissions.uiInvoicesPayInvoices.gui,
+        permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
+        permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
+        permissions.uiOrdersEdit.gui,
+        permissions.uiFinanceViewFundAndBudget.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.invoicesPath,
+          waiter: Invoices.waitLoading,
+        });
       });
     });
   });
 
   after(() => {
-    cy.getAdminToken();
+    cy.getAdminToken(false);
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C366537 Approve & pay more than one invoice (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'C366537'] },
+    { tags: ['extendedPath', 'thunderjet', 'C366537', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(firstInvoice.invoiceNumber);
       Invoices.selectInvoice(firstInvoice.invoiceNumber);

@@ -31,9 +31,9 @@ describe('Inventory', () => {
         cy.getAdminToken();
         cy.setTenant(Affiliations.College)
           .then(() => {
-            ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
+            ServicePoints.getViaApi({ limit: 1, query: 'name<>"*auto*"' }).then((servicePoints) => {
               const collegeLocationData = Locations.getDefaultLocation({
-                servicePointId: servicePoint.id,
+                servicePointId: servicePoints[0].id,
               }).location;
               Locations.createViaApi(collegeLocationData).then((location) => {
                 testData.locationId = location.id;
@@ -108,8 +108,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C477590 "Update ownership" option is not displayed on Local Instance Item menu (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C477590'] },
+        'C477590 "Update ownership" option is not displayed on Local Instance Item menu (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C477590'] },
         () => {
           InstanceRecordView.openHoldingItem({
             name: testData.locationName,

@@ -68,8 +68,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C895679 Derive MARC bib record with undefined Fields / Indicators / Subfield when "Undefined" rules are disabled (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C895679'] },
+        'C895679 Derive MARC bib record with undefined Fields / Indicators / Subfield when "Undefined" rules are disabled (promin)',
+        { tags: ['extendedPath', 'promin', 'C895679'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

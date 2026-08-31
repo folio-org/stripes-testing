@@ -182,8 +182,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C388647 Auto-linking newly added fields when deriving new "MARC Bib" record (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C388647'] },
+          'C388647 Auto-linking newly added fields when deriving new "MARC Bib" record (promin)',
+          { tags: ['extendedPath', 'promin', 'C388647'] },
           () => {
             // Step 1: Find and open detail view of imported record
             InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);

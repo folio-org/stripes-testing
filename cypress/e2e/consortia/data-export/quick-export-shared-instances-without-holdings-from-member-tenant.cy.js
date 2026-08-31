@@ -301,8 +301,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C411288 Consortia | Verify "Quick export" shared instances without holdings from Member tenant (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C411288'] },
+      'C411288 Consortia | Verify "Quick export" shared instances without holdings from Member tenant (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C411288'] },
       () => {
         // Step 1: Search two target instances by the same title prefix
         InventorySearchAndFilter.clearDefaultFilter('Held by');

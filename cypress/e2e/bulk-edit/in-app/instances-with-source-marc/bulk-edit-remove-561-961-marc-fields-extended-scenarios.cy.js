@@ -165,8 +165,8 @@ describe(
       });
 
       it(
-        'C1373185 Remove MARC field (561, 961) - extended scenarios (MARC) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C1373185'] },
+        'C1373185 Remove MARC field (561, 961) - extended scenarios (MARC) (athena)',
+        { tags: ['criticalPath', 'athena', 'C1373185'] },
         () => {
           // Step 1: Check columns for Source and Ownership and Custodial History note
           BulkEditActions.openActions();

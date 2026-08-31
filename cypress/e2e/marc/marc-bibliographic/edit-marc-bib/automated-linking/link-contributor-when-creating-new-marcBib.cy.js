@@ -98,8 +98,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422126 Link "Contributor" fields when creating "MARC Bibliographic" record (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C422126'] },
+          'C422126 Link "Contributor" fields when creating "MARC Bibliographic" record (promin)',
+          { tags: ['criticalPath', 'promin', 'C422126'] },
           () => {
             cy.login(userData.username, userData.password, {
               path: TopMenu.inventoryPath,

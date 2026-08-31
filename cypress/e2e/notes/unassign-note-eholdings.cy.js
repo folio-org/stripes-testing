@@ -65,7 +65,7 @@ describe('Unassign a note', () => {
     });
   });
 
-  it('C1298 Unassign a note (spitfire)', { tags: ['smoke', 'spitfire', 'C1298'] }, () => {
+  it('C1298 Unassign a note (promin)', { tags: ['smoke', 'promin', 'C1298'] }, () => {
     cy.login(testData.userProperties.username, testData.userProperties.password, {
       path: `/eholdings/providers/${testData.firstProviderId}`,
       waiter: NotesEholdings.waitLoading,

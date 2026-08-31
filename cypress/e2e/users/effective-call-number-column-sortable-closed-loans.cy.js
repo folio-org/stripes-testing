@@ -89,8 +89,8 @@ describe('Effective call number column is sortable', () => {
   });
 
   it(
-    'C440072 Verify that Effective call number column is sortable for closed loans (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C440072'] },
+    'C440072 Verify that Effective call number column is sortable for closed loans (vega)',
+    { tags: ['extendedPath', 'vega', 'C440072'] },
     () => {
       // Step 1: Search for test user by barcode
       UsersSearchPane.searchByBarcode(testData.user.barcode);

@@ -84,8 +84,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C422134 "$9" validation when creating a new "MARC bib" record (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C422134'] },
+          'C422134 "$9" validation when creating a new "MARC bib" record (promin)',
+          { tags: ['criticalPath', 'promin', 'C422134'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.updateExistingField(

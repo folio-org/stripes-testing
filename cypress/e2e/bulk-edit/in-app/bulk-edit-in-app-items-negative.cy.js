@@ -32,18 +32,15 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C350905 Negative uploading file with identifiers -- In app approach (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C350905'] },
+      'C350905 Negative uploading file with identifiers -- In app approach (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C350905'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);
 
         // try to upload empty file
         BulkEditSearchPane.uploadFile('empty.csv');
-        InteractorsTools.checkCalloutMessage(
-          'The uploaded file is empty.',
-          calloutTypes.error,
-        );
+        InteractorsTools.checkCalloutMessage('The uploaded file is empty.', calloutTypes.error);
         InteractorsTools.closeCalloutMessage();
 
         const invalidFileWarning = 'Invalid file';

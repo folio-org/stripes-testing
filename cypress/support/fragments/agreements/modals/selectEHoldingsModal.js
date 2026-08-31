@@ -130,6 +130,11 @@ export default {
     );
   },
 
+  selectRecord(recordName) {
+    cy.contains('#find-package-title-modal [class^="mclRow-"]', recordName).click();
+    this.verifySelectPackageModalIsClosed();
+  },
+
   verifySelectPackageModalIsClosed() {
     cy.expect(selectPackageModal.absent());
   },

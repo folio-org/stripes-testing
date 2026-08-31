@@ -53,8 +53,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C356809 Verify uploading file with Item accession number (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C356809'] },
+      'C356809 Verify uploading file with Item accession number (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C356809'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item accession numbers');

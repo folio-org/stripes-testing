@@ -50,8 +50,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C407752 (NON-CONSORTIA) Verify the permission for editing instance on Non-consortia tenant (folijet) (TaaS)',
-        { tags: ['smoke', 'folijet', 'C407752', 'shiftLeft'] },
+        'C407752 (NON-CONSORTIA) Verify the permission for editing instance on Non-consortia tenant (promin) (TaaS)',
+        { tags: ['smoke', 'promin', 'C407752', 'shiftLeft'] },
         () => {
           InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
           InstanceRecordView.verifyInstancePaneExists();

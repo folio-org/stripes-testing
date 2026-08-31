@@ -126,7 +126,7 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -135,8 +135,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C376973 Verify the log details for created imported order records (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C376973'] },
+      'C376973 Verify the log details for created imported order records (promin)',
+      { tags: ['criticalPath', 'promin', 'C376973'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
@@ -161,17 +161,20 @@ describe('Data Import', () => {
           OrderLines.getAssignedPOLNumber().then((initialNumber) => {
             const orderNumber = initialNumber.replace(/-\d+$/, '');
 
-            cy.getAdminToken().then(() => {
-              Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
-                (orderId) => {
-                  Orders.deleteOrderViaApi(orderId[0].id);
-                },
-              );
-            });
+            cy.getAdminToken(false)
+              .then(() => {
+                Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
+                  (orderId) => {
+                    Orders.deleteOrderViaApi(orderId[0].id);
+                  },
+                );
+              })
+              .then(() => {
+                TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
+                FileDetails.close();
+                Logs.openFileDetails(marcFileName);
+              });
           });
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-          FileDetails.close();
-          Logs.openFileDetails(marcFileName);
         });
       },
     );

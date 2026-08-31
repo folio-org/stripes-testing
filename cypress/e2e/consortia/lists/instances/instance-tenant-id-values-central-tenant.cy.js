@@ -101,8 +101,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C503086 Verify while in the Central tenant, the "Instance — Tenant ID" values include consortium + all tenant affiliations (consortia) (corsair)',
-        { tags: ['smokeECS', 'corsair', 'C503086'] },
+        'C503086 Verify while in the Central tenant, the "Instance — Tenant ID" values include consortium + all tenant affiliations (consortia) (athena)',
+        { tags: ['smokeECS', 'athena', 'C503086'] },
         () => {
           // Step 1: Create new list with Instances record type and open Query builder
           Lists.openNewListPane();
@@ -114,7 +114,7 @@ describe('Lists', () => {
           // Step 2-3: Search for "Instance — Tenant ID" field and select it
           QueryModal.selectField(instanceFieldValues.instanceTenantId);
           QueryModal.verifySelectedField(instanceFieldValues.instanceTenantId);
-          QueryModal.verifyQueryAreaContent('(instance.tenant_id  )');
+          QueryModal.verifyQueryAreaContent('');
 
           // Step 4: Verify supported operators for "Instance — Tenant ID" field
           QueryModal.verifyOperatorsList(STRING_STORES_UUID_OPERATORS);
@@ -129,10 +129,10 @@ describe('Lists', () => {
 
           // Step 6: Select "is null/empty" operator with "False" value and test query
           QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
-          QueryModal.verifySelectedOperator(` ${QUERY_OPERATIONS.IS_NULL}`);
+          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IS_NULL);
           QueryModal.selectValueFromSelect('False');
           QueryModal.verifySelectedValue('False');
-          QueryModal.verifyQueryAreaContent('(instance.tenant_id  is null/empty false)');
+          QueryModal.verifyQueryAreaContent('(instance.tenant_id is null/empty False)');
 
           // Add additional filter: Instance title starts with test prefix to narrow down results
           QueryModal.addNewRow();
@@ -140,7 +140,7 @@ describe('Lists', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
           QueryModal.fillInValueTextfield('AT_C503086_SharedInstance', 1);
           QueryModal.verifyQueryAreaContent(
-            '(instance.tenant_id  is null/empty false) AND (instance.title starts with AT_C503086_SharedInstance)',
+            '(instance.tenant_id is null/empty False) AND (instance.title starts with AT_C503086_SharedInstance)',
           );
 
           // Add additional filter: Instance created date equals today to further narrow results
@@ -149,7 +149,7 @@ describe('Lists', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 2);
           QueryModal.fillInValueTextfield(todayDate, 2);
           QueryModal.verifyQueryAreaContent(
-            `(instance.tenant_id  is null/empty false) AND (instance.title starts with AT_C503086_SharedInstance) AND (instance.created_at == ${todayDate})`,
+            `(instance.tenant_id is null/empty False) AND (instance.title starts with AT_C503086_SharedInstance) AND (instance.created_at == ${todayDate})`,
           );
 
           QueryModal.testQueryDisabled(false);

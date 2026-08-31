@@ -51,8 +51,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C496203 Cannot save "MARC authority" record with multiple "LDR" fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C496203'] },
+        'C496203 Cannot save "MARC authority" record with multiple "LDR" fields (promin)',
+        { tags: ['criticalPath', 'promin', 'C496203'] },
         () => {
           MarcAuthorities.searchBy(keywordOption, marcAuthorityHeading);
           MarcAuthorities.select(createdAuthorityId);

@@ -215,8 +215,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514905 Create MARC bib record with standard / local indicators, not repeatable subfields in Standard and Local fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C514905'] },
+        'C514905 Create MARC bib record with standard / local indicators, not repeatable subfields in Standard and Local fields (promin)',
+        { tags: ['criticalPath', 'promin', 'C514905'] },
         () => {
           // Step 1: Click on "Actions" button in second pane >> Select "New MARC bibliographic record" option
           InventoryInstance.newMarcBibRecord();

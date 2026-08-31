@@ -43,8 +43,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C345411 Search job profiles (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C345411'] },
+      'C345411 Search job profiles (athena)',
+      { tags: ['criticalPath', 'athena', 'C345411'] },
       () => {
         ExportJobProfiles.goToJobProfilesTab();
 

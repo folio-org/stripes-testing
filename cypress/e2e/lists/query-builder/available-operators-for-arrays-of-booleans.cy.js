@@ -34,8 +34,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C958460 Available operators for arrays of booleans (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C958460'] },
+      'C958460 Available operators for arrays of booleans (athena)',
+      { tags: ['extendedPath', 'athena', 'C958460'] },
       () => {
         // Step 1: Create new list with Holdings record type
         Lists.openNewListPane();

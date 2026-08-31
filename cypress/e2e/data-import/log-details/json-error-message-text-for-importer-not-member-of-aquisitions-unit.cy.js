@@ -99,8 +99,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C385666 Verify JSON error message text for importer who is not a member of the specified Acquisitions unit (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C385666'] },
+      'C385666 Verify JSON error message text for importer who is not a member of the specified Acquisitions unit (promin)',
+      { tags: ['criticalPath', 'promin', 'C385666'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);

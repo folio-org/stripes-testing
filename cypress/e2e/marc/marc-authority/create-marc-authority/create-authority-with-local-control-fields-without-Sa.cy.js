@@ -110,8 +110,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503161 Create "MARC authority" record with multiple Local control fields (002, 003, 004, 009) which dont have subfield "$a" (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C503161'] },
+        'C503161 Create "MARC authority" record with multiple Local control fields (002, 003, 004, 009) which dont have subfield "$a" (promin)',
+        { tags: ['extendedPath', 'promin', 'C503161'] },
         () => {
           // 1. Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();

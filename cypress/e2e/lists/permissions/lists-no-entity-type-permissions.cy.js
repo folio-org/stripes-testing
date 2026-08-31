@@ -20,8 +20,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C476850 Verify that it\'s not possible to access the Lists app when there are no entity type permissions assigned (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C476850'] },
+      "C476850 Verify that it's not possible to access the Lists app when there are no entity type permissions assigned (athena)",
+      { tags: ['extendedPath', 'athena', 'C476850'] },
       () => {
         // #1 Login to FOLIO
         // #2 Click on the "Apps" dropdown, click on "Lists" app

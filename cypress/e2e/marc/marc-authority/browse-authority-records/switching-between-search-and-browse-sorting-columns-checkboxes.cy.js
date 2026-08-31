@@ -78,8 +78,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C386510 Switching between Search and Browse in "MARC authority" app (sorting, columns, checkboxes) (spitfire)',
-        { tags: ['extendedPath', 'C386510', 'spitfire'] },
+        'C386510 Switching between Search and Browse in "MARC authority" app (sorting, columns, checkboxes) (promin)',
+        { tags: ['extendedPath', 'C386510', 'promin'] },
         () => {
           // Step 1: Select filter options that will return 50 or more existing records
           MarcAuthorities.selectSearchOptionInDropdown(testData.searchOption);

@@ -69,8 +69,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C9206 Verify search on Instance HRID (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C9206'] },
+      'C9206 Verify search on Instance HRID (promin)',
+      { tags: ['extendedPath', 'promin', 'C9206'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(user.username, user.password, {

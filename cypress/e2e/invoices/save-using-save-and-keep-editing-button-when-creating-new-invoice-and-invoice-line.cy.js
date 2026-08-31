@@ -17,7 +17,7 @@ import Users from '../../support/fragments/users/users';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   APPLICATION_NAMES,
-  INVOICE_AND_INVOICE_LINE_BUTTONS,
+  COMMON_BUTTON_LABELS,
   INVOICE_BATCH_GROUPS,
   INVOICE_LINE_VIEW_FIELDS,
   INVOICE_PAYMENT_METHODS,
@@ -53,20 +53,20 @@ describe('Invoices', () => {
 
   const buttonConditions = {
     saveCloseEnabled: [
-      { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
+      { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
       {
-        label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
+        label: COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING,
         conditions: { disabled: false },
       },
-      { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: false } },
+      { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: false } },
     ],
     saveCloseDisabled: [
-      { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
+      { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
       {
-        label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
+        label: COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING,
         conditions: { disabled: true },
       },
-      { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: true } },
+      { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: true } },
     ],
   };
 
@@ -277,12 +277,10 @@ describe('Invoices', () => {
       OrderDetails.createNewInvoice();
       InvoiceEditForm.waitLoading();
       InvoiceEditForm.checkButtonsConditions([
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.CANCEL, conditions: { disabled: false } },
-        { label: INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_CLOSE, conditions: { disabled: false } },
+        { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
+        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: false } },
       ]);
-      InvoiceEditForm.checkButtonsNotDisplayed([
-        INVOICE_AND_INVOICE_LINE_BUTTONS.SAVE_AND_KEEP_EDITING,
-      ]);
+      InvoiceEditForm.checkButtonsNotDisplayed([COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING]);
 
       // Step 17: Cancel invoice creation
       InvoiceEditForm.cancelWithUnsavedChanges();

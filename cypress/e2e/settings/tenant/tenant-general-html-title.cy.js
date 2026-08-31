@@ -43,8 +43,8 @@ describe('Tenant', () => {
     });
 
     it(
-      'C410826 Verify "Tenant -> General" settings HTML page title format (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C410826'] },
+      'C410826 Verify "Tenant -> General" settings HTML page title format (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C410826'] },
       () => {
         // Verify opened page title format: HTML page title is "Settings - FOLIO"
         cy.wait(500);

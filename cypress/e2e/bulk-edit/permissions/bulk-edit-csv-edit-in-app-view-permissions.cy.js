@@ -40,8 +40,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C388493 Verify that User with "Bulk Edit: Local Edit" and "Bulk Edit: In app - View inventory" permissions can edit user records | Local (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C388493'] },
+      'C388493 Verify that User with "Bulk Edit: Local Edit" and "Bulk Edit: In app - View inventory" permissions can edit user records | Local (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C388493'] },
       () => {
         BulkEditSearchPane.verifyBulkEditPaneItems();
         BulkEditSearchPane.isUsersRadioChecked(false);

@@ -77,8 +77,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C1045401 Edit MARC bib with 003 and 035 fields (no normalization) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1045401'] },
+        'C1045401 Edit MARC bib with 003 and 035 fields (no normalization) (promin)',
+        { tags: ['extendedPath', 'promin', 'C1045401'] },
         () => {
           // Preconditions: User is on the detail view pane of Instance ('MARC bibliographic') record
           InventoryInstances.searchByTitle(createdInstanceId);

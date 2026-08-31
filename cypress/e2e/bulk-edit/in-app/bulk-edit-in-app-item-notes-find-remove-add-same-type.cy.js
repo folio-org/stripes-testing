@@ -57,8 +57,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C411641 Verify Bulk Edit actions for Items notes - Find-Remove and Add the same type (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C411641'] },
+      'C411641 Verify Bulk Edit actions for Items notes - Find-Remove and Add the same type (athena)',
+      { tags: ['criticalPath', 'athena', 'C411641'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');

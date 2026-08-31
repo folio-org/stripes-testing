@@ -91,7 +91,7 @@ export default {
 
   verifyButtonsState(isEnabled = true) {
     cy.expect(selectMembersButton.has({ disabled: !isEnabled }));
-    cy.expect(Button('+ New').absent());
+    cy.expect(Button('New').absent());
   },
 
   verifyPaneIncludesSettings(settingsList) {

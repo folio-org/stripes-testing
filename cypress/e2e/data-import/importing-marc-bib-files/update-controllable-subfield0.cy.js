@@ -202,8 +202,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C385665 Update controllable subfield, "$0" in one of the linked repeatable fields (multiple repeatable fields with same indicators) (spitfire)',
-      { tags: ['criticalPathFlaky', 'spitfire', 'C385665'] },
+      'C385665 Update controllable subfield, "$0" in one of the linked repeatable fields (multiple repeatable fields with same indicators) (promin)',
+      { tags: ['criticalPathFlaky', 'promin', 'C385665'] },
       () => {
         InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstanceById(createdAuthorityIDs[0]);

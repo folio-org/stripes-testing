@@ -4,7 +4,7 @@ import Users from '../../../../support/fragments/users/users';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import getRandomPostfix, { getRandomLetters } from '../../../../support/utils/stringTools';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { APPLICATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
@@ -17,7 +17,9 @@ describe('Inventory', () => {
     describe('Filters', () => {
       describe('Consortia', () => {
         const randomPostfix = getRandomPostfix();
+        const randomLetters = getRandomLetters(5);
         const titlePrefix = `AT_C491302_${randomPostfix}`;
+        const locationPrefix = `C491302${randomLetters}`;
         const testData = {
           locations: {},
           instances: {},
@@ -104,8 +106,8 @@ describe('Inventory', () => {
             ServicePoints.createViaApi(testData.servicePointMember1);
             testData.locations.locationA_member1 = Location.getDefaultLocation(
               testData.servicePointMember1.id,
-              `${titlePrefix}_LocationA`,
-              `${titlePrefix}_A`,
+              `${locationPrefix}_LocA`,
+              `${locationPrefix}_A`,
             );
             Location.createViaApi(testData.locations.locationA_member1).then((loc) => {
               testData.locations.locationA_member1.id = loc.id;
@@ -116,8 +118,8 @@ describe('Inventory', () => {
             ServicePoints.createViaApi(testData.servicePointMember2);
             testData.locations.locationB_member2 = Location.getDefaultLocation(
               testData.servicePointMember2.id,
-              `${titlePrefix}_LocationB`,
-              `${titlePrefix}_B`,
+              `${locationPrefix}_LocB`,
+              `${locationPrefix}_B`,
             );
             Location.createViaApi(testData.locations.locationB_member2).then((loc) => {
               testData.locations.locationB_member2.id = loc.id;
@@ -126,8 +128,8 @@ describe('Inventory', () => {
             cy.setTenant(tenants.member1);
             testData.locations.testLocation_member1 = Location.getDefaultLocation(
               testData.servicePointMember1.id,
-              `${titlePrefix}_TestLocation`,
-              `${titlePrefix}_T`,
+              `${locationPrefix}_TLoc`,
+              `${locationPrefix}_T`,
             );
             Location.createViaApi(testData.locations.testLocation_member1).then((loc) => {
               testData.locations.testLocation_member1.id = loc.id;
@@ -135,8 +137,8 @@ describe('Inventory', () => {
             cy.setTenant(tenants.member2);
             testData.locations.testLocation_member2 = Location.getDefaultLocation(
               testData.servicePointMember2.id,
-              `${titlePrefix}_TestLocation`,
-              `${titlePrefix}_T`,
+              `${locationPrefix}_TLoc`,
+              `${locationPrefix}_T`,
             );
             Location.createViaApi(testData.locations.testLocation_member2).then((loc) => {
               testData.locations.testLocation_member2.id = loc.id;
@@ -422,8 +424,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C491302 Verify Tenant name displays next to location in "Effective location" facet during searching in Central tenant (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C491302'] },
+          'C491302 Verify Tenant name displays next to location in "Effective location" facet during searching in Central tenant (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C491302'] },
           () => {
             cy.login(testData.user.username, testData.user.password);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
@@ -439,6 +441,7 @@ describe('Inventory', () => {
 
             // Step 2: Search for created instances
             InventoryInstances.searchByTitle(titlePrefix);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(4);
             // Step 3: Type "Test location" in facet and verify both tenant options
             InventorySearchAndFilter.typeValueInMultiSelectFilterFieldAndCheck(
               locationsAccordionName,
@@ -459,18 +462,24 @@ describe('Inventory', () => {
               locationsAccordionName,
               `${testData.locations.testLocation_member1.name} (${tenantDisplayNames.member1})`,
             );
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventorySearchAndFilter.verifyNumberOfSearchResults(1);
             InventorySearchAndFilter.verifyInstanceDisplayed(instanceTitles.shared3);
             // Step 5: Cancel and select Member 2 location
             InventorySearchAndFilter.clearFilter(locationsAccordionName);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(4);
             InventorySearchAndFilter.selectMultiSelectFilterOption(
               locationsAccordionName,
               `${testData.locations.testLocation_member2.name} (${tenantDisplayNames.member2})`,
             );
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventorySearchAndFilter.verifyNumberOfSearchResults(1);
             InventorySearchAndFilter.verifyInstanceDisplayed(instanceTitles.shared4);
             // Step 6: Cancel and select Location A (unique)
             InventorySearchAndFilter.clearFilter(locationsAccordionName);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(4);
             InventorySearchAndFilter.typeValueInMultiSelectFilterFieldAndCheck(
               locationsAccordionName,
               testData.locations.locationA_member1.name,
@@ -490,6 +499,7 @@ describe('Inventory', () => {
             InventoryInstances.waitContentLoading();
             // Step 8: Search again
             InventoryInstances.searchByTitle(titlePrefix);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(4);
             // Type "Test location" in facet and verify both tenant options
             InventorySearchAndFilter.clickAccordionByName(locationsAccordionName);
             InventorySearchAndFilter.verifyAccordionByNameExpanded(locationsAccordionName, true);
@@ -512,10 +522,13 @@ describe('Inventory', () => {
               locationsAccordionName,
               `${testData.locations.testLocation_member1.name} (${tenantDisplayNames.member1})`,
             );
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventorySearchAndFilter.verifyNumberOfSearchResults(1);
             InventorySearchAndFilter.verifyInstanceDisplayed(instanceTitles.shared3);
             // Cancel and select Location B (unique)
             InventorySearchAndFilter.clearFilter(locationsAccordionName);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(4);
             InventorySearchAndFilter.typeValueInMultiSelectFilterFieldAndCheck(
               locationsAccordionName,
               testData.locations.locationB_member2.name,
@@ -535,6 +548,7 @@ describe('Inventory', () => {
             InventoryInstances.waitContentLoading();
             // Search again
             InventoryInstances.searchByTitle(titlePrefix);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(4);
             // Type "Test location" in facet and verify both tenant options
             InventorySearchAndFilter.clickAccordionByName(locationsAccordionName);
             InventorySearchAndFilter.verifyAccordionByNameExpanded(locationsAccordionName, true);
@@ -558,14 +572,10 @@ describe('Inventory', () => {
               `${testData.locations.testLocation_member1.name} (${tenantDisplayNames.member1})`,
             );
             InventorySearchAndFilter.verifyNumberOfSearchResults(1);
+            InventoryInstance.waitLoading();
+            InventoryInstance.waitInstanceRecordViewOpened();
             InventorySearchAndFilter.verifyInstanceDisplayed(instanceTitles.shared3);
             // Also slect Location A (unique)
-            InventorySearchAndFilter.typeValueInMultiSelectFilterFieldAndCheck(
-              locationsAccordionName,
-              testData.locations.locationA_member1.name,
-              true,
-              1,
-            );
             InventorySearchAndFilter.selectMultiSelectFilterOption(
               locationsAccordionName,
               `${testData.locations.locationA_member1.name} (${tenantDisplayNames.member1})`,

@@ -82,8 +82,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C360552 Displaying detail view pane automatically when search return 1 record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C360552'] },
+      'C360552 Displaying detail view pane automatically when search return 1 record (promin)',
+      { tags: ['extendedPath', 'promin', 'C360552'] },
       () => {
         InventoryInstances.searchByTitle(issnNumbers[0]);
         InventorySearchAndFilter.checkRowsCount(3);

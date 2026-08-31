@@ -46,8 +46,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C436871 Verify Bulk Edit Query tab (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C436871'] },
+      'C436871 Verify Bulk Edit Query tab (athena)',
+      { tags: ['criticalPath', 'athena', 'shiftLeft', 'C436871'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -67,8 +67,8 @@ describe('Bulk-edit', () => {
     );
 
     it(
-      'C436746 Verify actions in the "Build query" form (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C436746'] },
+      'C436746 Verify actions in the "Build query" form (athena)',
+      { tags: ['criticalPath', 'athena', 'C436746'] },
       () => {
         cy.login(secondUser.username, secondUser.password, {
           path: TopMenu.bulkEditPath,
@@ -89,7 +89,7 @@ describe('Bulk-edit', () => {
         QueryModal.verify();
         QueryModal.selectField(usersFieldValues.userActive);
         QueryModal.verifySelectedField(usersFieldValues.userActive);
-        QueryModal.verifyQueryAreaContent('(users.active  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorsList(booleanOperators);
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(users.active == )');
@@ -106,7 +106,7 @@ describe('Bulk-edit', () => {
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, false);
         QueryModal.selectField(usersFieldValues.patronGroup, 1);
-        QueryModal.verifyQueryAreaContent('(users.active == True) AND (groups.group  )');
+        QueryModal.verifyQueryAreaContent('(users.active == True)');
         QueryModal.testQueryDisabled();
         QueryModal.runQueryDisabled();
         QueryModal.verifyOperatorColumn();

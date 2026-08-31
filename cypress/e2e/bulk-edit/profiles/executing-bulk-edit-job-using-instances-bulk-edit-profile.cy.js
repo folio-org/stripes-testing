@@ -237,8 +237,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C773241 Executing bulk edit job using FOLIO Instance bulk edit profile (Query, Logs) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C773241'] },
+      'C773241 Executing bulk edit job using FOLIO Instance bulk edit profile (Query, Logs) (athena)',
+      { tags: ['criticalPath', 'athena', 'C773241'] },
       () => {
         // Step 1: Click "Actions" menu
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false, true);

@@ -56,8 +56,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C411733 Edit list: Make the list Private (corsair)',
-        { tags: ['smoke', 'corsair', 'shiftLeft', 'C411733', 'eurekaPhase1'] },
+        'C411733 Edit list: Make the list Private (athena)',
+        { tags: ['smoke', 'athena', 'shiftLeft', 'C411733', 'eurekaPhase1'] },
         () => {
           cy.login(firstUser.username, firstUser.password, {
             path: TopMenu.listsPath,
@@ -104,8 +104,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C411736 Edit list: Make the list Shared (corsair)',
-        { tags: ['smoke', 'corsair', 'C411736', 'eurekaPhase1'] },
+        'C411736 Edit list: Make the list Shared (athena)',
+        { tags: ['smoke', 'athena', 'C411736', 'eurekaPhase1'] },
         () => {
           cy.login(firstUser.username, firstUser.password, {
             path: TopMenu.listsPath,

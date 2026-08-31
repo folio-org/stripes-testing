@@ -39,8 +39,8 @@ describe('Settings (Users) - Custom Fields', () => {
   });
 
   it(
-    'C15698 Create a multi-select custom field (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C15698'] },
+    'C15698 Create a multi-select custom field (vega)',
+    { tags: ['extendedPath', 'vega', 'C15698'] },
     () => {
       CustomFields.waitLoading();
 

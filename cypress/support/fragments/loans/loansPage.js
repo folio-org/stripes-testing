@@ -218,4 +218,8 @@ export default {
   verifyCallNumbersDescending() {
     this.verifyCallNumbersSorted(true);
   },
+
+  verifyClosedLoansVisible() {
+    cy.get('body').should('contain', 'Closed');
+  },
 };

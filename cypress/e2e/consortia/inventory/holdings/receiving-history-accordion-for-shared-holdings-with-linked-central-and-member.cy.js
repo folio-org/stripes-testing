@@ -68,7 +68,7 @@ describe('Inventory', () => {
           },
           locations: [
             {
-              tenantId: 'college',
+              tenantId: Affiliations.College,
               holdingId: testData.holdings.holdingId,
               quantityPhysical: 1,
             },
@@ -299,8 +299,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C491283 Check Receiving history accordion for shared Holdings with linked central and member tenants (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C491283'] },
+        'C491283 Check Receiving history accordion for shared Holdings with linked central and member tenants (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C491283'] },
         () => {
           const todayDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
 

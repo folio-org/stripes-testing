@@ -73,8 +73,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C584449 Verify that "Uniform title" search option uses "all" search operator ("Cartoons & Comics" case) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C584449'] },
+      'C584449 Verify that "Uniform title" search option uses "all" search operator ("Cartoons & Comics" case) (promin)',
+      { tags: ['criticalPath', 'promin', 'C584449'] },
       () => {
         // execute search by "Keyword" option
         testData.searchOptions.forEach((option) => {

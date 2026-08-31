@@ -75,8 +75,8 @@ describe(
       });
 
       it(
-        'C446055 Verify switching between "Identifier" and "Query" tabs (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C446055'] },
+        'C446055 Verify switching between "Identifier" and "Query" tabs (athena)',
+        { tags: ['criticalPath', 'athena', 'C446055'] },
         () => {
           BulkEditSearchPane.openQuerySearch();
           BulkEditSearchPane.verifyResetAllButtonDisabled();
@@ -109,7 +109,7 @@ describe(
           BulkEditSearchPane.clickBuildQueryButton();
           QueryModal.selectField(itemFieldValues.itemStatus);
           QueryModal.verifySelectedField(itemFieldValues.itemStatus);
-          QueryModal.verifyQueryAreaContent('(items.status_name  )');
+          QueryModal.verifyQueryAreaContent('');
           QueryModal.verifyOperatorColumn();
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.verifyQueryAreaContent('(items.status_name in ())');

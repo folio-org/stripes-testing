@@ -85,8 +85,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C442798 Search for "MARC bibliographic" by "LCCN, normalized" option using a query with lower, UPPER case when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C442798'] },
+      'C442798 Search for "MARC bibliographic" by "LCCN, normalized" option using a query with lower, UPPER case when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (promin)',
+      { tags: ['extendedPath', 'promin', 'C442798'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,

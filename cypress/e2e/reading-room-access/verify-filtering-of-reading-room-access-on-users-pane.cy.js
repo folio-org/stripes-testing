@@ -101,7 +101,7 @@ describe('Reading Room Access', () => {
 
     it(
       'C476797 - Verify filtering of reading room access on users pane',
-      { tags: ['extendedPath', 'volaris', 'C476797'] },
+      { tags: ['extendedPath', 'vega', 'C476797'] },
       () => {
         // Step 1: Navigate to the "Reading room access" accordion
         UsersCard.openReadingRoomAccessAccordion();

@@ -126,8 +126,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C360111 MARC Authority plug-in | Check that no error displays when the user searches by same search option and updated query (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C360111'] },
+        'C360111 MARC Authority plug-in | Check that no error displays when the user searches by same search option and updated query (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C360111'] },
         () => {
           MarcAuthorities.verifySearchResultTabletIsAbsent(true);
           MarcAuthorities.searchByParameter(

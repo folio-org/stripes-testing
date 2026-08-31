@@ -197,8 +197,8 @@ describe('MARC', () => {
           });
 
           it(
-            'C422156 Auto-Link Local MARC bib with Shared/Local MARC auth on Member tenant in Create screen (consortia) (spitfire)',
-            { tags: ['extendedPathECS', 'spitfire', 'C422156'] },
+            'C422156 Auto-Link Local MARC bib with Shared/Local MARC auth on Member tenant in Create screen (consortia) (promin)',
+            { tags: ['extendedPathECS', 'promin', 'C422156'] },
             () => {
               InventoryInstance.newMarcBibRecord();
               QuickMarcEditor.updateLDR06And07Positions();

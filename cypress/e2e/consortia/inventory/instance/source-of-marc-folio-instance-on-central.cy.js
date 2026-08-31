@@ -63,8 +63,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C402762 (CONSORTIA) Verify the Source of a MARC Instance on Central tenant (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C402762'] },
+        'C402762 (CONSORTIA) Verify the Source of a MARC Instance on Central tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C402762'] },
         () => {
           InventorySearchAndFilter.verifySearchAndFilterPane();
           InventorySearchAndFilter.bySource(C402762testData.instanceSource);
@@ -76,8 +76,8 @@ describe('Inventory', () => {
       );
 
       it(
-        'C402763 (CONSORTIA) Verify the Source of a FOLIO Instance on Central tenant (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C402763'] },
+        'C402763 (CONSORTIA) Verify the Source of a FOLIO Instance on Central tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C402763'] },
         () => {
           InventorySearchAndFilter.verifySearchAndFilterPane();
           InventorySearchAndFilter.bySource(C402763testData.instanceSource);

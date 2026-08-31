@@ -345,8 +345,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C430257 Check import summary table with "create + update" actions (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C430257'] },
+      'C430257 Check import summary table with "create + update" actions (promin)',
+      { tags: ['criticalPath', 'promin', 'C430257'] },
       () => {
         InventoryInstances.searchByTitle(instanceId);
         InstanceRecordView.verifyInstanceSource('MARC');

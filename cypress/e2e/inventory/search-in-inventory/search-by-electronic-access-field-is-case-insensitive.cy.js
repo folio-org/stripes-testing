@@ -70,8 +70,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C466077 Search by "Electronic access" field of "Instance" record is case-insensitive (spitfire)',
-        { tags: ['extendedPathFlaky', 'spitfire', 'C466077'] },
+        'C466077 Search by "Electronic access" field of "Instance" record is case-insensitive (promin)',
+        { tags: ['extendedPathFlaky', 'promin', 'C466077'] },
         () => {
           InventorySearchAndFilter.instanceTabIsDefault();
           InventorySearchAndFilter.selectSearchOptions(testData.allOption, '');

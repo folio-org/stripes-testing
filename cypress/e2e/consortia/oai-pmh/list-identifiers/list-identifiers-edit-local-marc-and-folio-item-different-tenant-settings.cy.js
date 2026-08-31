@@ -234,8 +234,8 @@ describe('OAI-PMH', () => {
       });
 
       it(
-        'C422197 Consortia | SRS+Inventory | ListIdentifiers | Suppressed with flag | Skip suppressed: Edit Item of local MARC and local FOLIO instances from Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (firebird)',
-        { tags: ['extendedPathECS', 'firebird', 'C422197', 'nonParallel'] },
+        'C422197 Consortia | SRS+Inventory | ListIdentifiers | Suppressed with flag | Skip suppressed: Edit Item of local MARC and local FOLIO instances from Member tenant is retrieved in the responses of single tenant and cross-tenant harvests (consortia) (athena)',
+        { tags: ['extendedPathECS', 'athena', 'C422197', 'nonParallel'] },
         () => {
           const fromDate = DateTools.getCurrentDateForOaiPmh();
 

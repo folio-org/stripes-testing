@@ -137,8 +137,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C356830 Test field protections when importing to update instance, after editing the MARC Bib outside of FOLIO (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C356830'] },
+      'C356830 Test field protections when importing to update instance, after editing the MARC Bib outside of FOLIO (promin)',
+      { tags: ['criticalPath', 'promin', 'C356830'] },
       () => {
         MarcFieldProtection.createViaApi(firstProtectedFieldsData);
         MarcFieldProtection.createViaApi(secondProtectedFieldData);

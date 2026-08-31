@@ -38,8 +38,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C360949 Verify that User cannot click on "Commit changes"  until preview is completed (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C360949'] },
+      'C360949 Verify that User cannot click on "Commit changes"  until preview is completed (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C360949'] },
       () => {
         BulkEditActions.openActions();
         BulkEditActions.openStartBulkEditForm();

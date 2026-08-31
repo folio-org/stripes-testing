@@ -58,8 +58,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C17091 Provider record | Packages accordion displays tags (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C17091'] },
+      'C17091 Provider record | Packages accordion displays tags (promin)',
+      { tags: ['extendedPath', 'promin', 'C17091'] },
       () => {
         EHoldingsProvidersSearch.byProvider(testPackage.data.attributes.providerName);
         EHoldingsProviders.viewProvider();
@@ -67,6 +67,7 @@ describe('eHoldings', () => {
         EHoldingsProviders.verifyPackagesAccordionExpanded('true');
 
         EHoldingsProviders.searchPackageByName(testPackage.data.attributes.name);
+        EHoldingsProviders.toggleShowColumnsOption('Tags', { isChecked: true });
         EHoldingsProviders.verifyPackageWithTag(testPackage.data.attributes.name, addedTag);
       },
     );

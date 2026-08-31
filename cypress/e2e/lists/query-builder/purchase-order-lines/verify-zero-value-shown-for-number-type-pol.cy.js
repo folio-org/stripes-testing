@@ -109,8 +109,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C451531 Verify that the results viewer shows the 0 value for number type (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C451531'] },
+        'C451531 Verify that the results viewer shows the 0 value for number type (athena)',
+        { tags: ['criticalPath', 'athena', 'C451531'] },
         () => {
           // Step 1: Create new list with Purchase order lines and build query
           Lists.openNewListPane();

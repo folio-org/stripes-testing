@@ -174,8 +174,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C402339 Use "Shared" facet when Search was executed in "Member" tenant ("Item" tab) (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C402339'] },
+          'C402339 Use "Shared" facet when Search was executed in "Member" tenant ("Item" tab) (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C402339'] },
           () => {
             InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
             InventorySearchAndFilter.clickAccordionByName(heldbyAccordionName);

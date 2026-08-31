@@ -74,8 +74,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C380403 Browse call number pane remains same results when user switches to search pane and back (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C380403'] },
+      'C380403 Browse call number pane remains same results when user switches to search pane and back (promin)',
+      { tags: ['extendedPath', 'promin', 'C380403'] },
       () => {
         // Step 1-2: Switch to browse, select "Call numbers (all)", browse for call number
         InventorySearchAndFilter.switchToBrowseTab();

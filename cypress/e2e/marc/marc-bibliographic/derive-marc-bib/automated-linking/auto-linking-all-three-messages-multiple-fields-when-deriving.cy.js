@@ -289,8 +289,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C389479 All three messages shown for multiple fields each when auto-linking fields when deriving "MARC Bib" record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C389479'] },
+          'C389479 All three messages shown for multiple fields each when auto-linking fields when deriving "MARC Bib" record (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C389479'] },
           () => {
             // Step 1: Find and open detail view of record from precondition
             InventoryInstances.searchByTitle(createdInstanceId);

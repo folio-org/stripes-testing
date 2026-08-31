@@ -37,15 +37,17 @@ describe('Inventory', () => {
             .then(({ instanceData }) => {
               testData.instance = instanceData;
 
-              ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
-                const collegeLocationData = Locations.getDefaultLocation({
-                  servicePointId: servicePoint.id,
-                }).location;
-                Locations.createViaApi(collegeLocationData).then((location) => {
-                  testData.location = location;
-                  testData.locationName = location.name;
-                });
-              });
+              ServicePoints.getViaApi({ limit: 1, query: 'name<>"*auto*"' }).then(
+                (servicePoints) => {
+                  const collegeLocationData = Locations.getDefaultLocation({
+                    servicePointId: servicePoints[0].id,
+                  }).location;
+                  Locations.createViaApi(collegeLocationData).then((location) => {
+                    testData.location = location;
+                    testData.locationName = location.name;
+                  });
+                },
+              );
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                 testData.holdings.sourceId = folioSource.id;
               });
@@ -123,8 +125,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C526748 (CONSORTIA) Verify presence of update ownership action for Holdings when the permission for updating ownership is assigned on Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C526748'] },
+        'C526748 (CONSORTIA) Verify presence of update ownership action for Holdings when the permission for updating ownership is assigned on Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C526748'] },
         () => {
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();

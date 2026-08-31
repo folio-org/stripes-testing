@@ -50,8 +50,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C11112 Search the "View all" log screen (folijet)',
-      { tags: ['smoke', 'folijet', 'C11112'] },
+      'C11112 Search the "View all" log screen (promin)',
+      { tags: ['smoke', 'promin', 'C11112'] },
       () => {
         Logs.openViewAllLogs();
 

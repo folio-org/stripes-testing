@@ -50,8 +50,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C365630 Browse | Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C365630'] },
+        'C365630 Browse | Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C365630'] },
         () => {
           MarcAuthorities.checkAuthoritySourceOptions();
           MarcAuthorities.switchToBrowse();

@@ -37,8 +37,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C569534 LCCN length validation on Create a new MARC authority record pane when LCCN structure validation is enabled (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'C569534', 'nonParallel', 'spitfire'] },
+          'C569534 LCCN length validation on Create a new MARC authority record pane when LCCN structure validation is enabled (consortia) (promin)',
+          { tags: ['criticalPathECS', 'C569534', 'nonParallel', 'promin'] },
           () => {
             cy.then(() => {
               // Precondition moved in `it` block to ensure `after` hook is always triggered

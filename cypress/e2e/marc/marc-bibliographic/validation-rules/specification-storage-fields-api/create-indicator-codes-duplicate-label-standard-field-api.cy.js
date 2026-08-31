@@ -60,8 +60,8 @@ describe('MARC Bibliographic Validation Rules - Create Indicator Code Duplicate 
   });
 
   it(
-    'C499678 Create Indicator code of Standard field with duplicate "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['C499678', 'extendedPath', 'spitfire'] },
+    'C499678 Create Indicator code of Standard field with duplicate "label" for MARC bib spec (API) (promin)',
+    { tags: ['C499678', 'extendedPath', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

@@ -57,7 +57,7 @@ describe('eHoldings', () => {
 
     it(
       'C350744 Searching/Viewing/Editing Package with Streaming Media content type (eHoldings > Package)',
-      { tags: ['extendedPath', 'spitfire', 'C350744'] },
+      { tags: ['extendedPath', 'promin', 'C350744'] },
       () => {
         EHoldingsSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.packageName);

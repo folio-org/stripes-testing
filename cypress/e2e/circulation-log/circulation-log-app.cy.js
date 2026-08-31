@@ -62,16 +62,16 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C15483 Select and open the Circulation log app (volaris)',
-    { tags: ['smoke', 'volaris', 'shiftLeft', 'C15483'] },
+    'C15483 Select and open the Circulation log app (vega)',
+    { tags: ['smoke', 'vega', 'shiftLeft', 'C15483'] },
     () => {
       SearchPane.waitLoading();
     },
   );
 
   it(
-    'C15484 Filter circulation log on item barcode (volaris)',
-    { tags: ['smoke', 'volaris', 'shiftLeft', 'C15484'] },
+    'C15484 Filter circulation log on item barcode (vega)',
+    { tags: ['smoke', 'vega', 'shiftLeft', 'C15484'] },
     () => {
       SearchPane.searchByItemBarcode(testData.folioInstances[0].barcodes[0]);
       SearchPane.verifyResultCells();
@@ -80,8 +80,8 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C15485 Filter circulation log on user barcode (volaris)',
-    { tags: ['smoke', 'volaris', 'shiftLeft', 'C15485'] },
+    'C15485 Filter circulation log on user barcode (vega)',
+    { tags: ['smoke', 'vega', 'shiftLeft', 'C15485'] },
     () => {
       SearchPane.searchByUserBarcode(userData.barcode);
       SearchPane.verifyResultCells();

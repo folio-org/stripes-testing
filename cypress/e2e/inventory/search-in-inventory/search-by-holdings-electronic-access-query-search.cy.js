@@ -113,8 +113,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C740226 Search for Holdings by "Electronic access" field using "Query search" option (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C740226'] },
+      'C740226 Search for Holdings by "Electronic access" field using "Query search" option (promin)',
+      { tags: ['extendedPath', 'promin', 'C740226'] },
       () => {
         const searchData = [
           { query: `holdings.electronicAccess = "${linkText}"`, foundInstanceIndexes: [1, 2] },

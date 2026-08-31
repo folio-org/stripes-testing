@@ -38,8 +38,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C543867 Change "Default sort" from "Settings" >> "Inventory" >> "Display settings" pane (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C543867'] },
+        'C543867 Change "Default sort" from "Settings" >> "Inventory" >> "Display settings" pane (promin)',
+        { tags: ['criticalPath', 'promin', 'C543867'] },
         () => {
           DisplaySettings.waitloading();
           DisplaySettings.verifyDefaultSortOptions();
@@ -80,8 +80,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C813579 View "Settings" >> "Inventory" >> "Display settings" pane (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C813579'] },
+      'C813579 View "Settings" >> "Inventory" >> "Display settings" pane (promin)',
+      { tags: ['extendedPath', 'promin', 'C813579'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsPane.waitLoading();

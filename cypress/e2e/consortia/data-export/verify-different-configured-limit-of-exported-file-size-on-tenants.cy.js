@@ -31,7 +31,6 @@ describe('Data Export', () => {
   describe('Consortia', () => {
     before('Create test data', () => {
       cy.getAdminToken();
-
       cy.createTempUser(userPermissons).then((userProperties) => {
         user = userProperties;
 
@@ -69,29 +68,6 @@ describe('Data Export', () => {
 
           return Promise.all(instancePromises);
         });
-
-        // Configure different slice_size for each tenant
-        cy.resetTenant();
-        cy.configureDataExportFileLimit('slice_size', sliceSizes.central);
-
-        cy.setTenant(Affiliations.College);
-        cy.configureDataExportFileLimit('slice_size', sliceSizes.college);
-
-        cy.setTenant(Affiliations.University);
-        cy.configureDataExportFileLimit('slice_size', sliceSizes.university);
-
-        // Create CSV file with instance UUIDs
-        cy.then(() => {
-          FileManager.createFile(`cypress/fixtures/${csvFileName}`, expectedInstances.join('\n'));
-        });
-
-        // Login and navigate to Data Export app
-        cy.resetTenant();
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataExportPath,
-          waiter: DataExportLogs.waitLoading,
-        });
-        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
       });
     });
 
@@ -123,9 +99,33 @@ describe('Data Export', () => {
     });
 
     it(
-      'C432318 ECS | Verify different configured limit of exported file size on tenants (consortia) (firebird)',
-      { tags: ['criticalPathECS', 'firebird', 'C432318'] },
+      'C432318 ECS | Verify different configured limit of exported file size on tenants (consortia) (athena)',
+      { tags: ['criticalPathECS', 'athena', 'C432318', 'nonParallel'] },
       () => {
+        // Configure different slice_size for each tenant
+        cy.getAdminToken();
+        cy.resetTenant();
+        cy.configureDataExportFileLimit('slice_size', sliceSizes.central);
+
+        cy.setTenant(Affiliations.College);
+        cy.configureDataExportFileLimit('slice_size', sliceSizes.college);
+
+        cy.setTenant(Affiliations.University);
+        cy.configureDataExportFileLimit('slice_size', sliceSizes.university);
+
+        // Create CSV file with instance UUIDs
+        cy.then(() => {
+          FileManager.createFile(`cypress/fixtures/${csvFileName}`, expectedInstances.join('\n'));
+        });
+
+        // Login and navigate to Data Export app
+        cy.resetTenant();
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataExportPath,
+          waiter: DataExportLogs.waitLoading,
+        });
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+
         // Step 1-4: Test export from Central tenant
         ExportFileHelper.uploadFile(csvFileName);
         ExportFileHelper.exportWithDefaultJobProfile(csvFileName, jobProfileName);

@@ -5,13 +5,21 @@ Cypress.Commands.add('getCustomFieldsViaApi', (entityType = CUSTOM_FIELD_ENTITY_
 
   if (entityType === CUSTOM_FIELD_ENTITY_TYPES.USER) {
     moduleVersionPromise = cy.getModUsersVersion();
+  } else if (
+    entityType === CUSTOM_FIELD_ENTITY_TYPES.PURCHASE_ORDER ||
+    entityType === CUSTOM_FIELD_ENTITY_TYPES.PO_LINE
+  ) {
+    moduleVersionPromise = cy.getModOrdersStorageVersion();
   }
 
   return moduleVersionPromise.then((modVersion) => {
+    // Build query parameters with entityType filter
+    const queryParams = `limit=2147483647&query=${encodeURIComponent(`entityType==${entityType}`)}`;
+
     return cy
       .okapiRequest({
         method: 'GET',
-        path: 'custom-fields?limit=2147483647',
+        path: `custom-fields?${queryParams}`,
         isDefaultSearchParamsRequired: false,
         additionalHeaders: { 'x-okapi-module-id': modVersion },
       })
@@ -28,9 +36,14 @@ Cypress.Commands.add(
 
     if (entityType === CUSTOM_FIELD_ENTITY_TYPES.USER) {
       moduleVersionPromise = cy.getModUsersVersion();
+    } else if (
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PURCHASE_ORDER ||
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PO_LINE
+    ) {
+      moduleVersionPromise = cy.getModOrdersStorageVersion();
     }
 
-    return cy.getCustomFieldsViaApi().then((response) => {
+    return cy.getCustomFieldsViaApi(entityType).then((response) => {
       return moduleVersionPromise.then((modVersion) => {
         return cy.okapiRequest({
           path: 'custom-fields',
@@ -54,9 +67,14 @@ Cypress.Commands.add(
 
     if (entityType === CUSTOM_FIELD_ENTITY_TYPES.USER) {
       moduleVersionPromise = cy.getModUsersVersion();
+    } else if (
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PURCHASE_ORDER ||
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PO_LINE
+    ) {
+      moduleVersionPromise = cy.getModOrdersStorageVersion();
     }
 
-    return cy.getCustomFieldsViaApi().then((response) => {
+    return cy.getCustomFieldsViaApi(entityType).then((response) => {
       return moduleVersionPromise.then((modVersion) => {
         const createdCustomFields = [];
 
@@ -92,9 +110,17 @@ Cypress.Commands.add(
 
     if (entityType === CUSTOM_FIELD_ENTITY_TYPES.USER) {
       moduleVersionPromise = cy.getModUsersVersion();
+    } else if (
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PURCHASE_ORDER ||
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PO_LINE
+    ) {
+      moduleVersionPromise = cy.getModOrdersStorageVersion();
     }
 
-    return cy.getCustomFieldsViaApi().then((response) => {
+    // Use CQL query to filter by entityType
+    const query = `entityType==${entityType}`;
+
+    return cy.getCustomFieldsViaApi(entityType, query).then((response) => {
       return moduleVersionPromise.then((modVersion) => {
         const updatedFields = response.customFields.map((f) => {
           return f.id === updatedCustomField.id ? updatedCustomField : f;
@@ -122,6 +148,11 @@ Cypress.Commands.add(
 
     if (entityType === CUSTOM_FIELD_ENTITY_TYPES.USER) {
       moduleVersionPromise = cy.getModUsersVersion();
+    } else if (
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PURCHASE_ORDER ||
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PO_LINE
+    ) {
+      moduleVersionPromise = cy.getModOrdersStorageVersion();
     }
     return moduleVersionPromise.then((modVersion) => {
       return cy.wrap(ids).each((id) => {

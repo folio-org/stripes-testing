@@ -74,8 +74,8 @@ describe('Citation: Workspaces settings. Multiple users', () => {
   });
 
   it(
-    'C1259767 Marigold - Workspaces settings. Multiple users (citation)',
-    { tags: ['draft', 'citation', 'C1259767', 'marigold'] },
+    'C1259767 Marigold - Workspaces settings. Multiple users (promin)',
+    { tags: ['draft', 'promin', 'C1259767', 'marigold'] },
     () => {
       // Create LD Record as User1
       Marigold.openNewResourceForm();

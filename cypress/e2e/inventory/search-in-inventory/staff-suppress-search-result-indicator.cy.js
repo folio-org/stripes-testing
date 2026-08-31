@@ -61,8 +61,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C343210 Result list. Clear visual display if record is marked as Staff suppressed (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C343210'] },
+      'C343210 Result list. Clear visual display if record is marked as Staff suppressed (promin)',
+      { tags: ['extendedPath', 'promin', 'C343210'] },
       () => {
         InventoryInstances.searchByTitle(instanceTitlePrefix);
         InventorySearchAndFilter.verifyResultListExists();

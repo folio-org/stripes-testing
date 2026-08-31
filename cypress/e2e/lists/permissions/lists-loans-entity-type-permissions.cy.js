@@ -11,18 +11,16 @@ describe('Lists', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.listsAll.gui,
-        Permissions.inventoryAll.gui,
-      ]).then((userProperties) => {
-        userDataNoLoans = userProperties;
-      });
-      cy.createTempUser([
-        Permissions.listsAll.gui,
-        Permissions.loansAll.gui,
-      ]).then((userProperties) => {
-        userDataNoInventory = userProperties;
-      });
+      cy.createTempUser([Permissions.listsAll.gui, Permissions.inventoryAll.gui]).then(
+        (userProperties) => {
+          userDataNoLoans = userProperties;
+        },
+      );
+      cy.createTempUser([Permissions.listsAll.gui, Permissions.loansAll.gui]).then(
+        (userProperties) => {
+          userDataNoInventory = userProperties;
+        },
+      );
       cy.createTempUser([
         Permissions.listsAll.gui,
         Permissions.loansAll.gui,
@@ -40,8 +38,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C490871 Verify that it\'s not possible to access the Loans entity type without a proper User permissions (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C490871'] },
+      "C490871 Verify that it's not possible to access the Loans entity type without a proper User permissions (athena)",
+      { tags: ['extendedPath', 'athena', 'C490871'] },
       () => {
         cy.login(userDataNoLoans.username, userDataNoLoans.password, {
           path: TopMenu.listsPath,
@@ -58,8 +56,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C490873 Verify that it\'s not possible to access the Loans entity type without a proper Inventory permissions (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C490873'] },
+      "C490873 Verify that it's not possible to access the Loans entity type without a proper Inventory permissions (athena)",
+      { tags: ['criticalPath', 'athena', 'C490873'] },
       () => {
         cy.login(userDataNoInventory.username, userDataNoInventory.password, {
           path: TopMenu.listsPath,
@@ -76,8 +74,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C490869 [Users: User loans view, change due date, renew] Verify that it\'s possible to access the Loans entity when Lists app permissions assigned (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C490869'] },
+      "C490869 [Users: User loans view, change due date, renew] Verify that it's possible to access the Loans entity when Lists app permissions assigned (athena)",
+      { tags: ['extendedPath', 'athena', 'C490869'] },
       () => {
         cy.login(userDataWithLoans.username, userDataWithLoans.password, {
           path: TopMenu.listsPath,

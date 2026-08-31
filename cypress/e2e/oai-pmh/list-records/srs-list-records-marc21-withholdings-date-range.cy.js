@@ -178,8 +178,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C13784 SRS -- List records in marc21_withholdings format with start and end date (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C13784'] },
+      'C13784 SRS -- List records in marc21_withholdings format with start and end date (athena)',
+      { tags: ['criticalPath', 'athena', 'C13784'] },
       () => {
         cy.getAdminToken();
         OaiPmh.listRecordsRequest('marc21_withholdings').then((response) => {

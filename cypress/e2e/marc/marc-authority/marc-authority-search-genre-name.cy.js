@@ -130,8 +130,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C409454 Search for "MARC authority" records using "Genre" search option (spitfire)',
-      { tags: ['extendedPath', 'C409454', 'spitfire'] },
+      'C409454 Search for "MARC authority" records using "Genre" search option (promin)',
+      { tags: ['extendedPath', 'C409454', 'promin'] },
       () => {
         MarcAuthorities.selectSearchOptionInDropdown(searchOption);
         MarcAuthoritiesSearch.verifySelectedSearchOption(searchOption);

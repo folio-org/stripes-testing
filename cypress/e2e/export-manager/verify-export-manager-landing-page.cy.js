@@ -23,8 +23,8 @@ describe('Export Manager', () => {
   });
 
   it(
-    'C350726 Verify Export Manager landing page (firebird)',
-    { tags: ['criticalPath', 'firebird', 'C350726'] },
+    'C350726 Verify Export Manager landing page (athena)',
+    { tags: ['criticalPath', 'athena', 'C350726'] },
     () => {
       // Step 1: Verify "All" tab is highlighted by default and default view
       ExportManagerSearchPane.checkDefaultView();

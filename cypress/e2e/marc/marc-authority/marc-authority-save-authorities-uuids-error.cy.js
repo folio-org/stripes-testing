@@ -58,8 +58,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C773219 Verify error message when saving authority UUIDs (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C773219'] },
+      'C773219 Verify error message when saving authority UUIDs (promin)',
+      { tags: ['extendedPath', 'promin', 'C773219'] },
       () => {
         // Step 1: Search using Keyword — only 1 record should be found
         MarcAuthoritiesSearch.searchBy(MARC_AUTHORITY_SEARCH_OPTIONS.KEYWORD, testData.searchQuery);

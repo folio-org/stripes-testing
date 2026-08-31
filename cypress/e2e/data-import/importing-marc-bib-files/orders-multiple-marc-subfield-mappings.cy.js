@@ -106,8 +106,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C380431 Verify orders multiple MARC subfield mappings (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C380431'] },
+      'C380431 Verify orders multiple MARC subfield mappings (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C380431'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);

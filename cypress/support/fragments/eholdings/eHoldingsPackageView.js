@@ -16,10 +16,10 @@ import {
   MultiSelectOption,
   Callout,
   TextField,
-  FieldSet,
   PaneHeader,
   DropdownMenu,
   Select,
+  or,
 } from '../../../../interactors';
 import EHoldingsPackages from './eHoldingsPackages';
 import EHoldingsProviderView from './eHoldingsProviderView';
@@ -60,7 +60,6 @@ const searchAgreementButton = findAgreementModal.find(
 const titleFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-title-fields' });
 const packageFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-package-fields' });
 const openDropdownMenu = Button({ ariaLabel: 'open menu' });
-const patronRadioButton = FieldSet('Show titles in package to patrons');
 
 const packageInformationSection = Section({ id: 'packageShowInformation' });
 const notesSection = Section({ id: 'packageShowNotes' });
@@ -77,8 +76,11 @@ const titlesShowColumns = [
   'Custom embargo period',
   'Publication type',
   'Access status type',
-  'Tag(s)',
+  'Tags',
 ];
+const visibilityPfCheckbox = Checkbox('In Publication Finder');
+const visibilityFtfCheckbox = Checkbox('In Full Text Finder');
+const visibilityMarcCheckbox = Checkbox('In MARC export');
 
 export default {
   getCalloutMessageText,
@@ -116,7 +118,20 @@ export default {
   },
 
   createNewAgreement() {
-    cy.do(Accordion({ id: 'packageShowAgreements' }).find(Button('New')).click());
+    cy.window().then((win) => {
+      cy.stub(win, 'open').callsFake((url) => {
+        // eslint-disable-next-line no-param-reassign
+        win.location.href = url;
+      });
+    });
+    cy.do(
+      Accordion({ id: 'packageShowAgreements' })
+        .find(Button('New'))
+        .perform((element) => {
+          element.removeAttribute('target');
+          element.click();
+        }),
+    );
   },
 
   addExistingAgreement() {
@@ -124,7 +139,7 @@ export default {
   },
 
   searchForExistingAgreement(agreementName) {
-    cy.expect(findAgreementModal.exists());
+    cy.get('[id="plugin-find-agreement-modal"]').invoke('css', 'opacity', '1');
     cy.do([agreementSearchInputField.fillIn(agreementName), searchAgreementButton.click()]);
   },
 
@@ -314,14 +329,23 @@ export default {
       .should('be.lessThan', number);
   },
 
-  patronRadioButton: (yesOrNo) => {
-    cy.expect(patronRadioButton.exists());
-    cy.do(patronRadioButton.find(RadioButton(including(yesOrNo))).click());
-    cy.expect(patronRadioButton.find(RadioButton(including(yesOrNo))).is({ checked: true }));
+  chooseExclusionOptions({ pf = false, ftf = false, marc = false } = {}) {
+    if (pf) cy.do(visibilityPfCheckbox.checkIfNotSelected());
+    else cy.do(visibilityPfCheckbox.uncheckIfSelected());
+    if (ftf) cy.do(visibilityFtfCheckbox.checkIfNotSelected());
+    else cy.do(visibilityFtfCheckbox.uncheckIfSelected());
+    if (marc) cy.do(visibilityMarcCheckbox.checkIfNotSelected());
+    else cy.do(visibilityMarcCheckbox.uncheckIfSelected());
+
+    this.verifyExclusionOptions({ pf, ftf, marc });
   },
 
-  verifyAlternativeRadio(yesOrNo) {
-    cy.expect(KeyValue('Show titles in package to patrons').has({ value: including(yesOrNo) }));
+  verifyExclusionOptions({ pf = false, ftf = false, marc = false } = {}) {
+    cy.expect([
+      visibilityPfCheckbox.has({ checked: pf, disabled: or(true, false) }),
+      visibilityFtfCheckbox.has({ checked: ftf, disabled: or(true, false) }),
+      visibilityMarcCheckbox.has({ checked: marc, disabled: or(true, false) }),
+    ]);
   },
   checkNotesSectionContent(notes = []) {
     // wait for section to load
@@ -622,5 +646,23 @@ export default {
   filterTitlesBySelectionStatus(status) {
     cy.do(DropdownMenu().find(RadioButton(status)).click());
     cy.wait(1000);
+  },
+
+  assertAgreementLinesList(rows = []) {
+    rows.forEach((row) => {
+      const columnsEntries = Object.entries(row).map(([k, v]) => [
+        `list-column-${k.toLocaleLowerCase()}`,
+        v,
+      ]);
+
+      columnsEntries.forEach(([columnId, value]) => {
+        cy.expect(
+          agreementsAccordion
+            .find(MultiColumnListRow({ content: including(row.name), isContainer: false }))
+            .find(MultiColumnListCell({ columnId, content: including(value) }))
+            .exists(),
+        );
+      });
+    });
   },
 };

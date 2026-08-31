@@ -177,48 +177,48 @@ describe('Inventory', () => {
     });
 
     it(
-      'C831991 Verify ISSN search normalization - Case 1 (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C831991'] },
+      'C831991 Verify ISSN search normalization - Case 1 (promin)',
+      { tags: ['extendedPath', 'promin', 'C831991'] },
       () => {
         runTest(testData[0]);
       },
     );
 
     it(
-      'C831992 Verify ISSN search normalization - Case 2 (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C831992'] },
+      'C831992 Verify ISSN search normalization - Case 2 (promin)',
+      { tags: ['extendedPath', 'promin', 'C831992'] },
       () => {
         runTest(testData[1]);
       },
     );
 
     it(
-      'C831993 Verify ISSN search normalization - Case 3 (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C831993'] },
+      'C831993 Verify ISSN search normalization - Case 3 (promin)',
+      { tags: ['extendedPath', 'promin', 'C831993'] },
       () => {
         runTest(testData[2]);
       },
     );
 
     it(
-      'C831994 Verify ISSN search normalization - Case 4 (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C831994'] },
+      'C831994 Verify ISSN search normalization - Case 4 (promin)',
+      { tags: ['extendedPath', 'promin', 'C831994'] },
       () => {
         runTest(testData[3]);
       },
     );
 
     it(
-      'C831996 Verify ISSN search normalization - Case 5 (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C831996'] },
+      'C831996 Verify ISSN search normalization - Case 5 (promin)',
+      { tags: ['extendedPath', 'promin', 'C831996'] },
       () => {
         runTest(testData[4]);
       },
     );
 
     it(
-      'C831997 Verify ISSN search normalization - Case 6 (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C831997'] },
+      'C831997 Verify ISSN search normalization - Case 6 (promin)',
+      { tags: ['extendedPath', 'promin', 'C831997'] },
       () => {
         runTest(testData[5]);
       },

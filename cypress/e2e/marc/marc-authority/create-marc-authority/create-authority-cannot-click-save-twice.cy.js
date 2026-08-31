@@ -50,8 +50,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C436948 Verify that "Save & close" button cannot be clicked two times in a row in "Create a new MARC authority record" window (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C436948'] },
+        'C436948 Verify that "Save & close" button cannot be clicked two times in a row in "Create a new MARC authority record" window (promin)',
+        { tags: ['extendedPath', 'promin', 'C436948'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           MarcAuthority.setValid008DropdownValues();

@@ -89,8 +89,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C423680 (CONSORTIA) Check that non-marc data is not lost after sharing the local instance on member tenant (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C423680'] },
+        'C423680 (CONSORTIA) Check that non-marc data is not lost after sharing the local instance on member tenant (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C423680'] },
         () => {
           function verifyInstanceDetails() {
             InstanceRecordView.verifyInstanceIsMarkedAsStaffSuppressed();

@@ -20,3 +20,21 @@ export const ORGANIZATION_DETAILS_FIELDS = {
   DONOR: 'Donor',
   VENDOR: 'Vendor',
 };
+
+export const ORGANIZATION_FILTER_LABELS = {
+  COUNTRY: 'Country',
+  IS_DONOR: 'Is donor',
+  IS_VENDOR: 'Is vendor',
+  LANGUAGE: 'Language',
+  ORGANIZATIONS_STATUS: 'Organizations status',
+  PAYMENT_METHOD: 'Payment method',
+};
+
+export const ORGANIZATION_CATEGORIES = {
+  PAYMENTS: 'Payments',
+  SHIPMENTS: 'Shipments',
+};
+
+export const ORGANIZATION_PAYMENT_METHODS = {
+  CASH: 'Cash',
+};

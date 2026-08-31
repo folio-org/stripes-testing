@@ -84,8 +84,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C15827 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to duplicate unlocked mapping profile (firebird)',
-      { tags: ['criticalPath', 'firebird', 'shiftLeft', 'C15827'] },
+      'C15827 User with "Settings - UI-Data-Export Settings - Edit" capability set is able to duplicate unlocked mapping profile (athena)',
+      { tags: ['criticalPath', 'athena', 'shiftLeft', 'C15827'] },
       () => {
         SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[0]);
         SingleFieldMappingProfilePane.verifyLockProfileCheckbox(false, true);

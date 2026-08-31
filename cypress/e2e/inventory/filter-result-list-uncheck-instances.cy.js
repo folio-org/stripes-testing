@@ -47,7 +47,7 @@ describe('Inventory', () => {
   });
 
   afterEach('delete test data', () => {
-    cy.getAdminToken();
+    cy.getAdminToken(false);
     instanceIds.forEach((instanceId) => {
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId);
     });
@@ -55,8 +55,8 @@ describe('Inventory', () => {
   });
 
   it(
-    'C366530 Verify that User can filter the result list and uncheck instances (firebird) (TaaS)',
-    { tags: ['extendedPath', 'firebird', 'C366530'] },
+    'C366530 Verify that User can filter the result list and uncheck instances (athena) (TaaS)',
+    { tags: ['extendedPath', 'athena', 'C366530'] },
     () => {
       InventorySearchAndFilter.executeSearch('*');
       InventoryInstances.verifySelectAllInstancesCheckbox();

@@ -27,38 +27,34 @@ describe('remote-storage-configuration', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
-    'C163919 Configure remote storage (volaris)',
-    { tags: ['smoke', 'volaris', 'C163919'] },
-    () => {
-      // parametrized providers
-      [
-        Configurations.configurations.CaiaSoft,
-        Configurations.configurations.DematicEMS,
-        Configurations.configurations.DematicStagingDirector,
-      ].forEach((configuration) => {
-        const name = `AutotestConfigurationName${getRandomPostfix()}`;
-        configuration.create(name);
-        Configurations.verifyCreatedConfiguration(name, configuration);
-        const newName = `newAutotestConfigurationName${getRandomPostfix()}`;
-        Configurations.editConfiguration(name, { nameInput: newName });
-        Configurations.confirmCreateRemoteStorage();
-        Configurations.verifyCreatedConfiguration(name, configuration);
-        Configurations.editConfiguration(
-          name,
-          { nameInput: `shouldnotbesaved${getRandomPostfix()}` },
-          false,
-        );
-        Configurations.closeEditConfiguration();
-        Configurations.clickCloseWithoutSavingButtonInAreYouSureForm();
-        Configurations.deleteRemoteStorage(newName);
-      });
-    },
-  );
+  it('C163919 Configure remote storage (vega)', { tags: ['smoke', 'vega', 'C163919'] }, () => {
+    // parametrized providers
+    [
+      Configurations.configurations.CaiaSoft,
+      Configurations.configurations.DematicEMS,
+      Configurations.configurations.DematicStagingDirector,
+    ].forEach((configuration) => {
+      const name = `AutotestConfigurationName${getRandomPostfix()}`;
+      configuration.create(name);
+      Configurations.verifyCreatedConfiguration(name, configuration);
+      const newName = `newAutotestConfigurationName${getRandomPostfix()}`;
+      Configurations.editConfiguration(name, { nameInput: newName });
+      Configurations.confirmCreateRemoteStorage();
+      Configurations.verifyCreatedConfiguration(name, configuration);
+      Configurations.editConfiguration(
+        name,
+        { nameInput: `shouldnotbesaved${getRandomPostfix()}` },
+        false,
+      );
+      Configurations.closeEditConfiguration();
+      Configurations.clickCloseWithoutSavingButtonInAreYouSureForm();
+      Configurations.deleteRemoteStorage(newName);
+    });
+  });
 
   it(
-    'C163920 Edit remote storage configuration  (volaris)',
-    { tags: ['smoke', 'volaris', 'C163920'] },
+    'C163920 Edit remote storage configuration  (vega)',
+    { tags: ['smoke', 'vega', 'C163920'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
       const configuration = Configurations.configurations.DematicStagingDirector;

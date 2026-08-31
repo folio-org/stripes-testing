@@ -122,8 +122,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C831998 Select Instance plugin | Verify ISSN search normalization - Case 1 (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C831998'] },
+      'C831998 Select Instance plugin | Verify ISSN search normalization - Case 1 (promin)',
+      { tags: ['extendedPath', 'promin', 'C831998'] },
       () => {
         // Preconditions: User has opened "Select instance" plug-in -> "Instance" tab is selected
         Orders.searchByParameter('PO number', orderNumber);

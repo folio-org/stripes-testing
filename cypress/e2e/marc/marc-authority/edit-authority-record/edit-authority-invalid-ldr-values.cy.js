@@ -66,8 +66,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C356407 Verify that invalid values at 07, 08, 10, 11, 19-23 positions of "LDR" field change to valid when user edit "MARC Authority" record. (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C356407'] },
+        'C356407 Verify that invalid values at 07, 08, 10, 11, 19-23 positions of "LDR" field change to valid when user edit "MARC Authority" record. (promin)',
+        { tags: ['extendedPath', 'promin', 'C356407'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);

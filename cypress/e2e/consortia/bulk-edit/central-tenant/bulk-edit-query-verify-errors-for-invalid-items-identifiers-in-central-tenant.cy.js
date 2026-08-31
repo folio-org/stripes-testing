@@ -199,8 +199,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C503032 Query - Verify "Errors" when querying by invalid Items identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C503032'] },
+        'C503032 Query - Verify "Errors" when querying by invalid Items identifiers in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C503032'] },
         () => {
           // Step 1: Select "Inventory - items" radio button and click "Build query"
           BulkEditSearchPane.checkItemsRadio();
@@ -214,6 +214,7 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
           QueryModal.fillInValueTextfield(sharedItemBarcode);
           QueryModal.testQuery();
+          QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyNumberOfMatchedRecords(2);
           cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
           QueryModal.clickRunQuery();
@@ -291,6 +292,7 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
           QueryModal.fillInValueTextfield(sharedAccessionNumber);
           QueryModal.testQuery();
+          QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyNumberOfMatchedRecords(2);
 
           // Step 11: Click "Run query" button

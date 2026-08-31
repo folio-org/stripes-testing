@@ -197,8 +197,8 @@ describe('Lists', () => {
       });
 
       it(
-        "C451557 Verify that the 'POL currency' dropdown contains all possible currencies (corsair)",
-        { tags: ['extendedPath', 'corsair', 'C451557'] },
+        "C451557 Verify that the 'POL currency' dropdown contains all possible currencies (athena)",
+        { tags: ['extendedPath', 'athena', 'C451557'] },
         () => {
           // Step 1: Create new list with Purchase order lines record type
           Lists.openNewListPane();
@@ -216,7 +216,7 @@ describe('Lists', () => {
           // Step 3: Select "POL — Cost currency" field, "not equal to" operator, and verify Value dropdown
           QueryModal.selectField(purchaseOrderLinesFieldValues.costCurrency);
           QueryModal.verifySelectedField(purchaseOrderLinesFieldValues.costCurrency);
-          QueryModal.verifyQueryAreaContent('(pol.cost_currency  )');
+          QueryModal.verifyQueryAreaContent('');
 
           QueryModal.verifyOperatorsList(enumOperators);
           QueryModal.selectOperator(QUERY_OPERATIONS.NOT_EQUAL);

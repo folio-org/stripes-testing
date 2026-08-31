@@ -257,7 +257,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
   it(
     'C388564 Approve and pay invoice created in current FY for previous FY without related order (thunderjet) (TaaS)',
-    { tags: ['criticalPathBroken', 'thunderjet', 'C388564'] },
+    { tags: ['criticalPath', 'thunderjet', 'C388564', 'nonParallel'] },
     () => {
       Invoices.createRolloverInvoiceWithFY(
         testData.invoice,

@@ -102,7 +102,7 @@ const lastNameField = TextField({ id: 'adduser_lastname' });
 const firstNameField = TextField({ id: 'adduser_firstname' });
 const middleNameField = TextField({ id: 'adduser_middlename' });
 const preferredFirstName = TextField({ id: 'adduser_preferredname' });
-const preferredContactSelect = Select({ id: 'adduser_preferredcontact' });
+const preferredContactSelect = MultiSelect({ id: 'adduser_preferredcontact' });
 const preferableServicePointSelect = Select({ id: 'servicePointPreference' });
 const barcodeField = TextField({ id: 'adduser_barcode' });
 const emailField = TextField({ id: 'adduser_email' });
@@ -163,12 +163,14 @@ const getReadingRoomAccessOptionValue = (optionValue) => {
 // Expiration date modal appears for only some patron groups based on their settings,
 // so we need to check if it appears and click "Set" if it does.
 const clickSetExpirationDateIfModalExists = () => {
+  cy.wait(2000);
   cy.get('body').then(($body) => {
     if ($body.find('#recalculate_expirationdate_modal').length > 0) {
       cy.do(resetExpirationDateModal.find(recalculateExpirationDateButton).click());
       cy.expect(resetExpirationDateModal.absent());
     }
   });
+  cy.wait(2000);
 };
 
 const getAccordionByLabel = (accordionLabel) => Accordion(accordionLabel);
@@ -1245,6 +1247,8 @@ export default {
       emailField.fillIn(userData.personal.email),
     ]);
     this.changePatronGroup(patronGroup);
+    clickSetExpirationDateIfModalExists();
+    cy.wait(3000);
     cy.do(saveAndCloseBtn.click());
     return cy.wait('@createUser', { timeout: 80_000 }).then(({ response }) => {
       return response.body.id;
@@ -1884,6 +1888,18 @@ export default {
     cy.do(fulfillmentPreferenceSelect.clickInfoButton());
   },
 
+  assertNativeValidationMessage(field, expectedMessage) {
+    cy.expect(field.has({ nativeValidationMessage: expectedMessage }));
+  },
+
+  assertTextFieldNativeValidationMessage(fieldLabel, expectedMessage) {
+    this.assertNativeValidationMessage(TextField(fieldLabel), expectedMessage);
+  },
+
+  assertUsernameFieldNativeValidationMessage(expectedMessage) {
+    this.assertTextFieldNativeValidationMessage(including('Username'), expectedMessage);
+  },
+
   verifyFulfillmentPreferenceTooltip() {
     cy.expect(
       HTML(
@@ -1955,7 +1971,7 @@ export default {
         disabled: fulfillmentPreferenceDisabled,
       }),
       defaultDeliveryAddress &&
-        defaultDeliveryAddressField.checkedOptionText(defaultDeliveryAddress),
+      defaultDeliveryAddressField.checkedOptionText(defaultDeliveryAddress),
       defaultDeliveryAddressField.has({ disabled: defaultDeliveryAddressDisabled }),
     ]);
 

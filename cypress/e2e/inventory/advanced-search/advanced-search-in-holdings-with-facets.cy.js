@@ -88,8 +88,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C409422 Search Holdings using advanced search in combination with search facets (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C409422'] },
+      'C409422 Search Holdings using advanced search in combination with search facets (promin)',
+      { tags: ['extendedPath', 'promin', 'C409422'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.holdingsTabIsDefault();

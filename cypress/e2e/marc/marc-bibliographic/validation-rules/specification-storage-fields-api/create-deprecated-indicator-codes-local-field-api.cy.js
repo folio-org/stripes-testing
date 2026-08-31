@@ -94,8 +94,8 @@ describe('MARC Bibliographic Validation Rules - Create Deprecated Indicator Code
   });
 
   it(
-    'C499671 Create Deprecated Indicator code of Local field for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C499671', 'spitfire'] },
+    'C499671 Create Deprecated Indicator code of Local field for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C499671', 'promin'] },
     () => {
       // Use the created user's token
       cy.getUserToken(user.username, user.password).then(() => {

@@ -24,8 +24,8 @@ describe('Users', () => {
   });
 
   it(
-    "C720 Make sure there's a link from User to Create/View Requests (volaris)",
-    { tags: ['criticalPath', 'volaris', 'C720'] },
+    "C720 Make sure there's a link from User to Create/View Requests (vega)",
+    { tags: ['criticalPath', 'vega', 'C720'] },
     () => {
       UsersSearchPane.searchByKeywords(userData.username);
       UsersSearchPane.selectUserFromList(userData.username);

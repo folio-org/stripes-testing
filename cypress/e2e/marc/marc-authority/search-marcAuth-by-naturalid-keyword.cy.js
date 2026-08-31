@@ -114,8 +114,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C422174 Search MARC: support search for "naturalId" field using "Keyword" search option (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C422174'] },
+        'C422174 Search MARC: support search for "naturalId" field using "Keyword" search option (promin)',
+        { tags: ['extendedPath', 'promin', 'C422174'] },
         () => {
           searchData.forEach((search) => {
             MarcAuthorities.searchByParameter(testData.searchOption, search.query);

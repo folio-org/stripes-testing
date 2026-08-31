@@ -90,8 +90,8 @@ describe('Check out', () => {
 
   // May be failing because of this bug (https://issues.folio.org/browse/STSMACOM-783)
   it(
-    'C356781 Verify that all notes assigned to user pop up when user scan patron card (“Delete” option) (Spitfire) (TaaS)',
-    { tags: ['criticalPath', 'spitfire', 'C356781'] },
+    'C356781 Verify that all notes assigned to user pop up when user scan patron card (“Delete” option) (promin) (TaaS)',
+    { tags: ['criticalPath', 'promin', 'C356781'] },
     () => {
       // Fill in user barcode number in the input field at "Scan patron card" pane → Click "Enter" button.
       CheckOutActions.checkOutUser(testData.barcode);

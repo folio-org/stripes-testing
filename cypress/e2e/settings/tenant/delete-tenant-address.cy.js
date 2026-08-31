@@ -33,8 +33,8 @@ describe('Tenant', () => {
     });
 
     it(
-      'C6733 Delete Tenant address (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C6733'] },
+      'C6733 Delete Tenant address (athena)',
+      { tags: ['extendedPath', 'athena', 'C6733'] },
       () => {
         // Go to Settings/Tenant/Addresses
         TenantPane.selectTenant(TENANTS.ADDRESSES);

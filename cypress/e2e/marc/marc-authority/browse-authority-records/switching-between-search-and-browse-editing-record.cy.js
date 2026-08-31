@@ -78,8 +78,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C386519 Switching between Search and Browse in "MARC authority" app (editing record) (spitfire)',
-        { tags: ['extendedPath', 'C386519', 'spitfire'] },
+        'C386519 Switching between Search and Browse in "MARC authority" app (editing record) (promin)',
+        { tags: ['extendedPath', 'C386519', 'promin'] },
         () => {
           // Step 1: Select filter options that will return existing records in Search mode
           MarcAuthorities.selectSearchOptionInDropdown(testData.searchOption);

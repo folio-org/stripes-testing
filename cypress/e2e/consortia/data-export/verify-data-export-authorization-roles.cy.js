@@ -96,8 +96,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C877107 ECS | Verify data export authorization roles (consortia) (firebird)',
-      { tags: ['extendedPathECS', 'firebird', 'C877107'] },
+      'C877107 ECS | Verify data export authorization roles (consortia) (athena)',
+      { tags: ['extendedPathECS', 'athena', 'C877107'] },
       () => {
         // Step 1: Select central tenant from "Member" dropdown
         ConsortiumManagerApp.selectTenantFromDropdown(tenantNames.central);

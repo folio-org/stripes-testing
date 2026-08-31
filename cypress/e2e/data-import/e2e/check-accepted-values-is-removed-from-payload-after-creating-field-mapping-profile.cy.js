@@ -45,8 +45,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C594468 Check that acceptedValues is removed from payload after creating field mapping profile (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C594468'] },
+      'C594468 Check that acceptedValues is removed from payload after creating field mapping profile (promin)',
+      { tags: ['extendedPath', 'promin', 'C594468'] },
       () => {
         // Step 1: Open "New field mapping profile" page
         FieldMappingProfiles.openNewMappingProfileForm();

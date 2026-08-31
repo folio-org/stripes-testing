@@ -150,8 +150,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C514878 Cannot save existing Shared MARC bib record with value in "010 $a" subfield which matches to other Shared, Local records "LCCN" field when duplicate LCCN check is enabled (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'nonParallel', 'C514878'] },
+          'C514878 Cannot save existing Shared MARC bib record with value in "010 $a" subfield which matches to other Shared, Local records "LCCN" field when duplicate LCCN check is enabled (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C514878'] },
           () => {
             // Step 0: User is on the detail view pane of Shared "MARC bibliographic" record
             InventorySearchAndFilter.clearDefaultHeldbyFilter();

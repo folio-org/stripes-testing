@@ -82,8 +82,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C1045403 Create/Edit MARC holdings record with 003 and 035 fields (verify normalization) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1045403'] },
+        'C1045403 Create/Edit MARC holdings record with 003 and 035 fields (verify normalization) (promin)',
+        { tags: ['extendedPath', 'promin', 'C1045403'] },
         () => {
           // Preconditions: User is on the detail view pane of Instance ('MARC bibliographic') record
           InventoryInstances.searchByTitle(createdInstanceId);

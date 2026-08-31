@@ -136,8 +136,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C366555 Derive | Unlink created unsaved linked "MARC Bib" field from "MARC Authority" record (spitfire) (TaaS)',
-          { tags: ['extendedPath', 'spitfire', 'C366555'] },
+          'C366555 Derive | Unlink created unsaved linked "MARC Bib" field from "MARC Authority" record (promin) (TaaS)',
+          { tags: ['extendedPath', 'promin', 'C366555'] },
           () => {
             InventoryInstance.deriveNewMarcBib();
             QuickMarcEditor.addNewField(newFields[0].tag, newFields[0].content, 81);

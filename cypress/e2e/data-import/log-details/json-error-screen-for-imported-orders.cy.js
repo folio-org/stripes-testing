@@ -137,8 +137,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C375202 Verify the JSON error screen for imported orders (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C375202'] },
+      'C375202 Verify the JSON error screen for imported orders (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C375202'] },
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);

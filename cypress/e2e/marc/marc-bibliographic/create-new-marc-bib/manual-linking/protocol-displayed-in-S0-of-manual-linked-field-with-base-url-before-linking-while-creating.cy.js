@@ -235,8 +235,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C436829 Protocol is displayed in subfield "$0" of manually linked field when field has base URL with "http://" protocol before linking (spitfire)',
-          { tags: ['criticalPath', 'spitfire', 'C436829'] },
+          'C436829 Protocol is displayed in subfield "$0" of manually linked field when field has base URL with "http://" protocol before linking (promin)',
+          { tags: ['criticalPath', 'promin', 'C436829'] },
           () => {
             InventoryInstance.newMarcBibRecord();
             QuickMarcEditor.checkPaneheaderContains(/New .*MARC bib record/);

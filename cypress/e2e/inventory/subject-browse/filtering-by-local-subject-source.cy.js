@@ -37,30 +37,32 @@ describe('Inventory', () => {
           source: 'local',
           name: testData.subjectSource.name,
           code: testData.subjectSource.code,
-        }).then((responce) => {
-          testData.subjectSource.id = responce.body.id;
+        })
+          .then((responce) => {
+            testData.subjectSource.id = responce.body.id;
 
-          cy.getInstanceById(testData.instance.instanceId).then((body) => {
-            body.subjects = [
-              {
-                authorityId: null,
-                value: testData.subjectSource.subjectHeading,
-                sourceId: responce.body.id,
-                typeId: null,
-              },
-            ];
-            cy.updateInstance(body);
+            cy.getInstanceById(testData.instance.instanceId).then((body) => {
+              body.subjects = [
+                {
+                  authorityId: null,
+                  value: testData.subjectSource.subjectHeading,
+                  sourceId: responce.body.id,
+                  typeId: null,
+                },
+              ];
+              cy.updateInstance(body);
+            });
+          })
+          .then(() => {
+            cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+              testData.user = userProperties;
+
+              cy.login(testData.user.username, testData.user.password);
+              TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
+              InventoryInstances.waitContentLoading();
+              cy.wait(5000);
+            });
           });
-        });
-
-        cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-          testData.user = userProperties;
-
-          cy.login(testData.user.username, testData.user.password);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventoryInstances.waitContentLoading();
-          cy.wait(5000);
-        });
       });
 
       afterEach('Delete created instance', () => {
@@ -71,11 +73,12 @@ describe('Inventory', () => {
       });
 
       it(
-        'C584507 Check filtering by local Subject Source (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C584507'] },
+        'C584507 Check filtering by local Subject Source (promin)',
+        { tags: ['criticalPath', 'promin', 'C584507'] },
         () => {
           InventorySearchAndFilter.verifySearchAndFilterPane();
           InventorySearchAndFilter.switchToBrowseTab();
+          BrowseSubjects.waitForSubjectToAppear(testData.subjectSource.subjectHeading);
           BrowseSubjects.searchBrowseSubjects(testData.subjectSource.subjectHeading);
           cy.wait(2000);
           BrowseSubjects.checkSearchResultRecord(testData.subjectSource.subjectHeading);

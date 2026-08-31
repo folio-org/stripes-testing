@@ -80,8 +80,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C375092 No additional records appear after user edits "5XX" MARC tag in MARC authority record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C375092'] },
+        'C375092 No additional records appear after user edits "5XX" MARC tag in MARC authority record (promin)',
+        { tags: ['extendedPath', 'promin', 'C375092'] },
         () => {
           MarcAuthorities.searchBeats(testData.headingFrom5XXField);
           MarcAuthorities.checkRowsCount(1);

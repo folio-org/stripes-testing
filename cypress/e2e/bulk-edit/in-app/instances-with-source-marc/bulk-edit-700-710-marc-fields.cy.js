@@ -122,8 +122,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C648518 Bulk edit marc fields (700, 710) for all records (MARC, Logs) (firebird)',
-        { tags: ['smoke', 'firebird', 'C648518'] },
+        'C648518 Bulk edit marc fields (700, 710) for all records (MARC, Logs) (athena)',
+        { tags: ['smoke', 'athena', 'C648518', 'shiftLeft'] },
         () => {
           BulkEditActions.openActions();
           BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(

@@ -39,7 +39,7 @@ describe('Eureka', () => {
             firstName: `AT_C1347146_FirstName_${letter}_${randomPostfix}`,
             middleName: `AT_C1347146_MiddleName_${letter}_${randomPostfix}`,
             email: 'at_c1347146@test.com',
-            preferredContactTypeId: '002',
+            preferredContactTypeIds: ['002'],
           },
         };
       });
@@ -57,14 +57,14 @@ describe('Eureka', () => {
         cy.getUserGroups().then((groupId) => {
           ['userA', 'userB', 'userC'].forEach((key) => {
             userBodies[key].patronGroup = groupId;
-            cy.createUserWithoutKeycloakInEurekaApi(userBodies[key]).then((userId) => {
+            Users.createViaApi(userBodies[key]).then((user) => {
               users[key] = {
-                userId,
+                userId: user.id,
                 lastName: userBodies[key].personal.lastName,
                 firstName: userBodies[key].personal.firstName,
                 middleName: userBodies[key].personal.middleName,
               };
-              centralUserIds.push(userId);
+              centralUserIds.push(user.id);
             });
           });
         });
@@ -79,14 +79,14 @@ describe('Eureka', () => {
           cy.getUserGroups().then((groupId) => {
             ['userD', 'userE'].forEach((key) => {
               userBodies[key].patronGroup = groupId;
-              cy.createUserWithoutKeycloakInEurekaApi(userBodies[key]).then((userId) => {
+              Users.createViaApi(userBodies[key]).then((user) => {
                 users[key] = {
-                  userId,
+                  userId: user.id,
                   lastName: userBodies[key].personal.lastName,
                   firstName: userBodies[key].personal.firstName,
                   middleName: userBodies[key].personal.middleName,
                 };
-                collegeUserIds.push(userId);
+                collegeUserIds.push(user.id);
               });
             });
           });

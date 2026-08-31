@@ -71,22 +71,25 @@ describe('MARC', () => {
 
         getBibliographicSpec().then((spec) => {
           specId = spec.id;
-          toggleAllUndefinedValidationRules(specId, { enable: true });
-        });
+          cy.syncSpecifications(specId);
+          toggleAllUndefinedValidationRules(specId, { enable: false });
 
-        cy.createTempUser([
-          Permissions.uiInventoryViewInstances.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        ]).then((createdUserProperties) => {
-          user.userProperties = createdUserProperties;
+          cy.createTempUser([
+            Permissions.uiInventoryViewInstances.gui,
+            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          ]).then((createdUserProperties) => {
+            user.userProperties = createdUserProperties;
 
-          cy.createSimpleMarcBibViaAPI(testData.instanceTitle).then((instanceId) => {
-            createdInstanceId = instanceId;
+            cy.createSimpleMarcBibViaAPI(testData.instanceTitle).then((instanceId) => {
+              createdInstanceId = instanceId;
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(user.userProperties.username, user.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
+              toggleAllUndefinedValidationRules(specId, { enable: true });
+
+              cy.waitForAuthRefresh(() => {
+                cy.login(user.userProperties.username, user.userProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
               });
             });
           });
@@ -95,14 +98,14 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        toggleAllUndefinedValidationRules(specId, { enable: false });
         Users.deleteViaApi(user.userProperties.userId);
         InventoryInstance.deleteInstanceViaApi(createdInstanceId);
-        toggleAllUndefinedValidationRules(specId, { enable: false });
       });
 
       it(
-        'C543838 Indicator boxes validation during editing of MARC bib record (spitfire)',
-        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C543838'] },
+        'C543838 Indicator boxes validation during editing of MARC bib record (promin)',
+        { tags: ['extendedPathFlaky', 'promin', 'nonParallel', 'C543838'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

@@ -102,8 +102,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C523600 Find and remove MARC field (536) mapped to Inventory Instance (MARC) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C523600'] },
+      'C523600 Find and remove MARC field (536) mapped to Inventory Instance (MARC) (athena)',
+      { tags: ['criticalPath', 'athena', 'C523600'] },
       () => {
         // Step 1: Show Source and Funding Information Note columns
         BulkEditActions.openActions();

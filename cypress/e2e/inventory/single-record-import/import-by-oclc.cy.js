@@ -44,8 +44,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C193952 Create Instance by import of single MARC Bib record from OCLC (folijet)',
-      { tags: ['smoke', 'folijet', 'C193952'] },
+      'C193952 Create Instance by import of single MARC Bib record from OCLC (promin)',
+      { tags: ['smoke', 'promin', 'C193952'] },
       () => {
         InventoryInstances.importWithOclc(testData.oclc);
         InventoryInstance.waitLoading();

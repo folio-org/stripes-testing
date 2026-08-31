@@ -110,8 +110,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C852051 Verify that "Item - Order" field is queryable (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C852051'] },
+        'C852051 Verify that "Item - Order" field is queryable (athena)',
+        { tags: ['criticalPath', 'athena', 'C852051'] },
         () => {
           // Step 1: Create new list with Items record type and build query
           Lists.openNewListPane();

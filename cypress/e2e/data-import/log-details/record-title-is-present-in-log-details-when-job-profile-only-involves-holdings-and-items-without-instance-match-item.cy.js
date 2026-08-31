@@ -231,8 +231,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C422064 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITHOUT instance match item (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C422064'] },
+      'C422064 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITHOUT instance match item (promin)',
+      { tags: ['criticalPath', 'promin', 'C422064'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

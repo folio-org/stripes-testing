@@ -105,8 +105,8 @@ describe('Users', () => {
   });
 
   it(
-    'C434 Test proxy relationship. Proxy user expiration vs Proxy relationship expiration (volaris)',
-    { tags: ['extendedPath', 'volaris', 'C434'] },
+    'C434 Test proxy relationship. Proxy user expiration vs Proxy relationship expiration (vega)',
+    { tags: ['extendedPath', 'vega', 'C434'] },
     () => {
       // Step 1-2: Navigate to Users and verify proxy relationship in sponsor record
       cy.login(usersData.loginUser.username, usersData.loginUser.password, {

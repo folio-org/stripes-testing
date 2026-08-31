@@ -1,6 +1,7 @@
 import { HTML, including, Link } from '@interactors/html';
 import {
   and,
+  or,
   Pane,
   Button,
   TextField,
@@ -307,7 +308,12 @@ export default {
           exportJobsList
             .find(MultiColumnListRow({ index }))
             .find(MultiColumnListCell({ columnIndex }))
-            .has({ content: including(value) }),
+            // Supports both single and multiple values for the column, e.g. jobType can be "EDIFACT orders export" or ["EDIFACT orders export", "CLAIMS"]
+            .has({
+              content: Array.isArray(value)
+                ? or(...value.map((v) => including(v)))
+                : including(value),
+            }),
         );
       });
     });

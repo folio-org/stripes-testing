@@ -18,6 +18,7 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
+import Approvals from '../../support/fragments/settings/invoices/approvals';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
@@ -78,6 +79,8 @@ describe('Orders', () => {
 
   before(() => {
     cy.getAdminToken();
+
+    Approvals.setApprovePayValueViaApi(false);
     // create first Fiscal Year and prepere 2 Funds for Rollover
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
@@ -186,14 +189,14 @@ describe('Orders', () => {
                         FinanceHelp.searchByName(firstFiscalYear.name);
                         FiscalYears.selectFY(firstFiscalYear.name);
                         FiscalYears.editFiscalYearDetails();
-                        FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+                        FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(
                           periodStartForFirstFY,
                           periodEndForFirstFY,
                         );
                         FinanceHelp.searchByName(secondFiscalYear.name);
                         FiscalYears.selectFY(secondFiscalYear.name);
                         FiscalYears.editFiscalYearDetails();
-                        FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+                        FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(
                           periodStartForSecondFY,
                           periodEndForSecondFY,
                         );
@@ -226,7 +229,7 @@ describe('Orders', () => {
 
   it(
     'C404376 Change fund distribution when PO line has related paid invoices in previous and current fiscal years (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'C404376'] },
+    { tags: ['extendedPath', 'thunderjet', 'C404376', 'nonParallel'] },
     () => {
       TopMenuNavigation.navigateToApp('Orders');
       Orders.selectOrdersPane();
@@ -245,7 +248,6 @@ describe('Orders', () => {
         `${secondFund.name} (${secondFund.code})`,
       );
       Funds.checkStatusInTransactionDetails('Unreleased');
-
       TopMenuNavigation.navigateToApp('Orders');
       Orders.selectOrdersPane();
       Orders.searchByParameter('PO number', orderNumber);
@@ -257,7 +259,6 @@ describe('Orders', () => {
       Orders.newInvoiceFromOrder();
       Invoices.createInvoiceFromOrderWithoutFY(secondInvoice);
       Invoices.approveInvoice();
-
       TopMenuNavigation.navigateToApp('Orders');
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

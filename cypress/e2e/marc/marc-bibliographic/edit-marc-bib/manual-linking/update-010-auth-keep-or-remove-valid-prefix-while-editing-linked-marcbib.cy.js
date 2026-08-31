@@ -171,8 +171,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C397370 Update "010" value with valid/invalid prefix in "MARC authority" record while "MARC Bib" record being edited and linked (NOT saved link; "$0" = "010" with valid prefix) (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C397370'] },
+          'C397370 Update "010" value with valid/invalid prefix in "MARC authority" record while "MARC Bib" record being edited and linked (NOT saved link; "$0" = "010" with valid prefix) (promin)',
+          { tags: ['extendedPath', 'promin', 'C397370'] },
           () => {
             // Step 1: Open Edit MARC bib record
             InventoryInstances.searchByTitle(testInstanceId);

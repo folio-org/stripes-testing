@@ -211,7 +211,7 @@ describe('Invoices', () => {
 
   it(
     'C630444 Invoice created based on POL with acquisition unit can be paid by user that does not belong to that acquisition unit ("Approve & pay" option is NOT active) (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C630444'] },
+    { tags: ['extendedPath', 'thunderjet', 'C630444', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);

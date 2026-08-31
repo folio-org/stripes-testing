@@ -74,8 +74,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C569557 Edit MARC bib with invalid LCCN when "LCCN structure validation" is disabled (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C569557'] },
+        'C569557 Edit MARC bib with invalid LCCN when "LCCN structure validation" is disabled (promin)',
+        { tags: ['criticalPath', 'promin', 'C569557'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

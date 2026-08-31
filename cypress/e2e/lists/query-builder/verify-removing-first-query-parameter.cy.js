@@ -32,8 +32,8 @@ describe('Lists', () => {
     });
 
     it(
-      "C648455 Verify that it's possible to remove the first query parameter in the QB (corsair)",
-      { tags: ['criticalPath', 'corsair', 'C648455'] },
+      "C648455 Verify that it's possible to remove the first query parameter in the QB (athena)",
+      { tags: ['criticalPath', 'athena', 'C648455'] },
       () => {
         // Step 1: Create new list with Organizations record type
         Lists.openNewListPane();
@@ -64,7 +64,7 @@ describe('Lists', () => {
         QueryModal.clickGarbage(0);
         QueryModal.verifyPlusAndTrashButtonsDisabled(0, false, true);
         QueryModal.verifyBooleanColumnAbsent();
-        QueryModal.verifySelectedField('');
+        QueryModal.verifySelectedField('Select field');
         QueryModal.verifyQueryAreaContent('');
       },
     );

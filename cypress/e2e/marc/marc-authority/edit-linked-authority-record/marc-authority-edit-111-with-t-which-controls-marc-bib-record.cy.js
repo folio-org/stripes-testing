@@ -123,8 +123,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C374142 Edit tag value ("111 which has "$t") in the "MARC Authority" record which controls "MARC Bib(s)" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C374142'] },
+        'C374142 Edit tag value ("111 which has "$t") in the "MARC Authority" record which controls "MARC Bib(s)" (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C374142'] },
         () => {
           MarcAuthorities.switchToBrowse();
           MarcAuthorities.searchByParameter(

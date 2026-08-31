@@ -112,8 +112,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476812 "Select Instance" plugin | Filter "Instance" records by "Statistical code" filter/facet (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476812'] },
+        'C476812 "Select Instance" plugin | Filter "Instance" records by "Statistical code" filter/facet (promin)',
+        { tags: ['extendedPath', 'promin', 'C476812'] },
         () => {
           InventorySearchAndFilter.verifyAccordionExistance(statisticalCodeAccordionName, true);
           InventorySearchAndFilter.toggleAccordionByName(statisticalCodeAccordionName);

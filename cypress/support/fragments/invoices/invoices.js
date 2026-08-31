@@ -32,6 +32,7 @@ import {
   INVOICE_RESULTS_LIST_COLUMNS,
   INVOICE_SEARCH_INDEX_LABELS,
   INVOICE_STATUSES,
+  ORDER_LINE_FILTER_LABELS,
   RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -190,6 +191,7 @@ export default {
     adjustments,
     acqUnitIds,
     currency,
+    tags,
   }) {
     const create = (invoice) => {
       cy.okapiRequest({
@@ -219,6 +221,10 @@ export default {
       invoice.acqUnitIds = acqUnitIds;
     }
 
+    if (tags?.length > 0) {
+      invoice.tags = { tagList: tags };
+    }
+
     if (batchGroupId) {
       create(invoice);
     } else {
@@ -237,7 +243,7 @@ export default {
       searchParams,
     });
   },
-  deleteInvoiceViaApi(invoiceId, { failOnStatusCode } = {}) {
+  deleteInvoiceViaApi(invoiceId, { failOnStatusCode = false } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `invoice/invoices/${invoiceId}`,
@@ -245,7 +251,7 @@ export default {
       failOnStatusCode,
     });
   },
-  deleteInvoiceLineViaApi(invoiceLineId, { failOnStatusCode } = {}) {
+  deleteInvoiceLineViaApi(invoiceLineId, { failOnStatusCode = false } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `invoice/invoice-lines/${invoiceLineId}`,
@@ -304,6 +310,7 @@ export default {
     adjustments,
     acqUnitIds,
     currency,
+    tags = [],
   }) {
     this.createInvoiceViaApi({
       vendorId,
@@ -315,6 +322,7 @@ export default {
       adjustments,
       acqUnitIds,
       currency,
+      tags,
     }).then((resp) => {
       cy.wrap(resp).as('invoice');
       const { id: invoiceId, status: invoiceLineStatus } = resp;
@@ -1097,7 +1105,7 @@ export default {
   getSearchParamsMap(orderNumber, orderLine) {
     const searchParamsMap = new Map();
     searchParamsMap
-      .set('Keyword', orderNumber)
+      .set('Keyword', `${orderNumber}*`)
       .set('Contributor', orderLine.contributors[0].contributor)
       .set('PO line number', orderNumber.toString().concat('-1'))
       .set('Requester', orderLine.requester)
@@ -1215,6 +1223,18 @@ export default {
     cy.expect(
       invoiceResultsPane.find(HTML(including(RESULTS_PANE_CHOOSE_FILTER_MESSAGE))).exists(),
     );
+  },
+
+  clearAllFilters(options = {}) {
+    FiltersPane.clearAllFilters(invoiceFiltersSection, options);
+  },
+
+  filterByMultiSelectOptions(filterLabel, options) {
+    FiltersPane.filterByMultiSelectOptions(invoiceFiltersSection, filterLabel, options);
+  },
+
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, tags);
   },
 
   editInvoiceLine: () => {
@@ -1398,7 +1418,7 @@ export default {
     ]);
   },
 
-  selectButchGroupFilter: (batchGroup) => {
+  selectBatchGroupFilter: (batchGroup) => {
     cy.do([
       invoiceFiltersSection
         .find(batchGroupFilterSection)
@@ -1722,5 +1742,28 @@ export default {
         ],
       }),
     );
+  },
+
+  /* INTERCEPTORS */
+
+  interceptPostInvoices() {
+    cy.intercept('POST', '/invoice/invoices*').as('waiterForInvoicesPostQueryCompleted');
+  },
+  waitForInvoicesPostQueryCompleted() {
+    return cy.wait('@waiterForInvoicesPostQueryCompleted');
+  },
+
+  interceptGetInvoices() {
+    cy.intercept('GET', '/invoice/invoices*').as('waiterForInvoicesQueryCompleted');
+  },
+  waitForInvoiceQueryCompleted() {
+    cy.wait('@waiterForInvoicesQueryCompleted');
+  },
+
+  interceptGetBatchGroups() {
+    cy.intercept('GET', '/batch-groups*').as('waiterForBatchGroupsQueryCompleted');
+  },
+  waitForBatchGroupsQueryCompleted() {
+    cy.wait('@waiterForBatchGroupsQueryCompleted');
   },
 };

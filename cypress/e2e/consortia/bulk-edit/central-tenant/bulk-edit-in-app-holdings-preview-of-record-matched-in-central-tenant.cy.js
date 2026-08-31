@@ -417,8 +417,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C476787 Verify "Preview of record matched" when uploading valid Holdings identifiers in Central tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C476787'] },
+        'C476787 Verify "Preview of record matched" when uploading valid Holdings identifiers in Central tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C476787'] },
         () => {
           // Upload and verify Holdings UUIDs
           BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Holdings', 'Holdings UUIDs');

@@ -143,7 +143,7 @@ describe('Inventory', () => {
             InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C402319');
             cy.getLocations({
               limit: 1,
-              query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
+              query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
             }).then((loc) => {
               locations[Affiliations.College] = loc;
             });
@@ -158,7 +158,7 @@ describe('Inventory', () => {
             InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C402319');
             cy.getLocations({
               limit: 1,
-              query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
+              query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
             }).then((loc) => {
               locations[Affiliations.University] = loc;
             });
@@ -274,8 +274,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C402319 Use "Held by" facet for browse call numbers from "Central" tenant via "Call numbers (all)" option (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C402319'] },
+        'C402319 Use "Held by" facet for browse call numbers from "Central" tenant via "Call numbers (all)" option (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C402319'] },
         () => {
           const allVisibleCallNumbers = instancesData
             .filter((record) => record.affiliation === Affiliations.Consortia)

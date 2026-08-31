@@ -23,7 +23,7 @@ import deleteModal from './tenant/modals/deleteModal';
 export const startRowIndex = 2;
 export const rootPane = Section({ id: 'controlled-vocab-pane' });
 export const paneContent = HTML({ id: 'controlled-vocab-pane-content' });
-export const addButton = rootPane.find(Button('+ New'));
+export const addButton = rootPane.find(Button('New'));
 export const table = rootPane.find(EditableList());
 export const notesNavItem = NavListItem('Notes');
 

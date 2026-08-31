@@ -90,8 +90,8 @@ describe('Lists', () => {
     });
 
     it(
-      "C740199 Empty values are returned with the 'not in' operator for the String types (corsair)",
-      { tags: ['criticalPath', 'corsair', 'C740199'] },
+      "C740199 Empty values are returned with the 'not in' operator for the String types (athena)",
+      { tags: ['criticalPath', 'athena', 'C740199'] },
       () => {
         // Step 1: Create new list and open query builder
         Lists.openNewListPane();

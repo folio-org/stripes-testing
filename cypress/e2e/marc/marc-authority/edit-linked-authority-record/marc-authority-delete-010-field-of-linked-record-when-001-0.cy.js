@@ -140,8 +140,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C374163 Delete "010" field of linked "MARC Authority" record when "001" = "$0" (spitfire) (TaaS)',
-        { tags: ['extendedPath', 'spitfire', 'C374163'] },
+        'C374163 Delete "010" field of linked "MARC Authority" record when "001" = "$0" (promin) (TaaS)',
+        { tags: ['extendedPath', 'promin', 'C374163'] },
         () => {
           MarcAuthorities.searchByParameter(testData.searchOption, testData.searchValue);
 

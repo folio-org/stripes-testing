@@ -41,15 +41,14 @@ describe('Patron notices', () => {
     });
 
     it(
-      'C387439 C367968 Add metadata info to view of Patron Notice Templates scenario 1,4,5 (volaris)',
-      { tags: ['smoke', 'volaris', 'C387439'] },
+      'C387439 C367968 Add metadata info to view of Patron Notice Templates scenario 1,4,5 (vega)',
+      { tags: ['smoke', 'vega', 'C387439'] },
       () => {
         NewNoticePolicyTemplate.openToSide({ name: noticeTemplate.name });
         NewNoticePolicyTemplate.checkAfterSaving({
           name: noticeTemplate.name,
           description: noticeTemplate.description,
           category: NOTICE_CATEGORIES.loan,
-          subject: 'Email subject: Loan',
           body: 'Email body {{item.title}}',
         });
         NewNoticePolicyTemplate.editTemplate(noticeTemplate.name);
@@ -59,7 +58,6 @@ describe('Patron notices', () => {
           name: noticeTemplate.name,
           description: noticeTemplate.description,
           category: NOTICE_CATEGORIES.loan,
-          subject: 'Email subject: Loan',
           body: newBodytext,
         });
         cy.wait(2000);
@@ -69,8 +67,8 @@ describe('Patron notices', () => {
     );
 
     it(
-      'C387440 Add metadata info to view of Patron Notice Templates scenario 2/3 (volaris)',
-      { tags: ['extendedPath', 'volaris', 'C387440'] },
+      'C387440 Add metadata info to view of Patron Notice Templates scenario 2/3 (vega)',
+      { tags: ['extendedPath', 'vega', 'C387440'] },
       () => {
         const { lastName, firstName, middleName } = userData.personal;
         const creator = `${lastName}, ${firstName} ${middleName}`;

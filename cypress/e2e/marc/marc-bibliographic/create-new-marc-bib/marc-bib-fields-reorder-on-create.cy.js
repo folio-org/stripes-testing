@@ -99,8 +99,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C407733 Verify that all fields (except "LDR", "005", "999") can be moved and saved when creating a new "MARC bibliographic" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C407733'] },
+        'C407733 Verify that all fields (except "LDR", "005", "999") can be moved and saved when creating a new "MARC bibliographic" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C407733'] },
         () => {
           // Step 1: Open New MARC bib record editor
           InventoryInstance.newMarcBibRecord();

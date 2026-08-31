@@ -58,8 +58,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C374153 Verify change exported file names to the hyperlink color -- CQL (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C374153'] },
+      'C374153 Verify change exported file names to the hyperlink color -- CQL (athena)',
+      { tags: ['extendedPath', 'athena', 'C374153'] },
       () => {
         // Step 1: Go to "Inventory" app
         InventorySearchAndFilter.verifySearchAndFilterPane();

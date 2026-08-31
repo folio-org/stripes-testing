@@ -197,8 +197,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566175 Verify "Replace with" action for Items status in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566175'] },
+        'C566175 Verify "Replace with" action for Items status in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566175'] },
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();

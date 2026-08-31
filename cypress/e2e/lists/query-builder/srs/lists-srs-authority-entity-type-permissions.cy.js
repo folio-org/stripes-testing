@@ -1,6 +1,7 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import { Lists } from '../../../../support/fragments/lists/lists';
-import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import Users from '../../../../support/fragments/users/users';
 
 describe('Lists', () => {
@@ -23,17 +24,17 @@ describe('Lists', () => {
     });
 
     it(
-      'C788714 Verify SRS Authority entity type availability via API with correct permissions (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C788714'] },
+      'C788714 Verify SRS Authority entity type availability via API with correct permissions (athena)',
+      { tags: ['extendedPath', 'athena', 'C788714'] },
       () => {
         // #1 Login to the FOLIO using the user from pre-condition
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.listsPath,
-          waiter: Lists.waitLoading,
-        });
+        cy.login(userData.username, userData.password);
+        TopMenuNavigation.verifyAppButtonShown(APPLICATION_NAMES.LISTS);
+        TopMenuNavigation.verifyAppButtonShown(APPLICATION_NAMES.MARC_AUTHORITY);
 
         // #2 Click on "Lists" app
-        Lists.verifyNoEntityTypePermissionsWarning();
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.LISTS);
+        Lists.waitLoading();
 
         // #3 Send GET {Base_URL}/entity-types?includeAll=true
         Lists.getAllEntityTypesIncludeAllViaApi().then((response) => {
@@ -42,9 +43,7 @@ describe('Lists', () => {
           const { entityTypes } = response.body;
 
           // #4 Search for the entity type "SRS Authority"
-          const srsAuthority = entityTypes.find(
-            (et) => et.label === 'SRS Authority',
-          );
+          const srsAuthority = entityTypes.find((et) => et.label === 'SRS Authority');
           expect(srsAuthority.label).to.equal('SRS Authority');
           expect(srsAuthority.crossTenantQueriesEnabled).to.equal(false);
           expect(srsAuthority.missingPermissions).to.be.equal(null);

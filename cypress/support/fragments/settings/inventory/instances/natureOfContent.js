@@ -48,7 +48,10 @@ export default {
     failOnStatusCode: !ignoreErrors,
   }),
   verifyConsortiumNatureOfContentInTheList({ name, source = 'consortium', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({
+      content: including(name),
+      isContainer: false,
+    });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),

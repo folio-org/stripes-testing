@@ -85,8 +85,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423534 Create a new MARC authority record with invalid prefix ("Local" authority file and "LCCN" field without prefix) when "LCCN structure validation" is disabled (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423534'] },
+        'C423534 Create a new MARC authority record with invalid prefix ("Local" authority file and "LCCN" field without prefix) when "LCCN structure validation" is disabled (promin)',
+        { tags: ['extendedPath', 'promin', 'C423534'] },
         () => {
           // Step 1: Open new MARC authority record form
           MarcAuthorities.clickActionsAndNewAuthorityButton();

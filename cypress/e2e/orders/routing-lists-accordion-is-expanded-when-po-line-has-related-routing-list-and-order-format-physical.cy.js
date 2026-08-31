@@ -13,14 +13,15 @@ import ReceivingDetails from '../../support/fragments/receiving/receivingDetails
 import RoutingListDetails from '../../support/fragments/orders/routingLists/routingListDetails';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
 import { OrderDetails, OrderLineDetails } from '../../support/fragments/orders';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  APPLICATION_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_LINE_ACCORDION_NAMES,
   ORDER_STATUSES,
-  ORDER_TYPES,
   POL_CREATE_INVENTORY_SETTINGS,
   RECEIVING_TITLE_ACCORDION_NAMES,
 } from '../../support/constants';
@@ -50,12 +51,10 @@ describe('Orders', () => {
     acquisitionMethodId,
   ) => {
     const order = {
-      ...NewOrder.getDefaultOngoingOrder,
-      orderType: ORDER_TYPES.ONGOING,
-      ongoing: { isSubscription: false, manualRenewal: false },
-      approved: true,
-      reEncumber: true,
-      vendor: vendorId,
+      ...NewOrder.getDefaultOngoingOrder({
+        vendorId,
+        ongoing: { isSubscription: false, manualRenewal: false },
+      }),
     };
 
     return Orders.createOrderViaApi(order).then((orderResponse) => {
@@ -157,6 +156,7 @@ describe('Orders', () => {
           Permissions.uiNotesItemView.gui,
           Permissions.uiSettingsOrdersCanViewAllSettings.gui,
           Permissions.uiReceivingView.gui,
+          Permissions.uiOrganizationsView.gui,
         ]);
       })
       .then((userProperties) => {
@@ -176,9 +176,10 @@ describe('Orders', () => {
           workflowStatus: ORDER_STATUSES.PENDING,
         },
         true,
+        false,
       ).then(() => {
         RoutingListDetails.deleteRoutingListViaApi(testData.order.routingList.id);
-        Orders.deleteOrderViaApi(testData.order.order.id);
+        Orders.deleteOrderViaApi(testData.order.order.id, false);
         NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
           testData.location.institutionId,
           testData.location.campusId,
@@ -212,6 +213,13 @@ describe('Orders', () => {
           users: [`${testData.routingUser.lastName} ${testData.routingUser.firstName}`],
         },
       ]);
+      OrderLineDetails.openRoutingList(testData.order.routingList.name);
+      RoutingListDetails.checkRoutingListNameDetails(testData.order.routingList.name);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATIONS);
+      Organizations.waitLoading();
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
+      RoutingListDetails.checkRoutingListNameDetails(testData.order.routingList.name);
+      RoutingListDetails.closeRoutingListDetails();
       OrderLines.receiveOrderLinesViaActions();
       Receiving.selectFromResultsList(testData.order.orderLine.titleOrPackage);
       Receiving.verifyRoutingListWarning();
@@ -221,6 +229,21 @@ describe('Orders', () => {
         targetAccordionLabel: RECEIVING_TITLE_ACCORDION_NAMES.ROUTING_LISTS,
         nextAccordionLabel: RECEIVING_TITLE_ACCORDION_NAMES.UNRECEIVABLE,
       });
+      ReceivingDetails.checkRoutingListTableContent([
+        {
+          name: testData.order.routingList.name,
+          notes: testData.order.routingList.notes,
+          users: [`${testData.routingUser.lastName} ${testData.routingUser.firstName}`],
+        },
+      ]);
+      Receiving.openRoutingList(testData.order.routingList.name);
+      RoutingListDetails.checkRoutingListNameDetails(testData.order.routingList.name);
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATIONS);
+      Organizations.waitLoading();
+      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.RECEIVING);
+      RoutingListDetails.checkRoutingListNameDetails(testData.order.routingList.name);
+      RoutingListDetails.closeRoutingListDetails();
+      ReceivingDetails.waitLoading();
       ReceivingDetails.checkRoutingListTableContent([
         {
           name: testData.order.routingList.name,

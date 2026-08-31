@@ -93,8 +93,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C605892 Keep user\'s focus on last edited(selected) field when user clicks on the "Save & keep editing" on "Edit MARC authority record" pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C605892'] },
+        'C605892 Keep user\'s focus on last edited(selected) field when user clicks on the "Save & keep editing" on "Edit MARC authority record" pane (promin)',
+        { tags: ['extendedPath', 'promin', 'C605892'] },
         () => {
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.selectTitle(testData.authorityHeading);

@@ -111,7 +111,7 @@ describe('eHoldings', () => {
 
     it(
       'C350749 Edit title custom label for Streaming Media then Mixed Content package (eHoldings > Package)',
-      { tags: ['extendedPath', 'spitfire', 'C350749'] },
+      { tags: ['extendedPath', 'promin', 'C350749'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.eholdingsPath,

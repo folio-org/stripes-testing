@@ -52,8 +52,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C360947 Verify search by Subject with quotes (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C360947'] },
+      'C360947 Verify search by Subject with quotes (promin)',
+      { tags: ['extendedPath', 'promin', 'C360947'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(user.username, user.password, {

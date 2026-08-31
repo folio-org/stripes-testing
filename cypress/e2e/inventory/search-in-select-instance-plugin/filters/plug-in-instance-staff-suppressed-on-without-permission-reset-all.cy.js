@@ -105,8 +105,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C446114 Find Instance plugin | Staff suppressed records still displays when user without permission clicks "Reset all" button (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C446114'] },
+        'C446114 Find Instance plugin | Staff suppressed records still displays when user without permission clicks "Reset all" button (promin)',
+        { tags: ['extendedPath', 'promin', 'C446114'] },
         () => {
           InventorySearchAndFilter.verifyAccordionExistance(staffSuppressAccordionName, false);
 

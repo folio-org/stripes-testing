@@ -44,13 +44,6 @@ export default {
     cy.wait('@waiterForCustomFieldsQueryCompleted');
   },
 
-  interceptGetAcquisitionUnits() {
-    cy.intercept('GET', '/acquisition-units/units*').as('waiterForAcquisitionUnitsQueryCompleted');
-  },
-  waitForAcquisitionUnitsQueryCompleted() {
-    cy.wait('@waiterForAcquisitionUnitsQueryCompleted');
-  },
-
   interceptGetPrefixes() {
     cy.intercept('GET', '/orders/configuration/prefixes*').as('waiterForPrefixesQueryCompleted');
   },
@@ -118,5 +111,19 @@ export default {
   },
   waitForOrdersStorageSettingsQueryCompleted() {
     cy.wait('@waiterForOrdersStorageSettingsQueryCompleted');
+  },
+
+  interceptGetLocations() {
+    cy.intercept('GET', '/locations*').as('waiterForGetLocationsQueryCompleted');
+  },
+  waitForGetLocationsQueryCompleted() {
+    cy.wait('@waiterForGetLocationsQueryCompleted');
+  },
+
+  interceptGetHoldings() {
+    cy.intercept('GET', '/holdings-storage/holdings*').as('waiterForGetHoldingsQueryCompleted');
+  },
+  waitForGetHoldingsQueryCompleted() {
+    cy.wait('@waiterForGetHoldingsQueryCompleted');
   },
 };

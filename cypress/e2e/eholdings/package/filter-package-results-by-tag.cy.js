@@ -40,8 +40,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C1301 Filter package results by a tag (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C1301'] },
+      'C1301 Filter package results by a tag (promin)',
+      { tags: ['extendedPath', 'promin', 'C1301'] },
       () => {
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testPackage.data.attributes.name);

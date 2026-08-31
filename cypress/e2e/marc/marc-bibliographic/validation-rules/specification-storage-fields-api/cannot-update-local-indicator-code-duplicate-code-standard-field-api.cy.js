@@ -114,8 +114,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Local Indicator Co
   });
 
   it(
-    'C502963 Cannot update Local Indicator Code of Standard field with duplicate for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C502963', 'spitfire'] },
+    'C502963 Cannot update Local Indicator Code of Standard field with duplicate for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C502963', 'promin'] },
     () => {
       // Ensure token is set for the user before API calls
       cy.getUserToken(user.username, user.password);

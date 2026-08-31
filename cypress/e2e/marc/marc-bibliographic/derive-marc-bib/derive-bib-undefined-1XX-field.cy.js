@@ -62,8 +62,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C519974 Derive MARC bib record with undefined 1XX field when Undefined rules are enabled (spitfire)',
-        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C519974'] },
+        'C519974 Derive MARC bib record with undefined 1XX field when Undefined rules are enabled (promin)',
+        { tags: ['extendedPathFlaky', 'promin', 'nonParallel', 'C519974'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

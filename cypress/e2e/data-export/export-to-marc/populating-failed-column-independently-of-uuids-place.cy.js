@@ -152,8 +152,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C422011 Populating "Failed" column independently of the UUIDs place in a file (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C422011'] },
+      'C422011 Populating "Failed" column independently of the UUIDs place in a file (athena)',
+      { tags: ['extendedPath', 'athena', 'C422011'] },
       () => {
         const totalRecords = 5;
         const exportedRecords = 4;

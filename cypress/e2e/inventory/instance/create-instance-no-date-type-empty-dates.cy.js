@@ -31,8 +31,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C566515 Create Instance without selected "Date type" and with empty "Date 1", "Date 2" fields (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C566515'] },
+      'C566515 Create Instance without selected "Date type" and with empty "Date 1", "Date 2" fields (promin)',
+      { tags: ['extendedPath', 'promin', 'C566515'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
 

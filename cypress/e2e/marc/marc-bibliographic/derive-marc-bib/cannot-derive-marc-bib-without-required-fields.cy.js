@@ -120,8 +120,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C514969 Cannot derive MARC bib record without required fields (Standard and Local) (spitfire)',
-        { tags: ['criticalPathFlaky', 'spitfire', 'C514969', 'nonParallel'] },
+        'C514969 Cannot derive MARC bib record without required fields (Standard and Local) (promin)',
+        { tags: ['criticalPathFlaky', 'promin', 'C514969', 'nonParallel'] },
         () => {
           InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();

@@ -32,8 +32,8 @@ describe('Users', () => {
     });
 
     it(
-      "C451602 Username uniqueness checking using whitespaces when editing user's profile (volaris)",
-      { tags: ['extendedPath', 'volaris', 'C451602'] },
+      "C451602 Username uniqueness checking using whitespaces when editing user's profile (vega)",
+      { tags: ['extendedPath', 'vega', 'C451602'] },
       () => {
         // Step 1: User A opens details pane of an active user (User A's own record)
         UsersSearchPane.searchByUsername(testData.userA.username);

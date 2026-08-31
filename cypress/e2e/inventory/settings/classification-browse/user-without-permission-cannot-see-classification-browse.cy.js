@@ -27,8 +27,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C451640 User without permission "Settings (Inventory): Configure classification browse" cannot see "Settings >> Inventory >> Classification browse" page (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C451640'] },
+        'C451640 User without permission "Settings (Inventory): Configure classification browse" cannot see "Settings >> Inventory >> Classification browse" page (promin)',
+        { tags: ['extendedPath', 'promin', 'C451640'] },
         () => {
           cy.login(testUser.username, testUser.password);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);

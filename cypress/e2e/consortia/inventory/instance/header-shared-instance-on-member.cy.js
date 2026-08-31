@@ -48,8 +48,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C404384 (CONSORTIA) Verify the header of a shared Instance on the Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C404384'] },
+        'C404384 (CONSORTIA) Verify the header of a shared Instance on the Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C404384'] },
         () => {
           InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.clearDefaultHeldbyFilter();

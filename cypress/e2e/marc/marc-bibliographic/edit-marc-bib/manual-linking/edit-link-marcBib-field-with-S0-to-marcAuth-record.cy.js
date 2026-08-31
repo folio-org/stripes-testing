@@ -93,8 +93,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C365596 Link "MARC Bib" field with "$0" subfield matched to "MARC authority" record. "Authority source file" value created by user (700 field to 100) (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C365596'] },
+          'C365596 Link "MARC Bib" field with "$0" subfield matched to "MARC authority" record. "Authority source file" value created by user (700 field to 100) (promin)',
+          { tags: ['extendedPath', 'promin', 'C365596'] },
           () => {
             cy.getAdminToken();
             MarcAuthority.createAuthoritySource(testData.authoritySourceFile)

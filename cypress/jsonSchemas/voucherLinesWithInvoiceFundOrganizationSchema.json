@@ -129,7 +129,7 @@
             "type": ["string", "null"]
           },
           "invoice.acquisition_unit": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "invoice.acq_unit_ids": {
             "type": ["array", "null"],

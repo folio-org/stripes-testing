@@ -16,8 +16,14 @@ import {
   including,
   matching,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  ORDER_AND_ORDER_LINE_BUTTONS,
+  POLINE_DETAILS_FIELDS,
+} from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
+import AreYouSureModal from './modals/areYouSureModal';
 import SelectInstanceModal from './modals/selectInstanceModal';
 import SelectLocationModal from './modals/selectLocationModal';
 import OrderStates from './orderStates';
@@ -34,9 +40,11 @@ const fundDistributionDetailsSection = orderLineEditFormRoot.find(
 const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
 const automaticExportCheckboxName = 'automaticExport';
 const automaticExportInfoIconSelector = '[data-test-info-popover-trigger]';
-const cancelButton = Button('Cancel');
-const saveButton = Button('Save & close');
-const saveAndOpenOrderButton = Button('Save & open order');
+const cancelButton = Button(COMMON_BUTTON_LABELS.CANCEL);
+const saveButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_CLOSE);
+const saveAndOpenOrderButton = Button(ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_OPEN);
+const saveAndKeepEditingButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING);
+const saveAndCreateAnotherButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_CREATE_ANOTHER);
 const publicationDate = TextField({ name: 'publicationDate' });
 const publicher = TextField({ name: 'publisher' });
 const edition = TextField({ name: 'edition' });
@@ -49,6 +57,7 @@ const itemDetailsFields = {
 };
 
 const orderLineFields = {
+  acquisitionMethod: orderLineDetailsSection.find(Selection({ name: 'acquisitionMethod' })),
   orderFormat: orderLineDetailsSection.find(Select({ name: 'orderFormat' })),
   receiptStatus: orderLineDetailsSection.find(Select({ name: 'receiptStatus' })),
   paymentStatus: orderLineDetailsSection.find(Select({ name: 'paymentStatus' })),
@@ -75,10 +84,16 @@ const costDetailsFields = {
 };
 
 const buttons = {
-  Cancel: cancelButton,
-  'Save & close': saveButton,
-  'Save & open order': saveAndOpenOrderButton,
+  [COMMON_BUTTON_LABELS.CANCEL]: cancelButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_CLOSE]: saveButton,
+  [ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_OPEN]: saveAndOpenOrderButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING]: saveAndKeepEditingButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_CREATE_ANOTHER]: saveAndCreateAnotherButton,
 };
+const requiredFields = [
+  { fieldName: POLINE_DETAILS_FIELDS.ORDER_FORMAT, field: orderLineFields.orderFormat },
+  { fieldName: POLINE_DETAILS_FIELDS.ACQUISITION_METHOD, field: orderLineFields.acquisitionMethod },
+];
 const disabledButtons = {
   Title: itemDetailsFields.title,
   'Publication date': publicationDate,
@@ -427,6 +442,37 @@ export default {
     // wait for changes to be applied
     cy.wait(2000);
   },
+
+  cancelWithUnsavedChanges({ keepEditing = false } = {}) {
+    this.clickCancelButton(true);
+    AreYouSureModal.verifyAreYouSureForm(true);
+
+    if (keepEditing) {
+      AreYouSureModal.clickKeepEditingButton();
+      cy.expect(orderLineEditFormRoot.exists());
+    } else {
+      AreYouSureModal.clickCloseWithoutSavingButton();
+      AreYouSureModal.verifyAreYouSureForm(false);
+      cy.expect(orderLineEditFormRoot.absent());
+    }
+  },
+  clickSaveAndKeepEditingButton({ isSaved = true, orderLineCreated = false } = {}) {
+    cy.expect(saveAndKeepEditingButton.has({ disabled: false }));
+    cy.do(saveAndKeepEditingButton.click());
+    this.waitLoading();
+
+    if (isSaved) {
+      InteractorsTools.checkCalloutMessage(
+        matching(
+          new RegExp(
+            orderLineCreated
+              ? OrderStates.orderLineCreatedSuccessfully
+              : OrderStates.orderLineUpdatedSuccessfully,
+          ),
+        ),
+      );
+    }
+  },
   clickSaveAndOpenOrderButton({ orderOpened = true, orderLineCreated = true } = {}) {
     cy.expect(saveAndOpenOrderButton.has({ disabled: false }));
     cy.do(saveAndOpenOrderButton.click());
@@ -481,5 +527,19 @@ export default {
         ),
       }),
     );
+  },
+
+  checkButtonsNotDisplayed(buttonsNotDisplayed = []) {
+    buttonsNotDisplayed.forEach((label) => {
+      cy.expect(buttons[label].absent());
+    });
+  },
+
+  checkRequiredFields(fields = []) {
+    fields.forEach((field) => {
+      const requiredFieldsConfig = requiredFields.find((f) => f.fieldName === field);
+      if (!requiredFieldsConfig) throw new Error(`Unknown field: ${field}`);
+      cy.expect(requiredFieldsConfig.field.has({ error: 'Required!' }));
+    });
   },
 };

@@ -56,7 +56,7 @@ describe('Lists', () => {
                   userData = userProperties;
                 });
             })
-            .then(() => Lists.waitForCustomFieldToBeQueryable(recordType, testData.customFieldLabel));
+            .then(() => Lists.waitForCustomFieldToBeQueryable(testData.customFieldLabel, recordType));
 
           cy.createTempUser([]).then((user) => {
             loginUser = user;
@@ -86,8 +86,8 @@ describe('Lists', () => {
         });
 
         it(
-          'C648488 Verify that the custom field with a type Radio button is queryable (corsair)',
-          { tags: ['criticalPath', 'corsair', 'C648488'] },
+          'C648488 Verify that the custom field with a type Radio button is queryable (athena)',
+          { tags: ['criticalPath', 'athena', 'C648488'] },
           () => {
             listName = getTestEntityValue('C648488_List');
 

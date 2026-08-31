@@ -65,6 +65,7 @@ export default HTML.extend('selection')
       return false;
     },
     focused: (el) => !!el.querySelector('button:focused'),
+    disabled: (el) => el.querySelector('button[class^=selectionControl-]').disabled,
   })
   .actions({
     open: ({ perform }) => perform(toggle),

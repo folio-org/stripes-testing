@@ -152,8 +152,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C407654 Update local linked "MARC Authority" record in member tenant (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'C407654'] },
+        'C407654 Update local linked "MARC Authority" record in member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C407654'] },
         () => {
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.searchBy(testData.authoritySearchOption, testData.authorityTitle);

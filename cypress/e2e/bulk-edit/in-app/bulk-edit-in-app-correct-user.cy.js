@@ -77,8 +77,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C380393 Verify that bulk edit jobs run by correct user (firebird)',
-        { tags: ['extendedPath', 'firebird', 'C380393'] },
+        'C380393 Verify that bulk edit jobs run by correct user (athena)',
+        { tags: ['extendedPath', 'athena', 'C380393'] },
         () => {
           // Repeat steps 1-11 several times
           for (let i = 0; i < 3; i++) {

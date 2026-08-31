@@ -132,8 +132,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476834 "Select Instance" plugin | Filter "Instance" records by "Statistical code" facet on "Item" tab (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476834'] },
+        'C476834 "Select Instance" plugin | Filter "Instance" records by "Statistical code" facet on "Item" tab (promin)',
+        { tags: ['extendedPath', 'promin', 'C476834'] },
         () => {
           InventorySearchAndFilter.verifyAccordionExistance(statisticalCodeAccordionName, true);
           InventorySearchAndFilter.toggleAccordionByName(statisticalCodeAccordionName);

@@ -87,8 +87,8 @@ describe('Check out', () => {
   });
 
   it(
-    'C356847 Verify that "Note for patron" pop-up for two patrons on a row (don\'t use "End session" button) (spitfire)',
-    { tags: ['extendedPath', 'spitfire', 'C356847'] },
+    'C356847 Verify that "Note for patron" pop-up for two patrons on a row (don\'t use "End session" button) (promin)',
+    { tags: ['extendedPath', 'promin', 'C356847'] },
     () => {
       // Login as User A and navigate to Users app
       cy.login(testData.userA.username, testData.userA.password, {

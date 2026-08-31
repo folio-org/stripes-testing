@@ -29,8 +29,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C350707 Check Query parameters Browse subjects (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C350707'] },
+      'C350707 Check Query parameters Browse subjects (promin)',
+      { tags: ['extendedPath', 'promin', 'C350707'] },
       () => {
         InventorySearchAndFilter.selectBrowseSubjects();
         cy.intercept('GET', 'browse/subjects/instances?highlightMatch=true*').as(

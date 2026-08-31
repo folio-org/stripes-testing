@@ -58,8 +58,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C356838 Verify that entered special characters in "MultiSelection component" ("Type of heading" filter) doesn\'t crash the app (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C356838'] },
+          'C356838 Verify that entered special characters in "MultiSelection component" ("Type of heading" filter) doesn\'t crash the app (promin)',
+          { tags: ['extendedPath', 'promin', 'C356838'] },
           () => {
             // Steps 1-2: Search for all records
             MarcAuthorities.searchBeats(testData.searchQuery);

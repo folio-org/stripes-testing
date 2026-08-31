@@ -135,8 +135,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C651578 Pagination of "Version history" with Non-default value in Item (folijet)',
-        { tags: ['criticalPath', 'folijet', 'C651578'] },
+        'C651578 Pagination of "Version history" with Non-default value in Item (promin)',
+        { tags: ['criticalPath', 'promin', 'C651578'] },
         () => {
           // Step 1: Open Item details from the Holdings accordion.
           openItemFromInventory();

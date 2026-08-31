@@ -47,8 +47,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C367920 Export of "Title+Package" record which has filled only "Managed Coverage" field (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C367920'] },
+      'C367920 Export of "Title+Package" record which has filled only "Managed Coverage" field (promin)',
+      { tags: ['extendedPath', 'promin', 'C367920'] },
       () => {
         EHoldingsResourceView.verifyNoCustomCoverageDates();
 

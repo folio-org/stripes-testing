@@ -59,8 +59,8 @@ describe(
         });
 
         it(
-          'C375244 Verify generated Logs files for Users In app -- only valid (firebird)',
-          { tags: ['smoke', 'firebird', 'C375244'] },
+          'C375244 Verify generated Logs files for Users In app -- only valid (athena)',
+          { tags: ['smoke', 'athena', 'C375244'] },
           () => {
             BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User Barcodes');
             BulkEditSearchPane.uploadFile(validUserBarcodesFileName);

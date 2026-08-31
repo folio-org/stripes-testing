@@ -76,8 +76,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476822 "Update ownership" option is not displayed on Holdings menu if user don\'t have affiliation for second Member tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C476822'] },
+        'C476822 "Update ownership" option is not displayed on Holdings menu if user don\'t have affiliation for second Member tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C476822'] },
         () => {
           InventoryInstances.searchByTitle(testData.instance.instanceId);
           InventoryInstances.selectInstance();

@@ -133,8 +133,8 @@ describe('Citation: Supplementary content (008/24-27,31) / Illustrative Content 
   });
 
   it(
-    'C829885 Marigold - Supplementary content / Illustrative Content - 008 fields (citation)',
-    { tags: ['criticalPath', 'citation', 'C829885', 'marigold'] },
+    'C829885 Marigold - Supplementary content / Illustrative Content - 008 fields (promin)',
+    { tags: ['criticalPath', 'promin', 'C829885', 'marigold'] },
     () => {
       // Import MARC bib into Marigold
       InventoryInstances.searchByTitle(testData.uniqueMarcTitle);

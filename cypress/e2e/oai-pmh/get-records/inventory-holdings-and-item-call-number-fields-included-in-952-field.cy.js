@@ -99,8 +99,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C386504 GetRecord: Inventory - Verify that Holdings and Item "Call number" fields are properly included in "952" field of response (subfields "e", "f", "g", "h", "n") (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C386504', 'nonParallel'] },
+      'C386504 GetRecord: Inventory - Verify that Holdings and Item "Call number" fields are properly included in "952" field of response (subfields "e", "f", "g", "h", "n") (athena)',
+      { tags: ['extendedPath', 'athena', 'C386504', 'nonParallel'] },
       () => {
         // Step 1: Instance UUID is already available in folioInstance.id
         InventorySearchAndFilter.searchInstanceByTitle(folioInstance.title);

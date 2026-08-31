@@ -140,8 +140,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C435910 Verify that MARC bib record could be successfully saved with empty subfield code in linked field (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C435910'] },
+          'C435910 Verify that MARC bib record could be successfully saved with empty subfield code in linked field (promin)',
+          { tags: ['extendedPath', 'promin', 'C435910'] },
           () => {
             InventoryInstances.searchByTitle(createdInstanceId);
             InventoryInstances.selectInstanceById(createdInstanceId);

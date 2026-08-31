@@ -78,8 +78,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C584450 Verify that "Subject" search option uses "all" search operator ("Discrimination" case) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C584450'] },
+      'C584450 Verify that "Subject" search option uses "all" search operator ("Discrimination" case) (promin)',
+      { tags: ['criticalPath', 'promin', 'C584450'] },
       () => {
         // execute search by "Keyword" option
         testData.searchOptions.forEach((option) => {

@@ -12,6 +12,7 @@ export default HTML.extend('icon')
     shared: (el) => {
       return Array.from(el.classList).some((className) => className.startsWith('sharedIcon'));
     },
+    src: (el) => el.querySelector('img')?.src || '',
   })
   .actions({
     hoverMouse: ({ perform }) => perform((el) => el.dispatchEvent(new Event('mouseover'))),

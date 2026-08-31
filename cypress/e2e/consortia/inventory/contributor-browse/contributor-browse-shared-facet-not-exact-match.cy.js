@@ -181,8 +181,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C402374 Apply "Shared" facet when Browse for different contributors existing in different tenants (not exact match) (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C402374'] },
+        'C402374 Apply "Shared" facet when Browse for different contributors existing in different tenants (not exact match) (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C402374'] },
         () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.selectBrowseOption(contributorBrowseoption);

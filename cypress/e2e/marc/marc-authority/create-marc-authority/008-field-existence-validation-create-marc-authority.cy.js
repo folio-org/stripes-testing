@@ -47,8 +47,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423493 "008" field existence validation in "Create a new MARC authority record" pane (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C423493'] },
+        'C423493 "008" field existence validation in "Create a new MARC authority record" pane (promin)',
+        { tags: ['extendedPath', 'promin', 'C423493'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.waitLoading();

@@ -50,7 +50,6 @@ describe('MARC', () => {
         cy.getAdminToken();
         getBibliographicSpec().then((bibSpec) => {
           specId = bibSpec.id;
-          cy.syncSpecifications(specId);
         });
       });
 
@@ -64,8 +63,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C552357 Cannot update MARC bib record with multiple not-repeatable "Local" fields (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C552357', 'nonParallel'] },
+        'C552357 Cannot update MARC bib record with multiple not-repeatable "Local" fields (promin)',
+        { tags: ['criticalPath', 'promin', 'C552357', 'nonParallel'] },
         () => {
           cy.then(() => {
             // Create user and MARC bib FIRST (before setting up validation rules)

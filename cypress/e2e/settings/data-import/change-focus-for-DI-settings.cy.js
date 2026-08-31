@@ -23,10 +23,9 @@ describe('Data Import', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    // bug report https://folio-org.atlassian.net/browse/STRIPES-1024
     it(
-      'C350008 Verify that "Data import" settings displays correctly with focus (folijet)',
-      { tags: ['extendedPathFlaky', 'folijet'] },
+      'C350008 Verify that "Data import" settings displays correctly with focus (promin)',
+      { tags: ['extendedPathFlaky', 'promin', 'C350008'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         SettingsPane.waitLoading();

@@ -49,8 +49,8 @@ describe(
       });
 
       it(
-        'C440079 Render preview after query executed (Users - Edit In app) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C440079'] },
+        'C440079 Render preview after query executed (Users - Edit In app) (athena)',
+        { tags: ['criticalPath', 'athena', 'C440079'] },
         () => {
           BulkEditSearchPane.openQuerySearch();
           BulkEditSearchPane.checkUsersRadio();
@@ -60,7 +60,7 @@ describe(
           QueryModal.clickSelectFieldButton();
           QueryModal.selectField(usersFieldValues.patronGroup);
           QueryModal.verifySelectedField(usersFieldValues.patronGroup);
-          QueryModal.verifyQueryAreaContent('(groups.group  )');
+          QueryModal.verifyQueryAreaContent('');
           QueryModal.verifyOperatorColumn();
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
           QueryModal.verifyQueryAreaContent('(groups.group == )');

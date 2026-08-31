@@ -65,8 +65,8 @@ describe('Inventory', () => {
       });
 
       it(
-        "C580276 (CONSORTIA) Local instance can't be shared with local subject source (consortia) (folijet)",
-        { tags: ['extendedPathECS', 'folijet', 'C580276'] },
+        "C580276 (CONSORTIA) Local instance can't be shared with local subject source (consortia) (promin)",
+        { tags: ['extendedPathECS', 'promin', 'C580276'] },
         () => {
           InventorySearchAndFilter.clearDefaultFilter('Held by');
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceId);

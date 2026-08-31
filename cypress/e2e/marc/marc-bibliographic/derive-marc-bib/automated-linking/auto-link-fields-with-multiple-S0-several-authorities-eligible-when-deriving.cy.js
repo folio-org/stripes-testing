@@ -245,8 +245,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C389491 Auto-linking fields with multiple "$0" when several "MARC Authority" records can be linked when deriving "MARC Bib" record (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C389491'] },
+          'C389491 Auto-linking fields with multiple "$0" when several "MARC Authority" records can be linked when deriving "MARC Bib" record (promin)',
+          { tags: ['extendedPath', 'promin', 'C389491'] },
           () => {
             // Step 1: Find and open detail view
             InventoryInstances.searchByTitle(createdInstanceId);

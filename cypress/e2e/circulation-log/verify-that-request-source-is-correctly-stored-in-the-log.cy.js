@@ -133,8 +133,8 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C358981 Verify that request source is correctly stored in the log (Volaris) (TaaS)',
-    { tags: ['extendedPath', 'volaris', 'C358981'] },
+    'C358981 Verify that request source is correctly stored in the log (vega) (TaaS)',
+    { tags: ['extendedPath', 'vega', 'C358981'] },
     () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.requestsPath,

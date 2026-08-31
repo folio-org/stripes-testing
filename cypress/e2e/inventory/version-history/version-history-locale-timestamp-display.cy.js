@@ -88,8 +88,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C692114 Verify that "Updated date/time stamp" is displayed based on current locale in "Version history" pane of "MARC bibliographic" record (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C692114'] },
+        'C692114 Verify that "Updated date/time stamp" is displayed based on current locale in "Version history" pane of "MARC bibliographic" record (promin)',
+        { tags: ['extendedPath', 'promin', 'C692114'] },
         () => {
           InventoryViewSource.verifyVersionHistoryButtonShown();
           InventoryViewSource.clickVersionHistoryButton();

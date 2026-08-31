@@ -150,8 +150,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C566161 Verify "Clear" action for Holdings location in Member tenant (consortia) (firebird)',
-        { tags: ['criticalPathECS', 'firebird', 'C566161'] },
+        'C566161 Verify "Clear" action for Holdings location in Member tenant (consortia) (athena)',
+        { tags: ['criticalPathECS', 'athena', 'C566161'] },
         () => {
           QueryModal.clickRunQuery();
           QueryModal.verifyClosed();

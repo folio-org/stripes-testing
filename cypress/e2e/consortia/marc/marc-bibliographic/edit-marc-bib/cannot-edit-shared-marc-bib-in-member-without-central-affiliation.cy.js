@@ -93,8 +93,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C405506 User without affiliation or edit permissions in Central tenant cannot edit shared "MARC Bib" in member tenant (consortia) (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C405506'] },
+          'C405506 User without affiliation or edit permissions in Central tenant cannot edit shared "MARC Bib" in member tenant (consortia) (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C405506'] },
           () => {
             InventorySearchAndFilter.clearDefaultFilter(heldByAccordionName);
             InventoryInstances.searchByTitle(createdInstanceId);

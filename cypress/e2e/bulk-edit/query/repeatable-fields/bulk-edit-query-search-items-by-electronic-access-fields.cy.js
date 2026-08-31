@@ -253,8 +253,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C813676 Search items by Electronic access fields (firebird)',
-        { tags: ['smoke', 'firebird', 'C813676'] },
+        'C813676 Search items by Electronic access fields (athena)',
+        { tags: ['smoke', 'athena', 'C813676'] },
         () => {
           // Create expected items for verification
           const itemBarcodes = items.map((item) => item.barcode);

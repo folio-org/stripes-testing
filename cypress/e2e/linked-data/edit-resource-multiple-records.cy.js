@@ -107,8 +107,8 @@ describe('Citation: create new instance by duplicating - for a multiple instance
   });
 
   it(
-    'C721761 [User journey] Marigold - Create new instance by duplicating existing Instance for a work with multiple instances (citation)',
-    { tags: ['criticalPath', 'shiftLeft', 'citation', 'C721761', 'marigold'] },
+    'C721761 [User journey] Marigold - Create new instance by duplicating existing Instance for a work with multiple instances (promin)',
+    { tags: ['criticalPath', 'shiftLeft', 'promin', 'C721761', 'marigold'] },
     () => {
       // search by title for work created in precondition
       SearchAndFilter.searchResourceByTitle(resourceData.title);

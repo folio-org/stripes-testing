@@ -110,8 +110,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C423392 (CONSORTIA) User can see the the name of locations from Member tenant when he is on the second Member tenant (consortia) (folijet)',
-        { tags: ['criticalPathECS', 'folijet', 'C423392'] },
+        'C423392 (CONSORTIA) User can see the the name of locations from Member tenant when he is on the second Member tenant (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'C423392'] },
         () => {
           InventorySearchAndFilter.clearDefaultHeldbyFilter();
           InventoryInstances.searchByTitle(testData.instanceIds.instanceId);

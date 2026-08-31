@@ -101,8 +101,8 @@ describe('MARC Bibliographic Validation Rules - Cannot Update Indicator Code Emp
   });
 
   it(
-    'C502985 Cannot update Indicator code of Local field with empty "label" for MARC bib spec (API) (spitfire)',
-    { tags: ['extendedPath', 'C502985', 'spitfire'] },
+    'C502985 Cannot update Indicator code of Local field with empty "label" for MARC bib spec (API) (promin)',
+    { tags: ['extendedPath', 'C502985', 'promin'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

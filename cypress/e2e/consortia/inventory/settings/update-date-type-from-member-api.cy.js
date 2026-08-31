@@ -56,8 +56,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C506702 Update of Date type\'s "name" from Member tenant is forbidden (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C506702'] },
+          'C506702 Update of Date type\'s "name" from Member tenant is forbidden (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C506702'] },
           () => {
             cy.patchInstanceDateTypeViaAPI(
               originalDateType.id,

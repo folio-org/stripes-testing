@@ -64,8 +64,8 @@ describe('Consortia', () => {
         });
 
         it(
-          'C594411 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local subject types of selected affiliated tenants in "Consortium manager" app (folijet)',
-          { tags: ['criticalPathECS', 'folijet', 'C594411'] },
+          'C594411 User with "Consortium manager: Can create, edit and remove settings" permission is able to manage local subject types of selected affiliated tenants in "Consortium manager" app (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C594411'] },
           () => {
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
             ConsortiumManager.waitLoading();
@@ -77,9 +77,7 @@ describe('Consortia', () => {
             ConsortiumSubjectTypes.createLocalSubjectTypeSavedForMemberLibraries(subjectType.name);
             ConsortiumSubjectTypes.confirmSaveForMemberLibraries(
               subjectType.name,
-              tenantNames.college,
-              tenantNames.central,
-              tenantNames.university,
+              ...[tenantNames.college, tenantNames.central, tenantNames.university].sort(),
             );
             ConsortiumSubjectTypes.verifyNewAndSelectMembersButtonsState();
             ConsortiumSubjectTypes.verifyThreeLocalSubjectTypesExist(

@@ -34,8 +34,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C358134 Verify that Download matched records is hidden in case Errors only -- Local approach (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird', 'C358134'] },
+      'C358134 Verify that Download matched records is hidden in case Errors only -- Local approach (athena) (TaaS)',
+      { tags: ['extendedPath', 'athena', 'C358134'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

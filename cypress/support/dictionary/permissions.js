@@ -72,6 +72,10 @@ export default {
   },
 
   // eHoldings
+  uieHoldingsAppView: {
+    internal: 'ui-eholdings.app.view',
+    gui: 'UI-Eholdings App',
+  },
   uieHoldingsRecordsEdit: {
     internal: 'ui-eholdings.records.edit',
     gui: 'eHoldings: Can edit providers, packages, titles detail records',
@@ -358,6 +362,38 @@ export default {
     internal: 'inventory-storage.instance-date-types.collection.get',
     gui: 'inventory storage - get list of instance-date-types',
   },
+  inventoryStorageClassificationTypesCollectionGet: {
+    internal: 'inventory-storage.classification-types.collection.get',
+    gui: 'inventory storage - get list of classification-types',
+  },
+  inventoryStorageInstancesItemGet: {
+    internal: 'inventory-storage.instances.item.get',
+    gui: 'inventory storage - get instance',
+  },
+  inventoryStorageContributorNameTypesCollectionGet: {
+    internal: 'inventory-storage.contributor-name-types.collection.get',
+    gui: 'inventory storage - get list of contributor-name-types',
+  },
+  inventoryStorageContributorTypesCollectionGet: {
+    internal: 'inventory-storage.contributor-types.collection.get',
+    gui: 'inventory storage - get list of contributor-types',
+  },
+  inventoryStorageStatisticalCodesCollectionGet: {
+    internal: 'inventory-storage.statistical-codes.collection.get',
+    gui: 'inventory storage - get list of statistical-codes',
+  },
+  inventoryStorageStatisticalCodeTypesCollectionGet: {
+    internal: 'inventory-storage.statistical-code-types.collection.get',
+    gui: 'inventory storage - get list of statistical-code-types',
+  },
+  inventoryStorageInstanceFormatsCollectionGet: {
+    internal: 'inventory-storage.instance-formats.collection.get',
+    gui: 'inventory storage - get list of instance-formats',
+  },
+  inventoryStorageNatureOfContentTermsCollectionGet: {
+    internal: 'inventory-storage.nature-of-content-terms.collection.get',
+    gui: 'inventory storage - get list of nature-of-content-terms',
+  },
   inventoryViewEditGeneralSettings: {
     internal: 'ui-inventory.settings.displaySettings',
     gui: 'Settings (Inventory): Can view and edit general settings',
@@ -573,6 +609,7 @@ export default {
   },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
+  uiUsersEdit: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
   uiUsersPermissionsView: {
     internal: 'ui-users.perms.view',
@@ -601,6 +638,7 @@ export default {
     gui: 'Fee/Fine History: Can create, edit and remove accounts',
   },
   uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
+  uiUsersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUserLoansAnonymize: {
     internal: 'ui-users.loans-anonymize.execute',
     gui: 'Users: User loans anonymize',
@@ -1565,5 +1603,11 @@ export default {
   numbersGeneratorView: {
     internal: 'ui-service-interaction.numberGenerator.view',
     gui: 'Settings (Service-interaction): View number generator settings and use number generators within apps',
+  },
+
+  // Dashboard
+  uiDashboardManage: {
+    internal: 'ui-dashboard.dashboards.manage',
+    gui: 'Dashboard: Manage dashboard',
   },
 };

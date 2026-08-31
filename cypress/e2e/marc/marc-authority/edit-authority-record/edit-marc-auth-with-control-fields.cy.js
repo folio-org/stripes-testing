@@ -124,8 +124,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503163 Edit "MARC authority" record with control fields (002, 003, 004, 009) which have or dont have "$a" subfields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C503163'] },
+        'C503163 Edit "MARC authority" record with control fields (002, 003, 004, 009) which have or dont have "$a" subfields (promin)',
+        { tags: ['extendedPath', 'promin', 'C503163'] },
         () => {
           // 0. User is on the detail view pane of imported record opened via "MARC authority" app.
           MarcAuthorities.searchBy(testData.searchOption, testData.searchText);

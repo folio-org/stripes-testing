@@ -61,8 +61,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C357541 Invalid search request by "Query search" option leads to error (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C357541'] },
+      'C357541 Invalid search request by "Query search" option leads to error (promin)',
+      { tags: ['extendedPath', 'promin', 'C357541'] },
       () => {
         InventorySearchAndFilter.fillInSearchQuery(validQuery);
         InventorySearchAndFilter.checkSearchQueryText(validQuery);

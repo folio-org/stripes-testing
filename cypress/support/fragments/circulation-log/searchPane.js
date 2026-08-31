@@ -52,6 +52,12 @@ export default {
     cy.expect(MultiColumnListCell(content).exists());
   },
 
+  verifyMultipleResults(contents) {
+    contents.forEach((content) => {
+      cy.expect(MultiColumnListCell({ content: including(content) }).exists());
+    });
+  },
+
   searchByItemBarcode(barcode) {
     cy.wait(2000);
     cy.do(TextField({ name: 'itemBarcode' }).fillIn(barcode));

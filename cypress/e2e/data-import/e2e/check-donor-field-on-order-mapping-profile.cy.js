@@ -92,8 +92,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C543842 Check "Donor" information field for order field mapping profile (folijet)',
-      { tags: ['edgeCases', 'folijet', 'C543842'] },
+      'C543842 Check "Donor" information field for order field mapping profile (promin)',
+      { tags: ['edgeCases', 'promin', 'C543842'] },
       () => {
         // Step 1: Open "New field mapping profile" page
         FieldMappingProfiles.openNewMappingProfileForm();

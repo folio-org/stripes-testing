@@ -24,7 +24,7 @@ describe('Users', () => {
             active: true,
             username: getTestEntityValue('username'),
             personal: {
-              preferredContactTypeId: '002',
+              preferredContactTypeIds: ['002'],
               firstName: sameName,
               lastName: getTestEntityValue('lastName'),
               email: 'test@folio.org',
@@ -40,7 +40,7 @@ describe('Users', () => {
             active: true,
             username: getTestEntityValue('username'),
             personal: {
-              preferredContactTypeId: '002',
+              preferredContactTypeIds: ['002'],
               firstName: sameName,
               lastName: sameLastName,
               email: 'test@folio.org',
@@ -66,8 +66,8 @@ describe('Users', () => {
     });
 
     it(
-      'C415 Search: Verify search by Name (volaris)',
-      { tags: ['criticalPath', 'volaris', 'C415'] },
+      'C415 Search: Verify search by Name (vega)',
+      { tags: ['criticalPath', 'vega', 'C415'] },
       () => {
         UsersSearchPane.searchByKeywords(sameName);
         UsersSearchResultsPane.checkSearchResultsCount(

@@ -107,8 +107,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C633 Locations --> Permanent Location --> (Validate in Settings) (Folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C633'] },
+      'C633 Locations --> Permanent Location --> (Validate in Settings) (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C633'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
         InventorySearchAndFilter.clickAccordionByName(`Holdings: ${location.name} >`);

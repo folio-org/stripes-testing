@@ -46,8 +46,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C397981 Create record by import of single MARC record from LC (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C397981'] },
+      'C397981 Create record by import of single MARC record from LC (promin)',
+      { tags: ['extendedPath', 'promin', 'C397981'] },
       () => {
         InventoryActions.importLoc(locNumber);
         InventoryInstance.waitLoading();

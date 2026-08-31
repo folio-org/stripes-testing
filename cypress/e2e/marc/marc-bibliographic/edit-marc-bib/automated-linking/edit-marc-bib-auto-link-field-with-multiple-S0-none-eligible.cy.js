@@ -114,8 +114,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C389494 Auto-linking fields with multiple "$0" when none of the "MARC Authority" records can be linked when editing "MARC Bib" record (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C389494'] },
+          'C389494 Auto-linking fields with multiple "$0" when none of the "MARC Authority" records can be linked when editing "MARC Bib" record (promin)',
+          { tags: ['extendedPath', 'promin', 'C389494'] },
           () => {
             // Step 1: Find and open detail view
             InventoryInstances.searchByTitle(testData.searchQuery);

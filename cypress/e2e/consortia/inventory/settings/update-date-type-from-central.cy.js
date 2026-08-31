@@ -73,8 +73,8 @@ describe('Inventory', () => {
         });
 
         it(
-          'C506701 Update of Date type\'s "name" on Central tenant and check that from Member tenant user sees the same Date types (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C506701'] },
+          'C506701 Update of Date type\'s "name" on Central tenant and check that from Member tenant user sees the same Date types (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C506701'] },
           () => {
             cy.patchInstanceDateTypeViaAPI(
               originalDateType.id,

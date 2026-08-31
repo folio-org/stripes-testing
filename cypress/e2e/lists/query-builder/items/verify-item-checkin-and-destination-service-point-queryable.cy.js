@@ -181,8 +181,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1259781 Verify that Item checkin and destination service point available and queryable (corsair)',
-        { tags: ['criticalPath', 'corsair', 'C1259781'] },
+        'C1259781 Verify that Item checkin and destination service point available and queryable (athena)',
+        { tags: ['criticalPath', 'athena', 'C1259781'] },
         () => {
           // Step 1: Create new list with Items record type and build query
           Lists.openNewListPane();

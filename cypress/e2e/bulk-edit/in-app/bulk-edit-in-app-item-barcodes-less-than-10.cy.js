@@ -68,8 +68,8 @@ describe(
       });
 
       it(
-        'C358942 Verify that number of records matched for file with less than 10 item barcodes (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C358942'] },
+        'C358942 Verify that number of records matched for file with less than 10 item barcodes (athena)',
+        { tags: ['criticalPath', 'athena', 'C358942'] },
         () => {
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier(ITEM_IDENTIFIERS.ITEM_BARCODES);

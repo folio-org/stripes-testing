@@ -78,8 +78,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C584455 Verify that "Genre" search option uses "all" search operator ("Science fiction" case) (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C584455'] },
+      'C584455 Verify that "Genre" search option uses "all" search operator ("Science fiction" case) (promin)',
+      { tags: ['criticalPath', 'promin', 'C584455'] },
       () => {
         testData.searchOptions.forEach((option) => {
           testData.searchQueries.forEach((query) => {

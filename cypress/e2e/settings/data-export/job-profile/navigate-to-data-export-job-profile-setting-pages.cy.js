@@ -28,8 +28,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10952 Navigate to the data export job profile setting pages (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C10952'] },
+      'C10952 Navigate to the data export job profile setting pages (athena)',
+      { tags: ['extendedPath', 'athena', 'C10952'] },
       () => {
         // Step 1: Select "Job profiles" on the "Data export" second pane
         SettingsDataExport.goToSettingsDataExport();

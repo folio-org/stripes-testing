@@ -133,8 +133,8 @@ describe(
       });
 
       it(
-        'C1373186 Remove MARC field (533, 933, 999) with errors (MARC & FOLIO) (firebird)',
-        { tags: ['criticalPath', 'firebird', 'C1373186'] },
+        'C1373186 Remove MARC field (533, 933, 999) with errors (MARC & FOLIO) (athena)',
+        { tags: ['criticalPath', 'athena', 'C1373186'] },
         () => {
           // Step 1: Show Source column
           BulkEditActions.openActions();

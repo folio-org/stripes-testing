@@ -195,8 +195,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411623 Search for Shared/Local records by "Identifier (all)" ("Instance" tab) and "ISSN" search options from "Central" tenant (Instance, Holdings, Item tabs) (consortia) (spitfire)',
-        { tags: ['extendedPathECS', 'spitfire', 'C411623'] },
+        'C411623 Search for Shared/Local records by "Identifier (all)" ("Instance" tab) and "ISSN" search options from "Central" tenant (Instance, Holdings, Item tabs) (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411623'] },
         () => {
           InventorySearchAndFilter.fillInSearchQuery(identifierValue);
           InventorySearchAndFilter.clickSearch();

@@ -68,7 +68,7 @@ describe('Bulk-edit', () => {
     });
     // test case is obsolete
     it.skip(
-      'C380592 Verify that Holdings without "Source" populated can be updated (firebird) (TaaS)',
+      'C380592 Verify that Holdings without "Source" populated can be updated (athena) (TaaS)',
       { tags: [] },
       () => {
         InventorySearchAndFilter.switchToHoldings();

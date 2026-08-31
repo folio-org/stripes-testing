@@ -85,7 +85,7 @@ describe('Inventory', () => {
 
     it(
       'C368028 Search for "Instance" by "Title" field with all possible special characters using "Keyword", "Title (all)" search options',
-      { tags: ['extendedPath', 'spitfire', 'C368028'] },
+      { tags: ['extendedPath', 'promin', 'C368028'] },
       () => {
         // Ensure we're on the Instance tab with Keyword search selected
         InventorySearchAndFilter.instanceTabIsDefault();

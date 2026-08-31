@@ -175,7 +175,9 @@ describe('Export Manager', () => {
         // Check "EDIFACT orders export" option in "Job type" accordion
         ExportManagerSearchPane.checkFilterOption({ filterName: 'Orders (EDI)' });
         ExportManagerSearchPane.checkFilterOption({ filterName: 'Orders (CSV)' });
-        ExportManagerSearchPane.checkColumnInResultsTable({ jobType: 'EDIFACT orders export' });
+        ExportManagerSearchPane.checkColumnInResultsTable({
+          jobType: ['EDIFACT orders export', 'CLAIMS'],
+        });
 
         // Uncheck "EDIFACT orders export" option in "Job type" accordion
         ExportManagerSearchPane.checkFilterOption({ filterName: 'Orders (EDI)' });

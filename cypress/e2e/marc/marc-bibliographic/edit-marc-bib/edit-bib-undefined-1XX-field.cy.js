@@ -37,16 +37,18 @@ describe('MARC', () => {
 
           getBibliographicSpec().then((bibSpec) => {
             specId = bibSpec.id;
-            toggleAllUndefinedValidationRules(specId, { enable: true });
-          });
+            toggleAllUndefinedValidationRules(specId, { enable: false });
 
-          cy.createSimpleMarcBibViaAPI(testData.title).then((instanceId) => {
-            createdInstanceId = instanceId;
+            cy.createSimpleMarcBibViaAPI(testData.title).then((instanceId) => {
+              createdInstanceId = instanceId;
 
-            cy.waitForAuthRefresh(() => {
-              cy.login(testData.userProperties.username, testData.userProperties.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
+              toggleAllUndefinedValidationRules(specId, { enable: true });
+
+              cy.waitForAuthRefresh(() => {
+                cy.login(testData.userProperties.username, testData.userProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
               });
             });
           });
@@ -61,8 +63,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C519975 Edit MARC bib record with undefined 1XX field when Undefined rules are enabled (spitfire)',
-        { tags: ['extendedPathFlaky', 'spitfire', 'nonParallel', 'C519975'] },
+        'C519975 Edit MARC bib record with undefined 1XX field when Undefined rules are enabled (promin)',
+        { tags: ['extendedPathFlaky', 'promin', 'nonParallel', 'C519975'] },
         () => {
           InventoryInstances.searchByTitle(createdInstanceId);
           InventoryInstances.selectInstanceById(createdInstanceId);

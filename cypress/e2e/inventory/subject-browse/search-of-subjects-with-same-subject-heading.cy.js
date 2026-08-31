@@ -61,8 +61,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C584533 Search of subjects with same subject heading (folijet)',
-      { tags: ['criticalPath', 'folijet', 'C584533'] },
+      'C584533 Search of subjects with same subject heading (promin)',
+      { tags: ['criticalPath', 'promin', 'C584533'] },
       () => {
         BrowseSubjects.searchBrowseSubjects(testData.subjectHeading);
         cy.wait(5000);

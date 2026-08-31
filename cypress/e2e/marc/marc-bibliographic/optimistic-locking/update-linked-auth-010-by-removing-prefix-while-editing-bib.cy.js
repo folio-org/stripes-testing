@@ -142,8 +142,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C397342 Updating "010 $a" value by removing valid prefix in linked "MARC Authority" record while "MARC Bib" record being edited (saved link; "$0" = "010 $a") (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C397342'] },
+        'C397342 Updating "010 $a" value by removing valid prefix in linked "MARC Authority" record while "MARC Bib" record being edited (saved link; "$0" = "010 $a") (promin)',
+        { tags: ['extendedPath', 'promin', 'C397342'] },
         () => {
           // Step 1: User logs in, searches for MARC bib record, opens for editing
           cy.login(user.username, user.password, {

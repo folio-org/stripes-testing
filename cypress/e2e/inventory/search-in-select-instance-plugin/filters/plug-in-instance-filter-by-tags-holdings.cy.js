@@ -112,8 +112,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476830 "Select Instance" plugin | Filter "Instance" records by "Tags" filter in "Holdings" segment (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C476830'] },
+        'C476830 "Select Instance" plugin | Filter "Instance" records by "Tags" filter in "Holdings" segment (promin)',
+        { tags: ['extendedPath', 'promin', 'C476830'] },
         () => {
           InventorySearchAndFilter.verifyAccordionExistance(tagsAccordionName, true);
           InventorySearchAndFilter.toggleAccordionByName(tagsAccordionName);

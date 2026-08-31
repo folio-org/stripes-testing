@@ -70,8 +70,8 @@ describe('MARC', () => {
     });
 
     it(
-      'C496215 Add multiple 005s when creating "MARC Holdings" record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C496215'] },
+      'C496215 Add multiple 005s when creating "MARC Holdings" record (promin)',
+      { tags: ['extendedPath', 'promin', 'C496215'] },
       () => {
         // #1 Navigate to Instance and click "Actions" → "+Add MARC holdings record"
         InventoryInstances.searchBySource(INSTANCE_SOURCE_NAMES.MARC);

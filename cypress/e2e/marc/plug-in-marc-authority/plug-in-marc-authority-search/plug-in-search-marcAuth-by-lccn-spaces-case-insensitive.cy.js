@@ -177,8 +177,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C440117 MARC Authority plug-in | Search by "LCCN" option using a query with lower, UPPER case when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C440117'] },
+        'C440117 MARC Authority plug-in | Search by "LCCN" option using a query with lower, UPPER case when "LCCN" (010 $a) has (leading, internal, trailing) spaces. (promin)',
+        { tags: ['extendedPath', 'promin', 'C440117'] },
         () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.inventoryPath,

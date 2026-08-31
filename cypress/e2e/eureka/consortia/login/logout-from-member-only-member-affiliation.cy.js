@@ -26,6 +26,7 @@ describe('Eureka', () => {
         'C430269 Log out from Member tenant as a user only having affiliation for this tenant (consortia) (eureka)',
         { tags: ['extendedPathECS', 'eureka', 'C430269'] },
         () => {
+          cy.wait(3000);
           cy.login(user.username, user.password);
           ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
           cy.logout();

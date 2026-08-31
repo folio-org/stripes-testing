@@ -65,8 +65,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C614 Descriptive Data --> Format --> (Validate matching settings) (folijet)',
-      { tags: ['extendedPath', 'folijet', 'C614'] },
+      'C614 Descriptive Data --> Format --> (Validate matching settings) (promin)',
+      { tags: ['extendedPath', 'promin', 'C614'] },
       () => {
         // Steps 1-2: Open the created FOLIO instance and edit it
         InventoryInstances.searchByTitle(testData.instanceId);

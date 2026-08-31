@@ -49,8 +49,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C503067 Derive existing "MARC bib" record with multiple "999 ff" fields (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C503067'] },
+        'C503067 Derive existing "MARC bib" record with multiple "999 ff" fields (promin)',
+        { tags: ['extendedPath', 'promin', 'C503067'] },
         () => {
           InventoryInstances.searchByTitle(testInstanceId);
           InventoryInstances.selectInstanceById(testInstanceId);

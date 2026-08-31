@@ -41,6 +41,7 @@ describe('Lists', () => {
         QueryModal.verifyClosed();
         Lists.waitForCompilingToComplete();
         Lists.closeListDetailsPane();
+        Lists.verifyListIsPresent(testData.listName);
       });
     });
 
@@ -51,8 +52,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C831960 Verify that the migration of existing Lists with Regex Operator is successful (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C831960'] },
+      'C831960 Verify that the migration of existing Lists with Regex Operator is successful (athena)',
+      { tags: ['extendedPath', 'athena', 'C831960'] },
       () => {
         // Step 1: Open list and verify fqlQuery
         cy.intercept('GET', '**/lists/*').as('getListDetails');

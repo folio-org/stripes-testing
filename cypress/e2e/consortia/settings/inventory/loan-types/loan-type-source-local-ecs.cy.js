@@ -56,12 +56,12 @@ describe('Consortia', () => {
         });
 
         it(
-          'C877074 "source" field is filled with "local" value when creating loan type in Central and Member tenants (spitfire)',
-          { tags: ['extendedPathECS', 'spitfire', 'C877074'] },
+          'C877074 "source" field is filled with "local" value when creating loan type in Central and Member tenants (promin)',
+          { tags: ['extendedPathECS', 'promin', 'C877074'] },
           () => {
             cy.intercept('POST', '/loan-types').as('createLoanTypeCentral');
 
-            cy.do(Button('+ New').click());
+            cy.do(Button('New').click());
             cy.do(TextField().fillIn(testData.centralLoanTypeName));
             cy.do(Button('Save').click());
 
@@ -77,7 +77,7 @@ describe('Consortia', () => {
 
             cy.intercept('POST', '/loan-types').as('createLoanTypeMember');
 
-            cy.do(Button('+ New').click());
+            cy.do(Button('New').click());
             cy.do(TextField().fillIn(testData.memberLoanTypeName));
             cy.do(Button('Save').click());
 

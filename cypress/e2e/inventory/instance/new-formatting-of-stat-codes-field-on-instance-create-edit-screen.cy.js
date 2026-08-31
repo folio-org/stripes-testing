@@ -35,8 +35,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C400652 Check the new formatting of Statistical codes field on Instance create/edit screen (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C400652'] },
+      'C400652 Check the new formatting of Statistical codes field on Instance create/edit screen (promin) (TaaS)',
+      { tags: ['extendedPath', 'promin', 'C400652'] },
       () => {
         // Step 1: Go to Inventory -> Actions -> New
         const NewInstance = InventoryInstances.addNewInventory();

@@ -157,8 +157,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C476764 Filter "Instance" records by Item\'s "Statistical code" facet (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C476764'] },
+        'C476764 Filter "Instance" records by Item\'s "Statistical code" facet (promin)',
+        { tags: ['criticalPath', 'promin', 'C476764'] },
         () => {
           // 1. Open facet, check options and counters
           InventorySearchAndFilter.toggleAccordionByName(STAT_CODE_ACCORDION);

@@ -41,16 +41,18 @@ describe('Inventory', () => {
               cy.getHoldingTypes({ limit: 1 }).then((res) => {
                 testData.holdings.holdingTypeId = res[0].id;
               });
-              ServicePoints.getCircDesk1ServicePointViaApi().then((servicePoint) => {
-                const collegeLocationData = Locations.getDefaultLocation({
-                  servicePointId: servicePoint.id,
-                }).location;
-                Locations.createViaApi(collegeLocationData).then((location) => {
-                  testData.holdings.location = location;
-                  testData.holdings.locationId = location.id;
-                  testData.holdings.locationName = location.name;
-                });
-              });
+              ServicePoints.getViaApi({ limit: 1, query: 'name<>"*auto*"' }).then(
+                (servicePoints) => {
+                  const collegeLocationData = Locations.getDefaultLocation({
+                    servicePointId: servicePoints[0].id,
+                  }).location;
+                  Locations.createViaApi(collegeLocationData).then((location) => {
+                    testData.holdings.location = location;
+                    testData.holdings.locationId = location.id;
+                    testData.holdings.locationName = location.name;
+                  });
+                },
+              );
               cy.getLoanTypes({ limit: 1 }).then((res) => {
                 testData.item.loanTypeId = res[0].id;
               });
@@ -123,8 +125,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C411670 (CONSORTIA) Verify Item barcode hyperlink closing on Consortial holdings accordion details on shared Instance in Central Tenant (consortia) (folijet)',
-        { tags: ['extendedPathECS', 'folijet', 'C411670'] },
+        'C411670 (CONSORTIA) Verify Item barcode hyperlink closing on Consortial holdings accordion details on shared Instance in Central Tenant (consortia) (promin)',
+        { tags: ['extendedPathECS', 'promin', 'C411670'] },
         () => {
           InventorySearchAndFilter.searchInstanceByTitle(testData.instance.id);
           InventoryInstances.selectInstance();

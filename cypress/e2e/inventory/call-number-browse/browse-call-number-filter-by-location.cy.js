@@ -74,8 +74,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C350592 Verify filter by location (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C350592'] },
+      'C350592 Verify filter by location (promin)',
+      { tags: ['extendedPath', 'promin', 'C350592'] },
       () => {
         // Step 1: Select "Call numbers (all)" option
         InventorySearchAndFilter.switchToBrowseTab();

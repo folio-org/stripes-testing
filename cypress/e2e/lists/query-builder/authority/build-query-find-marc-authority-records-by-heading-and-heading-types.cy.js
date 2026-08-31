@@ -137,8 +137,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1322603 Build query to find MARC authority records by Heading and Heading types (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C1322603'] },
+        'C1322603 Build query to find MARC authority records by Heading and Heading types (promin)',
+        { tags: ['extendedPath', 'promin', 'C1322603'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

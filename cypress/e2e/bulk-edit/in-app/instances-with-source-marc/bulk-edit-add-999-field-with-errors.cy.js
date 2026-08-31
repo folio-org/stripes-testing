@@ -103,8 +103,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C543783 Add MARC field (999) with errors (MARC & FOLIO) (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C543783'] },
+      'C543783 Add MARC field (999) with errors (MARC & FOLIO) (athena)',
+      { tags: ['criticalPath', 'athena', 'C543783'] },
       () => {
         // Step 1: Show Source column
         BulkEditActions.openActions();

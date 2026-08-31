@@ -73,8 +73,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C358941 Edit the "MARC Authority" record deleted by another user (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C358941'] },
+        'C358941 Edit the "MARC Authority" record deleted by another user (promin)',
+        { tags: ['extendedPath', 'promin', 'C358941'] },
         () => {
           // Steps 1-3: User A searches for the record and opens it for view
           cy.login(userA.username, userA.password, {

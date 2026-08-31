@@ -129,8 +129,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C471472 Apply "Shared" facet to browse classifications result list during browsing by "Library of Congress classification" option when LC is selected in settings (consortia) (spitfire)',
-        { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C471472'] },
+        'C471472 Apply "Shared" facet to browse classifications result list during browsing by "Library of Congress classification" option when LC is selected in settings (consortia) (promin)',
+        { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C471472'] },
         () => {
           classificationValues.forEach((classification) => {
             BrowseClassifications.waitForClassificationNumberToAppear(

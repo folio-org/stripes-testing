@@ -8,6 +8,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 
 const listName = `AT_C451555_List_${getRandomPostfix()}`;
 const testData = {
@@ -27,8 +28,8 @@ describe('Lists', () => {
         testData.instanceTypeId = instanceTypes[0].id;
       });
 
-      cy.getLocations({ limit: 1 }).then((location) => {
-        testData.locationId = location.id;
+      Locations.getViaApiAnyDefault().then((location) => {
+        testData.locationId = location[0].id;
       });
 
       cy.then(() => {
@@ -69,8 +70,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C451555 Non-default fields that are part of the query can be deselected as columns (corsair)',
-      { tags: ['extendedPath', 'corsair', 'C451555'] },
+      'C451555 Non-default fields that are part of the query can be deselected as columns (athena)',
+      { tags: ['extendedPath', 'athena', 'C451555'] },
       () => {
         // Define columns used in test
         const allDefaultColumns = [

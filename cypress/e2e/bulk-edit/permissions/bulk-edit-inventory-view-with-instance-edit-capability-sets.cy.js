@@ -58,8 +58,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C423643 User with "data - UI-Bulk-Edit Inventory - view" and "data - UI-Inventory Instance - edit" capability sets is NOT able to start bulk edit of Instances (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C423643'] },
+      'C423643 User with "data - UI-Bulk-Edit Inventory - view" and "data - UI-Inventory Instance - edit" capability sets is NOT able to start bulk edit of Instances (athena)',
+      { tags: ['extendedPath', 'athena', 'C423643'] },
       () => {
         // Step 1: Check the "Bulk edit" main pane
         BulkEditSearchPane.verifyPanesBeforeImport();

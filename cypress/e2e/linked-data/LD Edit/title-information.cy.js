@@ -83,8 +83,8 @@ describe('Citation: Title Information section', () => {
   });
 
   it(
-    'C1307932 Marigold - Title Information section verification (citation)',
-    { tags: ['criticalPath', 'citation', 'C1307932', 'marigold'] },
+    'C1307932 Marigold - Title Information section verification (promin)',
+    { tags: ['criticalPath', 'promin', 'C1307932', 'marigold'] },
     () => {
       // Precondition: Find uploaded MARC record in Inventory and open in Marigold
       InventoryInstances.searchByTitle(testData.mainTitle);

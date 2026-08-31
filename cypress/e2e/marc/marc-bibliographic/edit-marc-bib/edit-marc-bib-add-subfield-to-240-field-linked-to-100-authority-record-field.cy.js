@@ -132,8 +132,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C376594 Add controllable subfields to linked "240" field of a "MARC bib" record (linked to "100" field of "MARC authority" record) (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C376594'] },
+        'C376594 Add controllable subfields to linked "240" field of a "MARC bib" record (linked to "100" field of "MARC authority" record) (promin)',
+        { tags: ['extendedPath', 'promin', 'C376594'] },
         () => {
           InventorySearchAndFilter.selectSearchOptions(
             testData.inventoryInstanceSearchOption,

@@ -301,7 +301,12 @@ describe('Eureka', () => {
         SelectMembers.selectMember(tenantNames.central);
         AuthorizationRoles.searchRole(testData.sharedRoleName);
         AuthorizationRoles.clickOnRoleName(testData.sharedRoleName);
+        AuthorizationRoles.checkCapabilitySetsAccordionCounter('1');
+        AuthorizationRoles.checkUsersAccordion(1);
         AuthorizationRoles.openForEdit(testData.sharedRoleName);
+        testData.sharedRoleCapabilitySets.forEach((set) => {
+          AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);
+        });
 
         // Step 15: Edit shared role to original member name - should succeed
         AuthorizationRoles.fillRoleNameDescription(testData.memberRoleName);

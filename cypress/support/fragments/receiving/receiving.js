@@ -11,19 +11,22 @@ import {
   MultiColumnListRow,
   Pane,
   PaneContent,
-  SearchField,
   Section,
   Select,
   TextField,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import { DEFAULT_WAIT_TIME, ITEM_STATUS_NAMES, ORDER_LINE_FILTER_LABELS } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
+import FiltersPaneHelper from '../filtersPane';
 import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
+import MultiColumnListHelper from '../multiColumnList';
+import SelectLocationModal from '../orders/modals/selectLocationModal';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import deleteHoldingsModalReceivingFullScreen from './modals/deleteHoldingsModaReceivinglFullScreen';
 import ReceivingDetails from './receivingDetails';
 
 const receivingResultsSection = Section({ id: 'receiving-results-pane' });
+const filtersPane = Pane({ id: 'receiving-filters-pane' });
 const rootsection = PaneContent({ id: 'pane-title-details-content' });
 const actionsButton = Button('Actions');
 const receivingSuccessful = 'Receiving successful';
@@ -49,6 +52,9 @@ const addRoutingListButton = routingListSection.find(Button('Add routing list'))
 const titleLookUpButton = Button('Title look-up');
 const receivingResultsList = MultiColumnList({ id: 'receivings-list' });
 
+const POL_LOOKUP_TRIGGER = 'POL number look-up';
+const LOCATION_LOOKUP_TRIGGER = 'Location look-up';
+
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
     cy.wait(ms);
@@ -72,7 +78,7 @@ export default {
     cy.expect(actionsButton.exists());
   },
   clearSearchField() {
-    cy.do(TextField({ id: 'input-record-search' }).fillIn(''));
+    cy.get('#receiving-filters-pane-content').find('#input-record-search').clear();
   },
   searchByParameter({ parameter = 'Keyword', value } = {}) {
     cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
@@ -156,19 +162,18 @@ export default {
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
-  selectLocationInFilters: (locationName) => {
-    cy.wait(4000);
-    cy.do([
-      Button({ id: 'accordion-toggle-button-filter-poLine.locations' }).click(),
-      Button('Location look-up').click(),
-      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
-      Button('Search').click(),
-    ]);
-    cy.wait(2000);
-    cy.do([
-      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
-      selectLocationsModal.find(Button('Save')).click(),
-    ]);
+  selectLocationInFilters(locationName, options = {}) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(filtersPane.find(Button(LOCATION_LOOKUP_TRIGGER)).click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectLocation(locationName, { multiselect: true, ...options });
+  },
+
+  selectMultipleLocationsInFilters(locationNames) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(filtersPane.find(Button(LOCATION_LOOKUP_TRIGGER)).click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectMultipleLocations(locationNames);
   },
 
   checkExistingPOLInReceivingList: (POL) => {
@@ -178,6 +183,38 @@ export default {
 
   checkTitleInReceivingList: (title) => {
     cy.expect(receivingResultsSection.find(MultiColumnListCell(title)).exists());
+  },
+
+  assertReceivingResults(titles = []) {
+    if (!titles.length) {
+      cy.expect(receivingResultsSection.find(HTML(including('No results found'))).exists());
+      return;
+    }
+    titles.forEach((title) => {
+      cy.expect(receivingResultsList.find(MultiColumnListCell({ content: title })).exists());
+    });
+    MultiColumnListHelper.assertRowCount(receivingResultsList, titles.length);
+  },
+
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(filtersPane, { disabled });
+  },
+
+  clearAllFilters() {
+    FiltersPaneHelper.clearAllFilters(filtersPane);
+    this.assertResetAllButtonState({ disabled: true });
+  },
+
+  filterByMultiSelectOptions(filterLabel, values, options) {
+    FiltersPaneHelper.filterByMultiSelectOptions(filtersPane, filterLabel, values, options);
+  },
+
+  filterByCheckboxes(filterLabel, values, options) {
+    FiltersPaneHelper.filterByCheckboxes(filtersPane, filterLabel, values, options);
+  },
+
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, tags);
   },
 
   addPiece: (displaySummary, copyNumber, enumeration, chronology) => {
@@ -192,27 +229,6 @@ export default {
       Checkbox('Create item').click(),
       Button('Save & close').click(),
     ]);
-    InteractorsTools.checkCalloutMessage('The piece was successfully saved');
-  },
-
-  receiveDisplayOnHoldingPiece(displaySummary) {
-    cy.do([
-      pieceDetailsSection.find(TextField('Display summary')).fillIn(displaySummary),
-      pieceDetailsSection.find(Checkbox('Display on holding')).click(),
-    ]);
-    cy.expect(pieceDetailsSection.find(Checkbox('Display to public')).exists());
-    this.openDropDownInEditPieceModal();
-    cy.do(Button('Quick receive').click());
-    cy.wait(1000);
-    InteractorsTools.checkCalloutMessage('The piece  was successfully received');
-  },
-
-  editDisplayOnHoldingAndAddDisplayToPublicPiece() {
-    cy.do(pieceDetailsSection.find(Checkbox('Display on holding')).click());
-    cy.expect(pieceDetailsSection.find(Checkbox('Display to public')).exists());
-    cy.do(pieceDetailsSection.find(Checkbox('Display to public')).click());
-    cy.do(Button('Save & close').click());
-    cy.wait(1000);
     InteractorsTools.checkCalloutMessage('The piece was successfully saved');
   },
 
@@ -687,6 +703,23 @@ export default {
     });
   },
 
+  unreceivePiecesViaApi({ poLineId, pieceIds }) {
+    const receivedItems = pieceIds.map((pieceId) => ({
+      pieceId,
+      itemStatus: ITEM_STATUS_NAMES.ON_ORDER,
+    }));
+
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'orders/receive',
+      body: {
+        toBeReceived: [{ poLineId, received: receivedItems.length, receivedItems }],
+        totalRecords: receivedItems.length,
+      },
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   getTitleByPoLineNumberViaApi(poLineNumber) {
     return cy
       .okapiRequest({
@@ -748,6 +781,10 @@ export default {
     cy.do(titleLookUpButton.click());
   },
 
+  clickPOLNumberLookUpButton() {
+    cy.do(Button(POL_LOOKUP_TRIGGER).click());
+  },
+
   fillTitleLookup(titleName) {
     cy.do([
       titleLookUpButton.click(),
@@ -765,7 +802,7 @@ export default {
   },
 
   fillPOLNumberLookup(polNumber) {
-    cy.do(Button('POL number look-up').click());
+    cy.do(Button(POL_LOOKUP_TRIGGER).click());
     cy.wait(1000);
     SelectOrderLinesModal.searchByName(polNumber);
     cy.wait(2000);
@@ -850,5 +887,13 @@ export default {
           cy.expect(resetButton.is({ disabled: true }));
         }
       });
+  },
+
+  /* Request interceptors */
+  interceptGetReceivingTitles() {
+    cy.intercept('GET', '/orders/titles*').as('waiterForReceivingTitlesQueryCompleted');
+  },
+  waitForReceivingTitlesQueryCompleted() {
+    cy.wait('@waiterForReceivingTitlesQueryCompleted');
   },
 };

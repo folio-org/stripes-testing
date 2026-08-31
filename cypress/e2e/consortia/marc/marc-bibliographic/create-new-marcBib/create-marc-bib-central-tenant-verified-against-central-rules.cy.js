@@ -93,8 +93,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C552462 Created MARC bib record on Central tenant is verified against Central tenant rules (consortia) (spitfire)',
-          { tags: ['criticalPathECS', 'spitfire', 'C552462', 'nonParallel'] },
+          'C552462 Created MARC bib record on Central tenant is verified against Central tenant rules (consortia) (promin)',
+          { tags: ['criticalPathECS', 'promin', 'C552462', 'nonParallel'] },
           () => {
             cy.then(() => {
               cy.resetTenant();

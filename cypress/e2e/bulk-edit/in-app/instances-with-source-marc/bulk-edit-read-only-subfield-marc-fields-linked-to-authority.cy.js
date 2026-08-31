@@ -174,8 +174,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C663266 Bulk edit read-only subfield (0) of marc fields (800, 830) linked to authority record (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C663266'] },
+      'C663266 Bulk edit read-only subfield (0) of marc fields (800, 830) linked to authority record (athena)',
+      { tags: ['criticalPath', 'athena', 'C663266'] },
       () => {
         // Step 1: Check "Series statements" checkbox to show column
         BulkEditActions.openActions();

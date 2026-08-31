@@ -16,6 +16,7 @@ import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderDetails from '../../support/fragments/orders/orderDetails';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
+import OrderStates from '../../support/fragments/orders/orderStates';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
@@ -188,7 +189,7 @@ describe('Orders', () => {
       Orders.selectFromResultsList(testData.order.poNumber);
       Orders.openOrder();
       OrderLines.checkErrorToastMessage(
-        `Order cannot be opened because there is no current budget for fund(s) ${testData.fund.code} for fiscal year ${testData.fiscalYear.code}.`,
+        OrderStates.noCurrentBudgetForFund(testData.fund.code, testData.fiscalYear.code),
       );
       OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
       OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);

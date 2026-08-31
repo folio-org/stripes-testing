@@ -112,8 +112,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C359151 Search by "Administrative notes" considers to what type of record, note was created ("Instance"/"Holdings"/"Item") (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C359151'] },
+      'C359151 Search by "Administrative notes" considers to what type of record, note was created ("Instance"/"Holdings"/"Item") (promin)',
+      { tags: ['extendedPath', 'promin', 'C359151'] },
       () => {
         InventorySearchAndFilter.selectSearchOption(testData.querySearchOption);
 

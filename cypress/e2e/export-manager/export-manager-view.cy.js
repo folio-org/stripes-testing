@@ -12,6 +12,7 @@ import {
   NewOrganization,
   Organizations,
 } from '../../support/fragments/organizations';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
 let now;
@@ -46,6 +47,7 @@ describe(
 
             now.set('second', now.second() + 10);
             testData.integration = Integrations.getDefaultIntegration({
+              accountNoList: [getRandomPostfix()],
               vendorId: testData.organization.id,
               acqMethodId: acqMethod.id,
               ediFtp: {
@@ -100,8 +102,8 @@ describe(
     });
 
     it(
-      'C405555 Verify that User is able to see the executed jobs but not to download the files with View permissions (firebird)',
-      { tags: ['criticalPath', 'firebird', 'C405555'] },
+      'C405555 Verify that User is able to see the executed jobs but not to download the files with View permissions (athena)',
+      { tags: ['criticalPath', 'athena', 'C405555'] },
       () => {
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchByAuthorityControl();

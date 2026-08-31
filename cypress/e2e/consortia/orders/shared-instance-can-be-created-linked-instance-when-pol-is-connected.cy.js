@@ -4,6 +4,7 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import SelectInstanceModal from '../../../support/fragments/inventory/modals/inventoryInstanceSelectInstanceModal';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -114,8 +115,11 @@ describe('Orders', () => {
         Orders.searchByParameter('PO number', testData.order.poNumber);
         Orders.selectFromResultsList(testData.order.poNumber);
         OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP(testData.sharedInstance.title, 0);
-        OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+        OrderLines.clickInstanceTitleLookup();
+        SelectInstanceModal.clearDefaultHeldbyFilter(); // Clear default filter to avoid selecting instance from the wrong tenant
+        SelectInstanceModal.searchByTitle(testData.sharedInstance.title);
+        SelectInstanceModal.selectInstance();
+        OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
         OrderLines.backToEditingOrder();
         Orders.openOrder();
         OrderLines.selectPOLInOrder();

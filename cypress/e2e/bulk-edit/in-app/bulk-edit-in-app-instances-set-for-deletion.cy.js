@@ -162,8 +162,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C831955 Verify Set true for deletion of Instances via FOLIO flow (firebird)',
-      { tags: ['smoke', 'firebird', 'C831955'] },
+      'C831955 Verify Set true for deletion of Instances via FOLIO flow (athena)',
+      { tags: ['smoke', 'athena', 'C831955'] },
       () => {
         // Step 1: Check the result of uploading the .csv file with Instances UUIDs
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

@@ -85,8 +85,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C466272 [Query Builder] Newly added fields that are part of the query are automatically displayed as columns (corsair)',
-      { tags: ['criticalPath', 'corsair', 'C466272'] },
+      'C466272 [Query Builder] Newly added fields that are part of the query are automatically displayed as columns (athena)',
+      { tags: ['criticalPath', 'athena', 'C466272'] },
       () => {
         // Step 1: Create new list with Purchase order lines record type and build query
         Lists.openNewListPane();
@@ -151,7 +151,7 @@ describe('Lists', () => {
         QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
         QueryModal.verifyPlusAndTrashButtonsDisabled(2, false, false);
         QueryModal.verifyQueryAreaContent(
-          `(po.po_number != non-existent-value) AND (po.po_number starts with ${testData.order.poNumber}) AND (  )`,
+          `(po.po_number != non-existent-value) AND (po.po_number starts with ${testData.order.poNumber})`,
         );
         QueryModal.testQueryDisabled(true);
         QueryModal.runQueryDisabled(true);

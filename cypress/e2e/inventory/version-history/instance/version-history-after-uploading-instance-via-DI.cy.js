@@ -127,8 +127,8 @@ describe('Inventory', () => {
       });
 
       it(
-        'C655276 Check "Version history" after updating Instance via Data import (folijet)',
-        { tags: ['extendedPath', 'folijet', 'C655276'] },
+        'C655276 Check "Version history" after updating Instance via Data import (promin)',
+        { tags: ['extendedPath', 'promin', 'C655276'] },
         () => {
           InstanceRecordView.exportInstanceMarc();
           cy.intercept('/data-export/quick-export').as('getHrid');

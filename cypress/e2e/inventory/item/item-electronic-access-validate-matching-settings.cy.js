@@ -96,8 +96,8 @@ describe('Inventory', () => {
     });
 
     it(
-      'C635 Loan Data and Availability --> Temporary loan type --> (Validate matching settings) (Folijet)(TaaS)',
-      { tags: ['extendedPath', 'folijet', 'C635'] },
+      'C635 Loan Data and Availability --> Temporary loan type --> (Validate matching settings) (promin)(TaaS)',
+      { tags: ['extendedPath', 'promin', 'C635'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
         InventoryInstance.openHoldingsAccordion(location.name);

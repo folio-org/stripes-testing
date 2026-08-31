@@ -77,8 +77,8 @@ describe('Data Import', () => {
     });
 
     it(
-      'C358534 Check the values in the Job profile filter after deleting the logs on the View all page (folijet) (TaaS)',
-      { tags: ['extendedPathFlaky', 'folijet'] },
+      'C358534 Check the values in the Job profile filter after deleting the logs on the View all page (promin) (TaaS)',
+      { tags: ['extendedPathFlaky', 'promin', 'C358534'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.filterJobsByJobProfile(jobProfile.name);

@@ -123,8 +123,8 @@ describe('MARC', () => {
         });
 
         it(
-          'C380759 Link "MARC Bib" field without controlled subfields to "MARC Authority" record. "Authority source file" value is "Not specified" (700 field to 100) (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C380759'] },
+          'C380759 Link "MARC Bib" field without controlled subfields to "MARC Authority" record. "Authority source file" value is "Not specified" (700 field to 100) (promin)',
+          { tags: ['extendedPath', 'promin', 'C380759'] },
           () => {
             InventoryInstances.searchByTitle(createdInstanceIds[0]);
             InventoryInstances.selectInstanceById(createdInstanceIds[0]);

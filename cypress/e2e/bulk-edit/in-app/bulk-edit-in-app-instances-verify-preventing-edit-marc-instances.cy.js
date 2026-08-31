@@ -79,8 +79,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C850013, C692112 Verify preventing bulk edit of MARC Instances with invalid 008 field in MARC record and missing or old status underlying SRS record (firebird)',
-      { tags: ['extendedPath', 'firebird', 'C850013', 'C692112'] },
+      'C850013, C692112 Verify preventing bulk edit of MARC Instances with invalid 008 field in MARC record and missing or old status underlying SRS record (athena)',
+      { tags: ['extendedPath', 'athena', 'C850013', 'C692112'] },
       () => {
         // Step 1: Select "Inventory - instances" radio button and "Instance UUIDs" from dropdown
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');

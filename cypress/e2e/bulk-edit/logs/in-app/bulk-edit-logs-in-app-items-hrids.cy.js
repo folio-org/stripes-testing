@@ -156,8 +156,8 @@ describe(
         });
 
         it(
-          'C375281 Verify generated Logs files for Items In app -- valid and invalid records (firebird)',
-          { tags: ['smoke', 'firebird', 'shiftLeft', 'C375281'] },
+          'C375281 Verify generated Logs files for Items In app -- valid and invalid records (athena)',
+          { tags: ['smoke', 'athena', 'shiftLeft', 'C375281'] },
           () => {
             BulkEditSearchPane.checkItemsRadio();
             BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');

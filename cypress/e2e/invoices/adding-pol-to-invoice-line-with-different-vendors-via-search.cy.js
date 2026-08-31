@@ -1,4 +1,7 @@
-import { POL_CREATE_INVENTORY_SETTINGS } from '../../support/constants';
+import {
+  ORDER_LINE_SEARCH_INDEX_LABELS,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import BrowseContributors from '../../support/fragments/inventory/search/browseContributors';
 import { Invoices, InvoiceView, NewInvoice } from '../../support/fragments/invoices';
@@ -9,6 +12,43 @@ import { BatchGroups } from '../../support/fragments/settings/invoices';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+
+const {
+  CONTRIBUTOR,
+  DONOR_DEPRECATED,
+  KEYWORD,
+  POL_NUMBER,
+  PRODUCT_ID,
+  PRODUCT_ID_ISBN,
+  PUBLISHER,
+  REQUESTER,
+  SELECTOR,
+  TITLE_OR_PACKAGE,
+  VENDOR_ACCOUNT,
+  VENDOR_REF_NUMBER,
+  VOLUMES,
+} = ORDER_LINE_SEARCH_INDEX_LABELS;
+
+const getSearchConfig = (context) => {
+  return [
+    { searchOption: KEYWORD, value: `${context.order.poNumber}*` },
+    { searchOption: CONTRIBUTOR, value: context.orderLine.contributors[0].contributor },
+    { searchOption: POL_NUMBER, value: context.orderLine.poLineNumber },
+    { searchOption: REQUESTER, value: context.orderLine.requester },
+    { searchOption: TITLE_OR_PACKAGE, value: context.orderLine.titleOrPackage },
+    { searchOption: PUBLISHER, value: context.orderLine.publisher },
+    { searchOption: VENDOR_ACCOUNT, value: context.orderLine.vendorDetail.vendorAccount },
+    {
+      searchOption: VENDOR_REF_NUMBER,
+      value: context.orderLine.vendorDetail.referenceNumbers[0].refNumber,
+    },
+    { searchOption: DONOR_DEPRECATED, value: context.orderLine.donor },
+    { searchOption: SELECTOR, value: context.orderLine.selector },
+    { searchOption: VOLUMES, value: context.orderLine.physical.volumes[0] },
+    { searchOption: PRODUCT_ID, value: context.orderLine.details.productIds[0].productId },
+    { searchOption: PRODUCT_ID_ISBN, value: context.orderLine.details.productIds[0].productId },
+  ];
+};
 
 describe('Invoices', () => {
   const invoiceOrganization = NewOrganization.getDefaultOrganization();
@@ -76,23 +116,6 @@ describe('Invoices', () => {
     user: {},
   };
 
-  const searchOptions = [
-    { searchOption: 'Contributor', value: testData.orderLine.contributors[0].contributor },
-    { searchOption: 'Requester', value: testData.orderLine.requester },
-    { searchOption: 'Title or package name', value: testData.orderLine.titleOrPackage },
-    { searchOption: 'Publisher', value: testData.orderLine.publisher },
-    { searchOption: 'Vendor account', value: testData.orderLine.vendorDetail.vendorAccount },
-    {
-      searchOption: 'Vendor reference number',
-      value: testData.orderLine.vendorDetail.referenceNumbers[0].refNumber,
-    },
-    { searchOption: 'Donor (Deprecated)', value: testData.orderLine.donor },
-    { searchOption: 'Selector', value: testData.orderLine.selector },
-    { searchOption: 'Volumes', value: testData.orderLine.physical.volumes[0] },
-    { searchOption: 'Product ID', value: testData.orderLine.details.productIds[0].productId },
-    { searchOption: 'Product ID ISBN', value: testData.orderLine.details.productIds[0].productId },
-  ];
-
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
       Organizations.createOrganizationViaApi(testData.invoiceOrganization).then(() => {
@@ -122,6 +145,10 @@ describe('Invoices', () => {
           Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then(
             (order) => {
               testData.order = order;
+
+              cy.get('@orderLine').then((poLine) => {
+                testData.orderLine = poLine;
+              });
             },
           );
 
@@ -174,13 +201,17 @@ describe('Invoices', () => {
       const SelectOrderLinesModal = InvoiceView.openSelectOrderLineModal();
       SelectOrderLinesModal.verifyModalView();
 
-      searchOptions.forEach(({ searchOption, value }) => {
+      const searchOptions = getSearchConfig(testData);
+
+      searchOptions.forEach(({ searchOption, value }, index) => {
         SelectOrderLinesModal.searchByParameter(searchOption, value);
         SelectOrderLinesModal.checkSearchResults(testData.orderLine.titleOrPackage);
-        SelectOrderLinesModal.resetFilters();
+
+        if (index < searchOptions.length - 1) {
+          SelectOrderLinesModal.resetFilters();
+        }
       });
 
-      SelectOrderLinesModal.searchByName(testData.order.poNumber);
       SelectOrderLinesModal.selectFromSearchResults();
       SelectOrderLinesModal.clickSaveButton();
 

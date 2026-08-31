@@ -67,8 +67,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C1046010 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to delete unlocked mapping profile not referenced in job profile (firebird)',
-      { tags: ['smoke', 'firebird', 'shiftLeft', 'C1046010'] },
+      'C1046010 User with "Settings - UI-Data-Export Settings Lock - Edit" capability set is able to delete unlocked mapping profile not referenced in job profile (athena)',
+      { tags: ['smoke', 'athena', 'shiftLeft', 'C1046010'] },
       () => {
         // Step 1: Select existing unlocked mapping profile from Preconditions: mapping profile not referenced in job profile
         ExportFieldMappingProfiles.searchFieldMappingProfile(notReferencedMappingProfileName);

@@ -87,8 +87,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C367950 "Optimistic locking" banner appears when edit MARC fields which mapped/not mapped to FOLIO instance by 2 different users (spitfire)',
-        { tags: ['extendedPath', 'spitfire', 'C367950'] },
+        'C367950 "Optimistic locking" banner appears when edit MARC fields which mapped/not mapped to FOLIO instance by 2 different users (promin)',
+        { tags: ['extendedPath', 'promin', 'C367950'] },
         () => {
           // Part 1: User B in UI edits mapped 245 field; User A saves via API first
           // Steps 1-2: User B opens record for editing
