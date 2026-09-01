@@ -142,7 +142,18 @@ export default {
     cy.wait(2000);
   },
 
-  fillItemRecordFields({ barcode, materialType, copyNumber, loanType } = {}) {
+  fillItemRecordFields({
+    barcode,
+    materialType,
+    copyNumber,
+    loanType,
+    callNumberPrefix,
+    callNumber,
+    callNumberSuffix,
+    volume,
+    enumeration,
+    chronology,
+  } = {}) {
     if (barcode) {
       cy.do(adminDataFields.barcode.fillIn(barcode));
     }
@@ -157,6 +168,26 @@ export default {
 
     if (loanType) {
       cy.do(loanDataFields.loanType.choose(loanType));
+    }
+
+    if (callNumberPrefix && callNumber) {
+      this.addEffectiveCallNumber(callNumberPrefix, callNumber);
+    }
+
+    if (callNumberSuffix) {
+      this.addCallNumberSuffix(callNumberSuffix);
+    }
+
+    if (volume) {
+      this.addVolume(volume);
+    }
+
+    if (enumeration) {
+      this.addEnumeration(enumeration);
+    }
+
+    if (chronology) {
+      this.addChronology(chronology);
     }
   },
   chooseItemPermanentLoanType: (permanentLoanType) => {
@@ -253,6 +284,14 @@ export default {
 
   addChronology(value) {
     cy.do(TextArea('Chronology').fillIn(value));
+  },
+
+  addCallNumberSuffix(value) {
+    cy.do(TextArea('Call number suffix').fillIn(value));
+  },
+
+  addVolume(value) {
+    cy.do(TextField('Volume').fillIn(value));
   },
 
   checkErrorMessageForStatisticalCode: (isPresented = true) => {

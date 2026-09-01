@@ -13,6 +13,7 @@ import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderDetails from '../../support/fragments/orders/orderDetails';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
+import OrderStates from '../../support/fragments/orders/orderStates';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
@@ -199,7 +200,7 @@ describe('Orders', () => {
       Orders.searchByParameter('PO number', testData.order.poNumber);
       Orders.selectFromResultsList(testData.order.poNumber);
       Orders.openOrder();
-      OrderLines.checkErrorToastMessage('Current fiscal year not found for ledger');
+      OrderLines.checkErrorToastMessage(OrderStates.noCurrentFYFoundForLedger);
       OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
     },
   );
