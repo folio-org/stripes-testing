@@ -130,6 +130,101 @@ export const embeddedFields = {
   classifications: ['Classification', 'Classification identifier type'],
 };
 
+export const extractValuesForTableType = (tableType, dataObj) => {
+  switch (tableType) {
+    case 'electronicAccess':
+      return [
+        dataObj.relationship,
+        dataObj.uri,
+        dataObj.linkText,
+        dataObj.materialsSpecification,
+        dataObj.publicNote,
+      ];
+    case 'notes':
+      return [dataObj.noteType, dataObj.note, dataObj.staffOnly];
+    case 'statements':
+    case 'statementsForSupplements':
+    case 'statementsForIndexes':
+      return [dataObj.statement, dataObj.note, dataObj.staffNote];
+    case 'receivingHistory':
+      return [dataObj.publicDisplay, dataObj.enumeration, dataObj.chronology];
+    case 'contributors':
+      return [
+        dataObj.name,
+        dataObj.contributorNameType,
+        dataObj.contributorType,
+        dataObj.contributorTypeFreeText,
+        dataObj.primary,
+      ];
+    case 'alternativeTitles':
+      return [dataObj.alternativeTitle, dataObj.alternativeTitleType];
+    case 'subjects':
+      return [dataObj.subjectHeadings, dataObj.subjectSource, dataObj.subjectType];
+    case 'publications':
+      return [dataObj.publisher, dataObj.role, dataObj.place, dataObj.dateOfPublication];
+    case 'identifiers':
+      return [dataObj.identifierType, dataObj.identifier];
+    case 'classifications':
+      return [dataObj.classificationIdentifierType, dataObj.classification];
+    case 'polFundDistribution':
+      return [
+        dataObj.code,
+        dataObj.encumbranceUUID,
+        dataObj.fund,
+        dataObj.expenseClass,
+        dataObj.distributionType,
+        dataObj.value,
+      ];
+    case 'userAddress':
+      return [
+        dataObj.city,
+        dataObj.region,
+        dataObj.country,
+        dataObj.postalCode,
+        dataObj.line1,
+        dataObj.type,
+        dataObj.primaryAddress,
+        dataObj.line2,
+      ];
+    case 'organizationAddresses':
+      return [
+        dataObj.addressLine1,
+        dataObj.addressLine2,
+        dataObj.city,
+        dataObj.stateRegion,
+        dataObj.zipCode,
+        dataObj.country,
+        dataObj.categories,
+      ];
+    case 'additionalCallNumbers':
+      return [dataObj.callNumber, dataObj.prefix, dataObj.suffix, dataObj.type];
+    case 'polLocations':
+      return [dataObj.name, dataObj.code, dataObj.quantityElectronic, dataObj.quantityPhysical];
+    case 'organizationUrls':
+      return [dataObj.url, dataObj.description, dataObj.categories, dataObj.notes];
+    case 'organizationAccounts':
+      return [
+        dataObj.name,
+        dataObj.accountNumber,
+        dataObj.description,
+        dataObj.accountingCode,
+        dataObj.paymentMethod,
+        dataObj.status,
+        dataObj.contactInfo,
+        dataObj.libraryCode,
+        dataObj.libraryEdiCode,
+        dataObj.notes,
+        dataObj.acquisitionUnitNames,
+      ];
+    case 'organizationEmails':
+      return [dataObj.email, dataObj.description, dataObj.categories];
+    case 'organizationPhoneNumbers':
+      return [dataObj.phoneNumber, dataObj.categories, dataObj.type];
+    default:
+      throw new Error(`Unknown table type: ${tableType}`);
+  }
+};
+
 export const holdingsFieldValues = {
   holdingsAdminNotes: 'Holdings — Administrative notes',
   instanceUuid: 'Holdings — Instance UUID',
@@ -184,6 +279,7 @@ export const holdingsFieldValues = {
   holdingsAdditionalCallNumbersSuffix: 'Holdings — Holdings additional call numbers — Suffix',
   holdingsAdditionalCallNumbersType: 'Holdings — Holdings additional call numbers — Type',
   holdingsTypeType: 'Holdings type — Type',
+  holdingsTypeUuid: 'Holdings type — Type UUID',
 };
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
@@ -1243,7 +1339,7 @@ export default {
 
         // Verify each expected row exists by finding a row containing all expected values
         dataToVerify.forEach((dataObj) => {
-          const expectedValues = this.extractValuesForTableType(tableType, dataObj);
+          const expectedValues = extractValuesForTableType(tableType, dataObj);
 
           // Find a table row that contains all expected values for this data object
           cy.get('[class^="DynamicTable-"]')
@@ -1265,101 +1361,6 @@ export default {
         });
       });
     });
-  },
-
-  extractValuesForTableType(tableType, dataObj) {
-    switch (tableType) {
-      case 'electronicAccess':
-        return [
-          dataObj.relationship,
-          dataObj.uri,
-          dataObj.linkText,
-          dataObj.materialsSpecification,
-          dataObj.publicNote,
-        ];
-      case 'notes':
-        return [dataObj.noteType, dataObj.note, dataObj.staffOnly];
-      case 'statements':
-      case 'statementsForSupplements':
-      case 'statementsForIndexes':
-        return [dataObj.statement, dataObj.note, dataObj.staffNote];
-      case 'receivingHistory':
-        return [dataObj.publicDisplay, dataObj.enumeration, dataObj.chronology];
-      case 'contributors':
-        return [
-          dataObj.name,
-          dataObj.contributorNameType,
-          dataObj.contributorType,
-          dataObj.contributorTypeFreeText,
-          dataObj.primary,
-        ];
-      case 'alternativeTitles':
-        return [dataObj.alternativeTitle, dataObj.alternativeTitleType];
-      case 'subjects':
-        return [dataObj.subjectHeadings, dataObj.subjectSource, dataObj.subjectType];
-      case 'publications':
-        return [dataObj.publisher, dataObj.role, dataObj.place, dataObj.dateOfPublication];
-      case 'identifiers':
-        return [dataObj.identifierType, dataObj.identifier];
-      case 'classifications':
-        return [dataObj.classificationIdentifierType, dataObj.classification];
-      case 'polFundDistribution':
-        return [
-          dataObj.code,
-          dataObj.encumbranceUUID,
-          dataObj.fund,
-          dataObj.expenseClass,
-          dataObj.distributionType,
-          dataObj.value,
-        ];
-      case 'userAddress':
-        return [
-          dataObj.city,
-          dataObj.region,
-          dataObj.country,
-          dataObj.postalCode,
-          dataObj.line1,
-          dataObj.type,
-          dataObj.primaryAddress,
-          dataObj.line2,
-        ];
-      case 'organizationAddresses':
-        return [
-          dataObj.addressLine1,
-          dataObj.addressLine2,
-          dataObj.city,
-          dataObj.stateRegion,
-          dataObj.zipCode,
-          dataObj.country,
-          dataObj.categories,
-        ];
-      case 'additionalCallNumbers':
-        return [dataObj.callNumber, dataObj.prefix, dataObj.suffix, dataObj.type];
-      case 'polLocations':
-        return [dataObj.name, dataObj.code, dataObj.quantityElectronic, dataObj.quantityPhysical];
-      case 'organizationUrls':
-        return [dataObj.url, dataObj.description, dataObj.categories, dataObj.notes];
-      case 'organizationAccounts':
-        return [
-          dataObj.name,
-          dataObj.accountNumber,
-          dataObj.description,
-          dataObj.accountingCode,
-          dataObj.paymentMethod,
-          dataObj.status,
-          dataObj.contactInfo,
-          dataObj.libraryCode,
-          dataObj.libraryEdiCode,
-          dataObj.notes,
-          dataObj.acquisitionUnitNames,
-        ];
-      case 'organizationEmails':
-        return [dataObj.email, dataObj.description, dataObj.categories];
-      case 'organizationPhoneNumbers':
-        return [dataObj.phoneNumber, dataObj.categories, dataObj.type];
-      default:
-        throw new Error(`Unknown table type: ${tableType}`);
-    }
   },
 
   verifyElectronicAccessEmbeddedTableInQueryModal(
