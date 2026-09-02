@@ -153,8 +153,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C423497 Verify "008" field dropdowns on Create MARC authority pane (promin)',
-        { tags: ['extendedPath', 'promin', 'nonParallel', 'C423497'] },
+        'C1464307 Verify "008" field dropdowns on Create MARC authority pane (promin)',
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C1464307'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           MarcAuthority.checkSourceFileSelectShown();

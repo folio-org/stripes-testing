@@ -172,9 +172,7 @@ describe('Data Import', () => {
         FileDetails.openInstanceInInventoryByStatus(RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.editMarcBibliographicRecord();
-        InventoryEditMarcRecord.deleteField(18);
-        InventoryEditMarcRecord.saveAndClose();
-        cy.wait(1500);
+        InventoryEditMarcRecord.deleteField(16);
         InventoryEditMarcRecord.saveAndClose();
         InventoryEditMarcRecord.confirmDeletingField();
         InstanceRecordView.waitLoading();
