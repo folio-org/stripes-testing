@@ -1,6 +1,5 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import BrowseContributors from '../../../../support/fragments/inventory/search/browseContributors';
-
 import QueryModal, {
   instanceFieldValues,
   QUERY_OPERATIONS,

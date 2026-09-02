@@ -23,11 +23,9 @@ import UserEdit from '../../../../support/fragments/users/userEdit';
 
 const testCaseId = 'C1464066';
 const titlePrefix = `AT_${testCaseId}`;
-
 const listData = {
   name: `${titlePrefix}_Open_loans_for_user`,
 };
-
 const testData = {
   loanPolicy: {
     name: `${titlePrefix}_LoanPolicy_${getRandomPostfix()}`,
@@ -58,7 +56,6 @@ const testData = {
   instances: [],
   loanIds: {},
 };
-
 let user;
 let servicePoint;
 let cachedLocation;
