@@ -1,6 +1,6 @@
 import { recurse } from 'cypress-recurse';
 import uuid from 'uuid';
-import { embeddedTableHeadersMap, embeddedFields } from '../bulk-edit/query-modal';
+import { embeddedTableHeadersMap, extractValuesForTableType } from '../bulk-edit/query-modal';
 import {
   Accordion,
   Button,
@@ -25,6 +25,7 @@ import {
   or,
   Pane,
   RadioButton,
+  SearchField,
   SelectionList,
   TextArea,
   TextField,
@@ -33,6 +34,7 @@ import {
 import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import ArrayUtils from '../../utils/arrays';
 import { poll } from '../../utils/polling';
+import SelectUser from '../users/modal/selectUser';
 
 const listInformationAccording = Accordion('List information');
 const queryAccordion = Accordion({ id: 'results-viewer-accordion' });
@@ -61,7 +63,11 @@ const newLink = Link('New');
 const statusAccordion = filterPane.find(Accordion('Status'));
 const visibilityAccordion = filterPane.find(Accordion('Visibility'));
 const recordTypesAccordion = filterPane.find(Accordion('Record types'));
+const sourceAccordion = filterPane.find(Accordion('Source'));
 const resetAllButton = filterPane.find(Button('Reset all'));
+const searchField = SearchField({ id: 'input-record-search' });
+const searchButton = filterPane.find(Button('Search'));
+const clearSearchButton = Button({ id: 'clickable-input-record-search-clear-field' });
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
 const editQueryButton = Button('Edit query');
 const resultViewerTable = MultiColumnList({ id: 'results-viewer-table' });
@@ -75,6 +81,10 @@ const privateCheckbox = Checkbox({ id: 'clickable-filter-visibility-private' });
 const deleteConfirmationModal = Modal('Delete list');
 const cancelConfirmationModal = Modal('Are you sure?');
 const buildQueryModal = Modal('Build query');
+const selectUserModal = Modal('Select User');
+const selectUserSearchField = selectUserModal.find(TextField({ name: 'query' }));
+const selectUserSearchButton = selectUserModal.find(Button('Search'));
+const selectUserResetAllButton = selectUserModal.find(Button('Reset all'));
 
 const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
 const linkSelector = 'a[data-test-text-link="true"]';
@@ -82,6 +92,7 @@ const linkSelector = 'a[data-test-text-link="true"]';
 const constants = {
   cannedListInactivePatronsWithOpenLoans: 'Inactive patrons with open loans',
   recordTypes: {
+    authority: 'Authority',
     users: 'Users',
     instances: 'Instances',
     holdings: 'Holdings',
@@ -935,6 +946,21 @@ const UI = {
     ]);
   },
 
+  verifySourceAccordionDefaultContent() {
+    cy.expect([
+      sourceAccordion.find(Checkbox('System')).has({ checked: false }),
+      sourceAccordion.find(Checkbox('User generated')).has({ checked: false }),
+    ]);
+  },
+
+  verifyFindUserAccordionDefaultContent(accordionName) {
+    const accordion = filterPane.find(Accordion(accordionName));
+    cy.expect([
+      accordion.find(TextField()).has({ value: '' }),
+      accordion.find(Button('Find User')).exists(),
+    ]);
+  },
+
   verifyRecordTypesAccordionDefaultContent() {
     cy.expect([
       recordTypesAccordion.find(Checkbox('Items')).has({ checked: false }),
@@ -962,6 +988,14 @@ const UI = {
     cy.wait(1000);
   },
 
+  unselectActiveLists() {
+    cy.wait(1000);
+    cy.do(activeCheckbox.uncheckIfSelected());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+    cy.wait(1000);
+  },
+
   selectInactiveLists() {
     cy.wait(1000);
     cy.do(inactiveCheckbox.checkIfNotSelected());
@@ -981,6 +1015,22 @@ const UI = {
   selectPrivateLists() {
     cy.wait(1000);
     cy.do(privateCheckbox.checkIfNotSelected());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+    cy.wait(1000);
+  },
+
+  selectSystemSource() {
+    cy.wait(1000);
+    cy.do(sourceAccordion.find(Checkbox('System')).checkIfNotSelected());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+    cy.wait(1000);
+  },
+
+  selectUserGeneratedSource() {
+    cy.wait(1000);
+    cy.do(sourceAccordion.find(Checkbox('User generated')).checkIfNotSelected());
     cy.wait(1000);
     this.waitForSpinnerToDisappear();
     cy.wait(1000);
@@ -1058,6 +1108,57 @@ const UI = {
     );
   },
 
+  clickOnFindUserButton(accordionName) {
+    cy.do(filterPane.find(Accordion(accordionName)).find(Button('Find User')).click());
+  },
+
+  verifySelectUserModalDefaultContent() {
+    cy.expect([
+      selectUserModal.exists(),
+      selectUserModal.find(HTML(including('User search'))).exists(),
+      selectUserSearchButton.has({ disabled: true }),
+      selectUserResetAllButton.has({ disabled: true }),
+      selectUserModal.find(Accordion('Status')).exists(),
+      selectUserModal.find(Accordion('Patron group')).exists(),
+      selectUserModal.find(Accordion('User type')).exists(),
+      selectUserModal.find(HTML(including('User Search Results'))).exists(),
+      selectUserModal.find(HTML(including('Enter search criteria to start'))).exists(),
+      selectUserModal.find(HTML(including('Choose a filter or enter a search'))).exists(),
+    ]);
+  },
+
+  findAndSelectUserInModal(userName) {
+    cy.do([selectUserSearchField.fillIn(userName), selectUserSearchButton.click()]);
+    cy.expect(selectUserModal.find(MultiColumnListCell(including(userName))).exists());
+    cy.do(selectUserModal.find(MultiColumnListRow({ index: 0 })).click());
+    cy.expect(selectUserModal.absent());
+  },
+
+  verifyFindUserFieldDisplaysUser(accordionName, userName) {
+    cy.expect(
+      filterPane
+        .find(Accordion(accordionName))
+        .find(TextField())
+        .has({ value: including(userName) }),
+    );
+  },
+
+  verifyNoResultsFoundMessage() {
+    cy.expect(
+      HTML(including('No results found. Please check your spelling and filters.')).exists(),
+    );
+  },
+
+  verifyNumberOfListsDisplayed(count) {
+    cy.get('div[class^="mclRowContainer--"]').find('[data-row-index]').should('have.length', count);
+  },
+
+  verifyAtLeastOneListDisplayed() {
+    cy.get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .should('have.length.at.least', 1);
+  },
+
   resetAllFilters() {
     cy.wait(1000);
     cy.get('button[id="clickable-reset-all"]').then((element) => {
@@ -1081,6 +1182,82 @@ const UI = {
 
   verifyResetAllButtonDisabled() {
     cy.expect(resetAllButton.has({ disabled: true }));
+  },
+
+  fillInSearchField(searchTerm) {
+    cy.do(searchField.fillIn(searchTerm));
+  },
+
+  pressEnterInSearchField() {
+    cy.get('#input-record-search').type('{enter}');
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+  },
+
+  clickOnSearchButton() {
+    cy.do(searchButton.click());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+  },
+
+  verifyListsPaneRecordsCount(count) {
+    let text;
+    if (count === 0) {
+      text = 'No records found';
+    } else if (count === 1) {
+      text = '1 record found';
+    } else {
+      text = `${count} records found`;
+    }
+    cy.get('[class^=paneHeader-]').contains(text).should('be.visible');
+  },
+
+  verifyNoResultsFoundForSearchTerm(searchTerm) {
+    cy.contains(
+      `No results found for "${searchTerm}". Please check your spelling and filters.`,
+    ).should('be.visible');
+  },
+
+  verifySearchFieldDisplayed() {
+    cy.expect(searchField.exists());
+  },
+
+  verifySearchFieldValue(value) {
+    cy.expect(searchField.has({ value }));
+  },
+
+  verifySearchFieldEmpty() {
+    cy.expect(searchField.has({ value: '' }));
+  },
+
+  verifySearchButtonEnabled() {
+    cy.expect(searchButton.has({ disabled: false }));
+  },
+
+  verifySearchButtonDisabled() {
+    cy.expect(searchButton.has({ disabled: true }));
+  },
+
+  verifyClearSearchButtonDisplayed() {
+    cy.expect(clearSearchButton.exists());
+  },
+
+  verifyClearSearchButtonAbsent() {
+    cy.expect(clearSearchButton.absent());
+  },
+
+  clickOnClearSearchButton() {
+    cy.do(clearSearchButton.click());
+  },
+
+  selectCreatedByFilter(userName) {
+    cy.do(Button({ id: 'created-by-filter-button' }).click());
+    SelectUser.findAndSelectUserInNameColumn(userName);
+  },
+
+  selectUpdatedByFilter(userName) {
+    cy.do(Button({ id: 'updated-by-filter-button' }).click());
+    SelectUser.findAndSelectUserInNameColumn(userName);
   },
 
   selectList(listName) {
@@ -1159,6 +1336,39 @@ const UI = {
           cy.expect(cell).to.be.oneOf(filters);
         });
       });
+  },
+
+  verifyListsFilteredBySource: (filters) => {
+    const cells = [];
+    cy.get('[role=columnheader]').then((headers) => {
+      const columnIndex =
+        [...headers].findIndex((header) => header.innerText.trim() === 'Source') + 1;
+
+      cy.get('div[class^="mclRowContainer--"]')
+        .find('[data-row-index]')
+        .each(($row) => {
+          cy.get(`[class*="mclCell-"]:nth-child(${columnIndex})`, { withinSubject: $row })
+            .invoke('text')
+            .then((cellValue) => {
+              cells.push(cellValue);
+            });
+        })
+        .then(() => {
+          const expectSystem = filters.includes('System');
+          const expectUserGenerated = filters.includes('User generated');
+
+          cells.forEach((cell) => {
+            if (expectSystem && !expectUserGenerated) {
+              cy.expect(cell).to.equal('System');
+            } else if (expectUserGenerated && !expectSystem) {
+              cy.expect(cell).to.not.equal('System');
+              cy.expect(cell).to.not.equal('');
+            } else {
+              cy.expect(cell).to.not.equal('');
+            }
+          });
+        });
+    });
   },
 
   verifySourceColumnCellDisplaysOnSingleLine() {
@@ -1455,9 +1665,7 @@ const QueryBuilder = {
 
           // Verify each expected row exists
           dataToVerify.forEach((dataObj) => {
-            const expectedValues = embeddedFields[tableType]
-              ? embeddedFields[tableType].map((field) => dataObj[field])
-              : Object.values(dataObj);
+            const expectedValues = extractValuesForTableType(tableType, dataObj);
 
             cy.get('[class^="DynamicTable-"]')
               .find('tbody tr')
