@@ -1,6 +1,5 @@
 import { recurse } from 'cypress-recurse';
 import uuid from 'uuid';
-import { embeddedTableHeadersMap, extractValuesForTableType } from '../bulk-edit/query-modal';
 import {
   Accordion,
   Button,
@@ -24,16 +23,18 @@ import {
   not,
   or,
   Pane,
+  PaneHeader,
   RadioButton,
   SelectionList,
   TextArea,
   TextField,
   Tooltip,
 } from '../../../../interactors';
-import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import ArrayUtils from '../../utils/arrays';
 import DateTools from '../../utils/dateTools';
 import { poll } from '../../utils/polling';
+import getRandomPostfix, { pluralize } from '../../utils/stringTools';
+import { embeddedTableHeadersMap, extractValuesForTableType } from '../bulk-edit/query-modal';
 
 const listInformationAccording = Accordion('List information');
 const queryAccordion = Accordion({ id: 'results-viewer-accordion' });
@@ -693,6 +694,19 @@ const UI = {
       cy.get('[class^=paneHeader-]').contains('1 record found').should('be.visible');
     }
     cy.get('#results-viewer-accordion').contains('1 record found').should('be.visible');
+  },
+
+  verifyLandingPageRecordsCount(number) {
+    cy.expect(listsPane.has({ subtitle: including(`${number} records found`) }));
+  },
+
+  verifyListDetailsHeaderWithIcon(listName) {
+    cy.expect(PaneHeader(including(listName)).exists());
+    cy.get('[class^=paneHeader-]')
+      .contains(listName)
+      .parents('[class^=paneHeader-]')
+      .find('[class*="appIcon"]')
+      .should('be.visible');
   },
 
   verifyQuery(query) {
@@ -1621,6 +1635,12 @@ const API = {
     return cy.okapiRequest({
       method: 'GET',
       path: 'lists',
+    });
+  },
+
+  getTotalRecordsViaApi() {
+    return this.getViaApi().then((response) => {
+      return response.body.totalRecords;
     });
   },
 
