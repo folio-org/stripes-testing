@@ -75,7 +75,7 @@ describe('Lists', () => {
         });
 
         it(
-          "C648494 Verify that it's possible to update the textbox custom fields, and all existing queries are still available (athena)",
+          'C648494 Verify that it\'s possible to update the textbox custom fields, and all existing queries are still available (athena)',
           { tags: ['criticalPath', 'athena', 'C648494'] },
           () => {
             listName = getTestEntityValue('C648494_List');
