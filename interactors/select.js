@@ -49,6 +49,12 @@ export default HTML.extend('select')
     allOptionsText: (el) => [...el.querySelectorAll('option')].map((option) => {
       return `${option.textContent}${option.disabled ? ' (disabled)' : ''}`;
     }),
+    optionsByGroup: (el) => Object.fromEntries(
+      [...el.querySelectorAll('optgroup')].map((group) => [
+        group.label,
+        [...group.querySelectorAll('option')].map((option) => option.textContent),
+      ]),
+    ),
     hasInfoButton: (el) => !!el.querySelector('[data-test-info-popover-trigger="true"]'),
   })
   .actions({
