@@ -129,6 +129,11 @@ export default {
     resource: 'UI-Users',
     action: CAPABILITY_ACTIONS.CREATE,
   },
+  uiUsersLoansView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Users Loans',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   rolesUsers: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'Roles Users',

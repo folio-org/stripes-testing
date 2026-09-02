@@ -7,6 +7,7 @@ export * from './lostItemsRequiringActualCostFields';
 export * from './orderInvoiceAnalysisFields';
 export * from './organizationsFields';
 export * from './purchaseOrderLinesFields';
+export * from './purchaseOrderFields';
 export * from './receivingPiecesFields';
 export * from './transactionsFields';
 export * from './usersFields';
