@@ -74,6 +74,26 @@ const editQueryButton = Button('Edit query');
 const resultViewerTable = MultiColumnList({ id: 'results-viewer-table' });
 const listsTable = MultiColumnList();
 
+// The sort affordance of a <MultiColumnList> header is a CSS pseudo-element driven by the
+// header's own class name, so the icon shown next to a column is asserted through the
+// class + aria-sort pair:
+//   "^" (caret up)    -> mclAscending     + aria-sort="ascending"
+//   "v" (caret down)  -> mclDescending    + aria-sort="descending"
+//   "up-down"         -> mclSortIndicator + aria-sort="none"
+//   no icon           -> none of them     + aria-sort="none"
+const sortIconClasses = {
+  ascending: 'mclAscending',
+  descending: 'mclDescending',
+  unsorted: 'mclSortIndicator',
+};
+const listsTableRowSelector = 'div[class^="mclRowContainer--"] [data-row-index]';
+const rowIndexOf = (row) => Number(row.getAttribute('data-row-index').replace('row-', ''));
+const displayedListNames = ($rows) => {
+  return [...$rows]
+    .sort((a, b) => rowIndexOf(a) - rowIndexOf(b))
+    .map((row) => row.querySelector('[role=gridcell]').innerText.trim());
+};
+
 const activeCheckbox = Checkbox({ id: 'clickable-filter-status-active' });
 const inactiveCheckbox = Checkbox({ id: 'clickable-filter-status-inactive' });
 const sharedCheckbox = Checkbox({ id: 'clickable-filter-visibility-shared' });
@@ -838,6 +858,87 @@ const UI = {
     cy.wait(1000);
   },
 
+  getLandingPageColumnHeader(columnName) {
+    return cy
+      .get('[role=columnheader]')
+      .filter((_, header) => header.innerText.trim() === columnName);
+  },
+
+  clickLandingPageColumnHeader(columnName) {
+    cy.do(listsTable.find(MultiColumnListHeader(columnName)).click());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+  },
+
+  // iconType is one of 'ascending', 'descending', 'unsorted' (the "up-down" icon) or 'none'
+  verifyLandingPageColumnSortIcon(columnName, iconType) {
+    const expectedClass = sortIconClasses[iconType];
+    const expectedAriaSort = expectedClass && iconType !== 'unsorted' ? iconType : 'none';
+    this.getLandingPageColumnHeader(columnName).should(($header) => {
+      expect($header.attr('aria-sort'), `"${columnName}" column aria-sort`).to.equal(
+        expectedAriaSort,
+      );
+      Object.entries(sortIconClasses).forEach(([icon, className]) => {
+        const assertion = expect($header.attr('class'), `"${columnName}" column "${icon}" icon`);
+        if (className === expectedClass) assertion.to.contain(className);
+        else assertion.to.not.contain(className);
+      });
+    });
+  },
+
+  verifyLandingPageColumnIsNotSortable(columnName) {
+    this.verifyLandingPageColumnSortIcon(columnName, 'none');
+    this.getLandingPageColumnHeader(columnName)
+      .find('[data-test-clickable-header]')
+      .should('not.exist');
+  },
+
+  verifyDisplayedListsOrder(expectedListNames) {
+    cy.get(listsTableRowSelector).should(($rows) => {
+      expect(displayedListNames($rows)).to.deep.equal(expectedListNames);
+    });
+  },
+
+  // The next two pin a result set down without asserting an exact records count, which a search
+  // on a common word cannot do: it also matches lists left behind by other tests.
+  verifyListsArePresent(listNames) {
+    cy.get(listsTableRowSelector).should(($rows) => {
+      const displayed = displayedListNames($rows);
+      listNames.forEach((name) => {
+        expect(displayed, `"${name}" is displayed`).to.include(name);
+      });
+    });
+  },
+
+  verifyListsAreNotPresent(listNames) {
+    cy.get(listsTableRowSelector).should(($rows) => {
+      const displayed = displayedListNames($rows);
+      listNames.forEach((name) => {
+        expect(displayed, `"${name}" is not displayed`).to.not.include(name);
+      });
+    });
+  },
+
+  // Checks the order of the expected lists relative to each other, ignoring any other row.
+  // Use it when the table also holds a list whose position cannot be predicted, e.g. a system
+  // generated list whose records count is environment data.
+  verifyDisplayedListsRelativeOrder(expectedListNames) {
+    cy.get(listsTableRowSelector).should(($rows) => {
+      const isExpected = (name) => expectedListNames.includes(name);
+      expect(displayedListNames($rows).filter(isExpected)).to.deep.equal(expectedListNames);
+    });
+  },
+
+  // Only the top rows are checked, so this works on a page holding more lists than the
+  // expected ones (a <MultiColumnList> renders only the rows around the viewport).
+  verifyFirstDisplayedListsOrder(expectedListNames) {
+    cy.get(listsTableRowSelector).should(($rows) => {
+      expect(displayedListNames($rows).slice(0, expectedListNames.length)).to.deep.equal(
+        expectedListNames,
+      );
+    });
+  },
+
   verifyResultCellContains(rowIndex, columnName, content) {
     this.verifyResultColumnDisplayed(columnName);
     cy.expect(
@@ -1224,6 +1325,21 @@ const UI = {
       text = `${count} records found`;
     }
     cy.get('[class^=paneHeader-]').contains(text).should('be.visible');
+  },
+
+  // Use on searches broad enough to also match lists left behind by other tests, where the
+  // exact number of results is not this test's to predict.
+  verifyListsPaneRecordsCountAtLeast(count) {
+    const pattern = /([\d,]+) records? found/;
+    cy.get('[class^=paneHeader-]')
+      .contains(pattern)
+      .invoke('text')
+      .then((text) => {
+        const displayedCount = Number(text.match(pattern)[1].replace(/,/g, ''));
+        expect(displayedCount, 'lists found, shown under the "Lists" pane label').to.be.at.least(
+          count,
+        );
+      });
   },
 
   verifyNoResultsFoundForSearchTerm(searchTerm) {
@@ -1732,6 +1848,22 @@ const API = {
         },
         fields: ['users.active', 'user.id'],
         uiQuery: 'users.id == 1234567890',
+      };
+    });
+  },
+
+  buildQueryOnSingleUserById(userId) {
+    return this.getAllEntityTypesViaApi().then((response) => {
+      const filteredEntityTypeId = response.body.entityTypes.find(
+        (entityType) => entityType.label === 'Users',
+      ).id;
+      return {
+        query: {
+          entityTypeId: filteredEntityTypeId,
+          fqlQuery: `{"users.id":{"$eq":"${userId}"}}`,
+        },
+        fields: ['users.active', 'users.id'],
+        uiQuery: `users.id == ${userId}`,
       };
     });
   },
