@@ -1752,7 +1752,7 @@ const QueryBuilder = {
       });
   },
 
-  verifyEmbeddedTableInResultsRow(tableType, identifier, expectedData) {
+  verifyEmbeddedTableInResultsRow(tableType, identifier, expectedData, tableIndex = 0) {
     const headers = embeddedTableHeadersMap[tableType];
     if (!headers) {
       throw new Error(
@@ -1769,6 +1769,7 @@ const QueryBuilder = {
         cy.get(`[data-row-index="row-${rowIndex}"]`).within(() => {
           // Verify table headers
           cy.get('[class^="DynamicTable-"]')
+            .eq(tableIndex)
             .find('tr')
             .eq(0)
             .then((headerRow) => {
