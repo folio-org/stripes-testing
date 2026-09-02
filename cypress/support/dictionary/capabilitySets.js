@@ -354,6 +354,11 @@ export default {
     resource: 'Acquisitions-Units Memberships',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  circulationStorageManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Circulation-Storage',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Procedural capability sets
   uiUsersResetPassword: {

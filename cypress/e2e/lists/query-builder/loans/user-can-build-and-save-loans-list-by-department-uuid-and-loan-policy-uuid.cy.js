@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import Permissions from '../../../../support/dictionary/permissions';
+import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 import QueryModal, {
   QUERY_OPERATIONS,
   stringStoresUuidButMillionOperators,
@@ -247,20 +247,27 @@ describe('Lists', () => {
             });
           })
           .then(() => {
-            return cy.createTempUser([
-              Permissions.listsAll.gui,
-              Permissions.uiUsersView.gui,
-              Permissions.inventoryAll.gui,
-              Permissions.circulationLogAll.gui,
-              Permissions.uiUsersViewLoans.gui,
-            ]);
-          })
-          .then((userProperties) => {
-            user = userProperties;
-            cy.login(user.username, user.password, {
-              path: TopMenu.listsPath,
-              waiter: Lists.waitLoading,
-            });
+            return cy
+              .createTempUser([])
+
+              .then((userProperties) => {
+                user = userProperties;
+                cy.assignCapabilitiesToExistingUser(
+                  userProperties.userId,
+                  [],
+                  [
+                    CapabilitySets.moduleListsManage,
+                    CapabilitySets.uiUsersView,
+                    CapabilitySets.uiInventory,
+                    CapabilitySets.circulationStorageManage,
+                  ],
+                );
+
+                cy.login(user.username, user.password, {
+                  path: TopMenu.listsPath,
+                  waiter: Lists.waitLoading,
+                });
+              });
           });
       });
 
