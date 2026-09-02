@@ -291,7 +291,7 @@ describe('Lists', () => {
           QueryModal.verifyPlusAndTrashButtonsDisabled(1, false, false);
           QueryModal.verifyPlusAndTrashButtonsDisabled(2, false, false);
           QueryModal.verifyQueryAreaContent(
-            `(holdings_type.id == ${testData.holdingsType1.id}) AND (holdings.instance_id == ${testData.instanceId}) AND (holdings.statistical_code_ids is null/empty True)`,
+            `(holdings_type.id == ${testData.holdingsType1.id}) AND (holdings.instance_id == ${testData.instanceId}) AND (holdings.statistical_code_ids  is null/empty true)`,
           );
           // HoldingsType1 holdings (1 & 2) both have stat codes — no results
           QueryModal.verifyQueryReturnsNoResults();
@@ -313,7 +313,7 @@ describe('Lists', () => {
           Lists.verifyListSavedCalloutMessage(listName);
           Lists.waitForCompilingToComplete();
           Lists.verifyQuery(
-            `holdings_type.id == ${testData.holdingsType2.id}) AND (holdings.instance_id == ${testData.instanceId}) AND (holdings.statistical_code_ids is null/empty True`,
+            `holdings_type.id == ${testData.holdingsType2.id}) AND (holdings.instance_id == ${testData.instanceId}) AND (holdings.statistical_code_ids is null/empty true`,
           );
 
           // Step 13: Open Actions => "Edit list", click "Edit query" and verify saved conditions
@@ -327,10 +327,10 @@ describe('Lists', () => {
           QueryModal.verifySelectedOperator(QUERY_OPERATIONS.EQUAL, 1);
           QueryModal.verifyTextFieldValue(testData.instanceId, 1);
           QueryModal.verifySelectedField(holdingsFieldValues.holdingsStatisticalCodeUuids, 2);
-          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IS_NULL, 2);
+          QueryModal.verifySelectedOperator(` ${QUERY_OPERATIONS.IS_NULL}`, 2);
           QueryModal.verifySelectedValue('True', 2);
           QueryModal.verifyQueryAreaContent(
-            `(holdings_type.id == ${testData.holdingsType2.id}) AND (holdings.instance_id == ${testData.instanceId}) AND (holdings.statistical_code_ids is null/empty True)`,
+            `(holdings_type.id == ${testData.holdingsType2.id}) AND (holdings.instance_id == ${testData.instanceId}) AND (holdings.statistical_code_ids  is null/empty true)`,
           );
         },
       );
