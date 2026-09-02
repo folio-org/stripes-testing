@@ -17,6 +17,7 @@ const actionsButton = Button('Actions');
 const editButton = Button('Edit');
 const encumbranceLimitsCheckbox = Checkbox({ labelText: 'Enforce all budget encumbrance limits' });
 const expenditureLimitsCheckbox = Checkbox({ labelText: 'Enforce all budget expenditure limits' });
+const iconTimes = Button({ icon: 'times' });
 
 export default {
   ...FinanceDetails,
@@ -103,5 +104,9 @@ export default {
     this.expandActionsDropdown();
     cy.do(editButton.click());
     LedgerEditForm.waitLoading();
+  },
+
+  closeLedgerDetails: () => {
+    cy.do(ledgerDetailsPane.find(iconTimes).click());
   },
 };
