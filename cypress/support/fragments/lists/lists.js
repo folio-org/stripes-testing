@@ -1,6 +1,6 @@
 import { recurse } from 'cypress-recurse';
 import uuid from 'uuid';
-import { embeddedTableHeadersMap, embeddedFields } from '../bulk-edit/query-modal';
+import { embeddedTableHeadersMap, extractValuesForTableType } from '../bulk-edit/query-modal';
 import {
   Accordion,
   Button,
@@ -83,6 +83,7 @@ const linkSelector = 'a[data-test-text-link="true"]';
 const constants = {
   cannedListInactivePatronsWithOpenLoans: 'Inactive patrons with open loans',
   recordTypes: {
+    authority: 'Authority',
     users: 'Users',
     instances: 'Instances',
     holdings: 'Holdings',
@@ -1464,9 +1465,7 @@ const QueryBuilder = {
 
           // Verify each expected row exists
           dataToVerify.forEach((dataObj) => {
-            const expectedValues = embeddedFields[tableType]
-              ? embeddedFields[tableType].map((field) => dataObj[field])
-              : Object.values(dataObj);
+            const expectedValues = extractValuesForTableType(tableType, dataObj);
 
             cy.get('[class^="DynamicTable-"]')
               .find('tbody tr')
