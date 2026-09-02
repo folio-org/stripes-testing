@@ -423,6 +423,31 @@ export default {
     actionProfileIdForMatches,
     actionProfileIdForNonMatches,
   ) => {
+    const matchIds = [].concat(actionProfileIdForMatches ?? []).filter(Boolean);
+    const nonMatchIds = [].concat(actionProfileIdForNonMatches ?? []).filter(Boolean);
+
+    const matchRelations = matchIds.map((id, index) => ({
+      masterProfileId: matchProfileId,
+      masterWrapperId: null,
+      masterProfileType: 'MATCH_PROFILE',
+      detailProfileId: id,
+      detailWrapperId: null,
+      detailProfileType: 'ACTION_PROFILE',
+      order: index,
+      reactTo: 'MATCH',
+    }));
+
+    const nonMatchRelations = nonMatchIds.map((id, index) => ({
+      masterProfileId: matchProfileId,
+      masterWrapperId: null,
+      masterProfileType: 'MATCH_PROFILE',
+      detailProfileId: id,
+      detailWrapperId: null,
+      detailProfileType: 'ACTION_PROFILE',
+      order: index,
+      reactTo: 'NON_MATCH',
+    }));
+
     return cy
       .okapiRequest({
         method: 'POST',
@@ -442,26 +467,8 @@ export default {
               detailProfileType: 'MATCH_PROFILE',
               order: 0,
             },
-            {
-              masterProfileId: matchProfileId,
-              masterWrapperId: null,
-              masterProfileType: 'MATCH_PROFILE',
-              detailProfileId: actionProfileIdForMatches,
-              detailWrapperId: null,
-              detailProfileType: 'ACTION_PROFILE',
-              order: 0,
-              reactTo: 'MATCH',
-            },
-            {
-              masterProfileId: matchProfileId,
-              masterWrapperId: null,
-              masterProfileType: 'MATCH_PROFILE',
-              detailProfileId: actionProfileIdForNonMatches,
-              detailWrapperId: null,
-              detailProfileType: 'ACTION_PROFILE',
-              order: 0,
-              reactTo: 'NON_MATCH',
-            },
+            ...matchRelations,
+            ...nonMatchRelations,
           ],
           deletedRelations: [],
         },
