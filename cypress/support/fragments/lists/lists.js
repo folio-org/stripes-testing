@@ -34,7 +34,7 @@ import {
 import ArrayUtils from '../../utils/arrays';
 import { poll } from '../../utils/polling';
 import getRandomPostfix, { pluralize } from '../../utils/stringTools';
-import { embeddedFields, embeddedTableHeadersMap } from '../bulk-edit/query-modal';
+import { embeddedTableHeadersMap, extractValuesForTableType } from '../bulk-edit/query-modal';
 import SelectUser from '../users/modal/selectUser';
 
 const listInformationAccording = Accordion('List information');
@@ -93,6 +93,7 @@ const linkSelector = 'a[data-test-text-link="true"]';
 const constants = {
   cannedListInactivePatronsWithOpenLoans: 'Inactive patrons with open loans',
   recordTypes: {
+    authority: 'Authority',
     users: 'Users',
     instances: 'Instances',
     holdings: 'Holdings',
@@ -1678,9 +1679,7 @@ const QueryBuilder = {
 
           // Verify each expected row exists
           dataToVerify.forEach((dataObj) => {
-            const expectedValues = embeddedFields[tableType]
-              ? embeddedFields[tableType].map((field) => dataObj[field])
-              : Object.values(dataObj);
+            const expectedValues = extractValuesForTableType(tableType, dataObj);
 
             cy.get('[class^="DynamicTable-"]')
               .find('tbody tr')
