@@ -1,6 +1,6 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import { MultiColumnList } from '../../../../interactors';
+import { MultiColumnList, MultiColumnListHeader } from '../../../../interactors';
 import {
   BROWSE_CLASSIFICATION_OPTIONS,
   BROWSE_CALL_NUMBER_OPTIONS,
@@ -35,6 +35,8 @@ describe('fse-inventory - UI (no data manipulation)', () => {
       InventorySearchAndFilter.byKeywords();
       // wait for requests
       cy.expect(MultiColumnList().exists());
+      cy.get('div[class*="mclScrollable-"]').scrollTo('right', { ensureScrollable: false });
+      cy.expect(MultiColumnListHeader('Instance HRID').exists());
       // reset filters
       InventorySearchAndFilter.resetAll();
       cy.expect(MultiColumnList().absent());
@@ -43,7 +45,7 @@ describe('fse-inventory - UI (no data manipulation)', () => {
 
   it(
     `TC195766 - check inventory classifications ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['ramsons', 'fse', 'ui', 'inventory', 'TC195766'] },
+    { tags: ['fse', 'ui', 'inventory', 'sanity', 'TC195766'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       // check classification
@@ -63,6 +65,17 @@ describe('fse-inventory - UI (no data manipulation)', () => {
       InventorySearchAndFilter.selectBrowseOption('Subjects');
       InventorySearchAndFilter.browseSearch('test subject');
       BrowseSubjects.checkSearchResultsTable();
+    },
+  );
+
+  it(
+    `FDOPS-6193 - verify title and contributors columns in classification (all) browse results ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'inventory', 'sanity', 'FDOPS-6193'] },
+    () => {
+      InventorySearchAndFilter.switchToBrowseTab();
+      InventorySearchAndFilter.selectBrowseOption(BROWSE_CLASSIFICATION_OPTIONS.CALL_NUMBERS_ALL);
+      InventorySearchAndFilter.browseSearch('a');
+      BrowseClassifications.verifySearchResultsTable();
     },
   );
 });
