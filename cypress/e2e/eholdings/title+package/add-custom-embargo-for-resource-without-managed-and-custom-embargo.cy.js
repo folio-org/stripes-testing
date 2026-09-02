@@ -41,8 +41,8 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C421988 Add "Custom Embargo" period for "Resource" that doesn\'t have specified "Managed embargo period" and "Custom embargo period" (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C421988'] },
+      'C421988 Add "Custom Embargo" period for "Resource" that doesn\'t have specified "Managed embargo period" and "Custom embargo period" (promin)',
+      { tags: ['extendedPath', 'promin', 'C421988'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.eholdingsPath + `/resources/${testData.resourceId}`,
