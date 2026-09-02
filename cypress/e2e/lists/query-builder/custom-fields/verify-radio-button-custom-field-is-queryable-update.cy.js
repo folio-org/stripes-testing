@@ -89,7 +89,7 @@ describe('Lists', () => {
         });
 
         it(
-          "C648493 Verify that it's possible to update the Radio custom fields, and all existing queries are still available (athena)",
+          'C648493 Verify that it\'s possible to update the Radio custom fields, and all existing queries are still available (athena)',
           { tags: ['criticalPath', 'athena', 'C648493'] },
           () => {
             listName = getTestEntityValue('C648493_List');
