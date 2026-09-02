@@ -57,4 +57,36 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
       });
     },
   );
+
+  it(
+    `FDOPS-6189 - check GET user/settings suppressEdit for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['sanity', 'fse', 'api', 'mod-users', 'FDOPS-6189'] },
+    () => {
+      cy.getUserSettings('key=="suppressEdit"').then((response) => {
+        cy.expect(response.status).to.eq(200);
+      });
+    },
+  );
+
+  it(
+    `FDOPS-6190 - check GET user/settings returns records for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['sanity', 'fse', 'api', 'mod-users', 'FDOPS-6190'] },
+    () => {
+      cy.getUserSettings().then((response) => {
+        cy.expect(response.status).to.eq(200);
+        cy.expect(response.body.totalRecords).to.not.be.oneOf([null, '']);
+      });
+    },
+  );
+
+  it(
+    `FDOPS-6191 - check GET user/settings by mod-users scope for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['sanity', 'fse', 'api', 'mod-users', 'FDOPS-6191'] },
+    () => {
+      cy.getUserSettings('scope=="mod-users"').then((response) => {
+        cy.expect(response.status).to.eq(200);
+        cy.expect(response.body.totalRecords).to.not.be.oneOf([null, '']);
+      });
+    },
+  );
 });

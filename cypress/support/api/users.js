@@ -498,6 +498,13 @@ Cypress.Commands.add('getKeycloakUsersInfo', () => {
   });
 });
 
+Cypress.Commands.add('getUserSettings', (query) => {
+  return cy.okapiRequest({
+    path: query ? `user/settings?query=(${query})` : 'user/settings',
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
 Cypress.Commands.add('getUserMigrations', () => {
   cy.okapiRequest({
     path: 'users-keycloak/migrations',
