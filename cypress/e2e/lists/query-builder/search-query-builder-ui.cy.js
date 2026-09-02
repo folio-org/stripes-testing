@@ -20,7 +20,6 @@ import {
   generateRadioButtonCustomFieldData,
   generateSingleSelectCustomFieldData,
 } from '../../../support/utils/customFields';
-import { poll } from '../../../support/utils/polling';
 import { getCurrentTimestamp, getTestEntityValue } from '../../../support/utils/stringTools';
 import {
   MultiColumnList,
@@ -97,24 +96,6 @@ describe('Lists', () => {
       }
       Lists.selectRecordType(recordType);
       Lists.buildQuery();
-    };
-
-    const waitForCustomFieldToBeQueryable = (recordType, fieldLabel) => {
-      const fieldLabels = Array.isArray(fieldLabel) ? fieldLabel : [fieldLabel];
-
-      return Lists.getEntityTypeIdByNameViaApi(recordType).then((entityTypeId) => {
-        return poll(
-          () => Lists.getEntityTypeByIdViaApi(entityTypeId, { failOnStatusCode: false }),
-          ({ body }) => {
-            return fieldLabels.every((label) => body.columns?.some(({ labelAlias, queryable }) => labelAlias === label && queryable));
-          },
-          {
-            timeout: 360000,
-            delay: 15000,
-            errorMessage: `"${fieldLabels.join(', ')}" custom field(s) did not become queryable for ${recordType}`,
-          },
-        );
-      });
     };
 
     const verifyUserFriendlyQueryText = ({ queryBuilderPreview, listDetails, expectedQuery }) => {
@@ -401,7 +382,7 @@ describe('Lists', () => {
 
             testData.createdCustomFieldIds = createdCustomFields.map(({ id }) => id);
 
-            return waitForCustomFieldToBeQueryable(recordType, getCustomFieldLabels());
+            return Lists.waitForCustomFieldToBeQueryable(getCustomFieldLabels(), recordType);
           });
       });
 
@@ -514,9 +495,9 @@ describe('Lists', () => {
             userData = userProperties;
           })
           .then(() => {
-            return waitForCustomFieldToBeQueryable(
-              recordType,
+            return Lists.waitForCustomFieldToBeQueryable(
               `User — ${testData.customField.name}`,
+              recordType
             );
           });
       });
