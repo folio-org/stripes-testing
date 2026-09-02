@@ -15,6 +15,9 @@ const financialSummarySection = Section({ id: 'financial-summary' });
 const ledgersSection = Section({ id: 'ledger' });
 const groupsSection = Section({ id: 'group' });
 const fundsSection = Section({ id: 'fund' });
+const fiscalYearSelect = Select('Fiscal year');
+
+const FISCAL_YEAR_OPTION_GROUPS = { CURRENT: 'Current:', PREVIOUS: 'Previous:' };
 
 export default {
   checkInformation(information = []) {
@@ -181,5 +184,16 @@ export default {
   },
   openFundDetails(name) {
     this.openItemDetails({ section: fundsSection, name });
+  },
+
+  selectFiscalYear(fiscalYearCode) {
+    cy.do(informationSection.find(fiscalYearSelect).choose(fiscalYearCode));
+  },
+
+  checkFiscalYearDropdownOptions({ current = [], previous = [] } = {}) {
+    cy.then(() => informationSection.find(fiscalYearSelect).optionsByGroup()).then((groups) => {
+      expect(groups[FISCAL_YEAR_OPTION_GROUPS.CURRENT]).to.deep.equal(current);
+      expect(groups[FISCAL_YEAR_OPTION_GROUPS.PREVIOUS]).to.deep.equal(previous);
+    });
   },
 };

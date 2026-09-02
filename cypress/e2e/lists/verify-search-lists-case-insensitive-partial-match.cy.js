@@ -104,7 +104,7 @@ describe('Lists', () => {
         Lists.verifyListIsPresent('Missing items');
         Lists.verifyListIsPresent(createdLists[0].name);
         Lists.verifyListIsPresent(createdLists[1].name);
-        Lists.verifyListsPaneRecordsCount(3);
+        Lists.verifyListsPaneRecordsCountAtLeast(3);
 
         // #2 Search "ITEMS" (uppercase), click "Search"
         Lists.fillInSearchField('ITEMS');

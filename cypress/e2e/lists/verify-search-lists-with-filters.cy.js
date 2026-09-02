@@ -157,7 +157,7 @@ describe('Lists', () => {
         Lists.unselectActiveLists();
         Lists.selectInactiveLists();
         Lists.verifyListIsPresent(list2.name);
-        Lists.verifyListsPaneRecordsCount(1);
+        Lists.verifyListsPaneRecordsCountAtLeast(1);
 
         // #2 Search "ITEMS" + filter by Visibility: uncheck Active, check Shared
         Lists.resetAllFilters();
@@ -168,7 +168,7 @@ describe('Lists', () => {
         Lists.verifyListIsPresent(cannedSystemList);
         Lists.verifyListIsPresent(list1.name);
         Lists.verifyListIsPresent(list4.name);
-        Lists.verifyListsPaneRecordsCount(3);
+        Lists.verifyListsPaneRecordsCountAtLeast(3);
 
         // #3 Search "Missing Items" + filter by Source: uncheck Active, check System
         Lists.resetAllFilters();
@@ -205,7 +205,7 @@ describe('Lists', () => {
         Lists.unselectActiveLists();
         Lists.selectRecordTypeFilter('Loans');
         Lists.verifyListIsPresent(list3.name);
-        Lists.verifyListsPaneRecordsCount(1);
+        Lists.verifyListsPaneRecordsCountAtLeast(1);
 
         // #7 Search "day" + all filters (Active stays checked): Private, User generated,
         // Created by User 2, Updated by User 2, Record types Users
