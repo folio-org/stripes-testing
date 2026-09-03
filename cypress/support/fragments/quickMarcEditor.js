@@ -2953,40 +2953,6 @@ export default {
     );
   },
 
-  checkDefaultFieldsInOrder() {
-    cy.expect(
-      QuickMarcEditorRow({ index: 0 })
-        .find(TextField('Field'))
-        .has({ value: 'LDR', disabled: true }),
-    );
-    cy.expect(
-      QuickMarcEditorRow({ index: 1 })
-        .find(TextField('Field'))
-        .has({ value: '001', disabled: true }),
-    );
-    this.checkEmptyContent('001');
-    cy.expect(
-      QuickMarcEditorRow({ index: 2 })
-        .find(TextField('Field'))
-        .has({ value: '005', disabled: false }),
-    );
-    this.checkFourthBoxEditable(2, false);
-    this.checkEmptyContent('005');
-    cy.expect(
-      QuickMarcEditorRow({ index: 3 })
-        .find(TextField('Field'))
-        .has({ value: '008', disabled: false }),
-    );
-    this.checkOnlyBackslashesIn008Boxes();
-    cy.expect(
-      QuickMarcEditorRow({ index: 4 })
-        .find(TextField('Field'))
-        .has({ value: '999', disabled: true }),
-    );
-    this.verifyTagField(4, '999', 'f', 'f', '', '');
-    this.verifyAllBoxesInARowAreDisabled(4);
-  },
-
   checkEditableQuickMarcFormIsOpened: () => {
     cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
   },

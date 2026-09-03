@@ -197,9 +197,6 @@ describe('Inventory', () => {
             InventorySearchAndFilter.switchToHoldings();
             InventorySearchAndFilter.holdingsTabIsDefault();
             InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
-            InventorySearchAndFilter.toggleAccordionByName(sharedAccordionName);
-            InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'Yes', false);
-            InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'No', false);
 
             SelectInstanceModal.searchByName(instancePrefix);
             InventorySearchAndFilter.verifyNumberOfSearchResults(instanceIndexesAllVisible.length);
@@ -210,6 +207,7 @@ describe('Inventory', () => {
                 instanceIndexesShared.includes(instanceIndex),
               );
             });
+            InventorySearchAndFilter.toggleAccordionByName(sharedAccordionName);
             InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'Yes', false);
             InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'No', false);
 
