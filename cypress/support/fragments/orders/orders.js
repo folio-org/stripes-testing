@@ -229,10 +229,12 @@ export default {
     ]);
   },
 
-  closeOrder: (reason) => {
+  closeOrder: (reason, isSuccess = true) => {
     expandActionsDropdown();
     cy.do([Button('Close order').click(), Select('Reason').choose(reason), submitButton.click()]);
-    InteractorsTools.checkCalloutMessage('Order was closed');
+    if (isSuccess) {
+      InteractorsTools.checkCalloutMessage('Order was closed');
+    }
   },
 
   reOpenOrder: (orderNumber) => {
