@@ -638,4 +638,38 @@ export default {
     if (isExist) cy.expect(targetRow.exists());
     else cy.expect(targetRow.absent());
   },
+
+  checkDefaultFieldsInOrder() {
+    cy.expect(
+      QuickMarcEditorRow({ index: 0 })
+        .find(TextField('Field'))
+        .has({ value: 'LDR', disabled: true }),
+    );
+    cy.expect(
+      QuickMarcEditorRow({ index: 1 })
+        .find(TextField('Field'))
+        .has({ value: '001', disabled: true }),
+    );
+    QuickMarcEditorWindow.checkEmptyContent('001');
+    cy.expect(
+      QuickMarcEditorRow({ index: 2 })
+        .find(TextField('Field'))
+        .has({ value: '005', disabled: false }),
+    );
+    QuickMarcEditorWindow.checkFourthBoxEditable(2, false);
+    QuickMarcEditorWindow.checkEmptyContent('005');
+    cy.expect(
+      QuickMarcEditorRow({ index: 3 })
+        .find(TextField('Field'))
+        .has({ value: '008', disabled: false }),
+    );
+    this.checkDefault008DropdownValues();
+    cy.expect(
+      QuickMarcEditorRow({ index: 4 })
+        .find(TextField('Field'))
+        .has({ value: '999', disabled: true }),
+    );
+    QuickMarcEditorWindow.verifyTagField(4, '999', 'f', 'f', '', '');
+    QuickMarcEditorWindow.verifyAllBoxesInARowAreDisabled(4);
+  },
 };
