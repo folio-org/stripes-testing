@@ -83,7 +83,7 @@ describe('Eureka', () => {
         });
 
         it(
-          'C1504509 [UISAUTHCOM-103] Assigning users with and without username to an authorization role (eureka)',
+          'C1504509 Assigning users with and without username to an authorization role (eureka)',
           { tags: ['criticalPath', 'eureka', 'C1504509'] },
           () => {
             // Steps 1-5: Role A — select all 3 users (including User C without username) → error
