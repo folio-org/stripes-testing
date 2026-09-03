@@ -1,3 +1,15 @@
+const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// funds can be listed in any order in the callout, so just check each code is present
+function fundsListPattern(fundCodes) {
+  return (
+    fundCodes
+      .map(escapeRegExp)
+      .map((code) => `(?=.*${code})`)
+      .join('') + '.+'
+  );
+}
+
 export default {
   orderSavedSuccessfully: 'The Purchase order - (?:\\d+) has been successfully saved',
   orderOpenedSuccessfully: 'The Purchase order - (?:\\d+) has been successfully opened',
@@ -23,6 +35,33 @@ export default {
     return `Order cannot be opened because there is no current budget for fund(s) [${fundCode}] for fiscal year ${fiscalYearCode}.`;
   },
   noCurrentFYFoundForLedger: 'Current fiscal year not found for ledger.',
+  budgetExpenseClassNotFoundError(expenseClass, fundCode) {
+    return `${expenseClass} expense class not found on ${fundCode} Fund`;
+  },
+  inactiveExpenseClassError(expenseClass) {
+    return `Order can NOT be Opened because expense class ${expenseClass} is inactive.`;
+  },
+  selectedAccountNumberIsInactive: 'The selected account number is inactive.',
+  budgetNotFoundForFiscalYearCancel(fundCodes, fiscalYearCode) {
+    return new RegExp(
+      `^To cancel the order, the related fund\\(s\\) ${fundsListPattern(fundCodes)} must have an active budget for fiscal year ${escapeRegExp(fiscalYearCode)}\\.$`,
+    );
+  },
+  budgetNotFoundForFiscalYearClose(fundCodes, fiscalYearCode) {
+    return new RegExp(
+      `^To close the order, the related fund\\(s\\) ${fundsListPattern(fundCodes)} must have an active budget for fiscal year ${escapeRegExp(fiscalYearCode)}\\.$`,
+    );
+  },
+  budgetNotFoundForFiscalYearUnopen(fundCodes, fiscalYearCode) {
+    return new RegExp(
+      `^To unopen the order, the related fund\\(s\\) ${fundsListPattern(fundCodes)} must have an active budget for fiscal year ${escapeRegExp(fiscalYearCode)}\\.$`,
+    );
+  },
+  budgetNotFoundForFiscalYearUpdateEncumbrances(fundCodes, fiscalYearCode) {
+    return new RegExp(
+      `^To update encumbrances, the related fund\\(s\\) ${fundsListPattern(fundCodes)} must have an active budget for fiscal year ${escapeRegExp(fiscalYearCode)}\\.$`,
+    );
+  },
 
   // warnings
   exchangeRateAmountMustBePositive: 'Amount must be a positive number',
@@ -38,6 +77,8 @@ export default {
   encumbrancesForReEncumberNotFound: 'encumbrancesForReEncumberNotFound',
   currentFiscalYearNotFound: 'currentFYearNotFound',
   budgetNotFoundForFiscalYear: 'budgetNotFoundForFiscalYear',
+  budgetExpenseClassNotFound: 'budgetExpenseClassNotFound',
+  inactiveExpenseClass: 'inactiveExpenseClass',
 
   // API errorMessages
   fundCannotBePaidDueToRestricrions: 'Fund cannot be paid due to restrictions',
@@ -46,4 +87,6 @@ export default {
   currentFYearNotFoundAPIMessage: 'Current fiscal year not found for ledger',
   couldNotFindActiveBudgetInCurrentFY:
     'Could not find an active budget for a fund with the current fiscal year of another fund in the fund distribution',
+  budgetExpenseClassNotFoundAPIMessage: 'Budget expense class not found',
+  expenseClassIsInactiveAPIMessage: 'Expense class is Inactive',
 };
