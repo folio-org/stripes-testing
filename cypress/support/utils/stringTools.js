@@ -33,3 +33,5 @@ export const getRandomLetters = (count) => {
 export const pluralize = (count, singular, plural = `${singular}s`) => {
   return count === 1 ? singular : plural;
 };
+
+export const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
