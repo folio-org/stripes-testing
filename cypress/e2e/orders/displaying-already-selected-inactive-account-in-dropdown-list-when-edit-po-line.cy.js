@@ -173,6 +173,7 @@ describe('Orders', () => {
       });
 
       // Step 7: Edit PO line and verify the Account number dropdown
+      cy.wait(30000);
       OrderLineDetails.openOrderLineEditForm();
       OrderLineEditForm.checkAccountNumberWarning(false);
       OrderLineEditForm.checkAccountNumberSelected(activeAccount.name);

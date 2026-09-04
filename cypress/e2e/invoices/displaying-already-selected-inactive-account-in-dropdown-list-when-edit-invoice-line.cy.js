@@ -172,6 +172,7 @@ describe('Invoices', () => {
       });
 
       // Step 6-7: Edit invoice line again and verify the Account number dropdown
+      cy.wait(30000);
       Invoices.editInvoiceLine();
       InvoiceLineEditForm.waitLoading();
       InvoiceLineEditForm.checkAccountNumberWarning(false);
