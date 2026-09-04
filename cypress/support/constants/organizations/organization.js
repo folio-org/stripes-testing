@@ -38,3 +38,8 @@ export const ORGANIZATION_CATEGORIES = {
 export const ORGANIZATION_PAYMENT_METHODS = {
   CASH: 'Cash',
 };
+export const ACCOUNT_STATUSES = {
+  ACTIVE: 'Active',
+  INACTIVE: 'Inactive',
+  PENDING: 'Pending',
+};
