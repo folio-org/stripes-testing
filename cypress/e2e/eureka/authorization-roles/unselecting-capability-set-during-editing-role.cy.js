@@ -202,7 +202,6 @@ describe('Eureka', () => {
 
           // Step 13: Log out and log in again — suppression resets; modal appears again
           cy.logout();
-          cy.wait(3000);
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,
             waiter: AuthorizationRoles.waitContentLoading,

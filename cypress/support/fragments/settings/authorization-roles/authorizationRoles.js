@@ -449,6 +449,16 @@ export default {
     cy.expect(targetCheckbox.has({ checked: isSelected }));
   },
 
+  verifyCapabilitySetCheckboxAbsent: ({ table, resource, action, type }) => {
+    const targetTable = type && !table ? type : table;
+    cy.expect(
+      capabilitySetsAccordion
+        .find(capabilityTables[targetTable])
+        .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }))
+        .absent(),
+    );
+  },
+
   clickOnCheckedDisabledCheckbox: ({ table, resource, action, type }) => {
     const targetTable = type && !table ? type : table;
     const targetCheckbox = capabilitiesAccordion.find(capabilityTables[targetTable]).find(
@@ -1327,11 +1337,21 @@ export default {
   },
 
   toggleShowHiddenCapabilities({ show = true } = {}) {
-    cy.expect(showHiddenCapabilitiesCheckbox.has({ disabled: false }));
     if (show) cy.do(showHiddenCapabilitiesCheckbox.checkIfNotSelected());
     else cy.do(showHiddenCapabilitiesCheckbox.uncheckIfSelected());
-    cy.expect(showHiddenCapabilitiesCheckbox.has({ checked: show }));
+    this.verifyShowHiddenCapabilitiesCheckbox({ isChecked: show, isDisabled: false });
     cy.wait(500);
+  },
+
+  verifyShowHiddenCapabilitiesCheckbox({ isChecked = false, isDisabled = false } = {}) {
+    cy.expect(showHiddenCapabilitiesCheckbox.has({ checked: isChecked, disabled: isDisabled }));
+  },
+
+  verifyNoCapabilitiesOrSetsChecked: ({ noCheckedSets = true, noCheckedCapabs = true } = {}) => {
+    if (noCheckedSets) cy.expect(capabilitySetsAccordion.find(Checkbox({ checked: true })).absent());
+    else cy.expect(capabilitySetsAccordion.find(Checkbox({ checked: true })).exists());
+    if (noCheckedCapabs) cy.expect(capabilitiesAccordion.find(Checkbox({ checked: true })).absent());
+    else cy.expect(capabilitiesAccordion.find(Checkbox({ checked: true })).exists());
   },
 
   verifyUnselectSetConfirmModal(
