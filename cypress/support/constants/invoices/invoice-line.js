@@ -1,4 +1,6 @@
 export const INVOICE_LINE_VIEW_FIELDS = {
+  ACCOUNT_NUMBER: 'Account number',
+  ACCOUNTING_CODE: 'Accounting code',
   DESCRIPTION: 'Description',
   PO_LINE_NUMBER: 'PO line number',
   STATUS: 'Status',
@@ -34,4 +36,8 @@ export const EXPORT_INVOICE_LINE_FIELDS = {
   VOUCHER_DATE: 'Voucher date',
   VOUCHER_NUMBER: 'Voucher number',
   VOUCHER_STATUS: 'Voucher status',
+};
+
+export const INVOICE_LINE_EDIT_FIELDS = {
+  ACCOUNT_NUMBER: 'Account number',
 };
