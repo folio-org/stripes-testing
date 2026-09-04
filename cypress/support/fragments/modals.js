@@ -54,4 +54,16 @@ export default {
       }
     });
   },
+
+  clickOutsideModal() {
+    cy.wait(2000);
+    cy.get('body').then(($body) => {
+      if ($body.find('[class^=modal---]').length > 0) {
+        cy.get('body').click(0, 0);
+        cy.wait(1000);
+      } else {
+        cy.log("Modal didn't appear");
+      }
+    });
+  },
 };
