@@ -1006,14 +1006,14 @@ export default {
       return response.body.organizations[0];
     }),
 
-  createOrganizationViaApi: (organization) => cy
+  createOrganizationViaApi: (organization, { returnBody = false } = {}) => cy
     .okapiRequest({
       method: 'POST',
       path: 'organizations/organizations',
       body: organization,
       isDefaultSearchParamsRequired: false,
     })
-    .then((response) => response.body.id),
+    .then((response) => (returnBody ? response.body : response.body.id)),
 
   createBankingInformationViaApi: (bankingInformation) => cy
     .okapiRequest({

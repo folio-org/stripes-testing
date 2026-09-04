@@ -28,6 +28,8 @@ export default {
   invoiceCanNotBeApprovedInactiveOrganization:
     'Vendor is inactive. Invoice cannot be approved or paid.',
   POLineFullyPaid: 'Purchase order line status is Fully Paid',
+  inactiveAccount: 'The selected account number is inactive.',
+
   // api response
   activeBudgetNotFoundMessage: 'Active budget not found by fund id and fiscal year id',
   budgetNotFoundCode: 'budgetNotFoundByFundIdAndFiscalYearId',
