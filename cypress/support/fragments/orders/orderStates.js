@@ -72,6 +72,7 @@ export default {
   remainingAmountToBeDistributed(remainingAmount) {
     return `Remaining amount to be distributed: $${remainingAmount}`;
   },
+  inactiveAccount: 'The selected account number is inactive.',
 
   // API errorCodes
   fundCannotBePaid: 'fundCannotBePaid',
