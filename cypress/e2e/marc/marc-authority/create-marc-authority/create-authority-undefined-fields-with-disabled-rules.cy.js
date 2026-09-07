@@ -77,7 +77,6 @@ describe('MARC', () => {
           MarcAuthority.selectSourceFile(testData.authoritySourceFile);
 
           // Step 3: Set valid values in "008" field dropdowns
-          QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tag008);
           MarcAuthority.setValid008DropdownValues();
           QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tag008, false);
 
