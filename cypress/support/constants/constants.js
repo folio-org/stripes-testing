@@ -1907,6 +1907,19 @@ export const INVENTORY_ITEMS = {
   DISPLAY_SUMMARY: 'Display summary',
 };
 
+export const EHOLDINGS_PACKAGE_CONTENT_TYPES = {
+  ALL: 'All',
+  AGGREGATED_FULL_TEXT: 'Aggregated Full Text',
+  ABSTRACT_AND_INDEX: 'Abstract and Index',
+  E_BOOK: 'E-Book',
+  E_JOURNAL: 'E-Journal',
+  MIXED_CONTENT: 'Mixed Content',
+  ONLINE_REFERENCE: 'Online Reference',
+  PRINT: 'Print',
+  STREAMING_MEDIA: 'Streaming Media',
+  UNKNOWN: 'Unknown',
+};
+
 export const HOLDING_TABLE_CONTENT = {
   HOLDINGS: 'Holdings:',
   ITEM_BARCODE: 'Item: barcode',

@@ -58,6 +58,9 @@ export default {
   waitLoading: () => {
     cy.expect(holdingStatusSection.exists());
   },
+  verifyPackageContentType: (contentType) => {
+    cy.expect(KeyValue('Package content type').has({ value: contentType }));
+  },
   checkNames: (packageName, titleName) => {
     const resourceId = titleName.replaceAll(' ', '-').toLowerCase();
     cy.expect(Pane({ title: titleName }).exists());
