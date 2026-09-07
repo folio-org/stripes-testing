@@ -415,6 +415,7 @@ describe('Data Export', () => {
 
         // Step 2-3: Run the "Default holdings export job profile" by clicking on it
         ExportFile.exportWithDefaultJobProfile(csvFileName, 'Default holdings');
+        cy.wait(5000);
 
         cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getJobInfo');
         cy.wait('@getJobInfo', getLongDelay()).then(({ response }) => {
