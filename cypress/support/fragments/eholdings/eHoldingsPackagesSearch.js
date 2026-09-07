@@ -27,6 +27,14 @@ export default {
     cy.do(contentTypeAccordion.find(Select()).choose(type));
     eHoldingsPackages.waitLoading();
   },
+  verifyContentTypeOptions: (options) => {
+    cy.do(contentTypeAccordion.clickHeader());
+    cy.expect(contentTypeAccordion.find(Select()).has({ optionsText: options }));
+  },
+  selectContentType: (type) => {
+    cy.do(contentTypeAccordion.find(Select()).choose(type));
+    eHoldingsPackages.waitLoading();
+  },
   bySelectionStatus: (selectionStatus) => {
     cy.do(selectionStatusAccordion.clickHeader());
     cy.do(selectionStatusAccordion.find(RadioButton(selectionStatus)).click());
