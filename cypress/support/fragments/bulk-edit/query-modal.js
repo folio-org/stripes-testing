@@ -33,7 +33,6 @@ const xButton = buildQueryModal.find(Button({ ariaLabel: 'Close ' }));
 const previewTable = buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' }));
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
-const selectFieldButton = Button({ id: 'field-option-0' });
 const showColumnsButton = buildQueryModal.find(Button('Show columns'));
 const valueSelection = Selection({ dataTestId: including('data-input-select-') });
 const fieldSelection = Selection({ id: including('field-option-') });
@@ -603,17 +602,13 @@ export default {
   },
 
   selectField(selection, row = 0) {
-    cy.do(
-      RepeatableFieldItem({ index: row })
-        .find(Selection({ id: `field-option-${row}` }))
-        .choose(selection),
-    );
+    cy.do(RepeatableFieldItem({ index: row }).find(fieldSelection).choose(selection));
     cy.wait(1000);
   },
 
-  clickSelectFieldButton() {
+  clickSelectFieldButton(row = 0) {
     cy.wait(300);
-    cy.do(selectFieldButton.click());
+    cy.do(RepeatableFieldItem({ index: row }).find(fieldSelection).find(Button()).click());
   },
 
   typeInAndSelectField(string, row = 0) {
@@ -638,9 +633,10 @@ export default {
   },
 
   verifySelectedField(selection, row = 0) {
-    cy.get(
-      `[data-testid="row-${row}"] [class^="col-sm-4"] [id="selected-field-option-${row}-item"]`,
-    ).should('have.text', selection);
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"] [id^="selected-field-option-"]`).should(
+      'have.text',
+      selection,
+    );
   },
 
   verifyOperatorColumn() {
