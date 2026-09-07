@@ -89,7 +89,7 @@ module.exports = defineConfig({
     openMode: 0,
   },
   numTestsKeptInMemory: 1,
-  watchForFileChanges: true,
+  watchForFileChanges: false,
   viewportWidth: 1920,
   viewportHeight: 1080,
   video: false,
