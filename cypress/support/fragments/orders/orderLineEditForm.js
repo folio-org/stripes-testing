@@ -13,10 +13,12 @@ import {
   SelectionOption,
   TextArea,
   TextField,
+  Warning,
   including,
   matching,
 } from '../../../../interactors';
 import {
+  ACCOUNT_STATUSES,
   COMMON_BUTTON_LABELS,
   DEFAULT_WAIT_TIME,
   ORDER_AND_ORDER_LINE_BUTTONS,
@@ -541,5 +543,25 @@ export default {
       if (!requiredFieldsConfig) throw new Error(`Unknown field: ${field}`);
       cy.expect(requiredFieldsConfig.field.has({ error: 'Required!' }));
     });
+  },
+
+  checkAccountNumberWarning(shouldHaveWarning = true) {
+    if (shouldHaveWarning) {
+      cy.expect(vendorDetailsSection.find(Warning()).has({ message: OrderStates.inactiveAccount }));
+    } else {
+      cy.expect(vendorDetailsSection.find(Warning()).absent());
+    }
+  },
+
+  checkAccountNumberMarkedInactive() {
+    cy.expect(
+      vendorDetailsFields.accountNumber.has({
+        checkedOptionText: including(ACCOUNT_STATUSES.INACTIVE),
+      }),
+    );
+  },
+
+  checkAccountNumberSelected(value) {
+    cy.expect(vendorDetailsFields.accountNumber.has({ checkedOptionText: including(value) }));
   },
 };

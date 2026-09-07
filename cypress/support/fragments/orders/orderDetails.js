@@ -130,7 +130,7 @@ export default {
 
     return OrderEditForm;
   },
-  closeOrder({ orderNumber, confirm = true } = {}) {
+  closeOrder({ orderNumber, confirm = true, checkSuccess = true } = {}) {
     this.expandActionsDropdown();
     cy.do(Button('Cancel').click());
 
@@ -139,7 +139,7 @@ export default {
     }
 
     if (confirm) {
-      CloseConfirmationModal.clickSubmitButton();
+      CloseConfirmationModal.clickSubmitButton(checkSuccess);
     }
   },
   openOrder({ orderNumber, confirm = true } = {}) {

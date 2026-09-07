@@ -46,6 +46,7 @@ const effectiveCallNumberKeyValue = KeyValue('Effective call number');
 const shelvingOrderKeyValue = KeyValue('Shelving order');
 const infoIcon = HTML({ className: including('icon-info') });
 const boundWithAndAnalyticsAccordion = Accordion('Bound-with and analytics');
+const loanAndAvailabilityAccordion = Accordion('Loan and availability');
 
 const NO_BARCODE = 'No barcode';
 
@@ -806,5 +807,10 @@ export default {
         .find(MultiColumnListCell(holdingsHrid, { row: rowIndex, columnIndex: 2 }))
         .exists(),
     ]);
+  },
+
+  verifyCirculationNotesAbsent() {
+    cy.expect(loanAndAvailabilityAccordion.find(KeyValue('Check out note')).absent());
+    cy.expect(loanAndAvailabilityAccordion.find(KeyValue('Check in note')).absent());
   },
 };

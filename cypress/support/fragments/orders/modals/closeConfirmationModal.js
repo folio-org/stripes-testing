@@ -22,10 +22,12 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(closeConfirmationModal.absent());
   },
-  clickSubmitButton() {
+  clickSubmitButton(isSuccess = true) {
     cy.do(submitButton.click());
     cy.expect(closeConfirmationModal.absent());
 
-    InteractorsTools.checkCalloutMessage(OrderStates.orderClosedSuccessfully);
+    if (isSuccess) {
+      InteractorsTools.checkCalloutMessage(OrderStates.orderClosedSuccessfully);
+    }
   },
 };

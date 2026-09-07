@@ -63,15 +63,19 @@ const defaultAuthority = {
   status: 'Current',
   name: 'oneMarcAuthority.mrc',
   tag008AuthorityBytesProperties: {
-    geoSubd: { interactor: Select('Geo Subd'), defaultValue: 'n - Not applicable', newValue: 'v' },
+    geoSubd: {
+      interactor: Select('Geo Subd'),
+      defaultValue: '\\ - Not subdivided geographically',
+      newValue: 'v',
+    },
     roman: {
       interactor: Select(or('Roman', 'Roman*')),
-      defaultValue: '| - No attempt to code',
+      defaultValue: 'a - International standard',
       newValue: 'v',
     },
     lang: {
       interactor: Select('Lang'),
-      defaultValue: '\\ - No information provided',
+      defaultValue: '| - No attempt to code',
       newValue: 'v',
     },
     kindRec: {
@@ -81,12 +85,12 @@ const defaultAuthority = {
     },
     catRules: {
       interactor: Select(or('CatRules', 'CatRules*')),
-      defaultValue: 'c - AACR 2',
+      defaultValue: 'd - AACR 2 compatible heading',
       newValue: 'v',
     },
     sHSys: {
       interactor: Select(or('SH Sys', 'SH Sys*')),
-      defaultValue: 'a - Library of Congress Subject Headings',
+      defaultValue: 'z - Other',
       newValue: 'v',
     },
     series: {
@@ -111,12 +115,12 @@ const defaultAuthority = {
     },
     seriesUse: {
       interactor: Select(or('Series use', 'Series use*')),
-      defaultValue: 'a - Appropriate',
+      defaultValue: '| - No attempt to code',
       newValue: 'v',
     },
     subdType: {
       interactor: Select(or('Subd type', 'Subd type*')),
-      defaultValue: 'n - Not applicable',
+      defaultValue: 'a - Topical',
       newValue: 'v',
     },
     govtAg: {
@@ -126,7 +130,7 @@ const defaultAuthority = {
     },
     refEval: {
       interactor: Select(or('RefEval', 'RefEval*')),
-      defaultValue: 'a - Tracings are consistent with the heading',
+      defaultValue: '| - No attempt to code',
       newValue: 'v',
     },
     recUpd: {
@@ -136,22 +140,22 @@ const defaultAuthority = {
     },
     persName: {
       interactor: Select(or('Pers Name', 'Pers Name*')),
-      defaultValue: 'a - Differentiated personal name',
+      defaultValue: '| - No attempt to code',
       newValue: 'v',
     },
     levelEst: {
       interactor: Select(or('Level Est', 'Level Est*')),
-      defaultValue: 'a - Fully established',
+      defaultValue: '| - No attempt to code',
       newValue: 'v',
     },
     modRec: {
       interactor: Select('Mod Rec'),
-      defaultValue: '\\ - Not modified',
+      defaultValue: '| - No attempt to code',
       newValue: 'v',
     },
     source: {
       interactor: Select('Source'),
-      defaultValue: '\\ - National bibliographic agency',
+      defaultValue: 'd - Other',
       newValue: 'v',
     },
     getAllProperties: () => {
@@ -599,6 +603,12 @@ export default {
     });
   },
 
+  checkDefault008DropdownValues() {
+    defaultAuthority.tag008AuthorityBytesProperties.getAllProperties().forEach((property) => {
+      cy.expect(property.interactor.has({ checkedOptionText: property.defaultValue }));
+    });
+  },
+
   getVersionHistoryViaAPI(authorityUUID) {
     return cy.okapiRequest({
       method: 'GET',
@@ -627,5 +637,39 @@ export default {
     );
     if (isExist) cy.expect(targetRow.exists());
     else cy.expect(targetRow.absent());
+  },
+
+  checkDefaultFieldsInOrder() {
+    cy.expect(
+      QuickMarcEditorRow({ index: 0 })
+        .find(TextField('Field'))
+        .has({ value: 'LDR', disabled: true }),
+    );
+    cy.expect(
+      QuickMarcEditorRow({ index: 1 })
+        .find(TextField('Field'))
+        .has({ value: '001', disabled: true }),
+    );
+    QuickMarcEditorWindow.checkEmptyContent('001');
+    cy.expect(
+      QuickMarcEditorRow({ index: 2 })
+        .find(TextField('Field'))
+        .has({ value: '005', disabled: false }),
+    );
+    QuickMarcEditorWindow.checkFourthBoxEditable(2, false);
+    QuickMarcEditorWindow.checkEmptyContent('005');
+    cy.expect(
+      QuickMarcEditorRow({ index: 3 })
+        .find(TextField('Field'))
+        .has({ value: '008', disabled: false }),
+    );
+    this.checkDefault008DropdownValues();
+    cy.expect(
+      QuickMarcEditorRow({ index: 4 })
+        .find(TextField('Field'))
+        .has({ value: '999', disabled: true }),
+    );
+    QuickMarcEditorWindow.verifyTagField(4, '999', 'f', 'f', '', '');
+    QuickMarcEditorWindow.verifyAllBoxesInARowAreDisabled(4);
   },
 };

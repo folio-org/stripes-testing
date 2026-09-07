@@ -6,9 +6,15 @@ import {
   Selection,
   SelectionList,
   TextField,
+  Warning,
   including,
 } from '../../../../interactors';
-import { COMMON_BUTTON_LABELS, DEFAULT_WAIT_TIME, INVOICE_LINE_VIEW_FIELDS } from '../../constants';
+import {
+  ACCOUNT_STATUSES,
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  INVOICE_LINE_VIEW_FIELDS,
+} from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
 import areYouSureModal from '../settings/bulk-edit/areYouSureModal';
@@ -42,6 +48,8 @@ const fundFields = {
     Button({ id: 'fundDistributions[0].expenseClassId' }),
   ),
 };
+
+const accountNumberField = informationSection.find(Selection('Account number'));
 
 const buttons = {
   'Release encumbrance': infoFields.releaseEncumbrance,
@@ -225,6 +233,22 @@ export default {
           .has({ error: 'Required!' }),
       );
     });
+  },
+
+  checkAccountNumberMarkedInactive() {
+    cy.expect(accountNumberField.has({ value: including(ACCOUNT_STATUSES.INACTIVE) }));
+  },
+
+  checkAccountNumberWarning(shouldHaveWarning = true) {
+    if (shouldHaveWarning) {
+      cy.expect(informationSection.find(Warning()).has({ message: InvoiceStates.inactiveAccount }));
+    } else {
+      cy.expect(informationSection.find(Warning()).absent());
+    }
+  },
+
+  checkAccountNumberSelected(value) {
+    cy.expect(accountNumberField.has({ value: including(value) }));
   },
 
   clearField(fieldName) {

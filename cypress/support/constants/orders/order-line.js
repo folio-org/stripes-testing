@@ -148,6 +148,7 @@ export const POLINE_DETAILS_FIELDS = {
   ORDER_FORMAT: 'Order format',
   RECEIPT_STATUS: 'Receipt status',
   PAYMENT_STATUS: 'Payment status',
+  ACCOUNT_NUMBER: 'Account number',
   HOLDING_NAME: 'Holding',
   LOCATION_NAME: 'Name (code)',
   PHYSICAL_UNIT_PRICE: 'Physical unit price',

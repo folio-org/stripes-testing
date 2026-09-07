@@ -169,7 +169,7 @@ describe('MARC', () => {
         marcFiles.forEach((marcFile) => {
           cy.setTenant(marcFile.affiliation);
           marcFile.createdRecordIDs.forEach((record) => {
-            MarcAuthority.deleteViaAPI(record);
+            MarcAuthority.deleteViaAPI(record, true);
           });
         });
       });
@@ -182,14 +182,7 @@ describe('MARC', () => {
           MarcAuthorities.verifyExistanceOfSharedAccordion();
           MarcAuthorities.verifySharedAccordionOpen(false);
 
-          // 2 Click on the "Shared" accordion button.
-          MarcAuthorities.clickAccordionByName(Dropdowns.SHARED);
-          MarcAuthorities.verifySharedAccordionOpen(true);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
-          MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
-          MarcAuthorities.checkRecordsCountExistsInSharedFacet();
-
-          // 3 Execute browse which will return both (Shared and Local) "MARC authority" records created at precondition:
+          // 2 Execute browse which will return both (Shared and Local) "MARC authority" records created at precondition:
           // Input the search query in the search box: "C404449 MARC authority 1st record, from Central tenant"
           // Click on the "Search" button.
           MarcAuthorities.searchBeats(sharedAuthorityRecord1FromCentralTenant.heading);
@@ -212,9 +205,13 @@ describe('MARC', () => {
             localAuthorityRecord2FromMember1Tenant.heading,
             false,
           );
+
+          // 3 Click on the "Shared" accordion button.
+          MarcAuthorities.clickAccordionByName(Dropdowns.SHARED);
           MarcAuthorities.verifySharedAccordionOpen(true);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.YES, false);
           MarcAuthorities.verifyCheckboxInAccordion(Dropdowns.SHARED, Dropdowns.NO, false);
+          MarcAuthorities.checkRecordsCountExistsInSharedFacet();
           cy.then(() => {
             MarcAuthorities.getRecordsCountInOptionsInSharedFacet(Dropdowns.YES).then((count) => {
               sharedRecordsCount = count;

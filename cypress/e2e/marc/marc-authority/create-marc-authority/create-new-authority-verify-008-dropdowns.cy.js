@@ -45,7 +45,6 @@ describe('MARC', () => {
         tag010: '010',
         tag100: '100',
       };
-      const tag008ErrorText = (label) => `Fail: Record cannot be saved. Field 008 contains an invalid value in "${label}" position.`;
       const dropdownData = [];
       Object.values(AUTHORITY_008_FIELD_DROPDOWNS_BOXES_NAMES).forEach((dropdownBoxName, index) => {
         const optionsLists = [
@@ -167,11 +166,8 @@ describe('MARC', () => {
           QuickMarcEditor.addNewField(tags.tag100, `$a ${authorityHeading}`, 4);
           QuickMarcEditor.checkContentByTag(tags.tag100, `$a ${authorityHeading}`);
 
-          QuickMarcEditor.pressSaveAndCloseButton();
-          defaultInvalid008Fields.forEach((invalid008Field) => {
-            QuickMarcEditor.checkDropdownMarkedAsInvalid(tags.tag008, invalid008Field.label);
-            QuickMarcEditor.checkErrorMessage(3, tag008ErrorText(invalid008Field.labelForError));
-          });
+          MarcAuthority.checkDefault008DropdownValues();
+          QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(tags.tag008, false);
 
           QuickMarcEditor.verifyDropdownsPresent(
             tags.tag008,
@@ -194,9 +190,6 @@ describe('MARC', () => {
               dropdown.options.length,
             );
           });
-
-          MarcAuthority.setValid008DropdownValues();
-          QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(tags.tag008, false);
 
           QuickMarcEditor.pressSaveAndCloseButton();
           MarcAuthority.waitLoading();
