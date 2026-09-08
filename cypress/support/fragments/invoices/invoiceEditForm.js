@@ -107,6 +107,9 @@ export default {
   checkCurrency(currency) {
     cy.expect(Button({ id: 'currency' }).has({ singleValue: currency }));
   },
+  verifyAccountingCode(accountingCode) {
+    cy.expect(vendorFields.accountingCode.has({ singleValue: including(accountingCode) }));
+  },
   selectVendorOnUi(vendorName) {
     cy.do([
       Button('Organization look-up').click(),
