@@ -99,7 +99,7 @@ describe('Data Export', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken();
+    cy.getAdminToken(false);
     Users.deleteViaApi(user.userId);
     testInstances.forEach((id) => {
       InventoryInstance.deleteInstanceViaApi(id);
@@ -128,7 +128,6 @@ describe('Data Export', () => {
       cy.intercept('POST', '/data-export/file-definitions').as('createFileDefinition');
       cy.intercept('POST', '/data-export/file-definitions/*/upload').as('uploadFile');
       cy.intercept('POST', '/data-export/export').as('startExport');
-      cy.intercept('GET', '/data-export/job-executions?query=status=*').as('checkJobStatus');
 
       ExportFile.uploadFile(csvFileName);
       SelectJobProfile.verifySelectJobPane();
@@ -153,6 +152,10 @@ describe('Data Export', () => {
       cy.wait('@startExport').then((interception) => {
         expect(interception.response.statusCode).to.be.oneOf([200, 201, 204]);
       });
+      cy.intercept('GET', /\/data-export\/job-executions\?query=status=\(COMPLETED/).as(
+        'checkJobStatus',
+      );
+
       cy.wait('@checkJobStatus', getLongDelay()).then(({ response }) => {
         const { jobExecutions } = response.body;
         const jobData = jobExecutions.find(({ runBy }) => runBy.userId === user.userId);

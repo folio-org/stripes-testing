@@ -17,7 +17,7 @@ let locationId;
 let loanTypeId;
 let sourceId;
 let materialTypeId;
-const itemCount = 150;
+const itemCount = 250;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 const instance = {
   title: `AT_C651436_Instance_${getRandomPostfix()}`,

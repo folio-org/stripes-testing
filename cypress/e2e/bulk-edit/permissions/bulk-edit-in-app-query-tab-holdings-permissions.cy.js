@@ -141,10 +141,8 @@ describe('Bulk-edit', () => {
         AuthorizationRoles.checkAfterSaveEdit(testData.roleName);
         AuthorizationRoles.clickOnCapabilitySetsAccordion();
         AuthorizationRoles.verifyCapabilitySetCheckboxChecked(capabSetToSelect);
-
-        capabSetToUnselect.forEach((capabSet) => {
-          AuthorizationRoles.verifyCapabilityCheckboxAbsent(capabSet);
-        });
+        AuthorizationRoles.verifyCapabilitySetTableAbsent(CAPABILITY_TYPES.SETTINGS);
+        AuthorizationRoles.verifyCapabilitySetCheckboxAbsent(capabSetToUnselect[3]);
 
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
