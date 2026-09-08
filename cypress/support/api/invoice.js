@@ -13,6 +13,7 @@ Cypress.Commands.add('deleteInvoiceFromStorageViaApi', (id) => {
     method: 'DELETE',
     path: `invoice/invoices/${id}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   });
 });
 

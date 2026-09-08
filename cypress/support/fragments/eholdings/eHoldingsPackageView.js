@@ -82,15 +82,115 @@ const visibilityPfCheckbox = Checkbox('In Publication Finder');
 const visibilityFtfCheckbox = Checkbox('In Full Text Finder');
 const visibilityMarcCheckbox = Checkbox('In MARC export');
 
+const closeIconButton = Button({ icon: 'times' });
+const filterTitlesSearchButton = Button({ icon: 'search' });
+const newButton = Button('New');
+const editButton = Button('Edit');
+const cancelButton = Button('Cancel');
+const deleteButton = Button('Delete');
+const saveAndCloseButton = Button('Save & close');
+const proxySelect = Select('Proxy');
+const packageShowAgreementsAccordion = Accordion({ id: 'packageShowAgreements' });
+const holdingStatusAccordion = Accordion('Holding status');
+const packageTypeKeyValue = KeyValue('Package type');
+const providerKeyValue = KeyValue('Provider');
+const titlesSelectedKeyValue = KeyValue('Titles selected');
+const totalTitlesKeyValue = KeyValue('Total titles');
+const packageDisplayNameKeyValue = KeyValue('Package display name');
+const customAlternateNamesKeyValue = KeyValue('Custom alternate names');
+const recordsFoundKeyValue = KeyValue('Records found');
+const customCoverageDatesKeyValue = KeyValue('Custom coverage dates');
+const noNotesFoundText = HTML('No notes found');
+const providerLink = Link({ href: including('/eholdings/providers/') });
+const searchByTagsOnlyCheckbox = Checkbox('Search by tags only');
+const relevanceRadioButton = RadioButton('Relevance');
+const titleRadioButton = RadioButton('Title');
+const allRadioButton = RadioButton('All');
+const selectedRadioButton = RadioButton('Selected');
+const notSelectedRadioButton = RadioButton('Not selected');
+const nextButton = Button('Next');
+const previousButton = Button('Previous');
+const titlesSearchTextField = TextField({ type: 'search' });
+
+const packageExportFieldOptions = [
+  'Access Status Type',
+  'Agreements',
+  'Automatically Select titles',
+  'Custom Coverage',
+  'Holdings status',
+  'Notes',
+  'Package Content Type',
+  'Package Id',
+  'Package Level Token',
+  'Package Name',
+  'Package Type',
+  'Provider Id',
+  'Provider Level Token',
+  'Provider Name',
+  'Proxy',
+  'Show To Patrons',
+  'Tags',
+];
+
+const titleExportFieldOptions = [
+  'Access status type',
+  'Agreements',
+  'Alternate title(s)',
+  'Contributors',
+  'Coverage statement',
+  'Custom coverage dates',
+  'Custom Embargo',
+  'Custom label',
+  'Description',
+  'Edition',
+  'Holdings Status',
+  'ISBN_Online',
+  'ISBN_Print',
+  'ISSN_Online',
+  'ISSN_Print',
+  'Managed coverage dates',
+  'Managed Embargo',
+  'Notes',
+  'Peer reviewed',
+  'Proxy',
+  'Publication Type',
+  'Publisher',
+  'Show to patron',
+  'Subjects',
+  'Tags',
+  'Title ID',
+  'Title name',
+  'Title Type',
+  'URL',
+];
+
+const publicationTypes = [
+  'All',
+  'Audiobook',
+  'Book',
+  'Book Series',
+  'Database',
+  'Journal',
+  'Newsletter',
+  'Newspaper',
+  'Proceedings',
+  'Report',
+  'Streaming Audio',
+  'Streaming Video',
+  'Thesis & Dissertation',
+  'Website',
+  'Unspecified',
+];
+
 export default {
   getCalloutMessageText,
   close() {
-    cy.do(Button({ icon: 'times' }).click());
+    cy.do(closeIconButton.click());
     EHoldingsPackages.waitLoading();
   },
 
   waitLoading() {
-    cy.expect([packageInformationSection.exists(), Button('Actions').exists()]);
+    cy.expect([packageInformationSection.exists(), actionsButton.exists()]);
   },
 
   openExportModal({ exportDisabled = false } = {}) {
@@ -100,7 +200,7 @@ export default {
     return ExportSettingsModal;
   },
   openFilterTitlesModal() {
-    cy.do(packageTitlesSection.find(Button({ icon: 'search' })).click());
+    cy.do(packageTitlesSection.find(filterTitlesSearchButton).click());
     FilterTitlesModal.verifyModalView();
 
     return FilterTitlesModal;
@@ -125,12 +225,10 @@ export default {
       });
     });
     cy.do(
-      Accordion({ id: 'packageShowAgreements' })
-        .find(Button('New'))
-        .perform((element) => {
-          element.removeAttribute('target');
-          element.click();
-        }),
+      packageShowAgreementsAccordion.find(newButton).perform((element) => {
+        element.removeAttribute('target');
+        element.click();
+      }),
     );
   },
 
@@ -159,7 +257,27 @@ export default {
   },
 
   verifyPackageType(packageType) {
-    cy.expect(KeyValue('Package type').has({ value: packageType }));
+    cy.expect(packageTypeKeyValue.has({ value: packageType }));
+  },
+
+  verifyProvider(providerName) {
+    cy.expect(packageInformationSection.find(providerKeyValue).has({ value: providerName }));
+  },
+
+  verifyTitlesSelected(count) {
+    cy.expect(packageInformationSection.find(titlesSelectedKeyValue).has({ floatValue: count }));
+  },
+
+  verifyTotalTitles(count) {
+    cy.expect(packageInformationSection.find(totalTitlesKeyValue).has({ floatValue: count }));
+  },
+
+  verifyPackageDisplayName(displayName) {
+    cy.expect(packageDisplayNameKeyValue.has({ value: displayName }));
+  },
+
+  verifyCustomAlternateNames(alternateName) {
+    cy.expect(customAlternateNamesKeyValue.has({ value: including(alternateName) }));
   },
 
   verifyLinkedAgreement(agreementName) {
@@ -169,16 +287,13 @@ export default {
   verifyPackageDetailViewIsOpened: (name, titlesNumber, status) => {
     cy.expect([
       Pane(name).exists(),
-      packageInformationSection.find(KeyValue('Total titles')).has({ floatValue: titlesNumber }),
-      Accordion('Holding status').has({ content: including(status) }),
+      packageInformationSection.find(totalTitlesKeyValue).has({ floatValue: titlesNumber }),
+      holdingStatusAccordion.has({ content: including(status) }),
     ]);
   },
 
   verifyDetailViewPage(name, status) {
-    cy.expect([
-      Pane(name).exists(),
-      Accordion('Holding status').has({ content: including(status) }),
-    ]);
+    cy.expect([Pane(name).exists(), holdingStatusAccordion.has({ content: including(status) })]);
   },
 
   verifyCalloutMessage: (message) => {
@@ -190,11 +305,11 @@ export default {
   },
 
   getTotalTitlesCount() {
-    return cy.then(() => packageInformationSection.find(KeyValue('Total titles')).floatValue());
+    return cy.then(() => packageInformationSection.find(totalTitlesKeyValue).floatValue());
   },
   getFilteredTitlesCount() {
     return cy
-      .then(() => packageTitlesSection.find(KeyValue('Records found')).value())
+      .then(() => packageTitlesSection.find(recordsFoundKeyValue).value())
       .then((count) => parseFloat(count.replace(/,/g, '')));
   },
   getJobIDFromCalloutMessage: () => {
@@ -243,60 +358,16 @@ export default {
 
   verifySelectedPackageFieldsOptions() {
     cy.do(packageFieldsSelect.find(openDropdownMenu).click());
-    cy.expect([
-      MultiSelectOption(including('Access Status Type')).exists(),
-      MultiSelectOption(including('Agreements')).exists(),
-      MultiSelectOption(including('Automatically Select titles')).exists(),
-      MultiSelectOption(including('Custom Coverage')).exists(),
-      MultiSelectOption(including('Holdings status')).exists(),
-      MultiSelectOption(including('Notes')).exists(),
-      MultiSelectOption(including('Package Content Type')).exists(),
-      MultiSelectOption(including('Package Id')).exists(),
-      MultiSelectOption(including('Package Level Token')).exists(),
-      MultiSelectOption(including('Package Name')).exists(),
-      MultiSelectOption(including('Package Type')).exists(),
-      MultiSelectOption(including('Provider Id')).exists(),
-      MultiSelectOption(including('Provider Level Token')).exists(),
-      MultiSelectOption(including('Provider Name')).exists(),
-      MultiSelectOption(including('Proxy')).exists(),
-      MultiSelectOption(including('Show To Patrons')).exists(),
-      MultiSelectOption(including('Tags')).exists(),
-    ]);
+    packageExportFieldOptions.forEach((option) => {
+      cy.expect(MultiSelectOption(including(option)).exists());
+    });
   },
 
   verifySelectedTitleFieldsOptions() {
     cy.do(titleFieldsSelect.find(openDropdownMenu).click());
-    cy.expect([
-      MultiSelectOption(including('Access status type')).exists(),
-      MultiSelectOption(including('Agreements')).exists(),
-      MultiSelectOption(including('Alternate title(s)')).exists(),
-      MultiSelectOption(including('Contributors')).exists(),
-      MultiSelectOption(including('Coverage statement')).exists(),
-      MultiSelectOption(including('Custom coverage dates')).exists(),
-      MultiSelectOption(including('Custom Embargo')).exists(),
-      MultiSelectOption(including('Custom label')).exists(),
-      MultiSelectOption(including('Description')).exists(),
-      MultiSelectOption(including('Edition')).exists(),
-      MultiSelectOption(including('Holdings Status')).exists(),
-      MultiSelectOption(including('ISBN_Online')).exists(),
-      MultiSelectOption(including('ISBN_Print')).exists(),
-      MultiSelectOption(including('ISSN_Online')).exists(),
-      MultiSelectOption(including('ISSN_Print')).exists(),
-      MultiSelectOption(including('Managed coverage dates')).exists(),
-      MultiSelectOption(including('Managed Embargo')).exists(),
-      MultiSelectOption(including('Notes')).exists(),
-      MultiSelectOption(including('Peer reviewed')).exists(),
-      MultiSelectOption(including('Proxy')).exists(),
-      MultiSelectOption(including('Publication Type')).exists(),
-      MultiSelectOption(including('Publisher')).exists(),
-      MultiSelectOption(including('Show to patron')).exists(),
-      MultiSelectOption(including('Subjects')).exists(),
-      MultiSelectOption(including('Tags')).exists(),
-      MultiSelectOption(including('Title ID')).exists(),
-      MultiSelectOption(including('Title name')).exists(),
-      MultiSelectOption(including('Title Type')).exists(),
-      MultiSelectOption(including('URL')).exists(),
-    ]);
+    titleExportFieldOptions.forEach((option) => {
+      cy.expect(MultiSelectOption(including(option)).exists());
+    });
   },
 
   clearSelectedFieldsToExport() {
@@ -369,11 +440,11 @@ export default {
     });
 
     if (!notes.length) {
-      cy.expect(notesSection.find(HTML('No notes found')).exists());
+      cy.expect(notesSection.find(noNotesFoundText).exists());
     }
   },
   openAddNewNoteForm() {
-    cy.do(notesSection.find(Button('New')).click());
+    cy.do(notesSection.find(newButton).click());
     NoteEditForm.waitLoading();
 
     return NoteEditForm;
@@ -403,31 +474,29 @@ export default {
   },
 
   verifyNoCoveragesDatesSet() {
-    cy.expect(KeyValue('Custom coverage dates').absent());
+    cy.expect(customCoverageDatesKeyValue.absent());
   },
 
   verifyCoverageDatesSet(startDate, endDate) {
-    cy.expect(KeyValue('Custom coverage dates').exists());
-    cy.expect(KeyValue('Custom coverage dates').has({ value: including(startDate) }));
-    cy.expect(KeyValue('Custom coverage dates').has({ value: including(endDate) }));
+    cy.expect(customCoverageDatesKeyValue.exists());
+    cy.expect(customCoverageDatesKeyValue.has({ value: including(startDate) }));
+    cy.expect(customCoverageDatesKeyValue.has({ value: including(endDate) }));
   },
 
   edit() {
-    cy.expect(KeyValue('Package type').exists());
-    cy.expect(KeyValue('Total titles').exists());
+    cy.expect(packageTypeKeyValue.exists());
+    cy.expect(totalTitlesKeyValue.exists());
     cy.wait(3000);
-    cy.do([PaneHeader().find(actionsButton).click(), Button('Edit').click()]);
+    cy.do([PaneHeader().find(actionsButton).click(), editButton.click()]);
     cy.expect([
-      Select('Proxy').exists(),
-      Button('Save & close').has({ disabled: true }),
-      Button('Cancel').has({ disabled: true }),
+      proxySelect.exists(),
+      saveAndCloseButton.has({ disabled: true }),
+      cancelButton.has({ disabled: true }),
     ]);
   },
 
   clickProviderLink() {
-    cy.do(
-      packageInformationSection.find(Link({ href: including('/eholdings/providers/') })).click(),
-    );
+    cy.do(packageInformationSection.find(providerLink).click());
     EHoldingsProviderView.waitLoading();
   },
 
@@ -446,17 +515,17 @@ export default {
   verifyDeleteAgreementModal() {
     cy.expect([
       deleteAgreementModal.exists(),
-      deleteAgreementModal.find(Button('Cancel')).exists(),
-      deleteAgreementModal.find(Button('Delete')).exists(),
+      deleteAgreementModal.find(cancelButton).exists(),
+      deleteAgreementModal.find(deleteButton).exists(),
     ]);
   },
 
   cancelDeleteAgreement() {
-    cy.do(deleteAgreementModal.find(Button('Cancel')).click());
+    cy.do(deleteAgreementModal.find(cancelButton).click());
   },
 
   confirmDeleteAgreement() {
-    cy.do(deleteAgreementModal.find(Button('Delete')).click());
+    cy.do(deleteAgreementModal.find(deleteButton).click());
   },
 
   verifyAgreementNotLinked(agreementName) {
@@ -471,7 +540,7 @@ export default {
 
   verifyTitlesSearchElements() {
     cy.expect([
-      titlesSection.find(Button('Actions')).exists(),
+      titlesSection.find(actionsButton).exists(),
       titlesSection.find(TextField()).exists(),
     ]);
   },
@@ -490,7 +559,7 @@ export default {
   },
 
   clickNextPaginationButton() {
-    cy.do(Button('Next').click());
+    cy.do(nextButton.click());
     cy.wait(1000);
   },
 
@@ -500,13 +569,13 @@ export default {
   },
 
   clickPreviousPaginationButton() {
-    cy.do(Button('Previous').click());
+    cy.do(previousButton.click());
     cy.wait(1000);
   },
 
   verifyFirstPageTitlesDisplayed() {
     cy.wait(500);
-    cy.expect([titlesSection.exists(), Button('Previous').has({ disabled: true })]);
+    cy.expect([titlesSection.exists(), previousButton.has({ disabled: true })]);
   },
 
   verifyAccessStatusType(accessStatusTypeName) {
@@ -543,42 +612,25 @@ export default {
   verifyFilteredTitlesCount(expectedCount) {
     cy.expect(
       titlesSection
-        .find(KeyValue('Records found'))
+        .find(recordsFoundKeyValue)
         .has({ value: expectedCount.toLocaleString('en-US') }),
     );
   },
 
   verifyTitlesActionsMenuOptions() {
     cy.expect([
-      DropdownMenu().find(Checkbox('Search by tags only')).exists(),
+      DropdownMenu().find(searchByTagsOnlyCheckbox).exists(),
       DropdownMenu().find(byAccessStatusTypesCheckbox).exists(),
-      DropdownMenu().find(RadioButton('Relevance')).exists(),
-      DropdownMenu().find(RadioButton('Title')).exists(),
-      DropdownMenu().find(RadioButton('All')).exists(),
-      DropdownMenu().find(RadioButton('Selected')).exists(),
-      DropdownMenu().find(RadioButton('Not selected')).exists(),
+      DropdownMenu().find(relevanceRadioButton).exists(),
+      DropdownMenu().find(titleRadioButton).exists(),
+      DropdownMenu().find(allRadioButton).exists(),
+      DropdownMenu().find(selectedRadioButton).exists(),
+      DropdownMenu().find(notSelectedRadioButton).exists(),
       DropdownMenu().find(Select()).exists(),
     ]);
   },
 
   verifyPublicationTypeDropdownOptions() {
-    const publicationTypes = [
-      'All',
-      'Audiobook',
-      'Book',
-      'Book Series',
-      'Database',
-      'Journal',
-      'Newsletter',
-      'Newspaper',
-      'Proceedings',
-      'Report',
-      'Streaming Audio',
-      'Streaming Video',
-      'Thesis & Dissertation',
-      'Website',
-      'Unspecified',
-    ];
     publicationTypes.forEach((type) => {
       cy.expect(
         DropdownMenu()
@@ -637,7 +689,7 @@ export default {
   },
 
   searchWithinTitles(titleName) {
-    cy.do(titlesSection.find(TextField({ type: 'search' })).fillIn(titleName));
+    cy.do(titlesSection.find(titlesSearchTextField).fillIn(titleName));
     cy.intercept('GET', '**/eholdings/packages/*/resources?**').as('getTitleResults');
     cy.get('#packageShowTitles input[type="search"]').type('{enter}');
     cy.wait('@getTitleResults').its('response.statusCode').should('eq', 200);
