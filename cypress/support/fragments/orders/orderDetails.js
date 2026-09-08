@@ -84,7 +84,12 @@ export default {
       );
     });
   },
-  checkOrderDetails({ orderInformation = [], ongoingInformation = [], summary = [] } = {}) {
+  checkOrderDetails({
+    orderInformation = [],
+    ongoingInformation = [],
+    summary = [],
+    fieldsNotDisplayed = [],
+  } = {}) {
     orderInformation.forEach(({ key, value, checkbox }) => {
       if (checkbox) {
         cy.expect(orderInfoSection.find(Checkbox(key)).has(value));
@@ -110,6 +115,15 @@ export default {
         cy.expect(poSummarySection.find(KeyValue(key)).has({ value: including(value) }));
       }
     });
+    if (fieldsNotDisplayed) {
+      fieldsNotDisplayed.forEach((field) => {
+        if (field === ORDER_VIEW_FIELD_LABELS.FISCAL_YEAR) {
+          cy.expect(poSummarySection.find(Select(field)).absent());
+        } else {
+          cy.expect(orderDetailsPane.find(KeyValue(field)).absent());
+        }
+      });
+    }
   },
   expandActionsDropdown() {
     cy.do(
@@ -412,8 +426,8 @@ export default {
 
   checkFiscalYearDropdownOptions({ current = [], previous = [] } = {}) {
     cy.then(() => fiscalYearSelect.optionsByGroup()).then((groups) => {
-      expect(groups[FISCAL_YEAR_OPTION_GROUPS.CURRENT]).to.deep.equal(current);
-      expect(groups[FISCAL_YEAR_OPTION_GROUPS.PREVIOUS]).to.deep.equal(previous);
+      expect(groups[FISCAL_YEAR_OPTION_GROUPS.CURRENT] || []).to.deep.equal(current);
+      expect(groups[FISCAL_YEAR_OPTION_GROUPS.PREVIOUS] || []).to.deep.equal(previous);
     });
   },
 };
