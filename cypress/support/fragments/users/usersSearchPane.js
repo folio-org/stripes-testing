@@ -39,6 +39,14 @@ export default {
     cy.wait(1000);
   },
 
+  verifyKeywordSearchOptionSelected() {
+    cy.expect(
+      Select({ id: 'input-user-search-qindex' }).has({
+        checkedOptionText: 'Keyword (name, username, email, identifier, custom fields)',
+      }),
+    );
+  },
+
   searchByUsername(username) {
     cy.do(Select({ id: 'input-user-search-qindex' }).choose('Username'));
     cy.do(TextField({ id: 'input-user-search' }).fillIn(username));
