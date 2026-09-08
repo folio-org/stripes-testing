@@ -54,16 +54,19 @@ function addRequester(userName) {
 }
 
 function openNewRequestPane() {
-  cy.do([actionsButton.click(), newRequestButton.click()]);
+  cy.do(actionsButton.click());
+  cy.do(newRequestButton.click());
   cy.wait(10000);
 }
 
 function openNewMediatedRequestPane() {
-  cy.do([actionsButton.click(), newMediatedRequestButton.click()]);
+  cy.do(actionsButton.click());
+  cy.do(newMediatedRequestButton.click());
 }
 
 function printPickSlips() {
-  cy.do([actionsButton.click(), Button({ id: 'printPickSlipsBtn' }).click()]);
+  cy.do(actionsButton.click());
+  cy.do(Button({ id: 'printPickSlipsBtn' }).click());
   InteractorsTools.checkCalloutMessage(
     'Print options loading in progress. It might take a few seconds, please be patient.',
   );

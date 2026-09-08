@@ -236,6 +236,14 @@ describe('Lists', () => {
         Lists.verifyClearFilterButton(visibilityFilter.accordionName);
         Lists.verifyResetAllButtonEnabled();
         Lists.verifyListsFilteredByVisibility(['Shared']);
+        Lists.getListsPaneRecordsCount().then((recordsCountBeforeNewList) => {
+          // #8 Click "New" button, then "X" to close the new list form without saving
+          Lists.openNewListPane();
+          Lists.closeListDetailsPane();
+          Lists.getListsPaneRecordsCount().then((recordsCountAfterClosingNewList) => {
+            expect(recordsCountAfterClosingNewList).to.equal(recordsCountBeforeNewList);
+          });
+        });
       },
     );
 
@@ -334,6 +342,7 @@ describe('Lists', () => {
         // #7 Click on "Reset all"
         Lists.resetAllFilters();
         Lists.verifyResetAllButtonDisabled();
+        Lists.verifyListsPaneRecordsCountAtLeast(1);
       },
     );
 
