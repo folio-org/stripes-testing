@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { INSTANCE_SOURCE_NAMES } from '../constants';
+import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../constants';
 import QuickMarcEditor from '../fragments/quickMarcEditor';
 
 const DEFAULT_INSTANCE = {
@@ -192,6 +192,19 @@ Cypress.Commands.add('getLocations', (searchParams) => {
     Cypress.env('locations', response.body.locations);
     return response.body.locations[0];
   });
+});
+
+Cypress.Commands.add('getMainLibraryLocation', () => {
+  if (!Cypress.env('MAIN_LIBRARY_LOCATION')) {
+    return cy
+      .getLocations({ query: `name=="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` })
+      .then((location) => {
+        Cypress.env('MAIN_LIBRARY_LOCATION', location);
+        return location;
+      });
+  } else {
+    return Cypress.env('MAIN_LIBRARY_LOCATION');
+  }
 });
 
 Cypress.Commands.add('getHoldingTypes', (searchParams) => {

@@ -441,6 +441,19 @@ export default {
     cy.wait(2000);
   },
   verifyCreatedRequest: (title) => cy.expect(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).exists()),
+
+  verifySearchInputValue: (value) => {
+    cy.expect(TextField({ id: 'input-request-search' }).has({ value }));
+  },
+
+  verifyOpenRequestStatusesChecked() {
+    cy.expect([
+      Checkbox({ name: 'Open - Awaiting delivery' }).has({ checked: true }),
+      Checkbox({ name: 'Open - Awaiting pickup' }).has({ checked: true }),
+      Checkbox({ name: 'Open - In transit' }).has({ checked: true }),
+      Checkbox({ name: 'Open - Not yet filled' }).has({ checked: true }),
+    ]);
+  },
   verifyColumnsPresence() {
     cy.expect([
       [...this.columns, this.sortingColumns].forEach(({ title }) => MultiColumnListHeader(title).exists()),
