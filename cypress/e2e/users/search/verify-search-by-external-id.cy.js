@@ -14,8 +14,8 @@ describe('Users', () => {
     };
     testData.searchUser1.externalSystemId = getTestEntityValue('ExternalId1');
     testData.searchUser2.externalSystemId = getTestEntityValue('ExternalId2');
-    const partialExternalId1 = testData.searchUser1.externalSystemId.slice(3);
-    const partialExternalId2 = testData.searchUser2.externalSystemId.slice(3);
+    const partialExternalId1 = testData.searchUser1.externalSystemId.slice(5);
+    const partialExternalId2 = testData.searchUser2.externalSystemId.slice(5);
 
     before('Preconditions', () => {
       cy.getAdminToken().then(() => {
@@ -51,7 +51,7 @@ describe('Users', () => {
 
     it(
       'C418 Search: Verify search by External ID (vega)',
-      { tags: ['criticalPath', 'vega', 'C418'] },
+      { tags: ['extendedPath', 'vega', 'C418'] },
       () => {
         // #1 Click on the search option dropdown above the search box on "Search & filter" pane and make sure that "Keyword (name, username, email, identifier, custom fields)" search option is selected
         UsersSearchPane.verifyKeywordSearchOptionSelected();
