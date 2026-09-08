@@ -1327,6 +1327,15 @@ const UI = {
     cy.get('[class^=paneHeader-]').contains(text).should('be.visible');
   },
 
+  getListsPaneRecordsCount() {
+    const pattern = /([\d,]+) records? found/;
+    return cy
+      .get('[class^=paneHeader-]')
+      .contains(pattern)
+      .invoke('text')
+      .then((text) => Number(text.match(pattern)[1].replace(/,/g, '')));
+  },
+
   // Use on searches broad enough to also match lists left behind by other tests, where the
   // exact number of results is not this test's to predict.
   verifyListsPaneRecordsCountAtLeast(count) {
