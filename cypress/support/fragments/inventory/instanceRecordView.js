@@ -109,6 +109,11 @@ const viewSource = () => {
   cy.do(viewSourceButton.click());
 };
 
+const checkViewSourceButtonIsDisabled = () => {
+  cy.do(rootSection.find(actionsButton).click());
+  cy.expect(viewSourceButton.has({ disabled: true }));
+};
+
 const verifyAdministrativeNote = (value, isExist = true) => {
   if (isExist) {
     cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());
@@ -234,6 +239,7 @@ export default {
   verifySrsMarcRecord,
   verifyImportedFieldExists,
   viewSource,
+  checkViewSourceButtonIsDisabled,
   verifyAdministrativeNote,
   verifyInstanceNote,
   verifyStatisticalCode,
