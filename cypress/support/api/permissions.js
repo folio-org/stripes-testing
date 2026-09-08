@@ -561,3 +561,19 @@ Cypress.Commands.add(
     });
   },
 );
+
+Cypress.Commands.add(
+  'queryCapabilitySetsForUsersApi',
+  (userIds, { capabilitySetNames = null, tenantId = null, failOnStatusCode = false } = {}) => {
+    const body = { userIds };
+    if (capabilitySetNames) body.capabilitySetNames = capabilitySetNames;
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'users/capability-sets/query',
+      body,
+      isDefaultSearchParamsRequired: false,
+      ...(tenantId ? { additionalHeaders: { 'x-okapi-tenant': tenantId } } : {}),
+      failOnStatusCode,
+    });
+  },
+);

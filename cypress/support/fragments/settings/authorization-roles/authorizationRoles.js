@@ -137,6 +137,7 @@ const unselectModalContentRegExp = (appNames, capabilitiesCount, setsCount) => {
 const confirmShareModalText = (roleName) => `Are you sure you want to share ${roleName} with ALL members?  Please note: Sharing a role with many capabilities or capability sets can take several minutes to complete, especially in systems with a large number of members. Avoid refreshing or closing this page during the process.`;
 const shareNameErrorText = (tenantNames) => `Role could not be shared: Name is already in use at one or more member libraries - ${tenantNames.join(', ')}.`;
 const saveNameErrorText = (tenantNames) => `Role could not be updated: Name is already in use at one or more member libraries - ${tenantNames.join(', ')}.`;
+
 const expectedCapabilityTableActions = {
   [CAPABILITY_TYPES.DATA]: [
     CAPABILITY_ACTIONS.VIEW,
@@ -155,6 +156,13 @@ const expectedCapabilityTableActions = {
   [CAPABILITY_TYPES.PROCEDURAL]: [CAPABILITY_ACTIONS.EXECUTE],
 };
 const unselectSetConfirmModal = Modal({ id: 'unselect-capability-set-confirmation-modal' });
+const unselectSetConfirmModalTitle = 'Warning';
+const unselectSetModalTextRegexp = (resource, action, capabilitiesCount) => new RegExp(
+  `By unselecting ${resource} - ${action.toLowerCase()}, ${capabilitiesCount !== null ? capabilitiesCount : '\\d+'} capabilit(ies|y) will also be unselected\\.\\s+Are you sure you'd like to proceed\\?`,
+);
+const unselectSetModalTextBottom =
+  'If checked, this message will be automatically confirmed for the rest of the session.';
+const unselectSetModalCheckbox = Checkbox('Do not display this message again.');
 const showHiddenCapabilitiesCheckbox = Checkbox('Show hidden capabilities');
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
@@ -439,6 +447,16 @@ export default {
       .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     cy.expect(targetCheckbox.has({ checked: isSelected }));
+  },
+
+  verifyCapabilitySetCheckboxAbsent: ({ table, resource, action, type }) => {
+    const targetTable = type && !table ? type : table;
+    cy.expect(
+      capabilitySetsAccordion
+        .find(capabilityTables[targetTable])
+        .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }))
+        .absent(),
+    );
   },
 
   clickOnCheckedDisabledCheckbox: ({ table, resource, action, type }) => {
@@ -1319,10 +1337,68 @@ export default {
   },
 
   toggleShowHiddenCapabilities({ show = true } = {}) {
-    cy.expect(showHiddenCapabilitiesCheckbox.has({ disabled: false }));
     if (show) cy.do(showHiddenCapabilitiesCheckbox.checkIfNotSelected());
     else cy.do(showHiddenCapabilitiesCheckbox.uncheckIfSelected());
-    cy.expect(showHiddenCapabilitiesCheckbox.has({ checked: show }));
+    this.verifyShowHiddenCapabilitiesCheckbox({ isChecked: show, isDisabled: false });
     cy.wait(500);
+  },
+
+  verifyShowHiddenCapabilitiesCheckbox({ isChecked = false, isDisabled = false } = {}) {
+    cy.expect(showHiddenCapabilitiesCheckbox.has({ checked: isChecked, disabled: isDisabled }));
+  },
+
+  verifyNoCapabilitiesOrSetsChecked: ({ noCheckedSets = true, noCheckedCapabs = true } = {}) => {
+    if (noCheckedSets) cy.expect(capabilitySetsAccordion.find(Checkbox({ checked: true })).absent());
+    else cy.expect(capabilitySetsAccordion.find(Checkbox({ checked: true })).exists());
+    if (noCheckedCapabs) cy.expect(capabilitiesAccordion.find(Checkbox({ checked: true })).absent());
+    else cy.expect(capabilitiesAccordion.find(Checkbox({ checked: true })).exists());
+  },
+
+  verifyUnselectSetConfirmModal(
+    { resource, action } = {},
+    capabilitiesCount = null,
+    checkboxChecked = false,
+  ) {
+    const mainMessage = unselectSetModalTextRegexp(resource, action, capabilitiesCount);
+    cy.expect([
+      unselectSetConfirmModal.has({
+        title: unselectSetConfirmModalTitle,
+        message: matching(mainMessage),
+      }),
+      unselectSetConfirmModal.find(unselectSetModalCheckbox).has({ checked: checkboxChecked }),
+      unselectSetConfirmModal.find(HTML(unselectSetModalTextBottom)).exists(),
+      unselectSetConfirmModal.find(cancelButton).exists(),
+      unselectSetConfirmModal.find(continueButton).exists(),
+    ]);
+    if (capabilitiesCount !== null) {
+      cy.expect(
+        unselectSetConfirmModal.has({
+          innerHtml: including(`<strong>${capabilitiesCount}</strong>`),
+        }),
+      );
+    }
+  },
+
+  clickContinueInUnselectSetConfirmModal: () => {
+    cy.do(unselectSetConfirmModal.find(continueButton).click());
+    cy.expect(unselectSetConfirmModal.absent());
+  },
+
+  clickCancelInUnselectSetConfirmModal: () => {
+    cy.do(unselectSetConfirmModal.find(cancelButton).click());
+    cy.expect(unselectSetConfirmModal.absent());
+  },
+
+  toggleCheckboxInUnselectSetConfirmModal: (isSelected = true) => {
+    const targetCheckbox = unselectSetConfirmModal.find(unselectSetModalCheckbox);
+    if (isSelected) cy.do(targetCheckbox.checkIfNotSelected());
+    else cy.do(targetCheckbox.uncheckIfSelected());
+    cy.wait(100);
+    cy.expect(unselectSetConfirmModal.find(unselectSetModalCheckbox).has({ checked: isSelected }));
+  },
+
+  checkUnselectSetConfirmModalShown: (isShown = true) => {
+    if (isShown) cy.expect(unselectSetConfirmModal.exists());
+    else cy.expect(unselectSetConfirmModal.absent());
   },
 };

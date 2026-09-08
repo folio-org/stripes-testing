@@ -16,6 +16,7 @@ export default HTML.extend('modal')
     message: (el) => el.querySelector('[class^=modalContent]').textContent,
     footer: (el) => el.querySelector('[class^=modalFooter]').textContent,
     numberOfRows: (el) => el.querySelectorAll('[class^=mclRowFormatterContainer-]').length,
+    innerHtml: (el) => el.innerHTML,
   })
   .actions({
     dismiss: (interactor) => interactor.find(Button({ ariaLabel: 'Dismiss modal' })).click(),
