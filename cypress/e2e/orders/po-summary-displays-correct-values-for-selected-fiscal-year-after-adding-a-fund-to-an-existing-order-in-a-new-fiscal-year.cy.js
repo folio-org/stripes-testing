@@ -38,6 +38,7 @@ import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
+import Approvals from '../../support/fragments/settings/invoices/approvals';
 
 describe('Orders', () => {
   describe('Order lines', () => {
@@ -238,6 +239,7 @@ describe('Orders', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
+      Approvals.setApprovePayValueViaApi(false);
       createConsecutiveFiscalYears()
         .then(createLedgerA)
         .then(createFundAWithBudget)
