@@ -1,4 +1,4 @@
-import { getTestEntityValue } from '../../../support/utils/stringTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -12,8 +12,8 @@ describe('Users', () => {
       searchUser1: Users.generateUserModel(),
       searchUser2: Users.generateUserModel(),
     };
-    testData.searchUser1.externalSystemId = getTestEntityValue('ExternalId1');
-    testData.searchUser2.externalSystemId = getTestEntityValue('ExternalId2');
+    testData.searchUser1.externalSystemId = `ExternalId1_${getRandomPostfix()}`;
+    testData.searchUser2.externalSystemId = `ExternalId2_${getRandomPostfix()}`;
     const partialExternalId1 = testData.searchUser1.externalSystemId.slice(0, 20);
     const partialExternalId2 = testData.searchUser2.externalSystemId.slice(0, 20);
 
