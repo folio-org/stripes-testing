@@ -14,8 +14,8 @@ describe('Users', () => {
     };
     testData.searchUser1.externalSystemId = getTestEntityValue('ExternalId1');
     testData.searchUser2.externalSystemId = getTestEntityValue('ExternalId2');
-    const partialExternalId1 = testData.searchUser1.externalSystemId.slice(5);
-    const partialExternalId2 = testData.searchUser2.externalSystemId.slice(5);
+    const partialExternalId1 = testData.searchUser1.externalSystemId.slice(0, 20);
+    const partialExternalId2 = testData.searchUser2.externalSystemId.slice(0, 20);
 
     before('Preconditions', () => {
       cy.getAdminToken().then(() => {
