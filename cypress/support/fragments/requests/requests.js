@@ -517,7 +517,10 @@ export default {
   },
 
   addNewTag(tag) {
-    cy.do([addTagInput.fillIn(tag), cy.wait(3000), MultiSelectOption(including(tag)).click()]);
+    cy.do(addTagInput.fillIn(tag));
+    cy.wait(3000);
+    cy.do(MultiSelectOption(including(tag)).click());
+    cy.wait(1000);
   },
 
   clearSelectedTags() {
