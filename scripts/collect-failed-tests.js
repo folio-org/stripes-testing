@@ -14,7 +14,7 @@ const selectedTestTypes = [
 ];
 
 const selectedStatus = [
-  status.Passed,
+  // status.Passed,
   status.Blocked,
   status.Untested,
   status.Retest,

@@ -7,6 +7,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -39,8 +40,9 @@ describe('Data Import', () => {
       instanceId: null,
       isbnTypeId: null,
       user: {},
-      invalidSubfieldIValue: 'catsarecute',
-      jsonLogErrorTextPart: 'externalIdsHolder.instanceId',
+      // same length as UUID not to risk metadata getting invalid after string replacement in the MARC file
+      invalidSubfieldIValue: 'catsarecutecatsarecutecatsarecutecat',
+      jsonLogErrorTextPart: (value) => `"jakarta.validation.constraints.Pattern.message","parameters":[{"key":"externalIdsHolder.instanceId","value":"${value}"}]`,
     };
 
     const mappingProfile = { name: `AT_C440105_MappingProfile_${postfix}` };
@@ -59,6 +61,7 @@ describe('Data Import', () => {
 
     before('Create test data via API', () => {
       cy.getAdminToken();
+      InventoryInstances.deleteInstanceByTitleViaApi('C440105_');
 
       cy.createMarcBibliographicViaAPI(QuickMarcEditor.defaultValidLdr, [
         { tag: '008', content: QuickMarcEditor.valid008ValuesInstance },
@@ -163,7 +166,9 @@ describe('Data Import', () => {
         FileDetails.openJsonScreen(testData.instanceTitle);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.openInstanceTab();
-        JsonScreenView.verifyContentInTab(testData.jsonLogErrorTextPart);
+        JsonScreenView.verifyContentInTab(
+          testData.jsonLogErrorTextPart(testData.invalidSubfieldIValue),
+        );
       },
     );
   });

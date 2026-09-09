@@ -83,6 +83,10 @@ export default {
     cy.do(createNewPackageButton.click());
   },
 
+  verifyNewPackageButtonExists: () => {
+    cy.expect(addNewPackageButton.exists());
+  },
+
   deletePackage: () => {
     cy.do([
       PaneHeader().find(actionButton).click(),

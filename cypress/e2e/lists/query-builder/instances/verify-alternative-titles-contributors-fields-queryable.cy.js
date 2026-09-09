@@ -64,7 +64,7 @@ describe('Lists', () => {
         });
 
         // Get contributor types
-        BrowseContributors.getContributorTypes({ searchParams: { limit: 200 } }).then((types) => {
+        BrowseContributors.getContributorTypes({ searchParams: { limit: 300 } }).then((types) => {
           const actorType = types.find((type) => type.name === 'Actor');
           testData.contributorTypeId = actorType?.id;
           testData.contributorTypeName = actorType?.name;
