@@ -44,7 +44,7 @@ const feeFineAccounts = {};
 
 describe('Lists', () => {
   describe('Query Builder', () => {
-    describe('Composite Entity Types', () => {
+    describe('Users with fees/fines, loans', () => {
       before('Create test data', () => {
         cy.getAdminToken();
 
