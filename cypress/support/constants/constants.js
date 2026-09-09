@@ -1756,6 +1756,8 @@ export const COMMON_BUTTON_LABELS = {
   CLOSE: 'Close',
   COLLAPSE_ALL: 'Collapse all',
   CONFIRM: 'Confirm',
+  CONTINUE: 'Continue',
+  CREATE: 'Create',
   DELETE: 'Delete',
   NEXT: 'Next',
   NEW: 'New',
@@ -1790,6 +1792,8 @@ export const DATE_RANGE_FIELD_LABELS = {
 };
 
 export const NO_VALUE = 'No value set-';
+
+export const NO_BARCODE = 'No barcode';
 
 export const FTP_PROTOCOLS = {
   SFTP: 'SFTP',

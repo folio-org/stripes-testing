@@ -71,6 +71,9 @@ export default {
     return `Remaining amount to be distributed: $${remainingAmount}`;
   },
   inactiveAccount: 'The selected account number is inactive.',
+  purchaseOrderClosedWarning({ reason } = {}) {
+    return `Purchase order is closed - ${reason}`;
+  },
 
   // API errorCodes
   fundCannotBePaid: 'fundCannotBePaid',
