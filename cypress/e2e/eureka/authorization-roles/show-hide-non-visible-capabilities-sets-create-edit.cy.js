@@ -51,12 +51,12 @@ describe('Eureka', () => {
         });
         cy.getCapabilitiesApi(500, false, { query: `${appQuery} and visible==true` }).then(
           (capabs) => {
-            testData.visibleCapabilities = (capabs || []).slice(0, 10).map(mapItem);
+            testData.visibleCapabilities = (capabs || []).slice(10, 20).map(mapItem);
           },
         );
         cy.getCapabilitiesApi(500, false, { query: `${appQuery} and visible==false` }).then(
           (capabs) => {
-            testData.hiddenCapabilities = (capabs || []).slice(0, 10).map(mapItem);
+            testData.hiddenCapabilities = (capabs || []).slice(10, 20).map(mapItem);
           },
         );
 
@@ -140,8 +140,8 @@ describe('Eureka', () => {
           // Step 5: Select first visible capability set and first visible capability
           AuthorizationRoles.selectCapabilitySetCheckbox(testData.visibleCapabilitySets[0]);
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.visibleCapabilitySets[0]);
-          AuthorizationRoles.selectCapabilityCheckbox(testData.visibleCapabilities[5]);
-          AuthorizationRoles.verifyCapabilityCheckboxChecked(testData.visibleCapabilities[5]);
+          AuthorizationRoles.selectCapabilityCheckbox(testData.visibleCapabilities.at(-1));
+          AuthorizationRoles.verifyCapabilityCheckboxChecked(testData.visibleCapabilities.at(-1));
 
           // Step 6: Save & close — hidden entities absent in view; counters > 0
           AuthorizationRoles.toggleShowHiddenCapabilities({ show: false });
@@ -160,7 +160,7 @@ describe('Eureka', () => {
             isDisabled: false,
           });
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.visibleCapabilitySets[0]);
-          AuthorizationRoles.verifyCapabilityCheckboxChecked(testData.visibleCapabilities[5]);
+          AuthorizationRoles.verifyCapabilityCheckboxChecked(testData.visibleCapabilities.at(-1));
           // hidden still not visible
           testData.hiddenCapabilitySets.forEach((set) => {
             AuthorizationRoles.verifyCapabilitySetCheckboxAbsent(set);

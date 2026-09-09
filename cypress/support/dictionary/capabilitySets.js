@@ -139,6 +139,16 @@ export default {
     resource: 'UI-Users Loans',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiUsersFeeFinesView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Users Feesfines',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiUsersFeeFineActionManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Users Fee-Fine-Actions',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
   rolesUsers: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'Roles Users',
@@ -434,6 +444,11 @@ export default {
   uiQuickMarcQuickMarcAuthorityRecordsLinkUnlink: {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'UI-Quick-Marc Quick-Marc-Authority-Records Link-Unlink',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiUsersManualPay: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Users Manual-Pay',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
 };

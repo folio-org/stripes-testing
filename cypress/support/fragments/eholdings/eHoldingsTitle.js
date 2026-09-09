@@ -79,6 +79,7 @@ export default {
       .then((packageNameRaw) => {
         const packageName = packageNameRaw.trim();
         cy.then(() => Pane().title()).then((titleName) => {
+          // eslint-disable-next-line cypress/no-force
           cy.get('#titleShowPackages li')
             .eq(packageNumber)
             .find('button, [role=button], a')

@@ -1,14 +1,33 @@
-import { Button, HTML, TextField, including, Select, Pane } from '../../../../interactors';
+import {
+  Button,
+  HTML,
+  IconButton,
+  Popover,
+  TextArea,
+  TextField,
+  including,
+  Select,
+  Pane,
+} from '../../../../interactors';
 
 const nameField = TextField({ name: 'name' });
 const contentTypeSelect = Select({ name: 'contentType' });
+const accessStatusTypeSelect = Select({ id: 'eholdings-access-type-id' });
+const packageDisplayNameField = TextArea('Package display name');
+const customAlternateNamesLabel = HTML('Custom alternate names');
+const packageDisplayNameLabel = HTML('Package display name');
+const infoIconButton = IconButton({ icon: 'info' });
 const saveAndCloseButton = Button({ type: 'submit' });
 const addDateRangeButton = Button('Add date range');
 const startDateField = TextField('Start date');
 const endDateField = TextField('End date');
 const deleteDateRangeButton = Button({ icon: 'trash' });
-const addAlternateNameButton = Button('Add name');
-const alternateNameField = (index = 0) => TextField({ name: `customAltNames[${index}].altName` });
+const addAlternateNameButton = Button('Add alternate name');
+const alternateNameField = (index = 0) => TextArea({ name: `customAltNames[${index}].altName` });
+const alternateNamesInfoPopoverText =
+  'Add familiar alternate names to help staff and patrons easily search for and find packages.';
+const packageDisplayNameInfoPopoverText =
+  'Enter the Package name to display on search results and the detail record.';
 
 export default {
   waitLoading: () => {
@@ -21,6 +40,36 @@ export default {
 
   chooseContentType: (contentTypeValue) => {
     cy.do(contentTypeSelect.choose(contentTypeValue));
+  },
+
+  chooseAccessStatusType: (accessStatusTypeName) => {
+    cy.do(accessStatusTypeSelect.choose(accessStatusTypeName));
+    cy.expect(accessStatusTypeSelect.has({ checkedOptionText: accessStatusTypeName }));
+  },
+
+  fillPackageDisplayName: (value) => {
+    cy.do(packageDisplayNameField.fillIn(value));
+  },
+
+  verifyCustomAlternateNamesInfoPopover: () => {
+    cy.do(customAlternateNamesLabel.find(infoIconButton).click());
+    cy.expect(Popover({ content: including(alternateNamesInfoPopoverText) }).exists());
+  },
+
+  verifyPackageDisplayNameInfoPopover: () => {
+    cy.do(packageDisplayNameLabel.find(infoIconButton).click());
+    cy.expect(Popover({ content: including(packageDisplayNameInfoPopoverText) }).exists());
+  },
+
+  verifyNewCustomPackageFormFields: () => {
+    cy.expect([
+      nameField.exists(),
+      contentTypeSelect.exists(),
+      packageDisplayNameField.exists(),
+      customAlternateNamesLabel.exists(),
+      addAlternateNameButton.exists(),
+      addDateRangeButton.exists(),
+    ]);
   },
 
   saveAndClose: () => {

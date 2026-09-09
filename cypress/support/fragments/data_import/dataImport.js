@@ -1,4 +1,6 @@
 import { HTML, including } from '@interactors/html';
+import { Marc } from 'marcjs';
+import { Readable } from 'stream';
 import {
   Button,
   Checkbox,
@@ -242,6 +244,29 @@ export default {
 
         FileManager.createFile(`cypress/fixtures/${finalFileName}`, newContent);
       });
+    });
+  },
+
+  // Removes every occurrence of the given field tag from every record in a (possibly multi-record)
+  // ".mrc" file, correctly rebuilding each record's leader and directory (unlike a plain text
+  // replace, which cannot keep those in sync once a field's byte length/position changes)
+  removeMarcFieldFromAllRecords(inputFileName, outputFileName, fieldTag) {
+    return FileManager.readFile(`cypress/fixtures/${inputFileName}`).then((fileContent) => {
+      const readable = new Readable();
+      readable.push(Buffer.from(fileContent, 'utf8'));
+      readable.push(null);
+
+      const reader = Marc.stream(readable, 'Iso2709');
+      const updatedRecords = [];
+
+      return new Promise((resolve, reject) => {
+        reader.on('data', (record) => {
+          record.fields = record.fields.filter((field) => field[0] !== fieldTag);
+          updatedRecords.push(record.as('iso2709'));
+        });
+        reader.on('error', reject);
+        reader.on('end', () => resolve(updatedRecords.join('')));
+      }).then((updatedContent) => FileManager.createFile(`cypress/fixtures/${outputFileName}`, updatedContent));
     });
   },
 
