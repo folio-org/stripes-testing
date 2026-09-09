@@ -328,6 +328,7 @@ export const instanceFieldValues = {
   natureOfContent: 'Instance — Nature of content',
   editions: 'Instance — Editions',
   physicalDescriptions: 'Instance — Physical descriptions',
+  alternativeTitles: 'Instance — Alternative titles',
   alternativeTitlesAlternativeTitle: 'Instance — Alternative titles — Alternative title',
   alternativeTitlesAlternativeTitleType: 'Instance — Alternative titles — Alternative title type',
   subjectsSubjectHeadings: 'Instance — Subjects — Subject headings',
@@ -1311,6 +1312,7 @@ export default {
     tableType,
     identifier,
     expectedData, // Can be a single object or array of objects
+    tableIndex = 0, // Can be used to specify which table to check if there are multiple embeded tables in the same row (default is 0, the first table)
   ) {
     const headers = embeddedTableHeadersMap[tableType];
     if (!headers) {
@@ -1327,6 +1329,7 @@ export default {
       cy.get(`div[aria-label="Build query"] [data-row-index="row-${rowIndex}"]`).within(() => {
         // Verify table headers
         cy.get('[class^="DynamicTable-"]')
+          .eq(tableIndex)
           .find('tr')
           .eq(0)
           .then((headerRow) => {
@@ -1418,15 +1421,29 @@ export default {
     );
   },
 
-  verifyContributorsEmbeddedTableInQueryModal(instanceIdentifier, expectedContributors) {
-    this.verifyEmbeddedTableInQueryModal('contributors', instanceIdentifier, expectedContributors);
+  verifyContributorsEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedContributors,
+    tableIndex = 0,
+  ) {
+    this.verifyEmbeddedTableInQueryModal(
+      'contributors',
+      instanceIdentifier,
+      expectedContributors,
+      tableIndex,
+    );
   },
 
-  verifyAlternativeTitlesEmbeddedTableInQueryModal(instanceIdentifier, expectedAlternativeTitles) {
+  verifyAlternativeTitlesEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedAlternativeTitles,
+    tableIndex = 0,
+  ) {
     this.verifyEmbeddedTableInQueryModal(
       'alternativeTitles',
       instanceIdentifier,
       expectedAlternativeTitles,
+      tableIndex,
     );
   },
 

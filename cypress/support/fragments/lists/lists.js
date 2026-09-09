@@ -1288,6 +1288,18 @@ const QueryBuilder = {
     cy.wait(500);
   },
 
+  verifyListsPaneRecordsCount(count) {
+    let text;
+    if (count === 0) {
+      text = 'No records found';
+    } else if (count === 1) {
+      text = '1 record found';
+    } else {
+      text = `${count} records found`;
+    }
+    cy.get('[class^=paneHeader-]').contains(text).should('be.visible');
+  },
+
   verifyQueryValue(value, condition, locator, valueInColumn = '') {
     let columnNumber = 0;
     cy.wrap(true)
@@ -1450,7 +1462,7 @@ const QueryBuilder = {
       });
   },
 
-  verifyEmbeddedTableInResultsRow(tableType, identifier, expectedData) {
+  verifyEmbeddedTableInResultsRow(tableType, identifier, expectedData, tableIndex = 0) {
     const headers = embeddedTableHeadersMap[tableType];
     if (!headers) {
       throw new Error(
@@ -1467,6 +1479,7 @@ const QueryBuilder = {
         cy.get(`[data-row-index="row-${rowIndex}"]`).within(() => {
           // Verify table headers
           cy.get('[class^="DynamicTable-"]')
+            .eq(tableIndex)
             .find('tr')
             .eq(0)
             .then((headerRow) => {
