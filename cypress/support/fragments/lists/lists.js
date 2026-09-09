@@ -1288,6 +1288,18 @@ const QueryBuilder = {
     cy.wait(500);
   },
 
+  verifyListsPaneRecordsCount(count) {
+    let text;
+    if (count === 0) {
+      text = 'No records found';
+    } else if (count === 1) {
+      text = '1 record found';
+    } else {
+      text = `${count} records found`;
+    }
+    cy.get('[class^=paneHeader-]').contains(text).should('be.visible');
+  },
+
   verifyQueryValue(value, condition, locator, valueInColumn = '') {
     let columnNumber = 0;
     cy.wrap(true)

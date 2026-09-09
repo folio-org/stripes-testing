@@ -105,9 +105,9 @@ describe('Lists', () => {
         };
 
         cy.getAdminToken()
-          .then(() => InventoryInstances.getLocations({ limit: 1 }))
+          .then(() => cy.getLocations({ query: 'name="Main Library"' }))
           .then((locations) => {
-            cachedLocation = locations[0];
+            cachedLocation = locations;
             return ServicePoints.getViaApi({
               limit: 1,
               query: `id=="${cachedLocation.primaryServicePoint}"`,
