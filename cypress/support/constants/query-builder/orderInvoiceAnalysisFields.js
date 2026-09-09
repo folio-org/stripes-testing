@@ -28,6 +28,7 @@ export const ORDER_INVOICE_ANALYSIS_FIELDS = {
   },
   EXPENSE_CLASS: {
     NAME: 'Expense class — Name',
+    UUID: 'Expense class — UUID',
   },
   FUND: {
     NAME: 'Fund — Name',
@@ -35,6 +36,7 @@ export const ORDER_INVOICE_ANALYSIS_FIELDS = {
   },
   FISCAL_YEAR: {
     CODE: 'Fiscal year — Code',
+    UUID: 'Fiscal year — UUID',
   },
   INSTANCE: {
     FORMAT_NAMES: 'Instance — Format names',
