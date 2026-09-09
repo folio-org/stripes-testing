@@ -4,18 +4,18 @@ import {
   Button,
   Checkbox,
   HTML,
-  MultiColumnListCell,
-  Pane,
+  including,
+  KeyValue,
   Link,
+  Modal,
+  MultiColumnListCell,
+  Option,
+  Pane,
   Section,
   Select,
   Spinner,
   TextArea,
   TextField,
-  Option,
-  including,
-  Modal,
-  KeyValue,
 } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
 import dateTools from '../../utils/dateTools';
@@ -40,6 +40,8 @@ const titleLevelRequest = Checkbox({ name: 'createTitleLevelRequest' });
 const selectItemPane = Pane({ id: 'items-dialog-instance-items-list' });
 const requestInfoSection = Section({ id: 'new-requester-info' });
 const itemInfoSection = Section({ id: 'new-item-info' });
+const cancelConfirmationModal = Modal('Are you sure?');
+const closeWithoutSavingButton = Button('Close without saving');
 const title = 'Title';
 const tlRequest = 'Title level requests';
 const contributors = 'Contributor';
@@ -81,6 +83,12 @@ export default {
 
   clickCancel() {
     cy.do(cancelButton.click());
+    cy.wait(1000);
+  },
+
+  closeWithoutSaving() {
+    cy.wait(500);
+    cy.do(cancelConfirmationModal.find(closeWithoutSavingButton).click());
     cy.wait(1000);
   },
 
@@ -287,7 +295,9 @@ export default {
   verifyRequesterInformation: (userName, userBarcode, patronGroupName) => {
     cy.expect(requestInfoSection.find(Link(including(userName))).exists());
     cy.expect(requestInfoSection.find(Link(including(userBarcode))).exists());
-    cy.expect(requestInfoSection.find(HTML(patronGroupName)).exists());
+    if (patronGroupName) {
+      cy.expect(requestInfoSection.find(HTML(patronGroupName)).exists());
+    }
   },
 
   verifyRequesterInformationWithBarcode: (userName) => {
