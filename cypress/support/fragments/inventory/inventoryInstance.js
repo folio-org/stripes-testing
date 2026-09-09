@@ -1392,6 +1392,18 @@ export default {
     });
   },
 
+  // verifies the number of "Holdings: ..." accordions - use when several holdings share the
+  // same label (checkIsHoldingsCreated only proves at least one such accordion exists, not the
+  // exact count; interactors has no count assertion, so this falls back to a raw DOM query)
+  verifyHoldingsAccordionsCount: (expectedCount) => {
+    cy.get('[class^="accordion"]')
+      .filter((_, el) => {
+        const label = el.querySelector('[class^="labelArea"]');
+        return !!label && label.textContent.trim().startsWith('Holdings: ');
+      })
+      .should('have.length', expectedCount);
+  },
+
   openHoldingsAccordion: (location) => {
     cy.wait(2000);
     cy.do(Button(including(location)).click());
