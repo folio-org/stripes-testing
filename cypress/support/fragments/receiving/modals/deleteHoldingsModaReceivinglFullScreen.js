@@ -14,11 +14,12 @@ const deleteHoldingsButtons = {
 export default {
   deleteHoldingsModal({ action, locations = [] }) {
     const holdingsToDelete = locations.map((location) => location.name);
-    cy.expect([
-      deleteHoldingsModal.has({ header: 'Delete Holdings' }),
-      deleteHoldingsModal.has({ message: including(modalMessage) }),
-      Object.values(deleteHoldingsButtons).map((button) => button().has({ visible: true, disabled: false })),
-    ]);
+    cy.expect(deleteHoldingsModal.has({ header: 'Delete Holdings' }));
+    cy.expect(deleteHoldingsModal.has({ message: including(modalMessage) }));
+
+    Object.values(deleteHoldingsButtons).forEach((button) => {
+      cy.expect(button().has({ visible: true, disabled: false }));
+    });
 
     if (holdingsToDelete.length > 0) {
       holdingsToDelete.forEach((locationName) => {
