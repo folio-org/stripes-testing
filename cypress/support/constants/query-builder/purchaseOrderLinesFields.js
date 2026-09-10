@@ -48,6 +48,13 @@ export const PURCHASE_ORDER_LINES_FIELDS = {
     LAST_NAME_FIRST_NAME: 'POL updated by — Last name, first name',
     USERNAME: 'POL updated by — Username',
   },
+  PAYMENT_TERMS: {
+    DISTRIBUTION_TYPE: 'POL — Payment terms — Distribution type',
+    EXPENSE_CLASS: 'POL — Payment terms — Expense class',
+    FISCAL_YEAR: 'POL — Payment terms — Fiscal year',
+    FUND: 'POL — Payment terms — Fund',
+    FUND_CODE: 'POL — Payment terms — Code',
+  },
   EXCHANGE_RATE: {
     CURRENCY: 'Exchange rate — Currency',
     RATE: 'Exchange rate — Rate',
