@@ -8,6 +8,15 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
+// Authority browse does NOT match a query against a heading in a different display form, so the
+// query and the expected result must both be in the current "mapping.extended" form. Browse keeps
+// the subfield order as authored; the only difference is the separator:
+//  ON  -> "--" before each subdivision ($v/$x/$y/$z) value
+//  OFF (or setting not retrieved) -> "--" rendered as a plain space
+const headingAsDisplayed = (extendedForm) => (Cypress.env('authorityExtendedMappingState') === true
+  ? extendedForm
+  : extendedForm.replace(/---/g, '- ').replace(/--/g, ' '));
+
 const randomPostfix = getRandomPostfix();
 const testUser = {};
 const marcFileName = 'marcAuthFileC409464.mrc';
@@ -38,6 +47,7 @@ describe('MARC', () => {
     describe('Browse - Authority records', () => {
       before('Create data, login', () => {
         cy.getAdminToken();
+        cy.getAuthorityExtendedMappingState();
         // make sure there are no duplicate records in the system
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(browseQuery);
 
@@ -71,42 +81,53 @@ describe('MARC', () => {
         'C409464 Browse for "MARC authority" records using "Personal name" browse option (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C409464'] },
         () => {
+          // Browse query and expected heading must both be in the current setting's display form
+          const [
+            authorizedFullD,
+            referenceFullD,
+            authRefFullD,
+            authorizedInvalidD,
+            referenceInvalidD,
+          ] = [authorizedFull, referenceFull, authRefFull, authorizedInvalid, referenceInvalid].map(
+            headingAsDisplayed,
+          );
+
           // Step 1: Select Personal name browse option
           // Step 2: Enter browse query and check Search button
           MarcAuthorityBrowse.selectOptionAndQueryAndCheck(personalNameOption, browseQuery);
 
           // Step 3: Search and verify results for base query
           MarcAuthorityBrowse.searchBy(personalNameOption, browseQuery);
-          MarcAuthorityBrowse.checkResultWithValue('Authorized', authorizedFull);
-          MarcAuthorityBrowse.checkResultWithValue('Reference', referenceFull);
-          MarcAuthorityBrowse.checkResultWithValue('Auth/Ref', authRefFull, false);
+          MarcAuthorityBrowse.checkResultWithValue('Authorized', authorizedFullD);
+          MarcAuthorityBrowse.checkResultWithValue('Reference', referenceFullD);
+          MarcAuthorityBrowse.checkResultWithValue('Auth/Ref', authRefFullD, false);
           MarcAuthorityBrowse.checkResultWithNoValue(browseQuery);
           MarcAuthorityBrowse.checkAllRowsHaveOnlyExpectedValues(3, [personalNameValueInList]);
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 4: Search for full Authorized record
-          MarcAuthorityBrowse.searchBy(personalNameOption, authorizedFull);
-          MarcAuthorityBrowse.checkResultWithValue('Authorized', authorizedFull, true, true);
+          MarcAuthorityBrowse.searchBy(personalNameOption, authorizedFullD);
+          MarcAuthorityBrowse.checkResultWithValue('Authorized', authorizedFullD, true, true);
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 5: Search for full Reference record
-          MarcAuthorityBrowse.searchBy(personalNameOption, referenceFull);
-          MarcAuthorityBrowse.checkResultWithValue('Reference', referenceFull, true, true);
+          MarcAuthorityBrowse.searchBy(personalNameOption, referenceFullD);
+          MarcAuthorityBrowse.checkResultWithValue('Reference', referenceFullD, true, true);
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 6: Search for Auth/Ref record (500)
-          MarcAuthorityBrowse.searchBy(personalNameOption, authRefFull);
-          MarcAuthorityBrowse.checkResultWithNoValue(authRefFull);
+          MarcAuthorityBrowse.searchBy(personalNameOption, authRefFullD);
+          MarcAuthorityBrowse.checkResultWithNoValue(authRefFullD);
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 7: Search for Authorized with invalid subfields
-          MarcAuthorityBrowse.searchBy(personalNameOption, authorizedInvalid);
-          MarcAuthorityBrowse.checkResultWithNoValue(authorizedInvalid);
+          MarcAuthorityBrowse.searchBy(personalNameOption, authorizedInvalidD);
+          MarcAuthorityBrowse.checkResultWithNoValue(authorizedInvalidD);
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 8: Search for Reference with invalid subfields
-          MarcAuthorityBrowse.searchBy(personalNameOption, referenceInvalid);
-          MarcAuthorityBrowse.checkResultWithNoValue(referenceInvalid);
+          MarcAuthorityBrowse.searchBy(personalNameOption, referenceInvalidD);
+          MarcAuthorityBrowse.checkResultWithNoValue(referenceInvalidD);
         },
       );
     });

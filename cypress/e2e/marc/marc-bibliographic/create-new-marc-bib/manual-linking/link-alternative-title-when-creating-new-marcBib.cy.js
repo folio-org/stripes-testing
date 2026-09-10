@@ -42,6 +42,12 @@ describe('MARC', () => {
             searchOption: 'Uniform title',
             marcValue:
               'C422127 Edinburgh tracts in mathematics and mathematical physics english--no. 19.--England',
+            // Displayed heading depends on "mapping.extended": ON keeps field order with "--" before
+            // subdivision subfields; OFF re-sorts subfields alphabetically by code with no "--"
+            displayedHeadingExtended:
+              'C422127 Edinburgh tracts in mathematics and mathematical physics english--no. 19.--England',
+            displayedHeadingDefault:
+              'C422127 Edinburgh tracts in mathematics and mathematical physics no. 19. english England',
             valueAfterSave:
               'C422127 Edinburgh tracts in mathematics and mathematical physics english',
           },
@@ -55,9 +61,16 @@ describe('MARC', () => {
             boxSeventh: '',
             searchOption: 'Name-title',
             marcValue: 'C422127 Abraham, Angela, 1958- C422127 Hosanna Bible',
+            // Only $a + $t, no subdivisions - display is the same under either setting
+            displayedHeadingExtended: 'C422127 Abraham, Angela, 1958- C422127 Hosanna Bible',
+            displayedHeadingDefault: 'C422127 Abraham, Angela, 1958- C422127 Hosanna Bible',
             valueAfterSave: 'C422127 Hosanna Bible',
           },
         ];
+
+        const displayedHeading = (field) => (Cypress.env('authorityExtendedMappingState') === true
+          ? field.displayedHeadingExtended
+          : field.displayedHeadingDefault);
 
         let userData = {};
 
@@ -75,6 +88,7 @@ describe('MARC', () => {
 
         before(() => {
           cy.getAdminToken();
+          cy.getAuthorityExtendedMappingState();
           // make sure there are no duplicate records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C422127');
 
@@ -133,11 +147,12 @@ describe('MARC', () => {
               InventoryInstance.verifyAndClickLinkIcon(newField.tag);
               InventoryInstance.verifySelectMarcAuthorityModal();
               MarcAuthorityBrowse.checkSearchOptions();
-              MarcAuthorityBrowse.searchBy(newField.searchOption, newField.marcValue);
+              // browse only matches a query that is in the same display form as the heading
+              MarcAuthorityBrowse.searchBy(newField.searchOption, displayedHeading(newField));
               cy.wait(1000);
-              MarcAuthorities.checkRow(newField.marcValue);
+              MarcAuthorities.checkRow(displayedHeading(newField));
               cy.wait(1000);
-              MarcAuthorities.selectTitle(newField.marcValue);
+              MarcAuthorities.selectTitle(displayedHeading(newField));
               cy.wait(2000);
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(newField.tag, newField.rowIndex);
@@ -193,7 +208,7 @@ describe('MARC', () => {
 
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
             MarcAuthorities.searchByParameter(newFields[1].searchOption, newFields[1].marcValue);
-            MarcAuthorities.checkRow(newFields[1].marcValue);
+            MarcAuthorities.checkRow(displayedHeading(newFields[1]));
             MarcAuthorities.verifyNumberOfTitles(5, '1');
             MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
             InventorySearchAndFilter.verifySearchResult(testData.fieldContents.tag245Content);
