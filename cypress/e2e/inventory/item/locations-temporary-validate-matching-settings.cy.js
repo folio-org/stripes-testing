@@ -111,6 +111,11 @@ describe('Inventory', () => {
       'C622 Locations --> Temporary Location --> (Validate matching settings) (Folijet)(TaaS)',
       { tags: ['extendedPath', 'folijet', 'C622'] },
       () => {
+        // force increased limit for UI to load all institutions
+        cy.intercept('GET', /location-units\/institutions\?.*limit=\d+/, (req) => {
+          req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+        });
+
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
         InventorySearchAndFilter.selectViewHoldings();
         HoldingsRecordView.waitLoading();

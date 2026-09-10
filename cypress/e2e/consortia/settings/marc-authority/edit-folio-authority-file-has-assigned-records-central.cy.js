@@ -75,6 +75,11 @@ describe('MARC', () => {
           'C436910 Edit all editable fields of FOLIO "Authority file" which has assigned "MARC authority" records at Central tenant, from Central tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C436910'] },
           () => {
+            // force increased limit for UI to load all files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
+
             cy.login(user.username, user.password);
             TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, marcAuthorityTabName);
             SettingsPane.waitLoading();

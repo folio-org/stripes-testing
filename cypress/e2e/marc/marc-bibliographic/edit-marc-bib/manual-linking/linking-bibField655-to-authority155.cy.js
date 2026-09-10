@@ -13,6 +13,14 @@ import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
+// Authority browse only matches a query that is in the same display form as the heading, and that
+// form depends on the "mapping.extended" setting. This heading has a single subdivision subfield
+// and no reordering, so the only difference is the separator:
+//  ON  -> "C380766 Drama--Genre"   OFF (or setting not retrieved) -> "C380766 Drama Genre"
+const headingAsDisplayed = (extendedForm) => (Cypress.env('authorityExtendedMappingState') === true
+  ? extendedForm
+  : extendedForm.replace(/---/g, '- ').replace(/--/g, ' '));
+
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
@@ -73,6 +81,7 @@ describe('MARC', () => {
 
         before('Creating user and data', () => {
           cy.getAdminToken();
+          cy.getAuthorityExtendedMappingState();
           // make sure there are no duplicate records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380766*');
 
@@ -148,9 +157,13 @@ describe('MARC', () => {
 
             MarcAuthorities.switchToBrowse();
             MarcAuthorities.verifyDisabledSearchButton();
-            MarcAuthorityBrowse.searchBy(testData.searchOptionGenre, testData.authorityValue);
-            MarcAuthorities.checkRow(testData.authorityValue);
-            MarcAuthorities.selectTitle(testData.authorityValue);
+            // browse only matches a query in the same display form as the heading
+            MarcAuthorityBrowse.searchBy(
+              testData.searchOptionGenre,
+              headingAsDisplayed(testData.authorityValue),
+            );
+            MarcAuthorities.checkRow(headingAsDisplayed(testData.authorityValue));
+            MarcAuthorities.selectTitle(headingAsDisplayed(testData.authorityValue));
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag655, bib655FieldValues[0]);
             QuickMarcEditor.verifyTagFieldAfterLinking(...bib655AfterLinkingToAuth155);
@@ -164,14 +177,18 @@ describe('MARC', () => {
             InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(
               testData.accordion,
             );
-            MarcAuthorities.checkDetailViewIncludesText(testData.authorityValue);
+            MarcAuthorities.checkDetailViewIncludesText(
+              headingAsDisplayed(testData.authorityValue),
+            );
             InventoryInstance.goToPreviousPage();
             InventoryInstance.waitLoading();
             InventoryInstance.viewSource();
             InventoryViewSource.contains(`${testData.linkedIconText}\n\t655`);
             InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
             InventoryInstance.clickViewAuthorityIconDisplayedInMarcViewPane();
-            MarcAuthorities.checkDetailViewIncludesText(testData.authorityValue);
+            MarcAuthorities.checkDetailViewIncludesText(
+              headingAsDisplayed(testData.authorityValue),
+            );
             InventoryInstance.goToPreviousPage();
             InventoryViewSource.waitLoading();
             InventoryViewSource.close();

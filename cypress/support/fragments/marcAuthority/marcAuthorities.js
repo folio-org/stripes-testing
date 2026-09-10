@@ -43,6 +43,10 @@ import parseMrkFile from '../../utils/parseMrkFile';
 import FileManager from '../../utils/fileManager';
 import DateTools from '../../utils/dateTools';
 import { calloutTypes } from '../../../../interactors/callout';
+import {
+  collapseHeadingDelimiters,
+  getExtendedMappingState,
+} from '../../utils/authorityHeadingMapping';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -334,9 +338,13 @@ export default {
     );
   },
 
-  selectTitle: (title) => cy.do(Button(title).click()),
+  selectTitle: (title) => getExtendedMappingState().then((isExtended) => {
+    cy.do(Button(isExtended ? title : collapseHeadingDelimiters(title)).click());
+  }),
 
-  selectIncludingTitle: (title) => cy.do(Button(including(title)).click()),
+  selectIncludingTitle: (title) => getExtendedMappingState().then((isExtended) => {
+    cy.do(Button(including(isExtended ? title : collapseHeadingDelimiters(title))).click());
+  }),
 
   selectItem: (item, partName = true) => {
     cy.expect(MultiColumnListCell({ content: item }).exists());
@@ -454,7 +462,17 @@ export default {
     ]);
   },
 
-  checkRow: (expectedHeadingReference) => cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
+  checkRow: (expectedHeadingReference) => getExtendedMappingState().then((isExtended) => cy.expect(
+    authoritiesList
+      .find(
+        MultiColumnListCell(
+          isExtended
+            ? expectedHeadingReference
+            : collapseHeadingDelimiters(expectedHeadingReference),
+        ),
+      )
+      .exists(),
+  )),
 
   checkRowsCount: (expectedRowsCount) => {
     cy.expect(authoritiesList.has({ rowCount: expectedRowsCount }));
@@ -555,10 +573,15 @@ export default {
   },
 
   checkAfterSearch(type, record) {
-    cy.expect([
-      MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
-      MultiColumnListCell({ columnIndex: 2, content: record }).exists(),
-    ]);
+    getExtendedMappingState().then((isExtended) => {
+      cy.expect([
+        MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
+        MultiColumnListCell({
+          columnIndex: 2,
+          content: isExtended ? record : collapseHeadingDelimiters(record),
+        }).exists(),
+      ]);
+    });
   },
 
   checkSingleHeadingType(type, headingType) {
@@ -1146,8 +1169,12 @@ export default {
   },
 
   checkResultList(records) {
-    records.forEach((record) => {
-      cy.expect(MultiColumnListCell(record).exists());
+    getExtendedMappingState().then((isExtended) => {
+      records.forEach((record) => {
+        cy.expect(
+          MultiColumnListCell(isExtended ? record : collapseHeadingDelimiters(record)).exists(),
+        );
+      });
     });
   },
 
@@ -1242,16 +1269,19 @@ export default {
   },
 
   verifyResultsRowContent(heading, type, headingType) {
-    const anchorCell = MultiColumnListCell(including(heading));
-    cy.expect(anchorCell.exists());
-    cy.then(() => anchorCell.row()).then((row) => {
-      const targetRow = MultiColumnListRow({ index: row, isContainer: false });
-      if (type) {
-        cy.expect(targetRow.find(MultiColumnListCell(type)).exists());
-      }
-      if (headingType) {
-        cy.expect(targetRow.find(MultiColumnListCell(headingType)).exists());
-      }
+    getExtendedMappingState().then((isExtended) => {
+      const expectedHeading = isExtended ? heading : collapseHeadingDelimiters(heading);
+      const anchorCell = MultiColumnListCell(including(expectedHeading));
+      cy.expect(anchorCell.exists());
+      cy.then(() => anchorCell.row()).then((row) => {
+        const targetRow = MultiColumnListRow({ index: row, isContainer: false });
+        if (type) {
+          cy.expect(targetRow.find(MultiColumnListCell(type)).exists());
+        }
+        if (headingType) {
+          cy.expect(targetRow.find(MultiColumnListCell(headingType)).exists());
+        }
+      });
     });
   },
 
@@ -1762,7 +1792,15 @@ export default {
     cy.do(MultiColumnListCell({ row: rowIndex, columnIndex: 2 }).find(Button()).click());
   },
 
-  checkRowByContent: (rowContent) => cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).exists()),
+  checkRowByContent: (rowContent) => getExtendedMappingState().then((isExtended) => cy.expect(
+    authoritiesList
+      .find(
+        MultiColumnListRow(
+          including(isExtended ? rowContent : collapseHeadingDelimiters(rowContent)),
+        ),
+      )
+      .exists(),
+  )),
 
   checkRowAbsentByContent: (rowContent) => cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).absent()),
 
@@ -2016,11 +2054,14 @@ export default {
   },
 
   verifyRecordFound(heading, isFound = true) {
-    const targetCell = searchResults.find(
-      MultiColumnListCell({ columnIndex: 2, content: heading }),
-    );
-    if (isFound) cy.expect(targetCell.exists());
-    else cy.expect(targetCell.absent());
+    getExtendedMappingState().then((isExtended) => {
+      const expectedHeading = isExtended ? heading : collapseHeadingDelimiters(heading);
+      const targetCell = searchResults.find(
+        MultiColumnListCell({ columnIndex: 2, content: expectedHeading }),
+      );
+      if (isFound) cy.expect(targetCell.exists());
+      else cy.expect(targetCell.absent());
+    });
   },
 
   verifySearchTabIsOpened() {
