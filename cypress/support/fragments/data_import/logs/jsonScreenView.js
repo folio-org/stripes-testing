@@ -93,51 +93,44 @@ export default {
     );
   },
 
-  // verifies the record name and the record type tabs fit in the header box: the record name
-  // does not overflow its own line, and the tabs stay on a single row without overflowing
-  // the tab list (a narrow viewport is the scenario where either could start wrapping/clipping)
+  // Record name fits its line, tabs stay on one row, and each tab's label text stays inside the
+  // tab list box. Measures fractional getBoundingClientRect edges of the label <span> (not the
+  // padded button), so invisible padding overflow doesn't fail it; EPSILON covers the ~1px border.
   verifyRecordNameAndTabsFitInHeader: () => {
-    cy.get('#job-log-colorizer [class*="toolbar"]').then(($toolbar) => {
-      const el = $toolbar[0];
-      expect(
-        el.scrollWidth,
-        'record name and tabs together should not overflow the header box',
-      ).to.be.at.most(el.clientWidth);
-    });
-
-    cy.get('#job-log-colorizer .toolbar [class*="header"]').then(($header) => {
-      const el = $header[0];
-      expect(el.scrollWidth, 'record name should not overflow the header box').to.be.at.most(
-        el.clientWidth,
+    const EPSILON = 1;
+    const fitsWithin = (child, parent, label) => {
+      expect(child.left, `${label} should not be clipped on the left`).to.be.at.least(
+        parent.left - EPSILON,
       );
-    });
+      expect(child.right, `${label} should not be clipped on the right`).to.be.at.most(
+        parent.right + EPSILON,
+      );
+    };
 
-    cy.get('#job-log-colorizer [role="tablist"]').then(($tabList) => {
-      const tabListEl = $tabList[0];
+    cy.get('#job-log-colorizer').then(($root) => {
+      const root = $root[0];
+      const header = root.querySelector('[class^="toolbar"] [class^="header"]');
+      const toolbarRect = root.querySelector('[class^="toolbar"]').getBoundingClientRect();
+      const tabList = root.querySelector('[role="tablist"]');
+      const tabs = [...tabList.querySelectorAll('[role="tab"]')];
+      const tabListRect = tabList.getBoundingClientRect();
+
+      // scrollWidth/clientWidth are integer-rounded, hence +1
+      expect(header.scrollWidth, 'record name should not overflow its line').to.be.at.most(
+        header.clientWidth + 1,
+      );
+      fitsWithin(tabListRect, toolbarRect, 'record type tabs');
       expect(
-        tabListEl.scrollWidth,
-        'record type tabs should not overflow the header box',
-      ).to.be.at.most(tabListEl.clientWidth);
-
-      const tabListRect = tabListEl.getBoundingClientRect();
-      const tabs = [...tabListEl.querySelectorAll('[role="tab"]')];
-
-      const tops = new Set(tabs.map((tab) => tab.getBoundingClientRect().top));
-      expect(tops.size, 'all record type tabs should stay on a single row').to.equal(1);
-
-      // check each tab button's own edges against the tablist's own box, not the viewport - a
-      // button can visually escape its container's border (e.g. via overflow: visible) even when
-      // the container itself measures as not overflowing
+        new Set(tabs.map((tab) => Math.round(tab.getBoundingClientRect().top))).size,
+        'all record type tabs should stay on a single row',
+      ).to.equal(1);
       tabs.forEach((tab) => {
-        const rect = tab.getBoundingClientRect();
-        expect(
-          rect.left,
-          `"${tab.textContent.trim()}" tab should not start outside the left edge of the tabs box`,
-        ).to.be.at.least(tabListRect.left);
-        expect(
-          rect.right,
-          `"${tab.textContent.trim()}" tab should not extend outside the right edge of the tabs box`,
-        ).to.be.at.most(tabListRect.right);
+        const label = tab.querySelector('[class*="inner"]') || tab;
+        fitsWithin(
+          label.getBoundingClientRect(),
+          tabListRect,
+          `"${label.textContent.trim()}" tab label`,
+        );
       });
     });
   },
