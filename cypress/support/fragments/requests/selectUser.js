@@ -30,6 +30,10 @@ export default {
     cy.expect(selectUserModal.find(MultiColumnListCell(userName)).exists());
   },
 
+  verifyFoundUserContainsPartialName(partialName) {
+    cy.expect(selectUserModal.find(MultiColumnListCell(including(partialName))).exists());
+  },
+
   filterByPatronGroup: (patronGroupName) => {
     cy.do(selectUserModal.find(Checkbox(patronGroupName)).click());
   },
