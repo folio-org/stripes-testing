@@ -314,16 +314,19 @@ export default {
   },
 
   verifyQuantityOfOpenAndClosedFeeFines(openFeesFines, closedFeesFines) {
+    const pluralizedOpenFeesFinesPhrase = openFeesFines === 1 ? 'open fee/fine' : 'open fees/fines';
     cy.expect(
       openedFeesFinesLink.has({
-        text: `${openFeesFines} open fee/fine `,
+        text: `${openFeesFines} ${pluralizedOpenFeesFinesPhrase} `,
       }),
     );
 
     if (closedFeesFines) {
+      const pluralizedClosedFeesFinesPhrase =
+        closedFeesFines === 1 ? 'closed fee/fine' : 'closed fees/fines';
       cy.expect(
         closedFeesFinesLink.has({
-          text: `${closedFeesFines} closed fee/fine`,
+          text: `${closedFeesFines} ${pluralizedClosedFeesFinesPhrase}`,
         }),
       );
     }

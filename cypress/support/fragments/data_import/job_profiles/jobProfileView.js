@@ -22,6 +22,10 @@ const actionsButton = Button('Actions');
 const tagSelect = MultiSelect({ id: 'input-tag' });
 const addTagForSelectOption = MultiSelectOption(including('Add tag for:'));
 const jobProfilesList = MultiColumnList({ id: 'job-profiles-list' });
+const deletedProfilePane = Pane('Job profile deleted');
+const deletedProfileMessage = 'Not available - this job profile has been deleted';
+
+export const deletedCalloutMessage = (profileName) => `The job profile "${profileName}" was successfully deleted`;
 
 function waitLoading() {
   // wait for the page to be fully loaded
@@ -82,6 +86,12 @@ export default {
     cy.expect(resultsPane.exists());
     cy.expect(viewPane.exists());
   },
+  verifyDeletedProfileView: () => {
+    cy.expect([
+      deletedProfilePane.exists(),
+      deletedProfilePane.find(HTML(including(deletedProfileMessage))).exists(),
+    ]);
+  },
   checkSummaryFieldsConditions(fields) {
     fields.forEach(({ label, conditions }) => {
       if (label === 'Name') {
@@ -112,12 +122,10 @@ export default {
     );
   },
   verifyCalloutMessage: (message) => {
-    cy.expect(Callout({ textContent: including(message) }).exists());
-    cy.do(
-      Callout()
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
+    const targetCallout = Callout({ textContent: including(message) });
+    cy.expect(targetCallout.exists());
+    cy.do(targetCallout.dismiss());
+    cy.expect(targetCallout.absent());
   },
   verifyJobProfileName: (profileName) => cy.expect(viewPane.find(HTML(including(profileName))).exists()),
   verifyActionMenuAbsent: () => cy.expect(viewPane.find(actionsButton).absent()),
