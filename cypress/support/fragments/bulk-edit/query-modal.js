@@ -36,6 +36,7 @@ const trashButton = Button({ icon: 'trash' });
 const showColumnsButton = buildQueryModal.find(Button('Show columns'));
 const valueSelection = Selection({ dataTestId: including('data-input-select-') });
 const fieldSelection = Selection({ id: including('field-option-') });
+const showColumnsSearchField = TextField({ placeholder: 'Search fields' });
 
 const booleanValues = ['AND'];
 
@@ -75,6 +76,9 @@ export const embeddedTableHeadersMap = {
     'Distribution type',
     'Value',
   ],
+  // Multi-year payment terms are rendered as a nested table in every supported
+  // PO-line-based Lists entity. Keep this order aligned with the UI table headers.
+  polPaymentTerms: ['Fiscal year', 'Code', 'Fund', 'Expense class', 'Distribution type', 'Value'],
   polLocations: ['Name', 'Code', 'Quantity electronic', 'Quantity physical'],
   userAddress: [
     'City',
@@ -169,6 +173,15 @@ export const extractValuesForTableType = (tableType, dataObj) => {
       return [
         dataObj.code,
         dataObj.encumbranceUUID,
+        dataObj.fund,
+        dataObj.expenseClass,
+        dataObj.distributionType,
+        dataObj.value,
+      ];
+    case 'polPaymentTerms':
+      return [
+        dataObj.fiscalYear,
+        dataObj.code,
         dataObj.fund,
         dataObj.expenseClass,
         dataObj.distributionType,
@@ -773,6 +786,19 @@ export default {
     this.closeOpenedSelection();
   },
 
+  verifyAvailableFieldOptionsBySearch(expectedFields, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+
+    expectedFields.forEach((field) => {
+      // Large FQM field lists are virtualized, so an unfiltered optionList only contains
+      // the rows currently mounted in the dropdown. Searching mounts the relevant option.
+      cy.do([targetSelection.open(), targetSelection.filter(field)]);
+      cy.expect(SelectionList().has({ optionList: including(field) }));
+      cy.do(targetSelection.filter(''));
+      this.closeOpenedSelection();
+    });
+  },
+
   verifyFieldOptionAbsent(expectedFields, row = 0) {
     const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
     cy.do(targetSelection.open());
@@ -860,6 +886,21 @@ export default {
 
   chooseValueSelect(choice, row = 0) {
     cy.do(RepeatableFieldItem({ index: row }).find(valueSelection).choose(choice));
+    cy.wait(1000);
+  },
+
+  /**
+   * Selects one value from a searchable, potentially virtualized value list.
+   *
+   * @param {string} choice Exact displayed option to select.
+   * @param {number} [row=0] Zero-based query-condition row containing the value control.
+   */
+  chooseValueSelectBySearch(choice, row = 0) {
+    // Selection.open() crashes in Cypress 12 for this asynchronously rendered value
+    // control. Limit the DOM workaround to opening it; use interactors for the list.
+    cy.get(`[data-testid="row-${row}"] [data-testid^="data-input-select-"] button`).click();
+    cy.then(() => cy.do(SelectionList().filter(choice)));
+    cy.then(() => cy.do(SelectionList().select(choice)));
     cy.wait(1000);
   },
 
@@ -1138,8 +1179,116 @@ export default {
     });
   },
 
+  verifyAllPreviewRowsContain(expectedText) {
+    cy.get('[id="results-viewer-table"] [data-row-index]').should(($rows) => {
+      expect($rows.length, 'preview rows').to.be.greaterThan(0);
+      [...$rows].forEach((row) => expect(row.innerText).to.contain(expectedText));
+    });
+  },
+
+  /**
+   * Verifies how many preview rows belong to one test entity.
+   *
+   * This is useful for non-unique query conditions in shared tenants, where unrelated
+   * records may also match but the current run must still contribute an exact row count.
+   *
+   * @param {string} expectedText Run-specific text present in each target row.
+   * @param {number} expectedCount Exact number of matching preview rows.
+   */
+  verifyPreviewRowsWithContentCount(expectedText, expectedCount) {
+    const scrollableSelector = 'div[aria-label="Build query"] div[class^="mclScrollable"]';
+    const rowSelector = '[id="results-viewer-table"] [data-row-index]';
+
+    cy.get(scrollableSelector).then(($scrollable) => {
+      const element = $scrollable[0];
+      const maxTop = Math.max(element.scrollHeight - element.clientHeight, 0);
+      const verticalStep = Math.max(Math.floor(element.clientHeight * 0.8), 1);
+      const topPositions = [];
+      const matchingRowIndexes = new Set();
+
+      for (let top = 0; top < maxTop; top += verticalStep) topPositions.push(top);
+      topPositions.push(maxTop);
+
+      const inspectPosition = (index) => {
+        if (index >= topPositions.length) {
+          expect(
+            [...matchingRowIndexes],
+            `preview rows containing "${expectedText}"`,
+          ).to.have.length(expectedCount);
+          return undefined;
+        }
+
+        return cy
+          .wrap($scrollable, { log: false })
+          .scrollTo('left', topPositions[index], {
+            duration: 0,
+            ensureScrollable: false,
+            log: false,
+          })
+          .wait(100, { log: false })
+          .then(() => {
+            Cypress.$(rowSelector).each((_, row) => {
+              if (row.innerText.includes(expectedText)) {
+                matchingRowIndexes.add(row.getAttribute('data-row-index'));
+              }
+            });
+            return inspectPosition(index + 1);
+          });
+      };
+
+      return inspectPosition(0);
+    });
+  },
+
   verifyRecordWithContent(content) {
     cy.expect(buildQueryModal.find(MultiColumnListCell({ content })).exists());
+  },
+
+  /**
+   * Finds content anywhere in the virtualized query-preview grid.
+   *
+   * Use this for wide or tall composite record types whose off-screen cells are
+   * removed from the DOM. Ordinary previews should use {@link verifyRecordWithContent}.
+   *
+   * @param {string} content Cell content to locate.
+   */
+  verifyRecordWithContentAcrossPreviewTable(content) {
+    const scrollableSelector = 'div[aria-label="Build query"] div[class^="mclScrollable"]';
+    const tableSelector = 'div[aria-label="Build query"] [id="results-viewer-table"]';
+
+    cy.get(scrollableSelector).then(($scrollable) => {
+      const element = $scrollable[0];
+      const maxLeft = Math.max(element.scrollWidth - element.clientWidth, 0);
+      const maxTop = Math.max(element.scrollHeight - element.clientHeight, 0);
+      const horizontalStep = Math.max(Math.floor(element.clientWidth * 0.8), 1);
+      const leftPositions = [];
+
+      for (let left = 0; left < maxLeft; left += horizontalStep) leftPositions.push(left);
+      leftPositions.push(maxLeft);
+
+      // The preview renders only a small vertical window. Searching its top and bottom
+      // is sufficient for the bounded query previews used by Lists (at most ten rows).
+      const topPositions = maxTop > 0 ? [0, maxTop] : [0];
+      const positions = topPositions.flatMap((top) => leftPositions.map((left) => ({ left, top })));
+
+      const searchPosition = (index) => {
+        if (index >= positions.length) {
+          throw new Error(`Could not find preview-table content: "${content}"`);
+        }
+
+        const { left, top } = positions[index];
+        return cy
+          .wrap($scrollable, { log: false })
+          .scrollTo(left, top, { duration: 0, ensureScrollable: false, log: false })
+          .wait(100, { log: false })
+          .then(() => {
+            if (Cypress.$(tableSelector).text().includes(content)) return undefined;
+            return searchPosition(index + 1);
+          });
+      };
+
+      return searchPosition(0);
+    });
   },
 
   verifyQueryReturnsNoResults() {
@@ -1318,6 +1467,15 @@ export default {
     cy.expect(buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' })).absent());
   },
 
+  /**
+   * Verifies the headers and rows of an embedded table in a query-preview record.
+   *
+   * @param {string} tableType Key from {@link embeddedTableHeadersMap}.
+   * @param {string|number} identifier Visible cell value identifying the record, or a zero-based
+   *   preview row index when the identifier column is unmounted by horizontal virtualization.
+   * @param {object|object[]} expectedData Complete embedded-table row or rows to verify.
+   * @param {number} [tableIndex=0] Embedded-table index when a record contains multiple tables.
+   */
   verifyEmbeddedTableInQueryModal(
     tableType,
     identifier,
@@ -1334,7 +1492,7 @@ export default {
     // Normalize input to always be an array
     const dataToVerify = Array.isArray(expectedData) ? expectedData : [expectedData];
 
-    cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((rowIndex) => {
+    const verifyRow = (rowIndex) => {
       // Find the DynamicTable specifically within this row
       cy.get(`div[aria-label="Build query"] [data-row-index="row-${rowIndex}"]`).within(() => {
         // Verify table headers
@@ -1373,7 +1531,15 @@ export default {
             });
         });
       });
-    });
+    };
+
+    // A numeric identifier addresses a preview row directly. This is required when
+    // horizontal virtualization unmounts the otherwise suitable identifier column.
+    if (Number.isInteger(identifier)) {
+      verifyRow(identifier);
+    } else {
+      cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then(verifyRow);
+    }
   },
 
   verifyElectronicAccessEmbeddedTableInQueryModal(
@@ -1484,6 +1650,43 @@ export default {
     this.verifyEmbeddedTableInQueryModal('polFundDistribution', identifier, expectedFundValues);
   },
 
+  /**
+   * Verifies the complete PO-line payment-term schedule in a query-preview record.
+   *
+   * @param {string|number} identifier Visible record identifier or zero-based preview row index.
+   * @param {object|object[]} expectedPaymentTerms Complete expected payment-term schedule.
+   * @param {number} [tableIndex=0] Payment-terms table index within the preview row.
+   */
+  verifyPOLPaymentTermsEmbeddedTableInQueryModal(identifier, expectedPaymentTerms, tableIndex = 0) {
+    const expectedRows = Array.isArray(expectedPaymentTerms) ? expectedPaymentTerms.length : 1;
+
+    this.verifyEmbeddedTableInQueryModal(
+      'polPaymentTerms',
+      identifier,
+      expectedPaymentTerms,
+      tableIndex,
+    );
+
+    // Payment-term expectations describe the complete schedule, including an empty
+    // fiscal-year card. Assert its exact size so unexpected duplicate/missing terms
+    // cannot pass merely because every supplied row was found.
+    const verifyNumberOfRows = (rowIndex) => {
+      cy.get(`div[aria-label="Build query"] [data-row-index="row-${rowIndex}"]`)
+        .find('[class^="DynamicTable-"]')
+        .eq(tableIndex)
+        .find('tbody tr')
+        .should('have.length', expectedRows);
+    };
+
+    if (Number.isInteger(identifier)) {
+      verifyNumberOfRows(identifier);
+    } else {
+      cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then(
+        verifyNumberOfRows,
+      );
+    }
+  },
+
   verifyUserAddressEmbeddedTableInQueryModal(identifier, expectedUserAddress) {
     this.verifyEmbeddedTableInQueryModal('userAddress', identifier, expectedUserAddress);
   },
@@ -1549,6 +1752,21 @@ export default {
 
   selectCheckboxInShowColumns(columnName) {
     cy.do(Checkbox(columnName).checkIfNotSelected());
+  },
+
+  /**
+   * Selects a column that may not currently be mounted in the virtualized Show columns menu.
+   *
+   * @param {string} columnName Exact displayed column label to find and select.
+   */
+  selectCheckboxInShowColumnsBySearch(columnName) {
+    // Filtering mounts the requested checkbox before Stripes Interactors resolves it.
+    cy.do(showColumnsSearchField.fillIn(columnName));
+    this.selectCheckboxInShowColumns(columnName);
+    cy.expect(Checkbox(columnName).has({ checked: true }));
+    // TextField.clear() clicks the optional times-circle icon, which can disappear
+    // during a Show columns menu rerender. Replacing the value is deterministic.
+    cy.do(showColumnsSearchField.fillIn(''));
   },
 
   uncheckAllShowColumns() {

@@ -87,6 +87,11 @@ export default {
     resource: 'Module Lists Refresh',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  moduleListsExportView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'Module Lists Export',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   myProfileMainNavOrderManage: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Myprofile Settings Main-Nav-Order',
@@ -133,6 +138,16 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Users Loans',
     action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiUsersFeeFinesView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Users Feesfines',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiUsersFeeFineActionManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Users Fee-Fine-Actions',
+    action: CAPABILITY_ACTIONS.MANAGE,
   },
   rolesUsers: {
     type: CAPABILITY_TYPES.DATA,
@@ -204,6 +219,21 @@ export default {
     resource: 'UI-Organizations',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiAgreementsAgreementsView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Agreements Agreements',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiFinanceFundBudgetView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Finance Fund-Budget',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInvoiceInvoiceView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Invoice Invoice',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventoryInstanceEdit: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Instance',
@@ -218,6 +248,16 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Orders Orders',
     action: CAPABILITY_ACTIONS.CREATE,
+  },
+  uiOrdersOrdersView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Orders Orders',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiReceivingView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Receiving',
+    action: CAPABILITY_ACTIONS.VIEW,
   },
   uiInventoryInstanceStaffSuppressedRecordsView: {
     type: CAPABILITY_TYPES.DATA,
@@ -404,6 +444,11 @@ export default {
   uiQuickMarcQuickMarcAuthorityRecordsLinkUnlink: {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'UI-Quick-Marc Quick-Marc-Authority-Records Link-Unlink',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiUsersManualPay: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Users Manual-Pay',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
 };
