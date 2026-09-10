@@ -12,8 +12,9 @@ import {
   Pane,
   PaneHeader,
   Section,
+  Select,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import { DEFAULT_WAIT_TIME, ORDER_VIEW_FIELD_LABELS } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import ExportDetails from '../exportManager/exportDetails';
 import InventoryInstance from '../inventory/inventoryInstance';
@@ -27,12 +28,15 @@ import OrderLineDetails from './orderLineDetails';
 import OrderLineEditForm from './orderLineEditForm';
 import OrderLines from './orderLines';
 
+const FISCAL_YEAR_OPTION_GROUPS = { CURRENT: 'Current', PREVIOUS: 'Previous' };
+
 const orderDetailsPane = Pane({ id: 'order-details' });
 const actionsButton = Button('Actions');
 
 const orderInfoSection = orderDetailsPane.find(Section({ id: 'purchaseOrder' }));
 const ongoingOrderInfoSection = orderDetailsPane.find(Section({ id: 'ongoing' }));
 const poSummarySection = orderDetailsPane.find(Section({ id: 'POSummary' }));
+const fiscalYearSelect = poSummarySection.find(Select(ORDER_VIEW_FIELD_LABELS.FISCAL_YEAR));
 const polListingAccordion = Section({ id: 'POListing' });
 const customFieldsAccordion = Section({ id: 'customFieldsPO' });
 
@@ -61,7 +65,6 @@ export default {
   checkOrderStatus(orderStatus) {
     cy.expect(poSummarySection.find(KeyValue('Workflow status')).has({ value: orderStatus }));
   },
-
   checkPurchaseOrderPaneAbsent() {
     cy.expect(orderDetailsPane.absent());
   },
@@ -81,7 +84,12 @@ export default {
       );
     });
   },
-  checkOrderDetails({ orderInformation = [], ongoingInformation = [], summary = [] } = {}) {
+  checkOrderDetails({
+    orderInformation = [],
+    ongoingInformation = [],
+    summary = [],
+    fieldsNotDisplayed = [],
+  } = {}) {
     orderInformation.forEach(({ key, value, checkbox }) => {
       if (checkbox) {
         cy.expect(orderInfoSection.find(Checkbox(key)).has(value));
@@ -101,10 +109,21 @@ export default {
     summary.forEach(({ key, value, checkbox }) => {
       if (checkbox) {
         cy.expect(poSummarySection.find(Checkbox(key)).has(value));
+      } else if (key === ORDER_VIEW_FIELD_LABELS.FISCAL_YEAR) {
+        cy.expect(fiscalYearSelect.has({ checkedOptionText: including(String(value)) }));
       } else {
         cy.expect(poSummarySection.find(KeyValue(key)).has({ value: including(value) }));
       }
     });
+    if (fieldsNotDisplayed) {
+      fieldsNotDisplayed.forEach((field) => {
+        if (field === ORDER_VIEW_FIELD_LABELS.FISCAL_YEAR) {
+          cy.expect(poSummarySection.find(Select(field)).absent());
+        } else {
+          cy.expect(orderDetailsPane.find(KeyValue(field)).absent());
+        }
+      });
+    }
   },
   expandActionsDropdown() {
     cy.do(
@@ -399,5 +418,16 @@ export default {
     if (updatedBy) cy.expect(MetaSection({ updatedByText: including(updatedBy) }).exists());
     if (created) cy.expect(MetaSection({ createdText: including(created) }).exists());
     if (createdBy) cy.expect(MetaSection({ createdByText: including(createdBy) }).exists());
+  },
+
+  selectFiscalYear(fiscalYearCode) {
+    cy.do(fiscalYearSelect.choose(fiscalYearCode));
+  },
+
+  checkFiscalYearDropdownOptions({ current = [], previous = [] } = {}) {
+    cy.then(() => fiscalYearSelect.optionsByGroup()).then((groups) => {
+      expect(groups[FISCAL_YEAR_OPTION_GROUPS.CURRENT] || []).to.deep.equal(current);
+      expect(groups[FISCAL_YEAR_OPTION_GROUPS.PREVIOUS] || []).to.deep.equal(previous);
+    });
   },
 };

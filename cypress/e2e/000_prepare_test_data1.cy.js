@@ -203,6 +203,7 @@ describe('Preconditions', () => {
       // searchParams: { query: `name=Instance` },
     })
       .then((response) => {
+        // eslint-disable-next-line no-console
         console.log(response);
         response.body.instances.forEach((item) => {
           cy.okapiRequest({

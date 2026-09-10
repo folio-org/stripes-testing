@@ -332,6 +332,42 @@ describe('Lists', () => {
           QueryModal.verifyQueryAreaContent(
             `(holdings_type.id == ${testData.holdingsType2.id}) AND (holdings.instance_id == ${testData.instanceId}) AND (holdings.statistical_code_ids is null/empty True)`,
           );
+
+          // Step 14: Close the query editor and the list details pane, create new list with Holdings record type, click "Build query" button
+          QueryModal.clickXButtton();
+          Lists.cancelList();
+          Lists.closeListDetailsPane();
+          Lists.openNewListPane();
+          Lists.setName(listName);
+          Lists.selectRecordType(Lists.recordTypes.holdings);
+          Lists.buildQuery();
+
+          // Step 15: Select "Holdings type — Type UUID" field, "equals" operator, HoldingsType1 UUID, test and save query
+          QueryModal.selectField(holdingsFieldValues.holdingsTypeUuid);
+          QueryModal.verifySelectedField(holdingsFieldValues.holdingsTypeUuid);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.fillInValueTextfield(testData.holdingsType1.id);
+          QueryModal.testQuery();
+          QueryModal.waitForQueryTestToFinish();
+          QueryModal.verifyQueryAreaContent(`(holdings_type.id == ${testData.holdingsType1.id})`);
+          QueryModal.clickRunQueryAndSave();
+          QueryModal.verifyClosed();
+          Lists.verifyListSavedCalloutMessage(listName);
+          Lists.waitForCompilingToComplete();
+          // Verify the user-friendly query line shows the "Holdings type — Type UUID" field (holdings_type.id), NOT the name field
+          Lists.getQueryText().then((queryText) => {
+            expect(queryText).to.include(`holdings_type.id == ${testData.holdingsType1.id}`);
+            expect(queryText).not.to.include('holdings_type.name');
+          });
+
+          // Step 16: Reopen the query builder and verify the saved condition persisted correctly
+          Lists.openActions();
+          Lists.editList();
+          Lists.editQuery();
+          QueryModal.verifySelectedField(holdingsFieldValues.holdingsTypeUuid);
+          QueryModal.verifySelectedOperator(QUERY_OPERATIONS.EQUAL);
+          QueryModal.verifyTextFieldValue(testData.holdingsType1.id);
+          QueryModal.verifyQueryAreaContent(`(holdings_type.id == ${testData.holdingsType1.id})`);
         },
       );
     });

@@ -119,6 +119,12 @@ export const ORDER_VIEW_FIELD_LABELS = {
   PO_NUMBER: 'PO number',
   VENDOR: 'Vendor',
   ORDER_TYPE: 'Order type',
+  FISCAL_YEAR: 'Fiscal year',
+  TOTAL_ESTIMATED_PRICE: 'Total estimated price',
+  TOTAL_ENCUMBERED: 'Total encumbered',
+  TOTAL_EXPENDED: 'Total expended',
+  TOTAL_CREDITED: 'Total credited',
+  REASON_FOR_CLOSURE: 'Reason for closure',
 };
 
 export const ORDER_AND_ORDER_LINE_BUTTONS = {

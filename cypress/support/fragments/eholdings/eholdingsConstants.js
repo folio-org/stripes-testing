@@ -4,3 +4,9 @@ export const FILTER_STATUSES = {
   SELECTED: 'Selected',
   NOT_SELECTED: 'Not selected',
 };
+
+export const PACKAGE_TYPES = {
+  CUSTOM: 'Custom',
+  VARIABLE: 'Variable',
+  COMPLETE: 'Complete',
+};

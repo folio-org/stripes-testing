@@ -2,7 +2,10 @@ import { v4 as uuid } from 'uuid';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ORDER_LINE_PAYMENT_STATUS,
+  ORDER_SEARCH_OPTIONS,
   ORDER_STATUSES,
+  ORDER_SYSTEM_CLOSING_REASONS,
+  ORDER_VIEW_FIELD_LABELS,
   POL_CREATE_INVENTORY_SETTINGS,
   POLINE_DETAILS_FIELDS,
   RECEIPT_STATUS_VIEW,
@@ -169,7 +172,7 @@ describe('Orders', () => {
     'C742 Set all POLs for an order to fully paid and fully received to close order as complete (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C742'] },
     () => {
-      Orders.searchByParameter('PO number', testData.order.poNumber);
+      Orders.searchByParameter(ORDER_SEARCH_OPTIONS.PO_NUMBER, testData.order.poNumber);
       Orders.selectFromResultsList(testData.order.poNumber);
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
       OrderDetails.openPolDetails(testData.orderLine1.titleOrPackage);
@@ -230,10 +233,15 @@ describe('Orders', () => {
       OrderLineDetails.backToOrderDetails();
       OrderDetails.checkOrderStatus(ORDER_STATUSES.CLOSED);
       OrderDetails.checkFieldsConditions([
-        { label: 'Reason for closure', conditions: { value: 'Complete' } },
+        {
+          label: ORDER_VIEW_FIELD_LABELS.REASON_FOR_CLOSURE,
+          conditions: { value: ORDER_SYSTEM_CLOSING_REASONS.COMPLETE },
+        },
       ]);
       OrderDetails.openPolDetails(testData.orderLine1.titleOrPackage);
-      OrderLineDetails.checkWarningMessage('Purchase order is closed - Complete');
+      OrderLineDetails.checkPurchaseOrderClosedWarning({
+        reason: ORDER_SYSTEM_CLOSING_REASONS.COMPLETE,
+      });
       OrderLineDetails.checkFieldsConditions([
         {
           label: POLINE_DETAILS_FIELDS.RECEIPT_STATUS,

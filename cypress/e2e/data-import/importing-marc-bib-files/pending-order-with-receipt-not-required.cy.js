@@ -147,7 +147,7 @@ describe('Data Import', () => {
           orderNumber = initialNumber.replace(/-\d+$/, '');
         });
         OrderLineDetails.checkOrderLineDetails({
-          purchaseOrderLineInformation: [
+          poLineInformation: [
             {
               key: POLINE_DETAILS_FIELDS.RECEIPT_STATUS,
               value: RECEIPT_STATUS_VIEW.RECEIPT_NOT_REQUIRED,

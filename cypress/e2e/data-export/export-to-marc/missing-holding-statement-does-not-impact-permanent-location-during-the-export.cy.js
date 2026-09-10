@@ -113,7 +113,7 @@ describe('Data Export', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(folioInstance.uuid);
       ExportJobProfiles.deleteJobProfileViaApi(testData.jobProfileId);

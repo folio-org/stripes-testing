@@ -14,6 +14,7 @@ import {
   Section,
   Select,
   TextField,
+  Warning,
 } from '../../../../interactors';
 import { DEFAULT_WAIT_TIME, ITEM_STATUS_NAMES, ORDER_LINE_FILTER_LABELS } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -24,6 +25,7 @@ import SelectLocationModal from '../orders/modals/selectLocationModal';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import deleteHoldingsModalReceivingFullScreen from './modals/deleteHoldingsModaReceivinglFullScreen';
 import ReceivingDetails from './receivingDetails';
+import ReceivingStates from './receivingStates';
 
 const receivingResultsSection = Section({ id: 'receiving-results-pane' });
 const filtersPane = Pane({ id: 'receiving-filters-pane' });
@@ -895,5 +897,15 @@ export default {
   },
   waitForReceivingTitlesQueryCompleted() {
     cy.wait('@waiterForReceivingTitlesQueryCompleted');
+  },
+
+  checkPurchaseOrderClosedWarning({ reason } = {}) {
+    cy.expect(
+      rootsection
+        .find(
+          Warning({ message: including(ReceivingStates.purchaseOrderClosedWarning({ reason })) }),
+        )
+        .exists(),
+    );
   },
 };

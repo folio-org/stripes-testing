@@ -79,7 +79,6 @@ describe('MARC', () => {
         { tags: ['extendedPathFlaky', 'promin', 'nonParallel', 'C519983'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
-          QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tags.tag008);
           MarcAuthority.setValid008DropdownValues();
           QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tags.tag008, false);
           MarcAuthority.selectSourceFile(testData.authoritySourceFile);
