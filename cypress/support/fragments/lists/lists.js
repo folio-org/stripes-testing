@@ -132,12 +132,14 @@ const constants = {
     vouchers: 'Vouchers',
     instancesWithMarcBibliographic: 'Instances with MARC bibliographic',
     receivingPieces: 'Receiving pieces',
+    receivingTitles: 'Receiving titles',
     feeFineAccountsWithUsers: 'Fee/Fine accounts with users',
     usersWithFeeFineLoans: 'Users with fees/fines, loans',
     usersWithManualBlocks: 'Users with manual blocks',
     lostItemsRequiringActualCost: 'Lost items requiring actual cost',
     loans: 'Loans',
     orderInvoiceAnalysis: 'Order — Invoice Analysis',
+    agreementsInvoicesOrders: 'Agreements - Invoices - Orders',
   },
   userColumns: [
     'User — Active',
@@ -558,6 +560,27 @@ const UI = {
   selectRecordType(type) {
     cy.get('button[name=recordType]').click();
     cy.do([SelectionList().filter(type), SelectionList().select(type)]);
+    cy.wait(1000);
+  },
+
+  selectRecordTypeByKeywords(searchTerm, keywords) {
+    cy.get('button[name=recordType]').click();
+    cy.do(SelectionList().filter(searchTerm));
+    cy.do(
+      SelectionList().perform((element) => {
+        // Highlight markup and punctuation can differ between FQM/UI releases. Matching all
+        // supplied words against textContent keeps the choice semantic and release-tolerant.
+        const option = [...element.querySelectorAll('li')].find(({ textContent }) => {
+          return keywords.every((keyword) => textContent.includes(keyword));
+        });
+
+        if (!option) {
+          throw new Error(`No record type contains all keywords: ${keywords.join(', ')}`);
+        }
+
+        option.click();
+      }),
+    );
     cy.wait(1000);
   },
 

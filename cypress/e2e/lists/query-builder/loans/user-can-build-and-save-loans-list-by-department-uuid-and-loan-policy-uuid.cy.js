@@ -362,7 +362,21 @@ describe('Lists', () => {
           QueryModal.waitForQueryTestToFinish();
 
           // Verify User 1, 2, and 3 are returned (all have departments assigned)
-          QueryModal.verifyNumberOfMatchedRecords(3);
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            testData.users[0].barcode,
+            LOANS_FIELDS.USER.BARCODE,
+            testData.users[0].barcode,
+          );
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            testData.users[1].barcode,
+            LOANS_FIELDS.USER.BARCODE,
+            testData.users[1].barcode,
+          );
+          QueryModal.verifyMatchedRecordsByIdentifier(
+            testData.users[2].barcode,
+            LOANS_FIELDS.USER.BARCODE,
+            testData.users[2].barcode,
+          );
 
           // Step 5: Verify Department UUIDs column displays correctly
           QueryModal.verifyMatchedRecordsByIdentifier(
@@ -386,22 +400,19 @@ describe('Lists', () => {
             QueryModal.clickRunQueryAndSave();
             QueryModal.verifyClosed();
             Lists.verifyListSavedCalloutMessage(listData.name);
-            // TODO: Uncomment after UIPQB-295 will be resolved
-            //  Lists.verifyQuery('users.department_id is null/empty False');
+            Lists.verifyQuery('users.department_id is null/empty False');
             Lists.verifyRefreshCompleteCallout(recordCount);
 
             // Step 7: Click "Actions" menu => "Edit list", then click "Edit query" button
             Lists.openActions();
             Lists.editList();
             Lists.editQuery();
-
-            // TODO: Uncomment after UIPQB-295 will be resolved
-            // QueryModal.verifySelectedField(LOANS_FIELDS.USER.DEPARTMENT_UUIDS);
+            QueryModal.verifySelectedField(LOANS_FIELDS.USER.DEPARTMENT_UUIDS);
             QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IS_NULL);
             QueryModal.verifySelectedValue('False');
-            // QueryModal.verifyQueryAreaContent(
-            //   `(users.department_ids == ${testData.departments[0].id})`,
-            // );
+            QueryModal.verifyQueryAreaContent(
+              `(users.department_ids == ${testData.departments[0].id})`,
+            );
 
             // Step 8: Change first field to Loan policy — UUID
             QueryModal.selectField(LOANS_FIELDS.LOAN_POLICY.UUID);
@@ -517,6 +528,42 @@ describe('Lists', () => {
             QueryModal.verifyQueryAreaContent(
               `(lpolicy.id == ${testData.loanPolicies[0].id}) AND (users.department_ids == ${testData.departments[0].id})`,
             );
+
+            // Step 14: Close the query editor and the list details pane, create new list with Loans record type, click "Build query" button
+            QueryModal.clickXButtton();
+            Lists.cancelList();
+            Lists.closeListDetailsPane();
+            Lists.openNewListPane();
+            Lists.setName(listData.name);
+            Lists.selectRecordType(Lists.recordTypes.loans);
+            Lists.buildQuery();
+
+            // Step 15: Select "Loan policy — UUID" field, "equals" operator, Policy-1-UUID value, test and save query
+            QueryModal.selectField(LOANS_FIELDS.LOAN_POLICY.UUID);
+            QueryModal.verifySelectedField(LOANS_FIELDS.LOAN_POLICY.UUID);
+            QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
+            QueryModal.fillInValueTextfield(testData.loanPolicies[0].id);
+            QueryModal.testQuery();
+            QueryModal.waitForQueryTestToFinish();
+            QueryModal.verifyQueryAreaContent(`(lpolicy.id == ${testData.loanPolicies[0].id})`);
+            QueryModal.clickRunQueryAndSave();
+            QueryModal.verifyClosed();
+            Lists.verifyListSavedCalloutMessage(listData.name);
+            Lists.waitForCompilingToComplete();
+            // Verify the user-friendly query line shows the "Loan policy — UUID" field (lpolicy.id), NOT the name field
+            Lists.getQueryText().then((queryText) => {
+              expect(queryText).to.include(`lpolicy.id == ${testData.loanPolicies[0].id}`);
+              expect(queryText).not.to.include('lpolicy.name');
+            });
+
+            // Step 16: Reopen the query builder and verify the saved condition persisted correctly
+            Lists.openActions();
+            Lists.editList();
+            Lists.editQuery();
+            QueryModal.verifySelectedField(LOANS_FIELDS.LOAN_POLICY.UUID);
+            QueryModal.verifySelectedOperator(QUERY_OPERATIONS.EQUAL);
+            QueryModal.verifyTextFieldValue(testData.loanPolicies[0].id);
+            QueryModal.verifyQueryAreaContent(`(lpolicy.id == ${testData.loanPolicies[0].id})`);
           });
         },
       );

@@ -87,6 +87,11 @@ export default {
     resource: 'Module Lists Refresh',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  moduleListsExportView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'Module Lists Export',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   myProfileMainNavOrderManage: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Myprofile Settings Main-Nav-Order',
@@ -214,6 +219,21 @@ export default {
     resource: 'UI-Organizations',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiAgreementsAgreementsView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Agreements Agreements',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiFinanceFundBudgetView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Finance Fund-Budget',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInvoiceInvoiceView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Invoice Invoice',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventoryInstanceEdit: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Instance',
@@ -228,6 +248,16 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Orders Orders',
     action: CAPABILITY_ACTIONS.CREATE,
+  },
+  uiOrdersOrdersView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Orders Orders',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiReceivingView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Receiving',
+    action: CAPABILITY_ACTIONS.VIEW,
   },
   uiInventoryInstanceStaffSuppressedRecordsView: {
     type: CAPABILITY_TYPES.DATA,
