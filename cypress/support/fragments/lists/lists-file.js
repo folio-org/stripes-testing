@@ -9,6 +9,7 @@ import {
   organizationFieldValues,
   purchaseOrderLinesFieldValues,
 } from '../bulk-edit/query-modal';
+import { LOANS_FIELDS } from '../../constants/query-builder/loansFields';
 
 /**
  * Converts field values to CSV header format
@@ -38,6 +39,7 @@ export const usersCsvHeaders = convertToCsvHeaders(usersFieldValues);
 export const transactionCsvHeaders = convertToCsvHeaders(transactionFieldValues);
 export const organizationCsvHeaders = convertToCsvHeaders(organizationFieldValues);
 export const purchaseOrderLinesCsvHeaders = convertToCsvHeaders(purchaseOrderLinesFieldValues);
+export const loansCsvHeaders = convertToCsvHeaders(LOANS_FIELDS);
 
 export default {
   /**
