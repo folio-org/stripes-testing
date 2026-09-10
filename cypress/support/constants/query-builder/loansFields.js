@@ -5,6 +5,7 @@ export const LOANS_FIELDS = {
   },
   LOAN: {
     STATUS_NAME: 'Loan — Status name',
+    CHECKOUT_DATE: 'Loan — Checkout date',
   },
   LOAN_POLICY: {
     NAME: 'Loan policy — Name',
