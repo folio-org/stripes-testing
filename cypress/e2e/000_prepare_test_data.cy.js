@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import Budgets from '../support/fragments/finance/budgets/budgets';
 import FiscalYears from '../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../support/fragments/finance/funds/funds';
+import OtherSettings from '../support/fragments/settings/circulation/otherSettings';
 import ExpenseClasses from '../support/fragments/settings/finance/expenseClasses';
 import BatchGroups from '../support/fragments/settings/invoices/batchGroups';
 import ServicePoints from '../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -121,6 +122,7 @@ describe('Prepare test data', () => {
       let defaultServicePointId;
       let userId;
       cy.getAdminToken().then(() => {
+        OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,externalSystemId,username' });
         cy.getAdminUserId()
           .then((id) => {
             userId = id;

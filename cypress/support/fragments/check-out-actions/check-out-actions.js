@@ -370,6 +370,10 @@ export default {
     );
   },
 
+  verifyUserContainsPartialName(partialName) {
+    cy.expect(userPane.find(Link(including(partialName))).exists());
+  },
+
   waitLoading() {
     cy.expect(Pane('Scan patron card').exists());
     cy.expect(Pane('Scan items').exists());
