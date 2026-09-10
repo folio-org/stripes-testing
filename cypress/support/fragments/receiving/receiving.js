@@ -15,6 +15,7 @@ import {
   Section,
   Select,
   TextField,
+  Warning,
 } from '../../../../interactors';
 import { DEFAULT_WAIT_TIME, ITEM_STATUS_NAMES } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -22,6 +23,7 @@ import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import deleteHoldingsModalReceivingFullScreen from './modals/deleteHoldingsModaReceivinglFullScreen';
 import ReceivingDetails from './receivingDetails';
+import ReceivingStates from './receivingStates';
 
 const receivingResultsSection = Section({ id: 'receiving-results-pane' });
 const rootsection = PaneContent({ id: 'pane-title-details-content' });
@@ -846,5 +848,23 @@ export default {
           cy.expect(resetButton.is({ disabled: true }));
         }
       });
+  },
+
+  /* Request interceptors */
+  interceptGetReceivingTitles() {
+    cy.intercept('GET', '/orders/titles*').as('waiterForReceivingTitlesQueryCompleted');
+  },
+  waitForReceivingTitlesQueryCompleted() {
+    cy.wait('@waiterForReceivingTitlesQueryCompleted');
+  },
+
+  checkPurchaseOrderClosedWarning({ reason } = {}) {
+    cy.expect(
+      rootsection
+        .find(
+          Warning({ message: including(ReceivingStates.purchaseOrderClosedWarning({ reason })) }),
+        )
+        .exists(),
+    );
   },
 };

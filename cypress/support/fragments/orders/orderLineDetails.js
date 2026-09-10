@@ -22,6 +22,7 @@ import CancelConfirmationModal from './modals/cancelConfirmationModal';
 import SelectInstanceModal from './modals/selectInstanceModal';
 import OrderLineEditForm from './orderLineEditForm';
 import VersionHistory from './orderVersionHistory';
+import OrderStates from './orderStates';
 
 const orderLineDetailsSection = Section({ id: 'order-lines-details' });
 const paneHeaderOrderLinesDetailes = orderLineDetailsSection.find(
@@ -209,6 +210,13 @@ export default {
   },
   checkWarningMessage(message) {
     cy.expect(orderLineDetailsSection.find(Warning()).has({ message }));
+  },
+  checkPurchaseOrderClosedWarning({ reason } = {}) {
+    cy.expect(
+      orderLineDetailsSection
+        .find(Warning({ message: including(OrderStates.purchaseOrderClosedWarning({ reason })) }))
+        .exists(),
+    );
   },
   checkContributorsSectionContent(contributors = []) {
     contributors.forEach(({ name, type }) => {
