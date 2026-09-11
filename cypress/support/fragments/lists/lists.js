@@ -72,6 +72,7 @@ const clearSearchButton = Button({ id: 'clickable-input-record-search-clear-fiel
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
 const editQueryButton = Button('Edit query');
 const resultViewerTable = MultiColumnList({ id: 'results-viewer-table' });
+const resultViewerTableSelector = '#results-viewer-table';
 const listsTable = MultiColumnList();
 
 // The sort affordance of a <MultiColumnList> header is a CSS pseudo-element driven by the
@@ -785,6 +786,11 @@ const UI = {
   verifyResultColumnDisplayed(columnName) {
     cy.do(resultViewerTable.scrollHeaderIntoView(columnName));
     cy.expect(resultViewerTable.find(MultiColumnListHeader(columnName)).exists());
+  },
+
+  verifyNoRecordsInListDetails() {
+    cy.contains('No records found').should('be.visible');
+    cy.get(`${resultViewerTableSelector} [data-row-index]`).should('not.exist');
   },
 
   verifyRecordValueAbsentInResultTable(value, timeout = 2000) {
@@ -1779,8 +1785,7 @@ const QueryBuilder = {
     return cy.xpath(`.//h3[starts-with(., "${searchTerm}")]`).then(($element) => {
       cy.wrap(true).then(() => {
         const text = $element.text().replace(`${searchTerm}`, '').replace(' records', '');
-        const parsedText = text.replace(text.substr(text.indexOf('.')), '');
-        return parsedText;
+        return text.replace(text.substr(text.indexOf('.')), '');
       });
     });
   },
