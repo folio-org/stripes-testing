@@ -15,6 +15,7 @@ import {
 } from '../../../../interactors';
 import {
   DEFAULT_WAIT_TIME,
+  INVOICE_ACTION_MENU_BUTTONS,
   INVOICE_LEVEL_ADJUSTMENTS_COLUMNS,
   INVOICE_LEVEL_FUND_DISTRIBUTION_COLUMNS,
   INVOICE_POL_PAYMENT_STATUSES,
@@ -519,6 +520,9 @@ export default {
 
   clickCancelInActionsMenu() {
     cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), cancelButton.click()]);
+  },
+  clickPayInActionsMenu() {
+    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button(INVOICE_ACTION_MENU_BUTTONS.PAY).click()]);
   },
   approveAndPayInvoiceWithUpdatePOLPaymentStatus({ status, errorMessage } = {}) {
     this.clickApproveAndPayInvoice({ isApprovePayEnabled: true });
