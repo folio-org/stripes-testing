@@ -1260,6 +1260,10 @@ export default {
     }
   },
 
+  getRowIndexByTag(tag) {
+    return getRowInteractorByTagName(tag).index();
+  },
+
   moveFieldUp(rowNumber) {
     cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).click());
   },
