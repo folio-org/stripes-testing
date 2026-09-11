@@ -1,6 +1,8 @@
 import {
   Accordion,
+  AcqFundDistribution,
   Button,
+  Callout,
   Checkbox,
   HTML,
   KeyValue,
@@ -583,5 +585,121 @@ export default {
 
   checkAccountNumberSelected(value) {
     cy.expect(vendorDetailsFields.accountNumber.has({ checkedOptionText: including(value) }));
+  },
+
+  removeLocationByIndex(index = 0) {
+    cy.do(
+      locationSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    );
+  },
+
+  enableMultiYearPrepayment() {
+    cy.do(multiYearPrepaymentCheckbox.click());
+  },
+
+  selectStartingFiscalYear(fyName) {
+    cy.do(paymentTermsSection.find(Selection(including('Starting fiscal year'))).open());
+    cy.do(SelectionOption(including(fyName)).click());
+  },
+
+  clickAddFiscalYearButton() {
+    cy.do(paymentTermsSection.find(Button('Add fiscal year')).click());
+  },
+
+  checkAddFiscalYearButtonEnabled() {
+    cy.expect(paymentTermsSection.find(Button('Add fiscal year')).has({ disabled: false }));
+  },
+
+  checkAddFiscalYearButtonDisabled() {
+    cy.expect(paymentTermsSection.find(Button('Add fiscal year')).has({ disabled: true }));
+  },
+
+  checkPrepaymentTermValue(value) {
+    cy.expect(
+      paymentTermsSection
+        .find(TextField({ name: 'paymentTerms.prepaymentTerm' }))
+        .has({ value: String(value) }),
+    );
+  },
+
+  removeLastFYCard() {
+    // The trash icon is shown only on the last FY card in the payment terms repeatable field
+    cy.get(
+      '[class*="paymentTerms"] [class*="repeatableFieldItem"]:last-child [data-test-repeatable-field-remove-item-button]',
+    ).click();
+  },
+
+  openFundIdDropdownInFYCard(fyName, rowIndex = 0) {
+    cy.do(
+      paymentTermsSection
+        .find(Accordion(fyName))
+        .find(AcqFundDistribution())
+        .openFundSelector(rowIndex),
+    );
+  },
+
+  checkFundAbsentInOpenDropdown(fundName) {
+    cy.expect(SelectionOption(including(fundName)).absent());
+  },
+
+  addFundDistributionInFYCard(fyName) {
+    cy.do(paymentTermsSection.find(Accordion(fyName)).find(AcqFundDistribution()).addRow());
+  },
+
+  selectFundInFYCard({ fyName, fundName, fundCode, rowIndex = 0 }) {
+    cy.do(
+      paymentTermsSection
+        .find(Accordion(fyName))
+        .find(AcqFundDistribution())
+        .openFundSelector(rowIndex),
+    );
+    cy.do(SelectionOption(`${fundName} (${fundCode})`).click());
+  },
+
+  selectExpenseClassInFYCard({ fyName, expenseClassName, rowIndex = 0 }) {
+    cy.do(
+      paymentTermsSection
+        .find(Accordion(fyName))
+        .find(AcqFundDistribution())
+        .openExpenseClassSelector(rowIndex),
+    );
+    cy.do(SelectionOption(including(expenseClassName)).click());
+  },
+
+  selectDistributionTypePercentInFYCard({ fyName, rowIndex = 0 }) {
+    cy.do(
+      paymentTermsSection
+        .find(Accordion(fyName))
+        .find(AcqFundDistribution())
+        .selectDistributionTypePercent(rowIndex),
+    );
+  },
+
+  fillFundDistributionValueInFYCard({ fyName, value, rowIndex = 0 }) {
+    cy.do(
+      paymentTermsSection
+        .find(Accordion(fyName))
+        .find(AcqFundDistribution())
+        .fillValue({ value, index: rowIndex }),
+    );
+  },
+
+  checkAtLeastTwoFYsValidationError() {
+    cy.expect(
+      HTML(
+        including('At least 2 fiscal years must be specified for multi-year prepayment'),
+      ).exists(),
+    );
+  },
+
+  checkFundRestrictionErrorToastPresent() {
+    cy.expect(Callout(including('Location-restricted fund applied to invalid location')).exists());
+  },
+
+  checkFundRestrictionErrorToastAbsent() {
+    cy.expect(Callout(including('Location-restricted fund applied to invalid location')).absent());
   },
 };
