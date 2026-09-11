@@ -1,4 +1,5 @@
 import { Button, Modal, HTML, including } from '../../../../../interactors';
+import { DEFAULT_WAIT_TIME } from '../../../constants';
 
 const areYouSureForm = Modal('Are you sure?');
 const keepEditingBtn = Button('Keep editing');
@@ -22,5 +23,13 @@ export default {
 
   clickKeepEditingButton() {
     cy.do(areYouSureForm.find(keepEditingBtn).click());
+  },
+  dismissIfOpen() {
+    cy.wait(DEFAULT_WAIT_TIME);
+    cy.document().then((doc) => {
+      if (doc.querySelector('[class^=modal-]')?.textContent.includes('Are you sure?')) {
+        this.clickCloseWithoutSavingButton();
+      }
+    });
   },
 };
