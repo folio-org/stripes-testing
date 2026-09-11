@@ -249,10 +249,20 @@ export default {
     resource: 'UI-Orders Orders',
     action: CAPABILITY_ACTIONS.CREATE,
   },
+  uiOrdersOrdersEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Orders Orders',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   uiOrdersOrdersView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Orders Orders',
     action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiOrdersSettingsOrderTemplatesCreate: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Orders Settings Order-Templates',
+    action: CAPABILITY_ACTIONS.CREATE,
   },
   uiReceivingView: {
     type: CAPABILITY_TYPES.DATA,

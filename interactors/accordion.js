@@ -59,6 +59,12 @@ export default HTML.extend('accordion')
     isWrapper: (el) => /accordionsWrapper/.test(el.className),
     validationMessage: (el) => el.querySelector('[class*=validationMessage]').textContent,
     counter: (el) => el.querySelector('span[class^=badge] [class^=label]').textContent,
+    expanded: (el) => {
+      const trigger = el.querySelector('button[class^=defaultCollapseButton-]');
+      const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+
+      return isExpanded;
+    },
   })
   .actions({
     clickHeader: ({ perform }) => perform((el) => el.querySelector('[class^=labelArea-]').click()),
