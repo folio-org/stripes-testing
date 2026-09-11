@@ -1,4 +1,4 @@
-import CapabilitySets from '../../../support/dictionary/capabilitySets';
+import { Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { ExecutionFlowManager, PaneRequestWaiter } from '../../../support/utils';
 import {
@@ -61,18 +61,13 @@ describe('Settings | Orders', () => {
       //   data - UI-Orders Orders - edit, create
       //   settings - UI-Orders Settings Order-Templates - create
       .step((currentFlow) => {
-        return cy.createTempUser([]).then((userProperties) => {
-          currentFlow.set(R.USER, userProperties, () => Users.deleteViaApi(userProperties.userId));
-          cy.assignCapabilitiesToExistingUser(
-            userProperties.userId,
-            [],
-            [
-              CapabilitySets.uiOrdersOrdersCreate,
-              CapabilitySets.uiOrdersOrdersEdit,
-              CapabilitySets.uiOrdersSettingsOrderTemplatesCreate,
-            ],
-          );
-        });
+        return cy
+          .createTempUser([
+            Permissions.uiOrdersCreate.gui,
+            Permissions.uiOrdersEdit.gui,
+            Permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui,
+          ])
+          .then((userProperties) => currentFlow.set(R.USER, userProperties, () => Users.deleteViaApi(userProperties.userId)));
       })
       // Precondition 3: A user is in "Settings" → "Orders" → "Order templates"
       .step((currentFlow) => {
