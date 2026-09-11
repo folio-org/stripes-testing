@@ -16,7 +16,7 @@ describe('MARC', () => {
           bibFile: 'marcBibFileC514876.mrc',
           lccnValues: [
             '$a kk58020544514876 $z test',
-            '$z test $a ek19951959514876',
+            '$z test $a kk58020544514876',
             '$z kk58020544514876',
             '$a',
           ],
@@ -110,8 +110,11 @@ describe('MARC', () => {
               // Attempt to update "010 $a" with various LCCN and Canceled LCCN values
               testData.lccnValues.forEach((lccnValue, index) => {
                 QuickMarcEditor.updateExistingField('010', lccnValue);
+                QuickMarcEditor.checkContentByTag('010', lccnValue);
                 if (index < 2) {
                   QuickMarcEditor.pressSaveAndCloseButton();
+                  QuickMarcEditor.verifyValidationCallout();
+                  QuickMarcEditor.closeAllCallouts();
                   QuickMarcEditor.checkErrorMessageForFieldByTag('010', errorText);
                 } else {
                   QuickMarcEditor.clickSaveAndKeepEditingButton();

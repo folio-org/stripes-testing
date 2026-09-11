@@ -15,8 +15,17 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       tag: '830',
+      // Heading used for searching (matches regardless of the "mapping.extended" setting)
       marcValue:
         'Cambridge tracts in mathematics and mathematical physics english--no. 19.--England',
+      // How the heading is actually displayed in the result list, per the "mapping.extended" setting:
+      //  ON  -> subfields in field order, "--" before the subdivision subfields
+      //  OFF -> subfields re-sorted alphabetically by code, no "--"
+      // (the OFF form cannot be derived from the ON one - the subfield order changes)
+      displayedHeadingExtended:
+        'Cambridge tracts in mathematics and mathematical physics english--no. 19.--England',
+      displayedHeadingDefault:
+        'Cambridge tracts in mathematics and mathematical physics no. 19. english England',
       rowIndex: 21,
       searchOption: 'Keyword',
       instanceTitle: 'The algebraic theory of modular systems / by F.S. Macaulay.',
@@ -41,6 +50,7 @@ describe('MARC', () => {
 
     before('Creating user', () => {
       cy.getAdminToken();
+      cy.getAuthorityExtendedMappingState();
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -102,7 +112,11 @@ describe('MARC', () => {
       { tags: ['extendedPath', 'spitfire', 'C375280'] },
       () => {
         MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);
-        MarcAuthorities.checkRow(testData.marcValue);
+        MarcAuthorities.checkRow(
+          Cypress.env('authorityExtendedMappingState') === true
+            ? testData.displayedHeadingExtended
+            : testData.displayedHeadingDefault,
+        );
         MarcAuthorities.verifyNumberOfTitles(5, '1');
         MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
         InventorySearchAndFilter.verifySearchResult(testData.instanceTitle);

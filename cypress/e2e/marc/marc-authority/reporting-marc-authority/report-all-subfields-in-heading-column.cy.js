@@ -12,6 +12,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import FileManager from '../../../../support/utils/fileManager';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
+import { collapseHeadingDelimiters } from '../../../../support/utils/authorityHeadingMapping';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
@@ -52,6 +53,9 @@ describe('MARC', () => {
 
       before('Create user, import authority file', () => {
         cy.getAdminToken();
+        // Report "heading" column follows the "mapping.extended" setting - resolve it once so the
+        // expected headings can be matched in the form the report actually uses
+        cy.getAuthorityExtendedMappingState();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C494105');
         DataImport.uploadFileViaApi(
           authorityFile,
@@ -146,6 +150,12 @@ describe('MARC', () => {
 
             const downloadedReportDate = DateTools.getFormattedDate({ date: new Date() });
             const fileNameMask = `${downloadedReportDate}*`;
+            // With extended mapping OFF (or setting unavailable) the report renders subdivision
+            // separators as spaces instead of "--"
+            const asShownInReport = (heading) => (Cypress.env('authorityExtendedMappingState') === true
+              ? heading
+              : collapseHeadingDelimiters(heading));
+
             FileManager.verifyFile(
               MarcAuthorities.verifyMARCAuthorityFileName,
               fileNameMask,
@@ -157,7 +167,7 @@ describe('MARC', () => {
                 corporateName.newHeading,
                 conferenceName.originalHeading,
                 conferenceName.newHeading,
-              ],
+              ].map(asShownInReport),
             );
           });
         },

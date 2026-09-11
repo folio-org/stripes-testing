@@ -13,6 +13,10 @@ import {
   MultiSelect,
   Pane,
 } from '../../../../interactors';
+import {
+  collapseHeadingDelimiters,
+  getExtendedMappingState,
+} from '../../utils/authorityHeadingMapping';
 
 const searchOptions = {
   selectBrowseOption: { option: 'Select a browse option' },
@@ -154,29 +158,36 @@ export default {
     checkHighlighted = false,
     typeOfHeading = false,
   ) {
-    if (isShown) {
-      let targetRowIndex;
-      cy.do(
-        browseResultsPane
-          .find(MultiColumnListCell(value, { column: 'Heading/Reference' }))
-          .perform((el) => {
-            targetRowIndex = +el.parentElement.getAttribute('data-row-inner');
-          }),
-      );
-      cy.then(() => {
-        cy.expect(MultiColumnListCell({ content: auth, row: targetRowIndex }).exists());
-        if (checkHighlighted) {
-          cy.expect(
-            MultiColumnListCell({ content: value, row: targetRowIndex })
-              .find(HTML({ className: including('anchorLink') }))
-              .exists(),
-          );
-        }
-        if (typeOfHeading) cy.expect(MultiColumnListCell({ content: typeOfHeading, row: targetRowIndex }).exists());
-      });
-    } else {
-      cy.expect(MultiColumnListCell({ content: value }).absent());
-    }
+    getExtendedMappingState().then((isExtended) => {
+      const expectedValue = isExtended ? value : collapseHeadingDelimiters(value);
+      if (isShown) {
+        let targetRowIndex;
+        cy.do(
+          browseResultsPane
+            .find(MultiColumnListCell(expectedValue, { column: 'Heading/Reference' }))
+            .perform((el) => {
+              targetRowIndex = +el.parentElement.getAttribute('data-row-inner');
+            }),
+        );
+        cy.then(() => {
+          cy.expect(MultiColumnListCell({ content: auth, row: targetRowIndex }).exists());
+          if (checkHighlighted) {
+            cy.expect(
+              MultiColumnListCell({ content: expectedValue, row: targetRowIndex })
+                .find(HTML({ className: including('anchorLink') }))
+                .exists(),
+            );
+          }
+          if (typeOfHeading) {
+            cy.expect(
+              MultiColumnListCell({ content: typeOfHeading, row: targetRowIndex }).exists(),
+            );
+          }
+        });
+      } else {
+        cy.expect(MultiColumnListCell({ content: expectedValue }).absent());
+      }
+    });
   },
 
   checkResultWithValueA(valueA, auth, valueAuth, ref, valueRef) {

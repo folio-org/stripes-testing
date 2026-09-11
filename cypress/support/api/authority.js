@@ -218,3 +218,31 @@ Cypress.Commands.add('getSrsRecordsByAuthorityId', (instanceId) => {
     return body;
   });
 });
+
+Cypress.Commands.add('getAuthorityExtendedMappingState', () => {
+  const cacheKey = 'authorityExtendedMappingState';
+
+  return cy.task('getRuntimeCache', cacheKey).then((cachedState) => {
+    // `getRuntimeCache` returns null only when the key was never set, so a cached
+    // `false` is still a hit
+    if (cachedState !== null) {
+      Cypress.env(cacheKey, cachedState);
+      return cachedState;
+    }
+
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.GET,
+        path: 'authorities/config/groups/authorities/settings',
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      })
+      .then(({ body }) => {
+        const setting = body?.settings?.find((item) => item.key === 'mapping.extended');
+        const state = setting ? setting.value : false;
+        cy.task('setRuntimeCache', { key: cacheKey, value: state });
+        Cypress.env(cacheKey, state);
+        return state;
+      });
+  });
+});

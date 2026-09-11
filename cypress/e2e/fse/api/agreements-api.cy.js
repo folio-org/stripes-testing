@@ -30,11 +30,12 @@ describe('fse-agreements', { retries: { runMode: 1 } }, () => {
           const docs = agreement.docs ?? [];
           const supplementaryDocs = agreement.supplementaryDocs ?? [];
 
+          // collect all fileUpload IDs
           docs.forEach((doc) => {
-            if (doc.id) fileIds.push(doc.id);
+            if (doc.fileUpload?.id) fileIds.push(doc.fileUpload.id);
           });
-          supplementaryDocs.forEach((doc) => {
-            if (doc.id) fileIds.push(doc.id);
+          supplementaryDocs.forEach((supplementaryDoc) => {
+            if (supplementaryDoc.fileUpload?.id) fileIds.push(supplementaryDoc.fileUpload.id);
           });
         });
 

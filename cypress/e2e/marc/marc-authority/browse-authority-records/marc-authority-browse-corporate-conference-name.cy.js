@@ -8,6 +8,15 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
+// Authority browse does NOT match a query against a heading in a different display form, so the
+// query and the expected result must both be in the current "mapping.extended" form. Browse keeps
+// the subfield order as authored; the only difference is the separator:
+//  ON  -> "--" before each subdivision ($v/$x/$y/$z) value
+//  OFF (or setting not retrieved) -> "--" rendered as a plain space
+const headingAsDisplayed = (extendedForm) => (Cypress.env('authorityExtendedMappingState') === true
+  ? extendedForm
+  : extendedForm.replace(/---/g, '- ').replace(/--/g, ' '));
+
 const randomPostfix = getRandomPostfix();
 const testUser = {};
 const marcFileName = 'marcAuthFileC409476.mrc';
@@ -48,6 +57,7 @@ describe('MARC', () => {
     describe('Browse - Authority records', () => {
       before('Create data, login', () => {
         cy.getAdminToken();
+        cy.getAuthorityExtendedMappingState();
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(browseQuery);
 
         cy.createTempUser(permissions).then((userProps) => {
@@ -80,6 +90,31 @@ describe('MARC', () => {
         'C409476 Browse for "MARC authority" records using "Corporate/Conference name" browse option (spitfire)',
         { tags: ['criticalPath', 'spitfire', 'C409476'] },
         () => {
+          // Browse query and expected heading must both be in the current setting's display form
+          const [
+            authorizedCorporateD,
+            referenceCorporateD,
+            authRefCorporateD,
+            authorizedConferenceD,
+            referenceConferenceD,
+            authRefConferenceD,
+            authorizedCorporateInvalidD,
+            referenceCorporateInvalidD,
+            authorizedConferenceInvalidD,
+            referenceConferenceInvalidD,
+          ] = [
+            authorizedCorporate,
+            referenceCorporate,
+            authRefCorporate,
+            authorizedConference,
+            referenceConference,
+            authRefConference,
+            authorizedCorporateInvalid,
+            referenceCorporateInvalid,
+            authorizedConferenceInvalid,
+            referenceConferenceInvalid,
+          ].map(headingAsDisplayed);
+
           // Step 1 & 2: Select option, enter query, check Search button
           MarcAuthorityBrowse.selectOptionAndQueryAndCheck(
             'Corporate/Conference name',
@@ -89,43 +124,43 @@ describe('MARC', () => {
           MarcAuthorityBrowse.searchBy('Corporate/Conference name', browseQuery);
           MarcAuthorityBrowse.checkResultWithValue(
             'Authorized',
-            authorizedCorporate,
+            authorizedCorporateD,
             true,
             false,
             'Corporate Name',
           );
           MarcAuthorityBrowse.checkResultWithValue(
             'Reference',
-            referenceCorporate,
+            referenceCorporateD,
             true,
             false,
             'Corporate Name',
           );
           MarcAuthorityBrowse.checkResultWithValue(
             'Authorized',
-            authorizedConference,
+            authorizedConferenceD,
             true,
             false,
             'Conference Name',
           );
           MarcAuthorityBrowse.checkResultWithValue(
             'Reference',
-            referenceConference,
+            referenceConferenceD,
             true,
             false,
             'Conference Name',
           );
-          MarcAuthorityBrowse.checkResultWithValue('Reference', authRefConference, false);
-          MarcAuthorityBrowse.checkResultWithValue('Reference', authRefCorporate, false);
+          MarcAuthorityBrowse.checkResultWithValue('Reference', authRefConferenceD, false);
+          MarcAuthorityBrowse.checkResultWithValue('Reference', authRefCorporateD, false);
           MarcAuthorityBrowse.checkResultWithNoValue(browseQuery);
           MarcAuthorityBrowse.checkAllRowsHaveOnlyExpectedValues(3, corporateOrConferenceTypes);
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 4: Search for full Authorized Corporate Name record
-          MarcAuthorityBrowse.searchBy('Corporate/Conference name', authorizedCorporate);
+          MarcAuthorityBrowse.searchBy('Corporate/Conference name', authorizedCorporateD);
           MarcAuthorityBrowse.checkResultWithValue(
             'Authorized',
-            authorizedCorporate,
+            authorizedCorporateD,
             true,
             true,
             'Corporate Name',
@@ -133,10 +168,10 @@ describe('MARC', () => {
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 5: Search for full Reference Corporate Name record
-          MarcAuthorityBrowse.searchBy('Corporate/Conference name', referenceCorporate);
+          MarcAuthorityBrowse.searchBy('Corporate/Conference name', referenceCorporateD);
           MarcAuthorityBrowse.checkResultWithValue(
             'Reference',
-            referenceCorporate,
+            referenceCorporateD,
             true,
             true,
             'Corporate Name',
@@ -144,15 +179,15 @@ describe('MARC', () => {
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 6: Search for Auth/Ref Corporate Name record (510)
-          MarcAuthorityBrowse.searchBy('Corporate/Conference name', authRefCorporate);
-          MarcAuthorityBrowse.checkResultWithNoValue(authRefCorporate);
+          MarcAuthorityBrowse.searchBy('Corporate/Conference name', authRefCorporateD);
+          MarcAuthorityBrowse.checkResultWithNoValue(authRefCorporateD);
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 7: Search for full Authorized Conference Name record
-          MarcAuthorityBrowse.searchBy('Corporate/Conference name', authorizedConference);
+          MarcAuthorityBrowse.searchBy('Corporate/Conference name', authorizedConferenceD);
           MarcAuthorityBrowse.checkResultWithValue(
             'Authorized',
-            authorizedConference,
+            authorizedConferenceD,
             true,
             true,
             'Conference Name',
@@ -160,10 +195,10 @@ describe('MARC', () => {
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 8: Search for full Reference Conference Name record
-          MarcAuthorityBrowse.searchBy('Corporate/Conference name', referenceConference);
+          MarcAuthorityBrowse.searchBy('Corporate/Conference name', referenceConferenceD);
           MarcAuthorityBrowse.checkResultWithValue(
             'Reference',
-            referenceConference,
+            referenceConferenceD,
             true,
             true,
             'Conference Name',
@@ -171,28 +206,28 @@ describe('MARC', () => {
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 9: Search for Auth/Ref Conference Name record (511)
-          MarcAuthorityBrowse.searchBy('Corporate/Conference name', authRefConference);
-          MarcAuthorityBrowse.checkResultWithNoValue(authRefConference);
+          MarcAuthorityBrowse.searchBy('Corporate/Conference name', authRefConferenceD);
+          MarcAuthorityBrowse.checkResultWithNoValue(authRefConferenceD);
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 10: Search for Authorized Corporate Name with invalid subfields
-          MarcAuthorityBrowse.searchBy('Corporate/Conference name', authorizedCorporateInvalid);
-          MarcAuthorityBrowse.checkResultWithNoValue(authorizedCorporateInvalid);
+          MarcAuthorityBrowse.searchBy('Corporate/Conference name', authorizedCorporateInvalidD);
+          MarcAuthorityBrowse.checkResultWithNoValue(authorizedCorporateInvalidD);
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 11: Search for Reference Corporate Name with invalid subfields
-          MarcAuthorityBrowse.searchBy('Corporate/Conference name', referenceCorporateInvalid);
-          MarcAuthorityBrowse.checkResultWithNoValue(referenceCorporateInvalid);
+          MarcAuthorityBrowse.searchBy('Corporate/Conference name', referenceCorporateInvalidD);
+          MarcAuthorityBrowse.checkResultWithNoValue(referenceCorporateInvalidD);
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 12: Search for Authorized Conference Name with invalid subfields
-          MarcAuthorityBrowse.searchBy('Corporate/Conference name', authorizedConferenceInvalid);
-          MarcAuthorityBrowse.checkResultWithNoValue(authorizedConferenceInvalid);
+          MarcAuthorityBrowse.searchBy('Corporate/Conference name', authorizedConferenceInvalidD);
+          MarcAuthorityBrowse.checkResultWithNoValue(authorizedConferenceInvalidD);
           MarcAuthorityBrowse.clickResetAllAndCheck();
 
           // Step 13: Search for Reference Conference Name with invalid subfields
-          MarcAuthorityBrowse.searchBy('Corporate/Conference name', referenceConferenceInvalid);
-          MarcAuthorityBrowse.checkResultWithNoValue(referenceConferenceInvalid);
+          MarcAuthorityBrowse.searchBy('Corporate/Conference name', referenceConferenceInvalidD);
+          MarcAuthorityBrowse.checkResultWithNoValue(referenceConferenceInvalidD);
         },
       );
     });

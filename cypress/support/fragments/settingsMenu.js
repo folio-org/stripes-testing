@@ -128,6 +128,8 @@ export default {
   tagsGeneralPath: 'settings/tags/general',
   // Software versions
   softwareVersionsPath: 'settings/about',
+  // Mosaic integration settings
+  mosaicSettingsConfigPath: 'settings/mosaic-settings/configuration-options',
   // Session locale path
   sessionLocalePath: 'settings/developer/locale',
 

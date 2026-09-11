@@ -181,7 +181,7 @@ describe('MARC', () => {
 
         it(
           'C389482 "Link headings" button is NOT displayed in derive "MARC bib" window when auto-link for all heading types is disabled (spitfire)',
-          { tags: ['extendedPath', 'spitfire', 'C389482'] },
+          { tags: ['extendedPath', 'nonParallel', 'spitfire', 'C389482'] },
           () => {
             InventoryInstances.searchByTitle(createdInstanceId);
             InventoryInstances.selectInstanceById(createdInstanceId);

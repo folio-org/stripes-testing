@@ -82,10 +82,24 @@ module.exports = defineConfig({
 
       allureWriter(on, config);
 
+      // In-memory cache living in the Node process for the whole `cypress run`.
+      // Lets values (e.g. env-level settings) be fetched once and reused across spec files.
+      // Not shared between parallel workers / separate `cypress run` invocations.
+      const runtimeCache = {};
+
       on('task', {
         log(message) {
           // eslint-disable-next-line no-console
           console.log(message);
+          return null;
+        },
+
+        getRuntimeCache(key) {
+          return Object.prototype.hasOwnProperty.call(runtimeCache, key) ? runtimeCache[key] : null;
+        },
+
+        setRuntimeCache({ key, value }) {
+          runtimeCache[key] = value;
           return null;
         },
 

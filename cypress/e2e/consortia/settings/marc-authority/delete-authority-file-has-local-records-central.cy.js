@@ -100,6 +100,11 @@ describe('MARC', () => {
           'C436926 Error shows when user tries to delete Local "Authority file" which has assigned Local "MARC authority" records from Central tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'C436926'] },
           () => {
+            // force increased limit for UI to load all files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
+
             cy.resetTenant();
             cy.login(user.username, user.password);
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);

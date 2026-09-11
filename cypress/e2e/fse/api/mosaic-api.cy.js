@@ -8,7 +8,7 @@ describe('fse-mosaic', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC196412 - Verify MOSAIC configuration endpoint for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'api', 'mosaic', 'sanity'] },
+    { tags: ['fse', 'api', 'mosaic', 'sanity', 'TC196412'] },
     () => {
       cy.getMosaicConfiguration().then((response) => {
         cy.expect(response.status).to.eq(200);

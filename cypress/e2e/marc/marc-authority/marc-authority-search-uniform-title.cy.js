@@ -8,6 +8,25 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
+// The displayed heading depends on the "mapping.extended" setting:
+//  ON  -> subdivision subfields ($v/$x/$y/$z) shown after "--"; numeric subfields kept inline
+//  OFF (or setting not retrieved) -> "--" rendered as a space, and numeric subfield values
+//         ("sub<digit>") moved to the end (letter subfields are already authored alphabetically).
+// This reordering depends on the original subfield order, so it is spec-specific and cannot live
+// in a fragment. It matches the fragment-level `collapseHeadingDelimiters` when there are no
+// numeric subfields, so the two layers do not conflict.
+const headingAsDisplayed = (extendedForm) => {
+  if (Cypress.env('authorityExtendedMappingState') === true) return extendedForm;
+  const collapsed = extendedForm.replace(/---/g, '- ').replace(/--/g, ' ');
+  const isNumericSubfield = (token) => /^sub[0-9]$/.test(token);
+  const tokens = collapsed.split(' ');
+  if (!tokens.some(isNumericSubfield)) return collapsed;
+  return [
+    ...tokens.filter((token) => !isNumericSubfield(token)),
+    ...tokens.filter(isNumericSubfield),
+  ].join(' ');
+};
+
 const marcFile = {
   marc: 'marcAuthFileC409450.mrc',
   fileName: `testMarcFileC409450.${getRandomPostfix()}.mrc`,
@@ -94,6 +113,7 @@ describe('MARC', () => {
           testData.userProperties = createdUserProperties;
 
           cy.getAdminToken();
+          cy.getAuthorityExtendedMappingState();
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('AT_C409450*');
           DataImport.uploadFileViaApi(
             marcFile.marc,
@@ -142,7 +162,7 @@ describe('MARC', () => {
             MarcAuthorities.verifyEmptySearchResults(query);
           } else {
             expected.forEach(({ authRef, heading, type }) => {
-              MarcAuthorities.verifyResultsRowContent(heading, type, authRef);
+              MarcAuthorities.verifyResultsRowContent(headingAsDisplayed(heading), type, authRef);
             });
             MarcAuthorities.checkRowsCount(expected.length);
           }
