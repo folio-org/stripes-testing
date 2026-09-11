@@ -126,7 +126,7 @@ describe('Lists', () => {
     });
 
     it(
-      'C451493 [POL] Verify Fund distribution fields are queryable and displayed in result table (athena)',
+      'C451493 Verify Fund distribution fields are queryable and displayed in result table (athena)',
       { tags: ['criticalPath', 'athena', 'C451493'] },
       () => {
         // Step 1: Create new list with Purchase order lines record type and build query
@@ -148,12 +148,13 @@ describe('Lists', () => {
         ];
 
         fundDistributionFields.forEach((field) => {
-          QueryModal.typeInAndSelectField(field);
+          QueryModal.selectField(field);
           QueryModal.verifySelectedField(field);
         });
         QueryModal.verifySubsetOfFieldsSortedAlphabetically(fundDistributionFields);
 
         // Step 3: Search for a field that should return query results, such as 'POL — Created at'
+        QueryModal.clickSelectFieldButton();
         QueryModal.typeInAndSelectField(purchaseOrderLinesFieldValues.createdAt);
         QueryModal.selectOperator(QUERY_OPERATIONS.LESS_THAN_OR_EQUAL_TO);
         QueryModal.fillInValueTextfield(date);
