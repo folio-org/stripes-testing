@@ -126,8 +126,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C451493 [POL] Verify that array type fields are not shown in the Query Builder (athena)',
-      { tags: ['criticalPathBroken', 'athena', 'C451493'] },
+      'C451493 Verify Fund distribution fields are queryable and displayed in result table (athena)',
+      { tags: ['criticalPath', 'athena', 'C451493'] },
       () => {
         // Step 1: Create new list with Purchase order lines record type and build query
         Lists.openNewListPane();
@@ -138,27 +138,23 @@ describe('Lists', () => {
         QueryModal.verifyQueryTextboxReadOnly();
         QueryModal.verifyQueryTextboxResizable();
 
-        // Step 2: Click "Select field" dropdown in the "Field" column => search for the field 'Fund distribution type'
-        QueryModal.filterFieldSelectionList('Fund distribution type');
-        QueryModal.verifyFieldOptionAbsentInTheList();
+        // Step 2: Click "Select field" dropdown in the "Field" column => verify Fund distribution fields are queryable
+        const fundDistributionFields = [
+          purchaseOrderLinesFieldValues.fundDistributionCode,
+          purchaseOrderLinesFieldValues.fundDistributionDistributionType,
+          purchaseOrderLinesFieldValues.fundDistributionEncumbranceUUID,
+          purchaseOrderLinesFieldValues.fundDistributionExpenseClass,
+          purchaseOrderLinesFieldValues.fundDistributionFund,
+        ];
 
-        // Step 3: Search for the field 'Fund distribution codes'
-        QueryModal.filterFieldSelectionList('Fund distribution codes');
-        QueryModal.verifyFieldOptionAbsentInTheList();
+        fundDistributionFields.forEach((field) => {
+          QueryModal.selectField(field);
+          QueryModal.verifySelectedField(field);
+        });
+        QueryModal.verifySubsetOfFieldsSortedAlphabetically(fundDistributionFields);
 
-        // Step 4: Search for the field 'Fund distribution values'
-        QueryModal.filterFieldSelectionList('Fund distribution values');
-        QueryModal.verifyFieldOptionAbsentInTheList();
-
-        // Step 5: Search for the field 'Fund distribution encumbrances'
-        QueryModal.filterFieldSelectionList('Fund distribution encumbrances');
-        QueryModal.verifyFieldOptionAbsentInTheList();
-
-        // Step 6: Search for the field 'PO note list'
-        QueryModal.filterFieldSelectionList('PO note list');
-        QueryModal.verifyFieldOptionAbsentInTheList();
-
-        // Step 7: Search for a field that should return query results, such as 'POL — Created at'
+        // Step 3: Search for a field that should return query results, such as 'POL — Created at'
+        QueryModal.clickSelectFieldButton();
         QueryModal.typeInAndSelectField(purchaseOrderLinesFieldValues.createdAt);
         QueryModal.selectOperator(QUERY_OPERATIONS.LESS_THAN_OR_EQUAL_TO);
         QueryModal.fillInValueTextfield(date);
@@ -169,7 +165,7 @@ describe('Lists', () => {
         QueryModal.fillInValueTextfield(testData.title, 1);
         QueryModal.testQuery();
 
-        // Step 8: Click on the 'Show columns' button
+        // Step 4: Click on the 'Show columns' button
         QueryModal.clickShowColumnsButton();
         QueryModal.clickCheckboxInShowColumns('POL — Fund distribution');
         QueryModal.verifyPOLFundDistributionEmbeddedTableInQueryModal(testData.orderLine.id, {
