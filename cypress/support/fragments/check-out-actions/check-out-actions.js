@@ -34,6 +34,10 @@ export default {
   modal,
   addPatron,
 
+  openPatronLookup() {
+    cy.do(Button({ id: 'patronLookup' }).click());
+  },
+
   waitForPatronSpinnerToDisappear() {
     cy.wait(1000);
     cy.get('#patron-details-content [class^="spinner"]').should('not.exist');
