@@ -3,7 +3,9 @@ import uuid from 'uuid';
 import {
   Accordion,
   Button,
+  Callout,
   DropdownMenu,
+  including,
   NavListItem,
   Pane,
   PaneContent,
@@ -139,5 +141,18 @@ export default {
       isDefaultSearchParamsRequired: false,
       failOnStatusCode,
     });
+  },
+
+  openEditForm() {
+    cy.do([actionsButton.click(), DropdownMenu().find(Button('Edit')).click()]);
+    OrderTemplateForm.waitLoading();
+  },
+
+  checkFundRestrictionErrorToastPresent() {
+    cy.expect(Callout(including('Location-restricted fund applied to invalid location')).exists());
+  },
+
+  checkFundRestrictionErrorToastAbsent() {
+    cy.expect(Callout(including('Location-restricted fund applied to invalid location')).absent());
   },
 };

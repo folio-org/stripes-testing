@@ -1,11 +1,15 @@
 import {
   Accordion,
+  AcqFundDistribution,
   Button,
   Checkbox,
   Form,
+  including,
+  RepeatableFieldItem,
   Section,
   Select,
   Selection,
+  SelectionList,
   SelectionOption,
   TextArea,
   TextField,
@@ -178,5 +182,42 @@ export default {
     if (templateCreated) {
       InteractorsTools.checkCalloutMessage('The template was saved');
     }
+  },
+
+  clickAddLocationButton() {
+    cy.do(orderTemplateLocationDetailsSection.find(Button('Add location')).click());
+  },
+
+  expandLocationNameCodeDropdown(index = 0) {
+    cy.do(Button({ id: `field-locations[${index}].locationId` }).click());
+  },
+
+  selectLocationFromDropdown(locationName) {
+    cy.do(SelectionOption(including(locationName)).click());
+  },
+
+  removeLocationByIndex(index = 0) {
+    cy.do(
+      orderTemplateLocationDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    );
+  },
+
+  locationOptionExists(locationName) {
+    return SelectionList()
+      .find(SelectionOption(including(locationName)))
+      .exists();
+  },
+
+  selectFundInPaymentTermsCard({ fyName, fundName, fundCode }) {
+    cy.do(
+      orderTemplatePaymentTermsSection
+        .find(Accordion(fyName))
+        .find(AcqFundDistribution())
+        .openFundSelector(0),
+    );
+    cy.do(SelectionOption(`${fundName} (${fundCode})`).click());
   },
 };
