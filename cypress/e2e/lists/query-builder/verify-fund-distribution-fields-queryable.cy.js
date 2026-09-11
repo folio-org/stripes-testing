@@ -154,7 +154,6 @@ describe('Lists', () => {
         QueryModal.verifySubsetOfFieldsSortedAlphabetically(fundDistributionFields);
 
         // Step 3: Search for a field that should return query results, such as 'POL — Created at'
-        QueryModal.clickSelectFieldButton();
         QueryModal.typeInAndSelectField(purchaseOrderLinesFieldValues.createdAt);
         QueryModal.selectOperator(QUERY_OPERATIONS.LESS_THAN_OR_EQUAL_TO);
         QueryModal.fillInValueTextfield(date);
