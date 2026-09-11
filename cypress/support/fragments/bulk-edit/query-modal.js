@@ -464,6 +464,11 @@ export const purchaseOrderLinesFieldValues = {
   vendorOrgEdiType: 'Vendor org — EDI vendor type',
   vendorOrgName: 'Vendor org — Name',
   acquisitionUnitNames: 'PO — Acquisition unit names',
+  fundDistributionCode: 'POL — Fund distribution — Code',
+  fundDistributionDistributionType: 'POL — Fund distribution — Distribution type',
+  fundDistributionEncumbranceUUID: 'POL — Fund distribution — Encumbrance UUID',
+  fundDistributionExpenseClass: 'POL — Fund distribution — Expense class',
+  fundDistributionFund: 'POL — Fund distribution — Fund',
 };
 export const dateTimeOperators = [
   'Select operator',
