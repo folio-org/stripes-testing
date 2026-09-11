@@ -31,6 +31,7 @@ export const INVOICE_POL_PAYMENT_STATUSES = {
 export const INVOICE_VIEW_FIELDS = {
   ACQUISITION_UNITS: 'Acquisition units',
   BATCH_GROUP: 'Batch group',
+  CANCELLATION_NOTE: 'Cancellation note',
   CALCULATED_TOTAL_AMOUNT: 'Calculated total amount',
   CALCULATED_TOTAL_AMOUNT_EXCHANGED: 'Calculated total amount (Exchanged)',
   FISCAL_YEAR: 'Fiscal year',
