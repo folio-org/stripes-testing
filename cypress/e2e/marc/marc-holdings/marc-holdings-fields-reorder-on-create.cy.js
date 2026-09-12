@@ -91,11 +91,16 @@ describe('MARC', () => {
 
     // Drags the field with the given tag from its current row down to targetRow, one swap at a
     // time - fixed fields (LDR/001/005/999) are never targeted directly, but get displaced (and
-    // so end up in their final position automatically) as the movable fields are dragged past them
+    // so end up in their final position automatically) as the movable fields are dragged past them.
+    // Clicks the tag's own down-arrow directly (by tag, not by a separately-computed row index)
+    // and re-checks its live row before every click, so a single step never drifts out of sync
+    // with the actual DOM state.
     const dragFieldDownToRow = (tag, targetRow) => {
       QuickMarcEditor.getRowIndexByTag(tag).then((currentRow) => {
-        for (let row = currentRow; row < targetRow; row++) {
-          QuickMarcEditor.moveFieldDown(row);
+        if (currentRow < targetRow) {
+          QuickMarcEditor.moveFieldDownByTag(tag);
+          QuickMarcEditor.verifyTagValue(currentRow + 1, tag);
+          dragFieldDownToRow(tag, targetRow);
         }
       });
     };
@@ -130,7 +135,7 @@ describe('MARC', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      if (instanceId) InventoryInstance.deleteInstanceViaApi(instanceId);
+      if (instanceId) InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId);
     });
 
     it(
@@ -171,10 +176,20 @@ describe('MARC', () => {
           INVENTORY_006_FIELD_DROPDOWNS_BOXES_NAMES.TYPE,
           INVENTORY_006_FIELD_TYPE_DROPDOWN.O,
         );
+        QuickMarcEditor.verifyFieldsDropdownOption(
+          testData.tags.tag006,
+          INVENTORY_006_FIELD_DROPDOWNS_BOXES_NAMES.TYPE,
+          INVENTORY_006_FIELD_TYPE_DROPDOWN.O,
+        );
 
         QuickMarcEditor.addNewField(testData.tags.tag007, '', currentRow++);
         QuickMarcEditor.verifyTagValue(currentRow, testData.tags.tag007);
         QuickMarcEditor.selectFieldsDropdownOption(
+          testData.tags.tag007,
+          INVENTORY_007_FIELD_DROPDOWNS_BOXES_NAMES.TYPE,
+          INVENTORY_007_FIELD_TYPE_DROPDOWN.T,
+        );
+        QuickMarcEditor.verifyFieldsDropdownOption(
           testData.tags.tag007,
           INVENTORY_007_FIELD_DROPDOWNS_BOXES_NAMES.TYPE,
           INVENTORY_007_FIELD_TYPE_DROPDOWN.T,
@@ -238,7 +253,7 @@ describe('MARC', () => {
 
         // "004" (first movable field, adjacent to fixed "005") has only the "move down" icon;
         // "856" (the last field added, right before "999") has only the "move up" icon
-        QuickMarcEditor.verifyEditableFieldIcons(3, false, true);
+        QuickMarcEditor.verifyEditableFieldIcons(3, false, true, false);
         QuickMarcEditor.verifyEditableFieldIcons(currentRow, true, false);
 
         // Step 4: Arrange fields into the target order - process from the bottom-most target
@@ -252,18 +267,27 @@ describe('MARC', () => {
         // Step 5: Save & close
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveHoldings();
+        HoldingsRecordView.waitLoading();
 
         // Step 6: Re-open in quickMARC - verify the saved order (001/005/999 are system-generated)
         HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
           HoldingsRecordView.close();
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
           InventoryInstance.openHoldingViewByID(holdingsID);
+          HoldingsRecordView.waitLoading();
           HoldingsRecordView.editInQuickMarc();
           QuickMarcEditor.waitLoading();
           QuickMarcEditor.verifyRowOrderByTags(expectedOrder);
 
           // Step 7: Close the editor, verify the same order in "View source"
-          QuickMarcEditor.closeEditorPane();
+          QuickMarcEditor.close();
+          HoldingsRecordView.waitLoading();
+          HoldingsRecordView.close();
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
           InventoryInstance.openHoldingViewByID(holdingsID);
+          HoldingsRecordView.waitLoading();
           HoldingsRecordView.viewSource();
           InventoryViewSource.verifyFieldsOrder(expectedOrder);
         });

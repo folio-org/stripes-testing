@@ -1261,7 +1261,7 @@ export default {
   },
 
   getRowIndexByTag(tag) {
-    return getRowInteractorByTagName(tag).index();
+    return cy.then(() => getRowInteractorByTagName(tag).index());
   },
 
   moveFieldUp(rowNumber) {
@@ -1270,6 +1270,10 @@ export default {
 
   moveFieldDown(rowNumber) {
     cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).click());
+  },
+
+  moveFieldDownByTag(tag) {
+    cy.do(getRowInteractorByTagName(tag).find(arrowDownButton).click());
   },
 
   moveFieldUpWithEnter(rowNumber) {
