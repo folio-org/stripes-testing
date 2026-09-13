@@ -1,5 +1,6 @@
 import {
   Accordion,
+  AcqFundDistribution,
   Button,
   Checkbox,
   HTML,
@@ -140,6 +141,12 @@ export default {
   },
   checkMultiYearPrepaymentUnchecked() {
     cy.expect(multiYearPrepaymentCheckbox.has({ checked: false }));
+  },
+  checkMultiYearPrepaymentAbsent() {
+    cy.expect(multiYearPrepaymentCheckbox.absent());
+  },
+  checkPaymentTermsSectionPresent() {
+    cy.expect(paymentTermsSection.exists());
   },
   checkPaymentTermsCollapsed() {
     cy.expect(paymentTermsSection.has({ expanded: false }));
@@ -583,5 +590,114 @@ export default {
 
   checkAccountNumberSelected(value) {
     cy.expect(vendorDetailsFields.accountNumber.has({ checkedOptionText: including(value) }));
+  },
+
+  // --- Multi-year prepayment / Payment terms ---
+  enableMultiYearPrepayment() {
+    cy.do(multiYearPrepaymentCheckbox.click());
+  },
+  checkMultiYearPrepaymentChecked() {
+    cy.expect(multiYearPrepaymentCheckbox.has({ checked: true }));
+  },
+  checkMultiYearPrepaymentEnabled() {
+    cy.expect(multiYearPrepaymentCheckbox.has({ disabled: false }));
+  },
+  selectStartingFiscalYear(fyName) {
+    cy.do(paymentTermsSection.find(Selection(including('Starting fiscal year'))).open());
+    cy.do(SelectionOption(including(fyName)).click());
+  },
+  clickAddFiscalYearButton() {
+    cy.do(paymentTermsSection.find(Button('Add fiscal year')).click());
+  },
+  checkAddFiscalYearButtonEnabled() {
+    cy.expect(paymentTermsSection.find(Button('Add fiscal year')).has({ disabled: false }));
+  },
+  checkAddFiscalYearButtonDisabled() {
+    cy.expect(paymentTermsSection.find(Button('Add fiscal year')).has({ disabled: true }));
+  },
+  checkPrepaymentTermValue(value) {
+    cy.expect(
+      paymentTermsSection
+        .find(TextField({ name: 'paymentTerms.prepaymentTerm' }))
+        .has({ value: String(value) }),
+    );
+  },
+  fillPaymentTermsTotalPrice(value) {
+    cy.do(
+      paymentTermsSection
+        .find(TextField({ name: 'paymentTerms.totalPrice' }))
+        .fillIn(String(value)),
+    );
+  },
+  checkPaymentTermsRemainingAmount(remainingAmount) {
+    cy.expect(
+      paymentTermsSection.has({
+        text: including(OrderStates.remainingAmountToBeDistributed(remainingAmount)),
+      }),
+    );
+  },
+  checkPaymentTermsPercentageValidationError(shouldExist = true) {
+    if (shouldExist) {
+      cy.expect(
+        paymentTermsSection.has({ text: including(OrderStates.percentageAmountShouldBeEqual) }),
+      );
+    } else {
+      cy.expect(
+        paymentTermsSection.has({
+          text: matching(new RegExp(`^(?!.*${OrderStates.percentageAmountShouldBeEqual}).*$`)),
+        }),
+      );
+    }
+  },
+  checkMultipleDistributionsSameFundError() {
+    cy.expect(HTML(including(OrderStates.multipleDistributionsSameFund)).exists());
+  },
+  // Trash icon is shown only on the last FY card in the payment terms repeatable field
+  removeLastFYCard() {
+    cy.get(
+      '[class*="paymentTerms"] [class*="repeatableFieldItem"]:last-child [data-test-repeatable-field-remove-item-button]',
+    ).click();
+  },
+  addFundDistributionInFYCard(fyName) {
+    cy.do(paymentTermsSection.find(Accordion(fyName)).find(AcqFundDistribution()).addRow());
+  },
+  removeFundDistributionInFYCard({ fyName, rowIndex = 0 }) {
+    cy.do(
+      paymentTermsSection.find(Accordion(fyName)).find(AcqFundDistribution()).removeRow(rowIndex),
+    );
+  },
+  selectFundInFYCard({ fyName, fundName, fundCode, rowIndex = 0 }) {
+    cy.do(
+      paymentTermsSection
+        .find(Accordion(fyName))
+        .find(AcqFundDistribution())
+        .openFundSelector(rowIndex),
+    );
+    cy.do(SelectionOption(`${fundName} (${fundCode})`).click());
+  },
+  selectExpenseClassInFYCard({ fyName, expenseClassName, rowIndex = 0 }) {
+    cy.do(
+      paymentTermsSection
+        .find(Accordion(fyName))
+        .find(AcqFundDistribution())
+        .openExpenseClassSelector(rowIndex),
+    );
+    cy.do(SelectionOption(including(expenseClassName)).click());
+  },
+  selectDistributionTypePercentInFYCard({ fyName, rowIndex = 0 }) {
+    cy.do(
+      paymentTermsSection
+        .find(Accordion(fyName))
+        .find(AcqFundDistribution())
+        .selectDistributionTypePercent(rowIndex),
+    );
+  },
+  fillFundDistributionValueInFYCard({ fyName, value, rowIndex = 0 }) {
+    cy.do(
+      paymentTermsSection
+        .find(Accordion(fyName))
+        .find(AcqFundDistribution())
+        .fillValue({ value, index: rowIndex }),
+    );
   },
 };

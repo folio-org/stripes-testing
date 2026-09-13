@@ -3,12 +3,15 @@ import uuid from 'uuid';
 import {
   Accordion,
   Button,
+  Checkbox,
   DropdownMenu,
+  HTML,
   NavListItem,
   Pane,
   PaneContent,
   Modal,
   Section,
+  including,
 } from '../../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -16,9 +19,11 @@ import getRandomPostfix from '../../../utils/stringTools';
 import OrderTemplateForm from './orderTemplateForm';
 
 const templateViewPane = Pane({ id: 'order-settings-order-template-view' });
+const templatePaymentTermsSection = templateViewPane.find(Accordion({ id: 'paymentTerms' }));
 
 const actionsButton = Button('Actions');
 const deleteModal = Modal('Delete template');
+const duplicateModal = Modal('Duplicate template');
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -121,6 +126,39 @@ export default {
 
   checkPaymentTermsSectionAbsent() {
     cy.expect(templateViewPane.find(Accordion({ id: 'paymentTerms' })).absent());
+  },
+
+  expandAll() {
+    cy.do(templateViewPane.find(Button('Expand all')).click());
+  },
+
+  // View mode: "Multi-year prepayment" is shown as a checked read-only checkbox
+  checkMultiYearPrepaymentChecked() {
+    cy.expect(templateViewPane.find(Checkbox({ name: 'multiYearPayment' })).has({ checked: true }));
+  },
+
+  checkPaymentTermsCardContainsFund(fyName, fundName) {
+    cy.expect(
+      templatePaymentTermsSection
+        .find(Accordion(including(fyName)))
+        .has({ text: including(fundName) }),
+    );
+  },
+
+  checkPaymentTermsCardShowsNoItems(fyName) {
+    cy.expect(
+      templatePaymentTermsSection
+        .find(Accordion(including(fyName)))
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
+  },
+
+  duplicateTemplate() {
+    cy.do([actionsButton.click(), DropdownMenu().find(Button('Duplicate')).click()]);
+    cy.expect(duplicateModal.exists());
+    cy.do(duplicateModal.find(Button('Submit')).click());
+    InteractorsTools.checkCalloutMessage('The template was successfully duplicated');
   },
 
   getOrderTemplateByNameViaApi(templateName) {

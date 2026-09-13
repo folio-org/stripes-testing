@@ -69,6 +69,8 @@ export default {
   exchangeRateAmountMustBePositive: 'Amount must be a positive number',
   locationRequired: 'At least one location must be entered',
   percentageAmountShouldBeEqual: 'The percentage or amount(s) should be equal 100% of the total',
+  multipleDistributionsSameFund:
+    'You can not have multiple distributions for the same fund with the same expense class.',
   remainingAmountToBeDistributed(remainingAmount) {
     return `Remaining amount to be distributed: $${remainingAmount}`;
   },

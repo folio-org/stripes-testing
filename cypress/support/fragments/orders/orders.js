@@ -356,6 +356,16 @@ export default {
     cy.do([SelectionOption(templateName).click(), saveAndClose.click()]);
   },
 
+  // Creates an order from a template via the UI and returns the created order body
+  // (used to register cleanup for UI-created orders per the "no direct API delete" rule).
+  createOrderByTemplateAndCapture(templateName) {
+    cy.do([actionsButton.click(), newButton.click(), Button({ id: 'order-template' }).click()]);
+    cy.wait(6000);
+    cy.intercept('POST', '/orders/composite-orders**').as('newOrderByTemplate');
+    cy.do([SelectionOption(templateName).click(), saveAndClose.click()]);
+    return cy.wait('@newOrderByTemplate', getLongDelay()).then(({ response }) => response.body);
+  },
+
   createOrderForRollover(order, isApproved = false) {
     cy.do([actionsButton.click(), newButton.click()]);
     this.selectVendorOnUi(order.vendor);

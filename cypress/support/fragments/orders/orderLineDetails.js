@@ -652,4 +652,24 @@ export default {
       );
     }
   },
+
+  // --- Multi-year prepayment / Payment terms (view mode) ---
+  checkMultiYearPrepaymentChecked() {
+    cy.expect(
+      ongoingOrderSection.find(Checkbox({ name: 'multiYearPayment' })).has({ checked: true }),
+    );
+  },
+  checkFundDistributionAccordionBlank() {
+    cy.expect(fundDistributionsSection.has({ text: including('The list contains no items') }));
+  },
+  checkPaymentTermsSectionAbsent() {
+    cy.expect(orderLineDetailsSection.find(Section({ id: 'paymentTerms' })).absent());
+  },
+  checkPaymentTermsCardContainsFund(fyName, fundName) {
+    cy.expect(
+      Section({ id: 'paymentTerms' })
+        .find(Section(including(fyName)))
+        .has({ text: including(fundName) }),
+    );
+  },
 };
