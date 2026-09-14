@@ -891,6 +891,12 @@ export default {
     });
   },
 
+  verifyCSVFileRecordsNumber(fileName, recordsNumber) {
+    return FileManager.convertCsvToJson(fileName).then((jsonDataArray) => {
+      expect(jsonDataArray).to.have.length(recordsNumber);
+    });
+  },
+
   verifySaveCSVQueryFileName(actualName) {
     // valid name example: order-export-2022-06-24-12_08.csv
     const expectedFileNameMask = /order-export-\d{4}-\d{2}-\d{2}-\d{2}_\d{2}.csv/gm;
