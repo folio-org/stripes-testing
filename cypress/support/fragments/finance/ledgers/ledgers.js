@@ -20,12 +20,17 @@ import {
   including,
   Callout,
 } from '../../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../../constants';
+import {
+  DEFAULT_WAIT_TIME,
+  EXPORT_FUND_FIELDS,
+  ROLLOVER_RESULT_CSV_HEADERS,
+} from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import getRandomPostfix from '../../../utils/stringTools';
 import FinanceHelper from '../financeHelper';
 import LedgerDetails from './ledgerDetails';
 import LedgerEditForm from './ledgerEditForm';
+import FileManager from '../../../utils/fileManager';
 
 const createdLedgerNameXpath = '//*[@id="paneHeaderpane-ledger-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderledger-results-pane-subtitle"]/span';
@@ -912,6 +917,40 @@ export default {
     cy.wait(6000);
     const filePath = `cypress\\downloads\\${fileName}`;
     cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
+  },
+
+  checkRolloverResultCsvContent({ fileName, funds = [] }) {
+    return FileManager.readFile(`${Cypress.config('downloadsFolder')}/${fileName}`).then(
+      (fileContent) => {
+        const [headerLine, ...recordLines] = fileContent
+          .split(/\r?\n/)
+          .filter((line) => line.trim());
+        const header = this.parseCsvLine(headerLine).map((column) => this.clean(column).replace(/^\uFEFF/, ''));
+
+        expect(header, 'CSV file header').to.deep.equal(Object.values(ROLLOVER_RESULT_CSV_HEADERS));
+
+        const records = recordLines.map((line) => {
+          const cells = this.parseCsvLine(line).map((cell) => this.clean(cell));
+
+          return Object.fromEntries(header.map((column, index) => [column, cells[index]]));
+        });
+
+        funds.forEach(({ name, columns = {} }) => {
+          const record = records.find((item) => item[EXPORT_FUND_FIELDS.FUND_NAME] === name);
+
+          expect(Boolean(record), `CSV file contains record for fund "${name}"`).to.equal(true);
+
+          Object.entries(columns).forEach(([column, expectedValue]) => {
+            const actualValue =
+              typeof expectedValue === 'number'
+                ? Number(record[column].replace(/[^0-9.-]/g, ''))
+                : record[column];
+
+            expect(actualValue, `Fund "${name}", column "${column}"`).to.equal(expectedValue);
+          });
+        });
+      },
+    );
   },
 
   fillInTestRolloverInfoCashBalanceWithNotActiveAllocation(
