@@ -16,6 +16,7 @@ export {
   isVisible,
   Page,
 } from '@interactors/html';
+export { AcqFundDistribution } from './acquisitions';
 export { default as converge } from './converge';
 export { default as Row } from './row';
 

@@ -1,17 +1,21 @@
 import uuid from 'uuid';
 
 import {
+  Accordion,
   Button,
   DropdownMenu,
   NavListItem,
   Pane,
   PaneContent,
   Modal,
+  Section,
 } from '../../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import getRandomPostfix from '../../../utils/stringTools';
 import OrderTemplateForm from './orderTemplateForm';
+
+const templateViewPane = Pane({ id: 'order-settings-order-template-view' });
 
 const actionsButton = Button('Actions');
 const deleteModal = Modal('Delete template');
@@ -111,10 +115,29 @@ export default {
       })
       .then(({ body }) => body);
   },
-  deleteOrderTemplateViaApi(orderTemplateId) {
+  checkPolOngoingOrderSectionAbsent() {
+    cy.expect(templateViewPane.find(Section({ id: 'polOngoingOrder' })).absent());
+  },
+
+  checkPaymentTermsSectionAbsent() {
+    cy.expect(templateViewPane.find(Accordion({ id: 'paymentTerms' })).absent());
+  },
+
+  getOrderTemplateByNameViaApi(templateName) {
+    return cy
+      .okapiRequest({
+        path: 'orders/order-templates',
+        searchParams: { query: `templateName=="${templateName}"`, limit: 1 },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.orderTemplates?.[0]);
+  },
+  deleteOrderTemplateViaApi(orderTemplateId, { failOnStatusCode = false } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `orders/order-templates/${orderTemplateId}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
 };
