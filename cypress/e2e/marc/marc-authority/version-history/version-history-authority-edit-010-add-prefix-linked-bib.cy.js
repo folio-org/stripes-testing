@@ -147,11 +147,14 @@ describe('MARC', () => {
           // Steps 4-5: Edit the record - add a valid letter prefix to "010" $a, update "100" $a
           MarcAuthority.edit();
           QuickMarcEditor.waitLoading();
+          cy.wait(2000);
           QuickMarcEditor.updateExistingField('010', updatedField010.content);
+          QuickMarcEditor.checkContentByTag('010', updatedField010.content);
           QuickMarcEditor.updateExistingField('100', updatedField100.content);
+          QuickMarcEditor.checkContentByTag('100', updatedField100.content);
 
           // Step 6: Save & close
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndClose({ acceptLinkedBibModal: true });
           MarcAuthority.verifyLinkedBibUpdatesCallout(1);
           MarcAuthority.contains(updatedAuthorityHeading);
 
