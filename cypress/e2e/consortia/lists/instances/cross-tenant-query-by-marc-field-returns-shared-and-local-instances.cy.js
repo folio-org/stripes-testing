@@ -1,16 +1,17 @@
-import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
-import Permissions from '../../../../../support/dictionary/permissions';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import Permissions from '../../../../support/dictionary/permissions';
 import QueryModal, {
   instanceFieldValues,
   QUERY_OPERATIONS,
-} from '../../../../../support/fragments/bulk-edit/query-modal';
-import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
-import { Lists } from '../../../../../support/fragments/lists/lists';
-import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
-import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import TopMenu from '../../../../../support/fragments/topMenu';
-import Users from '../../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../../support/utils/stringTools';
+} from '../../../../support/fragments/bulk-edit/query-modal';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import { Lists } from '../../../../support/fragments/lists/lists';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import DateTools from '../../../../support/utils/dateTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 const testCaseId = 'C1464355';
 const randomPostfix = getRandomPostfix();
@@ -38,6 +39,9 @@ const marcFields = [
 // is local to it
 const sharedInstance = { affiliationName: null };
 const localInstance = { affiliationName: null };
+const testData = {
+  currentDate: DateTools.getCurrentDate(),
+};
 
 let user;
 
@@ -138,6 +142,19 @@ describe('Lists', () => {
             QueryModal.fillInMarcValueTextfield(title245);
             QueryModal.verifyMarcValueTextfield(title245);
             QueryModal.verifyQueryAreaContent(`(${marc245Column} contains ${title245})`);
+
+            // Add "Instance — Created date" filter so the query stays performant on
+            // environments with a large number of instances
+            QueryModal.addNewRow();
+            QueryModal.verifyBooleanColumn(1);
+            QueryModal.selectField(instanceFieldValues.createdDate, 1);
+            QueryModal.verifySelectedField(instanceFieldValues.createdDate, 1);
+            QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN_OR_EQUAL_TO, 1);
+            QueryModal.pickDate(testData.currentDate, 1);
+            QueryModal.verifyTextFieldValue(testData.currentDate, 1);
+            QueryModal.verifyQueryAreaContent(
+              `(${marc245Column} contains ${title245}) AND (instance.created_at >= ${testData.currentDate})`,
+            );
             QueryModal.clickTestQuery();
             QueryModal.waitForQueryTestToFinish();
             QueryModal.verifyNumberOfMatchedRecords(2);
@@ -178,7 +195,10 @@ describe('Lists', () => {
             QueryModal.clickRunQueryAndSave();
             QueryModal.verifyClosed();
             Lists.verifyListSavedCalloutMessage(centralListName);
-            Lists.verifyQuery(`${marc245Column} contains ${title245}`);
+            Lists.getQueryText().should(
+              'include',
+              `(${marc245Column} contains ${title245}) AND (instance.created_at >= ${testData.currentDate})`,
+            );
             Lists.verifyRefreshCompleteCallout(2);
 
             // Step 6: Click "View updated list" link and check the same values in the saved list
@@ -332,7 +352,6 @@ describe('Lists', () => {
               { inBuildQueryForm: false },
             );
             Lists.verifyRecordValueAbsentInResultTable(sharedInstance.hrid);
-            cy.screenshot('C1464355-passed');
           },
         );
       });

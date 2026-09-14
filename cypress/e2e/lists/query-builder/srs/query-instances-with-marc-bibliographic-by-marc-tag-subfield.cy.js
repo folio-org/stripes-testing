@@ -439,7 +439,6 @@ describe('Lists', () => {
               QueryModal.verifyRecordWithIdentifierAbsentInResultTable(instance.hrid);
             });
           });
-          cy.screenshot('C1464311-passed');
         },
       );
     });

@@ -458,7 +458,6 @@ describe('Lists', () => {
             QueryModal.testQueryDisabled(false);
             QueryModal.runQueryAndSaveDisabled();
           });
-          cy.screenshot('C1464315-passed');
         },
       );
     });

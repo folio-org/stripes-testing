@@ -464,7 +464,6 @@ describe('Lists', () => {
             Lists.viewUpdatedList();
             Lists.verifyNoRecordsInListDetails();
           });
-          cy.screenshot('C1464325-passed');
         },
       );
     });
