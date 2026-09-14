@@ -59,10 +59,11 @@ const itemDetailsFields = {
   subscriptionTo: itemDetailsSection.find(TextField({ name: 'details.subscriptionTo' })),
 };
 
-const orderLineFields = {
+export const orderLineFields = {
   acquisitionMethod: orderLineDetailsSection.find(Selection({ name: 'acquisitionMethod' })),
   orderFormat: orderLineDetailsSection.find(Select({ name: 'orderFormat' })),
   receiptStatus: orderLineDetailsSection.find(Select({ name: 'receiptStatus' })),
+  checkinItems: orderLineDetailsSection.find(Select({ name: 'checkinItems' })),
   paymentStatus: orderLineDetailsSection.find(Select({ name: 'paymentStatus' })),
   claimingActive: orderLineDetailsSection.find(Checkbox({ name: 'claimingActive' })),
   claimingInterval: orderLineDetailsSection.find(TextField({ name: 'claimingInterval' })),
@@ -583,5 +584,13 @@ export default {
 
   checkAccountNumberSelected(value) {
     cy.expect(vendorDetailsFields.accountNumber.has({ checkedOptionText: including(value) }));
+  },
+
+  selectBlankAccountNumber() {
+    cy.do(vendorDetailsFields.accountNumber.choose(''));
+  },
+
+  checkAccountNumberIsBlank() {
+    cy.expect(vendorDetailsFields.accountNumber.has({ checkedOptionText: ' ' }));
   },
 };

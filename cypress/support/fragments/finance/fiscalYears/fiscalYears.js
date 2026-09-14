@@ -344,6 +344,21 @@ export default {
       .then(({ body }) => body);
   },
 
+  // Every environment has a pre-seeded current fiscal year following the
+  // "FY<year>" code pattern (e.g. FY2025, FY2026), so reuse it instead of
+  // creating a new one where possible. Falls back to creating one only if it can't be found.
+  getCurrentFiscalYearOrCreateViaApi() {
+    return this.getViaApi({
+      query: `code=="${DateTools.getCurrentFiscalYearCode()}"`,
+    }).then(({ fiscalYears }) => {
+      if (fiscalYears?.length) {
+        return fiscalYears[0];
+      }
+
+      return this.createViaApi(this.defaultUiFiscalYear);
+    });
+  },
+
   getFiscalYearIdByName(fiscalYearName) {
     return this.getViaApi({ query: `name=="${fiscalYearName}"` }).then((response) => {
       if (response.fiscalYears && response.fiscalYears.length > 0) {
