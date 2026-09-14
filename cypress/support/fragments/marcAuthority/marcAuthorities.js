@@ -1000,6 +1000,10 @@ export default {
     cy.expect(modalAdvancedSearch.absent());
   },
 
+  checkAdvancedSearchModalExists() {
+    cy.expect(modalAdvancedSearch.exists());
+  },
+
   checkAdvancedSearchModalFields: (
     row,
     value,
@@ -1691,8 +1695,44 @@ export default {
     cy.expect(TextArea({ id: 'textarea-authorities-search' }).has({ focused: true }));
   },
 
+  checkSearchInputIsEmpty() {
+    cy.expect(searchInput.has({ value: '' }));
+  },
+
   checkResetAllButtonDisabled(isDisabled = true) {
     cy.expect(resetButton.is({ disabled: isDisabled }));
+  },
+
+  checkSearchButtonDisabled(isDisabled = true) {
+    cy.expect(searchButton.is({ disabled: isDisabled }));
+  },
+
+  // Presses Tab (or Shift+Tab) from whichever element currently has focus until it matches
+  // matchFn or maxAttempts is reached, instead of relying on a fragile hardcoded tab count.
+  pressTabUntilFocused(matchFn, { shift = false, maxAttempts = 30 } = {}) {
+    const attempt = (count) => {
+      cy.focused().then(($el) => {
+        if (matchFn($el)) return;
+        if (count >= maxAttempts) {
+          throw new Error(
+            `Focus did not reach the target element within ${maxAttempts} Tab presses`,
+          );
+        }
+        cy.focused().tab({ shift });
+        attempt(count + 1);
+      });
+    };
+    attempt(0);
+  },
+
+  // cy.focused().type('{enter}') doesn't reliably trigger a focused button's native click
+  // behavior - cy.realPress() drives real OS-level input via CDP instead, so it does.
+  activateFocusedElementWithEnter() {
+    cy.realPress('Enter');
+  },
+
+  activateFocusedElementWithSpace() {
+    cy.realPress('Space');
   },
 
   verifyAllAuthorizedAreBold() {
