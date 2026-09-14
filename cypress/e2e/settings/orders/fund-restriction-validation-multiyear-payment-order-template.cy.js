@@ -1,6 +1,6 @@
 import { Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { ExecutionFlowManager } from '../../../support/utils';
+import { DateTools, ExecutionFlowManager } from '../../../support/utils';
 import { ORDER_TYPES } from '../../../support/constants/orders/order';
 import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
@@ -9,10 +9,13 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import Orders from '../../../support/fragments/orders/orders';
 import OrderTemplateForm from '../../../support/fragments/settings/orders/orderTemplateForm';
 import OrderTemplates from '../../../support/fragments/settings/orders/orderTemplates';
-import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 import SettingOrdersNavigationMenu from '../../../support/fragments/settings/orders/settingOrdersNavigationMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import { ServicePoints } from '../../../support/fragments/settings/tenant';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomStringCode from '../../../support/utils/generateTextCode';
 
 describe('Settings | Orders', () => {
   const flow = new ExecutionFlowManager();
@@ -31,6 +34,7 @@ describe('Settings | Orders', () => {
     BUDGET_B: 'budgetB',
     BUDGET_C1: 'budgetC1',
     BUDGET_C2: 'budgetC2',
+    SP: 'servicePoint',
     TEMPLATE: 'template',
     USER: 'user',
   };
@@ -46,32 +50,38 @@ describe('Settings | Orders', () => {
     // Precondition 1: Get 3 distinct system locations (Loc1, Loc2, Loc3)
     flow
       .step((f) => {
-        return Locations.getViaApiAnyDefault(3).then((locations) => {
-          f.set(R.LOC1, locations[0]);
-          f.set(R.LOC2, locations[1]);
-          f.set(R.LOC3, locations[2]);
+        return ServicePoints.getViaApi().then((servicePoints) => f.set(R.SP, servicePoints[0]));
+      })
+      .step((f) => {
+        [R.LOC1, R.LOC2, R.LOC3].forEach((key) => {
+          const locationData = NewLocation.getDefaultLocation(
+            f.get(R.SP).id,
+            `AT_Location_${key}_${getRandomPostfix()}`,
+          );
+
+          NewLocation.createViaApi(locationData).then((location) => {
+            f.set(key, location, () => NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+              locationData.institutionId,
+              locationData.campusId,
+              locationData.libraryId,
+              location.id,
+            ));
+          });
         });
       })
-      // Precondition 1: Create current FY (FY1) whose period includes today
+      // Precondition 1: Create current FY (FY1) and future FY (FY2)
       .step((f) => {
-        const currentYear = new Date().getFullYear();
-        return FiscalYears.createViaApi({
-          ...FiscalYears.getDefaultFiscalYear(),
-          periodStart: `${currentYear}-01-01T00:00:00.000+00:00`,
-          periodEnd: `${currentYear}-12-31T00:00:00.000+00:00`,
-        }).then((fy1) => {
-          f.set(R.FY1, fy1, () => FiscalYears.deleteFiscalYearViaApi(fy1.id));
-        });
-      })
-      // Precondition 1: Create future FY (FY2)
-      .step((f) => {
-        const currentYear = new Date().getFullYear();
-        return FiscalYears.createViaApi({
-          ...FiscalYears.getDefaultFiscalYear(),
-          periodStart: `${currentYear + 1}-01-01T00:00:00.000+00:00`,
-          periodEnd: `${currentYear + 1}-12-31T00:00:00.000+00:00`,
-        }).then((fy2) => {
-          f.set(R.FY2, fy2, () => FiscalYears.deleteFiscalYearViaApi(fy2.id));
+        const series = getRandomStringCode(5);
+
+        [R.FY1, R.FY2].forEach((key, index) => {
+          FiscalYears.createViaApi({
+            ...FiscalYears.getDefaultFiscalYear(),
+            ...DateTools.getFullFiscalYearStartAndEnd(index),
+            code: `${series}${new Date().getFullYear() + index}`,
+            series,
+          }).then((fy) => {
+            f.set(key, fy, () => FiscalYears.deleteFiscalYearViaApi(fy.id));
+          });
         });
       })
       // Precondition 2: Create active Ledger related to FY1
@@ -171,12 +181,18 @@ describe('Settings | Orders', () => {
             totalPrice: 100,
             prepaymentTerm: 2,
             startingFiscalYearId: fy1.id,
+            fiscalYearDistributions: [
+              {
+                fiscalYearId: fy1.id,
+                fundDistributions: [{ fundId: fundC.id, distributionType: 'amount', value: 50 }],
+              },
+              {
+                fiscalYearId: fy2.id,
+                fundDistributions: [{ fundId: fundC.id, distributionType: 'amount', value: 50 }],
+              },
+            ],
           },
           locations: [{ locationId: loc3.id }],
-          fundDistribution: [
-            { fundId: fundC.id, distributionType: 'amount', value: 50, fiscalYearId: fy1.id },
-            { fundId: fundC.id, distributionType: 'amount', value: 50, fiscalYearId: fy2.id },
-          ],
         }).then((template) => {
           f.set(R.TEMPLATE, template, () => OrderTemplates.deleteOrderTemplateViaApi(template.id));
         });
@@ -225,6 +241,7 @@ describe('Settings | Orders', () => {
       OrderTemplates.selectTemplate(testData.templateName);
       // Expected: Template details page displayed; error toast "Location-restricted fund applied to invalid location" appears
       OrderTemplates.checkFundRestrictionErrorToastPresent();
+      InteractorsTools.closeAllVisibleCallouts();
 
       cy.log('Step 2. Click "Actions" button; Select "Edit" option');
       OrderTemplates.openEditForm();
@@ -233,6 +250,7 @@ describe('Settings | Orders', () => {
       cy.log(
         'Step 3. Click "Add location" button in the "Location" accordion; Expand "Name (code)" dropdown',
       );
+      OrderTemplateForm.clickExpandAllAccordions();
       OrderTemplateForm.clickAddLocationButton();
       // Template already has Loc3 at index 0; new empty row is at index 1
       OrderTemplateForm.expandLocationNameCodeDropdown(1);
@@ -255,18 +273,19 @@ describe('Settings | Orders', () => {
 
       cy.log('Step 6. Click "Actions" button; Select "Edit" option');
       OrderTemplates.openEditForm();
+      OrderTemplateForm.clickExpandAllAccordions();
       // Expected: Edit order template page displayed
 
       cy.log(
         'Step 7. Select Fund A in the Fiscal year 1 card instead of Fund C; Select Fund B in the Fiscal year 2 card instead of Fund C; Click "Save" button',
       );
       OrderTemplateForm.selectFundInPaymentTermsCard({
-        fyName: fy1.name,
+        fyCode: fy1.code,
         fundName: fundA.name,
         fundCode: fundA.code,
       });
       OrderTemplateForm.selectFundInPaymentTermsCard({
-        fyName: fy2.name,
+        fyCode: fy2.code,
         fundName: fundB.name,
         fundCode: fundB.code,
       });
@@ -278,9 +297,11 @@ describe('Settings | Orders', () => {
       // Expected: Template details page displayed; error toast "Location-restricted fund applied to invalid location" appears
       // (Fund B requires Loc2 but template only has Loc3 and Loc1)
       OrderTemplates.checkFundRestrictionErrorToastPresent();
+      InteractorsTools.closeAllVisibleCallouts();
 
       cy.log('Step 9. Click "Actions" button; Select "Edit" option');
       OrderTemplates.openEditForm();
+      OrderTemplateForm.clickExpandAllAccordions();
       // Expected: Edit order template page displayed
 
       cy.log('Step 10. Remove both locations; Add Loc 2; Click "Save" button');
@@ -300,9 +321,11 @@ describe('Settings | Orders', () => {
       // Expected: Template details page displayed; error toast appears
       // (Fund A requires Loc1 but template only has Loc2)
       OrderTemplates.checkFundRestrictionErrorToastPresent();
+      InteractorsTools.closeAllVisibleCallouts();
 
       cy.log('Step 12. Click "Actions" button; Select "Edit" option');
       OrderTemplates.openEditForm();
+      OrderTemplateForm.clickExpandAllAccordions();
       // Expected: Edit order template page displayed
 
       cy.log('Step 13. Add Loc 1; Click "Save" button');

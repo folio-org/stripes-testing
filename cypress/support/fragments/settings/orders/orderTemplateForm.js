@@ -2,6 +2,7 @@ import {
   Accordion,
   AcqFundDistribution,
   Button,
+  Card,
   Checkbox,
   Form,
   including,
@@ -193,7 +194,7 @@ export default {
   },
 
   selectLocationFromDropdown(locationName) {
-    cy.do(SelectionOption(including(locationName)).click());
+    cy.do([SelectionList().filter(locationName), SelectionOption(including(locationName)).click()]);
   },
 
   removeLocationByIndex(index = 0) {
@@ -211,13 +212,22 @@ export default {
       .exists();
   },
 
-  selectFundInPaymentTermsCard({ fyName, fundName, fundCode }) {
-    cy.do(
-      orderTemplatePaymentTermsSection
-        .find(Accordion(fyName))
-        .find(AcqFundDistribution())
-        .openFundSelector(0),
-    );
-    cy.do(SelectionOption(`${fundName} (${fundCode})`).click());
+  selectFundInPaymentTermsCard({ fyCode, fundName, fundCode }) {
+    const label = `${fundName} (${fundCode})`;
+
+    const FDInteractor = orderTemplatePaymentTermsSection
+      .find(Card({ headerStart: including(fyCode) }))
+      .find(AcqFundDistribution());
+
+    cy.do([
+      FDInteractor.perform((el) => el.scrollIntoView()),
+      FDInteractor.openFundSelector(0),
+      SelectionList().filter(label),
+      SelectionOption(including(label)).click(),
+    ]);
+  },
+
+  clickExpandAllAccordions() {
+    cy.do(orderTemplateForm.find(Button('Expand all')).click());
   },
 };
