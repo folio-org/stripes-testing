@@ -113,10 +113,12 @@ describe('MARC', () => {
           // Steps 4-5: Edit the record - change the controlled "$m" subfield of "100"
           MarcAuthority.edit();
           QuickMarcEditor.waitLoading();
+          cy.wait(2000);
           QuickMarcEditor.updateExistingField('100', updatedField100Content);
+          QuickMarcEditor.checkContentByTag('100', updatedField100Content);
 
           // Steps 6-7: Save & close - confirm the linked bib record update
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndClose({ acceptLinkedBibModal: true });
           MarcAuthority.verifyLinkedBibUpdatesCallout(1);
 
           // Step 8: Close the detail view - re-search to refresh the results list
