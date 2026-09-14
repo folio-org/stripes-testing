@@ -49,6 +49,7 @@ const sourceFileSelect = QuickMarcEditorRow({ tagValue: '001' }).find(
 const versionHistoryButton = Button({ icon: 'clock' });
 const versionHistoryToolTipText = 'Version history';
 const actionsButton = rootSection.find(Button('Actions', { disabled: or(true, false) }));
+const getLinkedBibUpdatesSuccessCalloutText = (numberOfRecords) => `This record has successfully saved and is in process. ${numberOfRecords} linked bibliographic record(s) updates have begun.`;
 
 // related with cypress\fixtures\oneMarcAuthority.mrc
 const defaultAuthority = {
@@ -671,5 +672,14 @@ export default {
     );
     QuickMarcEditorWindow.verifyTagField(4, '999', 'f', 'f', '', '');
     QuickMarcEditorWindow.verifyAllBoxesInARowAreDisabled(4);
+  },
+
+  verifyLinkedBibUpdatesCallout(numberOfRecords) {
+    const targetCallout = Callout(getLinkedBibUpdatesSuccessCalloutText(numberOfRecords), {
+      type: 'success',
+    });
+    cy.expect(targetCallout.exists());
+    cy.do(targetCallout.dismiss());
+    cy.expect(targetCallout.absent());
   },
 };

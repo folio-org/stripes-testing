@@ -264,6 +264,7 @@ const defaultFolioAuthorityFiles = [
 ];
 
 export default {
+  defaultFolioAuthorityFiles,
   waitLoading,
   clickNewButton,
   clickEditButton,
