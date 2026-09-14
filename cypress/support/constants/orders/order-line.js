@@ -285,3 +285,7 @@ export const ORDER_LINE_DISCOUNT_TYPES = {
   PERCENTAGE: 'percentage',
   AMOUNT: 'amount',
 };
+
+export const ORDER_LINE_FORM_LABELS = {
+  ADD_LOCATION: 'Add location',
+};

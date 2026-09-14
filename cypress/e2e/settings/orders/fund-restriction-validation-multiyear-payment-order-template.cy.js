@@ -1,6 +1,7 @@
 import { Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DateTools, ExecutionFlowManager } from '../../../support/utils';
+import { FUND_DISTRIBUTION_TYPES } from '../../../support/constants/finance/fund';
 import { ORDER_TYPES } from '../../../support/constants/orders/order';
 import Budgets from '../../../support/fragments/finance/budgets/budgets';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
@@ -184,11 +185,15 @@ describe('Settings | Orders', () => {
             fiscalYearDistributions: [
               {
                 fiscalYearId: fy1.id,
-                fundDistributions: [{ fundId: fundC.id, distributionType: 'amount', value: 50 }],
+                fundDistributions: [
+                  { fundId: fundC.id, distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT, value: 50 },
+                ],
               },
               {
                 fiscalYearId: fy2.id,
-                fundDistributions: [{ fundId: fundC.id, distributionType: 'amount', value: 50 }],
+                fundDistributions: [
+                  { fundId: fundC.id, distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT, value: 50 },
+                ],
               },
             ],
           },

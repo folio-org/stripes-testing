@@ -15,9 +15,15 @@ import {
   TextArea,
   TextField,
 } from '../../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  ORDER_LINE_FORM_LABELS,
+} from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import SearchHelper from '../../finance/financeHelper';
+
+const LOCATION_FIELD_ID_PREFIX = 'field-locations';
 
 const orderTemplateForm = Form({ id: 'order-template-form' });
 const orderTemplateInfoSection = orderTemplateForm.find(Section({ id: 'templateInfo' }));
@@ -186,11 +192,13 @@ export default {
   },
 
   clickAddLocationButton() {
-    cy.do(orderTemplateLocationDetailsSection.find(Button('Add location')).click());
+    cy.do(
+      orderTemplateLocationDetailsSection.find(Button(ORDER_LINE_FORM_LABELS.ADD_LOCATION)).click(),
+    );
   },
 
   expandLocationNameCodeDropdown(index = 0) {
-    cy.do(Button({ id: `field-locations[${index}].locationId` }).click());
+    cy.do(Button({ id: `${LOCATION_FIELD_ID_PREFIX}[${index}].locationId` }).click());
   },
 
   selectLocationFromDropdown(locationName) {
@@ -228,6 +236,6 @@ export default {
   },
 
   clickExpandAllAccordions() {
-    cy.do(orderTemplateForm.find(Button('Expand all')).click());
+    cy.do(orderTemplateForm.find(Button(COMMON_BUTTON_LABELS.EXPAND_ALL)).click());
   },
 };
