@@ -1,9 +1,16 @@
 import moment from 'moment';
 import uuid from 'uuid';
 
+import { BUDGET_STATUSES } from '../../support/constants/finance/budget';
+import { FUND_DISTRIBUTION_TYPES } from '../../support/constants/finance/fund';
+import { ORDER_TYPES } from '../../support/constants/orders/order';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_FORMAT_VALUES,
+} from '../../support/constants/orders/order-line';
 import { Permissions } from '../../support/dictionary';
 import getRandomPostfix from '../../support/utils/stringTools';
-import { ExecutionFlowManager } from '../../support/utils';
+import { DateTools, ExecutionFlowManager } from '../../support/utils';
 import FileManager from '../../support/utils/fileManager';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
@@ -21,6 +28,7 @@ import { ExpenseClasses } from '../../support/fragments/settings/finance';
 import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import getRandomStringCode from '../../support/utils/generateTextCode';
 
 describe('Orders', () => {
   const flow = new ExecutionFlowManager();
@@ -54,6 +62,27 @@ describe('Orders', () => {
     csvFileName: `order-export-${moment().format('YYYY-MM-DD')}-*.csv`,
   };
 
+  const createBudgetStep = (fundKey, fiscalYearKey, budgetKey) => (f) => {
+    const { [fundKey]: fund, [fiscalYearKey]: fiscalYear, expenseClass } = f.ctx();
+
+    return Budgets.createViaApi({
+      ...Budgets.getDefaultBudget(),
+      fiscalYearId: fiscalYear.id,
+      fundId: fund.id,
+      allocated: 1000,
+    }).then((budget) => Budgets.updateBudgetViaApi({
+      ...budget,
+      statusExpenseClasses: [
+        {
+          status: BUDGET_STATUSES.ACTIVE,
+          expenseClassId: expenseClass.id,
+        },
+      ],
+    }).then(() => {
+      f.set(budgetKey, budget, () => Budgets.deleteViaApi(budget.id, false));
+    }));
+  };
+
   before(() => {
     cy.getAdminToken();
     cy.clearLocalStorage();
@@ -62,48 +91,19 @@ describe('Orders', () => {
     OrderLinesLimit.setPOLLimitViaApi(2);
 
     flow
-      // Precondition 2: Create current FY1 whose period includes current date
+      // Precondition 2: Create current FYs
       .step((f) => {
-        const currentYear = new Date().getFullYear();
-        return FiscalYears.createViaApi({
-          ...FiscalYears.getDefaultFiscalYear(),
-          periodStart: `${currentYear}-01-01T00:00:00.000+00:00`,
-          periodEnd: `${currentYear}-12-31T00:00:00.000+00:00`,
-        }).then((fy1) => {
-          f.set(R.FY1, fy1, () => FiscalYears.deleteFiscalYearViaApi(fy1.id));
-        });
-      })
-      // Precondition 2: Create future FY2
-      .step((f) => {
-        const currentYear = new Date().getFullYear();
-        return FiscalYears.createViaApi({
-          ...FiscalYears.getDefaultFiscalYear(),
-          periodStart: `${currentYear + 1}-01-01T00:00:00.000+00:00`,
-          periodEnd: `${currentYear + 1}-12-31T00:00:00.000+00:00`,
-        }).then((fy2) => {
-          f.set(R.FY2, fy2, () => FiscalYears.deleteFiscalYearViaApi(fy2.id));
-        });
-      })
-      // Precondition 2: Create future FY3
-      .step((f) => {
-        const currentYear = new Date().getFullYear();
-        return FiscalYears.createViaApi({
-          ...FiscalYears.getDefaultFiscalYear(),
-          periodStart: `${currentYear + 2}-01-01T00:00:00.000+00:00`,
-          periodEnd: `${currentYear + 2}-12-31T00:00:00.000+00:00`,
-        }).then((fy3) => {
-          f.set(R.FY3, fy3, () => FiscalYears.deleteFiscalYearViaApi(fy3.id));
-        });
-      })
-      // Precondition 2: Create future FY4
-      .step((f) => {
-        const currentYear = new Date().getFullYear();
-        return FiscalYears.createViaApi({
-          ...FiscalYears.getDefaultFiscalYear(),
-          periodStart: `${currentYear + 3}-01-01T00:00:00.000+00:00`,
-          periodEnd: `${currentYear + 3}-12-31T00:00:00.000+00:00`,
-        }).then((fy4) => {
-          f.set(R.FY4, fy4, () => FiscalYears.deleteFiscalYearViaApi(fy4.id));
+        const series = getRandomStringCode(5);
+
+        [R.FY1, R.FY2, R.FY3, R.FY4].forEach((key, index) => {
+          FiscalYears.createViaApi({
+            ...FiscalYears.getDefaultFiscalYear(),
+            ...DateTools.getFullFiscalYearStartAndEnd(index),
+            code: `${series}${new Date().getFullYear() + index}`,
+            series,
+          }).then((fy) => {
+            f.set(key, fy, () => FiscalYears.deleteFiscalYearViaApi(fy.id));
+          });
         });
       })
       // Precondition 3: Create active Ledger related to FY1
@@ -113,7 +113,7 @@ describe('Orders', () => {
           ...Ledgers.getDefaultLedger(),
           fiscalYearOneId: fy1.id,
         }).then((ledger) => {
-          f.set(R.LEDGER, ledger, () => Ledgers.deleteLedgerViaApi(ledger.id));
+          f.set(R.LEDGER, ledger, () => Ledgers.deleteLedgerViaApi(ledger.id, false));
         });
       })
       // Precondition 4: Create Fund A
@@ -123,7 +123,7 @@ describe('Orders', () => {
           ...Funds.getDefaultFund(),
           ledgerId: ledger.id,
         }).then((response) => {
-          f.set(R.FUND_A, response.fund, () => Funds.deleteFundViaApi(response.fund.id));
+          f.set(R.FUND_A, response.fund, () => Funds.deleteFundViaApi(response.fund.id, false));
         });
       })
       // Precondition 4: Create Fund B
@@ -133,7 +133,7 @@ describe('Orders', () => {
           ...Funds.getDefaultFund(),
           ledgerId: ledger.id,
         }).then((response) => {
-          f.set(R.FUND_B, response.fund, () => Funds.deleteFundViaApi(response.fund.id));
+          f.set(R.FUND_B, response.fund, () => Funds.deleteFundViaApi(response.fund.id, false));
         });
       })
       // Precondition 4: Create expense class "Electronic"
@@ -143,150 +143,34 @@ describe('Orders', () => {
           name: `Electronic_${getRandomPostfix()}`,
           code: `EL${getRandomPostfix()}`,
         }).then((ec) => {
-          f.set(R.EXPENSE_CLASS, ec, () => ExpenseClasses.deleteExpenseClassViaApi(ec.id));
+          f.set(R.EXPENSE_CLASS, ec, () => ExpenseClasses.deleteExpenseClassViaApi(ec.id, { failOnStatusCode: false }));
         });
       })
       // Precondition 4: Create budget for Fund A in FY1 with expense class
-      .step((f) => {
-        const { fundA, fy1, expenseClass } = f.ctx();
-        return Budgets.createViaApi({
-          ...Budgets.getDefaultBudget(),
-          fiscalYearId: fy1.id,
-          fundId: fundA.id,
-          allocated: 1000,
-        }).then((budget) => {
-          return Budgets.updateBudgetViaApi({
-            ...budget,
-            statusExpenseClasses: [{ status: 'Active', expenseClassId: expenseClass.id }],
-          }).then(() => {
-            f.set(R.BUDGET_A1, budget, () => Budgets.deleteViaApi(budget.id));
-          });
-        });
-      })
+      .step(createBudgetStep(R.FUND_A, R.FY1, R.BUDGET_A1))
       // Precondition 4: Create budget for Fund A in FY2 with expense class
-      .step((f) => {
-        const { fundA, fy2, expenseClass } = f.ctx();
-        return Budgets.createViaApi({
-          ...Budgets.getDefaultBudget(),
-          fiscalYearId: fy2.id,
-          fundId: fundA.id,
-          allocated: 1000,
-        }).then((budget) => {
-          return Budgets.updateBudgetViaApi({
-            ...budget,
-            statusExpenseClasses: [{ status: 'Active', expenseClassId: expenseClass.id }],
-          }).then(() => {
-            f.set(R.BUDGET_A2, budget, () => Budgets.deleteViaApi(budget.id));
-          });
-        });
-      })
+      .step(createBudgetStep(R.FUND_A, R.FY2, R.BUDGET_A2))
       // Precondition 4: Create budget for Fund A in FY3 with expense class
-      .step((f) => {
-        const { fundA, fy3, expenseClass } = f.ctx();
-        return Budgets.createViaApi({
-          ...Budgets.getDefaultBudget(),
-          fiscalYearId: fy3.id,
-          fundId: fundA.id,
-          allocated: 1000,
-        }).then((budget) => {
-          return Budgets.updateBudgetViaApi({
-            ...budget,
-            statusExpenseClasses: [{ status: 'Active', expenseClassId: expenseClass.id }],
-          }).then(() => {
-            f.set(R.BUDGET_A3, budget, () => Budgets.deleteViaApi(budget.id));
-          });
-        });
-      })
+      .step(createBudgetStep(R.FUND_A, R.FY3, R.BUDGET_A3))
       // Precondition 4: Create budget for Fund A in FY4
-      .step((f) => {
-        const { fundA, fy4, expenseClass } = f.ctx();
-        return Budgets.createViaApi({
-          ...Budgets.getDefaultBudget(),
-          fiscalYearId: fy4.id,
-          fundId: fundA.id,
-          allocated: 1000,
-        }).then((budget) => {
-          return Budgets.updateBudgetViaApi({
-            ...budget,
-            statusExpenseClasses: [{ status: 'Active', expenseClassId: expenseClass.id }],
-          }).then(() => {
-            f.set(R.BUDGET_A4, budget, () => Budgets.deleteViaApi(budget.id));
-          });
-        });
-      })
+      .step(createBudgetStep(R.FUND_A, R.FY4, R.BUDGET_A4))
       // Precondition 4: Create budget for Fund B in FY1 with expense class
-      .step((f) => {
-        const { fundB, fy1, expenseClass } = f.ctx();
-        return Budgets.createViaApi({
-          ...Budgets.getDefaultBudget(),
-          fiscalYearId: fy1.id,
-          fundId: fundB.id,
-          allocated: 1000,
-        }).then((budget) => {
-          return Budgets.updateBudgetViaApi({
-            ...budget,
-            statusExpenseClasses: [{ status: 'Active', expenseClassId: expenseClass.id }],
-          }).then(() => {
-            f.set(R.BUDGET_B1, budget, () => Budgets.deleteViaApi(budget.id));
-          });
-        });
-      })
+      .step(createBudgetStep(R.FUND_B, R.FY1, R.BUDGET_B1))
       // Precondition 4: Create budget for Fund B in FY2 with expense class
-      .step((f) => {
-        const { fundB, fy2, expenseClass } = f.ctx();
-        return Budgets.createViaApi({
-          ...Budgets.getDefaultBudget(),
-          fiscalYearId: fy2.id,
-          fundId: fundB.id,
-          allocated: 1000,
-        }).then((budget) => {
-          return Budgets.updateBudgetViaApi({
-            ...budget,
-            statusExpenseClasses: [{ status: 'Active', expenseClassId: expenseClass.id }],
-          }).then(() => {
-            f.set(R.BUDGET_B2, budget, () => Budgets.deleteViaApi(budget.id));
-          });
-        });
-      })
+      .step(createBudgetStep(R.FUND_B, R.FY2, R.BUDGET_B2))
       // Precondition 4: Create budget for Fund B in FY3 with expense class
-      .step((f) => {
-        const { fundB, fy3, expenseClass } = f.ctx();
-        return Budgets.createViaApi({
-          ...Budgets.getDefaultBudget(),
-          fiscalYearId: fy3.id,
-          fundId: fundB.id,
-          allocated: 1000,
-        }).then((budget) => {
-          return Budgets.updateBudgetViaApi({
-            ...budget,
-            statusExpenseClasses: [{ status: 'Active', expenseClassId: expenseClass.id }],
-          }).then(() => {
-            f.set(R.BUDGET_B3, budget, () => Budgets.deleteViaApi(budget.id));
-          });
-        });
-      })
+      .step(createBudgetStep(R.FUND_B, R.FY3, R.BUDGET_B3))
       // Precondition 4: Create budget for Fund B in FY4
-      .step((f) => {
-        const { fundB, fy4, expenseClass } = f.ctx();
-        return Budgets.createViaApi({
-          ...Budgets.getDefaultBudget(),
-          fiscalYearId: fy4.id,
-          fundId: fundB.id,
-          allocated: 1000,
-        }).then((budget) => {
-          return Budgets.updateBudgetViaApi({
-            ...budget,
-            statusExpenseClasses: [{ status: 'Active', expenseClassId: expenseClass.id }],
-          }).then(() => {
-            f.set(R.BUDGET_B4, budget, () => Budgets.deleteViaApi(budget.id));
-          });
-        });
-      })
+      .step(createBudgetStep(R.FUND_B, R.FY4, R.BUDGET_B4))
       // Precondition 5: Fetch acquisition method "Other" for POL creation
       .step((f) => {
-        return cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then(({ body }) => {
-          f.set(R.ACQ_METHOD, body.acquisitionMethods[0].id);
-        });
+        return cy
+          .getAcquisitionMethodsApi({
+            query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.OTHER}"`,
+          })
+          .then(({ body }) => {
+            f.set(R.ACQ_METHOD, body.acquisitionMethods[0].id);
+          });
       })
       // Precondition 5: Create organization (vendor)
       .step((f) => {
@@ -302,10 +186,10 @@ describe('Orders', () => {
         return Orders.createOrderViaApi({
           id: uuid(),
           vendor: org.id,
-          orderType: 'Ongoing',
+          orderType: ORDER_TYPES.ONGOING,
           ongoing: { isSubscription: false, manualRenewal: false },
         }).then((order) => {
-          f.set(R.ORDER, order, () => Orders.deleteOrderViaApi(order.id));
+          f.set(R.ORDER, order, () => Orders.deleteOrderViaApi(order.id, false));
         });
       })
       // Precondition 5: Create POL with 4-year multi-year prepayment starting FY1
@@ -319,7 +203,7 @@ describe('Orders', () => {
             quantity: 1,
             acquisitionMethod: acqMethod,
           }),
-          orderFormat: 'Other',
+          orderFormat: ORDER_FORMAT_VALUES.OTHER,
           multiYearPayment: true,
           paymentTerms: {
             totalPrice: 100,
@@ -329,10 +213,10 @@ describe('Orders', () => {
               {
                 fiscalYearId: fy1.id,
                 fundDistributions: [
-                  { fundId: fundA.id, distributionType: 'amount', value: 25 },
+                  { fundId: fundA.id, distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT, value: 25 },
                   {
                     fundId: fundB.id,
-                    distributionType: 'amount',
+                    distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
                     value: 25,
                     expenseClassId: expenseClass.id,
                   },
@@ -343,7 +227,7 @@ describe('Orders', () => {
                 fundDistributions: [
                   {
                     fundId: fundA.id,
-                    distributionType: 'amount',
+                    distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
                     value: 25,
                     expenseClassId: expenseClass.id,
                   },
@@ -351,7 +235,9 @@ describe('Orders', () => {
               },
               {
                 fiscalYearId: fy3.id,
-                fundDistributions: [{ fundId: fundB.id, distributionType: 'amount', value: 25 }],
+                fundDistributions: [
+                  { fundId: fundB.id, distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT, value: 25 },
+                ],
               },
               {
                 fiscalYearId: fy4.id,
@@ -360,7 +246,7 @@ describe('Orders', () => {
             ],
           },
         }).then((pol) => {
-          f.set(R.POL, pol, () => OrderLines.deleteOrderLineViaApi(pol.id));
+          f.set(R.POL, pol, () => OrderLines.deleteOrderLineViaApi(pol.id, false));
         });
       })
       // Precondition 6: Create authorized user with Orders edit/create + export CSV permissions
@@ -528,7 +414,10 @@ describe('Orders', () => {
       );
       OrderLineEditForm.enableMultiYearPrepayment();
       OrderLineEditForm.fillItemDetailsTitle({ instanceTitle: `AT_POL2_${getRandomPostfix()}` });
-      OrderLineEditForm.fillPoLineDetails({ acquisitionMethod: 'Other', orderFormat: 'Other' });
+      OrderLineEditForm.fillPoLineDetails({
+        acquisitionMethod: ACQUISITION_METHOD_NAMES_IN_PROFILE.OTHER,
+        orderFormat: ORDER_FORMAT_VALUES.OTHER,
+      });
       OrderLineEditForm.fillCostDetails({ physicalUnitPrice: '100', quantityPhysical: '1' });
       OrderLineEditForm.selectStartingFiscalYear(fy1.name);
       OrderLineEditForm.removeLastFYCard();
