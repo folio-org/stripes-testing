@@ -1,4 +1,5 @@
 import {
+  Accordion,
   Button,
   Checkbox,
   Form,
@@ -33,6 +34,8 @@ const orderTemplateFundDetailsSection = orderTemplateForm.find(
 );
 const orderTemplateLocationDetailsSection = orderTemplateForm.find(Section({ id: 'location' }));
 const orderTemplatePoLineTagsSection = orderTemplateForm.find(Section({ id: 'polTags' }));
+
+const orderTemplatePaymentTermsSection = Accordion({ id: 'paymentTerms' });
 
 const saveButton = Button({ id: 'save-order-template-button' });
 
@@ -97,6 +100,19 @@ export default {
     });
   },
 
+  checkPolOngoingOrderSectionAbsent() {
+    cy.expect(orderTemplatePOLOngoingSection.absent());
+  },
+  checkPolOngoingOrderSectionPresent() {
+    cy.expect(orderTemplatePOLOngoingSection.exists());
+  },
+  checkPaymentTermsSectionAbsent() {
+    cy.expect(orderTemplatePaymentTermsSection.absent());
+  },
+  checkPaymentTermsSectionPresent() {
+    cy.expect(orderTemplatePaymentTermsSection.exists());
+  },
+
   fillOrderTemplateFields({ templateInformation, poInformation, poLineDetails } = {}) {
     if (templateInformation) {
       this.fillInfoSectionFields(templateInformation);
@@ -110,7 +126,11 @@ export default {
   },
   fillInfoSectionFields({ templateName, templateCode, templateDescription, hideAll }) {
     if (templateName) {
-      cy.do(infoSectionFields.templateName.fillIn(templateName));
+      cy.do([
+        infoSectionFields.templateName.focus(),
+        infoSectionFields.templateName.fillIn(templateName),
+        infoSectionFields.templateName.blur(),
+      ]);
     }
     if (templateCode) {
       cy.do(infoSectionFields.templateCode.fillIn(templateCode));

@@ -31,12 +31,20 @@ const runQueryButton = buildQueryModal.find(Button(or('Run query', 'Run query & 
 const runQueryAndSave = buildQueryModal.find(Button('Run query & save'));
 const xButton = buildQueryModal.find(Button({ ariaLabel: 'Close ' }));
 const previewTable = buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' }));
+const resultsTableSelector = '#results-viewer-table';
+const columnCheckbox = '[data-test-checkbox]';
+const buildQueryFormTableSelector = `[role="dialog"][aria-label="Build query"] ${resultsTableSelector}`;
+const getResultsTableSelector = (inBuildQueryForm) => {
+  return inBuildQueryForm ? buildQueryFormTableSelector : resultsTableSelector;
+};
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
 const showColumnsButton = buildQueryModal.find(Button('Show columns'));
 const valueSelection = Selection({ dataTestId: including('data-input-select-') });
 const fieldSelection = Selection({ id: including('field-option-') });
 const showColumnsSearchField = TextField({ placeholder: 'Search fields' });
+const marcTextField = (part, row) => TextField({ testid: `marc-${part}-${row}` });
+const valueTextField = (row) => TextField({ testid: `input-value-${row}` });
 
 const booleanValues = ['AND'];
 
@@ -453,6 +461,7 @@ export const organizationFieldValues = {
 };
 export const purchaseOrderLinesFieldValues = {
   poNumber: 'PO — PO number',
+  poType: 'PO — Order type',
   paymentStatus: 'POL — Payment status',
   createdAt: 'POL — Created at',
   title: 'POL — Title or package',
@@ -463,6 +472,11 @@ export const purchaseOrderLinesFieldValues = {
   vendorOrgEdiType: 'Vendor org — EDI vendor type',
   vendorOrgName: 'Vendor org — Name',
   acquisitionUnitNames: 'PO — Acquisition unit names',
+  fundDistributionCode: 'POL — Fund distribution — Code',
+  fundDistributionDistributionType: 'POL — Fund distribution — Distribution type',
+  fundDistributionEncumbranceUUID: 'POL — Fund distribution — Encumbrance UUID',
+  fundDistributionExpenseClass: 'POL — Fund distribution — Expense class',
+  fundDistributionFund: 'POL — Fund distribution — Fund',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -638,6 +652,10 @@ export default {
     const targetField = RepeatableFieldItem({ index: row });
 
     cy.do([targetField.find(Selection()).open(), targetField.find(Selection()).filter(string)]);
+  },
+
+  verifyFilterOptionsListInputInFocus() {
+    cy.get('input[aria-label=" options filter"]').should('be.focused');
   },
 
   verifyFieldOptionAbsentInTheList() {
@@ -1830,5 +1848,104 @@ export default {
     const targetCell = MultiColumnListCell(partialMatch ? including(expectedValue) : expectedValue);
     if (isFound) cy.expect(targetCell.exists());
     else cy.expect(targetCell.absent());
+  },
+
+  verifyMarcSelectorDisplayed(row = 0) {
+    cy.expect([
+      marcTextField('tag', row).has({ required: true, value: '' }),
+      marcTextField('ind1', row).has({ value: '' }),
+      marcTextField('ind2', row).has({ value: '' }),
+      marcTextField('subfield', row).has({ value: '' }),
+    ]);
+  },
+
+  verifyMarcTagValue(tag, row = 0) {
+    cy.expect(marcTextField('tag', row).has({ value: tag }));
+  },
+
+  verifyMarcIndicatorsAndSubfieldValues({ ind1 = '', ind2 = '', subfield = '' } = {}, row = 0) {
+    cy.expect([
+      marcTextField('ind1', row).has({ value: ind1 }),
+      marcTextField('ind2', row).has({ value: ind2 }),
+      marcTextField('subfield', row).has({ value: subfield }),
+    ]);
+  },
+
+  verifyMarcIndicatorsAndSubfieldAbsent(row = 0) {
+    cy.expect([
+      marcTextField('ind1', row).absent(),
+      marcTextField('ind2', row).absent(),
+      marcTextField('subfield', row).absent(),
+    ]);
+  },
+
+  fillInMarcTag(tag, row = 0) {
+    cy.do(marcTextField('tag', row).fillIn(tag));
+    cy.wait(500);
+  },
+
+  fillInMarcIndicator1(value, row = 0) {
+    cy.do(marcTextField('ind1', row).fillIn(value));
+    cy.wait(500);
+  },
+
+  fillInMarcIndicator2(value, row = 0) {
+    cy.do(marcTextField('ind2', row).fillIn(value));
+    cy.wait(500);
+  },
+
+  fillInMarcSubfield(value, row = 0) {
+    cy.do(marcTextField('subfield', row).fillIn(value));
+    cy.wait(500);
+  },
+
+  verifyMarcColumnLockedInShowColumns(columnName) {
+    cy.contains(columnCheckbox, columnName).then(($option) => {
+      const options = $option.parent().children(columnCheckbox);
+
+      expect(options.last().text(), 'last column of the column list').to.contain(columnName);
+      expect($option.attr('class'), `"${columnName}" column checkbox`).to.match(/readOnly/i);
+      cy.wrap($option).find('input').should('be.checked');
+    });
+  },
+
+  verifyResultTableColumnDisplayed(columnName, { inBuildQueryForm = true } = {}) {
+    cy.contains(`${getResultsTableSelector(inBuildQueryForm)} [role=columnheader]`, columnName, {
+      timeout: 15000,
+    }).should('exist');
+  },
+
+  verifyResultTableColumnValues(
+    identifier,
+    columnName,
+    expectedValues,
+    { inBuildQueryForm = true } = {},
+  ) {
+    this.verifyResultTableColumnDisplayed(columnName, { inBuildQueryForm });
+    cy.contains(`${getResultsTableSelector(inBuildQueryForm)} [data-row-index]`, identifier).should(
+      ($row) => {
+        const headers = [...$row.closest(resultsTableSelector).find('[role=columnheader]')].map(
+          (header) => header.textContent.trim(),
+        );
+        const cellText = $row
+          .find('[class*="mclCell-"]')
+          .eq(headers.indexOf(columnName))
+          .text()
+          .trim();
+        const actualValues = cellText ? cellText.split(' | ').sort() : [];
+
+        expect(actualValues, `"${columnName}" values of the "${identifier}" record`).to.deep.equal(
+          [...expectedValues].sort(),
+        );
+      },
+    );
+  },
+
+  fillInMarcValueTextfield(text, row = 0) {
+    cy.do(valueTextField(row).fillIn(text));
+  },
+
+  verifyMarcValueTextfield(expectedValue, row = 0) {
+    cy.expect(valueTextField(row).has({ value: expectedValue }));
   },
 };
