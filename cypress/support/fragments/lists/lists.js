@@ -215,7 +215,7 @@ const UI = {
   },
 
   clickOnListInformationAccordion() {
-    cy.do(listInformationAccording.click());
+    cy.do(listInformationAccording.clickHeader());
     cy.wait(500);
   },
 
@@ -228,16 +228,8 @@ const UI = {
     cy.expect(listInformationAccording.has({ open: isExpanded }));
   },
 
-  clickOnCollapseAllButton() {
-    cy.get(linkSelector).contains('Collapse all').click();
-  },
-
   verifyCollapseAllButtonAbsent() {
-    cy.get(linkSelector).contains('Collapse all').should('not.exist');
-  },
-
-  clickOnExpandAllButton() {
-    cy.get(linkSelector).contains('Expand all').click();
+    cy.contains(linkSelector, 'Collapse all').should('not.exist');
   },
 
   clickOnQueryAccordion() {
