@@ -1,4 +1,5 @@
 import {
+  Accordion,
   Button,
   Checkbox,
   HTML,
@@ -74,6 +75,10 @@ export const vendorDetailsFields = {
 const ongoingInformationFields = {
   'Renewal note': ongoingOrderSection.find(TextArea({ name: 'renewalNote' })),
 };
+const multiYearPrepaymentCheckbox = ongoingOrderSection.find(
+  Checkbox({ name: 'multiYearPayment' }),
+);
+const paymentTermsSection = Accordion({ id: 'paymentTerms' });
 
 const costDetailsFields = {
   physicalUnitPrice: costDetailsSection.find(TextField({ name: 'cost.listUnitPrice' })),
@@ -126,6 +131,18 @@ export default {
   },
   checkOngoingOrderInformationSection(fields = []) {
     this.checkFieldsConditions({ fields, section: ongoingInformationFields });
+  },
+  checkOngoingOrderSectionAbsent() {
+    cy.expect(ongoingOrderSection.absent());
+  },
+  checkPaymentTermsSectionAbsent() {
+    cy.expect(paymentTermsSection.absent());
+  },
+  checkMultiYearPrepaymentUnchecked() {
+    cy.expect(multiYearPrepaymentCheckbox.has({ checked: false }));
+  },
+  checkPaymentTermsCollapsed() {
+    cy.expect(paymentTermsSection.has({ expanded: false }));
   },
   checkCostDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: costDetailsFields });
@@ -425,6 +442,9 @@ export default {
     if (!shouldModalExsist) {
       cy.expect(orderLineEditFormRoot.absent());
     }
+  },
+  assertFormClosed() {
+    cy.expect(orderLineEditFormRoot.absent());
   },
   clickSaveButton({ orderLineCreated = false, orderLineUpdated = true } = {}) {
     cy.expect(saveButton.has({ disabled: false }));
