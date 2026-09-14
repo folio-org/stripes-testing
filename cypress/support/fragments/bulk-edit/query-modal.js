@@ -32,11 +32,7 @@ const runQueryAndSave = buildQueryModal.find(Button('Run query & save'));
 const xButton = buildQueryModal.find(Button({ ariaLabel: 'Close ' }));
 const previewTable = buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' }));
 const resultsTableSelector = '#results-viewer-table';
-// Every column of a "Show columns" list is a stripes Checkbox whose root carries data-test-checkbox and,
-// for a locked column, a readOnly class. The Build query form and the list details page wrap the same
-// checkboxes in different menus, so the options are located as the siblings of one another
 const columnCheckbox = '[data-test-checkbox]';
-// The "Build query" form is a dialog layer, and the list page behind it may render its own results viewer table
 const buildQueryFormTableSelector = `[role="dialog"][aria-label="Build query"] ${resultsTableSelector}`;
 const getResultsTableSelector = (inBuildQueryForm) => {
   return inBuildQueryForm ? buildQueryFormTableSelector : resultsTableSelector;
@@ -47,10 +43,7 @@ const showColumnsButton = buildQueryModal.find(Button('Show columns'));
 const valueSelection = Selection({ dataTestId: including('data-input-select-') });
 const fieldSelection = Selection({ id: including('field-option-') });
 const showColumnsSearchField = TextField({ placeholder: 'Search fields' });
-// MARC selector text boxes (Tag / Indicator 1 / Indicator 2 / Subfield) rendered under the "Field"
-// dropdown when the MARC field option is selected for a MARC-capable record type
 const marcTextField = (part, row) => TextField({ testid: `marc-${part}-${row}` });
-// "Value" text box of a row located by its test id, because a MARC row contains several text boxes
 const valueTextField = (row) => TextField({ testid: `input-value-${row}` });
 
 const booleanValues = ['AND'];
@@ -479,6 +472,11 @@ export const purchaseOrderLinesFieldValues = {
   vendorOrgEdiType: 'Vendor org — EDI vendor type',
   vendorOrgName: 'Vendor org — Name',
   acquisitionUnitNames: 'PO — Acquisition unit names',
+  fundDistributionCode: 'POL — Fund distribution — Code',
+  fundDistributionDistributionType: 'POL — Fund distribution — Distribution type',
+  fundDistributionEncumbranceUUID: 'POL — Fund distribution — Encumbrance UUID',
+  fundDistributionExpenseClass: 'POL — Fund distribution — Expense class',
+  fundDistributionFund: 'POL — Fund distribution — Fund',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -1873,7 +1871,6 @@ export default {
     ]);
   },
 
-  // Control fields (00X) have no indicators or subfields, so only the "Tag" text box is displayed
   verifyMarcIndicatorsAndSubfieldAbsent(row = 0) {
     cy.expect([
       marcTextField('ind1', row).absent(),
@@ -1887,7 +1884,6 @@ export default {
     cy.wait(500);
   },
 
-  // An empty value clears the indicator, which removes the constraint from the queried MARC field
   fillInMarcIndicator1(value, row = 0) {
     cy.do(marcTextField('ind1', row).fillIn(value));
     cy.wait(500);
@@ -1903,11 +1899,6 @@ export default {
     cy.wait(500);
   },
 
-  // A queried column is appended to the results viewer table after the default ones, so it is often outside
-  // the visible area, which interactors treat as hidden. The checks below work with the DOM of the table
-  // (in the "Build query" form by default, or in the list details page) and retry until it is rendered.
-  // A queried MARC column is synthesized from the returned data rather than declared on the entity type, so
-  // it is listed at the end of the "Show columns" menu and locked visible with a read-only checked checkbox
   verifyMarcColumnLockedInShowColumns(columnName) {
     cy.contains(columnCheckbox, columnName).then(($option) => {
       const options = $option.parent().children(columnCheckbox);
@@ -1924,8 +1915,6 @@ export default {
     }).should('exist');
   },
 
-  // A cell holding several values, e.g. the subfield values of a MARC field, shows them joined with " | "
-  // in no particular order, so the values are compared as a set (an empty array for an empty cell)
   verifyResultTableColumnValues(
     identifier,
     columnName,
