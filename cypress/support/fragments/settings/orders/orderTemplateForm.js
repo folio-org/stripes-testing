@@ -2,21 +2,35 @@ import {
   Accordion,
   AcqFundDistribution,
   Button,
+  Card,
   Checkbox,
   Form,
   Popover,
+  including,
+  RepeatableFieldItem,
   Section,
   Select,
   Selection,
+  SelectionList,
   SelectionOption,
   TextArea,
   TextField,
-  including,
 } from '../../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../../constants';
 import OrderStates from '../../orders/orderStates';
+import {
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  ORDER_LINE_FORM_LABELS,
+} from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import SearchHelper from '../../finance/financeHelper';
+
+const LOCATION_FIELD_ID_PREFIX = 'field-locations';
+
+const PAYMENT_TERMS_LABELS = {
+  STARTING_FISCAL_YEAR: 'Starting fiscal year',
+  ADD_FISCAL_YEAR: 'Add fiscal year',
+};
 
 const orderTemplateForm = Form({ id: 'order-template-form' });
 const orderTemplateInfoSection = orderTemplateForm.find(Section({ id: 'templateInfo' }));
@@ -274,13 +288,19 @@ export default {
       }),
     );
   },
-  selectStartingFiscalYear(fyName) {
-    cy.do(
-      orderTemplatePaymentTermsSection.find(Selection(including('Starting fiscal year'))).open(),
-    );
-    cy.do(SelectionOption(including(fyName)).click());
+
+  selectStartingFiscalYear(fyCode) {
+    cy.do([
+      orderTemplatePaymentTermsSection.perform((el) => el.scrollIntoView()),
+      orderTemplatePaymentTermsSection
+        .find(Selection(including(PAYMENT_TERMS_LABELS.STARTING_FISCAL_YEAR)))
+        .open(),
+      SelectionList().filter(fyCode),
+      SelectionOption(including(fyCode)).click(),
+    ]);
   },
-  checkPrepaymentTermValue(value) {
+
+  assertPrepaymentTermValue(value) {
     cy.expect(
       orderTemplatePaymentTermsSection
         .find(TextField({ name: 'paymentTerms.prepaymentTerm' }))
@@ -290,17 +310,18 @@ export default {
   clickAddFiscalYearButton() {
     cy.do(orderTemplatePaymentTermsSection.find(Button('Add fiscal year')).click());
   },
-  checkAddFiscalYearButtonEnabled() {
+  assertAddFiscalYearButtonEnabled() {
     cy.expect(
       orderTemplatePaymentTermsSection.find(Button('Add fiscal year')).has({ disabled: false }),
     );
   },
-  checkAddFiscalYearButtonDisabled() {
+  assertAddFiscalYearButtonDisabled() {
     cy.expect(
       orderTemplatePaymentTermsSection.find(Button('Add fiscal year')).has({ disabled: true }),
     );
   },
-  checkFiscalYearCardPresent(fyName) {
+
+  assertFiscalYearCardPresent(fyName) {
     cy.expect(orderTemplatePaymentTermsSection.find(Accordion(including(fyName))).exists());
   },
   addFundDistributionInFYCard(fyName) {
@@ -311,43 +332,47 @@ export default {
         .addRow(),
     );
   },
-  removeFundDistributionInFYCard({ fyName, rowIndex = 0 }) {
+  removeFundDistributionInFYCard({ fyCode, rowIndex = 0 }) {
     cy.do(
       orderTemplatePaymentTermsSection
-        .find(Accordion(including(fyName)))
+        .find(Card({ headerStart: including(fyCode) }))
         .find(AcqFundDistribution())
         .removeRow(rowIndex),
     );
   },
-  checkFundDistributionAbsentInFYCard(fyName) {
+
+  assertFundDistributionAbsentInFYCard(fyCode) {
     cy.expect(
       orderTemplatePaymentTermsSection
-        .find(Accordion(including(fyName)))
+        .find(Card({ headerStart: including(fyCode) }))
         .find(AcqFundDistribution())
         .has({ rowCount: 0 }),
     );
   },
-  selectFundInFYCard({ fyName, fundName, fundCode, rowIndex = 0 }) {
+
+  selectFundInFYCard({ fyCode, fundName, fundCode, rowIndex = 0 }) {
     cy.do(
       orderTemplatePaymentTermsSection
-        .find(Accordion(including(fyName)))
+        .find(Card({ headerStart: including(fyCode) }))
         .find(AcqFundDistribution())
         .openFundSelector(rowIndex),
     );
     cy.do(SelectionOption(`${fundName} (${fundCode})`).click());
   },
-  checkExpenseClassFieldPresentInFYCard(fyName) {
+
+  assertExpenseClassFieldPresentInFYCard(fyCode) {
     cy.expect(
       orderTemplatePaymentTermsSection
-        .find(Accordion(including(fyName)))
+        .find(Card({ headerStart: including(fyCode) }))
         .find(Selection(including('Expense class')))
         .exists(),
     );
   },
-  selectDistributionTypePercentInFYCard({ fyName, rowIndex = 0 }) {
+
+  selectDistributionTypePercentInFYCard({ fyCode, rowIndex = 0 }) {
     cy.do(
       orderTemplatePaymentTermsSection
-        .find(Accordion(including(fyName)))
+        .find(Card({ headerStart: including(fyCode) }))
         .find(AcqFundDistribution())
         .selectDistributionTypePercent(rowIndex),
     );
@@ -367,5 +392,53 @@ export default {
   selectCurrency(currency = 'USD') {
     cy.do(orderTemplateCostDetailsSection.find(Selection(including('Currency'))).open());
     cy.do(SelectionOption(including(currency)).click());
+  },
+
+  clickAddLocationButton() {
+    cy.do(
+      orderTemplateLocationDetailsSection.find(Button(ORDER_LINE_FORM_LABELS.ADD_LOCATION)).click(),
+    );
+  },
+
+  expandLocationNameCodeDropdown(index = 0) {
+    cy.do(Button({ id: `${LOCATION_FIELD_ID_PREFIX}[${index}].locationId` }).click());
+  },
+
+  selectLocationFromDropdown(locationName) {
+    cy.do([SelectionList().filter(locationName), SelectionOption(including(locationName)).click()]);
+  },
+
+  removeLocationByIndex(index = 0) {
+    cy.do(
+      orderTemplateLocationDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    );
+  },
+
+  locationOptionExists(locationName) {
+    return SelectionList()
+      .find(SelectionOption(including(locationName)))
+      .exists();
+  },
+
+  selectFundInPaymentTermsCard({ fyCode, fundName, fundCode }) {
+    const label = `${fundName} (${fundCode})`;
+
+    const FDInteractor = orderTemplatePaymentTermsSection
+      .find(Card({ headerStart: including(fyCode) }))
+      .find(AcqFundDistribution());
+
+    cy.do([
+      FDInteractor.perform((el) => el.scrollIntoView()),
+      FDInteractor.openFundSelector(0),
+      SelectionList().filter(label),
+      SelectionOption(including(label)).click(),
+    ]);
+  },
+
+  clickExpandAllAccordions() {
+    cy.do(orderTemplateForm.find(Button(COMMON_BUTTON_LABELS.EXPAND_ALL)).click());
   },
 };

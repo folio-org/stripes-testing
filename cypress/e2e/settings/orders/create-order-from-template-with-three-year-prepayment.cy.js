@@ -304,7 +304,7 @@ describe('Settings | Orders', () => {
 
       cy.log('Step 11. Select Fund A in the "Fund ID" dropdown');
       OrderTemplateForm.selectFundInFYCard({
-        fyName: fy2.code,
+        fyCode: fy2.code,
         fundName: fundA.name,
         fundCode: fundA.code,
         rowIndex: 0,
@@ -313,7 +313,7 @@ describe('Settings | Orders', () => {
       OrderTemplateForm.checkExpenseClassFieldPresentInFYCard(fy2.code);
 
       cy.log('Step 12. Click trash icon next to the Fund row in the Fiscal year 1 card');
-      OrderTemplateForm.removeFundDistributionInFYCard({ fyName: fy2.code, rowIndex: 0 });
+      OrderTemplateForm.removeFundDistributionInFYCard({ fyCode: fy2.code, rowIndex: 0 });
       // Expected: fund distribution removed; only active "Add fund distribution" button remains
       OrderTemplateForm.checkFundDistributionAbsentInFYCard(fy2.code);
 
@@ -322,18 +322,18 @@ describe('Settings | Orders', () => {
       );
       OrderTemplateForm.addFundDistributionInFYCard(fy4.code);
       OrderTemplateForm.selectFundInFYCard({
-        fyName: fy4.code,
+        fyCode: fy4.code,
         fundName: fundA.name,
         fundCode: fundA.code,
         rowIndex: 0,
       });
-      OrderTemplateForm.selectDistributionTypePercentInFYCard({ fyName: fy4.code, rowIndex: 0 });
+      OrderTemplateForm.selectDistributionTypePercentInFYCard({ fyCode: fy4.code, rowIndex: 0 });
       // Expected: Fund A is selected in the Fiscal year 3 card
 
       cy.log('Step 14. Add fund distribution in the Fiscal year 2 card; Select Fund B');
       OrderTemplateForm.addFundDistributionInFYCard(fy3.code);
       OrderTemplateForm.selectFundInFYCard({
-        fyName: fy3.code,
+        fyCode: fy3.code,
         fundName: fundB.name,
         fundCode: fundB.code,
         rowIndex: 0,
@@ -452,12 +452,12 @@ describe('Settings | Orders', () => {
       );
       OrderLineEditForm.fillPaymentTermsTotalPrice(1500);
       OrderLineEditForm.fillFundDistributionValueInFYCard({
-        fyName: fy3.code,
+        fyCode: fy3.code,
         value: 300,
         rowIndex: 0,
       });
       OrderLineEditForm.fillFundDistributionValueInFYCard({
-        fyName: fy4.code,
+        fyCode: fy4.code,
         value: 25,
         rowIndex: 0,
       });
@@ -470,19 +470,19 @@ describe('Settings | Orders', () => {
       );
       OrderLineEditForm.addFundDistributionInFYCard(fy2.code);
       OrderLineEditForm.selectFundInFYCard({
-        fyName: fy2.code,
+        fyCode: fy2.code,
         fundName: fundA.name,
         fundCode: fundA.code,
         rowIndex: 0,
       });
       OrderLineEditForm.selectExpenseClassInFYCard({
-        fyName: fy2.code,
+        fyCode: fy2.code,
         expenseClassName: expenseClass1.name,
         rowIndex: 0,
       });
-      OrderLineEditForm.selectDistributionTypePercentInFYCard({ fyName: fy2.code, rowIndex: 0 });
+      OrderLineEditForm.selectDistributionTypePercentInFYCard({ fyCode: fy2.code, rowIndex: 0 });
       OrderLineEditForm.fillFundDistributionValueInFYCard({
-        fyName: fy2.code,
+        fyCode: fy2.code,
         value: 25,
         rowIndex: 0,
       });
@@ -493,13 +493,13 @@ describe('Settings | Orders', () => {
       cy.log('Step 27. Add fund distribution in the Fiscal year 1 card; Select Fund B; Enter 250');
       OrderLineEditForm.addFundDistributionInFYCard(fy2.code);
       OrderLineEditForm.selectFundInFYCard({
-        fyName: fy2.code,
+        fyCode: fy2.code,
         fundName: fundB.name,
         fundCode: fundB.code,
         rowIndex: 1,
       });
       OrderLineEditForm.fillFundDistributionValueInFYCard({
-        fyName: fy2.code,
+        fyCode: fy2.code,
         value: 250,
         rowIndex: 1,
       });
@@ -510,13 +510,13 @@ describe('Settings | Orders', () => {
       cy.log('Step 28. Add fund distribution in the Fiscal year 3 card; Select Fund A; Enter 200');
       OrderLineEditForm.addFundDistributionInFYCard(fy4.code);
       OrderLineEditForm.selectFundInFYCard({
-        fyName: fy4.code,
+        fyCode: fy4.code,
         fundName: fundA.name,
         fundCode: fundA.code,
         rowIndex: 1,
       });
       OrderLineEditForm.fillFundDistributionValueInFYCard({
-        fyName: fy4.code,
+        fyCode: fy4.code,
         value: 200,
         rowIndex: 1,
       });
@@ -525,7 +525,7 @@ describe('Settings | Orders', () => {
 
       cy.log('Step 29. Select Fund B instead of Fund A in the Fiscal year 3 card');
       OrderLineEditForm.selectFundInFYCard({
-        fyName: fy4.code,
+        fyCode: fy4.code,
         fundName: fundB.name,
         fundCode: fundB.code,
         rowIndex: 1,

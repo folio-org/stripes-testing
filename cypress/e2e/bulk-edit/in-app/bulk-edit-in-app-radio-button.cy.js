@@ -1,6 +1,7 @@
+import { APPLICATION_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 let user;
@@ -17,10 +18,7 @@ describe('Bulk-edit', () => {
         Permissions.uiUsersView.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
+        cy.login(user.username, user.password);
       });
     });
 
@@ -33,6 +31,12 @@ describe('Bulk-edit', () => {
       'C350670 Verify radio buttons on the Record types accordion (athena) (TaaS)',
       { tags: ['extendedPath', 'athena', 'C350670'] },
       () => {
+        // Click "Bulk Edit" app in the header
+        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
+        // Focus is set at the top of the left side pane
+        BulkEditSearchPane.verifySetCriteriaPaneFocused();
+
+        BulkEditSearchPane.waitLoading();
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs', 'Query');
         BulkEditSearchPane.verifyRecordIdentifierEmpty();

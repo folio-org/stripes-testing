@@ -1,7 +1,9 @@
 import { including } from '@interactors/html';
 import {
   Button,
+  Card,
   Checkbox,
+  HTML,
   InfoRow,
   KeyValue,
   Link,
@@ -35,6 +37,7 @@ const itemDetailsSection = orderLineDetailsSection.find(Section({ id: 'ItemDetai
 const purchaseOrderLineSection = orderLineDetailsSection.find(Section({ id: 'poLine' }));
 const ongoingOrderSection = orderLineDetailsSection.find(Section({ id: 'ongoingOrder' }));
 const fundDistributionsSection = orderLineDetailsSection.find(Section({ id: 'FundDistribution' }));
+const paymentTermsSection = orderLineDetailsSection.find(Section({ id: 'paymentTerms' }));
 const vendorDetailsSection = orderLineDetailsSection.find(Section({ id: 'Vendor' }));
 const costDetailsSection = orderLineDetailsSection.find(Section({ id: 'CostDetails' }));
 const physicalResourceDetailsSection = orderLineDetailsSection.find(Section({ id: 'physical' }));
@@ -278,6 +281,57 @@ export default {
     if (!records.length) {
       cy.expect(fundDistributionsSection.has({ text: including('The list contains no items') }));
     }
+  },
+
+  assertPaymentTerms({ totalPrice, prepaymentTerm, startingFiscalYear, distributions = [] }) {
+    cy.expect(
+      paymentTermsSection
+        .find(KeyValue('Total price'))
+        .has({ value: including(String(totalPrice)) }),
+    );
+    cy.expect(
+      paymentTermsSection.find(KeyValue('Prepayment term')).has({ value: String(prepaymentTerm) }),
+    );
+    cy.expect(
+      paymentTermsSection
+        .find(KeyValue('Starting fiscal year'))
+        .has({ value: including(startingFiscalYear) }),
+    );
+
+    distributions.forEach(({ fyCode, rows = [] }) => {
+      const card = paymentTermsSection.find(Card({ headerStart: including(fyCode) }));
+
+      cy.expect(card.exists());
+
+      if (!rows.length) {
+        cy.expect(card.find(HTML(including('The list contains no items'))).exists());
+        return;
+      }
+
+      rows.forEach(({ fundName, expenseClass, value, amount }, index) => {
+        const expectations = [
+          card
+            .find(MultiColumnListCell({ row: index, column: 'Fund' }))
+            .has({ content: including(fundName) }),
+          card
+            .find(MultiColumnListCell({ row: index, column: 'Value' }))
+            .has({ content: including(String(value)) }),
+          card
+            .find(MultiColumnListCell({ row: index, column: 'Amount' }))
+            .has({ content: including(String(amount)) }),
+        ];
+
+        if (expenseClass) {
+          expectations.push(
+            card
+              .find(MultiColumnListCell({ row: index, column: 'Expense class' }))
+              .has({ content: including(expenseClass) }),
+          );
+        }
+
+        cy.expect(expectations);
+      });
+    });
   },
   checkExportDetailsTableContent(records = []) {
     records.forEach((record, index) => {

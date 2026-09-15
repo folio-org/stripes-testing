@@ -72,6 +72,7 @@ const clearSearchButton = Button({ id: 'clickable-input-record-search-clear-fiel
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
 const editQueryButton = Button('Edit query');
 const resultViewerTable = MultiColumnList({ id: 'results-viewer-table' });
+const resultViewerTableSelector = '#results-viewer-table';
 const listsTable = MultiColumnList();
 
 // The sort affordance of a <MultiColumnList> header is a CSS pseudo-element driven by the
@@ -108,7 +109,6 @@ const selectUserSearchButton = selectUserModal.find(Button('Search'));
 const selectUserResetAllButton = selectUserModal.find(Button('Reset all'));
 
 const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
-const linkSelector = 'a[data-test-text-link="true"]';
 
 const constants = {
   cannedListInactivePatronsWithOpenLoans: 'Inactive patrons with open loans',
@@ -215,7 +215,7 @@ const UI = {
   },
 
   clickOnListInformationAccordion() {
-    cy.do(listInformationAccording.click());
+    cy.do(listInformationAccording.clickHeader());
     cy.wait(500);
   },
 
@@ -228,16 +228,8 @@ const UI = {
     cy.expect(listInformationAccording.has({ open: isExpanded }));
   },
 
-  clickOnCollapseAllButton() {
-    cy.get(linkSelector).contains('Collapse all').click();
-  },
-
   verifyCollapseAllButtonAbsent() {
-    cy.get(linkSelector).contains('Collapse all').should('not.exist');
-  },
-
-  clickOnExpandAllButton() {
-    cy.get(linkSelector).contains('Expand all').click();
+    cy.expect(HTML('Collapse all').absent());
   },
 
   clickOnQueryAccordion() {
@@ -785,6 +777,11 @@ const UI = {
   verifyResultColumnDisplayed(columnName) {
     cy.do(resultViewerTable.scrollHeaderIntoView(columnName));
     cy.expect(resultViewerTable.find(MultiColumnListHeader(columnName)).exists());
+  },
+
+  verifyNoRecordsInListDetails() {
+    cy.contains('No records found').should('be.visible');
+    cy.get(`${resultViewerTableSelector} [data-row-index]`).should('not.exist');
   },
 
   verifyRecordValueAbsentInResultTable(value, timeout = 2000) {
@@ -1779,8 +1776,7 @@ const QueryBuilder = {
     return cy.xpath(`.//h3[starts-with(., "${searchTerm}")]`).then(($element) => {
       cy.wrap(true).then(() => {
         const text = $element.text().replace(`${searchTerm}`, '').replace(' records', '');
-        const parsedText = text.replace(text.substr(text.indexOf('.')), '');
-        return parsedText;
+        return text.replace(text.substr(text.indexOf('.')), '');
       });
     });
   },
