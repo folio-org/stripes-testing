@@ -1,5 +1,7 @@
 export const FUNDING_INFORMATION_NAMES = {
   INITIAL_ALLOCATION: 'Initial allocation',
+  INCREASE_IN_ALLOCATION: 'Increase in allocation',
+  DECREASE_IN_ALLOCATION: 'Decrease in allocation',
   NET_TRANSFERS: 'Net transfers',
   TOTAL_ALLOCATED: 'Total allocated',
   TOTAL_FUNDING: 'Total funding',
