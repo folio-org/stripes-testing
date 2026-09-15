@@ -91,6 +91,12 @@ const costDetailsFields = {
   calculatedTotalAmount: costDetailsSection.find(KeyValue('Calculated total amount (Exchanged)')),
 };
 
+const fundDistributionFields = {
+  expenseClass: (index = 0) => fundDistributionDetailsSection
+    .find(RepeatableFieldItem({ index }))
+    .find(Selection(including('Expense class'))),
+};
+
 const buttons = {
   [COMMON_BUTTON_LABELS.CANCEL]: cancelButton,
   [COMMON_BUTTON_LABELS.SAVE_AND_CLOSE]: saveButton,
@@ -101,6 +107,7 @@ const buttons = {
 const requiredFields = [
   { fieldName: POLINE_DETAILS_FIELDS.ORDER_FORMAT, field: orderLineFields.orderFormat },
   { fieldName: POLINE_DETAILS_FIELDS.ACQUISITION_METHOD, field: orderLineFields.acquisitionMethod },
+  { fieldName: POLINE_DETAILS_FIELDS.EXPENSE_CLASS, field: fundDistributionFields.expenseClass() },
 ];
 const disabledButtons = {
   Title: itemDetailsFields.title,
@@ -353,6 +360,10 @@ export default {
         .find(Selection(including('Fund ID')))
         .open(),
     );
+    cy.wait(1000);
+  },
+  expandExpenseClassDropdown(index = 0) {
+    cy.do(fundDistributionFields.expenseClass(index).open());
     cy.wait(1000);
   },
   verifyFundInDropdown(fundName, fundCode, isPresent = true) {
