@@ -115,6 +115,7 @@ const FIELD_SELECTORS = {
   FIELDSET: 'fieldset',
   LOCATION_ID_INPUT: 'field-locations[{index}].locationId',
   UNKNOWN_FIELD_ERROR: 'Unknown field: ',
+  PAYMENT_TERMS_ACCORDION_TOGGLE: 'button[id="accordion-toggle-button-paymentTerms"]',
 };
 const VALIDATION_MESSAGES = {
   MINIMUM_FISCAL_YEARS: 'At least 2 fiscal years must be specified for multi-year prepayment',
@@ -448,6 +449,17 @@ export default {
     cy.get(`[id="${FORM_SECTION_IDS.FUND_DISTRIBUTION}"]`).scrollIntoView().should('be.visible');
     cy.wait(1000);
   },
+
+  scrollToPaymentTermsSection() {
+    cy.get(
+      `[id="${FORM_SECTION_IDS.PAYMENT_TERMS}"] ${FIELD_SELECTORS.PAYMENT_TERMS_ACCORDION_TOGGLE}`,
+    )
+      .scrollIntoView()
+      .should('be.visible')
+      .focus();
+    cy.wait(1000);
+  },
+
   addFundDistribution({ fund, index, amount }) {
     this.clickAddFundDistributionButton();
     this.selectFundDistribution(fund, index);

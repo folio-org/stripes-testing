@@ -30,6 +30,7 @@ import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesL
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomStringCode from '../../support/utils/generateTextCode';
+import { FinanceHelper } from '../../support/fragments/finance';
 
 describe('Orders', () => {
   const flow = new ExecutionFlowManager();
@@ -340,6 +341,10 @@ describe('Orders', () => {
     () => {
       const { fy1, fy2, fy3, fy4, fundA, fundB, expenseClass, locale } = flow.ctx();
 
+      const triggerValidation = () => {
+        OrderLineEditForm.scrollToPaymentTermsSection();
+        cy.wait('@validateFD');
+      };
       const formatAmount = (value) => NumberTools.formatCurrency(value, locale);
       const assertEnteredFutureYearDistributions = () => {
         OrderLineEditForm.assertFiscalYearCardFundDistributions({
@@ -363,10 +368,15 @@ describe('Orders', () => {
       };
 
       cy.intercept('PUT', FUND_DISTRIBUTION_VALIDATION_PATH).as('validateFD');
+      FinanceHelper.interceptGetFiscalYearsRequest();
 
       cy.log('Step 1. Click on the PO line record; Click "Actions" button; Select "Edit" option');
       OrderDetails.openPolDetails(testData.polTitle);
       OrderLineDetails.openOrderLineEditForm();
+
+      FinanceHelper.waitForGetFiscalYearsRequestCompletion();
+
+      OrderLineEditForm.scrollToPaymentTermsSection();
       OrderLineEditForm.assertMultiYearPrepaymentCheckedAndEnabled();
       OrderLineEditForm.assertPrepaymentTermValue(4);
       OrderLineEditForm.assertFiscalYearCards([fy1.code, fy2.code, fy3.code, fy4.code]);
@@ -414,6 +424,9 @@ describe('Orders', () => {
 
       cy.log('Step 2. Select the next future fiscal year in the "Starting fiscal year" dropdown');
       OrderLineEditForm.selectStartingFiscalYear(fy2.code);
+
+      FinanceHelper.waitForGetFiscalYearsRequestCompletion();
+
       OrderLineEditForm.assertPrepaymentTermValue(2);
       OrderLineEditForm.assertFiscalYearCards([fy2.code, fy3.code]);
       OrderLineEditForm.assertOnlyFiscalYearCardRemovable([fy2.code, fy3.code], fy3.code);
@@ -448,6 +461,7 @@ describe('Orders', () => {
         fundName: fundA.name,
         fundCode: fundA.code,
       });
+      cy.wait(1000);
       OrderLineEditForm.selectExpenseClassInFYCard({
         fyCode: fy2.code,
         expenseClassName: expenseClass.name,
@@ -464,11 +478,12 @@ describe('Orders', () => {
         fundName: fundA.name,
         fundCode: fundA.code,
       });
-      cy.wait(1000);
+      triggerValidation();
       OrderLineEditForm.fillFundDistributionValueInFYCard({
         fyCode: fy3.code,
         value: 10,
       });
+      triggerValidation();
 
       OrderLineEditForm.addFundDistributionInFYCard(fy3.code);
       OrderLineEditForm.selectFundInPaymentTermsCard({
@@ -477,12 +492,13 @@ describe('Orders', () => {
         fundCode: fundB.code,
         rowIndex: 1,
       });
-      cy.wait(1000);
+      triggerValidation();
       OrderLineEditForm.fillFundDistributionValueInFYCard({
         fyCode: fy3.code,
         value: 10,
         rowIndex: 1,
       });
+      triggerValidation();
 
       // The third card (FY4) contains Fund A and Fund B, each with 15%.
       OrderLineEditForm.addFundDistributionInFYCard(fy4.code);
@@ -491,11 +507,13 @@ describe('Orders', () => {
         fundName: fundA.name,
         fundCode: fundA.code,
       });
+      triggerValidation();
       OrderLineEditForm.selectDistributionTypePercentInFYCard({ fyCode: fy4.code });
       OrderLineEditForm.fillFundDistributionValueInFYCard({
         fyCode: fy4.code,
         value: 15,
       });
+      triggerValidation();
 
       OrderLineEditForm.addFundDistributionInFYCard(fy4.code);
       OrderLineEditForm.selectFundInPaymentTermsCard({
@@ -504,14 +522,14 @@ describe('Orders', () => {
         fundCode: fundB.code,
         rowIndex: 1,
       });
+      triggerValidation();
       OrderLineEditForm.selectDistributionTypePercentInFYCard({ fyCode: fy4.code, rowIndex: 1 });
       OrderLineEditForm.fillFundDistributionValueInFYCard({
         fyCode: fy4.code,
         value: 15,
         rowIndex: 1,
       });
-      cy.realPress('Tab');
-      cy.wait('@validateFD');
+      triggerValidation();
 
       OrderLineEditForm.assertPrepaymentTermsRemainingAmount(formatAmount(0));
       assertEnteredFutureYearDistributions();
@@ -525,7 +543,7 @@ describe('Orders', () => {
 
       cy.log('Step 5. Click trash icon next to the Fiscal year 3 card');
       OrderLineEditForm.removeLastFYCard();
-      cy.wait('@validateFD');
+      triggerValidation();
 
       OrderLineEditForm.assertPrepaymentTermValue(2);
       OrderLineEditForm.assertFiscalYearCards([fy2.code, fy3.code]);
@@ -556,14 +574,13 @@ describe('Orders', () => {
         fundCode: fundA.code,
         rowIndex: 0,
       });
-      cy.wait(1000);
+      triggerValidation();
       OrderLineEditForm.fillFundDistributionValueInFYCard({
         fyCode: fy4.code,
         value: 30,
         rowIndex: 0,
       });
-      cy.realPress('Tab');
-      cy.wait('@validateFD');
+      triggerValidation();
 
       OrderLineEditForm.assertPrepaymentTermsRemainingAmount(formatAmount(0));
 
@@ -588,8 +605,7 @@ describe('Orders', () => {
         value: 80,
         rowIndex: 0,
       });
-      cy.realPress('Tab');
-      cy.wait('@validateFD');
+      triggerValidation();
 
       OrderLineEditForm.clickSaveButton({ orderLineCreated: false, orderLineUpdated: true });
       OrderLineDetails.waitLoading();
@@ -642,6 +658,10 @@ describe('Orders', () => {
       OrderLineEditForm.fillCostDetails({ physicalUnitPrice: '100', quantityPhysical: '1' });
       OrderLineEditForm.fillPrepaymentTotalPrice(100);
       OrderLineEditForm.selectStartingFiscalYear(fy1.code);
+
+      FinanceHelper.waitForGetFiscalYearsRequestCompletion();
+
+      OrderLineEditForm.scrollToPaymentTermsSection();
       OrderLineEditForm.removeLastFYCard();
       OrderLineEditForm.removeLastFYCard();
       OrderLineEditForm.clickSaveButton({ orderLineUpdated: false });
@@ -659,11 +679,13 @@ describe('Orders', () => {
         fundName: fundA.name,
         fundCode: fundA.code,
       });
+      triggerValidation();
       OrderLineEditForm.selectExpenseClassInFYCard({
         fyCode: fy1.code,
         expenseClassName: expenseClass.name,
       });
       OrderLineEditForm.selectDistributionTypePercentInFYCard({ fyCode: fy1.code });
+      triggerValidation();
 
       OrderLineEditForm.assertFiscalYearCardFundDistributions({
         fyCode: fy1.code,
