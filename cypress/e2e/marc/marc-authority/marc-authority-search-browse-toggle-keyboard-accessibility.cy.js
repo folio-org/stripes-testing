@@ -4,10 +4,11 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix, { randomNDigitNumber } from '../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Authority', () => {
+    const naturalId = `1385638${randomNDigitNumber(15)}`;
     const testData = {
       authorityHeading: `AT_C1385638_MarcAuthority${getRandomPostfix()}`,
       browseSearchTerm: 'AT_C1385638',
@@ -31,8 +32,9 @@ describe('MARC', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C1385638_');
 
-      MarcAuthorities.createMarcAuthorityViaAPI('', getRandomPostfix(), [
+      MarcAuthorities.createMarcAuthorityViaAPI('', naturalId, [
         { tag: '100', content: `$a ${testData.authorityHeading}`, indicators: ['1', '\\'] },
       ]).then((id) => {
         createdAuthorityId = id;

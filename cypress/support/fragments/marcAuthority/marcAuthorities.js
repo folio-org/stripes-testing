@@ -1186,6 +1186,14 @@ export default {
     cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including(option) })).exists());
   },
 
+  checkResultsPaneRecordsCounter(totalRecord) {
+    cy.expect(
+      Pane({
+        subtitle: matching(new RegExp(`${totalRecord} (record|result)s{0,1} found`)),
+      }).exists(),
+    );
+  },
+
   checkSelectedAuthoritySourceInPlugInModal(option) {
     cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including(option) })).exists());
   },
@@ -1461,6 +1469,10 @@ export default {
 
   verifyAuthoritySourceAccordionCollapsed() {
     cy.expect([authoritySourceAccordion.has({ open: false })]);
+  },
+
+  verifyAccordionOpenState(accordionName, isOpen) {
+    cy.expect(Accordion(accordionName).has({ open: isOpen }));
   },
 
   checkResultsSelectedByAuthoritySource(options) {
@@ -2069,6 +2081,14 @@ export default {
     });
   },
 
+  verifyActionsMenuBrowse({ newShown = null, exportEnabled = null } = {}) {
+    if (newShown !== null) cy.expect(buttonNew[newShown ? 'exists' : 'absent']());
+    if (exportEnabled !== null) cy.expect(buttonExportSelected.is({ disabled: !exportEnabled }));
+    actionsShowColumnsOptions.forEach((option) => {
+      actionsMenuShowColumnsSection.find(Checkbox(option)).exists();
+    });
+  },
+
   clickSaveCqlButton() {
     cy.do(saveCqlButton.click());
     cy.wait(5000);
@@ -2124,9 +2144,10 @@ export default {
     );
   },
 
-  verifyRecordFound(heading, isFound = true) {
+  verifyRecordFound(heading, isFound = true, { partialMatch = false } = {}) {
+    const headingValue = partialMatch ? including(heading) : heading;
     const targetCell = searchResults.find(
-      MultiColumnListCell({ columnIndex: 2, content: heading }),
+      MultiColumnListCell({ columnIndex: 2, content: headingValue }),
     );
     if (isFound) cy.expect(targetCell.exists());
     else cy.expect(targetCell.absent());
@@ -2302,6 +2323,15 @@ export default {
   getNextPaginationButtonState() {
     cy.wait(1000);
     return cy.wrap(nextButton.perform((el) => !el.disabled));
+  },
+
+  getPreviousPaginationButtonState() {
+    cy.wait(1000);
+    return cy.wrap(previousButton.perform((el) => !el.disabled));
+  },
+
+  checkPaginationButtonsShown() {
+    cy.expect([nextButton.exists(), previousButton.exists()]);
   },
 
   checkAfterDelete(heading) {

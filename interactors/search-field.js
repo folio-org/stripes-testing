@@ -17,8 +17,10 @@ export default HTML.extend('search field')
     placeholder: (el) => el.querySelector('input, textarea').placeholder,
     disabled: (el) => el.querySelector('select').disabled,
     selectedFilterText: (el) => el.querySelector('select option:checked').textContent,
+    focused: (el) => el.querySelector('input, textarea').contains(el.ownerDocument.activeElement),
   })
   .actions({
     fillIn: ({ find }, value) => find(TextField()).fillIn(value),
     selectIndex: ({ find }, value) => find(Select()).choose(value),
+    focus: ({ find }) => find(TextField()).focus(),
   });
