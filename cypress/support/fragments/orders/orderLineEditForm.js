@@ -3,6 +3,7 @@ import {
   AcqFundDistribution,
   Button,
   Callout,
+  Card,
   Checkbox,
   HTML,
   KeyValue,
@@ -25,6 +26,7 @@ import {
   COMMON_BUTTON_LABELS,
   DEFAULT_WAIT_TIME,
   ORDER_AND_ORDER_LINE_BUTTONS,
+  ORDER_FORMAT_NAMES,
   POLINE_DETAILS_FIELDS,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -33,64 +35,191 @@ import SelectInstanceModal from './modals/selectInstanceModal';
 import SelectLocationModal from './modals/selectLocationModal';
 import OrderStates from './orderStates';
 
-const orderLineEditFormRoot = Section({ id: 'pane-poLineForm' });
-const itemDetailsSection = orderLineEditFormRoot.find(Section({ id: 'itemDetails' }));
-const orderLineDetailsSection = orderLineEditFormRoot.find(Section({ id: 'lineDetails' }));
-const vendorDetailsSection = orderLineEditFormRoot.find(Section({ id: 'vendor' }));
-const ongoingOrderSection = orderLineEditFormRoot.find(Section({ id: 'ongoingOrder' }));
-const costDetailsSection = orderLineEditFormRoot.find(Section({ id: 'costDetails' }));
-const fundDistributionDetailsSection = orderLineEditFormRoot.find(
-  Section({ id: 'fundDistributionAccordion' }),
+const FORM_SECTION_IDS = {
+  FORM: 'pane-poLineForm',
+  ITEM_DETAILS: 'itemDetails',
+  ORDER_LINE_DETAILS: 'lineDetails',
+  VENDOR: 'vendor',
+  ONGOING_ORDER: 'ongoingOrder',
+  COST_DETAILS: 'costDetails',
+  FUND_DISTRIBUTION: 'fundDistributionAccordion',
+  LOCATION: 'location',
+  PAYMENT_TERMS: 'paymentTerms',
+};
+const FORM_FIELD_NAMES = {
+  ACQUISITION_METHOD: 'acquisitionMethod',
+  ORDER_FORMAT: 'orderFormat',
+  RECEIPT_STATUS: 'receiptStatus',
+  CHECKIN_ITEMS: 'checkinItems',
+  PAYMENT_STATUS: 'paymentStatus',
+  MULTI_YEAR_PAYMENT: 'multiYearPayment',
+  TOTAL_PRICE: 'paymentTerms.totalPrice',
+  PREPAYMENT_TERM: 'paymentTerms.prepaymentTerm',
+  LOCATION_ID: 'locations[0].locationId',
+  LOCATION_QUANTITY_PHYSICAL: 'locations[0].quantityPhysical',
+  LOCATION_QUANTITY_ELECTRONIC: 'locations[0].quantityElectronic',
+  USER_LIMIT: 'eresource.userLimit',
+  EXCHANGE_RATE: 'cost.exchangeRate',
+  CLAIMING_ACTIVE: 'claimingActive',
+  CLAIMING_INTERVAL: 'claimingInterval',
+  TITLE_OR_PACKAGE: 'titleOrPackage',
+  STILL_IN_USE: 'isStillInUse',
+  RECEIVING_NOTE: 'details.receivingNote',
+  SUBSCRIPTION_FROM: 'details.subscriptionFrom',
+  SUBSCRIPTION_TO: 'details.subscriptionTo',
+  RENEWAL_NOTE: 'renewalNote',
+  MATERIAL_TYPE_ERESOURCE: 'eresource.materialType',
+  MATERIAL_TYPE_PHYSICAL: 'physical.materialType',
+  VENDOR_ACCOUNT: 'vendorDetail.vendorAccount',
+  PUBLICATION_DATE: 'publicationDate',
+  PUBLISHER: 'publisher',
+  EDITION: 'edition',
+  LIST_UNIT_PRICE: 'cost.listUnitPrice',
+  LIST_UNIT_PRICE_ELECTRONIC: 'cost.listUnitPriceElectronic',
+  QUANTITY_PHYSICAL: 'cost.quantityPhysical',
+  QUANTITY_ELECTRONIC: 'cost.quantityElectronic',
+  USE_SET_EXCHANGE_RATE: 'use-set-exchange-rate',
+  CALCULATED_TOTAL_AMOUNT: 'Calculated total amount (Exchanged)',
+};
+const FUND_DISTRIBUTION_LABELS = {
+  FUND_ID: 'Fund ID',
+  EXPENSE_CLASS: 'Expense class',
+};
+const PAYMENT_TERMS_LABELS = {
+  STARTING_FISCAL_YEAR: 'Starting fiscal year',
+  ADD_FISCAL_YEAR: 'Add fiscal year',
+};
+const FORM_LABELS = {
+  ADD_LOCATION: 'Add location',
+  ADD_FUND_DISTRIBUTION: 'Add fund distribution',
+  TITLE_LOOKUP: 'Title look-up',
+  LOCATION_LOOKUP: 'Location look-up',
+  FILTER_NAME_CODE: 'Name (code)',
+  REQUIRED_FIELD_ERROR: 'Required!',
+  AUTO_EXPORT_INFO_MESSAGE:
+    'This is a Manual PO so all POLs are excluded from automated export workflows',
+  REMOVE_FISCAL_YEAR: 'Remove fiscal year',
+};
+const FIELD_SELECTORS = {
+  LOCATION_ID: 'field-locations',
+  FUND_DISTRIBUTION_VALUE: 'fundDistribution',
+  AUTOMATIC_EXPORT: 'automaticExport',
+  INFO_POPOVER_TRIGGER: '[data-test-info-popover-trigger]',
+  REMOVE_FISCAL_YEAR_BUTTON: 'button[icon="trash"][aria-label="Remove fiscal year"]',
+  USER_LIMIT: '[name="eresource.userLimit"]',
+  EXCHANGE_RATE: '[name="cost.exchangeRate"]',
+  TEXT_FIELD_WRAPPER: '[class*="textField"]',
+  ALERT: '[role="alert"]',
+  COLUMN: '[class*="col-"]',
+  FEEDBACK_ERROR: 'feedbackError',
+  REPEATABLE_FIELD_LIST: '[data-test-repeatable-field-list]',
+  FIELDSET: 'fieldset',
+  LOCATION_ID_INPUT: 'field-locations[{index}].locationId',
+  UNKNOWN_FIELD_ERROR: 'Unknown field: ',
+};
+const VALIDATION_MESSAGES = {
+  MINIMUM_FISCAL_YEARS: 'At least 2 fiscal years must be specified for multi-year prepayment',
+  INVALID_LOCATION_FUND: 'Location-restricted fund applied to invalid location',
+  PERCENT_OR_AMOUNT_EQUALS_100: 'The percentage or amount(s) should be equal 100% of the total',
+  REMAINING_AMOUNT_PREFIX: 'Remaining amount to be distributed: ',
+};
+
+const orderLineEditFormRoot = Section({ id: FORM_SECTION_IDS.FORM });
+const itemDetailsSection = orderLineEditFormRoot.find(
+  Section({ id: FORM_SECTION_IDS.ITEM_DETAILS }),
 );
-const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
-const automaticExportCheckboxName = 'automaticExport';
-const automaticExportInfoIconSelector = '[data-test-info-popover-trigger]';
+const orderLineDetailsSection = orderLineEditFormRoot.find(
+  Section({ id: FORM_SECTION_IDS.ORDER_LINE_DETAILS }),
+);
+const vendorDetailsSection = orderLineEditFormRoot.find(Section({ id: FORM_SECTION_IDS.VENDOR }));
+const ongoingOrderSection = orderLineEditFormRoot.find(
+  Section({ id: FORM_SECTION_IDS.ONGOING_ORDER }),
+);
+const costDetailsSection = orderLineEditFormRoot.find(
+  Section({ id: FORM_SECTION_IDS.COST_DETAILS }),
+);
+const fundDistributionDetailsSection = orderLineEditFormRoot.find(
+  Section({ id: FORM_SECTION_IDS.FUND_DISTRIBUTION }),
+);
+const locationSection = orderLineEditFormRoot.find(Section({ id: FORM_SECTION_IDS.LOCATION }));
+const automaticExportCheckboxName = FIELD_SELECTORS.AUTOMATIC_EXPORT;
+const automaticExportInfoIconSelector = FIELD_SELECTORS.INFO_POPOVER_TRIGGER;
 const cancelButton = Button(COMMON_BUTTON_LABELS.CANCEL);
 const saveButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_CLOSE);
 const saveAndOpenOrderButton = Button(ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_OPEN);
 const saveAndKeepEditingButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING);
 const saveAndCreateAnotherButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_CREATE_ANOTHER);
-const publicationDate = TextField({ name: 'publicationDate' });
-const publicher = TextField({ name: 'publisher' });
-const edition = TextField({ name: 'edition' });
+const publicationDate = TextField({ name: FORM_FIELD_NAMES.PUBLICATION_DATE });
+const publicher = TextField({ name: FORM_FIELD_NAMES.PUBLISHER });
+const edition = TextField({ name: FORM_FIELD_NAMES.EDITION });
 
 const itemDetailsFields = {
-  title: itemDetailsSection.find(TextField({ name: 'titleOrPackage' })),
-  receivingNote: itemDetailsSection.find(TextArea({ name: 'details.receivingNote' })),
-  subscriptionFrom: itemDetailsSection.find(TextField({ name: 'details.subscriptionFrom' })),
-  subscriptionTo: itemDetailsSection.find(TextField({ name: 'details.subscriptionTo' })),
+  title: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.TITLE_OR_PACKAGE })),
+  receivingNote: itemDetailsSection.find(TextArea({ name: FORM_FIELD_NAMES.RECEIVING_NOTE })),
+  subscriptionFrom: itemDetailsSection.find(
+    TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_FROM }),
+  ),
+  subscriptionTo: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_TO })),
 };
 
 export const orderLineFields = {
-  acquisitionMethod: orderLineDetailsSection.find(Selection({ name: 'acquisitionMethod' })),
-  orderFormat: orderLineDetailsSection.find(Select({ name: 'orderFormat' })),
-  receiptStatus: orderLineDetailsSection.find(Select({ name: 'receiptStatus' })),
-  checkinItems: orderLineDetailsSection.find(Select({ name: 'checkinItems' })),
-  paymentStatus: orderLineDetailsSection.find(Select({ name: 'paymentStatus' })),
-  claimingActive: orderLineDetailsSection.find(Checkbox({ name: 'claimingActive' })),
-  claimingInterval: orderLineDetailsSection.find(TextField({ name: 'claimingInterval' })),
+  acquisitionMethod: orderLineDetailsSection.find(
+    Selection({ name: FORM_FIELD_NAMES.ACQUISITION_METHOD }),
+  ),
+  orderFormat: orderLineDetailsSection.find(Select({ name: FORM_FIELD_NAMES.ORDER_FORMAT })),
+  receiptStatus: orderLineDetailsSection.find(Select({ name: FORM_FIELD_NAMES.RECEIPT_STATUS })),
+  checkinItems: orderLineDetailsSection.find(Select({ name: FORM_FIELD_NAMES.CHECKIN_ITEMS })),
+  paymentStatus: orderLineDetailsSection.find(Select({ name: FORM_FIELD_NAMES.PAYMENT_STATUS })),
+  claimingActive: orderLineDetailsSection.find(
+    Checkbox({ name: FORM_FIELD_NAMES.CLAIMING_ACTIVE }),
+  ),
+  claimingInterval: orderLineDetailsSection.find(
+    TextField({ name: FORM_FIELD_NAMES.CLAIMING_INTERVAL }),
+  ),
 };
 
 export const vendorDetailsFields = {
-  accountNumber: vendorDetailsSection.find(Select({ name: 'vendorDetail.vendorAccount' })),
+  accountNumber: vendorDetailsSection.find(Select({ name: FORM_FIELD_NAMES.VENDOR_ACCOUNT })),
 };
 
 const ongoingInformationFields = {
-  'Renewal note': ongoingOrderSection.find(TextArea({ name: 'renewalNote' })),
+  'Renewal note': ongoingOrderSection.find(TextArea({ name: FORM_FIELD_NAMES.RENEWAL_NOTE })),
 };
 const multiYearPrepaymentCheckbox = ongoingOrderSection.find(
-  Checkbox({ name: 'multiYearPayment' }),
+  Checkbox({ name: FORM_FIELD_NAMES.MULTI_YEAR_PAYMENT }),
 );
-const paymentTermsSection = Accordion({ id: 'paymentTerms' });
+const paymentTermsSection = Accordion({ id: FORM_SECTION_IDS.PAYMENT_TERMS });
+const fiscalYearDistributions = paymentTermsSection.find(
+  RepeatableField({ id: 'paymentTerms.fiscalYearDistributions' }),
+);
+const getFiscalYearDistributionItems = (element) => {
+  // Each FY card contains another repeatable field for its fund rows. Restrict the
+  // lookup to the list owned by the outer FY fieldset so nested fund rows are excluded.
+  const list = [...element.querySelectorAll(FIELD_SELECTORS.REPEATABLE_FIELD_LIST)].find(
+    (candidate) => candidate.closest(FIELD_SELECTORS.FIELDSET) === element,
+  );
+
+  return list ? [...list.children] : [];
+};
 
 const costDetailsFields = {
-  physicalUnitPrice: costDetailsSection.find(TextField({ name: 'cost.listUnitPrice' })),
-  electronicUnitPrice: costDetailsSection.find(TextField({ name: 'cost.listUnitPriceElectronic' })),
-  quantityPhysical: costDetailsSection.find(TextField({ name: 'cost.quantityPhysical' })),
-  quantityElectronic: costDetailsSection.find(TextField({ name: 'cost.quantityElectronic' })),
-  useSetExchangeRate: costDetailsSection.find(Checkbox({ id: 'use-set-exchange-rate' })),
-  exchangeRate: costDetailsSection.find(TextField({ name: 'cost.exchangeRate' })),
-  calculatedTotalAmount: costDetailsSection.find(KeyValue('Calculated total amount (Exchanged)')),
+  physicalUnitPrice: costDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.LIST_UNIT_PRICE })),
+  electronicUnitPrice: costDetailsSection.find(
+    TextField({ name: FORM_FIELD_NAMES.LIST_UNIT_PRICE_ELECTRONIC }),
+  ),
+  quantityPhysical: costDetailsSection.find(
+    TextField({ name: FORM_FIELD_NAMES.QUANTITY_PHYSICAL }),
+  ),
+  quantityElectronic: costDetailsSection.find(
+    TextField({ name: FORM_FIELD_NAMES.QUANTITY_ELECTRONIC }),
+  ),
+  useSetExchangeRate: costDetailsSection.find(
+    Checkbox({ id: FORM_FIELD_NAMES.USE_SET_EXCHANGE_RATE }),
+  ),
+  exchangeRate: costDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.EXCHANGE_RATE })),
+  calculatedTotalAmount: costDetailsSection.find(
+    KeyValue(FORM_FIELD_NAMES.CALCULATED_TOTAL_AMOUNT),
+  ),
 };
 
 const buttons = {
@@ -151,21 +280,21 @@ export default {
     this.checkFieldsConditions({ fields, section: costDetailsFields });
   },
   setUserLimit(limit) {
-    cy.get('[name="eresource.userLimit"]').clear().type(limit);
+    cy.get(FIELD_SELECTORS.USER_LIMIT).clear().type(limit);
   },
   checkExchangeRateError(
     errorMessage = OrderStates.exchangeRateAmountMustBePositive,
     shouldExist = true,
   ) {
     if (shouldExist) {
-      cy.get('[name="cost.exchangeRate"]')
-        .closest('[class*="textField"]')
-        .find('[role="alert"]')
+      cy.get(FIELD_SELECTORS.EXCHANGE_RATE)
+        .closest(FIELD_SELECTORS.TEXT_FIELD_WRAPPER)
+        .find(FIELD_SELECTORS.ALERT)
         .should('contain.text', errorMessage);
     } else {
-      cy.get('[name="cost.exchangeRate"]')
-        .closest('[class*="textField"]')
-        .find('[role="alert"]')
+      cy.get(FIELD_SELECTORS.EXCHANGE_RATE)
+        .closest(FIELD_SELECTORS.TEXT_FIELD_WRAPPER)
+        .find(FIELD_SELECTORS.ALERT)
         .should('not.contain.text', errorMessage);
     }
   },
@@ -175,9 +304,13 @@ export default {
   checkLocationDetailsSection({ rows = [] } = {}) {
     if (!rows.length) {
       cy.expect([
-        locationSection.find(Selection({ name: 'locations[0].locationId' })).exists(),
-        locationSection.find(TextField({ name: 'locations[0].quantityPhysical' })).exists(),
-        locationSection.find(TextField({ name: 'locations[0].quantityElectronic' })).exists(),
+        locationSection.find(Selection({ name: FORM_FIELD_NAMES.LOCATION_ID })).exists(),
+        locationSection
+          .find(TextField({ name: FORM_FIELD_NAMES.LOCATION_QUANTITY_PHYSICAL }))
+          .exists(),
+        locationSection
+          .find(TextField({ name: FORM_FIELD_NAMES.LOCATION_QUANTITY_ELECTRONIC }))
+          .exists(),
       ]);
     }
   },
@@ -208,13 +341,13 @@ export default {
     }
   },
   clickTitleLookUpButton() {
-    cy.do(itemDetailsSection.find(Button('Title look-up')).click());
+    cy.do(itemDetailsSection.find(Button(FORM_LABELS.TITLE_LOOKUP)).click());
     SelectInstanceModal.waitLoading();
 
     return SelectInstanceModal;
   },
   clickLocationLookUpButton() {
-    cy.do(locationSection.find(Button('Location look-up')).click());
+    cy.do(locationSection.find(Button(FORM_LABELS.LOCATION_LOOKUP)).click());
     SelectLocationModal.waitLoading();
     SelectLocationModal.verifyModalView();
 
@@ -232,7 +365,7 @@ export default {
   },
   fillPoLineDetails(poLineDetails) {
     if (poLineDetails.acquisitionMethod) {
-      cy.do(Button({ name: 'acquisitionMethod' }).click());
+      cy.do(Button({ name: FORM_FIELD_NAMES.ACQUISITION_METHOD }).click());
       cy.do(SelectionOption(poLineDetails.acquisitionMethod).click());
     }
     if (poLineDetails.orderFormat) {
@@ -240,13 +373,23 @@ export default {
       cy.wait(1000);
     }
     if (poLineDetails.receivingWorkflow) {
-      cy.do(Select({ name: 'checkinItems' }).choose(poLineDetails.receivingWorkflow));
+      cy.do(
+        Select({ name: FORM_FIELD_NAMES.CHECKIN_ITEMS }).choose(poLineDetails.receivingWorkflow),
+      );
     }
     if (poLineDetails.materialType) {
-      if (poLineDetails.orderFormat === 'Electronic resource') {
-        cy.do(Select({ name: 'eresource.materialType' }).choose(poLineDetails.materialType));
+      if (poLineDetails.orderFormat === ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE) {
+        cy.do(
+          Select({ name: FORM_FIELD_NAMES.MATERIAL_TYPE_ERERESOURCE }).choose(
+            poLineDetails.materialType,
+          ),
+        );
       } else {
-        cy.do(Select({ name: 'physical.materialType' }).choose(poLineDetails.materialType));
+        cy.do(
+          Select({ name: FORM_FIELD_NAMES.MATERIAL_TYPE_PHYSICAL }).choose(
+            poLineDetails.materialType,
+          ),
+        );
       }
     }
     if (poLineDetails.claimingActive) {
@@ -285,7 +428,7 @@ export default {
     });
   },
   searchLocationByName({ name, open = true, checkOptions = true }) {
-    this.filterDropDownValue({ label: 'Name (code)', option: name, open });
+    this.filterDropDownValue({ label: FORM_LABELS.FILTER_NAME_CODE, option: name, open });
     cy.wait(2000);
 
     if (checkOptions) {
@@ -295,13 +438,15 @@ export default {
     }
   },
   clickAddLocationButton() {
-    cy.do(Button('Add location').click());
+    cy.do(Button(FORM_LABELS.ADD_LOCATION).click());
   },
+
   clickAddFundDistributionButton() {
-    cy.do(Button('Add fund distribution').click());
+    cy.do([fundDistributionDetailsSection.find(Button(FORM_LABELS.ADD_FUND_DISTRIBUTION)).click()]);
   },
+
   scrollToFundDistributionSection() {
-    cy.get('[id="fundDistributionAccordion"]').scrollIntoView().should('be.visible');
+    cy.get(`[id="${FORM_SECTION_IDS.FUND_DISTRIBUTION}"]`).scrollIntoView().should('be.visible');
     cy.wait(1000);
   },
   addFundDistribution({ fund, index, amount }) {
@@ -334,10 +479,12 @@ export default {
 
     cy.do(SelectionList().filter(option));
   },
-  selectDropDownValue(label, option, index = 0) {
+
+  selectFundDistributionDropDownValue(label, option, index = 0) {
     cy.wait(1000); // Wait for elements to be ready
     cy.do([
-      RepeatableFieldItem({ index })
+      fundDistributionDetailsSection
+        .find(RepeatableFieldItem({ index }))
         .find(Selection(including(label)))
         .open(),
     ]);
@@ -345,14 +492,16 @@ export default {
     cy.do([SelectionList().filter(option), SelectionList().select(including(option))]);
     cy.wait(500); // Wait for selection to complete
   },
+
   selectFundDistribution(fund, index) {
-    this.selectDropDownValue('Fund ID', fund, index);
+    this.selectFundDistributionDropDownValue(FUND_DISTRIBUTION_LABELS.FUND_ID, fund, index);
   },
+
   expandFundIdDropdown(index = 0) {
     cy.do(
       fundDistributionDetailsSection
         .find(RepeatableFieldItem({ index }))
-        .find(Selection(including('Fund ID')))
+        .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID)))
         .open(),
     );
     cy.wait(1000);
@@ -365,12 +514,16 @@ export default {
       cy.expect(fundOption.absent());
     }
   },
+
   selectFundFromOpenDropdown(fundName, fundCode) {
-    cy.do(SelectionOption(`${fundName} (${fundCode})`).click());
+    const label = `${fundName} (${fundCode})`;
+
+    cy.do([SelectionList().filter(label), SelectionOption(including(label)).click()]);
     cy.wait(1000);
   },
+
   expandLocationDropdown(index = 0) {
-    cy.do(Button({ id: `field-locations[${index}].locationId` }).click());
+    cy.do(Button({ id: FIELD_SELECTORS.LOCATION_ID_INPUT.replace('{index}', index) }).click());
     cy.wait(1000);
   },
 
@@ -392,7 +545,11 @@ export default {
     if (shouldHaveWarning) {
       cy.expect(locationSection.has({ error: OrderStates.locationRequired }));
     } else {
-      cy.expect(locationSection.find(HTML({ className: including('feedbackError') })).absent());
+      cy.expect(
+        locationSection
+          .find(HTML({ className: including(FIELD_SELECTORS.FEEDBACK_ERROR) }))
+          .absent(),
+      );
     }
   },
 
@@ -404,7 +561,7 @@ export default {
     } else {
       cy.expect(
         fundDistributionDetailsSection
-          .find(HTML({ className: including('feedbackError') }))
+          .find(HTML({ className: including(FIELD_SELECTORS.FEEDBACK_ERROR) }))
           .absent(),
       );
     }
@@ -419,14 +576,24 @@ export default {
   },
 
   selectExpenseClass(expenseClass, index) {
-    this.selectDropDownValue('Expense class', expenseClass, index);
+    this.selectFundDistributionDropDownValue(
+      FUND_DISTRIBUTION_LABELS.EXPENSE_CLASS,
+      expenseClass,
+      index,
+    );
   },
+
   setFundDistributionValue(value, index) {
     // Use cy.get().type() to allow entering decimals; .fillIn() only works with integers
-    cy.get(`[name="fundDistribution[${index}].value"]`).type('{selectall}{backspace}', {
-      delay: 50,
-    });
-    cy.get(`[name="fundDistribution[${index}].value"]`).type(value, { delay: 100 }).blur();
+    cy.get(`[name="${FIELD_SELECTORS.FUND_DISTRIBUTION_VALUE}[${index}].value"]`).type(
+      '{selectall}{backspace}',
+      {
+        delay: 50,
+      },
+    );
+    cy.get(`[name="${FIELD_SELECTORS.FUND_DISTRIBUTION_VALUE}[${index}].value"]`)
+      .type(value, { delay: 100 })
+      .blur();
   },
   checkValidatorError({ locationDetails } = {}) {
     if (locationDetails) {
@@ -518,7 +685,7 @@ export default {
     cy.wait(2000);
   },
   clickConfirmButton() {
-    cy.do(Button('Confirm').click());
+    cy.do(Button(COMMON_BUTTON_LABELS.CONFIRM).click());
   },
   verifyOrderLineEditFormClosed() {
     cy.expect(orderLineEditFormRoot.absent());
@@ -538,7 +705,7 @@ export default {
   clickAutomaticExportInfoIcon() {
     cy.get(`[name="${automaticExportCheckboxName}"]`).then(($checkbox) => {
       cy.wrap($checkbox)
-        .closest('[class*="col-"]')
+        .closest(FIELD_SELECTORS.COLUMN)
         .find(automaticExportInfoIconSelector)
         .first()
         .click();
@@ -547,9 +714,7 @@ export default {
   verifyAutomaticExportInfoPopover() {
     cy.expect(
       Popover().has({
-        content: including(
-          'This is a Manual PO so all POLs are excluded from automated export workflows',
-        ),
+        content: including(FORM_LABELS.AUTO_EXPORT_INFO_MESSAGE),
       }),
     );
   },
@@ -563,8 +728,8 @@ export default {
   checkRequiredFields(fields = []) {
     fields.forEach((field) => {
       const requiredFieldsConfig = requiredFields.find((f) => f.fieldName === field);
-      if (!requiredFieldsConfig) throw new Error(`Unknown field: ${field}`);
-      cy.expect(requiredFieldsConfig.field.has({ error: 'Required!' }));
+      if (!requiredFieldsConfig) throw new Error(`${FIELD_SELECTORS.UNKNOWN_FIELD_ERROR}${field}`);
+      cy.expect(requiredFieldsConfig.field.has({ error: FORM_LABELS.REQUIRED_FIELD_ERROR }));
     });
   },
 
@@ -601,42 +766,143 @@ export default {
     cy.do(multiYearPrepaymentCheckbox.click());
   },
 
-  selectStartingFiscalYear(fyName) {
-    cy.do(paymentTermsSection.find(Selection(including('Starting fiscal year'))).open());
-    cy.do(SelectionOption(including(fyName)).click());
+  assertMultiYearPrepaymentCheckedAndEnabled() {
+    cy.expect(multiYearPrepaymentCheckbox.has({ checked: true, disabled: false }));
   },
 
-  clickAddFiscalYearButton() {
-    cy.do(paymentTermsSection.find(Button('Add fiscal year')).click());
-  },
-
-  checkAddFiscalYearButtonEnabled() {
-    cy.expect(paymentTermsSection.find(Button('Add fiscal year')).has({ disabled: false }));
-  },
-
-  checkAddFiscalYearButtonDisabled() {
-    cy.expect(paymentTermsSection.find(Button('Add fiscal year')).has({ disabled: true }));
-  },
-
-  checkPrepaymentTermValue(value) {
-    cy.expect(
+  selectStartingFiscalYear(fyCode) {
+    cy.do([
+      paymentTermsSection.perform((el) => el.scrollIntoView()),
       paymentTermsSection
-        .find(TextField({ name: 'paymentTerms.prepaymentTerm' }))
-        .has({ value: String(value) }),
+        .find(Selection(including(PAYMENT_TERMS_LABELS.STARTING_FISCAL_YEAR)))
+        .open(),
+      SelectionList().filter(fyCode),
+      SelectionOption(including(fyCode)).click(),
+    ]);
+  },
+
+  fillPrepaymentTotalPrice(value) {
+    cy.do(
+      paymentTermsSection
+        .find(TextField({ name: FORM_FIELD_NAMES.TOTAL_PRICE }))
+        .fillIn(String(value)),
     );
   },
 
-  removeLastFYCard() {
-    // The trash icon is shown only on the last FY card in the payment terms repeatable field
-    cy.get(
-      '[class*="paymentTerms"] [class*="repeatableFieldItem"]:last-child [data-test-repeatable-field-remove-item-button]',
-    ).click();
+  clickAddFiscalYearButton() {
+    cy.do(paymentTermsSection.find(Button(PAYMENT_TERMS_LABELS.ADD_FISCAL_YEAR)).click());
   },
 
-  openFundIdDropdownInFYCard(fyName, rowIndex = 0) {
+  assertAddFiscalYearButtonEnabled() {
+    cy.expect(
+      paymentTermsSection
+        .find(Button(PAYMENT_TERMS_LABELS.ADD_FISCAL_YEAR))
+        .has({ disabled: false }),
+    );
+  },
+
+  assertAddFiscalYearButtonDisabled() {
+    cy.expect(
+      paymentTermsSection
+        .find(Button(PAYMENT_TERMS_LABELS.ADD_FISCAL_YEAR))
+        .has({ disabled: true }),
+    );
+  },
+
+  assertPrepaymentTermValue(value) {
+    cy.expect(
+      paymentTermsSection
+        .find(TextField({ name: FORM_FIELD_NAMES.PREPAYMENT_TERM }))
+        .has({ value: String(value), disabled: true }),
+    );
+  },
+
+  assertFiscalYearCards(fyCodes) {
+    fyCodes.forEach((fyCode) => {
+      cy.expect(paymentTermsSection.find(Card({ headerStart: including(fyCode) })).exists());
+    });
+  },
+
+  assertOnlyFiscalYearCardRemovable(fyCodes, removableFyCode) {
+    cy.do(
+      fiscalYearDistributions.perform((element) => {
+        const items = getFiscalYearDistributionItems(element);
+
+        expect(items).to.have.length(fyCodes.length);
+        items.forEach((item, index) => {
+          const removeButtons = item.querySelectorAll(FIELD_SELECTORS.REMOVE_FISCAL_YEAR_BUTTON);
+          const expectedCount = fyCodes[index] === removableFyCode ? 1 : 0;
+
+          expect(removeButtons).to.have.length(expectedCount);
+        });
+      }),
+    );
+  },
+
+  assertFiscalYearCardFundDistributions({ fyCode, distributions }) {
+    const fundDistribution = paymentTermsSection
+      .find(Card({ headerStart: including(fyCode) }))
+      .find(AcqFundDistribution());
+
+    cy.expect(fundDistribution.has({ rowCount: distributions.length }));
+
+    distributions.forEach(({ fundName, fundCode, expenseClassName, value }, index) => {
+      const row = fundDistribution.find(RepeatableFieldItem({ index }));
+      const expectations = [
+        row
+          .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID)))
+          .has({ singleValue: including(`${fundName} (${fundCode})`) }),
+        row.find(TextField()).has({ value: String(value) }),
+      ];
+
+      if (expenseClassName) {
+        expectations.push(
+          row
+            .find(Selection(including(FUND_DISTRIBUTION_LABELS.EXPENSE_CLASS)))
+            .has({ singleValue: including(expenseClassName) }),
+        );
+      }
+
+      cy.expect(expectations);
+    });
+  },
+
+  assertPrepaymentTermsRemainingAmount(value) {
+    cy.expect(
+      paymentTermsSection
+        .find(HTML(`${VALIDATION_MESSAGES.REMAINING_AMOUNT_PREFIX}${value}`))
+        .exists(),
+    );
+  },
+
+  assertPrepaymentTermsDistributionError(value) {
+    cy.expect(
+      paymentTermsSection
+        .find(HTML(including(VALIDATION_MESSAGES.PERCENT_OR_AMOUNT_EQUALS_100)))
+        .exists(),
+    );
+    this.assertPrepaymentTermsRemainingAmount(value);
+  },
+
+  removeLastFYCard() {
+    cy.do(
+      fiscalYearDistributions.perform((element) => {
+        const items = getFiscalYearDistributionItems(element);
+        const lastItem = items.at(-1);
+        const removeButton = lastItem?.querySelector(FIELD_SELECTORS.REMOVE_FISCAL_YEAR_BUTTON);
+
+        // ui-orders passes onRemove={false} to RepeatableField and renders this custom
+        // sibling button, so the standard RepeatableField.clickRemove action cannot reach it.
+        expect(removeButton, 'last fiscal-year card remove button').to.not.equal(null);
+        removeButton.click();
+      }),
+    );
+  },
+
+  openFundIdDropdownInFYCard(fyCode, rowIndex = 0) {
     cy.do(
       paymentTermsSection
-        .find(Accordion(fyName))
+        .find(Card({ headerStart: including(fyCode) }))
         .find(AcqFundDistribution())
         .openFundSelector(rowIndex),
     );
@@ -646,62 +912,77 @@ export default {
     cy.expect(SelectionOption(including(fundName)).absent());
   },
 
-  addFundDistributionInFYCard(fyName) {
-    cy.do(paymentTermsSection.find(Accordion(fyName)).find(AcqFundDistribution()).addRow());
-  },
-
-  selectFundInFYCard({ fyName, fundName, fundCode, rowIndex = 0 }) {
+  addFundDistributionInFYCard(fyCode) {
     cy.do(
       paymentTermsSection
-        .find(Accordion(fyName))
+        .find(Card({ headerStart: including(fyCode) }))
         .find(AcqFundDistribution())
-        .openFundSelector(rowIndex),
+        .addRow(),
     );
-    cy.do(SelectionOption(`${fundName} (${fundCode})`).click());
   },
 
-  selectExpenseClassInFYCard({ fyName, expenseClassName, rowIndex = 0 }) {
+  selectFundInPaymentTermsCard({ fyCode, fundName, fundCode, rowIndex = 0 }) {
+    const label = `${fundName} (${fundCode})`;
+
+    const FDInteractor = paymentTermsSection
+      .find(Card({ headerStart: including(fyCode) }))
+      .find(AcqFundDistribution());
+
+    cy.do([
+      FDInteractor.perform((el) => el.scrollIntoView()),
+      FDInteractor.openFundSelector(rowIndex),
+      SelectionList().filter(label),
+      SelectionOption(including(label)).click(),
+    ]);
+  },
+
+  selectExpenseClassInFYCard({ fyCode, expenseClassName, rowIndex = 0 }) {
     cy.do(
       paymentTermsSection
-        .find(Accordion(fyName))
+        .find(Card({ headerStart: including(fyCode) }))
         .find(AcqFundDistribution())
         .openExpenseClassSelector(rowIndex),
     );
     cy.do(SelectionOption(including(expenseClassName)).click());
   },
 
-  selectDistributionTypePercentInFYCard({ fyName, rowIndex = 0 }) {
+  selectDistributionTypePercentInFYCard({ fyCode, rowIndex = 0 }) {
     cy.do(
       paymentTermsSection
-        .find(Accordion(fyName))
+        .find(Card({ headerStart: including(fyCode) }))
         .find(AcqFundDistribution())
         .selectDistributionTypePercent(rowIndex),
     );
   },
 
-  fillFundDistributionValueInFYCard({ fyName, value, rowIndex = 0 }) {
+  selectDistributionTypeAmountInFYCard({ fyCode, rowIndex = 0 }) {
     cy.do(
       paymentTermsSection
-        .find(Accordion(fyName))
+        .find(Card({ headerStart: including(fyCode) }))
+        .find(AcqFundDistribution())
+        .selectDistributionTypeAmount(rowIndex),
+    );
+  },
+
+  fillFundDistributionValueInFYCard({ fyCode, value, rowIndex = 0 }) {
+    cy.do(
+      paymentTermsSection
+        .find(Card({ headerStart: including(fyCode) }))
         .find(AcqFundDistribution())
         .fillValue({ value, index: rowIndex }),
     );
   },
 
   checkAtLeastTwoFYsValidationError() {
-    cy.expect(
-      HTML(
-        including('At least 2 fiscal years must be specified for multi-year prepayment'),
-      ).exists(),
-    );
+    cy.expect(HTML(including(VALIDATION_MESSAGES.MINIMUM_FISCAL_YEARS)).exists());
   },
 
   checkFundRestrictionErrorToastPresent() {
-    cy.expect(Callout(including('Location-restricted fund applied to invalid location')).exists());
+    cy.expect(Callout(including(VALIDATION_MESSAGES.INVALID_LOCATION_FUND)).exists());
   },
 
   checkFundRestrictionErrorToastAbsent() {
-    cy.expect(Callout(including('Location-restricted fund applied to invalid location')).absent());
+    cy.expect(Callout(including(VALIDATION_MESSAGES.INVALID_LOCATION_FUND)).absent());
   },
 
   selectBlankAccountNumber() {

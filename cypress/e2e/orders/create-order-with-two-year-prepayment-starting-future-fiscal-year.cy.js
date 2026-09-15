@@ -2,15 +2,16 @@ import moment from 'moment';
 import uuid from 'uuid';
 
 import { BUDGET_STATUSES } from '../../support/constants/finance/budget';
-import { FUND_DISTRIBUTION_TYPES } from '../../support/constants/finance/fund';
-import { ORDER_TYPES } from '../../support/constants/orders/order';
+import { FUND_DISTRIBUTION_TYPES, FUND_STATUSES } from '../../support/constants/finance/fund';
+import { LEDGER_STATUSES } from '../../support/constants/finance/ledger';
+import { ORDER_STATUSES, ORDER_TYPES } from '../../support/constants/orders/order';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ORDER_FORMAT_VALUES,
 } from '../../support/constants/orders/order-line';
 import { Permissions } from '../../support/dictionary';
 import getRandomPostfix from '../../support/utils/stringTools';
-import { DateTools, ExecutionFlowManager } from '../../support/utils';
+import { DateTools, ExecutionFlowManager, NumberTools } from '../../support/utils';
 import FileManager from '../../support/utils/fileManager';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
@@ -50,19 +51,68 @@ describe('Orders', () => {
     BUDGET_B2: 'budgetB2',
     BUDGET_B3: 'budgetB3',
     BUDGET_B4: 'budgetB4',
+    LOCALE: 'locale',
     ORG: 'org',
     ORDER: 'order',
     POL: 'pol',
     USER: 'user',
     ACQ_METHOD: 'acqMethod',
+    POL_LIMIT: 'polLimit',
   };
 
   const testData = {
     polTitle: `AT_POL_${getRandomPostfix()}`,
+    secondPolTitle: `AT_POL_SECOND_${getRandomPostfix()}`,
     csvFileName: `order-export-${moment().format('YYYY-MM-DD')}-*.csv`,
   };
 
-  const createBudgetStep = (fundKey, fiscalYearKey, budgetKey) => (f) => {
+  const CSV_HEADERS = {
+    MULTI_YEAR_PREPAYMENT: 'Multi-year prepayment',
+    PREPAYMENT_TERM: 'Prepayment term',
+    STARTING_FISCAL_YEAR: 'Prepayment starting fiscal year',
+    TOTAL_PRICE: 'Prepayment total price',
+    FISCAL_YEAR_DISTRIBUTIONS: 'Prepayment fiscal year, Fund code, Expense class, Value, Amount',
+  };
+
+  const parsePrepaymentFiscalYearDistribution = (value = '') => {
+    return (value || '')
+      .split(' | ')
+      .filter(Boolean)
+      .map((entry) => {
+        const quotedValues = entry.match(/"([^"]*)"/g) || [];
+        const values = quotedValues.map((item) => item.slice(1, -1));
+
+        if (values.length < 5) {
+          return null;
+        }
+
+        const isPercentage = values[3].endsWith('%');
+
+        return {
+          fyCode: values[0],
+          fundCode: values[1],
+          expenseClass: values[2],
+          value: isPercentage ? values[3].slice(0, -1) : values[3],
+          distributionType: isPercentage
+            ? FUND_DISTRIBUTION_TYPES.PERCENTAGE
+            : FUND_DISTRIBUTION_TYPES.AMOUNT,
+          amount: values[4],
+        };
+      })
+      .filter(Boolean);
+  };
+
+  const getParsedPrepaymentDistributionByFiscalYear = (row, fyCode) => {
+    const exportValue = row?.[CSV_HEADERS.FISCAL_YEAR_DISTRIBUTIONS] || '';
+
+    return parsePrepaymentFiscalYearDistribution(exportValue).filter(
+      (distribution) => distribution.fyCode === fyCode,
+    );
+  };
+
+  const FUND_DISTRIBUTION_VALIDATION_PATH = '**/orders/order-lines/fund-distributions/validate';
+
+  const createBudgetStep = (fundKey, fiscalYearKey, budgetKey, budgetStatus) => (f) => {
     const { [fundKey]: fund, [fiscalYearKey]: fiscalYear, expenseClass } = f.ctx();
 
     return Budgets.createViaApi({
@@ -70,6 +120,7 @@ describe('Orders', () => {
       fiscalYearId: fiscalYear.id,
       fundId: fund.id,
       allocated: 1000,
+      budgetStatus,
     }).then((budget) => Budgets.updateBudgetViaApi({
       ...budget,
       statusExpenseClasses: [
@@ -87,22 +138,25 @@ describe('Orders', () => {
     cy.getAdminToken();
     cy.clearLocalStorage();
 
-    // Precondition 1: "Set purchase order lines limit" is set to more than 1
-    OrderLinesLimit.setPOLLimitViaApi(2);
+    cy.getTenantLocaleApi().then((locale) => flow.set(R.LOCALE, locale));
 
     flow
-      // Precondition 2: Create current FYs
+      // Precondition 1: "Set purchase order lines limit" is set to more than 1
+      .step(() => {
+        return OrderLinesLimit.setPOLLimitViaApi(2);
+      })
+      // Precondition 2: Create a current FY and three future FYs in the same series
       .step((f) => {
         const series = getRandomStringCode(5);
 
-        [R.FY1, R.FY2, R.FY3, R.FY4].forEach((key, index) => {
-          FiscalYears.createViaApi({
+        return cy.wrap([R.FY1, R.FY2, R.FY3, R.FY4]).each((key, index) => {
+          return FiscalYears.createViaApi({
             ...FiscalYears.getDefaultFiscalYear(),
             ...DateTools.getFullFiscalYearStartAndEnd(index),
             code: `${series}${new Date().getFullYear() + index}`,
             series,
           }).then((fy) => {
-            f.set(key, fy, () => FiscalYears.deleteFiscalYearViaApi(fy.id));
+            f.set(key, fy, () => FiscalYears.deleteFiscalYearViaApi(fy.id, false));
           });
         });
       })
@@ -112,6 +166,7 @@ describe('Orders', () => {
         return Ledgers.createViaApi({
           ...Ledgers.getDefaultLedger(),
           fiscalYearOneId: fy1.id,
+          ledgerStatus: LEDGER_STATUSES.ACTIVE,
         }).then((ledger) => {
           f.set(R.LEDGER, ledger, () => Ledgers.deleteLedgerViaApi(ledger.id, false));
         });
@@ -122,6 +177,9 @@ describe('Orders', () => {
         return Funds.createViaApi({
           ...Funds.getDefaultFund(),
           ledgerId: ledger.id,
+          name: `AT_FUND_${R.FUND_A}_${getRandomPostfix()}`,
+          code: `${R.FUND_A}${getRandomPostfix()}`,
+          fundStatus: FUND_STATUSES.ACTIVE,
         }).then((response) => {
           f.set(R.FUND_A, response.fund, () => Funds.deleteFundViaApi(response.fund.id, false));
         });
@@ -131,7 +189,10 @@ describe('Orders', () => {
         const { ledger } = f.ctx();
         return Funds.createViaApi({
           ...Funds.getDefaultFund(),
+          name: `AT_FUND_${R.FUND_B}_${getRandomPostfix()}`,
+          code: `${R.FUND_B}${getRandomPostfix()}`,
           ledgerId: ledger.id,
+          fundStatus: FUND_STATUSES.ACTIVE,
         }).then((response) => {
           f.set(R.FUND_B, response.fund, () => Funds.deleteFundViaApi(response.fund.id, false));
         });
@@ -147,21 +208,21 @@ describe('Orders', () => {
         });
       })
       // Precondition 4: Create budget for Fund A in FY1 with expense class
-      .step(createBudgetStep(R.FUND_A, R.FY1, R.BUDGET_A1))
+      .step(createBudgetStep(R.FUND_A, R.FY1, R.BUDGET_A1, BUDGET_STATUSES.ACTIVE))
       // Precondition 4: Create budget for Fund A in FY2 with expense class
-      .step(createBudgetStep(R.FUND_A, R.FY2, R.BUDGET_A2))
+      .step(createBudgetStep(R.FUND_A, R.FY2, R.BUDGET_A2, BUDGET_STATUSES.PLANNED))
       // Precondition 4: Create budget for Fund A in FY3 with expense class
-      .step(createBudgetStep(R.FUND_A, R.FY3, R.BUDGET_A3))
+      .step(createBudgetStep(R.FUND_A, R.FY3, R.BUDGET_A3, BUDGET_STATUSES.PLANNED))
       // Precondition 4: Create budget for Fund A in FY4
-      .step(createBudgetStep(R.FUND_A, R.FY4, R.BUDGET_A4))
+      .step(createBudgetStep(R.FUND_A, R.FY4, R.BUDGET_A4, BUDGET_STATUSES.PLANNED))
       // Precondition 4: Create budget for Fund B in FY1 with expense class
-      .step(createBudgetStep(R.FUND_B, R.FY1, R.BUDGET_B1))
+      .step(createBudgetStep(R.FUND_B, R.FY1, R.BUDGET_B1, BUDGET_STATUSES.ACTIVE))
       // Precondition 4: Create budget for Fund B in FY2 with expense class
-      .step(createBudgetStep(R.FUND_B, R.FY2, R.BUDGET_B2))
+      .step(createBudgetStep(R.FUND_B, R.FY2, R.BUDGET_B2, BUDGET_STATUSES.PLANNED))
       // Precondition 4: Create budget for Fund B in FY3 with expense class
-      .step(createBudgetStep(R.FUND_B, R.FY3, R.BUDGET_B3))
+      .step(createBudgetStep(R.FUND_B, R.FY3, R.BUDGET_B3, BUDGET_STATUSES.PLANNED))
       // Precondition 4: Create budget for Fund B in FY4
-      .step(createBudgetStep(R.FUND_B, R.FY4, R.BUDGET_B4))
+      .step(createBudgetStep(R.FUND_B, R.FY4, R.BUDGET_B4, BUDGET_STATUSES.PLANNED))
       // Precondition 5: Fetch acquisition method "Other" for POL creation
       .step((f) => {
         return cy
@@ -188,6 +249,7 @@ describe('Orders', () => {
           vendor: org.id,
           orderType: ORDER_TYPES.ONGOING,
           ongoing: { isSubscription: false, manualRenewal: false },
+          workflowStatus: ORDER_STATUSES.PENDING,
         }).then((order) => {
           f.set(R.ORDER, order, () => Orders.deleteOrderViaApi(order.id, false));
         });
@@ -213,7 +275,12 @@ describe('Orders', () => {
               {
                 fiscalYearId: fy1.id,
                 fundDistributions: [
-                  { fundId: fundA.id, distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT, value: 25 },
+                  {
+                    fundId: fundA.id,
+                    distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
+                    value: 25,
+                    expenseClassId: expenseClass.id,
+                  },
                   {
                     fundId: fundB.id,
                     distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
@@ -283,147 +350,314 @@ describe('Orders', () => {
     'C1404903 Create an order with two-year prepayment term starting from the future fiscal year (thunderjet)',
     { tags: ['extendedPath', 'thunderjet', 'C1404903'] },
     () => {
-      const { fy1, fy2, fy3, fy4, fundA, fundB, expenseClass } = flow.ctx();
+      const { fy1, fy2, fy3, fy4, fundA, fundB, expenseClass, locale } = flow.ctx();
+
+      const formatAmount = (value) => NumberTools.formatCurrency(value, locale);
+      const assertEnteredFutureYearDistributions = () => {
+        OrderLineEditForm.assertFiscalYearCardFundDistributions({
+          fyCode: fy2.code,
+          distributions: [
+            {
+              fundName: fundA.name,
+              fundCode: fundA.code,
+              expenseClassName: expenseClass.name,
+              value: 50,
+            },
+          ],
+        });
+        OrderLineEditForm.assertFiscalYearCardFundDistributions({
+          fyCode: fy3.code,
+          distributions: [
+            { fundName: fundA.name, fundCode: fundA.code, value: 10 },
+            { fundName: fundB.name, fundCode: fundB.code, value: 10 },
+          ],
+        });
+      };
+
+      cy.intercept('PUT', FUND_DISTRIBUTION_VALIDATION_PATH).as('validateFD');
 
       cy.log('Step 1. Click on the PO line record; Click "Actions" button; Select "Edit" option');
       OrderDetails.openPolDetails(testData.polTitle);
       OrderLineDetails.openOrderLineEditForm();
-      // Expected: Multi-year prepayment checked; prepayment term = 4; 4 FY cards; trash only on FY4; Add fiscal year inactive
-      OrderLineEditForm.checkPrepaymentTermValue(4);
-      OrderLineEditForm.checkAddFiscalYearButtonDisabled();
+      OrderLineEditForm.assertMultiYearPrepaymentCheckedAndEnabled();
+      OrderLineEditForm.assertPrepaymentTermValue(4);
+      OrderLineEditForm.assertFiscalYearCards([fy1.code, fy2.code, fy3.code, fy4.code]);
+      OrderLineEditForm.assertOnlyFiscalYearCardRemovable(
+        [fy1.code, fy2.code, fy3.code, fy4.code],
+        fy4.code,
+      );
+      OrderLineEditForm.assertFiscalYearCardFundDistributions({
+        fyCode: fy1.code,
+        distributions: [
+          {
+            fundName: fundA.name,
+            fundCode: fundA.code,
+            expenseClassName: expenseClass.name,
+            value: 25,
+          },
+          {
+            fundName: fundB.name,
+            fundCode: fundB.code,
+            expenseClassName: expenseClass.name,
+            value: 25,
+          },
+        ],
+      });
+      OrderLineEditForm.assertFiscalYearCardFundDistributions({
+        fyCode: fy2.code,
+        distributions: [
+          {
+            fundName: fundA.name,
+            fundCode: fundA.code,
+            expenseClassName: expenseClass.name,
+            value: 25,
+          },
+        ],
+      });
+      OrderLineEditForm.assertFiscalYearCardFundDistributions({
+        fyCode: fy3.code,
+        distributions: [{ fundName: fundB.name, fundCode: fundB.code, value: 25 }],
+      });
+      OrderLineEditForm.assertFiscalYearCardFundDistributions({
+        fyCode: fy4.code,
+        distributions: [],
+      });
+      OrderLineEditForm.assertAddFiscalYearButtonDisabled();
 
       cy.log('Step 2. Select the next future fiscal year in the "Starting fiscal year" dropdown');
-      OrderLineEditForm.selectStartingFiscalYear(fy2.name);
-      // Expected: Prepayment term = 2; 2 FY cards (FY2, FY3); trash only on FY3; Add fiscal year active
-      OrderLineEditForm.checkPrepaymentTermValue(2);
-      OrderLineEditForm.checkAddFiscalYearButtonEnabled();
+      OrderLineEditForm.selectStartingFiscalYear(fy2.code);
+      OrderLineEditForm.assertPrepaymentTermValue(2);
+      OrderLineEditForm.assertFiscalYearCards([fy2.code, fy3.code]);
+      OrderLineEditForm.assertOnlyFiscalYearCardRemovable([fy2.code, fy3.code], fy3.code);
+      OrderLineEditForm.assertFiscalYearCardFundDistributions({
+        fyCode: fy2.code,
+        distributions: [],
+      });
+      OrderLineEditForm.assertFiscalYearCardFundDistributions({
+        fyCode: fy3.code,
+        distributions: [],
+      });
+      OrderLineEditForm.assertAddFiscalYearButtonEnabled();
 
       cy.log('Step 3. Click "Add fiscal year" button');
       OrderLineEditForm.clickAddFiscalYearButton();
-      // Expected: Prepayment term = 3; 3 FY cards (FY2, FY3, FY4); trash only on FY4; Add fiscal year inactive
-      OrderLineEditForm.checkPrepaymentTermValue(3);
-      OrderLineEditForm.checkAddFiscalYearButtonDisabled();
+      OrderLineEditForm.assertPrepaymentTermValue(3);
+      OrderLineEditForm.assertFiscalYearCards([fy2.code, fy3.code, fy4.code]);
+      OrderLineEditForm.assertOnlyFiscalYearCardRemovable([fy2.code, fy3.code, fy4.code], fy4.code);
+      [fy2.code, fy3.code, fy4.code].forEach((fyCode) => {
+        OrderLineEditForm.assertFiscalYearCardFundDistributions({
+          fyCode,
+          distributions: [],
+        });
+      });
+      OrderLineEditForm.assertAddFiscalYearButtonDisabled();
 
       cy.log('Step 4. Fill in the Fiscal year cards with fund distribution data');
-      // FY2 card: Fund A (expense class #1) with $50
-      OrderLineEditForm.addFundDistributionInFYCard(fy2.name);
-      OrderLineEditForm.selectFundInFYCard({
-        fyName: fy2.name,
+      // The first card now represents FY2 because the starting fiscal year was shifted in step 2.
+      OrderLineEditForm.addFundDistributionInFYCard(fy2.code);
+      OrderLineEditForm.selectFundInPaymentTermsCard({
+        fyCode: fy2.code,
         fundName: fundA.name,
         fundCode: fundA.code,
-        rowIndex: 0,
       });
       OrderLineEditForm.selectExpenseClassInFYCard({
-        fyName: fy2.name,
+        fyCode: fy2.code,
         expenseClassName: expenseClass.name,
-        rowIndex: 0,
       });
       OrderLineEditForm.fillFundDistributionValueInFYCard({
-        fyName: fy2.name,
+        fyCode: fy2.code,
         value: 50,
-        rowIndex: 0,
       });
 
-      // FY3 card: Fund A and Fund B, each with 25%
-      OrderLineEditForm.addFundDistributionInFYCard(fy3.name);
-      OrderLineEditForm.selectFundInFYCard({
-        fyName: fy3.name,
+      // The second card (FY3) contains Fund A and Fund B, each with $10.
+      OrderLineEditForm.addFundDistributionInFYCard(fy3.code);
+      OrderLineEditForm.selectFundInPaymentTermsCard({
+        fyCode: fy3.code,
         fundName: fundA.name,
         fundCode: fundA.code,
-        rowIndex: 0,
       });
-      OrderLineEditForm.selectDistributionTypePercentInFYCard({ fyName: fy3.name, rowIndex: 0 });
+      cy.wait(1000);
       OrderLineEditForm.fillFundDistributionValueInFYCard({
-        fyName: fy3.name,
-        value: 25,
-        rowIndex: 0,
+        fyCode: fy3.code,
+        value: 10,
       });
-      OrderLineEditForm.addFundDistributionInFYCard(fy3.name);
-      OrderLineEditForm.selectFundInFYCard({
-        fyName: fy3.name,
+
+      OrderLineEditForm.addFundDistributionInFYCard(fy3.code);
+      OrderLineEditForm.selectFundInPaymentTermsCard({
+        fyCode: fy3.code,
         fundName: fundB.name,
         fundCode: fundB.code,
         rowIndex: 1,
       });
-      OrderLineEditForm.selectDistributionTypePercentInFYCard({ fyName: fy3.name, rowIndex: 1 });
+      cy.wait(1000);
       OrderLineEditForm.fillFundDistributionValueInFYCard({
-        fyName: fy3.name,
-        value: 25,
+        fyCode: fy3.code,
+        value: 10,
         rowIndex: 1,
       });
-      // Expected: All three cards populated with entered values
+
+      // The third card (FY4) contains Fund A and Fund B, each with 15%.
+      OrderLineEditForm.addFundDistributionInFYCard(fy4.code);
+      OrderLineEditForm.selectFundInPaymentTermsCard({
+        fyCode: fy4.code,
+        fundName: fundA.name,
+        fundCode: fundA.code,
+      });
+      OrderLineEditForm.selectDistributionTypePercentInFYCard({ fyCode: fy4.code });
+      OrderLineEditForm.fillFundDistributionValueInFYCard({
+        fyCode: fy4.code,
+        value: 15,
+      });
+
+      OrderLineEditForm.addFundDistributionInFYCard(fy4.code);
+      OrderLineEditForm.selectFundInPaymentTermsCard({
+        fyCode: fy4.code,
+        fundName: fundB.name,
+        fundCode: fundB.code,
+        rowIndex: 1,
+      });
+      OrderLineEditForm.selectDistributionTypePercentInFYCard({ fyCode: fy4.code, rowIndex: 1 });
+      OrderLineEditForm.fillFundDistributionValueInFYCard({
+        fyCode: fy4.code,
+        value: 15,
+        rowIndex: 1,
+      });
+      cy.realPress('Tab');
+      cy.wait('@validateFD');
+
+      OrderLineEditForm.assertPrepaymentTermsRemainingAmount(formatAmount(0));
+      assertEnteredFutureYearDistributions();
+      OrderLineEditForm.assertFiscalYearCardFundDistributions({
+        fyCode: fy4.code,
+        distributions: [
+          { fundName: fundA.name, fundCode: fundA.code, value: 15 },
+          { fundName: fundB.name, fundCode: fundB.code, value: 15 },
+        ],
+      });
 
       cy.log('Step 5. Click trash icon next to the Fiscal year 3 card');
       OrderLineEditForm.removeLastFYCard();
-      // Expected: prepayment term = 2; 2 FY cards with entered values; validation messages appear; Add fiscal year active
-      OrderLineEditForm.checkPrepaymentTermValue(2);
-      OrderLineEditForm.checkAddFiscalYearButtonEnabled();
+      cy.wait('@validateFD');
+
+      OrderLineEditForm.assertPrepaymentTermValue(2);
+      OrderLineEditForm.assertFiscalYearCards([fy2.code, fy3.code]);
+      OrderLineEditForm.assertOnlyFiscalYearCardRemovable([fy2.code, fy3.code], fy3.code);
+      assertEnteredFutureYearDistributions();
+      OrderLineEditForm.assertAddFiscalYearButtonEnabled();
+      OrderLineEditForm.assertPrepaymentTermsDistributionError(formatAmount(30));
 
       cy.log('Step 6. Click "Add fiscal year" button');
       OrderLineEditForm.clickAddFiscalYearButton();
-      // Expected: prepayment term = 3; 2 populated FY cards + 1 new FY4; trash only on FY4; Add fiscal year inactive
-      OrderLineEditForm.checkPrepaymentTermValue(3);
-      OrderLineEditForm.checkAddFiscalYearButtonDisabled();
+      OrderLineEditForm.assertPrepaymentTermValue(3);
+      OrderLineEditForm.assertFiscalYearCards([fy2.code, fy3.code, fy4.code]);
+      OrderLineEditForm.assertOnlyFiscalYearCardRemovable([fy2.code, fy3.code, fy4.code], fy4.code);
+      assertEnteredFutureYearDistributions();
+      OrderLineEditForm.assertFiscalYearCardFundDistributions({
+        fyCode: fy4.code,
+        distributions: [],
+      });
+      OrderLineEditForm.assertAddFiscalYearButtonDisabled();
 
       cy.log(
         'Step 7. Fill in Fiscal year 3 card with valid values; Click trash icon next to the Fiscal year 3 card',
       );
-      OrderLineEditForm.addFundDistributionInFYCard(fy4.name);
-      OrderLineEditForm.selectFundInFYCard({
-        fyName: fy4.name,
+      OrderLineEditForm.addFundDistributionInFYCard(fy4.code);
+      OrderLineEditForm.selectFundInPaymentTermsCard({
+        fyCode: fy4.code,
         fundName: fundA.name,
         fundCode: fundA.code,
         rowIndex: 0,
       });
+      cy.wait(1000);
       OrderLineEditForm.fillFundDistributionValueInFYCard({
-        fyName: fy4.name,
-        value: 25,
+        fyCode: fy4.code,
+        value: 30,
         rowIndex: 0,
       });
+      cy.realPress('Tab');
+      cy.wait('@validateFD');
+
+      OrderLineEditForm.assertPrepaymentTermsRemainingAmount(formatAmount(0));
+
       OrderLineEditForm.removeLastFYCard();
-      // Expected: prepayment term = 2; 2 FY cards with entered values; Add fiscal year active
-      OrderLineEditForm.checkPrepaymentTermValue(2);
-      OrderLineEditForm.checkAddFiscalYearButtonEnabled();
+
+      OrderLineEditForm.assertPrepaymentTermValue(2);
+      OrderLineEditForm.assertFiscalYearCards([fy2.code, fy3.code]);
+      OrderLineEditForm.assertOnlyFiscalYearCardRemovable([fy2.code, fy3.code], fy3.code);
+      assertEnteredFutureYearDistributions();
+      OrderLineEditForm.assertAddFiscalYearButtonEnabled();
 
       cy.log(
         'Step 8. Add Fund A with expense class in the "Fund distribution" accordion; Change value to 80 in the Fiscal year 1 card; Click "Save & close" button',
       );
+      OrderLineEditForm.scrollToFundDistributionSection();
       OrderLineEditForm.clickAddFundDistributionButton();
       OrderLineEditForm.expandFundIdDropdown(0);
       OrderLineEditForm.selectFundFromOpenDropdown(fundA.name, fundA.code);
       OrderLineEditForm.selectExpenseClass(expenseClass.name, 0);
-      OrderLineEditForm.setFundDistributionValue(100, 0);
       OrderLineEditForm.fillFundDistributionValueInFYCard({
-        fyName: fy2.name,
+        fyCode: fy2.code,
         value: 80,
         rowIndex: 0,
       });
+      cy.realPress('Tab');
+      cy.wait('@validateFD');
+
       OrderLineEditForm.clickSaveButton({ orderLineCreated: false, orderLineUpdated: true });
-      // Expected: PO Line details; "successfully updated"; Fund A in Fund distribution; 2 FY cards (FY2, FY3) with entered values
       OrderLineDetails.waitLoading();
+
+      OrderLineDetails.checkFundDistibutionTableContent([
+        { name: fundA.name, expenseClass: expenseClass.name },
+      ]);
+      OrderLineDetails.assertPaymentTerms({
+        totalPrice: formatAmount(100),
+        prepaymentTerm: 2,
+        startingFiscalYear: fy2.code,
+        distributions: [
+          {
+            fyCode: fy2.code,
+            rows: [
+              {
+                fundName: fundA.name,
+                expenseClass: expenseClass.name,
+                value: '80',
+                amount: formatAmount(80),
+              },
+            ],
+          },
+          {
+            fyCode: fy3.code,
+            rows: [
+              { fundName: fundA.name, value: '10', amount: formatAmount(10) },
+              { fundName: fundB.name, value: '10', amount: formatAmount(10) },
+            ],
+          },
+        ],
+      });
 
       cy.log(
         'Step 9. Click left back arrow; Click "Actions" button in "PO lines" accordion; Select "Add PO line" option',
       );
       OrderLineDetails.backToOrderDetails();
       OrderDetails.selectAddPOLine();
-      // Expected: Add PO line page displayed
+      OrderLineEditForm.waitLoading();
 
       cy.log(
         'Step 10. Check "Multi-year prepayment" checkbox; Fill in required fields; Select current FY in "Starting fiscal year" dropdown; Remove all FY cards; Click "Save & close" button',
       );
       OrderLineEditForm.enableMultiYearPrepayment();
-      OrderLineEditForm.fillItemDetailsTitle({ instanceTitle: `AT_POL2_${getRandomPostfix()}` });
+      OrderLineEditForm.fillItemDetails({ title: testData.secondPolTitle });
       OrderLineEditForm.fillPoLineDetails({
         acquisitionMethod: ACQUISITION_METHOD_NAMES_IN_PROFILE.OTHER,
         orderFormat: ORDER_FORMAT_VALUES.OTHER,
       });
       OrderLineEditForm.fillCostDetails({ physicalUnitPrice: '100', quantityPhysical: '1' });
-      OrderLineEditForm.selectStartingFiscalYear(fy1.name);
+      OrderLineEditForm.fillPrepaymentTotalPrice(100);
+      OrderLineEditForm.selectStartingFiscalYear(fy1.code);
       OrderLineEditForm.removeLastFYCard();
       OrderLineEditForm.removeLastFYCard();
-      OrderLineEditForm.clickSaveButton({ orderLineCreated: true, orderLineUpdated: false });
-      // Expected: Validation error "At least 2 fiscal years must be specified for multi-year prepayment"
+      OrderLineEditForm.clickSaveButton({ orderLineUpdated: false });
+      OrderLineEditForm.waitLoading();
       OrderLineEditForm.checkAtLeastTwoFYsValidationError();
 
       cy.log(
@@ -431,27 +665,52 @@ describe('Orders', () => {
       );
       OrderLineEditForm.clickAddFiscalYearButton();
       OrderLineEditForm.clickAddFiscalYearButton();
-      OrderLineEditForm.addFundDistributionInFYCard(fy1.name);
-      OrderLineEditForm.selectFundInFYCard({
-        fyName: fy1.name,
+      OrderLineEditForm.addFundDistributionInFYCard(fy1.code);
+      OrderLineEditForm.selectFundInPaymentTermsCard({
+        fyCode: fy1.code,
         fundName: fundA.name,
         fundCode: fundA.code,
-        rowIndex: 0,
       });
       OrderLineEditForm.selectExpenseClassInFYCard({
-        fyName: fy1.name,
+        fyCode: fy1.code,
         expenseClassName: expenseClass.name,
-        rowIndex: 0,
       });
-      OrderLineEditForm.selectDistributionTypePercentInFYCard({ fyName: fy1.name, rowIndex: 0 });
-      OrderLineEditForm.fillFundDistributionValueInFYCard({
-        fyName: fy1.name,
-        value: 100,
-        rowIndex: 0,
+      OrderLineEditForm.selectDistributionTypePercentInFYCard({ fyCode: fy1.code });
+
+      OrderLineEditForm.assertFiscalYearCardFundDistributions({
+        fyCode: fy1.code,
+        distributions: [
+          {
+            fundName: fundA.name,
+            fundCode: fundA.code,
+            expenseClassName: expenseClass.name,
+            value: 100,
+          },
+        ],
       });
+
       OrderLineEditForm.clickSaveButton({ orderLineCreated: true, orderLineUpdated: false });
-      // Expected: PO Line details; "successfully created"; Fund A in Fund distribution; 2 FY cards with values for FY1; FY2 shows "no items"
       OrderLineDetails.waitLoading();
+
+      OrderLineDetails.assertPaymentTerms({
+        totalPrice: formatAmount(100),
+        prepaymentTerm: 2,
+        startingFiscalYear: fy1.code,
+        distributions: [
+          {
+            fyCode: fy1.code,
+            rows: [
+              {
+                fundName: fundA.name,
+                expenseClass: expenseClass.name,
+                value: '100%',
+                amount: formatAmount(100),
+              },
+            ],
+          },
+          { fyCode: fy2.code, rows: [] },
+        ],
+      });
 
       cy.log(
         'Step 12. Click "Actions" button on the "Orders" pane; Select "Export results (CSV)" option; Leave "All" selected; Click "Export" button',
@@ -460,16 +719,79 @@ describe('Orders', () => {
       OrderDetails.closeOrderDetails();
       Orders.waitLoading();
       Orders.exportResultsToCsv();
-      // Expected: Export started; .csv file downloaded
 
       cy.log('Step 13. Open downloaded .csv file');
-      // Expected: File contains multi-year prepayment data for both PO lines
       FileManager.convertCsvToJson(testData.csvFileName).then((data) => {
-        const headers = Object.keys(data[0] || {});
-        expect(headers.some((h) => h.includes('Multi-year prepayment'))).to.equal(true);
-        expect(headers.some((h) => h.includes('Prepayment term'))).to.equal(true);
-        expect(headers.some((h) => h.includes('Prepayment starting fiscal year'))).to.equal(true);
-        expect(headers.some((h) => h.includes('Prepayment total price'))).to.equal(true);
+        const firstPoLine = data.find((row) => row[CSV_HEADERS.STARTING_FISCAL_YEAR] === fy2.code);
+        const secondPoLine = data.find((row) => row[CSV_HEADERS.STARTING_FISCAL_YEAR] === fy1.code);
+        const firstFyDistributions = getParsedPrepaymentDistributionByFiscalYear(
+          firstPoLine,
+          fy2.code,
+        );
+        const firstFy3Distributions = getParsedPrepaymentDistributionByFiscalYear(
+          firstPoLine,
+          fy3.code,
+        );
+        const secondFyDistributions = getParsedPrepaymentDistributionByFiscalYear(
+          secondPoLine,
+          fy1.code,
+        );
+
+        // The Orders search from precondition 7 remains applied, so the export must contain
+        // exactly the two PO lines of this order. Their different starting FYs identify them.
+        expect(data).to.have.length(2);
+        expect(firstPoLine).to.not.equal(null);
+        expect(secondPoLine).to.not.equal(null);
+
+        [firstPoLine, secondPoLine].forEach((row) => {
+          expect(String(row[CSV_HEADERS.MULTI_YEAR_PREPAYMENT]).toLowerCase()).to.equal('true');
+          expect(String(row[CSV_HEADERS.PREPAYMENT_TERM])).to.equal('2');
+          expect(String(row[CSV_HEADERS.TOTAL_PRICE])).to.equal('100');
+        });
+
+        expect(firstPoLine[CSV_HEADERS.STARTING_FISCAL_YEAR]).to.equal(fy2.code);
+        expect(firstFyDistributions).to.deep.equal([
+          {
+            fyCode: fy2.code,
+            fundCode: fundA.code,
+            expenseClass: expenseClass.name,
+            value: '80',
+            distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
+            amount: '80',
+          },
+        ]);
+        expect(firstFy3Distributions).to.deep.equal([
+          {
+            fyCode: fy3.code,
+            fundCode: fundA.code,
+            expenseClass: expenseClass.name,
+            value: '10',
+            distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
+            amount: '10',
+          },
+          {
+            fyCode: fy3.code,
+            fundCode: fundB.code,
+            expenseClass: expenseClass.name,
+            value: '10',
+            distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
+            amount: '10',
+          },
+        ]);
+        expect(firstPoLine[CSV_HEADERS.FISCAL_YEAR_DISTRIBUTIONS]).to.not.include(fy4.code);
+
+        expect(secondPoLine[CSV_HEADERS.STARTING_FISCAL_YEAR]).to.equal(fy1.code);
+        expect(secondFyDistributions).to.deep.equal([
+          {
+            fyCode: fy1.code,
+            fundCode: fundA.code,
+            expenseClass: expenseClass.name,
+            value: '100',
+            distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
+            amount: '100',
+          },
+        ]);
+        expect(secondPoLine[CSV_HEADERS.FISCAL_YEAR_DISTRIBUTIONS]).to.not.include(fy2.code);
       });
     },
   );
