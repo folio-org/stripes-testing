@@ -1,19 +1,15 @@
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  BUDGET_DETAIL_FIELDS,
-  BUDGET_STATUSES,
-  FINANCIAL_ACTIVITY_OVERRAGES,
+  EXPORT_BUDGET_FIELDS,
   FUND_DISTRIBUTION_TYPES,
-  FUNDING_INFORMATION_NAMES,
   INVOICE_STATUSES,
   LEDGER_ROLLOVER_BUDGET_VALUE_LABELS,
+  LEDGER_ROLLOVER_ENCUMBRANCE_BASE_LABELS,
   LEDGER_ROLLOVER_SOURCE_LABELS,
   LEDGER_ROLLOVER_STATUS_LABELS,
   LEDGER_ROLLOVER_TYPES,
   ORDER_STATUSES,
-  ROLLOVER_BUDGET_VALUE_AS,
-  ROLLOVER_RESULT_CSV_HEADERS,
-} from '../../../support/constants';
+} from '../../../../support/constants';
 import {
   Budgets,
   FinanceHelper,
@@ -25,21 +21,22 @@ import {
   LedgerRolloverInProgress,
   LedgerRollovers,
   Ledgers,
-} from '../../../support/fragments/finance';
-import { Invoices } from '../../../support/fragments/invoices';
-import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
-import { CodeTools, DateTools, NumberTools, StringTools } from '../../../support/utils';
-import FileManager from '../../../support/utils/fileManager';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
-import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
+} from '../../../../support/fragments/finance';
+import { Invoices } from '../../../../support/fragments/invoices';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../../support/fragments/orders';
+import { CodeTools, DateTools, StringTools } from '../../../../support/utils';
+import FileManager from '../../../../support/utils/fileManager';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import { NewOrganization, Organizations } from '../../../../support/fragments/organizations';
+import Permissions from '../../../../support/dictionary/permissions';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
 
 describe('Finance', () => {
   describe('Fiscal Year Rollover', () => {
     const code = CodeTools(4);
-    const allocatedAmount = 100;
+    const polTotalAmount = 50;
+    const paidAmount = 30;
     const resultFileName = `${DateTools.getCurrentDateForFileNaming()}-result.csv`;
     const resultsColumnValue = `${DateTools.getCurrentDate()}-result`;
 
@@ -60,16 +57,15 @@ describe('Finance', () => {
         },
       },
       ledger: {},
-      fund: {},
-      budget: {},
+      fundA: {},
+      budgetA: {},
+      fundB: {},
+      budgetB: {},
       acquisitionMethodId: null,
-      order1: {},
-      order2: {},
-      orderLine1: {},
-      orderLine2: {},
+      order: {},
+      orderLine: {},
       invoice: {},
       user: {},
-      locale: 'en-US',
     };
 
     const createFiscalYear = (fiscalYearKey) => {
@@ -91,20 +87,20 @@ describe('Finance', () => {
       });
     };
 
-    const createFundWithBudget = () => {
+    const createFundWithBudget = (fundKey, budgetKey) => {
       return Funds.createViaApi({
         ...Funds.getDefaultFund(),
         ledgerId: testData.ledger.id,
       }).then((fundResponse) => {
-        testData.fund = fundResponse.fund;
+        testData[fundKey] = fundResponse.fund;
 
         return Budgets.createViaApi({
           ...Budgets.getDefaultBudget(),
           fiscalYearId: testData.fiscalYears.first.id,
-          fundId: testData.fund.id,
-          allocated: allocatedAmount,
+          fundId: testData[fundKey].id,
+          allocated: 1000,
         }).then((budget) => {
-          testData.budget = budget;
+          testData[budgetKey] = budget;
         });
       });
     };
@@ -125,22 +121,25 @@ describe('Finance', () => {
         });
     };
 
-    const createOpenOrderWithLine = (orderKey, orderLineKey, order, price) => {
-      return Orders.createOrderViaApi({ ...order, reEncumber: true })
-        .then((orderResponse) => {
-          testData[orderKey] = orderResponse;
+    const createOrderWithLine = () => {
+      return Orders.createOrderViaApi({
+        ...NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
+        reEncumber: true,
+      })
+        .then((order) => {
+          testData.order = order;
 
           return OrderLines.createOrderLineViaApi(
             BasicOrderLine.getDefaultOrderLine({
               acquisitionMethod: testData.acquisitionMethodId,
-              purchaseOrderId: testData[orderKey].id,
-              title: `AT_C376611_${orderLineKey}_${getRandomPostfix()}`,
-              listUnitPrice: price,
-              poLineEstimatedPrice: price,
+              purchaseOrderId: testData.order.id,
+              title: `AT_C375266_OrderLine_${getRandomPostfix()}`,
+              listUnitPrice: polTotalAmount,
+              poLineEstimatedPrice: polTotalAmount,
               fundDistribution: [
                 {
-                  code: testData.fund.code,
-                  fundId: testData.fund.id,
+                  code: testData.fundA.code,
+                  fundId: testData.fundA.id,
                   distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
                   value: 100,
                 },
@@ -149,66 +148,67 @@ describe('Finance', () => {
           );
         })
         .then((orderLine) => {
-          testData[orderLineKey] = orderLine;
+          testData.orderLine = orderLine;
 
           return Orders.updateOrderViaApi({
-            ...testData[orderKey],
+            ...testData.order,
             workflowStatus: ORDER_STATUSES.OPEN,
           });
-        })
-        .then(() => {
-          return OrderLines.getOrderLineByIdViaApi(testData[orderLineKey].id);
-        })
-        .then((orderLine) => {
-          testData[orderLineKey] = orderLine;
         });
     };
 
-    const createOneTimeOrder = () => {
-      return createOpenOrderWithLine(
-        'order1',
-        'orderLine1',
-        NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
-        40,
-      );
-    };
-
-    const createOngoingOrder = () => {
-      return createOpenOrderWithLine(
-        'order2',
-        'orderLine2',
-        NewOrder.getDefaultOngoingOrder({
-          vendorId: testData.organization.id,
-          ongoing: { isSubscription: false, manualRenewal: false },
-        }),
-        10,
-      );
-    };
-
     const createAndPayInvoice = () => {
-      return cy
-        .getBatchGroups()
-        .then((batchGroup) => {
-          return Invoices.createInvoiceWithInvoiceLineViaApi({
+      return OrderLines.getOrderLineByIdViaApi(testData.orderLine.id)
+        .then((orderLine) => {
+          testData.orderLine = orderLine;
+
+          return Invoices.createInvoiceViaApi({
             vendorId: testData.organization.id,
             accountingCode: testData.organization.erpCode,
-            poLineId: testData.orderLine1.id,
             fiscalYearId: testData.fiscalYears.first.id,
-            batchGroupId: batchGroup.id,
-            fundDistributions: testData.orderLine1.fundDistribution,
-            subTotal: testData.orderLine1.cost.poLineEstimatedPrice,
-            releaseEncumbrance: true,
+            invoiceStatus: INVOICE_STATUSES.OPEN,
             exportToAccounting: true,
           });
         })
         .then((invoice) => {
           testData.invoice = invoice;
 
+          return Invoices.createInvoiceLineViaApi(
+            Invoices.getDefaultInvoiceLine({
+              invoiceId: invoice.id,
+              invoiceLineStatus: invoice.status,
+              poLineId: testData.orderLine.id,
+              fundDistributions: testData.orderLine.fundDistribution,
+              accountingCode: testData.organization.erpCode,
+              subTotal: paidAmount,
+              releaseEncumbrance: true,
+            }),
+          );
+        })
+        .then(() => {
           return Invoices.changeInvoiceStatusViaApi({
             invoice: testData.invoice,
             status: INVOICE_STATUSES.PAID,
           });
         });
+    };
+
+    const changeFundInOrderLine = () => {
+      return OrderLines.getOrderLineByIdViaApi(testData.orderLine.id).then((orderLine) => {
+        testData.orderLine = orderLine;
+
+        return OrderLines.updateOrderLineViaApi({
+          ...testData.orderLine,
+          fundDistribution: [
+            {
+              code: testData.fundB.code,
+              fundId: testData.fundB.id,
+              distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
+              value: 100,
+            },
+          ],
+        });
+      });
     };
 
     const createUserAndLogin = () => {
@@ -219,7 +219,7 @@ describe('Finance', () => {
           Permissions.uiFinanceViewFundAndBudget.gui,
           Permissions.uiFinanceViewLedger.gui,
           Permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
-          Permissions.uiOrdersView.gui,
+          Permissions.uiOrdersEdit.gui,
         ])
         .then((userProperties) => {
           testData.user = userProperties;
@@ -234,18 +234,16 @@ describe('Finance', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
-      cy.getTenantLocaleApi().then((locale) => {
-        testData.locale = locale;
-      });
 
       createConsecutiveFiscalYears()
         .then(createLedger)
-        .then(createFundWithBudget)
+        .then(() => createFundWithBudget('fundA', 'budgetA'))
+        .then(() => createFundWithBudget('fundB', 'budgetB'))
         .then(createOrganization)
         .then(getAcquisitionMethodId)
-        .then(createOneTimeOrder)
+        .then(createOrderWithLine)
         .then(createAndPayInvoice)
-        .then(createOngoingOrder)
+        .then(changeFundInOrderLine)
         .then(createUserAndLogin);
     });
 
@@ -258,21 +256,18 @@ describe('Finance', () => {
     });
 
     it(
-      'C376611 Rollover allocation with "None" option selected in "Rollover budget value" dropdown (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'C376611'] },
+      'C375266 Irrelevant encumbrances are not rolled over when order fund distribution was changed and related paid invoice exists (based on Expended) (thunderjet)',
+      { tags: ['extendedPath', 'thunderjet', 'C375266', 'nonParallel'] },
       () => {
-        const format = (value) => NumberTools.formatCurrency(value, testData.locale);
         const rolloverFields = {
           fiscalYear: testData.fiscalYears.second.code,
           rolloverBudgets: [
-            {
-              checked: true,
-              rolloverBudget: LEDGER_ROLLOVER_BUDGET_VALUE_LABELS.NONE,
-              rolloverValue: ROLLOVER_BUDGET_VALUE_AS.ALLOCATION,
-            },
+            { checked: true, rolloverBudget: LEDGER_ROLLOVER_BUDGET_VALUE_LABELS.NONE },
           ],
+          rolloverEncumbrance: {
+            oneTime: { checked: true, basedOn: LEDGER_ROLLOVER_ENCUMBRANCE_BASE_LABELS.EXPENDED },
+          },
         };
-
         // Step 1: Open ledger details pane
         Ledgers.selectLedger(testData.ledger.name);
 
@@ -296,36 +291,24 @@ describe('Finance', () => {
         });
 
         // Step 8: Export test rollover result
-        FileManager.deleteFile(`${Cypress.config('downloadsFolder')}/${resultFileName}`);
         LedgerRollovers.exportRolloverResult();
 
-        // Step 9: Check "<mm_dd_yyyy>-result.csv" file content
+        // Steps 9-10: Check "<mm_dd_yyyy>-result.csv" file content for both funds
         Ledgers.checkRolloverResultCsvContent({
           fileName: resultFileName,
           funds: [
             {
-              name: testData.fund.name,
-              columns: {
-                [ROLLOVER_RESULT_CSV_HEADERS.INITIAL_ALLOCATION]: 100,
-                [ROLLOVER_RESULT_CSV_HEADERS.ALLOCATED_INCREASE]: 0,
-                [ROLLOVER_RESULT_CSV_HEADERS.ALLOCATED_DECREASE]: 0,
-                [ROLLOVER_RESULT_CSV_HEADERS.TOTAL_ALLOCATED]: 100,
-                [ROLLOVER_RESULT_CSV_HEADERS.TRANSFERS]: 0,
-                [ROLLOVER_RESULT_CSV_HEADERS.TOTAL_FUNDING]: 100,
-                [ROLLOVER_RESULT_CSV_HEADERS.BUDGET_ENCUMBERED]: 0,
-                [ROLLOVER_RESULT_CSV_HEADERS.AWAITING_PAYMENT]: 0,
-                [ROLLOVER_RESULT_CSV_HEADERS.EXPENDED]: 0,
-                [ROLLOVER_RESULT_CSV_HEADERS.UNAVAILABLE]: 0,
-                [ROLLOVER_RESULT_CSV_HEADERS.OVER_ENCUMBERED]: 0,
-                [ROLLOVER_RESULT_CSV_HEADERS.OVER_EXPENDED]: 0,
-                [ROLLOVER_RESULT_CSV_HEADERS.CASH_BALANCE]: 100,
-                [ROLLOVER_RESULT_CSV_HEADERS.AVAILABLE]: 100,
-              },
+              name: testData.fundA.name,
+              columns: { [EXPORT_BUDGET_FIELDS.BUDGET_ENCUMBERED]: 0 },
+            },
+            {
+              name: testData.fundB.name,
+              columns: { [EXPORT_BUDGET_FIELDS.BUDGET_ENCUMBERED]: paidAmount },
             },
           ],
         });
 
-        // Steps 10-11: Go back to ledger and fill in the same rollover settings
+        // Steps 11-12: Open rollover form and fill in the same rollover settings
         Ledgers.closeOpenedPage();
         FinanceHelper.selectLedgersNavigation();
         Ledgers.searchByName(testData.ledger.name);
@@ -333,44 +316,37 @@ describe('Finance', () => {
         LedgerDetails.openLedgerRolloverEditForm();
         LedgerRolloverDetails.fillLedgerRolloverFields(rolloverFields);
 
-        // Steps 12-14: Execute rollover
+        // Steps 13-15: Execute rollover
         LedgerRolloverDetails.clickRolloverButton();
         LedgerRolloverInProgress.checkLedgerRolloverInProgressDetails();
 
-        // Step 15: Click "Close & view ledger details" button
+        // Step 16: Click "Close & view ledger details" button
         LedgerRolloverInProgress.clickCloseAndViewLedgerButton();
 
-        // Step 16: Check planned budget of the fund
-        LedgerDetails.openFundDetails(testData.fund.name);
+        // Step 17: Check "Fund A" planned budget
+        LedgerDetails.openFundDetails(testData.fundA.name);
         FundDetails.checkFundDetails({
           plannedBudgets: [
             {
-              name: `${testData.fund.code}-${testData.fiscalYears.second.code}`,
-              allocated: format(allocatedAmount),
-              unavailable: format(0),
-              available: format(allocatedAmount),
+              name: `${testData.fundA.code}-${testData.fiscalYears.second.code}`,
+              unavailable: '$0.00',
             },
           ],
         });
 
-        // Steps 17-19: Check planned budget details
-        FundDetails.openPlannedBudgetDetails().checkBudgetDetails({
-          information: [{ key: BUDGET_DETAIL_FIELDS.BUDGET_STATUS, value: BUDGET_STATUSES.ACTIVE }],
-          summary: [
-            { key: FUNDING_INFORMATION_NAMES.INITIAL_ALLOCATION, value: format(allocatedAmount) },
-            { key: FUNDING_INFORMATION_NAMES.INCREASE_IN_ALLOCATION, value: format(0) },
-            { key: FUNDING_INFORMATION_NAMES.DECREASE_IN_ALLOCATION, value: format(0) },
-            { key: FUNDING_INFORMATION_NAMES.TOTAL_ALLOCATED, value: format(allocatedAmount) },
-            { key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS, value: format(0) },
-            { key: FUNDING_INFORMATION_NAMES.TOTAL_FUNDING, value: format(allocatedAmount) },
-            { key: FINANCIAL_ACTIVITY_OVERRAGES.ENCUMBERED, value: format(0) },
-            { key: FINANCIAL_ACTIVITY_OVERRAGES.AWAITING_PAYMENT, value: format(0) },
-            { key: FINANCIAL_ACTIVITY_OVERRAGES.EXPENDED, value: format(0) },
-            { key: FINANCIAL_ACTIVITY_OVERRAGES.UNAVAILABLE, value: format(0) },
-            { key: FINANCIAL_ACTIVITY_OVERRAGES.OVER_ENCUMBRANCE, value: format(0) },
-            { key: FINANCIAL_ACTIVITY_OVERRAGES.OVER_EXPENDED, value: format(0) },
+        // Steps 18-19: Check "Fund B" planned budget
+        FinanceHelper.selectLedgersNavigation();
+        Ledgers.searchByName(testData.ledger.name);
+        Ledgers.selectLedgerAfterRollover(testData.ledger.name);
+        LedgerRolloverInProgress.clickCloseAndViewLedgerButton();
+        LedgerDetails.openFundDetails(testData.fundB.name);
+        FundDetails.checkFundDetails({
+          plannedBudgets: [
+            {
+              name: `${testData.fundB.code}-${testData.fiscalYears.second.code}`,
+              unavailable: `$${paidAmount}.00`,
+            },
           ],
-          balance: { cash: format(allocatedAmount), available: format(allocatedAmount) },
         });
       },
     );

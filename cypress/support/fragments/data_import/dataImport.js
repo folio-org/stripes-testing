@@ -247,10 +247,31 @@ export default {
     });
   },
 
-  // Removes every occurrence of the given field tag from every record in a (possibly multi-record)
-  // ".mrc" file, correctly rebuilding each record's leader and directory (unlike a plain text
-  // replace, which cannot keep those in sync once a field's byte length/position changes)
-  removeMarcFieldFromAllRecords(inputFileName, outputFileName, fieldTag) {
+  // Adds, edits, and removes MARC fields in every record of a (possibly multi-record) ".mrc" file,
+  // using marcjs to keep the leader/directory correctly in sync - a plain text edit (editMarcFile)
+  // cannot do this once a field's byte length changes, e.g. when a field is added or removed.
+  // Field specs use the same { tag, indicators, content } shape as cy.createMarcAuthorityViaAPI /
+  // cy.createMarcBibliographicViaAPI ('\\' = blank indicator, content = "$a foo $b bar"); omit
+  // `indicators` for a control field (e.g. tag '001').
+  //  - addFields: [{ tag, indicators, content }] - appended to every record
+  //  - removeTags: ['670', '953'] - every field with one of these tags is removed
+  //  - editFields: [{ tag, content, indicators, occurrence = 0 }] - replaces the content (and, if
+  //    given, the indicators) of the Nth (0-based) existing field with that tag; indicators are
+  //    left as-is when not provided
+  editMarcFieldsInAllRecords(
+    inputFileName,
+    outputFileName,
+    { addFields = [], removeTags = [], editFields = [] } = {},
+  ) {
+    const toMarcIndicator = (indicator) => (indicator === '\\' ? ' ' : indicator);
+    const parseSubfields = (content) => content
+      .split(/\$(?=\S)/)
+      .filter(Boolean)
+      .flatMap((part) => [part[0], part.slice(1).trim()]);
+    const toMarcField = ({ tag, content, indicators }) => (indicators
+      ? [tag, indicators.map(toMarcIndicator).join(''), ...parseSubfields(content)]
+      : [tag, content]);
+
     return FileManager.readFile(`cypress/fixtures/${inputFileName}`).then((fileContent) => {
       const readable = new Readable();
       readable.push(Buffer.from(fileContent, 'utf8'));
@@ -261,7 +282,27 @@ export default {
 
       return new Promise((resolve, reject) => {
         reader.on('data', (record) => {
-          record.fields = record.fields.filter((field) => field[0] !== fieldTag);
+          record.fields = record.fields.filter((field) => !removeTags.includes(field[0]));
+
+          editFields.forEach(({ tag, content, indicators, occurrence = 0 }) => {
+            const matchingIndexes = record.fields
+              .map((field, index) => (field[0] === tag ? index : -1))
+              .filter((index) => index !== -1);
+            const targetIndex = matchingIndexes[occurrence];
+            if (targetIndex === undefined) return;
+
+            const existingField = record.fields[targetIndex];
+            const existingIndicators =
+              existingField.length > 2 ? [existingField[1][0], existingField[1][1]] : undefined;
+            record.fields[targetIndex] = toMarcField({
+              tag,
+              content,
+              indicators: indicators || existingIndicators,
+            });
+          });
+
+          addFields.forEach((field) => record.append(toMarcField(field)));
+
           updatedRecords.push(record.as('iso2709'));
         });
         reader.on('error', reject);

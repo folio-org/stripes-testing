@@ -59,10 +59,11 @@ const itemDetailsFields = {
   subscriptionTo: itemDetailsSection.find(TextField({ name: 'details.subscriptionTo' })),
 };
 
-const orderLineFields = {
+export const orderLineFields = {
   acquisitionMethod: orderLineDetailsSection.find(Selection({ name: 'acquisitionMethod' })),
   orderFormat: orderLineDetailsSection.find(Select({ name: 'orderFormat' })),
   receiptStatus: orderLineDetailsSection.find(Select({ name: 'receiptStatus' })),
+  checkinItems: orderLineDetailsSection.find(Select({ name: 'checkinItems' })),
   paymentStatus: orderLineDetailsSection.find(Select({ name: 'paymentStatus' })),
   claimingActive: orderLineDetailsSection.find(Checkbox({ name: 'claimingActive' })),
   claimingInterval: orderLineDetailsSection.find(TextField({ name: 'claimingInterval' })),
@@ -90,6 +91,12 @@ const costDetailsFields = {
   calculatedTotalAmount: costDetailsSection.find(KeyValue('Calculated total amount (Exchanged)')),
 };
 
+const fundDistributionFields = {
+  expenseClass: (index = 0) => fundDistributionDetailsSection
+    .find(RepeatableFieldItem({ index }))
+    .find(Selection(including('Expense class'))),
+};
+
 const buttons = {
   [COMMON_BUTTON_LABELS.CANCEL]: cancelButton,
   [COMMON_BUTTON_LABELS.SAVE_AND_CLOSE]: saveButton,
@@ -100,6 +107,7 @@ const buttons = {
 const requiredFields = [
   { fieldName: POLINE_DETAILS_FIELDS.ORDER_FORMAT, field: orderLineFields.orderFormat },
   { fieldName: POLINE_DETAILS_FIELDS.ACQUISITION_METHOD, field: orderLineFields.acquisitionMethod },
+  { fieldName: POLINE_DETAILS_FIELDS.EXPENSE_CLASS, field: fundDistributionFields.expenseClass() },
 ];
 const disabledButtons = {
   Title: itemDetailsFields.title,
@@ -354,6 +362,10 @@ export default {
     );
     cy.wait(1000);
   },
+  expandExpenseClassDropdown(index = 0) {
+    cy.do(fundDistributionFields.expenseClass(index).open());
+    cy.wait(1000);
+  },
   verifyFundInDropdown(fundName, fundCode, isPresent = true) {
     const fundOption = SelectionOption(`${fundName} (${fundCode})`);
     if (isPresent) {
@@ -583,5 +595,13 @@ export default {
 
   checkAccountNumberSelected(value) {
     cy.expect(vendorDetailsFields.accountNumber.has({ checkedOptionText: including(value) }));
+  },
+
+  selectBlankAccountNumber() {
+    cy.do(vendorDetailsFields.accountNumber.choose(''));
+  },
+
+  checkAccountNumberIsBlank() {
+    cy.expect(vendorDetailsFields.accountNumber.has({ checkedOptionText: ' ' }));
   },
 };

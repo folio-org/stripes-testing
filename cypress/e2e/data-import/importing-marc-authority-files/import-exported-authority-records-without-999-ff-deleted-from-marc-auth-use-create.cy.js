@@ -90,7 +90,9 @@ describe('Data Import', () => {
         })
         .then(() => {
           // Remove "999" field from each record in the exported file
-          return DataImport.removeMarcFieldFromAllRecords(exportedMarcFile, reimportFile, '999');
+          return DataImport.editMarcFieldsInAllRecords(exportedMarcFile, reimportFile, {
+            removeTags: ['999'],
+          });
         })
         .then(() => {
           // Delete the exported authority records via API
