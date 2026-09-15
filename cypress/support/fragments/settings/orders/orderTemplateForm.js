@@ -1,18 +1,29 @@
 import {
   Accordion,
+  AcqFundDistribution,
   Button,
+  Card,
   Checkbox,
   Form,
+  including,
+  RepeatableFieldItem,
   Section,
   Select,
   Selection,
+  SelectionList,
   SelectionOption,
   TextArea,
   TextField,
 } from '../../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  ORDER_LINE_FORM_LABELS,
+} from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import SearchHelper from '../../finance/financeHelper';
+
+const LOCATION_FIELD_ID_PREFIX = 'field-locations';
 
 const orderTemplateForm = Form({ id: 'order-template-form' });
 const orderTemplateInfoSection = orderTemplateForm.find(Section({ id: 'templateInfo' }));
@@ -178,5 +189,53 @@ export default {
     if (templateCreated) {
       InteractorsTools.checkCalloutMessage('The template was saved');
     }
+  },
+
+  clickAddLocationButton() {
+    cy.do(
+      orderTemplateLocationDetailsSection.find(Button(ORDER_LINE_FORM_LABELS.ADD_LOCATION)).click(),
+    );
+  },
+
+  expandLocationNameCodeDropdown(index = 0) {
+    cy.do(Button({ id: `${LOCATION_FIELD_ID_PREFIX}[${index}].locationId` }).click());
+  },
+
+  selectLocationFromDropdown(locationName) {
+    cy.do([SelectionList().filter(locationName), SelectionOption(including(locationName)).click()]);
+  },
+
+  removeLocationByIndex(index = 0) {
+    cy.do(
+      orderTemplateLocationDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    );
+  },
+
+  locationOptionExists(locationName) {
+    return SelectionList()
+      .find(SelectionOption(including(locationName)))
+      .exists();
+  },
+
+  selectFundInPaymentTermsCard({ fyCode, fundName, fundCode }) {
+    const label = `${fundName} (${fundCode})`;
+
+    const FDInteractor = orderTemplatePaymentTermsSection
+      .find(Card({ headerStart: including(fyCode) }))
+      .find(AcqFundDistribution());
+
+    cy.do([
+      FDInteractor.perform((el) => el.scrollIntoView()),
+      FDInteractor.openFundSelector(0),
+      SelectionList().filter(label),
+      SelectionOption(including(label)).click(),
+    ]);
+  },
+
+  clickExpandAllAccordions() {
+    cy.do(orderTemplateForm.find(Button(COMMON_BUTTON_LABELS.EXPAND_ALL)).click());
   },
 };

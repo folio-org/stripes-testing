@@ -3,17 +3,21 @@ import uuid from 'uuid';
 import {
   Accordion,
   Button,
+  Callout,
   DropdownMenu,
+  including,
   NavListItem,
   Pane,
   PaneContent,
   Modal,
   Section,
 } from '../../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../../constants';
+import { COMMON_BUTTON_LABELS, DEFAULT_WAIT_TIME } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import getRandomPostfix from '../../../utils/stringTools';
 import OrderTemplateForm from './orderTemplateForm';
+
+const FUND_RESTRICTION_ERROR = 'Location-restricted fund applied to invalid location';
 
 const templateViewPane = Pane({ id: 'order-settings-order-template-view' });
 
@@ -139,5 +143,18 @@ export default {
       isDefaultSearchParamsRequired: false,
       failOnStatusCode,
     });
+  },
+
+  openEditForm() {
+    cy.do([actionsButton.click(), DropdownMenu().find(Button(COMMON_BUTTON_LABELS.EDIT)).click()]);
+    OrderTemplateForm.waitLoading();
+  },
+
+  checkFundRestrictionErrorToastPresent() {
+    cy.expect(Callout(including(FUND_RESTRICTION_ERROR)).exists());
+  },
+
+  checkFundRestrictionErrorToastAbsent() {
+    cy.expect(Callout(including(FUND_RESTRICTION_ERROR)).absent());
   },
 };
