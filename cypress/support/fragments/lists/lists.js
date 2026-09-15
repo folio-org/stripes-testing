@@ -108,7 +108,6 @@ const selectUserSearchButton = selectUserModal.find(Button('Search'));
 const selectUserResetAllButton = selectUserModal.find(Button('Reset all'));
 
 const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
-const linkSelector = 'a[data-test-text-link="true"]';
 
 const constants = {
   cannedListInactivePatronsWithOpenLoans: 'Inactive patrons with open loans',
@@ -229,7 +228,7 @@ const UI = {
   },
 
   verifyCollapseAllButtonAbsent() {
-    cy.contains(linkSelector, 'Collapse all').should('not.exist');
+    cy.expect(HTML('Collapse all').absent());
   },
 
   clickOnQueryAccordion() {
