@@ -161,6 +161,7 @@ export const POLINE_DETAILS_FIELDS = {
   QUANTITY_ELECTRONIC: 'Quantity electronic',
   CREATE_INVENTORY: 'Create inventory',
   CURRENCY: 'Currency',
+  EXPENSE_CLASS: 'Expense class',
   EXCHANGE_RATE: 'Exchange rate',
   USER_LIMIT: 'User limit',
   RECEIVING_NOTE: 'Receiving note',
