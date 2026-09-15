@@ -45,12 +45,8 @@ describe('Orders', () => {
     EXPENSE_CLASS: 'expenseClass',
     BUDGET_A1: 'budgetA1',
     BUDGET_A2: 'budgetA2',
-    BUDGET_A3: 'budgetA3',
-    BUDGET_A4: 'budgetA4',
     BUDGET_B1: 'budgetB1',
     BUDGET_B2: 'budgetB2',
-    BUDGET_B3: 'budgetB3',
-    BUDGET_B4: 'budgetB4',
     LOCALE: 'locale',
     ORG: 'org',
     ORDER: 'order',
@@ -211,18 +207,10 @@ describe('Orders', () => {
       .step(createBudgetStep(R.FUND_A, R.FY1, R.BUDGET_A1, BUDGET_STATUSES.ACTIVE))
       // Precondition 4: Create budget for Fund A in FY2 with expense class
       .step(createBudgetStep(R.FUND_A, R.FY2, R.BUDGET_A2, BUDGET_STATUSES.PLANNED))
-      // Precondition 4: Create budget for Fund A in FY3 with expense class
-      .step(createBudgetStep(R.FUND_A, R.FY3, R.BUDGET_A3, BUDGET_STATUSES.PLANNED))
-      // Precondition 4: Create budget for Fund A in FY4
-      .step(createBudgetStep(R.FUND_A, R.FY4, R.BUDGET_A4, BUDGET_STATUSES.PLANNED))
       // Precondition 4: Create budget for Fund B in FY1 with expense class
       .step(createBudgetStep(R.FUND_B, R.FY1, R.BUDGET_B1, BUDGET_STATUSES.ACTIVE))
       // Precondition 4: Create budget for Fund B in FY2 with expense class
       .step(createBudgetStep(R.FUND_B, R.FY2, R.BUDGET_B2, BUDGET_STATUSES.PLANNED))
-      // Precondition 4: Create budget for Fund B in FY3 with expense class
-      .step(createBudgetStep(R.FUND_B, R.FY3, R.BUDGET_B3, BUDGET_STATUSES.PLANNED))
-      // Precondition 4: Create budget for Fund B in FY4
-      .step(createBudgetStep(R.FUND_B, R.FY4, R.BUDGET_B4, BUDGET_STATUSES.PLANNED))
       // Precondition 5: Fetch acquisition method "Other" for POL creation
       .step((f) => {
         return cy
@@ -764,7 +752,7 @@ describe('Orders', () => {
           {
             fyCode: fy3.code,
             fundCode: fundA.code,
-            expenseClass: expenseClass.name,
+            expenseClass: '',
             value: '10',
             distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
             amount: '10',
@@ -772,7 +760,7 @@ describe('Orders', () => {
           {
             fyCode: fy3.code,
             fundCode: fundB.code,
-            expenseClass: expenseClass.name,
+            expenseClass: '',
             value: '10',
             distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
             amount: '10',

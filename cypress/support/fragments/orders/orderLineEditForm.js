@@ -63,7 +63,6 @@ const FORM_FIELD_NAMES = {
   CLAIMING_ACTIVE: 'claimingActive',
   CLAIMING_INTERVAL: 'claimingInterval',
   TITLE_OR_PACKAGE: 'titleOrPackage',
-  STILL_IN_USE: 'isStillInUse',
   RECEIVING_NOTE: 'details.receivingNote',
   SUBSCRIPTION_FROM: 'details.subscriptionFrom',
   SUBSCRIPTION_TO: 'details.subscriptionTo',
