@@ -259,6 +259,11 @@ export default {
     resource: 'UI-Orders Orders',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiOrdersOrderExportCsvExecute: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Orders Order Export CSV',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
   uiOrdersSettingsOrderTemplatesCreate: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Orders Settings Order-Templates',
