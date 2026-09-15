@@ -28,7 +28,7 @@ import {
 } from '../../../support/fragments/finance';
 import { Invoices } from '../../../support/fragments/invoices';
 import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
-import { CodeTools, DateTools, StringTools } from '../../../support/utils';
+import { CodeTools, DateTools, NumberTools, StringTools } from '../../../support/utils';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
@@ -39,6 +39,7 @@ import Users from '../../../support/fragments/users/users';
 describe('Finance', () => {
   describe('Fiscal Year Rollover', () => {
     const code = CodeTools(4);
+    const allocatedAmount = 100;
     const resultFileName = `${DateTools.getCurrentDateForFileNaming()}-result.csv`;
     const resultsColumnValue = `${DateTools.getCurrentDate()}-result`;
 
@@ -68,6 +69,7 @@ describe('Finance', () => {
       orderLine2: {},
       invoice: {},
       user: {},
+      locale: 'en-US',
     };
 
     const createFiscalYear = (fiscalYearKey) => {
@@ -100,7 +102,7 @@ describe('Finance', () => {
           ...Budgets.getDefaultBudget(),
           fiscalYearId: testData.fiscalYears.first.id,
           fundId: testData.fund.id,
-          allocated: 100,
+          allocated: allocatedAmount,
         }).then((budget) => {
           testData.budget = budget;
         });
@@ -232,6 +234,9 @@ describe('Finance', () => {
 
     before('Create test data', () => {
       cy.getAdminToken();
+      cy.getTenantLocaleApi().then((locale) => {
+        testData.locale = locale;
+      });
 
       createConsecutiveFiscalYears()
         .then(createLedger)
@@ -256,6 +261,7 @@ describe('Finance', () => {
       'C376611 Rollover allocation with "None" option selected in "Rollover budget value" dropdown (thunderjet)',
       { tags: ['criticalPath', 'thunderjet', 'C376611'] },
       () => {
+        const format = (value) => NumberTools.formatCurrency(value, testData.locale);
         const rolloverFields = {
           fiscalYear: testData.fiscalYears.second.code,
           rolloverBudgets: [
@@ -340,9 +346,9 @@ describe('Finance', () => {
           plannedBudgets: [
             {
               name: `${testData.fund.code}-${testData.fiscalYears.second.code}`,
-              allocated: '$100.00',
-              unavailable: '$0.00',
-              available: '$100.00',
+              allocated: format(allocatedAmount),
+              unavailable: format(0),
+              available: format(allocatedAmount),
             },
           ],
         });
@@ -351,20 +357,20 @@ describe('Finance', () => {
         FundDetails.openPlannedBudgetDetails().checkBudgetDetails({
           information: [{ key: BUDGET_DETAIL_FIELDS.BUDGET_STATUS, value: BUDGET_STATUSES.ACTIVE }],
           summary: [
-            { key: FUNDING_INFORMATION_NAMES.INITIAL_ALLOCATION, value: '$100.00' },
-            { key: FUNDING_INFORMATION_NAMES.INCREASE_IN_ALLOCATION, value: '$0.00' },
-            { key: FUNDING_INFORMATION_NAMES.DECREASE_IN_ALLOCATION, value: '$0.00' },
-            { key: FUNDING_INFORMATION_NAMES.TOTAL_ALLOCATED, value: '$100.00' },
-            { key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS, value: '$0.00' },
-            { key: FUNDING_INFORMATION_NAMES.TOTAL_FUNDING, value: '$100.00' },
-            { key: FINANCIAL_ACTIVITY_OVERRAGES.ENCUMBERED, value: '$0.00' },
-            { key: FINANCIAL_ACTIVITY_OVERRAGES.ENCUMBERED, value: '$0.00' },
-            { key: FINANCIAL_ACTIVITY_OVERRAGES.EXPENDED, value: '$0.00' },
-            { key: FINANCIAL_ACTIVITY_OVERRAGES.UNAVAILABLE, value: '$0.00' },
-            { key: FINANCIAL_ACTIVITY_OVERRAGES.OVER_ENCUMBRANCE, value: '$0.00' },
-            { key: FINANCIAL_ACTIVITY_OVERRAGES.OVER_EXPENDED, value: '$0.00' },
+            { key: FUNDING_INFORMATION_NAMES.INITIAL_ALLOCATION, value: format(allocatedAmount) },
+            { key: FUNDING_INFORMATION_NAMES.INCREASE_IN_ALLOCATION, value: format(0) },
+            { key: FUNDING_INFORMATION_NAMES.DECREASE_IN_ALLOCATION, value: format(0) },
+            { key: FUNDING_INFORMATION_NAMES.TOTAL_ALLOCATED, value: format(allocatedAmount) },
+            { key: FUNDING_INFORMATION_NAMES.NET_TRANSFERS, value: format(0) },
+            { key: FUNDING_INFORMATION_NAMES.TOTAL_FUNDING, value: format(allocatedAmount) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.ENCUMBERED, value: format(0) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.AWAITING_PAYMENT, value: format(0) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.EXPENDED, value: format(0) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.UNAVAILABLE, value: format(0) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.OVER_ENCUMBRANCE, value: format(0) },
+            { key: FINANCIAL_ACTIVITY_OVERRAGES.OVER_EXPENDED, value: format(0) },
           ],
-          balance: { cash: '$100.00', available: '$100.00' },
+          balance: { cash: format(allocatedAmount), available: format(allocatedAmount) },
         });
       },
     );
