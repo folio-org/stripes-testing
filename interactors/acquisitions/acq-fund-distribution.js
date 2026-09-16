@@ -36,6 +36,8 @@ export const AcqFundDistribution = HTML.extend('acq fund distribution')
         .find(Selection(including('Expense class')))
         .open();
     },
+    focusValueField: (interactor, { index = 0 }) => interactor.find(RepeatableFieldItem({ index })).find(TextField()).focus(),
+    blurValueField: (interactor, { index = 0 }) => interactor.find(RepeatableFieldItem({ index })).find(TextField()).blur(),
     fillValue: (interactor, { value, index = 0 }) => interactor.find(RepeatableFieldItem({ index })).find(TextField()).fillIn(String(value)),
     selectDistributionTypePercent: (interactor, index = 0) => interactor.find(RepeatableFieldItem({ index })).find(Button('%')).click(),
     selectDistributionTypeAmount: (interactor, index = 0) => interactor.find(RepeatableFieldItem({ index })).find(Button('$')).click(),

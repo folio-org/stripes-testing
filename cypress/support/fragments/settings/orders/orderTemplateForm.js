@@ -1,11 +1,8 @@
 import {
   Accordion,
-  AcqFundDistribution,
   Button,
-  Card,
   Checkbox,
   Form,
-  Popover,
   including,
   RepeatableFieldItem,
   Section,
@@ -16,7 +13,6 @@ import {
   TextArea,
   TextField,
 } from '../../../../../interactors';
-import OrderStates from '../../orders/orderStates';
 import {
   COMMON_BUTTON_LABELS,
   DEFAULT_WAIT_TIME,
@@ -26,11 +22,6 @@ import InteractorsTools from '../../../utils/interactorsTools';
 import SearchHelper from '../../finance/financeHelper';
 
 const LOCATION_FIELD_ID_PREFIX = 'field-locations';
-
-const PAYMENT_TERMS_LABELS = {
-  STARTING_FISCAL_YEAR: 'Starting fiscal year',
-  ADD_FISCAL_YEAR: 'Add fiscal year',
-};
 
 const orderTemplateForm = Form({ id: 'order-template-form' });
 const orderTemplateInfoSection = orderTemplateForm.find(Section({ id: 'templateInfo' }));
@@ -52,15 +43,6 @@ const orderTemplateFundDetailsSection = orderTemplateForm.find(
 );
 const orderTemplateLocationDetailsSection = orderTemplateForm.find(Section({ id: 'location' }));
 const orderTemplatePoLineTagsSection = orderTemplateForm.find(Section({ id: 'polTags' }));
-
-const orderTemplatePaymentTermsSection = Accordion({ id: 'paymentTerms' });
-
-const orderTemplateMultiYearPrepaymentCheckbox = orderTemplatePOLOngoingSection.find(
-  Checkbox({ name: 'multiYearPayment' }),
-);
-
-// Info popover trigger ("i" icon) selector used across the acq forms
-const infoPopoverTriggerSelector = '[data-test-info-popover-trigger]';
 
 const saveButton = Button({ id: 'save-order-template-button' });
 
@@ -125,17 +107,19 @@ export default {
     });
   },
 
-  checkPolOngoingOrderSectionAbsent() {
+  assertPolOngoingOrderSectionAbsent() {
     cy.expect(orderTemplatePOLOngoingSection.absent());
   },
-  checkPolOngoingOrderSectionPresent() {
+  assertPolOngoingOrderSectionPresent() {
     cy.expect(orderTemplatePOLOngoingSection.exists());
   },
-  checkPaymentTermsSectionAbsent() {
-    cy.expect(orderTemplatePaymentTermsSection.absent());
+
+  expandAll() {
+    cy.do(orderTemplateForm.find(Button(COMMON_BUTTON_LABELS.EXPAND_ALL)).click());
   },
-  checkPaymentTermsSectionPresent() {
-    cy.expect(orderTemplatePaymentTermsSection.exists());
+
+  expandAccordion(label) {
+    cy.do(orderTemplateForm.find(Accordion(including(label))).expand());
   },
 
   fillOrderTemplateFields({ templateInformation, poInformation, poLineDetails } = {}) {
@@ -166,6 +150,18 @@ export default {
     if (hideAll) {
       cy.do(infoSectionFields.hideAll.click());
     }
+  },
+  assertInfoSectionFields({ templateName, templateCode }) {
+    const expectations = [];
+
+    if (templateName !== undefined) {
+      expectations.push(infoSectionFields.templateName.has({ value: templateName }));
+    }
+    if (templateCode !== undefined) {
+      expectations.push(infoSectionFields.templateCode.has({ value: templateCode }));
+    }
+
+    cy.expect(expectations);
   },
   fillPoInfoSectionFields({ organizationName, orderType }) {
     cy.do(poInfoSectionFields.poInformationSection.click());
@@ -205,193 +201,17 @@ export default {
     }
   },
 
-  // --- Multi-year prepayment / Payment terms (template form) ---
-  checkMultiYearPrepaymentUnchecked() {
-    cy.expect(orderTemplateMultiYearPrepaymentCheckbox.has({ checked: false }));
-  },
-  enableMultiYearPrepayment() {
-    cy.do(orderTemplateMultiYearPrepaymentCheckbox.click());
-  },
-  checkMultiYearPrepaymentChecked() {
-    cy.expect(orderTemplateMultiYearPrepaymentCheckbox.has({ checked: true }));
-  },
-  // The "i" icon next to the "Multi-year prepayment" checkbox in the POL ongoing accordion
-  clickMultiYearPrepaymentInfoIcon() {
-    cy.get('[name="multiYearPayment"]')
-      .closest('[class*="col-"]')
-      .find(infoPopoverTriggerSelector)
-      .first()
-      .click();
-  },
-  verifyMultiYearPrepaymentInfoPopover() {
-    cy.expect(
-      Popover().has({
-        content: including(
-          'Select Multi-year prepayment if paying for orders over multiple fiscal years',
-        ),
-      }),
-    );
-  },
-  // The "i" icon next to the "Payment terms" accordion header
-  clickPaymentTermsInfoIcon() {
-    cy.do(orderTemplatePaymentTermsSection.find(Button({ icon: 'info' })).click());
-  },
-  verifyPaymentTermsInfoPopover() {
-    cy.expect(
-      Popover().has({
-        content: including(
-          'To enable the fields in the Payment terms accordion, select Multi-year payment',
-        ),
-      }),
-    );
-  },
-  checkPaymentTermsExpanded() {
-    cy.expect(orderTemplatePaymentTermsSection.has({ open: true }));
-  },
-  checkPaymentTermsInitialState() {
-    cy.expect([
-      orderTemplatePaymentTermsSection
-        .find(TextField({ name: 'paymentTerms.totalPrice' }))
-        .has({ value: '' }),
-      orderTemplatePaymentTermsSection
-        .find(TextField({ name: 'paymentTerms.prepaymentTerm' }))
-        .has({ disabled: true, value: '' }),
-      orderTemplatePaymentTermsSection.has({
-        text: including(OrderStates.remainingAmountToBeDistributed('0.00')),
-      }),
-    ]);
-  },
-  openStartingFiscalYearDropdown() {
-    cy.do(
-      orderTemplatePaymentTermsSection.find(Selection(including('Starting fiscal year'))).open(),
-    );
-  },
-  checkFiscalYearOptionPresent(fyName) {
-    cy.expect(SelectionOption(including(fyName)).exists());
-  },
-  checkFiscalYearOptionAbsent(fyName) {
-    cy.expect(SelectionOption(including(fyName)).absent());
-  },
-  // The "i" icon next to the "Starting fiscal year" dropdown
-  clickStartingFiscalYearInfoIcon() {
-    cy.get('[class*="paymentTerms"]')
-      .contains('label', 'Starting fiscal year')
-      .closest('[class*="col-"]')
-      .find(infoPopoverTriggerSelector)
-      .first()
-      .click();
-  },
-  verifyStartingFiscalYearInfoPopover() {
-    cy.expect(
-      Popover().has({
-        content: including('Fiscal years must have been created for each year of prepayment'),
-      }),
-    );
-  },
-
-  selectStartingFiscalYear(fyCode) {
-    cy.do([
-      orderTemplatePaymentTermsSection.perform((el) => el.scrollIntoView()),
-      orderTemplatePaymentTermsSection
-        .find(Selection(including(PAYMENT_TERMS_LABELS.STARTING_FISCAL_YEAR)))
-        .open(),
-      SelectionList().filter(fyCode),
-      SelectionOption(including(fyCode)).click(),
-    ]);
-  },
-
-  assertPrepaymentTermValue(value) {
-    cy.expect(
-      orderTemplatePaymentTermsSection
-        .find(TextField({ name: 'paymentTerms.prepaymentTerm' }))
-        .has({ value: String(value) }),
-    );
-  },
-  clickAddFiscalYearButton() {
-    cy.do(orderTemplatePaymentTermsSection.find(Button('Add fiscal year')).click());
-  },
-  assertAddFiscalYearButtonEnabled() {
-    cy.expect(
-      orderTemplatePaymentTermsSection.find(Button('Add fiscal year')).has({ disabled: false }),
-    );
-  },
-  assertAddFiscalYearButtonDisabled() {
-    cy.expect(
-      orderTemplatePaymentTermsSection.find(Button('Add fiscal year')).has({ disabled: true }),
-    );
-  },
-
-  assertFiscalYearCardPresent(fyName) {
-    cy.expect(orderTemplatePaymentTermsSection.find(Accordion(including(fyName))).exists());
-  },
-  addFundDistributionInFYCard(fyName) {
-    cy.do(
-      orderTemplatePaymentTermsSection
-        .find(Accordion(including(fyName)))
-        .find(AcqFundDistribution())
-        .addRow(),
-    );
-  },
-  removeFundDistributionInFYCard({ fyCode, rowIndex = 0 }) {
-    cy.do(
-      orderTemplatePaymentTermsSection
-        .find(Card({ headerStart: including(fyCode) }))
-        .find(AcqFundDistribution())
-        .removeRow(rowIndex),
-    );
-  },
-
-  assertFundDistributionAbsentInFYCard(fyCode) {
-    cy.expect(
-      orderTemplatePaymentTermsSection
-        .find(Card({ headerStart: including(fyCode) }))
-        .find(AcqFundDistribution())
-        .has({ rowCount: 0 }),
-    );
-  },
-
-  selectFundInFYCard({ fyCode, fundName, fundCode, rowIndex = 0 }) {
-    cy.do(
-      orderTemplatePaymentTermsSection
-        .find(Card({ headerStart: including(fyCode) }))
-        .find(AcqFundDistribution())
-        .openFundSelector(rowIndex),
-    );
-    cy.do(SelectionOption(`${fundName} (${fundCode})`).click());
-  },
-
-  assertExpenseClassFieldPresentInFYCard(fyCode) {
-    cy.expect(
-      orderTemplatePaymentTermsSection
-        .find(Card({ headerStart: including(fyCode) }))
-        .find(Selection(including('Expense class')))
-        .exists(),
-    );
-  },
-
-  selectDistributionTypePercentInFYCard({ fyCode, rowIndex = 0 }) {
-    cy.do(
-      orderTemplatePaymentTermsSection
-        .find(Card({ headerStart: including(fyCode) }))
-        .find(AcqFundDistribution())
-        .selectDistributionTypePercent(rowIndex),
-    );
-  },
-  // The eye icon toggles field visibility (hidden fields) on the template form.
-  // Best-effort selector: the "eye-open" icon button next to the target field/accordion.
-  clickHideEyeIconForMultiYearPrepayment() {
-    cy.get('[name="multiYearPayment"]')
-      .closest('[class*="col-"]')
-      .find('button[icon="eye-open"], button[aria-label*="eye"]')
-      .first()
-      .click();
-  },
-  clickHideEyeIconForPaymentTerms() {
-    cy.do(orderTemplatePaymentTermsSection.find(Button({ icon: 'eye-open' })).click());
-  },
   selectCurrency(currency = 'USD') {
-    cy.do(orderTemplateCostDetailsSection.find(Selection(including('Currency'))).open());
-    cy.do(SelectionOption(including(currency)).click());
+    const field = orderTemplateCostDetailsSection.find(
+      Selection(including(ORDER_LINE_FORM_LABELS.CURRENCY)),
+    );
+
+    cy.do([
+      field.perform((el) => el.scrollIntoView()),
+      field.open(),
+      SelectionList().filter(currency),
+      SelectionOption(including(currency)).click(),
+    ]);
   },
 
   clickAddLocationButton() {
@@ -423,22 +243,24 @@ export default {
       .exists();
   },
 
-  selectFundInPaymentTermsCard({ fyCode, fundName, fundCode }) {
-    const label = `${fundName} (${fundCode})`;
-
-    const FDInteractor = orderTemplatePaymentTermsSection
-      .find(Card({ headerStart: including(fyCode) }))
-      .find(AcqFundDistribution());
-
-    cy.do([
-      FDInteractor.perform((el) => el.scrollIntoView()),
-      FDInteractor.openFundSelector(0),
-      SelectionList().filter(label),
-      SelectionOption(including(label)).click(),
-    ]);
-  },
-
   clickExpandAllAccordions() {
     cy.do(orderTemplateForm.find(Button(COMMON_BUTTON_LABELS.EXPAND_ALL)).click());
+  },
+
+  /* Fields visibility */
+  toggleFieldVisibilityIcon(fieldName) {
+    cy.do(
+      orderTemplateForm.perform((el) => {
+        el.querySelector(`input[name="hiddenFields.${fieldName}"]`).click();
+      }),
+    );
+  },
+
+  toggleMultiYearPrepaymentVisibility() {
+    this.toggleFieldVisibilityIcon('multiYearPayment');
+  },
+
+  togglePaymentTermsVisibility() {
+    this.toggleFieldVisibilityIcon('paymentTerms');
   },
 };

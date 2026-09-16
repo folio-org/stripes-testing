@@ -13,8 +13,13 @@ import {
   PaneContent,
   Modal,
   Section,
+  Card,
 } from '../../../../../interactors';
-import { COMMON_BUTTON_LABELS, DEFAULT_WAIT_TIME } from '../../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  ORDER_LINE_FORM_LABELS,
+} from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import getRandomPostfix from '../../../utils/stringTools';
 import OrderTemplateForm from './orderTemplateForm';
@@ -123,11 +128,11 @@ export default {
       })
       .then(({ body }) => body);
   },
-  checkPolOngoingOrderSectionAbsent() {
+  assertPolOngoingOrderSectionAbsent() {
     cy.expect(templateViewPane.find(Section({ id: 'polOngoingOrder' })).absent());
   },
 
-  checkPaymentTermsSectionAbsent() {
+  assertPaymentTermsSectionAbsent() {
     cy.expect(templateViewPane.find(Accordion({ id: 'paymentTerms' })).absent());
   },
 
@@ -136,22 +141,26 @@ export default {
   },
 
   // View mode: "Multi-year prepayment" is shown as a checked read-only checkbox
-  checkMultiYearPrepaymentChecked() {
-    cy.expect(templateViewPane.find(Checkbox({ name: 'multiYearPayment' })).has({ checked: true }));
+  assertMultiYearPrepaymentChecked() {
+    cy.expect(
+      templateViewPane
+        .find(Checkbox({ labelText: ORDER_LINE_FORM_LABELS.MULTI_YEAR_PREPAYMENT }))
+        .has({ checked: true, disabled: true }),
+    );
   },
 
-  checkPaymentTermsCardContainsFund(fyName, fundName) {
+  assertPaymentTermsCardContainsFund(fyCode, fundName) {
     cy.expect(
       templatePaymentTermsSection
-        .find(Accordion(including(fyName)))
+        .find(Card({ headerStart: including(fyCode) }))
         .has({ text: including(fundName) }),
     );
   },
 
-  checkPaymentTermsCardShowsNoItems(fyName) {
+  assertPaymentTermsCardShowsNoItems(fyCode) {
     cy.expect(
       templatePaymentTermsSection
-        .find(Accordion(including(fyName)))
+        .find(Card({ headerStart: including(fyCode) }))
         .find(HTML(including('The list contains no items')))
         .exists(),
     );

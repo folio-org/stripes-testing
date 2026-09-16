@@ -10,18 +10,23 @@ import AreYouSureModal from '../../../support/fragments/orders/modals/areYouSure
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderDetails from '../../../support/fragments/orders/orderDetails';
 import OrderEditForm from '../../../support/fragments/orders/orderEditForm';
-import OrderLineEditForm from '../../../support/fragments/orders/orderLineEditForm';
+import OrderLineEditFormFragment from '../../../support/fragments/orders/orderLineEditForm';
+import MultiYearPaymentTerms from '../../../support/fragments/orders/multiYearPaymentTerms';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import SettingOrdersNavigationMenu from '../../../support/fragments/settings/orders/settingOrdersNavigationMenu';
-import OrderTemplateForm from '../../../support/fragments/settings/orders/orderTemplateForm';
+import OrderTemplateFormFragment from '../../../support/fragments/settings/orders/orderTemplateForm';
+
 import OrderTemplates from '../../../support/fragments/settings/orders/orderTemplates';
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import { APPLICATION_NAMES } from '../../../support/constants';
+
+const OrderLineEditForm = { ...OrderLineEditFormFragment, ...MultiYearPaymentTerms };
+const OrderTemplateForm = { ...OrderTemplateFormFragment, ...MultiYearPaymentTerms };
 
 const { PANE_REQUEST_PHASES, PANE_REQUEST_PROFILE_NAMES } = PaneRequestWaiter;
 
@@ -91,20 +96,20 @@ describe('Settings | Orders', () => {
     { tags: ['extendedPath', 'thunderjet', 'C1404901'] },
     () => {
       const checkTemplateFormOngoingSectionsAbsent = () => {
-        OrderTemplateForm.checkPolOngoingOrderSectionAbsent();
-        OrderTemplateForm.checkPaymentTermsSectionAbsent();
+        OrderTemplateForm.assertPolOngoingOrderSectionAbsent();
+        OrderTemplateForm.assertPaymentTermsSectionAbsent();
       };
       const checkTemplateFormOngoingSectionsPresent = () => {
-        OrderTemplateForm.checkPolOngoingOrderSectionPresent();
-        OrderTemplateForm.checkPaymentTermsSectionPresent();
+        OrderTemplateForm.assertPolOngoingOrderSectionPresent();
+        OrderTemplateForm.assertPaymentTermsSectionPresent();
       };
       const checkTemplateViewOngoingSectionsAbsent = () => {
-        OrderTemplates.checkPolOngoingOrderSectionAbsent();
-        OrderTemplates.checkPaymentTermsSectionAbsent();
+        OrderTemplates.assertPolOngoingOrderSectionAbsent();
+        OrderTemplates.assertPaymentTermsSectionAbsent();
       };
       const checkPolLineOngoingSectionsAbsent = () => {
-        OrderLineEditForm.checkOngoingOrderSectionAbsent();
-        OrderLineEditForm.checkPaymentTermsSectionAbsent();
+        OrderLineEditForm.assertOngoingOrderSectionAbsent();
+        OrderLineEditForm.assertPaymentTermsSectionAbsent();
       };
       cy.intercept('POST', '**/orders/order-templates').as('templateCreated');
 
@@ -181,8 +186,8 @@ describe('Settings | Orders', () => {
       );
       OrderDetails.selectAddPOLine();
       OrderLineEditForm.waitLoading();
-      OrderLineEditForm.checkMultiYearPrepaymentUnchecked();
-      OrderLineEditForm.checkPaymentTermsCollapsed();
+      OrderLineEditForm.assertMultiYearPrepaymentUnchecked();
+      OrderLineEditForm.assertPaymentTermsCollapsed();
 
       cy.log(
         'Step 10. Close "Add PO line" page; Click "Actions" button; Select "Edit" option; Select "One-time" option in the "Order type" dropdown; Click "Save & close" button',
