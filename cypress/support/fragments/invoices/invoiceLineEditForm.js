@@ -30,6 +30,7 @@ const cancelButtom = Button(COMMON_BUTTON_LABELS.CANCEL);
 const saveButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_CLOSE);
 const saveAndKeepEditingButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING);
 const clearButton = Button({ icon: 'times-circle-solid' });
+const polLookUpButton = Button('POL look-up');
 const unsavedChangesMessage = 'There are unsaved changes';
 const subTotalSelector = '#subTotal';
 
@@ -41,9 +42,12 @@ const infoFields = {
   releaseEncumbrance: informationSection.find(Checkbox({ name: 'releaseEncumbrance' })),
   quantity: informationSection.find(TextField({ id: 'quantity' })),
   subTotal: informationSection.find(TextField({ id: 'subTotal' })),
+  polNumber: informationSection.find(TextField('POL number')),
 };
 
-const fundFields = {
+const formFields = {
+  [INVOICE_LINE_VIEW_FIELDS.DESCRIPTION]: infoFields.description,
+  'POL number': infoFields.polNumber,
   'Expense class': fundDistributionSection.find(
     Button({ id: 'fundDistributions[0].expenseClassId' }),
   ),
@@ -76,13 +80,17 @@ export default {
   },
   checkFieldsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
-      cy.expect(fundFields[label].has(conditions));
+      cy.expect(formFields[label].has(conditions));
     });
+  },
+
+  clickPolLookUpButton() {
+    cy.do(invoiceLineEditFormRoot.find(polLookUpButton).click());
   },
 
   selectOrderLines(orderLine) {
     cy.do([
-      Button('POL look-up').click(),
+      polLookUpButton.click(),
       SearchField({ id: 'input-record-search' }).fillIn(orderLine),
       Button('Search').click(),
     ]);
