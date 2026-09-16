@@ -109,7 +109,6 @@ const selectUserSearchButton = selectUserModal.find(Button('Search'));
 const selectUserResetAllButton = selectUserModal.find(Button('Reset all'));
 
 const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
-const linkSelector = 'a[data-test-text-link="true"]';
 
 const constants = {
   cannedListInactivePatronsWithOpenLoans: 'Inactive patrons with open loans',
@@ -216,7 +215,7 @@ const UI = {
   },
 
   clickOnListInformationAccordion() {
-    cy.do(listInformationAccording.click());
+    cy.do(listInformationAccording.clickHeader());
     cy.wait(500);
   },
 
@@ -229,16 +228,8 @@ const UI = {
     cy.expect(listInformationAccording.has({ open: isExpanded }));
   },
 
-  clickOnCollapseAllButton() {
-    cy.get(linkSelector).contains('Collapse all').click();
-  },
-
   verifyCollapseAllButtonAbsent() {
-    cy.get(linkSelector).contains('Collapse all').should('not.exist');
-  },
-
-  clickOnExpandAllButton() {
-    cy.get(linkSelector).contains('Expand all').click();
+    cy.expect(HTML('Collapse all').absent());
   },
 
   clickOnQueryAccordion() {

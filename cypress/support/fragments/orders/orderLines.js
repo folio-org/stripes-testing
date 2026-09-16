@@ -2779,15 +2779,6 @@ export default {
     cy.expect(Pane({ id: 'pane-poLineForm' }).exists());
   },
 
-  verifyExpenseClassRequiredFieldWarningMessage() {
-    cy.get('[id="fundDistribution[0].expenseClassId"]')
-      .parent()
-      .parent()
-      .find('[role="alert"]')
-      .contains('Required!')
-      .should('be.visible');
-  },
-
   fillCostDetailsForPhysicalOrderType(physicalPrice, quantity) {
     cy.do([
       physicalUnitPriceTextField.fillIn(physicalPrice),

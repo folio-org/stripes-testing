@@ -1260,12 +1260,20 @@ export default {
     }
   },
 
+  getRowIndexByTag(tag) {
+    return cy.then(() => getRowInteractorByTagName(tag).index());
+  },
+
   moveFieldUp(rowNumber) {
     cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).click());
   },
 
   moveFieldDown(rowNumber) {
     cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).click());
+  },
+
+  moveFieldDownByTag(tag) {
+    cy.do(getRowInteractorByTagName(tag).find(arrowDownButton).click());
   },
 
   moveFieldUpWithEnter(rowNumber) {
