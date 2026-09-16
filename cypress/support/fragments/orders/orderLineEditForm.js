@@ -88,6 +88,7 @@ const FORM_LABELS = {
   AUTO_EXPORT_INFO_MESSAGE:
     'This is a Manual PO so all POLs are excluded from automated export workflows',
   REMOVE_FISCAL_YEAR: 'Remove fiscal year',
+  SHOW_HIDDEN_FIELDS: 'Show hidden fields',
 };
 const FIELD_SELECTORS = {
   LOCATION_ID: 'field-locations',
@@ -256,7 +257,7 @@ export default {
   },
 
   clickShowHiddenFieldsAction() {
-    cy.do(Button(including('Show hidden fields')).click());
+    cy.do(Button(including(FORM_LABELS.SHOW_HIDDEN_FIELDS)).click());
   },
 
   checkExchangeRateError(
