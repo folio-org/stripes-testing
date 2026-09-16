@@ -73,7 +73,7 @@ describe('Inventory', () => {
 
     it(
       'C9207 Verify search on Holdings HRID (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C9207'] },
+      { tags: ['smoke', 'extendedPath', 'spitfire', 'C9207'] },
       () => {
         cy.waitForAuthRefresh(() => {
           cy.login(user.username, user.password, {

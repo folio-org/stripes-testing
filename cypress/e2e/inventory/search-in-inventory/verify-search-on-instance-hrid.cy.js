@@ -70,7 +70,7 @@ describe('Inventory', () => {
 
     it(
       'C9206 Verify search on Instance HRID (spitfire)',
-      { tags: ['extendedPath', 'spitfire', 'C9206'] },
+      { tags: ['smoke', 'extendedPath', 'spitfire', 'C9206'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.inventoryPath,
