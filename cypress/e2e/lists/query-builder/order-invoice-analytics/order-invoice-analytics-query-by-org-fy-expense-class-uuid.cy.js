@@ -424,6 +424,7 @@ describe('Lists', () => {
         }
       });
 
+      // Fails due to the known issue UIPQB-286
       it(
         'C1453720 User can build and save an "Order — Invoice Analysis" list queried by organization code, fiscal year UUID and expense class UUID (athena)',
         { tags: ['extendedPath', 'athena', 'C1453720', 'nonParallel'] },
