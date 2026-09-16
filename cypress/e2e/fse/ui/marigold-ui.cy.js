@@ -20,6 +20,7 @@ describe('fse-marigold - UI (no data manipulation)', () => {
     `FDOPS-6443 - Verify Marigold search returns results for LINKED_DATA instance from ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'marigold', 'FDOPS-6443'] },
     () => {
+      cy.getUserToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
       cy.getLinkedDataWorks('title=*').then(({ body }) => {
         if (!body.content?.length) {
           cy.log('No linked data works found; skipping Marigold search verification');
