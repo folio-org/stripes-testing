@@ -16,6 +16,7 @@ import {
   COMMON_BUTTON_LABELS,
   DEFAULT_WAIT_TIME,
   RECEIVING_BOUND_ITEMS_COLUMN_LABELS,
+  THE_LIST_CONTAINS_NO_ITEMS,
 } from '../../constants';
 import { ItemRecordView } from '../inventory';
 import InventoryInstance from '../inventory/inventoryInstance';
@@ -34,10 +35,12 @@ const titleInformationSection = receivingDetailsSection.find(Section({ id: 'info
 const orderLineDetailsSection = receivingDetailsSection.find(Section({ id: 'polDetails' }));
 const expectedSection = receivingDetailsSection.find(Section({ id: 'expected' }));
 const receivedSection = receivingDetailsSection.find(Section({ id: 'received' }));
+const unreceivableSection = receivingDetailsSection.find(Section({ id: 'unreceivable' }));
 const routingListSection = receivingDetailsSection.find(Section({ id: 'routing-list' }));
 const routingListAccordionButton = Button({ id: 'accordion-toggle-button-routing-list' });
 const expectedRowsSelector = '#expected [class*="mclRowFormatterContainer"]';
 const receivedRowsSelector = '#received [class*="mclRowFormatterContainer"]';
+const unreceivableRowsSelector = '#unreceivable [class*="mclRowFormatterContainer"]';
 
 const boundItemsAccordion = Section({ id: 'boundItems' });
 const boundItemsList = MultiColumnList({ id: 'bound-items-list' });
@@ -121,16 +124,23 @@ export default {
   },
   verifyExpectedRecordsCount(expectedCount) {
     if (expectedCount === 0) {
-      cy.expect(expectedSection.has({ text: including('The list contains no items') }));
+      cy.expect(expectedSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
     } else {
       cy.get(expectedRowsSelector).should('have.length', expectedCount);
     }
   },
   verifyReceivedRecordsCount(receivedCount) {
     if (receivedCount === 0) {
-      cy.expect(receivedSection.has({ text: including('The list contains no items') }));
+      cy.expect(receivedSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
     } else {
       cy.get(receivedRowsSelector).should('have.length', receivedCount);
+    }
+  },
+  verifyUnreceivableRecordsCount(unreceivableCount) {
+    if (unreceivableCount === 0) {
+      cy.expect(unreceivableSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
+    } else {
+      cy.get(unreceivableRowsSelector).should('have.length', unreceivableCount);
     }
   },
   checkExpectedTableContent(records = []) {
@@ -152,7 +162,7 @@ export default {
     });
 
     if (!records.length) {
-      cy.expect(expectedSection.has({ text: including('The list contains no items') }));
+      cy.expect(expectedSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
     }
   },
   checkReceivedTableContent(records = []) {
