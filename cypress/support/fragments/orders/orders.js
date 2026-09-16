@@ -42,6 +42,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 import SearchHelper from '../finance/financeHelper';
 import MultiColumnListHelper from '../multiColumnList';
 import SelectUser from '../invoices/modal/selectUser';
+import DuplicateConfirmationModal from './modals/duplicateConfirmationModal';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import OrderDetails from './orderDetails';
@@ -212,12 +213,15 @@ export default {
     cy.do([TextField({ name: 'poNumber' }).fillIn(poNumber), saveAndClose.click()]);
   },
 
-  duplicateOrder() {
+  duplicateOrder({ verifyModal = false } = {}) {
     expandActionsDropdown();
-    cy.do([
-      Button('Duplicate').click(),
-      Button({ id: 'clickable-order-clone-confirmation-confirm' }).click(),
-    ]);
+    cy.do(Button('Duplicate').click());
+
+    if (verifyModal) {
+      DuplicateConfirmationModal.verifyModalView();
+    }
+
+    DuplicateConfirmationModal.confirm();
   },
 
   assignOrderToAdmin: (rowNumber = 0) => {
@@ -908,6 +912,12 @@ export default {
           expect(actualHeaders).to.not.include(columnHeader);
         });
       }
+    });
+  },
+
+  verifyCSVFileRecordsNumber(fileName, recordsNumber) {
+    return FileManager.convertCsvToJson(fileName).then((jsonDataArray) => {
+      expect(jsonDataArray).to.have.length(recordsNumber);
     });
   },
 

@@ -5,16 +5,21 @@ import {
   Modal,
   MultiColumnListCell,
   MultiColumnListRow,
+  MultiSelect,
   SearchField,
   TextField,
 } from '../../../../../interactors';
 import { COMMON_BUTTON_LABELS, DEFAULT_WAIT_TIME } from '../../../constants';
 
 const selectLocationModal = Modal(including('Select location'));
+const institutionMultiSelect = selectLocationModal.find(MultiSelect({ id: 'institutions-filter' }));
+const campusMultiSelect = selectLocationModal.find(MultiSelect({ id: 'campuses-filter' }));
+const libraryMultiSelect = selectLocationModal.find(MultiSelect({ id: 'libraries-filter' }));
 const resetAllButton = selectLocationModal.find(Button(COMMON_BUTTON_LABELS.RESET_ALL));
 const saveButton = selectLocationModal.find(Button(COMMON_BUTTON_LABELS.SAVE));
 const searchInput = selectLocationModal.find(TextField({ id: 'input-record-search' }));
 const searchButton = selectLocationModal.find(Button(COMMON_BUTTON_LABELS.SEARCH));
+const closeButton = selectLocationModal.find(Button({ icon: 'times' }));
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -72,6 +77,27 @@ export default {
           .click(),
       );
     }
+  },
+
+  selectLocationByHierarchy({ institution, campus, library, location }) {
+    cy.do(institutionMultiSelect.choose(including(institution)));
+    cy.do(campusMultiSelect.choose(including(campus)));
+    cy.do(libraryMultiSelect.choose(including(library)));
+
+    const locationRow = selectLocationModal.find(
+      MultiColumnListRow({ content: including(location), isContainer: false }),
+    );
+
+    cy.expect(locationRow.exists());
+    cy.do(locationRow.find(Checkbox()).checkIfNotSelected());
+    cy.expect(saveButton.has({ disabled: false }));
+    cy.do(saveButton.click());
+    cy.expect(selectLocationModal.absent());
+  },
+
+  closeModal() {
+    cy.do(closeButton.click());
+    cy.expect(selectLocationModal.absent());
   },
 
   selectMultipleLocations(locationSearchValues = []) {

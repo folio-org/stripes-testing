@@ -283,6 +283,20 @@ export default {
     }
   },
 
+  checkOrderLineInTableByIdentifier(identifier, columns = [{ columnName: 'POL number' }]) {
+    const targetRow = polListingAccordion.find(
+      MultiColumnListRow({ content: including(identifier), isContainer: false }),
+    );
+
+    columns.forEach(({ columnName, value = identifier }) => {
+      cy.expect(
+        targetRow
+          .find(MultiColumnListCell({ column: columnName }))
+          .has({ content: including(value) }),
+      );
+    });
+  },
+
   checkRelatedInvoiceColumnItem(rowIndex, columnName, value) {
     cy.expect(
       relatedInvoicesSection
@@ -335,17 +349,9 @@ export default {
   },
   verifyPOLCount(ordersCount) {
     if (ordersCount === 0) {
-      cy.expect(
-        Accordion({ label: including('PO lines') })
-          .find(MultiColumnList({ id: 'POListing' }))
-          .absent(),
-      );
+      cy.expect(polListingAccordion.find(MultiColumnList()).absent());
     } else {
-      cy.expect(
-        Accordion({ label: including('PO lines') })
-          .find(MultiColumnList({ id: 'POListing' }))
-          .has({ rowCount: ordersCount }),
-      );
+      cy.expect(polListingAccordion.find(MultiColumnList()).has({ rowCount: ordersCount }));
     }
   },
 
