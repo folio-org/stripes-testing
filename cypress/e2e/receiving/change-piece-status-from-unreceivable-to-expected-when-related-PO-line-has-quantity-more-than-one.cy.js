@@ -2,6 +2,7 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ITEM_STATUS_NAMES,
   LOCATION_NAMES,
+  NO_BARCODE,
   ORDER_STATUSES,
   POLINE_DETAILS_FIELDS,
   RECEIPT_STATUS_VIEW,
@@ -24,8 +25,6 @@ import Receiving from '../../support/fragments/receiving/receiving';
 import ReceivingDetails from '../../support/fragments/receiving/receivingDetails';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-
-const NO_BARCODE = 'No barcode';
 
 describe('Receiving', () => {
   const testData = {
