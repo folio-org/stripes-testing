@@ -441,6 +441,7 @@ export const organizationFieldValues = {
 };
 export const purchaseOrderLinesFieldValues = {
   poNumber: 'PO — PO number',
+  poType: 'PO — Order type',
   paymentStatus: 'POL — Payment status',
   createdAt: 'POL — Created at',
   title: 'POL — Title or package',
@@ -630,6 +631,10 @@ export default {
     const targetField = RepeatableFieldItem({ index: row });
 
     cy.do([targetField.find(Selection()).open(), targetField.find(Selection()).filter(string)]);
+  },
+
+  verifyFilterOptionsListInputInFocus() {
+    cy.get('input[aria-label=" options filter"]').should('be.focused');
   },
 
   verifyFieldOptionAbsentInTheList() {

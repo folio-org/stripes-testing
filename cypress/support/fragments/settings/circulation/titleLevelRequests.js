@@ -208,4 +208,16 @@ export default {
       }
     });
   },
+
+  getConsortiumTitleLevelRequestsStatus() {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'tlr/settings',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => {
+        return body.ecsTlrFeatureEnabled;
+      });
+  },
 };
