@@ -257,6 +257,14 @@ export default {
     cy.expect(acquisitionAccordion.find(MultiColumnListCell({ row: 0, content: number })).exists());
     cy.expect(acquisitionAccordion.find(Link({ href: including('/orders/lines/view') })).exists());
   },
+  openHotlinkToPOL: (number) => {
+    cy.do(
+      acquisitionAccordion
+        .find(MultiColumnListCell({ row: 0, content: number }))
+        .find(Link())
+        .click(),
+    );
+  },
   verifyElectronicAccess: (uri) => {
     cy.expect(electronicAccessAccordion.find(HTML(uri)).exists());
   },
