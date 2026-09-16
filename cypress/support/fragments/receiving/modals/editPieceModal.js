@@ -8,6 +8,7 @@ import {
   TextArea,
   TextField,
   matching,
+  including,
   Modal,
 } from '../../../../../interactors';
 import { RECEIVING_PIECE_FORM_FIELD_LABELS } from '../../../constants';
@@ -107,6 +108,13 @@ export default {
         cy.expect(field.exists());
       }
     });
+  },
+  verifySelectedHolding(holdingName) {
+    cy.expect(
+      editPieceModal
+        .find(Selection({ name: 'holdingId' }))
+        .has({ singleValue: including(holdingName) }),
+    );
   },
   checkFieldsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
