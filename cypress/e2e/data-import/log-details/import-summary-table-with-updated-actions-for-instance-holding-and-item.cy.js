@@ -280,7 +280,6 @@ describe('Data Import', () => {
           );
         });
 
-      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -303,7 +302,7 @@ describe('Data Import', () => {
       FileManager.deleteFileFromDownloadsByMask(nameMarcFileForImportUpdate);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       FileManager.deleteFileFromDownloadsByMask(nameForCSVFile);
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.name);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
@@ -371,6 +370,7 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
         ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+        cy.wait(2000);
         ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
         cy.wait(10000);
 
@@ -392,7 +392,7 @@ describe('Data Import', () => {
 
         // download exported marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
-        cy.getAdminToken().then(() => {
+        cy.getAdminToken(false).then(() => {
           ExportFile.uploadFile(nameForCSVFile);
           ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
           ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
@@ -469,9 +469,10 @@ describe('Data Import', () => {
           columnNumbers.holdings,
           columnNumbers.item,
         ].forEach((column) => {
-          FileDetails.verifyColumnValuesInSummaryTable(column, ['0', '1', '0', '0']);
+          FileDetails.verifyColumnValuesInSummaryTable(column, ['0', '1', '0', '0', '0']);
         });
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.error, [
+          RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
@@ -479,6 +480,7 @@ describe('Data Import', () => {
         ]);
         [columnNumbers.authority, columnNumbers.order, columnNumbers.invoice].forEach((column) => {
           FileDetails.verifyColumnValuesInSummaryTable(column, [
+            RECORD_STATUSES.DASH,
             RECORD_STATUSES.DASH,
             RECORD_STATUSES.DASH,
             RECORD_STATUSES.DASH,
