@@ -1853,9 +1853,9 @@ export default {
   verifyMarcSelectorDisplayed(row = 0) {
     cy.expect([
       marcTextField('tag', row).has({ required: true, value: '' }),
-      marcTextField('ind1', row).has({ value: '' }),
-      marcTextField('ind2', row).has({ value: '' }),
-      marcTextField('subfield', row).has({ value: '' }),
+      marcTextField('ind1', row).has({ required: false, value: '' }),
+      marcTextField('ind2', row).has({ required: false, value: '' }),
+      marcTextField('subfield', row).has({ required: false, value: '' }),
     ]);
   },
 
@@ -1947,5 +1947,48 @@ export default {
 
   verifyMarcValueTextfield(expectedValue, row = 0) {
     cy.expect(valueTextField(row).has({ value: expectedValue }));
+  },
+
+  // The MARC tag, indicator and subfield boxes are validated as the user types, so the keystrokes of a
+  // check have to reach the box without leaving it — hence typing instead of filling the box in
+  typeInMarcTextField(part, text, row = 0) {
+    cy.get(`input[data-testid="marc-${part}-${row}"]`).type(text);
+    cy.wait(500);
+  },
+
+  clearMarcTextField(part, row = 0) {
+    cy.get(`input[data-testid="marc-${part}-${row}"]`).clear();
+    cy.wait(500);
+  },
+
+  blurMarcTextField(part, row = 0) {
+    cy.get(`input[data-testid="marc-${part}-${row}"]`).blur();
+    cy.wait(500);
+  },
+
+  verifyMarcTextFieldError(part, errorMessage, { focused = true, row = 0 } = {}) {
+    cy.expect(
+      marcTextField(part, row).has({
+        error: errorMessage,
+        errorBorder: true,
+        errorIcon: true,
+        focused,
+      }),
+    );
+  },
+
+  verifyMarcTextFieldWithoutError(part, { focused = true, row = 0 } = {}) {
+    cy.expect(
+      marcTextField(part, row).has({
+        error: undefined,
+        errorBorder: false,
+        errorIcon: false,
+        focused,
+      }),
+    );
+  },
+
+  verifyOperatorColumnAbsent() {
+    cy.get('[class^="col-sm-2"][class*="headerCell"]').should('not.exist');
   },
 };
