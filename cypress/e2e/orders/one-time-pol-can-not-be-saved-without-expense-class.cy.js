@@ -143,7 +143,7 @@ describe('Orders', () => {
       OrderDetails.selectAddPOLine();
       OrderLineEditForm.checkButtonsConditions([
         { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
-        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: true } },
+        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: false } },
       ]);
 
       // Step 5: Fill in mandatory PO line fields
