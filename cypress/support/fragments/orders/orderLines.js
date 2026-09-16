@@ -40,6 +40,7 @@ import getRandomPostfix from '../../utils/stringTools';
 import FiltersPaneHelper from '../filtersPane';
 import SearchHelper from '../finance/financeHelper';
 import MultiColumnListHelper from '../multiColumnList';
+import SelectUser from '../invoices/modal/selectUser';
 import SelectInstanceModal from './modals/selectInstanceModal';
 import SelectLocationModal from './modals/selectLocationModal';
 import SelectDonorModal from './modals/selectDonorModal';
@@ -48,6 +49,14 @@ import OrderLineDetails from './orderLineDetails';
 const path = require('path');
 
 const filtersPane = PaneContent({ id: 'order-lines-filters-pane-content' });
+const createdByFilterSection = filtersPane.find(Accordion(ORDER_LINE_FILTER_LABELS.CREATED_BY));
+const findUserButton = createdByFilterSection.find(
+  Button({ id: 'metadata.createdByUserId-button' }),
+);
+const updatedByFilterSection = filtersPane.find(Accordion(ORDER_LINE_FILTER_LABELS.UPDATED_BY));
+const findUpdatedByUserButton = updatedByFilterSection.find(
+  Button({ id: 'metadata.updatedByUserId-button' }),
+);
 const receivedtitleDetails = PaneContent({ id: 'receiving-results-pane-content' });
 const resetButton = Button('Reset all');
 const saveAndCloseButton = Button('Save & close');
@@ -525,13 +534,6 @@ export default {
       Select('Create inventory*').choose('Instance, holdings, item'),
       saveAndCloseButton.click(),
     ]);
-  },
-
-  POLineInfoEditWithReceiptNotRequiredStatus() {
-    cy.do(Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED));
-    cy.expect(receivingWorkflowSelect.disabled());
-    save();
-    submitOrderLine();
   },
 
   POLineInfoEditWithPendingReceiptStatus() {
@@ -2790,6 +2792,15 @@ export default {
     MultiColumnListHelper.sortListBy(searchResultsPane.find(orderLineList), columnName);
   },
 
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(filtersPane, { disabled });
+  },
+
+  clearAllFilters(filterLabel) {
+    FiltersPaneHelper.clearAllFilters(filtersPane, filterLabel);
+    this.assertResetAllButtonState({ disabled: true });
+  },
+
   clearFilter(filterLabel) {
     FiltersPaneHelper.clearFilter(filtersPane, filterLabel);
   },
@@ -2804,6 +2815,18 @@ export default {
 
   filterByRush(options) {
     this.filterByCheckboxOptions(ORDER_LINE_FILTER_LABELS.RUSH, options);
+  },
+
+  filterByCreatedBy(userName) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.CREATED_BY);
+    cy.do(findUserButton.click());
+    SelectUser.selectUser(userName);
+  },
+
+  filterByUpdatedBy(userName) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.UPDATED_BY);
+    cy.do(findUpdatedByUserButton.click());
+    SelectUser.selectUser(userName);
   },
 
   filterByFundCodes(codes = []) {
@@ -2841,6 +2864,13 @@ export default {
     cy.expect(searchResultsPane.exists());
     MultiColumnListHelper.assertRowsCellsContent(searchResultsPane, rowsConfig);
     this.assertResultsCount(rowsConfig.length);
+  },
+
+  assertTitlesInResults(titles = []) {
+    titles.forEach((title) => {
+      cy.expect(searchResultsPane.find(MultiColumnListCell({ content: title })).exists());
+    });
+    this.assertResultsCount(titles.length);
   },
 
   assertResultsActionIsDisabled(actionButtonName, expectedDisabledState = true) {

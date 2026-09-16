@@ -39,6 +39,7 @@ import FileManager from '../../utils/fileManager';
 import InteractorsTools from '../../utils/interactorsTools';
 import SearchHelper from '../finance/financeHelper';
 import MultiColumnListHelper from '../multiColumnList';
+import SelectUser from '../invoices/modal/selectUser';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import OrderDetails from './orderDetails';
@@ -67,6 +68,14 @@ const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
 const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
 const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
 const ordersResultsPane = Pane({ id: 'orders-results-pane' });
+const createdByFilterSection = ordersFiltersPane.find(Accordion(ORDER_FILTER_LABELS.CREATED_BY));
+const findUserButton = createdByFilterSection.find(
+  Button({ id: 'metadata.createdByUserId-button' }),
+);
+const updatedByFilterSection = ordersFiltersPane.find(Accordion(ORDER_FILTER_LABELS.UPDATED_BY));
+const findUpdatedByUserButton = updatedByFilterSection.find(
+  Button({ id: 'metadata.updatedByUserId-button' }),
+);
 const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
 const purchaseOrderSection = Section({ id: 'purchaseOrder' });
 const purchaseOrderLineLimitReachedModal = Modal({ id: 'data-test-lines-limit-modal' });
@@ -101,6 +110,11 @@ export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
     cy.wait(ms);
     cy.expect([ordersFiltersPane.exists(), ordersResultsPane.exists()]);
+  },
+
+  verifyOrdersResultsPaneContentExists(ms = DEFAULT_WAIT_TIME) {
+    cy.expect(ordersResults.exists());
+    cy.wait(ms);
   },
 
   waitSettingsPageLoading() {
@@ -1145,6 +1159,22 @@ export default {
 
   filterByFundCodes(codes = []) {
     this.filterByMultiSelectOptions(ORDER_FILTER_LABELS.FUND_CODE, codes);
+  },
+
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_FILTER_LABELS.TAGS, tags);
+  },
+
+  filterByCreatedBy(userName) {
+    FiltersPaneHelper.expandFilterAccordion(ordersFiltersPane, ORDER_FILTER_LABELS.CREATED_BY);
+    cy.do(findUserButton.click());
+    SelectUser.selectUser(userName);
+  },
+
+  filterByUpdatedBy(userName) {
+    FiltersPaneHelper.expandFilterAccordion(ordersFiltersPane, ORDER_FILTER_LABELS.UPDATED_BY);
+    cy.do(findUpdatedByUserButton.click());
+    SelectUser.selectUser(userName);
   },
 
   removeMultiSelectChips(filterLabel, values = []) {
