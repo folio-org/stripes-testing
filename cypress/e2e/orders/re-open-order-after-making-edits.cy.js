@@ -186,6 +186,7 @@ describe('Orders', () => {
   };
 
   before('Create test data', () => {
+    cy.clearLocalStorage();
     cy.getAdminToken();
 
     testData.addresses.forEach((address) => Addresses.createAddressViaApi(address));

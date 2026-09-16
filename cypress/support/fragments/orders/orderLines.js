@@ -2792,6 +2792,15 @@ export default {
     MultiColumnListHelper.sortListBy(searchResultsPane.find(orderLineList), columnName);
   },
 
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(filtersPane, { disabled });
+  },
+
+  clearAllFilters(filterLabel) {
+    FiltersPaneHelper.clearAllFilters(filtersPane, filterLabel);
+    this.assertResetAllButtonState({ disabled: true });
+  },
+
   clearFilter(filterLabel) {
     FiltersPaneHelper.clearFilter(filtersPane, filterLabel);
   },
@@ -2855,6 +2864,13 @@ export default {
     cy.expect(searchResultsPane.exists());
     MultiColumnListHelper.assertRowsCellsContent(searchResultsPane, rowsConfig);
     this.assertResultsCount(rowsConfig.length);
+  },
+
+  assertTitlesInResults(titles = []) {
+    titles.forEach((title) => {
+      cy.expect(searchResultsPane.find(MultiColumnListCell({ content: title })).exists());
+    });
+    this.assertResultsCount(titles.length);
   },
 
   assertResultsActionIsDisabled(actionButtonName, expectedDisabledState = true) {

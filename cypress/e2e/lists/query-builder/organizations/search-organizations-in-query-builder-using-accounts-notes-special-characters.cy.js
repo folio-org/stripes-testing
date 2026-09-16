@@ -212,6 +212,7 @@ describe('Lists', () => {
         if (user?.userId) Users.deleteViaApi(user.userId);
       });
 
+      // The test will fail in Trillium until MODFQMMGR-1208 is deployed
       it(
         'C1525843 User can query Organizations by "contains" on repeatable "Organization — Accounts — Notes" field with special characters (athena)',
         { tags: ['extendedPath', 'athena', 'C1525843'] },
