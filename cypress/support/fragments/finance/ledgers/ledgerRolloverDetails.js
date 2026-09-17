@@ -9,6 +9,7 @@ import {
   Select,
   including,
   matching,
+  TextField,
 } from '../../../../../interactors';
 import UnpaidInvoiceListModal from '../modals/unpaidInvoiceListModal';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -72,6 +73,14 @@ export default {
     rolloverBudgets.forEach((details, index) => {
       if (details.checked) {
         cy.do(Checkbox({ name: `budgetsRollover[${index}].rolloverAllocation` }).click());
+      }
+
+      if (details.adjustAllocation) {
+        cy.do(
+          TextField({ name: `budgetsRollover[${index}].adjustAllocation` }).fillIn(
+            details.adjustAllocation,
+          ),
+        );
       }
 
       if (details.rolloverBudget) {
