@@ -435,6 +435,14 @@ export default {
     );
   },
 
+  selectRecordInUnreceivableList: (rowNumber = 0) => {
+    cy.do(
+      Section({ id: 'unreceivable' })
+        .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+        .click(),
+    );
+  },
+
   varifyReceivedListIsEmpty: () => {
     cy.expect(Section({ id: 'received' }).find(MultiColumnListRow()).absent());
   },

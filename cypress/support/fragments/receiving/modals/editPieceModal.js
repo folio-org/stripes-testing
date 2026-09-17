@@ -10,7 +10,10 @@ import {
   matching,
   Modal,
 } from '../../../../../interactors';
-import { RECEIVING_PIECE_FORM_FIELD_LABELS } from '../../../constants';
+import {
+  RECEIVING_PIECE_FORM_ACTIONS_LABELS,
+  RECEIVING_PIECE_FORM_FIELD_LABELS,
+} from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import ReceivingStates from '../receivingStates';
 import SelectLocationModal from '../../orders/modals/selectLocationModal';
@@ -32,6 +35,7 @@ const unreceivableButton = Button('Unreceivable');
 const saveAndCloseButton = editPieceModal.find(Button('Save & close'));
 const actionsDropdownButton = Button({ dataTestID: 'dropdown-trigger-button' });
 const unreceiveButton = Button('Unreceive');
+const expectButton = Button(RECEIVING_PIECE_FORM_ACTIONS_LABELS.EXPECT);
 
 const editPieceFields = {
   [RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_SUMMARY]: editPieceModal.find(
@@ -168,6 +172,18 @@ export default {
       InteractorsTools.checkCalloutMessage(
         matching(new RegExp(ReceivingStates.pieceReceivedSuccessfully)),
       );
+    }
+  },
+  clickExpectButton(isSuccess = true) {
+    cy.do(expectButton.click());
+    if (isSuccess) {
+      InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
+    }
+  },
+  clickUnreceivableButton(isSuccess = true) {
+    cy.do(unreceivableButton.click());
+    if (isSuccess) {
+      InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
     }
   },
   clickSaveAndCloseButton({ pieceSaved = true } = {}) {
