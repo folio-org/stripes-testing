@@ -112,7 +112,7 @@ describe('Orders', () => {
       ]);
       OrderLineEditForm.checkButtonsConditions([
         { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
-        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: false } },
+        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: true } },
       ]);
 
       // Step 3: check "Receiving workflow" dropdown options
