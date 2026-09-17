@@ -1,7 +1,9 @@
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 import QueryModal, { QUERY_OPERATIONS } from '../../../../support/fragments/bulk-edit/query-modal';
+import { AUTHORITY_LISTS_COLUMNS } from '../../../../support/constants';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import { Lists } from '../../../../support/fragments/lists/lists';
+import ListsFile from '../../../../support/fragments/lists/lists-file';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
@@ -21,6 +23,7 @@ const marcPrefix = `AT_${testCaseId}_${randomPostfix}`;
 const localSourceFileName = `AT_${testCaseId}_LocalSF_${randomPostfix}`;
 const localSourceFileCode = `atc${getRandomLetters(6)}`;
 const marcFieldOption = 'MARC Authority — MARC';
+const naturalIdCsvHeader = AUTHORITY_LISTS_COLUMNS.AUTHORITY_NATURAL_ID.replace('—', '-');
 const marcColumn = (tag, ind1, ind2, subfield) => {
   return `MARC ${tag} ind1=${ind1} ind2=${ind2} $${subfield}`;
 };
@@ -491,6 +494,15 @@ describe('Lists', () => {
               recordAC.naturalId,
               recordAD.naturalId,
             ]);
+            ListsFile.verifyCsvFileRowsRecordsNumber(listName, 2);
+            [recordAC, recordAD].forEach((record) => {
+              ListsFile.verifyHeaderAndValuesInCsvFileByIdentifier(
+                listName,
+                naturalIdCsvHeader,
+                record.naturalId,
+                [{ header: column670B, value: '' }],
+              );
+            });
 
             // Step 10: Click "Actions" menu > "Edit list", then click "Edit query" button
             Lists.openActions();

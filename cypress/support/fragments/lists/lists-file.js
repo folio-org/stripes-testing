@@ -11,7 +11,7 @@ import {
   organizationFieldValues,
   purchaseOrderLinesFieldValues,
 } from '../bulk-edit/query-modal';
-import { LOANS_FIELDS } from '../../constants/query-builder/loansFields';
+import { LOANS_FIELDS } from '../../constants';
 
 /**
  * Converts field values to CSV header format
@@ -139,6 +139,21 @@ export default {
 
         expect(actualValue).to.equal(pair.value);
       });
+    });
+  },
+
+  /**
+   * Verifies the number of record rows (excluding the header row) in a CSV file
+   * @param {string} listName - Name of the list (used to construct CSV filename)
+   * @param {number} recordsNumber - Expected number of record rows
+   * @returns {Cypress.Chainable} Cypress chainable
+   */
+  verifyCsvFileRowsRecordsNumber(listName, recordsNumber) {
+    const fileName = `${listName}.csv`;
+
+    return FileManager.convertCsvToJson(fileName).then((jsonDataArray) => {
+      expect(jsonDataArray).to.be.an('array').and.not.be.empty;
+      expect(jsonDataArray).to.have.length(recordsNumber);
     });
   },
 };

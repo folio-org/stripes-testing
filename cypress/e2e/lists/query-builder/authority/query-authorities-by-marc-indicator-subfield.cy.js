@@ -2,6 +2,7 @@ import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 import QueryModal, { QUERY_OPERATIONS } from '../../../../support/fragments/bulk-edit/query-modal';
 import ExportFile from '../../../../support/fragments/data-export/exportFile';
 import { Lists } from '../../../../support/fragments/lists/lists';
+import ListsFile from '../../../../support/fragments/lists/lists-file';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import ManageAuthorityFiles from '../../../../support/fragments/settings/marc-authority/manageAuthorityFiles';
@@ -383,6 +384,7 @@ describe('Lists', () => {
               shakespeareNameUpperCase,
               shakespeareDates,
             ]);
+            ListsFile.verifyCsvFileRowsRecordsNumber(listName, 2);
 
             // Step 7: Click "Actions" menu > "Edit list", then click "Edit query" button
             Lists.openActions();
