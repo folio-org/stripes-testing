@@ -60,6 +60,7 @@ export const RECEIVING_PIECE_FORM_ACTIONS_LABELS = {
   CANCEL: 'Cancel',
   DELAY_CLAIM: 'Delay claim',
   DELETE: 'Delete',
+  EXPECT: 'Expect',
   MARK_LATE: 'Mark late',
   QUICK_RECEIVE: 'Quick receive',
   SAVE_AND_CLOSE: 'Save & close',
