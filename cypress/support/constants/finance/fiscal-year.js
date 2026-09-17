@@ -17,3 +17,7 @@ export const FINANCIAL_ACTIVITY_OVERRAGES = {
   OVER_EXPENDED: 'Over expended',
   AVAILABLE_BALANCE: 'Available balance',
 };
+
+export const FISCAL_YEARS_VIEW_FIELDS = {
+  NAME: 'Name',
+};
