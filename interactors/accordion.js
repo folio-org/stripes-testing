@@ -69,10 +69,10 @@ export default HTML.extend('accordion')
   .actions({
     clickHeader: ({ perform }) => perform((el) => el.querySelector('[class^=labelArea-]').click()),
     focus: ({ find }) => find(Button()).focus(),
-    expand: (el) => {
+    expand: ({ perform }) => perform((el) => {
       const trigger = el.querySelector('button[class^=defaultCollapseButton-]');
       const isCollapsed = trigger.getAttribute('aria-expanded') === 'false';
 
       if (isCollapsed) trigger.click();
-    },
+    }),
   });
