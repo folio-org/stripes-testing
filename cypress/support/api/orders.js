@@ -16,6 +16,24 @@ Cypress.Commands.add('createOrderLineApi', (orderLine) => {
   });
 });
 
+Cypress.Commands.add('createAcquisitionMethodApi', (body) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'orders/acquisition-methods',
+    body,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('deleteAcquisitionMethodApi', (id) => {
+  return cy.okapiRequest({
+    method: 'DELETE',
+    path: `orders/acquisition-methods/${id}`,
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
+  });
+});
+
 Cypress.Commands.add('getAcquisitionMethodsApi', (searchParams) => {
   return cy.okapiRequest({
     path: 'orders/acquisition-methods',

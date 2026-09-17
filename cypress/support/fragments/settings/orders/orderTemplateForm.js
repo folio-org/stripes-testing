@@ -1,8 +1,6 @@
 import {
   Accordion,
-  AcqFundDistribution,
   Button,
-  Card,
   Checkbox,
   Form,
   including,
@@ -45,8 +43,6 @@ const orderTemplateFundDetailsSection = orderTemplateForm.find(
 );
 const orderTemplateLocationDetailsSection = orderTemplateForm.find(Section({ id: 'location' }));
 const orderTemplatePoLineTagsSection = orderTemplateForm.find(Section({ id: 'polTags' }));
-
-const orderTemplatePaymentTermsSection = Accordion({ id: 'paymentTerms' });
 
 const saveButton = Button({ id: 'save-order-template-button' });
 
@@ -111,17 +107,19 @@ export default {
     });
   },
 
-  checkPolOngoingOrderSectionAbsent() {
+  assertPolOngoingOrderSectionAbsent() {
     cy.expect(orderTemplatePOLOngoingSection.absent());
   },
-  checkPolOngoingOrderSectionPresent() {
+  assertPolOngoingOrderSectionPresent() {
     cy.expect(orderTemplatePOLOngoingSection.exists());
   },
-  checkPaymentTermsSectionAbsent() {
-    cy.expect(orderTemplatePaymentTermsSection.absent());
+
+  expandAll() {
+    cy.do(orderTemplateForm.find(Button(COMMON_BUTTON_LABELS.EXPAND_ALL)).click());
   },
-  checkPaymentTermsSectionPresent() {
-    cy.expect(orderTemplatePaymentTermsSection.exists());
+
+  expandAccordion(label) {
+    cy.do(orderTemplateForm.find(Accordion(including(label))).expand());
   },
 
   fillOrderTemplateFields({ templateInformation, poInformation, poLineDetails } = {}) {
@@ -152,6 +150,18 @@ export default {
     if (hideAll) {
       cy.do(infoSectionFields.hideAll.click());
     }
+  },
+  assertInfoSectionFields({ templateName, templateCode }) {
+    const expectations = [];
+
+    if (templateName !== undefined) {
+      expectations.push(infoSectionFields.templateName.has({ value: templateName }));
+    }
+    if (templateCode !== undefined) {
+      expectations.push(infoSectionFields.templateCode.has({ value: templateCode }));
+    }
+
+    cy.expect(expectations);
   },
   fillPoInfoSectionFields({ organizationName, orderType }) {
     cy.do(poInfoSectionFields.poInformationSection.click());
@@ -191,6 +201,19 @@ export default {
     }
   },
 
+  selectCurrency(currency = 'USD') {
+    const field = orderTemplateCostDetailsSection.find(
+      Selection(including(ORDER_LINE_FORM_LABELS.CURRENCY)),
+    );
+
+    cy.do([
+      field.perform((el) => el.scrollIntoView()),
+      field.open(),
+      SelectionList().filter(currency),
+      SelectionOption(including(currency)).click(),
+    ]);
+  },
+
   clickAddLocationButton() {
     cy.do(
       orderTemplateLocationDetailsSection.find(Button(ORDER_LINE_FORM_LABELS.ADD_LOCATION)).click(),
@@ -220,22 +243,24 @@ export default {
       .exists();
   },
 
-  selectFundInPaymentTermsCard({ fyCode, fundName, fundCode }) {
-    const label = `${fundName} (${fundCode})`;
-
-    const FDInteractor = orderTemplatePaymentTermsSection
-      .find(Card({ headerStart: including(fyCode) }))
-      .find(AcqFundDistribution());
-
-    cy.do([
-      FDInteractor.perform((el) => el.scrollIntoView()),
-      FDInteractor.openFundSelector(0),
-      SelectionList().filter(label),
-      SelectionOption(including(label)).click(),
-    ]);
-  },
-
   clickExpandAllAccordions() {
     cy.do(orderTemplateForm.find(Button(COMMON_BUTTON_LABELS.EXPAND_ALL)).click());
+  },
+
+  /* Fields visibility */
+  toggleFieldVisibilityIcon(fieldName) {
+    cy.do(
+      orderTemplateForm.perform((el) => {
+        el.querySelector(`input[name="hiddenFields.${fieldName}"]`).click();
+      }),
+    );
+  },
+
+  toggleMultiYearPrepaymentVisibility() {
+    this.toggleFieldVisibilityIcon('multiYearPayment');
+  },
+
+  togglePaymentTermsVisibility() {
+    this.toggleFieldVisibilityIcon('paymentTerms');
   },
 };

@@ -8,7 +8,9 @@ import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYe
 import Funds from '../../../support/fragments/finance/funds/funds';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import Orders from '../../../support/fragments/orders/orders';
-import OrderTemplateForm from '../../../support/fragments/settings/orders/orderTemplateForm';
+import OrderTemplateFormFragment from '../../../support/fragments/settings/orders/orderTemplateForm';
+import MultiYearPaymentTerms from '../../../support/fragments/orders/multiYearPaymentTerms';
+
 import OrderTemplates from '../../../support/fragments/settings/orders/orderTemplates';
 import SettingOrdersNavigationMenu from '../../../support/fragments/settings/orders/settingOrdersNavigationMenu';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -17,6 +19,8 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import { ServicePoints } from '../../../support/fragments/settings/tenant';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomStringCode from '../../../support/utils/generateTextCode';
+
+const OrderTemplateForm = { ...OrderTemplateFormFragment, ...MultiYearPaymentTerms };
 
 describe('Settings | Orders', () => {
   const flow = new ExecutionFlowManager();
