@@ -14,12 +14,7 @@ describe('Data Import', () => {
       const testData = {};
       const capabSetsToAssign = [CapabilitySets.uiDataImportSettingsManage];
       const capabsToAssign = [Capabilities.settingsEnabled];
-      // TO DO: Uncomment step after https://folio-org.atlassian.net/browse/UIDATIMP-1775 is done
-      // const disabledOptions = [
-      //   'Edit',
-      //   'Duplicate',
-      //   'Delete',
-      // ];
+      const disabledOptions = ['Edit', 'Duplicate', 'Delete'];
       const conditionsToCheck = [
         { label: 'Name', conditions: { value: profileName } },
         { label: 'Description', conditions: { value: profileDescription } },
@@ -63,7 +58,7 @@ describe('Data Import', () => {
 
           // TO DO: Uncomment step after https://folio-org.atlassian.net/browse/UIDATIMP-1775 is done
           // Step 3: Click Actions; verify Edit, Duplicate, Delete are disabled
-          // FieldMappingProfileView.verifyActionsMenuOptionsDisabled(disabledOptions);
+          FieldMappingProfileView.verifyActionsMenuOptionsDisabled(disabledOptions);
         },
       );
     });

@@ -757,6 +757,15 @@ export default {
     ]);
   },
 
+  clearTextInTypeOfHeading: () => {
+    cy.then(() => headingTypeAccordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(headingTypeAccordion.clickHeader());
+      }
+    });
+    cy.do([typeOfHeadingSelect.focus(), typeOfHeadingSelect.fillIn('')]);
+  },
+
   clickAccordionAndCheckResultList(accordion, record) {
     cy.do(Accordion(accordion).clickHeader());
     cy.expect(MultiColumnListCell({ content: including(record) }).exists());
@@ -1194,6 +1203,14 @@ export default {
     );
   },
 
+  checkResultsPaneRecordsCounterAbsent() {
+    cy.expect(
+      Pane({ id: 'authority-search-results-pane' }).has({
+        subtitle: not(matching(/\d+ (record|result)s{0,1} found/)),
+      }),
+    );
+  },
+
   checkSelectedAuthoritySourceInPlugInModal(option) {
     cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including(option) })).exists());
   },
@@ -1565,6 +1582,16 @@ export default {
     });
   },
 
+  // Browse's "Heading/Reference" column must sort diacritic letters as equivalent to their base
+  // letter (e.g. "Ż" alongside "Z") - `localeCompare` with { sensitivity: 'base' } encodes that
+  // equivalence, unlike a plain string/numeric sort which would treat them as different letters
+  checkResultsSortedWithDiacriticFolding(columnIndex = 2) {
+    this.getResultsListByColumn(columnIndex).then((cells) => {
+      const expectedOrder = [...cells].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      cy.expect(cells).to.deep.equal(expectedOrder);
+    });
+  },
+
   verifyOnlyOneAuthorityRecordInResultsList() {
     this.getResultsListByColumn(1).then((cells) => {
       const authorizedRecords = cells.filter((element) => {
@@ -1593,6 +1620,7 @@ export default {
   verifyColumnValuesOnlyExist({ column, expectedValues, browsePane = false } = {}) {
     let actualValues = [];
 
+    cy.wait(1000);
     cy.then(() => authoritiesList.rowCount())
       .then((rowsCount) => {
         Array.from({ length: rowsCount }).forEach((_, index) => {
