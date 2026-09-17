@@ -18,7 +18,8 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import Organizations from '../../support/fragments/organizations/organizations';
 import OrderDetails from '../../support/fragments/orders/orderDetails';
 import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
-import OrderLineEditForm from '../../support/fragments/orders/orderLineEditForm';
+import OrderLineEditFormFragment from '../../support/fragments/orders/orderLineEditForm';
+import MultiYearPaymentTerms from '../../support/fragments/orders/multiYearPaymentTerms';
 import Orders from '../../support/fragments/orders/orders';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
@@ -30,7 +31,10 @@ import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesL
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomStringCode from '../../support/utils/generateTextCode';
+import { parsePrepaymentFiscalYearDistribution } from '../../support/utils/ordersExport';
 import { FinanceHelper } from '../../support/fragments/finance';
+
+const OrderLineEditForm = { ...OrderLineEditFormFragment, ...MultiYearPaymentTerms };
 
 describe('Orders', () => {
   const flow = new ExecutionFlowManager();
@@ -69,34 +73,6 @@ describe('Orders', () => {
     STARTING_FISCAL_YEAR: 'Prepayment starting fiscal year',
     TOTAL_PRICE: 'Prepayment total price',
     FISCAL_YEAR_DISTRIBUTIONS: 'Prepayment fiscal year, Fund code, Expense class, Value, Amount',
-  };
-
-  const parsePrepaymentFiscalYearDistribution = (value = '') => {
-    return (value || '')
-      .split(' | ')
-      .filter(Boolean)
-      .map((entry) => {
-        const quotedValues = entry.match(/"([^"]*)"/g) || [];
-        const values = quotedValues.map((item) => item.slice(1, -1));
-
-        if (values.length < 5) {
-          return null;
-        }
-
-        const isPercentage = values[3].endsWith('%');
-
-        return {
-          fyCode: values[0],
-          fundCode: values[1],
-          expenseClass: values[2],
-          value: isPercentage ? values[3].slice(0, -1) : values[3],
-          distributionType: isPercentage
-            ? FUND_DISTRIBUTION_TYPES.PERCENTAGE
-            : FUND_DISTRIBUTION_TYPES.AMOUNT,
-          amount: values[4],
-        };
-      })
-      .filter(Boolean);
   };
 
   const getParsedPrepaymentDistributionByFiscalYear = (row, fyCode) => {
@@ -666,7 +642,7 @@ describe('Orders', () => {
       OrderLineEditForm.removeLastFYCard();
       OrderLineEditForm.clickSaveButton({ orderLineUpdated: false });
       OrderLineEditForm.waitLoading();
-      OrderLineEditForm.checkAtLeastTwoFYsValidationError();
+      OrderLineEditForm.assertAtLeastTwoFYsValidationError();
 
       cy.log(
         'Step 11. Add two FY cards; Click "Add fund distribution" in FY1 card; Select Fund A; Select expense class; Change type to %; Click "Save & close"',

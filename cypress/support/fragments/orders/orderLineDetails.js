@@ -15,7 +15,7 @@ import {
   Warning,
   MultiColumnListHeader,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import { DEFAULT_WAIT_TIME, ORDER_LINE_FORM_LABELS } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import ExportDetails from '../exportManager/exportDetails';
 import TransactionDetails from '../finance/transactions/transactionDetails';
@@ -715,5 +715,32 @@ export default {
           .has({ value: including(customFieldValue) }),
       );
     }
+  },
+
+  // --- Multi-year prepayment / Payment terms (view mode) ---
+  assertMultiYearPrepaymentChecked() {
+    cy.expect(
+      ongoingOrderSection
+        .find(Checkbox({ labelText: ORDER_LINE_FORM_LABELS.MULTI_YEAR_PREPAYMENT }))
+        .has({ checked: true, disabled: true }),
+    );
+  },
+  assertMultiYearPrepaymentAbsent() {
+    cy.expect(
+      ongoingOrderSection
+        .find(
+          Checkbox({
+            disabled: true,
+            labelText: ORDER_LINE_FORM_LABELS.MULTI_YEAR_PREPAYMENT,
+          }),
+        )
+        .absent(),
+    );
+  },
+  assertFundDistributionAccordionBlank() {
+    cy.expect(fundDistributionsSection.has({ text: including('The list contains no items') }));
+  },
+  assertPaymentTermsSectionAbsent() {
+    cy.expect(orderLineDetailsSection.find(Section({ id: 'paymentTerms' })).absent());
   },
 };

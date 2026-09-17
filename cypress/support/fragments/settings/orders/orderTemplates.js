@@ -3,16 +3,23 @@ import uuid from 'uuid';
 import {
   Accordion,
   Button,
-  Callout,
+  Checkbox,
   DropdownMenu,
+  HTML,
+  Callout,
   including,
   NavListItem,
   Pane,
   PaneContent,
   Modal,
   Section,
+  Card,
 } from '../../../../../interactors';
-import { COMMON_BUTTON_LABELS, DEFAULT_WAIT_TIME } from '../../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  ORDER_LINE_FORM_LABELS,
+} from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import getRandomPostfix from '../../../utils/stringTools';
 import OrderTemplateForm from './orderTemplateForm';
@@ -20,9 +27,11 @@ import OrderTemplateForm from './orderTemplateForm';
 const FUND_RESTRICTION_ERROR = 'Location-restricted fund applied to invalid location';
 
 const templateViewPane = Pane({ id: 'order-settings-order-template-view' });
+const templatePaymentTermsSection = templateViewPane.find(Accordion({ id: 'paymentTerms' }));
 
 const actionsButton = Button('Actions');
 const deleteModal = Modal('Delete template');
+const duplicateModal = Modal('Duplicate template');
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -119,12 +128,49 @@ export default {
       })
       .then(({ body }) => body);
   },
-  checkPolOngoingOrderSectionAbsent() {
+  assertPolOngoingOrderSectionAbsent() {
     cy.expect(templateViewPane.find(Section({ id: 'polOngoingOrder' })).absent());
   },
 
-  checkPaymentTermsSectionAbsent() {
+  assertPaymentTermsSectionAbsent() {
     cy.expect(templateViewPane.find(Accordion({ id: 'paymentTerms' })).absent());
+  },
+
+  expandAll() {
+    cy.do(templateViewPane.find(Button('Expand all')).click());
+  },
+
+  // View mode: "Multi-year prepayment" is shown as a checked read-only checkbox
+  assertMultiYearPrepaymentChecked() {
+    cy.expect(
+      templateViewPane
+        .find(Checkbox({ labelText: ORDER_LINE_FORM_LABELS.MULTI_YEAR_PREPAYMENT }))
+        .has({ checked: true, disabled: true }),
+    );
+  },
+
+  assertPaymentTermsCardContainsFund(fyCode, fundName) {
+    cy.expect(
+      templatePaymentTermsSection
+        .find(Card({ headerStart: including(fyCode) }))
+        .has({ text: including(fundName) }),
+    );
+  },
+
+  assertPaymentTermsCardShowsNoItems(fyCode) {
+    cy.expect(
+      templatePaymentTermsSection
+        .find(Card({ headerStart: including(fyCode) }))
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
+  },
+
+  duplicateTemplate() {
+    cy.do([actionsButton.click(), DropdownMenu().find(Button('Duplicate')).click()]);
+    cy.expect(duplicateModal.exists());
+    cy.do(duplicateModal.find(Button('Submit')).click());
+    InteractorsTools.checkCalloutMessage('The template was successfully duplicated');
   },
 
   getOrderTemplateByNameViaApi(templateName) {
