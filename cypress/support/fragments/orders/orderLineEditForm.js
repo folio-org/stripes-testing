@@ -1,9 +1,7 @@
 import {
-  Accordion,
   AcqFundDistribution,
   Button,
   Callout,
-  Card,
   Checkbox,
   HTML,
   KeyValue,
@@ -44,7 +42,6 @@ const FORM_SECTION_IDS = {
   COST_DETAILS: 'costDetails',
   FUND_DISTRIBUTION: 'fundDistributionAccordion',
   LOCATION: 'location',
-  PAYMENT_TERMS: 'paymentTerms',
 };
 const FORM_FIELD_NAMES = {
   ACQUISITION_METHOD: 'acquisitionMethod',
@@ -52,9 +49,6 @@ const FORM_FIELD_NAMES = {
   RECEIPT_STATUS: 'receiptStatus',
   CHECKIN_ITEMS: 'checkinItems',
   PAYMENT_STATUS: 'paymentStatus',
-  MULTI_YEAR_PAYMENT: 'multiYearPayment',
-  TOTAL_PRICE: 'paymentTerms.totalPrice',
-  PREPAYMENT_TERM: 'paymentTerms.prepaymentTerm',
   LOCATION_ID: 'locations[0].locationId',
   LOCATION_QUANTITY_PHYSICAL: 'locations[0].quantityPhysical',
   LOCATION_QUANTITY_ELECTRONIC: 'locations[0].quantityElectronic',
@@ -84,10 +78,6 @@ const FUND_DISTRIBUTION_LABELS = {
   FUND_ID: 'Fund ID',
   EXPENSE_CLASS: 'Expense class',
 };
-const PAYMENT_TERMS_LABELS = {
-  STARTING_FISCAL_YEAR: 'Starting fiscal year',
-  ADD_FISCAL_YEAR: 'Add fiscal year',
-};
 const FORM_LABELS = {
   ADD_LOCATION: 'Add location',
   ADD_FUND_DISTRIBUTION: 'Add fund distribution',
@@ -98,6 +88,7 @@ const FORM_LABELS = {
   AUTO_EXPORT_INFO_MESSAGE:
     'This is a Manual PO so all POLs are excluded from automated export workflows',
   REMOVE_FISCAL_YEAR: 'Remove fiscal year',
+  SHOW_HIDDEN_FIELDS: 'Show hidden fields',
 };
 const FIELD_SELECTORS = {
   LOCATION_ID: 'field-locations',
@@ -115,13 +106,9 @@ const FIELD_SELECTORS = {
   FIELDSET: 'fieldset',
   LOCATION_ID_INPUT: 'field-locations[{index}].locationId',
   UNKNOWN_FIELD_ERROR: 'Unknown field: ',
-  PAYMENT_TERMS_ACCORDION_TOGGLE: 'button[id="accordion-toggle-button-paymentTerms"]',
 };
 const VALIDATION_MESSAGES = {
-  MINIMUM_FISCAL_YEARS: 'At least 2 fiscal years must be specified for multi-year prepayment',
   INVALID_LOCATION_FUND: 'Location-restricted fund applied to invalid location',
-  PERCENT_OR_AMOUNT_EQUALS_100: 'The percentage or amount(s) should be equal 100% of the total',
-  REMAINING_AMOUNT_PREFIX: 'Remaining amount to be distributed: ',
 };
 
 const orderLineEditFormRoot = Section({ id: FORM_SECTION_IDS.FORM });
@@ -184,22 +171,6 @@ export const vendorDetailsFields = {
 
 const ongoingInformationFields = {
   'Renewal note': ongoingOrderSection.find(TextArea({ name: FORM_FIELD_NAMES.RENEWAL_NOTE })),
-};
-const multiYearPrepaymentCheckbox = ongoingOrderSection.find(
-  Checkbox({ name: FORM_FIELD_NAMES.MULTI_YEAR_PAYMENT }),
-);
-const paymentTermsSection = Accordion({ id: FORM_SECTION_IDS.PAYMENT_TERMS });
-const fiscalYearDistributions = paymentTermsSection.find(
-  RepeatableField({ id: 'paymentTerms.fiscalYearDistributions' }),
-);
-const getFiscalYearDistributionItems = (element) => {
-  // Each FY card contains another repeatable field for its fund rows. Restrict the
-  // lookup to the list owned by the outer FY fieldset so nested fund rows are excluded.
-  const list = [...element.querySelectorAll(FIELD_SELECTORS.REPEATABLE_FIELD_LIST)].find(
-    (candidate) => candidate.closest(FIELD_SELECTORS.FIELDSET) === element,
-  );
-
-  return list ? [...list.children] : [];
 };
 
 const costDetailsFields = {
@@ -271,17 +242,8 @@ export default {
   checkOngoingOrderInformationSection(fields = []) {
     this.checkFieldsConditions({ fields, section: ongoingInformationFields });
   },
-  checkOngoingOrderSectionAbsent() {
+  assertOngoingOrderSectionAbsent() {
     cy.expect(ongoingOrderSection.absent());
-  },
-  checkPaymentTermsSectionAbsent() {
-    cy.expect(paymentTermsSection.absent());
-  },
-  checkMultiYearPrepaymentUnchecked() {
-    cy.expect(multiYearPrepaymentCheckbox.has({ checked: false }));
-  },
-  checkPaymentTermsCollapsed() {
-    cy.expect(paymentTermsSection.has({ expanded: false }));
   },
   checkCostDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: costDetailsFields });
@@ -289,6 +251,15 @@ export default {
   setUserLimit(limit) {
     cy.get(FIELD_SELECTORS.USER_LIMIT).clear().type(limit);
   },
+
+  clickActionsButton: () => {
+    cy.do(orderLineEditFormRoot.find(Button(COMMON_BUTTON_LABELS.ACTIONS)).click());
+  },
+
+  clickShowHiddenFieldsAction() {
+    cy.do(Button(including(FORM_LABELS.SHOW_HIDDEN_FIELDS)).click());
+  },
+
   checkExchangeRateError(
     errorMessage = OrderStates.exchangeRateAmountMustBePositive,
     shouldExist = true,
@@ -372,8 +343,12 @@ export default {
   },
   fillPoLineDetails(poLineDetails) {
     if (poLineDetails.acquisitionMethod) {
-      cy.do(Button({ name: FORM_FIELD_NAMES.ACQUISITION_METHOD }).click());
-      cy.do(SelectionOption(poLineDetails.acquisitionMethod).click());
+      cy.do([
+        orderLineDetailsSection.perform((el) => el.scrollIntoView()),
+        Button({ name: FORM_FIELD_NAMES.ACQUISITION_METHOD }).click(),
+        SelectionList().filter(poLineDetails.acquisitionMethod),
+        SelectionOption(poLineDetails.acquisitionMethod).click(),
+      ]);
     }
     if (poLineDetails.orderFormat) {
       cy.do(orderLineFields.orderFormat.choose(poLineDetails.orderFormat));
@@ -454,16 +429,6 @@ export default {
 
   scrollToFundDistributionSection() {
     cy.get(`[id="${FORM_SECTION_IDS.FUND_DISTRIBUTION}"]`).scrollIntoView().should('be.visible');
-    cy.wait(1000);
-  },
-
-  scrollToPaymentTermsSection() {
-    cy.get(
-      `[id="${FORM_SECTION_IDS.PAYMENT_TERMS}"] ${FIELD_SELECTORS.PAYMENT_TERMS_ACCORDION_TOGGLE}`,
-    )
-      .scrollIntoView()
-      .should('be.visible')
-      .focus();
     cy.wait(1000);
   },
 
@@ -587,6 +552,10 @@ export default {
           .absent(),
       );
     }
+  },
+
+  assertFundDistributionSectionEmpty() {
+    cy.expect(fundDistributionDetailsSection.find(AcqFundDistribution()).has({ rowCount: 0 }));
   },
 
   checkRemainingAmountToBeDistributed(remainingAmount) {
@@ -782,221 +751,6 @@ export default {
         .find(Button({ icon: 'trash' }))
         .click(),
     );
-  },
-
-  enableMultiYearPrepayment() {
-    cy.do(multiYearPrepaymentCheckbox.click());
-  },
-
-  assertMultiYearPrepaymentCheckedAndEnabled() {
-    cy.expect(multiYearPrepaymentCheckbox.has({ checked: true, disabled: false }));
-  },
-
-  selectStartingFiscalYear(fyCode) {
-    cy.do([
-      paymentTermsSection.perform((el) => el.scrollIntoView()),
-      paymentTermsSection
-        .find(Selection(including(PAYMENT_TERMS_LABELS.STARTING_FISCAL_YEAR)))
-        .open(),
-      SelectionList().filter(fyCode),
-      SelectionOption(including(fyCode)).click(),
-    ]);
-  },
-
-  fillPrepaymentTotalPrice(value) {
-    cy.do(
-      paymentTermsSection
-        .find(TextField({ name: FORM_FIELD_NAMES.TOTAL_PRICE }))
-        .fillIn(String(value)),
-    );
-  },
-
-  clickAddFiscalYearButton() {
-    cy.do(paymentTermsSection.find(Button(PAYMENT_TERMS_LABELS.ADD_FISCAL_YEAR)).click());
-  },
-
-  assertAddFiscalYearButtonEnabled() {
-    cy.expect(
-      paymentTermsSection
-        .find(Button(PAYMENT_TERMS_LABELS.ADD_FISCAL_YEAR))
-        .has({ disabled: false }),
-    );
-  },
-
-  assertAddFiscalYearButtonDisabled() {
-    cy.expect(
-      paymentTermsSection
-        .find(Button(PAYMENT_TERMS_LABELS.ADD_FISCAL_YEAR))
-        .has({ disabled: true }),
-    );
-  },
-
-  assertPrepaymentTermValue(value) {
-    cy.expect(
-      paymentTermsSection
-        .find(TextField({ name: FORM_FIELD_NAMES.PREPAYMENT_TERM }))
-        .has({ value: String(value), disabled: true }),
-    );
-  },
-
-  assertFiscalYearCards(fyCodes) {
-    fyCodes.forEach((fyCode) => {
-      cy.expect(paymentTermsSection.find(Card({ headerStart: including(fyCode) })).exists());
-    });
-  },
-
-  assertOnlyFiscalYearCardRemovable(fyCodes, removableFyCode) {
-    cy.do(
-      fiscalYearDistributions.perform((element) => {
-        const items = getFiscalYearDistributionItems(element);
-
-        expect(items).to.have.length(fyCodes.length);
-        items.forEach((item, index) => {
-          const removeButtons = item.querySelectorAll(FIELD_SELECTORS.REMOVE_FISCAL_YEAR_BUTTON);
-          const expectedCount = fyCodes[index] === removableFyCode ? 1 : 0;
-
-          expect(removeButtons).to.have.length(expectedCount);
-        });
-      }),
-    );
-  },
-
-  assertFiscalYearCardFundDistributions({ fyCode, distributions }) {
-    const fundDistribution = paymentTermsSection
-      .find(Card({ headerStart: including(fyCode) }))
-      .find(AcqFundDistribution());
-
-    cy.expect(fundDistribution.has({ rowCount: distributions.length }));
-
-    distributions.forEach(({ fundName, fundCode, expenseClassName, value }, index) => {
-      const row = fundDistribution.find(RepeatableFieldItem({ index }));
-      const expectations = [
-        row
-          .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID)))
-          .has({ singleValue: including(`${fundName} (${fundCode})`) }),
-        row.find(TextField()).has({ value: String(value) }),
-      ];
-
-      if (expenseClassName) {
-        expectations.push(
-          row
-            .find(Selection(including(FUND_DISTRIBUTION_LABELS.EXPENSE_CLASS)))
-            .has({ singleValue: including(expenseClassName) }),
-        );
-      }
-
-      cy.expect(expectations);
-    });
-  },
-
-  assertPrepaymentTermsRemainingAmount(value) {
-    cy.expect(
-      paymentTermsSection
-        .find(HTML(`${VALIDATION_MESSAGES.REMAINING_AMOUNT_PREFIX}${value}`))
-        .exists(),
-    );
-  },
-
-  assertPrepaymentTermsDistributionError(value) {
-    cy.expect(
-      paymentTermsSection
-        .find(HTML(including(VALIDATION_MESSAGES.PERCENT_OR_AMOUNT_EQUALS_100)))
-        .exists(),
-    );
-    this.assertPrepaymentTermsRemainingAmount(value);
-  },
-
-  removeLastFYCard() {
-    cy.do(
-      fiscalYearDistributions.perform((element) => {
-        const items = getFiscalYearDistributionItems(element);
-        const lastItem = items.at(-1);
-        const removeButton = lastItem?.querySelector(FIELD_SELECTORS.REMOVE_FISCAL_YEAR_BUTTON);
-
-        // ui-orders passes onRemove={false} to RepeatableField and renders this custom
-        // sibling button, so the standard RepeatableField.clickRemove action cannot reach it.
-        expect(removeButton, 'last fiscal-year card remove button').to.not.equal(null);
-        removeButton.click();
-      }),
-    );
-  },
-
-  openFundIdDropdownInFYCard(fyCode, rowIndex = 0) {
-    cy.do(
-      paymentTermsSection
-        .find(Card({ headerStart: including(fyCode) }))
-        .find(AcqFundDistribution())
-        .openFundSelector(rowIndex),
-    );
-  },
-
-  checkFundAbsentInOpenDropdown(fundName) {
-    cy.expect(SelectionOption(including(fundName)).absent());
-  },
-
-  addFundDistributionInFYCard(fyCode) {
-    cy.do(
-      paymentTermsSection
-        .find(Card({ headerStart: including(fyCode) }))
-        .find(AcqFundDistribution())
-        .addRow(),
-    );
-  },
-
-  selectFundInPaymentTermsCard({ fyCode, fundName, fundCode, rowIndex = 0 }) {
-    const label = `${fundName} (${fundCode})`;
-
-    const FDInteractor = paymentTermsSection
-      .find(Card({ headerStart: including(fyCode) }))
-      .find(AcqFundDistribution());
-
-    cy.do([
-      FDInteractor.perform((el) => el.scrollIntoView()),
-      FDInteractor.openFundSelector(rowIndex),
-      SelectionList().filter(label),
-      SelectionOption(including(label)).click(),
-    ]);
-  },
-
-  selectExpenseClassInFYCard({ fyCode, expenseClassName, rowIndex = 0 }) {
-    cy.do(
-      paymentTermsSection
-        .find(Card({ headerStart: including(fyCode) }))
-        .find(AcqFundDistribution())
-        .openExpenseClassSelector(rowIndex),
-    );
-    cy.do(SelectionOption(including(expenseClassName)).click());
-  },
-
-  selectDistributionTypePercentInFYCard({ fyCode, rowIndex = 0 }) {
-    cy.do(
-      paymentTermsSection
-        .find(Card({ headerStart: including(fyCode) }))
-        .find(AcqFundDistribution())
-        .selectDistributionTypePercent(rowIndex),
-    );
-  },
-
-  selectDistributionTypeAmountInFYCard({ fyCode, rowIndex = 0 }) {
-    cy.do(
-      paymentTermsSection
-        .find(Card({ headerStart: including(fyCode) }))
-        .find(AcqFundDistribution())
-        .selectDistributionTypeAmount(rowIndex),
-    );
-  },
-
-  fillFundDistributionValueInFYCard({ fyCode, value, rowIndex = 0 }) {
-    cy.do(
-      paymentTermsSection
-        .find(Card({ headerStart: including(fyCode) }))
-        .find(AcqFundDistribution())
-        .fillValue({ value, index: rowIndex }),
-    );
-  },
-
-  checkAtLeastTwoFYsValidationError() {
-    cy.expect(HTML(including(VALIDATION_MESSAGES.MINIMUM_FISCAL_YEARS)).exists());
   },
 
   checkFundRestrictionErrorToastPresent() {

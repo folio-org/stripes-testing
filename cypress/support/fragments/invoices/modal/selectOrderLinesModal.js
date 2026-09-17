@@ -11,7 +11,11 @@ import {
   TextField,
   including,
 } from '../../../../../interactors';
-import { ORDER_LINE_FILTER_LABELS, SEARCH_AND_FILTER_PANE_TITLE } from '../../../constants';
+import {
+  ORDER_LINE_FILTER_LABELS,
+  RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
+  SEARCH_AND_FILTER_PANE_TITLE,
+} from '../../../constants';
 import FiltersPane from '../../filtersPane';
 import MultiColumnListHelper from '../../multiColumnList';
 import SelectLocationModal from '../../orders/modals/selectLocationModal';
@@ -85,7 +89,7 @@ export default {
         .has({ content: titleOrPackage }),
     );
   },
-  assertSearchResults(titles = []) {
+  assertSearchResults(titles = [], { verifyRowCount = true } = {}) {
     cy.expect(selectOrderLinesModal.exists());
     if (!titles.length) {
       cy.expect(selectOrderLinesModal.find(HTML(including('No results found'))).exists());
@@ -94,7 +98,9 @@ export default {
     titles.forEach((title) => {
       cy.expect(resultsList.find(MultiColumnListCell({ content: title })).exists());
     });
-    MultiColumnListHelper.assertRowCount(resultsList, titles.length);
+    if (verifyRowCount) {
+      MultiColumnListHelper.assertRowCount(resultsList, titles.length);
+    }
   },
   assertSearchResultTitlesAbsent(titles = []) {
     titles.forEach((title) => {
@@ -170,6 +176,34 @@ export default {
     cy.do(filtersPane.find(Button(LOCATIONS_LOOKUP_TRIGGER_LABEL)).click());
     SelectLocationModal.waitLoading();
     SelectLocationModal.selectLocation(locationName, options);
+  },
+
+  openLocationLookUp() {
+    FiltersPane.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(filtersPane.find(Button(LOCATIONS_LOOKUP_TRIGGER_LABEL)).click());
+    SelectLocationModal.waitLoading();
+  },
+
+  checkChooseFilterMessageDisplayed() {
+    cy.expect(
+      selectOrderLinesModal.find(HTML(including(RESULTS_PANE_CHOOSE_FILTER_MESSAGE))).exists(),
+    );
+  },
+
+  checkTotalSelected(count) {
+    cy.expect(selectOrderLinesModal.has({ footer: including(`Total selected: ${count}`) }));
+  },
+
+  selectOrderLineByNumber(polNumber, { multiselect = true } = {}) {
+    const targetRow = resultsList.find(
+      MultiColumnListRow({ content: including(polNumber), isContainer: false }),
+    );
+
+    if (multiselect) {
+      cy.do(targetRow.find(Checkbox()).click());
+    } else {
+      cy.do(targetRow.find(MultiColumnListCell({ content: polNumber })).click());
+    }
   },
 
   selectMultipleLocationsInFilters(locationNames) {

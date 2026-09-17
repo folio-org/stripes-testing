@@ -60,11 +60,14 @@ describe('Data Import', () => {
           MatchProfileView.verifyMatchProfileTitleName(duplicatedProfileName);
           MatchProfiles.search(originalProfileName);
           MatchProfiles.verifySearchResult(originalProfileName);
+          MatchProfiles.selectMatchProfileFromList(duplicatedProfileName);
+          MatchProfileView.verifyMatchProfileTitleName(originalProfileName);
           MatchProfiles.search(duplicatedProfileName);
           MatchProfiles.verifySearchResult(duplicatedProfileName);
 
           // Step 5: Open duplicated profile; verify Edit, Duplicate, Delete are all enabled
           MatchProfiles.selectMatchProfileFromList(duplicatedProfileName);
+          MatchProfileView.verifyMatchProfileTitleName(duplicatedProfileName);
           MatchProfileView.verifyActionsMenuOptionsDisabled(
             [
               COMMON_BUTTON_LABELS.EDIT,

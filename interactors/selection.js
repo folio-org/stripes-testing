@@ -69,6 +69,7 @@ export default HTML.extend('selection')
   })
   .actions({
     open: ({ perform }) => perform(toggle),
+    toggle: ({ perform }) => perform(toggle),
     filter: async ({ perform }, value) => {
       return perform(() => SelectionList().filter(value));
     },
