@@ -12,11 +12,14 @@ import { DEFAULT_WAIT_TIME } from '../../../constants';
 import FinanceDetails from '../financeDetails';
 import AddTransferModal from '../modals/addTransferModal';
 import { TRANSFER_ACTIONS } from '../transfer/constants';
+import InteractorsTools from '../../../utils/interactorsTools';
+import States from '../states';
 import Transactions from '../transactions/transactions';
 
 const budgetPane = Section({ id: 'pane-budget' });
 const budgetDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-budget' });
 const actionsButton = budgetDetailsPaneHeader.find(Button('Actions'));
+const recalculateBudgetTotalsButton = Button('Recalculate budget totals');
 
 const summarySection = budgetPane.find(Section({ id: 'summary' }));
 const informationSection = budgetPane.find(Section({ id: 'information' }));
@@ -82,6 +85,12 @@ export default {
     AddTransferModal.verifyModalView({ header: TRANSFER_ACTIONS.MOVE_ALLOCATION });
 
     return AddTransferModal;
+  },
+  clickRecalculateBudgetTotals(isSuccess = true) {
+    cy.do([actionsButton.click(), recalculateBudgetTotalsButton.click()]);
+    if (isSuccess) {
+      InteractorsTools.checkCalloutMessage(States.budgetTotalsRecalculatedSuccessfully);
+    }
   },
   clickViewTransactionsLink() {
     cy.do(informationSection.find(Link('View transactions')).click());
