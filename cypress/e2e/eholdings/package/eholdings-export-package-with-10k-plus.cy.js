@@ -20,7 +20,7 @@ describe('eHoldings', () => {
   describe('Package', () => {
     const testData = {
       packageName: 'Sage Reference & Academic Books A to Z',
-      selectedStatus: 'selected',
+      selectedStatus: 'Selected',
       packageExportFields: ['Holdings status', 'Package Id'],
       titleExportFields: ['Alternate title(s)', 'Description'],
       titleFilterParams: ['Handbook of Theories', 'Title'],

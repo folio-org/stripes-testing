@@ -157,6 +157,13 @@ const titleLookupTrigger = Button({ id: 'find-instance-trigger' });
 // Filters
 const donorFilterAccordion = Accordion(ORDER_LINE_FILTER_LABELS.DONOR);
 const donorLookUpTrigger = donorFilterAccordion.find(Button('Donor look-up'));
+const linkedPackagePolFilterAccordion = filtersPane.find(
+  Accordion(ORDER_LINE_FILTER_LABELS.LINKED_PACKAGE_POL),
+);
+const linkedPackagePolTextField = linkedPackagePolFilterAccordion.find(TextField());
+const linkedPackagePolLookUpTrigger = linkedPackagePolFilterAccordion.find(
+  Button('Linked package POL lookup'),
+);
 
 const checkQuantityPhysical = (quantity) => {
   cy.expect(Accordion('Cost details').find(KeyValue('Quantity physical')).has({ value: quantity }));
@@ -2865,6 +2872,45 @@ export default {
 
   filterBySubscriptionFrom({ from, to }) {
     this.filterByDateRange(ORDER_LINE_FILTER_LABELS.SUBSCRIPTION_FROM, { from, to });
+  },
+
+  verifyLinkedPackagePolFilterAccordionExpanded(expanded = true) {
+    cy.expect(linkedPackagePolFilterAccordion.has({ open: expanded }));
+  },
+
+  expandLinkedPackagePolFilter() {
+    FiltersPaneHelper.expandFilterAccordion(
+      filtersPane,
+      ORDER_LINE_FILTER_LABELS.LINKED_PACKAGE_POL,
+    );
+    this.verifyLinkedPackagePolFilterAccordionExpanded();
+  },
+
+  verifyLinkedPackagePolFilterValue(value = '') {
+    cy.expect([
+      linkedPackagePolTextField.has({ value, disabled: true }),
+      linkedPackagePolLookUpTrigger.exists(),
+    ]);
+  },
+
+  clickLinkedPackagePolLookUp() {
+    cy.do(linkedPackagePolLookUpTrigger.click());
+  },
+
+  verifyNoResultsFoundMessage() {
+    cy.expect(
+      searchResultsPane
+        .find(HTML(including('No results found. Please check your filters.')))
+        .exists(),
+    );
+  },
+
+  verifySearchCriteriaMessage() {
+    cy.expect(
+      searchResultsPane
+        .find(PaneHeader({ subtitle: including('Enter search criteria to start search') }))
+        .exists(),
+    );
   },
 
   assertNoFiltersApplied() {
