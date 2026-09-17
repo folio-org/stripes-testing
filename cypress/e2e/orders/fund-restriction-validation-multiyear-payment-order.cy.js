@@ -18,6 +18,7 @@ import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
+import AcqLocationsFieldArray from '../../support/fragments/orders/acqLocationsFieldArray';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import MultiYearPaymentTerms from '../../support/fragments/orders/multiYearPaymentTerms';
 import NewOrder from '../../support/fragments/orders/newOrder';
@@ -36,7 +37,11 @@ import getRandomStringCode from '../../support/utils/generateTextCode';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-const OrderLineEditForm = { ...OrderLineEditFormFragment, ...MultiYearPaymentTerms };
+const OrderLineEditForm = {
+  ...OrderLineEditFormFragment,
+  ...MultiYearPaymentTerms,
+  ...AcqLocationsFieldArray,
+};
 
 describe('Orders', () => {
   const flow = new ExecutionFlowManager();
@@ -436,10 +441,10 @@ describe('Orders', () => {
       assertPaymentTermsOnEditForm();
 
       cy.log('Step 3. Expand the Location Name (code) dropdown');
-      OrderLineEditForm.expandLocationDropdown();
+      OrderLineEditForm.openLocationSelector();
       // Expected: Only Loc1 and Loc2 are offered.
-      OrderLineEditForm.checkLocationDropdownOptions(bothLocationOptions);
-      OrderLineEditForm.closeOpenSelection();
+      OrderLineEditForm.assertLocationOptions(bothLocationOptions);
+      OrderLineEditForm.closeLocationSelector();
 
       cy.log('Step 4. Remove Fund B from top-level Fund distribution and click Save & close');
       OrderLineEditForm.deleteFundDistribution();
@@ -458,12 +463,12 @@ describe('Orders', () => {
       assertPaymentTermsOnEditForm();
 
       cy.log('Step 6. Expand the Location Name (code) dropdown');
-      OrderLineEditForm.expandLocationDropdown();
+      OrderLineEditForm.openLocationSelector();
       // Expected: Only Loc1 and Loc2 are offered.
-      OrderLineEditForm.checkLocationDropdownOptions(bothLocationOptions);
+      OrderLineEditForm.assertLocationOptions(bothLocationOptions);
 
       cy.log('Step 7. Select Loc2 and click Save & close');
-      OrderLineEditForm.selectLocationFromDropdown(loc2.name);
+      OrderLineEditForm.selectLocationFromOpenDropdown(loc2.name);
 
       saveUpdatedOrderLine({ restrictionErrorExpected: false });
 
@@ -490,32 +495,32 @@ describe('Orders', () => {
       OrderLineEditForm.openFundSelectorInPaymentTermsCard({ fyCode: fy1.code });
       // Expected: Fund A is absent because its Loc1 restriction is not satisfied.
       OrderLineEditForm.verifyFundInDropdown(fundA.name, fundA.code, false);
-      OrderLineEditForm.closeOpenSelection();
+      OrderLineEditForm.closeFundSelectorInPaymentTermsCard();
 
       cy.log('Step 10. Expand Fund ID in the FY2 card');
       OrderLineEditForm.openFundSelectorInPaymentTermsCard({ fyCode: fy2.code });
       // Expected: Fund A is absent because its Loc1 restriction is not satisfied.
       OrderLineEditForm.verifyFundInDropdown(fundA.name, fundA.code, false);
-      OrderLineEditForm.closeOpenSelection();
+      OrderLineEditForm.closeFundSelectorInPaymentTermsCard();
 
       cy.log('Step 11. Add a fund distribution in FY2 and expand its Fund ID dropdown');
       OrderLineEditForm.addFundDistributionInFYCard(fy2.code);
       OrderLineEditForm.openFundSelectorInPaymentTermsCard({ fyCode: fy2.code, rowIndex: 1 });
       // Expected: Fund A is also absent from a newly added distribution.
       OrderLineEditForm.verifyFundInDropdown(fundA.name, fundA.code, false);
-      OrderLineEditForm.closeOpenSelection();
+      OrderLineEditForm.closeFundSelectorInPaymentTermsCard();
 
       cy.log('Step 12. Remove the location and click Add location');
-      OrderLineEditForm.removeLocationByIndex();
-      OrderLineEditForm.clickAddLocationButton();
+      OrderLineEditForm.removeLocationRow();
+      OrderLineEditForm.addLocationRow();
       // Expected: A new empty Location row is displayed.
-      OrderLineEditForm.checkLocationDetailsSection();
+      OrderLineEditForm.assertEmptyLocationRow();
 
       cy.log('Step 13. Expand the new Location Name (code) dropdown');
-      OrderLineEditForm.expandLocationDropdown();
+      OrderLineEditForm.openLocationSelector();
       // Expected: Only Loc2 is available while Fund B is the only selected restricted fund.
-      OrderLineEditForm.checkLocationDropdownOptions([locationOption(loc2)]);
-      OrderLineEditForm.closeOpenSelection();
+      OrderLineEditForm.assertLocationOptions([locationOption(loc2)]);
+      OrderLineEditForm.closeLocationSelector();
 
       cy.log('Step 14. Add Fund A to the second fund distribution in the FY2 card');
       OrderLineEditForm.selectFundInPaymentTermsCard({
@@ -534,29 +539,25 @@ describe('Orders', () => {
       });
 
       cy.log('Step 15. Expand the Location Name (code) dropdown');
-      OrderLineEditForm.expandLocationDropdown();
+      OrderLineEditForm.openLocationSelector();
       // Expected: Loc1 and Loc2 are both available for the two restricted funds.
-      OrderLineEditForm.checkLocationDropdownOptions(bothLocationOptions);
-      OrderLineEditForm.closeOpenSelection();
+      OrderLineEditForm.assertLocationOptions(bothLocationOptions);
+      OrderLineEditForm.closeLocationSelector();
 
       cy.log(
         'Step 16. Add Loc1 and Loc2, adjust quantities and fund distributions, and click Save & close',
       );
-      OrderLineEditForm.expandLocationDropdown();
-      OrderLineEditForm.selectLocationFromDropdown(loc1.name);
-      OrderLineEditForm.clickAddLocationButton();
-      OrderLineEditForm.expandLocationDropdown(1);
-      OrderLineEditForm.selectLocationFromDropdown(loc2.name);
+      OrderLineEditForm.selectLocation({ locationName: loc1.name });
+      OrderLineEditForm.addLocationRow();
+      OrderLineEditForm.selectLocation({ locationName: loc2.name, rowIndex: 1 });
       OrderLineEditForm.fillCostDetails({ quantityPhysical: '2' });
 
-      OrderLines.setPhysicalQuantity({
-        quantity: LOCATION_QUANTITY,
-        changeQuantity: false,
+      OrderLineEditForm.fillPhysicalLocationQuantity({
+        value: LOCATION_QUANTITY,
       });
-      OrderLines.setPhysicalQuantity({
-        quantity: LOCATION_QUANTITY,
-        index: 1,
-        changeQuantity: false,
+      OrderLineEditForm.fillPhysicalLocationQuantity({
+        value: LOCATION_QUANTITY,
+        rowIndex: 1,
       });
 
       OrderLineEditForm.fillFundDistributionValueInFYCard({
@@ -597,9 +598,11 @@ describe('Orders', () => {
       OrderLineEditForm.clickAddFundDistributionButton();
       OrderLineEditForm.expandFundIdDropdown();
       OrderLineEditForm.selectFundFromOpenDropdown(fundA.name, fundA.code);
-      OrderLineEditForm.removeLocationByIndex();
+      OrderLineEditForm.removeLocationRow();
 
-      OrderLines.setPhysicalQuantity({ quantity: `${Number(LOCATION_QUANTITY) * 2}` });
+      OrderLineEditForm.fillPhysicalLocationQuantity({
+        value: `${Number(LOCATION_QUANTITY) * 2}`,
+      });
 
       saveUpdatedOrderLine({ restrictionErrorExpected: true });
 
@@ -648,11 +651,11 @@ describe('Orders', () => {
         fyCode: fy1.code,
         value: PAYMENT_TERMS.HALF,
       });
-      OrderLineEditForm.clickAddLocationButton();
-      OrderLineEditForm.expandLocationDropdown();
+      OrderLineEditForm.addLocationRow();
+      OrderLineEditForm.openLocationSelector();
       // Expected: Only Loc1 is offered for Fund A.
-      OrderLineEditForm.checkLocationDropdownOptions([locationOption(loc1)]);
-      OrderLineEditForm.closeOpenSelection();
+      OrderLineEditForm.assertLocationOptions([locationOption(loc1)]);
+      OrderLineEditForm.closeLocationSelector();
 
       cy.log('Step 23. Select Fund B in FY2, add a location, and expand Name (code)');
       OrderLineEditForm.addFundDistributionInFYCard(fy2.code);
@@ -665,10 +668,10 @@ describe('Orders', () => {
         fyCode: fy2.code,
         value: PAYMENT_TERMS.HALF,
       });
-      OrderLineEditForm.expandLocationDropdown();
+      OrderLineEditForm.openLocationSelector();
       // Expected: Loc1 and Loc2 are offered for Funds A and B.
-      OrderLineEditForm.checkLocationDropdownOptions(bothLocationOptions);
-      OrderLineEditForm.closeOpenSelection();
+      OrderLineEditForm.assertLocationOptions(bothLocationOptions);
+      OrderLineEditForm.closeLocationSelector();
 
       cy.log('Step 24. Select locations, fill all required fields, and click Save & close');
       OrderLineEditForm.fillItemDetails({ title: testData.secondPolTitle });
@@ -681,11 +684,9 @@ describe('Orders', () => {
         quantityPhysical: LOCATION_QUANTITY,
       });
 
-      OrderLineEditForm.expandLocationDropdown();
-      OrderLineEditForm.selectLocationFromDropdown(loc1.name);
-      OrderLines.setPhysicalQuantity({
-        quantity: LOCATION_QUANTITY,
-        changeQuantity: false,
+      OrderLineEditForm.selectLocation({ locationName: loc1.name });
+      OrderLineEditForm.fillPhysicalLocationQuantity({
+        value: LOCATION_QUANTITY,
       });
 
       OrderLineEditForm.clickSaveButton({ orderLineCreated: true, orderLineUpdated: false });
@@ -701,14 +702,12 @@ describe('Orders', () => {
       openOrderLineEditForm();
       OrderLineEditForm.fillCostDetails({ quantityPhysical: '2' });
 
-      OrderLines.setPhysicalQuantity({ quantity: LOCATION_QUANTITY });
-      OrderLineEditForm.clickAddLocationButton();
-      OrderLineEditForm.expandLocationDropdown(1);
-      OrderLineEditForm.selectLocationFromDropdown(loc2.name);
-      OrderLines.setPhysicalQuantity({
-        quantity: LOCATION_QUANTITY,
-        index: 1,
-        changeQuantity: false,
+      OrderLineEditForm.fillPhysicalLocationQuantity({ value: LOCATION_QUANTITY });
+      OrderLineEditForm.addLocationRow();
+      OrderLineEditForm.selectLocation({ locationName: loc2.name, rowIndex: 1 });
+      OrderLineEditForm.fillPhysicalLocationQuantity({
+        value: LOCATION_QUANTITY,
+        rowIndex: 1,
       });
 
       saveUpdatedOrderLine({ restrictionErrorExpected: false });

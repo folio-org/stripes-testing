@@ -16,7 +16,11 @@ export {
   isVisible,
   Page,
 } from '@interactors/html';
-export { AcqFundDistribution } from './acquisitions';
+export {
+  ACQ_LOCATION_FIELD_NAMES,
+  AcqFundDistribution,
+  AcqLocationsFieldArray,
+} from './acquisitions';
 export { default as converge } from './converge';
 export { default as Row } from './row';
 

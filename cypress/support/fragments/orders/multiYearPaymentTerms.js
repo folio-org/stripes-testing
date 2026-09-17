@@ -363,6 +363,12 @@ const multiYearPaymentTerms = {
       fundDistribution.openFundSelector(rowIndex),
     ]);
   },
+  closeFundSelectorInPaymentTermsCard() {
+    // Fund options are rendered in a portal. Clicking the owning payment-terms section closes
+    // the list without selecting an option or changing the current fund distribution.
+    cy.do(paymentTermsSection.click());
+    cy.expect(SelectionList().absent());
+  },
   selectFundInPaymentTermsCard({ fyCode, fundName, fundCode, rowIndex = 0 }) {
     const label = `${fundName} (${fundCode})`;
 

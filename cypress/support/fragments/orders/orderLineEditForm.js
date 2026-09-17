@@ -523,13 +523,6 @@ export default {
     cy.wait(1000);
   },
 
-  closeOpenSelection() {
-    // Selection popups are rendered in a portal and do not consistently retain keyboard focus.
-    // Clicking the form outside the popup invokes the component's supported outside-click close.
-    cy.do(orderLineEditFormRoot.click());
-    cy.expect(SelectionList().absent());
-  },
-
   checkLocationDropdownOptions(expectedLocations) {
     cy.then(() => SelectionList().optionList()).then((actualOptions) => {
       expect(actualOptions.sort()).to.deep.equal(
@@ -542,14 +535,6 @@ export default {
   selectLocationFromDropdown(locationName) {
     cy.do(SelectionOption(including(locationName)).click());
     cy.wait(1000);
-  },
-
-  assertSelectedLocation({ locationName, locationCode, index = 0 }) {
-    cy.expect(
-      locationSection
-        .find(Selection({ name: `locations[${index}].locationId` }))
-        .has({ singleValue: including(`${locationName} (${locationCode})`) }),
-    );
   },
 
   checkIsLocationRequired(shouldHaveWarning = true) {
@@ -775,7 +760,6 @@ export default {
         .find(Button({ icon: 'trash' }))
         .click(),
     );
-    cy.wait(DEFAULT_WAIT_TIME / 4);
   },
 
   checkFundRestrictionErrorToastPresent() {
