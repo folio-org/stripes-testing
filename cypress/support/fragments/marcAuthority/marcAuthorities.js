@@ -632,10 +632,12 @@ export default {
 
   clickNextPagination() {
     cy.do(rootSection.find(nextButton).click());
+    cy.wait(1000);
   },
 
   clickPreviousPagination() {
     cy.do(rootSection.find(previousButton).click());
+    cy.wait(1000);
   },
 
   clickLinkButton() {
@@ -1003,6 +1005,10 @@ export default {
     cy.expect(modalAdvancedSearch.absent());
   },
 
+  checkAdvancedSearchModalExists() {
+    cy.expect(modalAdvancedSearch.exists());
+  },
+
   checkAdvancedSearchModalFields: (
     row,
     value,
@@ -1183,6 +1189,14 @@ export default {
 
   checkSelectedAuthoritySource(option) {
     cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including(option) })).exists());
+  },
+
+  checkResultsPaneRecordsCounter(totalRecord) {
+    cy.expect(
+      Pane({
+        subtitle: matching(new RegExp(`${totalRecord} (record|result)s{0,1} found`)),
+      }).exists(),
+    );
   },
 
   checkSelectedAuthoritySourceInPlugInModal(option) {
@@ -1462,6 +1476,10 @@ export default {
     cy.expect([authoritySourceAccordion.has({ open: false })]);
   },
 
+  verifyAccordionOpenState(accordionName, isOpen) {
+    cy.expect(Accordion(accordionName).has({ open: isOpen }));
+  },
+
   checkResultsSelectedByAuthoritySource(options) {
     authoritySourceOptions.forEach((option) => {
       if (options.includes(option)) {
@@ -1694,8 +1712,44 @@ export default {
     cy.expect(TextArea({ id: 'textarea-authorities-search' }).has({ focused: true }));
   },
 
+  checkSearchInputIsEmpty() {
+    cy.expect(searchInput.has({ value: '' }));
+  },
+
   checkResetAllButtonDisabled(isDisabled = true) {
     cy.expect(resetButton.is({ disabled: isDisabled }));
+  },
+
+  checkSearchButtonDisabled(isDisabled = true) {
+    cy.expect(searchButton.is({ disabled: isDisabled }));
+  },
+
+  // Presses Tab (or Shift+Tab) from whichever element currently has focus until it matches
+  // matchFn or maxAttempts is reached, instead of relying on a fragile hardcoded tab count.
+  pressTabUntilFocused(matchFn, { shift = false, maxAttempts = 30 } = {}) {
+    const attempt = (count) => {
+      cy.focused().then(($el) => {
+        if (matchFn($el)) return;
+        if (count >= maxAttempts) {
+          throw new Error(
+            `Focus did not reach the target element within ${maxAttempts} Tab presses`,
+          );
+        }
+        cy.focused().tab({ shift });
+        attempt(count + 1);
+      });
+    };
+    attempt(0);
+  },
+
+  // cy.focused().type('{enter}') doesn't reliably trigger a focused button's native click
+  // behavior - cy.realPress() drives real OS-level input via CDP instead, so it does.
+  activateFocusedElementWithEnter() {
+    cy.realPress('Enter');
+  },
+
+  activateFocusedElementWithSpace() {
+    cy.realPress('Space');
   },
 
   verifyAllAuthorizedAreBold() {
@@ -2032,6 +2086,14 @@ export default {
     });
   },
 
+  verifyActionsMenuBrowse({ newShown = null, exportEnabled = null } = {}) {
+    if (newShown !== null) cy.expect(buttonNew[newShown ? 'exists' : 'absent']());
+    if (exportEnabled !== null) cy.expect(buttonExportSelected.is({ disabled: !exportEnabled }));
+    actionsShowColumnsOptions.forEach((option) => {
+      actionsMenuShowColumnsSection.find(Checkbox(option)).exists();
+    });
+  },
+
   clickSaveCqlButton() {
     cy.do(saveCqlButton.click());
     cy.wait(5000);
@@ -2087,9 +2149,10 @@ export default {
     );
   },
 
-  verifyRecordFound(heading, isFound = true) {
+  verifyRecordFound(heading, isFound = true, { partialMatch = false } = {}) {
+    const headingValue = partialMatch ? including(heading) : heading;
     const targetCell = searchResults.find(
-      MultiColumnListCell({ columnIndex: 2, content: heading }),
+      MultiColumnListCell({ columnIndex: 2, content: headingValue }),
     );
     if (isFound) cy.expect(targetCell.exists());
     else cy.expect(targetCell.absent());
@@ -2265,6 +2328,15 @@ export default {
   getNextPaginationButtonState() {
     cy.wait(1000);
     return cy.wrap(nextButton.perform((el) => !el.disabled));
+  },
+
+  getPreviousPaginationButtonState() {
+    cy.wait(1000);
+    return cy.wrap(previousButton.perform((el) => !el.disabled));
+  },
+
+  checkPaginationButtonsShown() {
+    cy.expect([nextButton.exists(), previousButton.exists()]);
   },
 
   checkAfterDelete(heading) {
