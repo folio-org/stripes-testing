@@ -289,4 +289,11 @@ export const ORDER_LINE_DISCOUNT_TYPES = {
 
 export const ORDER_LINE_FORM_LABELS = {
   ADD_LOCATION: 'Add location',
+  ADD_FISCAL_YEAR: 'Add fiscal year',
+  ADD_FUND_DISTRIBUTION: 'Add fund distribution',
+  EXPENSE_CLASS: 'Expense class',
+  FUND_ID: 'Fund ID',
+  MULTI_YEAR_PREPAYMENT: 'Multi-year prepayment',
+  STARTING_FISCAL_YEAR: 'Starting fiscal year',
+  CURRENCY: 'Currency',
 };
