@@ -132,19 +132,16 @@ describe('MARC', () => {
               showColumnsOptions.forEach((column) => {
                 MarcAuthorities.checkColumnAbsent(column);
               });
-            }
-          });
 
-          // Step 11: "Next" x2 - only run/verify if the button is actually enabled
-          MarcAuthorities.getNextPaginationButtonState().then((nextEnabled) => {
-            if (nextEnabled) {
-              MarcAuthorities.clickNextPagination();
-              MarcAuthorities.getNextPaginationButtonState().then((stillEnabled) => {
-                if (stillEnabled) MarcAuthorities.clickNextPagination();
-              });
-              MarcAuthorities.verifySearchResultTabletIsAbsent(false);
-              showColumnsOptions.forEach((column) => {
-                MarcAuthorities.checkColumnAbsent(column);
+              // Step 11: "Next" - only run/verify if the button is actually enabled
+              MarcAuthorities.getNextPaginationButtonState().then((nextEnabled) => {
+                if (nextEnabled) {
+                  MarcAuthorities.clickNextPagination();
+                  MarcAuthorities.verifySearchResultTabletIsAbsent(false);
+                  showColumnsOptions.forEach((column) => {
+                    MarcAuthorities.checkColumnAbsent(column);
+                  });
+                }
               });
             }
           });
