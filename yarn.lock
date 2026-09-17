@@ -4777,6 +4777,11 @@ cypress-plugin-tab@^1.0.5:
   dependencies:
     ally.js "^1.4.1"
 
+cypress-real-events@^1.15.0:
+  version "1.15.1"
+  resolved "https://registry.yarnpkg.com/cypress-real-events/-/cypress-real-events-1.15.1.tgz#ebe8b7ef468b74a9d418152d24b92a546a23e5e9"
+  integrity sha512-BiTyqYcNHiIFWfSLRn3H+TgTvpnTGOKfl4Brz51yeSGKMxBbD60wtRQw31nII00yQ67Xg3C18mU8lqUxDN3OUA==
+
 cypress-recurse@^1.13.1:
   version "1.37.2"
   resolved "https://registry.yarnpkg.com/cypress-recurse/-/cypress-recurse-1.37.2.tgz#f1d467d08d1c3e5f03e26898d74d7e2c33993ab6"
