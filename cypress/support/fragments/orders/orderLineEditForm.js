@@ -502,6 +502,15 @@ export default {
     }
   },
 
+  assertFundDistributionFund({ fundName, fundCode, index = 0 }) {
+    cy.expect(
+      fundDistributionDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID)))
+        .has({ singleValue: including(`${fundName} (${fundCode})`) }),
+    );
+  },
+
   selectFundFromOpenDropdown(fundName, fundCode) {
     const label = `${fundName} (${fundCode})`;
 
@@ -512,6 +521,13 @@ export default {
   expandLocationDropdown(index = 0) {
     cy.do(Button({ id: FIELD_SELECTORS.LOCATION_ID_INPUT.replace('{index}', index) }).click());
     cy.wait(1000);
+  },
+
+  closeOpenSelection() {
+    // Selection popups are rendered in a portal and do not consistently retain keyboard focus.
+    // Clicking the form outside the popup invokes the component's supported outside-click close.
+    cy.do(orderLineEditFormRoot.click());
+    cy.expect(SelectionList().absent());
   },
 
   checkLocationDropdownOptions(expectedLocations) {
@@ -526,6 +542,14 @@ export default {
   selectLocationFromDropdown(locationName) {
     cy.do(SelectionOption(including(locationName)).click());
     cy.wait(1000);
+  },
+
+  assertSelectedLocation({ locationName, locationCode, index = 0 }) {
+    cy.expect(
+      locationSection
+        .find(Selection({ name: `locations[${index}].locationId` }))
+        .has({ singleValue: including(`${locationName} (${locationCode})`) }),
+    );
   },
 
   checkIsLocationRequired(shouldHaveWarning = true) {
@@ -751,6 +775,7 @@ export default {
         .find(Button({ icon: 'trash' }))
         .click(),
     );
+    cy.wait(DEFAULT_WAIT_TIME / 4);
   },
 
   checkFundRestrictionErrorToastPresent() {

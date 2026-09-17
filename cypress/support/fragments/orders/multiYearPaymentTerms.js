@@ -353,8 +353,7 @@ const multiYearPaymentTerms = {
         .addRow(),
     );
   },
-  selectFundInPaymentTermsCard({ fyCode, fundName, fundCode, rowIndex = 0 }) {
-    const label = `${fundName} (${fundCode})`;
+  openFundSelectorInPaymentTermsCard({ fyCode, rowIndex = 0 }) {
     const fundDistribution = paymentTermsSection
       .find(Card({ headerStart: including(fyCode) }))
       .find(AcqFundDistribution());
@@ -362,9 +361,13 @@ const multiYearPaymentTerms = {
     cy.do([
       fundDistribution.perform((el) => el.scrollIntoView()),
       fundDistribution.openFundSelector(rowIndex),
-      SelectionList().filter(label),
-      SelectionOption(including(label)).click(),
     ]);
+  },
+  selectFundInPaymentTermsCard({ fyCode, fundName, fundCode, rowIndex = 0 }) {
+    const label = `${fundName} (${fundCode})`;
+
+    this.openFundSelectorInPaymentTermsCard({ fyCode, rowIndex });
+    cy.do([SelectionList().filter(label), SelectionOption(including(label)).click()]);
     cy.wait(DEFAULT_WAIT_TIME / 4);
   },
   selectExpenseClassInFYCard({ fyCode, expenseClassName, rowIndex = 0 }) {
@@ -410,6 +413,7 @@ const multiYearPaymentTerms = {
       fieldValue.fillValue({ value, index: rowIndex }),
       fieldValue.blurValueField({ index: rowIndex }),
     ]);
+    cy.wait(DEFAULT_WAIT_TIME / 4);
   },
   assertPaymentTermsRemainingAmount(remainingAmount) {
     cy.expect(

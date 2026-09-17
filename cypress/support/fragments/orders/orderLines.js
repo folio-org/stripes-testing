@@ -1985,11 +1985,14 @@ export default {
     cy.wait(1500);
     const quantityField = TextField({ name: `locations[${index}].quantityPhysical` });
 
+    cy.do(quantityField.perform((el) => el.scrollIntoView()));
+
     if (changeQuantity) {
       cy.do([quantityField.clear(), quantityField.fillIn(quantity)]);
     } else {
       cy.do(quantityField.fillIn(quantity));
     }
+
     cy.expect(quantityField.has({ value: quantity }));
   },
 
