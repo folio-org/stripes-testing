@@ -159,6 +159,18 @@ export default {
     FiltersPane.filterByMultiSelectOptions(filtersPane, filterLabel, values, options);
   },
 
+  assertCheckboxFilterValues(filterLabel, values, options) {
+    FiltersPane.assertCheckboxFilterValues(filtersPane, filterLabel, values, options);
+  },
+
+  filterByCheckboxes(filterLabel, values, options) {
+    FiltersPane.filterByCheckboxes(filtersPane, filterLabel, values, options);
+  },
+
+  clearFilter(filterLabel) {
+    FiltersPane.clearFilter(filtersPane, filterLabel);
+  },
+
   filterBySelection(filterLabel, value, options) {
     FiltersPane.filterBySelection(filtersPane, filterLabel, value, options);
   },
