@@ -15,4 +15,26 @@ describe('fse-finance', { retries: { runMode: 1 } }, () => {
       });
     },
   );
+
+  it(
+    `FDOPS-6490 - Exchange rate source configuration is readable for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'api', 'sanity', 'finance', 'trillium', 'FDOPS-6490'] },
+    () => {
+      cy.okapiRequest({
+        path: 'finance-storage/exchange-rate-source',
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      }).then((response) => {
+        if (response.status === 404) {
+          // no exchange rate source configured for this tenant - a clean not-configured response
+          cy.expect(response.body).to.have.property('errors').that.is.an('array');
+          return;
+        }
+        cy.expect(response.status).to.eq(200);
+        // assert only presence and provider name, never the configured values (credentials live in the secret store)
+        cy.expect(response.body).to.have.property('providerType').that.is.a('string');
+        cy.expect(response.body).to.have.property('enabled').that.is.a('boolean');
+      });
+    },
+  );
 });
