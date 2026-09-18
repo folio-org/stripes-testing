@@ -1093,6 +1093,10 @@ export default {
     internal: 'ui-finance.fund-budget.view',
     gui: 'Finance: View fund and budget',
   },
+  uiFinanceRecalculateBudgetTotals: {
+    internal: 'ui-finance.fund-budget.recalculate-totals.execute',
+    gui: 'Finance: Recalculate budget totals',
+  },
   uiFinanceUnreleaseEncumbrance: {
     internal: 'ui-finance.encumbrance.unrelease.execute',
     gui: 'Finance: Unrelease encumbrance',

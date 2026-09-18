@@ -521,6 +521,15 @@ export default {
     }
   },
 
+  assertFundDistributionFund({ fundName, fundCode, index = 0 }) {
+    cy.expect(
+      fundDistributionDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID)))
+        .has({ singleValue: including(`${fundName} (${fundCode})`) }),
+    );
+  },
+
   selectFundFromOpenDropdown(fundName, fundCode) {
     const label = `${fundName} (${fundCode})`;
 

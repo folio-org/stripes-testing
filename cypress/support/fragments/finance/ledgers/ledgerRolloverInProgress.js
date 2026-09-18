@@ -32,6 +32,15 @@ export default {
       cy.expect(errorMessageBanner.exists());
     }
   },
+  checkRolloverErrorLink({ ledgerName, fiscalYearCode }) {
+    cy.expect(
+      errorMessageBanner.has({
+        text: including(
+          `Rollover for ${ledgerName} produced errors: ${ledgerName}-rollover-errors-${fiscalYearCode}.csv`,
+        ),
+      }),
+    );
+  },
   clickRolloverErrorLink() {
     cy.do(errorMessageBanner.find(HTML({ className: including('hoveredLink') })).click());
   },

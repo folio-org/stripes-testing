@@ -13,6 +13,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import { INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 
 const testCaseId = 'C1464325';
 const randomPostfix = getRandomPostfix();
@@ -44,9 +45,11 @@ const callNumberPartA = '.A1 2026';
 const callNumberC = 'pr2848';
 const callNumberPartC = 'qa.c3 2026';
 const callNumberSearchValue = 'QA';
-// The "Instance — Source" value list is built from the instances of the tenant, where LINKED_DATA of the
-// test case does not occur, so the second value of the "not in" condition is the other available source
-const instanceSourceValues = ['MARC', 'FOLIO'];
+// The "Instance — Source" value list is built from the sources of the instances of the tenant, so the
+// instance below is created to make LINKED_DATA selectable. It has no MARC record, so it never shows up
+// in the result of a query of this test
+const linkedDataInstanceTitle = `AT_${testCaseId}_LinkedDataInstance_${randomPostfix}`;
+const instanceSourceValues = [INSTANCE_SOURCE_NAMES.MARC, INSTANCE_SOURCE_NAMES.LDE];
 // Every record of this run has the unique beginning in its 245 field. The condition below is added as the
 // second row where the queried operator alone matches most of the records of the tenant: "not equal to" and
 // "is null/empty True" also match the records without the queried field (the test case notes allow filters)
@@ -129,6 +132,7 @@ const allInstances = Object.values(marcInstances);
 const savedListInstances = [instanceA, instanceB, instanceC];
 
 let user;
+let linkedDataInstanceId;
 
 describe('Lists', () => {
   describe('Query Builder', () => {
@@ -156,6 +160,19 @@ describe('Lists', () => {
           );
         });
 
+        // An instance with the LINKED_DATA source has to exist in the tenant, otherwise the value is
+        // missing from the "Instance — Source" value list of the query builder (step 13)
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          cy.createInstance({
+            instance: { instanceTypeId: instanceTypes[0].id, title: linkedDataInstanceTitle },
+          }).then((instanceId) => {
+            linkedDataInstanceId = instanceId;
+            cy.getInstanceById(instanceId).then((instanceData) => {
+              cy.updateInstance({ ...instanceData, source: INSTANCE_SOURCE_NAMES.LDE });
+            });
+          });
+        });
+
         cy.createTempUser([
           Permissions.listsAll.gui,
           Permissions.inventoryAll.gui,
@@ -176,6 +193,7 @@ describe('Lists', () => {
         allInstances.forEach((instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
         });
+        InventoryInstance.deleteInstanceViaApi(linkedDataInstanceId);
         Users.deleteViaApi(user.userId);
         FileManager.deleteFileFromDownloadsByMask(`*${listName}*`);
       });
@@ -292,6 +310,7 @@ describe('Lists', () => {
 
             // Step 6: Click "View updated list" link, check the rows and the column of the saved list
             Lists.viewUpdatedList();
+            Lists.verifyResultColumnDisplayed(column500);
             QueryModal.verifyResultTableColumnValues(
               instanceA.hrid,
               column500,
@@ -327,6 +346,7 @@ describe('Lists', () => {
             // Step 8: Click "Actions" menu > "Edit list"
             Lists.openActions();
             Lists.editList();
+            Lists.verifyResultColumnDisplayed(column500);
             QueryModal.verifyResultTableColumnValues(
               instanceA.hrid,
               column500,
@@ -337,6 +357,12 @@ describe('Lists', () => {
               instanceB.hrid,
               column500,
               [generalNoteBeta, generalNoteGamma],
+              { inBuildQueryForm: false },
+            );
+            QueryModal.verifyResultTableColumnValues(
+              instanceC.hrid,
+              column500,
+              [generalNoteDelta],
               { inBuildQueryForm: false },
             );
 
@@ -442,12 +468,14 @@ describe('Lists', () => {
             instanceSourceValues.forEach((sourceValue) => {
               QueryModal.chooseFromValueMultiselect(sourceValue, 1, { exactMatch: true });
             });
+            QueryModal.verifySelectedMultiselectValue(instanceSourceValues, 1);
             QueryModal.verifyQueryAreaContent(
               `(${column999} is null/empty False) AND (instance.source not in [${instanceSourceValues.join(', ')}])`,
             );
             QueryModal.clickTestQuery();
             QueryModal.waitForQueryTestToFinish();
             QueryModal.verifyQueryReturnsNoResults();
+            QueryModal.verifyResultsTableAbsent();
             QueryModal.runQueryAndSaveDisabled(false);
 
             // Step 14: Click "Run query & save" button
