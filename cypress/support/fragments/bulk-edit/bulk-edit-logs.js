@@ -589,6 +589,18 @@ export default {
     cy.expect([queryIdentifiersBtn.exists(), matchingRecordsBtn.exists()]);
   },
 
+  verifyLogsRowActionWhenRunQueryWithErrors() {
+    cy.expect([
+      queryIdentifiersBtn.exists(),
+      matchingRecordsBtn.exists(),
+      errorsEncounteredBtn.exists(),
+    ]);
+  },
+
+  verifyLogsRowActionWhenRunQueryWithErrorsWithoutModification() {
+    cy.expect([queryIdentifiersBtn.exists(), errorsEncounteredBtn.exists()]);
+  },
+
   waitingFileDownload() {
     cy.wait(3000);
   },
