@@ -244,6 +244,12 @@ export const ORDER_LINE_EXPORT_CSV_FIELDS = {
   PO_LINE_DATE_CREATED: 'Created on (PO Line)',
   PO_LINE_UPDATED_BY: 'Updated by (PO Line)',
   PO_LINE_DATE_UPDATED: 'Updated on (PO Line)',
+  MULTI_YEAR_PREPAYMENT: 'Multi-year prepayment',
+  PREPAYMENT_TERM: 'Prepayment term',
+  PREPAYMENT_STARTING_FISCAL_YEAR: 'Prepayment starting fiscal year',
+  PREPAYMENT_TOTAL_PRICE: 'Prepayment total price',
+  PREPAYMENT_FISCAL_YEAR_DISTRIBUTIONS:
+    'Prepayment fiscal year, Fund code, Expense class, Value, Amount',
 };
 
 export const ORDER_LINE_FILTER_LABELS = {
@@ -266,6 +272,7 @@ export const ORDER_LINE_FILTER_LABELS = {
   LOCATION: 'Location',
   MATERIAL_TYPE_ELECTRONIC: 'Material type, electronic',
   MATERIAL_TYPE_PHYSICAL: 'Material type, physical',
+  MULTI_YEAR_PREPAYMENT: 'Multi-year prepayment',
   ORDER_FORMAT: 'Order format',
   PAYMENT_STATUS: 'Payment status',
   PREFIX: 'Prefix',

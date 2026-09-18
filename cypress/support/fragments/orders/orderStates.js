@@ -15,6 +15,10 @@ export default {
   orderOpenedSuccessfully: 'The Purchase order - (?:\\d+) has been successfully opened',
   orderDeletedSuccessfully: 'The purchase order (?:\\d+) was successfully deleted',
   orderClosedSuccessfully: 'Order was closed',
+  orderDuplicatedSuccessfully: 'The purchase order was successfully duplicated',
+  purchaseOrderPaneTitle(orderNumber) {
+    return `Purchase order - ${orderNumber}`;
+  },
   orderUnopenedSuccessfully(orderNumber) {
     return `The Purchase order - ${orderNumber} has been successfully unopened`;
   },

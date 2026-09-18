@@ -4,6 +4,7 @@ import {
   Checkbox,
   Form,
   including,
+  PaneHeader,
   RepeatableFieldItem,
   Section,
   Select,
@@ -20,10 +21,15 @@ import {
 } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import SearchHelper from '../../finance/financeHelper';
+import AreYouSureModal from '../../orders/modals/areYouSureModal';
 
 const LOCATION_FIELD_ID_PREFIX = 'field-locations';
 
 const orderTemplateForm = Form({ id: 'order-template-form' });
+const orderTemplateEditorPaneHeader = PaneHeader({
+  id: 'paneHeaderorder-settings-order-templates-editor',
+});
+const closeFormButton = orderTemplateEditorPaneHeader.find(Button({ icon: 'times' }));
 const orderTemplateInfoSection = orderTemplateForm.find(Section({ id: 'templateInfo' }));
 const orderTemplatePoInfoSection = orderTemplateForm.find(Section({ id: 'poInfo' }));
 const orderTemplateOngoingSection = orderTemplateForm.find(Section({ id: 'ongoing' }));
@@ -198,6 +204,29 @@ export default {
 
     if (templateCreated) {
       InteractorsTools.checkCalloutMessage('The template was saved');
+    }
+  },
+
+  closeForm(shouldModalExist = false) {
+    // The legacy order-template editor has no Cancel action; its pane-header X closes the form.
+    cy.do(closeFormButton.click());
+
+    if (!shouldModalExist) {
+      cy.expect(orderTemplateForm.absent());
+    }
+  },
+
+  closeFormWithUnsavedChanges({ keepEditing = false } = {}) {
+    this.closeForm(true);
+    AreYouSureModal.verifyAreYouSureForm(true);
+
+    if (keepEditing) {
+      AreYouSureModal.clickKeepEditingButton();
+      cy.expect(orderTemplateForm.exists());
+    } else {
+      AreYouSureModal.clickCloseWithoutSavingButton();
+      AreYouSureModal.verifyAreYouSureForm(false);
+      cy.expect(orderTemplateForm.absent());
     }
   },
 

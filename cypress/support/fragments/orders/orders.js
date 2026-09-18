@@ -626,6 +626,9 @@ export default {
   checkOrderlineFilterInList: (orderLineNumber) => {
     cy.expect(orderLineList.has(Link(orderLineNumber)));
   },
+  assertOrderLineAbsent(orderLineNumber) {
+    cy.expect(orderLineList.find(Link(orderLineNumber)).absent());
+  },
   closeThirdPane: () => {
     cy.do([
       Button('Collapse all').click(),
@@ -1180,6 +1183,10 @@ export default {
   assertMultiSelectFilterOptions:
     FiltersPaneHelper.buildMultiSelectFilterOptionsValuesAssertion(ordersFiltersPane),
 
+  assertCheckboxFilterValues(filterLabel, values, options) {
+    FiltersPaneHelper.assertCheckboxFilterValues(ordersFiltersPane, filterLabel, values, options);
+  },
+
   assertFundCodeFilterValues(expectedValues, options = {}) {
     this.assertMultiSelectFilterValues(ORDER_FILTER_LABELS.FUND_CODE, expectedValues, options);
   },
@@ -1205,6 +1212,10 @@ export default {
 
   filterByMultiSelectOptions(filterLabel, options = []) {
     FiltersPaneHelper.filterByMultiSelectOptions(ordersFiltersPane, filterLabel, options);
+  },
+
+  filterByCheckboxes(filterLabel, values, options) {
+    FiltersPaneHelper.filterByCheckboxes(ordersFiltersPane, filterLabel, values, options);
   },
 
   filterByTextField(filterLabel, value, options) {

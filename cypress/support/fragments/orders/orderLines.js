@@ -267,6 +267,14 @@ export default {
     }
   },
 
+  checkOrderLineFilterInList: (orderLineNumber) => {
+    cy.expect(orderLineList.find(Link(orderLineNumber)).exists());
+  },
+
+  assertOrderLineAbsent(orderLineNumber) {
+    cy.expect(orderLineList.find(Link(orderLineNumber)).absent());
+  },
+
   checkCreatedPOLineResource: (orderLineTitleName, recourceName, fund) => {
     cy.expect([
       orderLineDetailsPane.exists(),
@@ -2795,6 +2803,10 @@ export default {
     FiltersPaneHelper.assertResetAllButtonState(filtersPane, { disabled });
   },
 
+  expandFilterAccordion(filterLabel) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, filterLabel);
+  },
+
   clearSearchField() {
     cy.get('#order-lines-filters-pane-content').find('#input-record-search').clear();
   },
@@ -2977,6 +2989,8 @@ export default {
     FiltersPaneHelper.buildMultiSelectFilterValuesAssertion(filtersPane),
   assertMultiSelectFilterOptions:
     FiltersPaneHelper.buildMultiSelectFilterOptionsValuesAssertion(filtersPane),
+
+  assertCheckboxFilterValues: FiltersPaneHelper.buildCheckboxFilterValuesAssertion(filtersPane),
 
   assertFundCodeFilterValues(expectedValues, options = {}) {
     this.assertMultiSelectFilterValues(ORDER_LINE_FILTER_LABELS.FUND_CODE, expectedValues, options);
