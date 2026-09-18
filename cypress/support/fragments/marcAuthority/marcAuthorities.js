@@ -141,7 +141,7 @@ const thesaurusAccordion = Accordion('Thesaurus');
 const sharedTextInDetailView = 'Shared • ';
 const localTextInDetailView = 'Local • ';
 export const defaultLDR = '00000nz\\\\a2200000o\\\\4500';
-const valid008FieldValues = {
+export const valid008FieldValues = {
   'Cat Rules': 'c',
   'Geo Subd': 'n',
   'Govt Ag': '|',
@@ -499,10 +499,12 @@ export default {
     ]);
   },
 
-  searchBy: (parameter, value, isLongValue = false) => {
+  searchBy(parameter, value, isLongValue = false) {
     cy.do(filtersSection.find(searchInput).selectIndex(parameter));
+    this.checkSelectOptionFieldContent(parameter);
     cy.wait(1000);
     cy.do(filtersSection.find(searchInput).fillIn(value));
+    this.checkSearchQuery(value);
     if (isLongValue) {
       // need to wait until value will be applied in case when value is long
       cy.wait(1000);
@@ -760,6 +762,15 @@ export default {
       Keyboard.type(headingType),
       Keyboard.press({ code: 'Enter' }),
     ]);
+  },
+
+  clearTextInTypeOfHeading: () => {
+    cy.then(() => headingTypeAccordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(headingTypeAccordion.clickHeader());
+      }
+    });
+    cy.do([typeOfHeadingSelect.focus(), typeOfHeadingSelect.fillIn('')]);
   },
 
   clickAccordionAndCheckResultList(accordion, record) {
@@ -1199,6 +1210,14 @@ export default {
     );
   },
 
+  checkResultsPaneRecordsCounterAbsent() {
+    cy.expect(
+      Pane({ id: 'authority-search-results-pane' }).has({
+        subtitle: not(matching(/\d+ (record|result)s{0,1} found/)),
+      }),
+    );
+  },
+
   checkSelectedAuthoritySourceInPlugInModal(option) {
     cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including(option) })).exists());
   },
@@ -1570,6 +1589,25 @@ export default {
     });
   },
 
+  // Browse's "Heading/Reference" column must sort diacritic letters as equivalent to their base
+  // letter (e.g. "Ż" alongside "Z") - `localeCompare` with { sensitivity: 'base' } encodes that
+  // equivalence, unlike a plain string/numeric sort which would treat them as different letters
+  checkResultsSortedWithDiacriticFolding(columnIndex = 2) {
+    this.getResultsListByColumn(columnIndex).then((cells) => {
+      const expectedOrder = [...cells].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      cy.expect(cells).to.deep.equal(expectedOrder);
+    });
+  },
+
+  // Checks OUR OWN headings keep the given relative order, ignoring other rows interspersed among
+  // them - safer than asserting the whole list is sorted on an environment with lots of real data.
+  verifyRecordsInRelativeOrder(expectedOrderedHeadings, columnIndex = 2) {
+    this.getResultsListByColumn(columnIndex).then((cells) => {
+      const actualOrder = cells.filter((cell) => expectedOrderedHeadings.includes(cell));
+      cy.expect(actualOrder).to.deep.equal(expectedOrderedHeadings);
+    });
+  },
+
   verifyOnlyOneAuthorityRecordInResultsList() {
     this.getResultsListByColumn(1).then((cells) => {
       const authorizedRecords = cells.filter((element) => {
@@ -1598,6 +1636,7 @@ export default {
   verifyColumnValuesOnlyExist({ column, expectedValues, browsePane = false } = {}) {
     let actualValues = [];
 
+    cy.wait(1000);
     cy.then(() => authoritiesList.rowCount())
       .then((rowsCount) => {
         Array.from({ length: rowsCount }).forEach((_, index) => {
