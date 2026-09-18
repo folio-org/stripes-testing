@@ -405,7 +405,9 @@ export default {
     cy.expect(acquisitionAccordion.find(KeyValue('POL number')).has({ value: number }));
     cy.expect(acquisitionAccordion.find(Link({ href: including('/orders/lines/view') })).exists());
   },
-
+  openHotlinkToPOL: (POLnumber) => {
+    cy.do(acquisitionAccordion.find(Link(POLnumber)).click());
+  },
   checkItemCirculationHistory: (date, servicePointName, userName) => {
     cy.expect([
       circulationHistoryAccordion.find(KeyValue('Check in date')).has({ value: including(date) }),
