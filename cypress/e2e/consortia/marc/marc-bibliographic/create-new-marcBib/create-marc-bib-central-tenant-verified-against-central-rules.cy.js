@@ -97,7 +97,6 @@ describe('MARC', () => {
           { tags: ['criticalPathECS', 'promin', 'C552462', 'nonParallel'] },
           () => {
             cy.then(() => {
-              cy.wait(20_000);
               cy.resetTenant();
               cy.getAdminToken();
 
