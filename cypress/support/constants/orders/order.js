@@ -125,6 +125,7 @@ export const ORDER_VIEW_FIELD_LABELS = {
   TOTAL_EXPENDED: 'Total expended',
   TOTAL_CREDITED: 'Total credited',
   REASON_FOR_CLOSURE: 'Reason for closure',
+  NOTES_ON_CLOSURE: 'Notes on closure',
 };
 
 export const ORDER_AND_ORDER_LINE_BUTTONS = {

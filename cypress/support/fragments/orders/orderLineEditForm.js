@@ -753,6 +753,28 @@ export default {
     );
   },
 
+  checkFundDistributionFundSelected({ fund, index = 0 }) {
+    cy.expect(
+      fundDistributionDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID)))
+        .has({ value: including(fund) }),
+    );
+  },
+
+  checkLocationSelected({ location, index = 0 }) {
+    cy.expect([
+      locationSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Selection(including(FORM_LABELS.FILTER_NAME_CODE)))
+        .has({ value: including(location) }),
+      locationSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .exists(),
+    ]);
+  },
+
   checkFundRestrictionErrorToastPresent() {
     cy.expect(Callout(including(VALIDATION_MESSAGES.INVALID_LOCATION_FUND)).exists());
   },
