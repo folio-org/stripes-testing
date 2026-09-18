@@ -496,10 +496,12 @@ export default {
     ]);
   },
 
-  searchBy: (parameter, value, isLongValue = false) => {
+  searchBy(parameter, value, isLongValue = false) {
     cy.do(filtersSection.find(searchInput).selectIndex(parameter));
+    this.checkSelectOptionFieldContent(parameter);
     cy.wait(1000);
     cy.do(filtersSection.find(searchInput).fillIn(value));
+    this.checkSearchQuery(value);
     if (isLongValue) {
       // need to wait until value will be applied in case when value is long
       cy.wait(1000);
@@ -2369,5 +2371,17 @@ export default {
 
   verifyRecordNotFoundCallout() {
     this.checkCallout(recordNotFoundMessage, calloutTypes.error);
+  },
+
+  // Checks OUR OWN headings keep the given relative order, ignoring other rows interspersed among
+  // them - safer than asserting the whole list is sorted on an environment with lots of real data.
+  verifyRecordsInRelativeOrder(expectedOrderedHeadings, columnIndex = 2) {
+    expectedOrderedHeadings.forEach((heading) => {
+      this.verifyRecordFound(including(heading));
+    });
+    this.getResultsListByColumn(columnIndex).then((cells) => {
+      const actualOrder = cells.filter((cell) => expectedOrderedHeadings.includes(cell));
+      cy.expect(actualOrder).to.deep.equal(expectedOrderedHeadings);
+    });
   },
 };
