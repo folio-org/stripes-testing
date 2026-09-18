@@ -31,4 +31,25 @@ describe('fse-inventory', { retries: { runMode: 1 } }, () => {
       }));
     },
   );
+
+  it(
+    `FDOPS-6486 - Inventory item records carry the new order property for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'api', 'sanity', 'inventory', 'trillium', 'FDOPS-6486'] },
+    () => {
+      cy.okapiRequest({
+        path: 'item-storage/items',
+        searchParams: {
+          limit: 10,
+          query: 'cql.allRecords=1',
+        },
+        isDefaultSearchParamsRequired: false,
+      }).then((response) => {
+        cy.expect(response.status).to.eq(200);
+        cy.expect(response.body.items).to.be.an('array').with.length.greaterThan(0);
+        response.body.items.forEach((item) => {
+          cy.expect(item).to.have.property('order').that.is.a('number');
+        });
+      });
+    },
+  );
 });
