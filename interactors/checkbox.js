@@ -22,6 +22,7 @@ export const Checkbox = HTML.extend('checkbox')
     feedbackText: (el) => el.querySelector('[role=alert]').textContent,
     hasWarning: (el) => !!el.className.match(/hasWarning/),
     hasError: (el) => !!el.className.match(/hasError/),
+    readOnly: (el) => !!el.className.match(/readOnly/),
     disabled: {
       apply: (el) => el.querySelector('input').disabled,
       default: false,
