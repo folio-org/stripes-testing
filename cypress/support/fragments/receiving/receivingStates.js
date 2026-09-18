@@ -5,6 +5,7 @@ export default {
   pieceDeletedSuccessfully: 'The piece  was successfully deleted',
   pieceSavedSuccessfully: 'The piece was successfully saved',
   exportJobStartedSuccessfully: 'Export has been started successfully',
+  expectSavedSuccessfully: 'Pieces expect successful',
 
   // warnings
   purchaseOrderClosedWarning({ reason } = {}) {
