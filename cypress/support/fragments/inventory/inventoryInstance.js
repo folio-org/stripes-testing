@@ -1857,6 +1857,14 @@ export default {
       cy.expect(listInstanceAcquisitions.has({ rowCount: ordersCount }));
     }
   },
+  openPolFromAcquisitionsAccordion(rowIndex = 0) {
+    cy.do(
+      acquisitionAccordion
+        .find(MultiColumnListCell({ row: rowIndex, column: 'POL number' }))
+        .find(Link())
+        .click(),
+    );
+  },
   checkAcquisitionsDetails(orderLines = [], { href = true } = {}) {
     orderLines.forEach((item, index) => {
       if (item.polNumber) {
