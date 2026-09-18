@@ -4,6 +4,7 @@ import {
   Accordion,
   Button,
   Checkbox,
+  DropdownMenu,
   Link,
   Modal,
   MultiColumnList,
@@ -17,7 +18,13 @@ import {
   TextField,
   Warning,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME, ITEM_STATUS_NAMES } from '../../constants';
+import {
+  DEFAULT_WAIT_TIME,
+  ITEM_STATUS_NAMES,
+  RECEIVING_PIECE_FORM_ACTIONS_LABELS,
+  RECEIVING_RECEIVED_PIECE_FILTER_LABELS,
+  UNRECEIVABLE_TABLE_COLUMN_HEADERS,
+} from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
 import ExportSettingsModal from './modals/exportSettingsModal';
@@ -34,6 +41,7 @@ const expectedPiecesAccordionId = 'expected';
 const receivedPiecesAccordionId = 'received';
 const receiveButton = Button('Receive');
 const unreceiveButton = Button('Unreceive');
+const expectButton = Button(RECEIVING_PIECE_FORM_ACTIONS_LABELS.EXPECT);
 const addPieceModal = Modal({ id: 'add-piece-modal' });
 const addPieceButton = Button('Add piece');
 const openedRequestModal = Modal({ id: 'data-test-opened-requests-modal' });
@@ -47,6 +55,7 @@ const filterOpenReceiving = () => {
   cy.do(Checkbox({ id: 'clickable-filter-purchaseOrder.workflowStatus-open' }).click());
 };
 const routingListSection = rootsection.find(Section({ id: 'routing-list' }));
+const unreceivableSection = rootsection.find(Section({ id: 'unreceivable' }));
 const addRoutingListButton = routingListSection.find(Button('Add routing list'));
 const titleLookUpButton = Button('Title look-up');
 const receivingResultsList = MultiColumnList({ id: 'receivings-list' });
@@ -414,6 +423,40 @@ export default {
   receiveFromExpectedSection: () => {
     cy.do([Section({ id: 'expected' }).find(actionsButton).click(), receiveButton.click()]);
   },
+  clickActionsInUnreceivableSection: () => {
+    cy.do(unreceivableSection.find(actionsButton).click());
+  },
+  selectExpectPieceInActionsMenu: () => {
+    cy.do(expectButton.click());
+  },
+  checkActionsMenuOptionsInUnreceivableSection: () => {
+    const dropdownMenu = DropdownMenu();
+    const unrecievableMenuSection = dropdownMenu.find(
+      Section({ id: 'unreceivable-pieces-menu-actions' }),
+    );
+    const filterMenuSection = dropdownMenu.find(
+      Section({ id: 'unreceivable-pieces-filter-menu-section' }),
+    );
+    const showColumnsMenuSection = dropdownMenu.find(
+      Section({ id: 'column-manager-unreceivable-pieces-list-columns-menu-section' }),
+    );
+
+    cy.expect(dropdownMenu.find(expectButton).exists());
+    cy.expect(unrecievableMenuSection.find(HTML('Actions')).absent());
+    cy.expect(filterMenuSection.find(HTML('Filter')).exists());
+    cy.expect(showColumnsMenuSection.find(HTML('Show columns')).exists());
+
+    [
+      RECEIVING_RECEIVED_PIECE_FILTER_LABELS.SUPPLEMENTS,
+      RECEIVING_RECEIVED_PIECE_FILTER_LABELS.NON_SUPPLEMENTS,
+    ].forEach((label) => {
+      cy.expect(filterMenuSection.find(Checkbox(label)).has({ checked: false }));
+    });
+
+    Object.values(UNRECEIVABLE_TABLE_COLUMN_HEADERS).forEach((label) => {
+      cy.expect(showColumnsMenuSection.find(Checkbox(label)).has({ checked: true }));
+    });
+  },
 
   selectRecordInExpectedList: (rowNumber = 0) => {
     cy.do(
@@ -436,11 +479,7 @@ export default {
   },
 
   selectRecordInUnreceivableList: (rowNumber = 0) => {
-    cy.do(
-      Section({ id: 'unreceivable' })
-        .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
-        .click(),
-    );
+    cy.do(unreceivableSection.find(MultiColumnListRow({ indexRow: `row-${rowNumber}` })).click());
   },
 
   varifyReceivedListIsEmpty: () => {
