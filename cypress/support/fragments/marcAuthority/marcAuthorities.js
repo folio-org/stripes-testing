@@ -1602,6 +1602,9 @@ export default {
   // Checks OUR OWN headings keep the given relative order, ignoring other rows interspersed among
   // them - safer than asserting the whole list is sorted on an environment with lots of real data.
   verifyRecordsInRelativeOrder(expectedOrderedHeadings, columnIndex = 2) {
+    expectedOrderedHeadings.forEach(heading => {
+      this.verifyRecordFound(including(heading));
+    });
     this.getResultsListByColumn(columnIndex).then((cells) => {
       const actualOrder = cells.filter((cell) => expectedOrderedHeadings.includes(cell));
       cy.expect(actualOrder).to.deep.equal(expectedOrderedHeadings);
