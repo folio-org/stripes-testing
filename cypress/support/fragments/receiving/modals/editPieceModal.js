@@ -8,6 +8,7 @@ import {
   TextArea,
   TextField,
   matching,
+  including,
   Modal,
 } from '../../../../../interactors';
 import {
@@ -54,7 +55,7 @@ const editPieceFields = {
   [RECEIVING_PIECE_FORM_FIELD_LABELS.EXPECTED_RECEIPT_DATE]: editPieceModal.find(
     TextField({ name: 'receiptDate' }),
   ),
-  [RECEIVING_PIECE_FORM_FIELD_LABELS.COMMENTS]: editPieceModal.find(TextArea({ name: 'comment' })),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.COMMENT]: editPieceModal.find(TextArea({ name: 'comment' })),
   [RECEIVING_PIECE_FORM_FIELD_LABELS.ORDER_LINE_LOCATIONS]: editPieceModal.find(
     KeyValue('Order line locations'),
   ),
@@ -111,6 +112,13 @@ export default {
         cy.expect(field.exists());
       }
     });
+  },
+  verifySelectedHolding(holdingName) {
+    cy.expect(
+      editPieceModal
+        .find(Selection({ name: 'holdingId' }))
+        .has({ singleValue: including(holdingName) }),
+    );
   },
   checkFieldsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {

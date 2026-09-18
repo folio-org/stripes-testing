@@ -32,6 +32,7 @@ import {
   ORDER_FILTER_LABELS,
   ORDER_SYSTEM_CLOSING_REASONS,
   RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
+  RESULTS_PANE_NOT_FOUND_MESSAGE,
 } from '../../constants';
 import AcqVersionHistory from '../acqVersionHistory';
 import FiltersPaneHelper from '../filtersPane';
@@ -426,6 +427,10 @@ export default {
 
   checkZeroSearchResultsHeader() {
     this.assertResultsCount(0);
+  },
+
+  assertNoResultsFound() {
+    cy.expect(ordersResults.find(HTML(RESULTS_PANE_NOT_FOUND_MESSAGE)).exists());
   },
 
   createOrderWithAU(order, AUName, isApproved = false) {
@@ -1239,5 +1244,19 @@ export default {
 
   removeMultiSelectChips(filterLabel, values = []) {
     FiltersPaneHelper.removeMultiSelectChips(ordersFiltersPane, filterLabel, values);
+  },
+
+  clickVendorLookUp() {
+    FiltersPaneHelper.expandFilterAccordion(ordersFiltersPane, ORDER_FILTER_LABELS.VENDOR);
+    cy.do(ordersFiltersPane.find(Button('Organization look-up')).click());
+  },
+
+  verifyVendorFilterValue(value) {
+    cy.expect(
+      ordersFiltersPane
+        .find(Accordion(ORDER_FILTER_LABELS.VENDOR))
+        .find(TextField())
+        .has({ value: including(value) }),
+    );
   },
 };
