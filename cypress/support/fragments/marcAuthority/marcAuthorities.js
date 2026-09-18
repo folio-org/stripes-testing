@@ -141,7 +141,7 @@ const thesaurusAccordion = Accordion('Thesaurus');
 const sharedTextInDetailView = 'Shared • ';
 const localTextInDetailView = 'Local • ';
 export const defaultLDR = '00000nz\\\\a2200000o\\\\4500';
-const valid008FieldValues = {
+export const valid008FieldValues = {
   'Cat Rules': 'c',
   'Geo Subd': 'n',
   'Govt Ag': '|',
