@@ -392,6 +392,9 @@ export default {
       });
     });
   },
+  verifyLocationAbsentInSection(locationName) {
+    cy.expect(locationDetailsSection.find(HTML(including(locationName))).absent());
+  },
   verifyLinesDetailTitle(title) {
     cy.expect(orderLineDetailsSection.find(headerLinesDetail).has({ text: including(title) }));
   },
