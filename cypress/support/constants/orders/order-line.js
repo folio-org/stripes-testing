@@ -151,6 +151,8 @@ export const POLINE_DETAILS_FIELDS = {
   ACQUISITION_METHOD: 'Acquisition method',
   ORDER_FORMAT: 'Order format',
   RECEIPT_STATUS: 'Receipt status',
+  RECEIVING_WORKFLOW: 'Receiving workflow',
+  BINDERY_ACTIVE: 'Bindery active',
   PAYMENT_STATUS: 'Payment status',
   ACCOUNT_NUMBER: 'Account number',
   HOLDING_NAME: 'Holding',
@@ -280,4 +282,15 @@ export const ORDER_LINE_FILTER_LABELS = {
   TRIAL: 'Trial',
   UPDATED_BY: 'Updated by',
   VENDOR: 'Vendor',
+};
+
+export const ORDER_LINE_FORM_LABELS = {
+  ADD_LOCATION: 'Add location',
+  ADD_FISCAL_YEAR: 'Add fiscal year',
+  ADD_FUND_DISTRIBUTION: 'Add fund distribution',
+  EXPENSE_CLASS: 'Expense class',
+  FUND_ID: 'Fund ID',
+  MULTI_YEAR_PREPAYMENT: 'Multi-year prepayment',
+  STARTING_FISCAL_YEAR: 'Starting fiscal year',
+  CURRENCY: 'Currency',
 };
