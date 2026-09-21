@@ -55,7 +55,7 @@ describe('fse-agreements', { retries: { runMode: 1 } }, () => {
         });
 
         cy.then(() => {
-          cy.expect(failures, failures.join('\n')).to.have.length(0);
+          expect(failures, failures.join('\n')).to.have.length(0);
         });
       });
     },
