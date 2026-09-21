@@ -5,6 +5,7 @@ import SoftwareVersions from '../../../support/fragments/settings/softwareVersio
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Modals from '../../../support/fragments/modals';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import NumberGeneratorSettings from '../../../support/fragments/settings/users/numberGeneratorSettings';
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 
 describe('fse-settings - UI (no data manipulation)', () => {
@@ -39,6 +40,16 @@ describe('fse-settings - UI (no data manipulation)', () => {
       cy.visit(SettingsMenu.consortiumManagerPath);
       ConsortiumManager.waitLoading();
       ConsortiumManager.checkOptionsExist();
+    },
+  );
+
+  it(
+    `FDOPS-6233 - verify Number generator options are displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'settings', 'users', 'number-generator', 'FDOPS-6233'] },
+    () => {
+      cy.visit(SettingsMenu.numberGeneratorOptionsPath);
+      NumberGeneratorSettings.waitLoading();
+      NumberGeneratorSettings.checkBarcodeOptionsExist();
     },
   );
 });
