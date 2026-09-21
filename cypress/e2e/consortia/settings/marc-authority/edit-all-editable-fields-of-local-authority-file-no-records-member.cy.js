@@ -78,6 +78,10 @@ describe('MARC', () => {
           'C436903 Edit all editable fields of Local "Authority file" which doesn\'t have assigned "MARC authority" records, from Member tenant (consortia) (promin)',
           { tags: ['criticalPathECS', 'promin', 'C436903'] },
           () => {
+            // Force increased limit for UI to load all files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
             // Login directly to Member (College) tenant
             cy.setTenant(Affiliations.College);
             cy.login(testData.user.username, testData.user.password, {
