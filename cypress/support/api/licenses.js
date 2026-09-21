@@ -28,10 +28,10 @@ Cypress.Commands.add('deleteLicenseById', (id) => {
   });
 });
 
-Cypress.Commands.add('getLicenses', () => {
+Cypress.Commands.add('getLicenses', (page = 1, perPage = 100) => {
   cy.okapiRequest({
     method: 'GET',
-    path: 'licenses/licenses?page=1&perPage=200',
+    path: `licenses/licenses?page=${page}&perPage=${perPage}`,
     isDefaultSearchParamsRequired: false,
   });
 });
