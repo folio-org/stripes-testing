@@ -6,10 +6,18 @@ Cypress.Commands.add('getAgreementsByStatus', (status) => {
   });
 });
 
-Cypress.Commands.add('getAgreements', () => {
+Cypress.Commands.add('getAgreements', (page = 1, perPage = 100) => {
   cy.okapiRequest({
     method: 'GET',
-    path: 'erm/sas?page=1&perPage=200',
+    path: `erm/sas?page=${page}&perPage=${perPage}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getEntitlements', (page = 1, perPage = 100) => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: `erm/entitlements?page=${page}&perPage=${perPage}`,
     isDefaultSearchParamsRequired: false,
   });
 });
