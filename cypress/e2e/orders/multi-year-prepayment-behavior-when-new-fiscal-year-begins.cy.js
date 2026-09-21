@@ -738,7 +738,7 @@ describe('Orders', () => {
       OrderLineDetails.openOrderLineEditForm();
 
       assertTwoYearTerms({ form: OrderLineEditForm, fy1, fy2, fundA, fundB, disabled: true });
-      OrderLineEditForm.assertPaymentTermsInitialState({
+      OrderLineEditForm.assertPaymentTermsState({
         values: { totalPrice: '1000', prepaymentTerm: '2', startingFiscalYear: fy1.code },
         disabled: { totalPrice: false, prepaymentTerm: true, startingFiscalYear: true },
       });
@@ -758,7 +758,7 @@ describe('Orders', () => {
       OrderLineDetails.openOrderLineEditForm();
 
       assertTwoYearTerms({ form: OrderLineEditForm, fy1, fy2, fundA, fundB, disabled: true });
-      OrderLineEditForm.assertPaymentTermsInitialState({
+      OrderLineEditForm.assertPaymentTermsState({
         values: { totalPrice: '1000', prepaymentTerm: '2', startingFiscalYear: fy1.code },
         disabled: { totalPrice: false, prepaymentTerm: true, startingFiscalYear: true },
       });

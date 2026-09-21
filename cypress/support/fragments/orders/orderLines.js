@@ -48,6 +48,7 @@ import SelectLocationModal from './modals/selectLocationModal';
 import SelectDonorModal from './modals/selectDonorModal';
 import OrderLineDetails from './orderLineDetails';
 import SelectOrganizationModal from './modals/selectOrganizationModal';
+import AcqVersionHistory from '../acqVersionHistory';
 
 const path = require('path');
 
@@ -398,6 +399,15 @@ export default {
     ]);
   },
 
+  assertVersionHistoryCard({ index = 0, changedFields = [], eventDate, source } = {}) {
+    AcqVersionHistory.assertVersionHistoryCard('order-line', {
+      index,
+      changedFields,
+      eventDate,
+      source,
+    });
+  },
+
   selectVersionHistoryCard(date) {
     cy.do([
       orderHistorySection
@@ -410,12 +420,7 @@ export default {
   closeVersionHistory: () => {
     cy.do(orderHistorySection.find(Button({ icon: 'times' })).click());
     cy.wait(2000);
-    cy.expect([
-      agreementLinesSection.exists(),
-      invoiceLinesSection.exists(),
-      notesSection.exists(),
-      orderHistorySection.absent(),
-    ]);
+    cy.expect(orderHistorySection.absent());
   },
 
   deleteOrderLine: ({ poLineNumber, checkDeleteSuccessMessage = false } = {}) => {

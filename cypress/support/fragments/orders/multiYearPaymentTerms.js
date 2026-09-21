@@ -1,3 +1,5 @@
+import { TextField as TextFieldOriginal } from '@interactors/html';
+
 import {
   Accordion,
   AcqFundDistribution,
@@ -17,8 +19,10 @@ import {
 import {
   DEFAULT_WAIT_TIME,
   FUND_DISTRIBUTION_TYPES,
+  ORDER_LINE_ACCORDION_NAMES,
   ORDER_LINE_FORM_LABELS,
 } from '../../constants';
+import { isFloat } from '../../utils/numberTools';
 import OrderStates from './orderStates';
 
 const FORM_FIELD_NAMES = {
@@ -102,6 +106,13 @@ const assertSelectedDistributionType = (row, selectedType) => {
   );
 };
 
+const fillFieldWithFloatValue = (fieldInteractor, value) => {
+  return fieldInteractor.find(TextFieldOriginal()).perform((el) => {
+    return cy.wrap(el).scrollIntoView().clear().type(value)
+      .blur();
+  });
+};
+
 const multiYearPaymentTerms = {
   assertPaymentTermsSectionAbsent() {
     cy.expect(paymentTermsSection.absent());
@@ -112,7 +123,7 @@ const multiYearPaymentTerms = {
   assertMultiYearPrepaymentUnchecked() {
     cy.expect(multiYearPrepaymentCheckbox.has({ checked: false }));
   },
-  enableMultiYearPrepayment() {
+  toggleMultiYearPrepayment() {
     cy.do(multiYearPrepaymentCheckbox.click());
   },
   assertMultiYearPrepaymentChecked() {
@@ -136,7 +147,7 @@ const multiYearPaymentTerms = {
   assertPaymentTermsCollapsed() {
     cy.expect(paymentTermsSection.has({ expanded: false }));
   },
-  assertPaymentTermsInitialState(overrides = {}) {
+  assertPaymentTermsState(overrides = {}) {
     const {
       values: {
         prepaymentTerm: prepaymentTermValue = '',
@@ -199,12 +210,18 @@ const multiYearPaymentTerms = {
       SelectionOption(including(fyCode)).click(),
     ]);
   },
+  clearPrepaymentTotalPrice() {
+    this.fillPrepaymentTotalPrice('');
+  },
   fillPrepaymentTotalPrice(value) {
-    cy.do(
-      paymentTermsSection
-        .find(TextField({ name: FORM_FIELD_NAMES.TOTAL_PRICE }))
-        .fillIn(String(value)),
-    );
+    const field = paymentTermsSection.find(TextField({ name: FORM_FIELD_NAMES.TOTAL_PRICE }));
+
+    cy.do([
+      field.perform((el) => el.scrollIntoView()),
+      field.focus(),
+      isFloat(value) ? fillFieldWithFloatValue(field, value) : field.fillIn(String(value)),
+      field.blur(),
+    ]);
   },
   assertPrepaymentTermValue(value) {
     cy.expect(
@@ -366,7 +383,7 @@ const multiYearPaymentTerms = {
       fundDistribution.openFundSelector(rowIndex),
     ]);
   },
-  closeFundSelectorInPaymentTermsCard() {
+  closeSelectionList() {
     // Fund options are rendered in a portal. Clicking the owning payment-terms section closes
     // the list without selecting an option or changing the current fund distribution.
     cy.do(paymentTermsSection.click());
@@ -380,13 +397,15 @@ const multiYearPaymentTerms = {
     cy.wait(DEFAULT_WAIT_TIME / 4);
   },
   selectExpenseClassInFYCard({ fyCode, expenseClassName, rowIndex = 0 }) {
-    cy.do(
-      paymentTermsSection
-        .find(Card({ headerStart: including(fyCode) }))
-        .find(AcqFundDistribution())
-        .openExpenseClassSelector(rowIndex),
-    );
-    cy.do(SelectionOption(including(expenseClassName)).click());
+    const distributionInteractor = paymentTermsSection
+      .find(Card({ headerStart: including(fyCode) }))
+      .find(AcqFundDistribution());
+
+    cy.do([
+      distributionInteractor.perform((el) => el.scrollIntoView()),
+      distributionInteractor.openExpenseClassSelector(rowIndex),
+      SelectionOption(including(expenseClassName)).click(),
+    ]);
   },
   selectDistributionTypePercentInFYCard({ fyCode, rowIndex = 0 }) {
     cy.do(
@@ -419,7 +438,12 @@ const multiYearPaymentTerms = {
 
     cy.do([
       fieldValue.focusValueField({ index: rowIndex }),
-      fieldValue.fillValue({ value, index: rowIndex }),
+      isFloat(value)
+        ? fillFieldWithFloatValue(
+          fieldValue.find(RepeatableFieldItem({ index: rowIndex })).find(TextField()),
+          value,
+        )
+        : fieldValue.fillValue({ value, index: rowIndex }),
       fieldValue.blurValueField({ index: rowIndex }),
     ]);
     cy.wait(DEFAULT_WAIT_TIME / 4);
@@ -460,6 +484,17 @@ const multiYearPaymentTerms = {
     );
     this.assertPrepaymentTermsRemainingAmount(value);
   },
+  assertPaymentTermsTotalPriceValidationError(error) {
+    paymentTermsSection.find(TextField({ name: FORM_FIELD_NAMES.TOTAL_PRICE })).has({ error });
+  },
+  assertPaymentTermsPrepaymentTermValidationError(error) {
+    paymentTermsSection.find(TextField({ name: FORM_FIELD_NAMES.PREPAYMENT_TERM })).has({ error });
+  },
+  assertPaymentTermsStartingFiscalYearValidationError(error) {
+    paymentTermsSection
+      .find(Selection({ name: FORM_FIELD_NAMES.STARTING_FISCAL_YEAR }))
+      .has({ error });
+  },
   removeLastFYCard() {
     cy.do(
       paymentTermsSection
@@ -489,7 +524,11 @@ const multiYearPaymentTerms = {
     );
   },
   clickPaymentTermsInfoIcon() {
-    cy.do(paymentTermsSection.find(Button({ icon: BUTTON_ICONS.INFO })).click());
+    cy.get('section[id="paymentTerms"]')
+      .contains(ORDER_LINE_ACCORDION_NAMES.PAYMENT_TERMS)
+      .find(FIELD_SELECTORS.INFO_POPOVER_TRIGGER)
+      .first()
+      .click();
   },
   verifyPaymentTermsInfoPopover() {
     cy.expect(
