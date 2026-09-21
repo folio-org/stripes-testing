@@ -124,7 +124,12 @@ const multiYearPaymentTerms = {
     cy.expect(multiYearPrepaymentCheckbox.has({ checked: false }));
   },
   toggleMultiYearPrepayment() {
-    cy.do(multiYearPrepaymentCheckbox.click());
+    cy.do([
+      multiYearPrepaymentCheckbox.perform((el) => el.scrollIntoView()),
+      multiYearPrepaymentCheckbox.focus(),
+      multiYearPrepaymentCheckbox.click(),
+      multiYearPrepaymentCheckbox.blur(),
+    ]);
   },
   assertMultiYearPrepaymentChecked() {
     cy.expect(multiYearPrepaymentCheckbox.has({ checked: true }));
