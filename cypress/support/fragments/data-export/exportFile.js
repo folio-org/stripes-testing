@@ -425,7 +425,7 @@ export default {
                       },
                       {
                         log: true,
-                        timeout: 60000,
+                        timeout: 90000,
                         delay: 2000,
                       },
                     ).then((finalResponse) => {

@@ -533,6 +533,7 @@ describe('Data Export', () => {
           path: TopMenu.dataExportPath,
           waiter: DataExportLogs.waitLoading,
         });
+        cy.reload();
         cy.wait(20000);
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
 
