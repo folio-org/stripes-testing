@@ -9,7 +9,7 @@ Cypress.Commands.add('getAgreementsByStatus', (status) => {
 Cypress.Commands.add('getAgreements', () => {
   cy.okapiRequest({
     method: 'GET',
-    path: 'erm/sas',
+    path: 'erm/sas?page=1&perPage=200',
     isDefaultSearchParamsRequired: false,
   });
 });

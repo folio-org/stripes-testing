@@ -31,7 +31,7 @@ Cypress.Commands.add('deleteLicenseById', (id) => {
 Cypress.Commands.add('getLicenses', () => {
   cy.okapiRequest({
     method: 'GET',
-    path: 'licenses/licenses',
+    path: 'licenses/licenses?page=1&perPage=200',
     isDefaultSearchParamsRequired: false,
   });
 });

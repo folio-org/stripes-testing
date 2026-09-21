@@ -44,13 +44,18 @@ describe('fse-agreements', { retries: { runMode: 1 } }, () => {
           return;
         }
 
+        const failures = [];
+
         fileIds.forEach((id) => {
           cy.getAgreementFileRaw(id).then((fileResponse) => {
-            cy.expect(
-              fileResponse.status,
-              `erm/files/${id}/raw returned ${fileResponse.status}`,
-            ).to.eq(200);
+            if (fileResponse.status !== 200) {
+              failures.push(`erm/files/${id}/raw returned ${fileResponse.status}`);
+            }
           });
+        });
+
+        cy.then(() => {
+          cy.expect(failures, failures.join('\n')).to.have.length(0);
         });
       });
     },

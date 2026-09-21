@@ -44,13 +44,18 @@ describe('fse-licenses', { retries: { runMode: 1 } }, () => {
           return;
         }
 
+        const failures = [];
+
         fileIds.forEach((id) => {
           cy.getLicenseFileRaw(id).then((fileResponse) => {
-            cy.expect(
-              fileResponse.status,
-              `licenses/files/${id}/raw returned ${fileResponse.status}`,
-            ).to.eq(200);
+            if (fileResponse.status !== 200) {
+              failures.push(`licenses/files/${id}/raw returned ${fileResponse.status}`);
+            }
           });
+        });
+
+        cy.then(() => {
+          cy.expect(failures, failures.join('\n')).to.have.length(0);
         });
       });
     },
