@@ -134,7 +134,7 @@ describe('Data Import', () => {
         FileDetails.checkInvoiceInSummaryTable('0', 2);
         // check Error counter in the Summary table
         FileDetails.checkInvoiceInSummaryTable('0', 3);
-        FileDetails.checkErrorQuantityInSummaryTable('0', 3);
+        FileDetails.checkErrorQuantityInSummaryTable('0', 4);
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
         Invoices.searchByNumber(vendorInvoiceNumber);
