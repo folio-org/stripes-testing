@@ -27,5 +27,6 @@ Cypress.Commands.add('getAgreementFileRaw', (id) => {
     method: 'GET',
     path: `erm/files/${id}/raw`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   });
 });

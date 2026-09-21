@@ -41,5 +41,6 @@ Cypress.Commands.add('getLicenseFileRaw', (id) => {
     method: 'GET',
     path: `licenses/files/${id}/raw`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   });
 });
