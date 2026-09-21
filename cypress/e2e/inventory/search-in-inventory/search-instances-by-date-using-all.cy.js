@@ -22,7 +22,7 @@ describe('Inventory', () => {
       searchOption: 'All',
       resourceTypeAccordionName: 'Resource type',
       searchQueries: [
-        '1968',
+        '1678',
         '0007',
         '167u',
         '167b',
@@ -64,7 +64,7 @@ describe('Inventory', () => {
     before('Create test data, login', () => {
       cy.then(() => {
         cy.getAdminToken();
-        InventoryInstances.deleteInstanceByTitleViaApi('C553011');
+        InventoryInstances.deleteInstanceByTitleViaApi('C553011 ');
         cy.getInstanceTypes({ limit: 200 }).then((types) => {
           const duplicateTypes = types.filter(
             (type) => type.code === testData.resourceTypeBody.code,

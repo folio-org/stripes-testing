@@ -199,7 +199,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
           for (let i = 0; i < 5; i++) {
-            MarcAuthority.deleteViaAPI(createdRecordIDs[i]);
+            MarcAuthority.deleteViaAPI(createdRecordIDs[i], true);
           }
           InventoryInstance.deleteInstanceViaApi(createdRecordIDs[5]);
           // TO DO: remove `failOnStatusCode = false` after MODELINKS-210 is done

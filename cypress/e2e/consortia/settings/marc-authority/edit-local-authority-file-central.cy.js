@@ -80,6 +80,10 @@ describe('MARC', () => {
           'C436902 Edit all editable fields of Local "Authority file" which doesn\'t have assigned "MARC authority" records, from Central tenant (promin)',
           { tags: ['criticalPathECS', 'promin', 'C436902'] },
           () => {
+            // Force increased limit for UI to load all files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
             ManageAuthorityFiles.checkAuthorityFilesTableExists();
             ManageAuthorityFiles.checkManageAuthorityFilesPaneExists();
             ManageAuthorityFiles.checkSourceFileExists(
