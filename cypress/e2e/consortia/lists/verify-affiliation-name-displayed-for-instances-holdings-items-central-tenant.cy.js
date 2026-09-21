@@ -14,7 +14,9 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import { ITEM_STATUS_NAMES } from '../../../support/constants/inventory/item';
+import { RECEIVING_PIECES_FIELDS } from '../../../support/constants/query-builder/receivingPiecesFields';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import DateTools from '../../../support/utils/dateTools';
 
 const userPermissions = [
   Permissions.listsAll.gui,
@@ -26,6 +28,7 @@ const userPermissions = [
   Permissions.uiOrdersDelete.gui,
   Permissions.inventoryAll.gui,
 ];
+const todayDate = DateTools.getCurrentDate();
 const testData = {
   user: {},
   listName: `AT_C736768_List_${getRandomPostfix()}`,
@@ -163,8 +166,12 @@ describe('Lists', () => {
           `${tenantNames.college}+`,
         ]);
 
-        // Step 4: Select a value and run test query
+        // Step 4: Select a value, narrow down by created date and run test query
         QueryModal.chooseFromValueMultiselect(tenantNames.central);
+        QueryModal.addNewRow();
+        QueryModal.selectField(instanceFieldValues.createdDate, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.pickDate(todayDate, 1);
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();
@@ -193,8 +200,12 @@ describe('Lists', () => {
           `${tenantNames.college}+`,
         ]);
 
-        // Step 8: Select a value and run test query
+        // Step 8: Select a value, narrow down by created date and run test query
         QueryModal.chooseFromValueMultiselect(tenantNames.college);
+        QueryModal.addNewRow();
+        QueryModal.selectField(RECEIVING_PIECES_FIELDS.HOLDINGS.CREATED_DATE, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.pickDate(todayDate, 1);
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();
@@ -227,8 +238,12 @@ describe('Lists', () => {
           `${tenantNames.college}+`,
         ]);
 
-        // Step 12: Select a value and run test query
+        // Step 12: Select a value, narrow down by created date and run test query
         QueryModal.chooseFromValueMultiselect(tenantNames.college);
+        QueryModal.addNewRow();
+        QueryModal.selectField(itemFieldValues.itemCreatedDate, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.pickDate(todayDate, 1);
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();

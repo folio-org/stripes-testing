@@ -281,6 +281,12 @@ describe(
           // Step 11: Download preview in MARC format
           BulkEditActions.downloadPreviewInMarcFormat();
 
+          const currentTimestampUpToMinutes = DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
+          const currentTimestampUpToMinutesOneMinuteAfter =
+            DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
+          const currentTimestampUpToMinutesTwoMinuteAfter =
+            DateTools.getCurrentISO8601TimestampUpToMinutesUTC(2);
+
           // Verify MARC file content for both instances
           const assertionsOnMarcFileContent = [
             {
@@ -368,16 +374,15 @@ describe(
                   );
                 },
                 // Verify 005 field is updated
-                (record) => {
+                (record) =>
+                  // eslint-disable-next-line implicit-arrow-linebreak
                   expect(
-                    record
-                      .get('005')[0]
-                      .value.startsWith(DateTools.getCurrentISO8601TimestampUpToMinutesUTC()) ||
-                      record
-                        .get('005')[0]
-                        .value.startsWith(DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1)),
-                  ).to.be.true;
-                },
+                    [
+                      currentTimestampUpToMinutes,
+                      currentTimestampUpToMinutesOneMinuteAfter,
+                      currentTimestampUpToMinutesTwoMinuteAfter,
+                    ].some((prefix) => record.get('005')[0].value.startsWith(prefix)),
+                  ).to.be.true,
               ],
             },
             {
