@@ -124,6 +124,9 @@ const multiYearPaymentTerms = {
   assertMultiYearPrepaymentCheckedAndEnabled() {
     cy.expect(multiYearPrepaymentCheckbox.has({ checked: true, disabled: false }));
   },
+  assertMultiYearPrepaymentCheckedAndDisabled() {
+    cy.expect(multiYearPrepaymentCheckbox.has({ checked: true, disabled: true }));
+  },
   assertMultiYearPrepaymentEnabled() {
     cy.expect(multiYearPrepaymentCheckbox.has({ disabled: false }));
   },
@@ -174,11 +177,11 @@ const multiYearPaymentTerms = {
     cy.wait(1000);
   },
   toggleStartingFiscalYearDropdown() {
-    cy.do(
-      paymentTermsSection
-        .find(Selection(including(PAYMENT_TERMS_LABELS.STARTING_FISCAL_YEAR)))
-        .toggle(),
+    const selectionField = paymentTermsSection.find(
+      Selection(including(PAYMENT_TERMS_LABELS.STARTING_FISCAL_YEAR)),
     );
+
+    cy.do([selectionField.perform((el) => el.scrollIntoView()), selectionField.toggle()]);
   },
   assertFiscalYearOptionPresent(fyCode) {
     cy.expect(SelectionOption(including(fyCode)).exists());
