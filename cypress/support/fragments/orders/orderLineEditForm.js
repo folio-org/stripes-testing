@@ -42,6 +42,7 @@ const FORM_SECTION_IDS = {
   COST_DETAILS: 'costDetails',
   FUND_DISTRIBUTION: 'fundDistributionAccordion',
   LOCATION: 'location',
+  PHYSICAL_RESOURCE_DETAILS: 'physical',
 };
 const FORM_FIELD_NAMES = {
   ACQUISITION_METHOD: 'acquisitionMethod',
@@ -56,6 +57,8 @@ const FORM_FIELD_NAMES = {
   EXCHANGE_RATE: 'cost.exchangeRate',
   CLAIMING_ACTIVE: 'claimingActive',
   CLAIMING_INTERVAL: 'claimingInterval',
+  BINDERY_ACTIVE: 'details.isBinderyActive',
+  CREATE_INVENTORY_PHYSICAL: 'physical.createInventory',
   TITLE_OR_PACKAGE: 'titleOrPackage',
   RECEIVING_NOTE: 'details.receivingNote',
   SUBSCRIPTION_FROM: 'details.subscriptionFrom',
@@ -129,6 +132,9 @@ const fundDistributionDetailsSection = orderLineEditFormRoot.find(
   Section({ id: FORM_SECTION_IDS.FUND_DISTRIBUTION }),
 );
 const locationSection = orderLineEditFormRoot.find(Section({ id: FORM_SECTION_IDS.LOCATION }));
+const physicalResourceDetailsSection = orderLineEditFormRoot.find(
+  Section({ id: FORM_SECTION_IDS.PHYSICAL_RESOURCE_DETAILS }),
+);
 const automaticExportCheckboxName = FIELD_SELECTORS.AUTOMATIC_EXPORT;
 const automaticExportInfoIconSelector = FIELD_SELECTORS.INFO_POPOVER_TRIGGER;
 const cancelButton = Button(COMMON_BUTTON_LABELS.CANCEL);
@@ -162,6 +168,13 @@ export const orderLineFields = {
   ),
   claimingInterval: orderLineDetailsSection.find(
     TextField({ name: FORM_FIELD_NAMES.CLAIMING_INTERVAL }),
+  ),
+  binderyActive: orderLineDetailsSection.find(Checkbox({ name: FORM_FIELD_NAMES.BINDERY_ACTIVE })),
+};
+
+export const physicalResourceDetailsFields = {
+  createInventory: physicalResourceDetailsSection.find(
+    Select({ name: FORM_FIELD_NAMES.CREATE_INVENTORY_PHYSICAL }),
   ),
 };
 
@@ -247,6 +260,12 @@ export default {
   },
   checkCostDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: costDetailsFields });
+  },
+  checkPhysicalResourceDetailsSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: physicalResourceDetailsFields });
+  },
+  clickBinderyActiveCheckbox() {
+    cy.do(orderLineFields.binderyActive.click());
   },
   setUserLimit(limit) {
     cy.get(FIELD_SELECTORS.USER_LIMIT).clear().type(limit);
@@ -760,6 +779,28 @@ export default {
         .find(Button({ icon: 'trash' }))
         .click(),
     );
+  },
+
+  checkFundDistributionFundSelected({ fund, index = 0 }) {
+    cy.expect(
+      fundDistributionDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID)))
+        .has({ value: including(fund) }),
+    );
+  },
+
+  checkLocationSelected({ location, index = 0 }) {
+    cy.expect([
+      locationSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Selection(including(FORM_LABELS.FILTER_NAME_CODE)))
+        .has({ value: including(location) }),
+      locationSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .exists(),
+    ]);
   },
 
   checkFundRestrictionErrorToastPresent() {
