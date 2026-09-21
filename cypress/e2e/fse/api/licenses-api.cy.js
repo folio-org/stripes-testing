@@ -33,6 +33,12 @@ const collectDocFileIds = (records) => {
   return fileIds;
 };
 
+const collectAmendmentDocFileIds = (records) => {
+  const amendments = records.flatMap((record) => record.amendments ?? []);
+
+  return collectDocFileIds(amendments);
+};
+
 const verifyFilesAccessible = (fileIds) => {
   if (fileIds.length === 0) {
     cy.log('No docs or supplementaryDocs found — skipping file access checks');
@@ -78,6 +84,16 @@ describe('fse-licenses', { retries: { runMode: 1 } }, () => {
     () => {
       fetchAllPages((page, perPage) => cy.getLicenses(page, perPage)).then((licenses) => {
         verifyFilesAccessible(collectDocFileIds(licenses));
+      });
+    },
+  );
+
+  it(
+    `FDOPS-6514 - Verify license amendment file docs are accessible for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'api', 'licenses-docs', 'FDOPS-6514'] },
+    () => {
+      fetchAllPages((page, perPage) => cy.getLicenses(page, perPage)).then((licenses) => {
+        verifyFilesAccessible(collectAmendmentDocFileIds(licenses));
       });
     },
   );
