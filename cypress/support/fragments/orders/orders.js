@@ -43,6 +43,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 import SearchHelper from '../finance/financeHelper';
 import MultiColumnListHelper from '../multiColumnList';
 import SelectUser from '../invoices/modal/selectUser';
+import CloseConfirmationModal from './modals/closeConfirmationModal';
 import DuplicateConfirmationModal from './modals/duplicateConfirmationModal';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
@@ -250,9 +251,15 @@ export default {
     ]);
   },
 
-  closeOrder: (reason, isSuccess = true) => {
+  closeOrder: (reason, isSuccess = true, note) => {
     expandActionsDropdown();
-    cy.do([Button('Close order').click(), Select('Reason').choose(reason), submitButton.click()]);
+    cy.do([Button('Close order').click(), Select('Reason').choose(reason)]);
+
+    if (note) {
+      CloseConfirmationModal.fillNotes(note);
+    }
+
+    cy.do(submitButton.click());
     if (isSuccess) {
       InteractorsTools.checkCalloutMessage('Order was closed');
     }

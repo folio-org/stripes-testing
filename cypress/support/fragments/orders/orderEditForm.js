@@ -7,6 +7,7 @@ import {
   Select,
   Selection,
   SelectionList,
+  TextArea,
   TextField,
   including,
   matching,
@@ -44,6 +45,7 @@ const infoSectionFields = {
   poNumber: orderInfoSection.find(KeyValue('PO number')),
   vendor: orderInfoSection.find(TextField({ name: 'vendor', disabled: true })),
   orderType: orderInfoSection.find(Select({ name: 'orderType' })),
+  orderTypeValue: orderInfoSection.find(KeyValue('Order type')),
   acquisitionUnit: orderInfoSection.find(MultiSelect({ id: 'order-acq-units' })),
   assignedTo: orderInfoSection.find(TextField({ name: 'assignedTo', disabled: true })),
   billTo: orderInfoSection.find(Selection('Bill to')),
@@ -53,7 +55,17 @@ const infoSectionFields = {
 
 const ongoingInformationFields = {
   subscription: ongoingInformationSection.find(Checkbox({ name: 'ongoing.isSubscription' })),
+  renewalInterval: ongoingInformationSection.find(TextField({ name: 'ongoing.interval' })),
   renewalDate: ongoingInformationSection.find(TextField({ name: 'ongoing.renewalDate' })),
+  reviewPeriod: ongoingInformationSection.find(TextField({ name: 'ongoing.reviewPeriod' })),
+  manualRenewal: ongoingInformationSection.find(Checkbox({ name: 'ongoing.manualRenewal' })),
+  reviewDate: ongoingInformationSection.find(TextField({ name: 'ongoing.reviewDate' })),
+  notes: ongoingInformationSection.find(TextArea({ name: 'ongoing.notes' })),
+};
+
+const orderSummaryFields = {
+  workflowStatus: orderSummarySection.find(KeyValue('Workflow status')),
+  notesOnClosure: orderSummarySection.find(TextArea({ name: 'closeReason.note' })),
 };
 
 const sections = {
@@ -119,6 +131,12 @@ export default {
       cy.expect(infoSectionFields.orderType.has({ error: 'Required!' }));
     }
   },
+  verifyOrderInformationSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: infoSectionFields });
+  },
+  verifyOrderSummarySection(fields = []) {
+    this.checkFieldsConditions({ fields, section: orderSummaryFields });
+  },
   checkOngoingOrderInformationSection(fields = []) {
     this.checkFieldsConditions({ fields, section: ongoingInformationFields });
   },
@@ -139,10 +157,42 @@ export default {
       cy.do(infoSectionFields.orderType.choose(orderType));
     }
   },
-  fillOngoingInformationSectionFields({ renewalDate }) {
+  fillOngoingInformationSectionFields({
+    renewalInterval,
+    renewalDate,
+    reviewPeriod,
+    reviewDate,
+    notes,
+  }) {
+    if (renewalInterval) {
+      cy.do(ongoingInformationFields.renewalInterval.fillIn(renewalInterval));
+      cy.expect(ongoingInformationFields.renewalInterval.has({ value: renewalInterval }));
+    }
+
     if (renewalDate) {
       cy.do(ongoingInformationFields.renewalDate.fillIn(renewalDate));
       cy.expect(ongoingInformationFields.renewalDate.has({ value: renewalDate }));
+    }
+
+    if (reviewPeriod) {
+      cy.do(ongoingInformationFields.reviewPeriod.fillIn(reviewPeriod));
+      cy.expect(ongoingInformationFields.reviewPeriod.has({ value: reviewPeriod }));
+    }
+
+    if (reviewDate) {
+      cy.do(ongoingInformationFields.reviewDate.fillIn(reviewDate));
+      cy.expect(ongoingInformationFields.reviewDate.has({ value: reviewDate }));
+    }
+
+    if (notes) {
+      cy.do(ongoingInformationFields.notes.fillIn(notes));
+      cy.expect(ongoingInformationFields.notes.has({ value: notes }));
+    }
+  },
+  fillOrderSummarySectionFields({ notesOnClosure }) {
+    if (notesOnClosure) {
+      cy.do(orderSummaryFields.notesOnClosure.fillIn(notesOnClosure));
+      cy.expect(orderSummaryFields.notesOnClosure.has({ value: notesOnClosure }));
     }
   },
   selectOrderTemplate(templateName) {
