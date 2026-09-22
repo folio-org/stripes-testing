@@ -151,6 +151,7 @@ export const BATCH_GROUP = {
 export const RECORD_STATUSES = {
   CREATED: 'Created',
   UPDATED: 'Updated',
+  DELETED: 'Deleted',
   NO_ACTION: 'No action',
   DASH: 'No value set-',
   BLANK: 'No value set',
