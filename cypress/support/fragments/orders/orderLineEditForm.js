@@ -1,4 +1,5 @@
 import {
+  Accordion,
   AcqFundDistribution,
   Button,
   Callout,
@@ -381,7 +382,7 @@ export default {
     if (poLineDetails.materialType) {
       if (poLineDetails.orderFormat === ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE) {
         cy.do(
-          Select({ name: FORM_FIELD_NAMES.MATERIAL_TYPE_ERERESOURCE }).choose(
+          Select({ name: FORM_FIELD_NAMES.MATERIAL_TYPE_ERESOURCE }).choose(
             poLineDetails.materialType,
           ),
         );
@@ -414,7 +415,7 @@ export default {
   fillCostDetails(costDetails) {
     Object.entries(costDetails).forEach(([key, value]) => {
       if (costDetailsFields[key]) {
-        cy.do(costDetailsFields[key].fillIn(value));
+        cy.do(costDetailsFields[key].fillIn(String(value)));
       }
     });
   },
@@ -497,6 +498,10 @@ export default {
 
   selectFundDistribution(fund, index) {
     this.selectFundDistributionDropDownValue(FUND_DISTRIBUTION_LABELS.FUND_ID, fund, index);
+  },
+
+  expandAccordion(label) {
+    cy.do(orderLineEditFormRoot.find(Accordion(including(label))).expand());
   },
 
   expandFundIdDropdown(index = 0) {
@@ -623,12 +628,12 @@ export default {
       );
     }
   },
-  clickCancelButton(shouldModalExsist = false) {
-    cy.wait(20000);
+  clickCancelButton(shouldModalExist = false, { waitMs = 20000 } = {}) {
+    cy.wait(waitMs);
     cy.expect(cancelButton.has({ disabled: false }));
     cy.do(cancelButton.click());
 
-    if (!shouldModalExsist) {
+    if (!shouldModalExist) {
       cy.expect(orderLineEditFormRoot.absent());
     }
   },
@@ -654,8 +659,8 @@ export default {
     cy.wait(2000);
   },
 
-  cancelWithUnsavedChanges({ keepEditing = false } = {}) {
-    this.clickCancelButton(true);
+  cancelWithUnsavedChanges({ keepEditing = false, waitMs } = {}) {
+    this.clickCancelButton(true, { waitMs });
     AreYouSureModal.verifyAreYouSureForm(true);
 
     if (keepEditing) {

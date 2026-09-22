@@ -59,11 +59,15 @@ export default {
 
     const classes = expenseClasses || (expenseClass ? [expenseClass] : null);
     if (classes) {
-      FinanceDetails.checkExpenseClassesTableContent({
-        section: expenseClassSection,
-        items: classes,
-      });
+      this.checkExpenseClassesTableContent(classes);
     }
+  },
+
+  checkExpenseClassesTableContent(items) {
+    FinanceDetails.checkExpenseClassesTableContent({
+      section: expenseClassSection,
+      items,
+    });
   },
   checkBalance({ name, value }) {
     cy.expect(budgetPane.find(HTML(including(`${name} balance: ${value}`))).exists());

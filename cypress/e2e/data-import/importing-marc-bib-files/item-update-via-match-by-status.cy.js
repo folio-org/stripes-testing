@@ -360,7 +360,7 @@ describe('Data Import', () => {
           Logs.waitFileIsImported(nameMarcFileForUpdate);
           Logs.openFileDetails(nameMarcFileForUpdate);
           FileDetails.checkItemQuantityInSummaryTable('7', 1);
-          FileDetails.checkItemQuantityInSummaryTable('3', 2);
+          FileDetails.checkItemQuantityInSummaryTable('3', 3);
           // check items what statuses were not changed have Updated status
           titlesItemStatusNotChanged.forEach((title) => {
             FileDetails.openItemInInventoryByTitle(title, 5);

@@ -65,8 +65,8 @@ describe('Data Import', () => {
           RECORD_STATUSES.CREATED,
         ]);
         // check that "SRS MARC" and "Instance" were not created for record, that contain 999 ff field
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 2);
-        FileDetails.checkErrorQuantityInSummaryTable('1', 3);
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 3);
+        FileDetails.checkErrorQuantityInSummaryTable('1', 4);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.srsMarc,

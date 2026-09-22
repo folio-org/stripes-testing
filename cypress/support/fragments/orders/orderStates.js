@@ -77,7 +77,9 @@ export default {
   multipleDistributionsSameFund:
     'You can not have multiple distributions for the same fund with the same expense class.',
   remainingAmountToBeDistributed(remainingAmount) {
-    return `Remaining amount to be distributed: $${remainingAmount}`;
+    const value = remainingAmount === undefined ? '\nNo value set\n-' : ` ${remainingAmount}`;
+
+    return `Remaining amount to be distributed:${value}`;
   },
   inactiveAccount: 'The selected account number is inactive.',
   purchaseOrderClosedWarning({ reason } = {}) {

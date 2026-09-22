@@ -117,6 +117,8 @@ const packageExportFieldOptions = [
   'Agreements',
   'Automatically Select titles',
   'Custom Coverage',
+  'Hide in Full Text Finder',
+  'Hide in Publication Finder',
   'Holdings status',
   'Notes',
   'Package Content Type',
@@ -128,7 +130,6 @@ const packageExportFieldOptions = [
   'Provider Level Token',
   'Provider Name',
   'Proxy',
-  'Show To Patrons',
   'Tags',
 ];
 

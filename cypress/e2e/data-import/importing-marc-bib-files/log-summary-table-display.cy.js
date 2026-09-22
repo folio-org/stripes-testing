@@ -61,17 +61,26 @@ describe('Data Import', () => {
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.summary, [
           RECORD_STATUSES.CREATED,
           RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.DELETED,
           RECORD_STATUSES.NO_ACTION,
           RECORD_STATUSES.ERROR,
         ]);
-        FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.srs, ['103', '0', '0', '0']);
+        FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.srs, [
+          '103',
+          '0',
+          '0',
+          '0',
+          '0',
+        ]);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.instance, [
           '103',
           '0',
           '0',
           '0',
+          '0',
         ]);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.holdings, [
+          RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
@@ -82,8 +91,10 @@ describe('Data Import', () => {
           RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
         ]);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.order, [
+          RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
@@ -94,8 +105,10 @@ describe('Data Import', () => {
           RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
         ]);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.error, [
+          RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,

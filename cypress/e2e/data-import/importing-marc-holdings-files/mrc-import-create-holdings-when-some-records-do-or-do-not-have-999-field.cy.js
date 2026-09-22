@@ -106,9 +106,9 @@ describe('Data Import', () => {
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.created);
         FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems.created);
         // check No action counter in the Summary table
-        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.noAction, 2);
+        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.noAction, 3);
         // check Error counter in the Summary table
-        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.error, 3);
+        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.error, 4);
         FileDetails.openJsonScreen('Holdings');
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(errorMessage);
