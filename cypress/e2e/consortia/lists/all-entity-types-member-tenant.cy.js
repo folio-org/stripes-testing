@@ -64,6 +64,8 @@ describe('Lists', () => {
           Lists.recordTypes.purchaseOrderLines,
           Lists.recordTypes.purchaseOrderLinesWithTitles,
           Lists.recordTypes.purchaseOrders,
+          Lists.recordTypes.receivingPieces,
+          Lists.recordTypes.receivingTitles,
           Lists.recordTypes.transactions,
           Lists.recordTypes.users,
         ]);

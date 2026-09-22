@@ -10,6 +10,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import Affiliations, { tenantNames } from '../../../support/dictionary/affiliations';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import DateTools from '../../../support/utils/dateTools';
 
 const userPermissions = [
   Permissions.listsAll.gui,
@@ -21,6 +22,7 @@ const userPermissions = [
   Permissions.uiOrdersDelete.gui,
   Permissions.inventoryAll.gui,
 ];
+const todayDate = DateTools.getCurrentDate();
 const testData = {
   user: {},
   listName: `AT_C850001_List_${getRandomPostfix()}`,
@@ -121,6 +123,10 @@ describe('Lists', () => {
         buildInstanceAffiliationQuery();
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.chooseValueSelect(tenantNames.central);
+        QueryModal.addNewRow();
+        QueryModal.selectField(instanceFieldValues.createdDate, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.pickDate(todayDate, 1);
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();
@@ -136,6 +142,10 @@ describe('Lists', () => {
         buildInstanceAffiliationQuery();
         QueryModal.selectOperator(QUERY_OPERATIONS.NOT_EQUAL);
         QueryModal.chooseValueSelect(tenantNames.central);
+        QueryModal.addNewRow();
+        QueryModal.selectField(instanceFieldValues.createdDate, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.pickDate(todayDate, 1);
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();
@@ -152,6 +162,10 @@ describe('Lists', () => {
         QueryModal.selectOperator(QUERY_OPERATIONS.IN);
         QueryModal.chooseFromValueMultiselect(tenantNames.central);
         QueryModal.chooseFromValueMultiselect(tenantNames.college);
+        QueryModal.addNewRow();
+        QueryModal.selectField(instanceFieldValues.createdDate, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.pickDate(todayDate, 1);
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();
@@ -184,6 +198,10 @@ describe('Lists', () => {
         buildInstanceAffiliationQuery();
         QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
         QueryModal.selectValueFromSelect('False');
+        QueryModal.addNewRow();
+        QueryModal.selectField(instanceFieldValues.createdDate, 1);
+        QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+        QueryModal.pickDate(todayDate, 1);
         QueryModal.clickTestQuery();
         QueryModal.waitForQueryTestToFinish();
         QueryModal.verifyPreviewOfRecordsMatched();
