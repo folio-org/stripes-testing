@@ -56,7 +56,15 @@ export default {
 
     cy.do([polNumberLink.perform((el) => el.removeAttribute('target')), polNumberLink.click()]);
   },
-  checkInvoiceLineDetails({ invoiceLineInformation = [], checkboxes = [] } = {}) {
+  checkInvoiceLineDetails({ title, subtitle, invoiceLineInformation = [], checkboxes = [] } = {}) {
+    if (title) {
+      cy.expect(invoiceLineDetailsPane.has({ title: `View invoice line - ${title}` }));
+    }
+
+    if (subtitle) {
+      cy.expect(invoiceLineDetailsPane.has({ subtitle }));
+    }
+
     invoiceLineInformation.forEach(({ key, value }) => {
       cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
     });

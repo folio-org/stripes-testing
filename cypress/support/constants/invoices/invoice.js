@@ -6,6 +6,7 @@ export const INVOICE_ACTION_MENU_BUTTONS = {
   DUPLICATE: 'Duplicate',
   EDIT: 'Edit',
   PAY: 'Pay',
+  PRINT_VOUCHER: 'Print voucher',
 };
 
 export const INVOICE_STATUSES = {
@@ -149,4 +150,21 @@ export const EXPORT_INVOICE_FIELDS = {
   VENDOR_CODE: 'Vendor code',
   VENDOR_INVOICE_NO: 'Vendor invoice number',
   VENDOR_NAME: 'Vendor name',
+};
+
+export const INVOICE_LINES_TABLE_COLUMN_HEADERS = {
+  POL_NUMBER: 'POL number',
+  DESCRIPTION: 'Description',
+  FUND_CODE: 'Fund code',
+  PO_STATUS: 'PO status',
+  RECEIPT_STATUS: 'Receipt status',
+  PAYMENT_STATUS: 'Payment status',
+  VENDOR_REFERENCE_NUMBER: 'Vendor reference number',
+  QUANTITY: 'Quantity',
+  SUB_TOTAL: 'Sub-total',
+  ADJUSTMENTS: 'Adjustments',
+  RELEASE_ENCUMBRANCE: 'Release encumbrance',
+  TOTAL: 'Total',
+  TOTAL_EXCHANGED: 'Total (Exchanged)',
+  VENDOR_CODE: 'Vendor code',
 };
