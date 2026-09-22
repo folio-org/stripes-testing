@@ -761,38 +761,6 @@ export default {
     submitOrderLine();
   },
 
-  binderyActivePEMixPOLineInfo(fund, resource, unitPrice, quantity, value, institutionId) {
-    cy.do([orderFormatSelect.choose(resource), acquisitionMethodButton.click()]);
-    cy.wait(2000);
-    cy.do([
-      Checkbox({ name: 'details.isBinderyActive' }).click(),
-      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      physicalUnitPriceTextField.fillIn(unitPrice),
-      electronicUnitPriceTextField.fillIn(unitPrice),
-      quantityPhysicalTextField.fillIn(quantity),
-      quantityElectronicTextField.fillIn(quantity),
-      addFundDistributionButton.click(),
-      fundDistributionSelect.click(),
-      SelectionOption(`${fund.name} (${fund.code})`).click(),
-    ]);
-    cy.wait(2000);
-    cy.do([
-      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
-      fundDistributionField.fillIn(value),
-      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
-      addLocationButton.click(),
-      createNewLocationButton.click(),
-    ]);
-    SelectLocationModal.selectLocation(institutionId);
-    cy.do([
-      quantityPhysicalLocationField.fillIn(quantity),
-      quantityElectronicField.fillIn(quantity),
-      saveAndCloseButton.click(),
-    ]);
-    cy.wait(4000);
-    submitOrderLine();
-  },
-
   rolloverPOLineInfoforPhysicalMaterialWithFundInPercents(
     fund,
     unitPrice,
