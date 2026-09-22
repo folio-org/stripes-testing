@@ -229,9 +229,10 @@ describe('Data Import', () => {
           columnNumbers.holdings,
           columnNumbers.item,
         ].forEach((column) => {
-          FileDetails.verifyColumnValuesInSummaryTable(column, ['1', '0', '0', '0']);
+          FileDetails.verifyColumnValuesInSummaryTable(column, ['1', '0', '0', '0', '0']);
         });
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.error, [
+          RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
           RECORD_STATUSES.DASH,
@@ -239,6 +240,7 @@ describe('Data Import', () => {
         ]);
         [columnNumbers.authority, columnNumbers.order, columnNumbers.invoice].forEach((column) => {
           FileDetails.verifyColumnValuesInSummaryTable(column, [
+            RECORD_STATUSES.DASH,
             RECORD_STATUSES.DASH,
             RECORD_STATUSES.DASH,
             RECORD_STATUSES.DASH,
