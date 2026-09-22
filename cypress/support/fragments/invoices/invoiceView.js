@@ -99,6 +99,18 @@ export default {
   },
   checkInvoiceLinesTableContent(records = []) {
     records.forEach((record, index) => {
+      if (record.number) {
+        cy.expect(
+          invoiceLinesSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: INVOICE_LINES_TABLE_COLUMN_HEADERS.LINE_NUMBER,
+              }),
+            )
+            .has({ content: String(record.number) }),
+        );
+      }
       if (record.poNumber) {
         cy.expect(
           invoiceLinesSection
