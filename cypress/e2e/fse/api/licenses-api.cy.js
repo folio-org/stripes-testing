@@ -1,3 +1,65 @@
+const PER_PAGE = 100;
+
+const fetchAllPages = (getPage, page = 1, collected = []) => {
+  return getPage(page, PER_PAGE).then((response) => {
+    cy.expect(response.status).to.eq(200);
+
+    const items = response.body.results ?? response.body;
+    const all = collected.concat(items);
+
+    if (items.length < PER_PAGE) {
+      return all;
+    }
+    return fetchAllPages(getPage, page + 1, all);
+  });
+};
+
+const collectDocFileIds = (records) => {
+  const fileIds = [];
+
+  records.forEach((record) => {
+    const docs = record.docs ?? [];
+    const supplementaryDocs = record.supplementaryDocs ?? [];
+
+    // collect all fileUpload IDs
+    docs.forEach((doc) => {
+      if (doc.fileUpload?.id) fileIds.push(doc.fileUpload.id);
+    });
+    supplementaryDocs.forEach((supplementaryDoc) => {
+      if (supplementaryDoc.fileUpload?.id) fileIds.push(supplementaryDoc.fileUpload.id);
+    });
+  });
+
+  return fileIds;
+};
+
+const collectAmendmentDocFileIds = (records) => {
+  const amendments = records.flatMap((record) => record.amendments ?? []);
+
+  return collectDocFileIds(amendments);
+};
+
+const verifyFilesAccessible = (fileIds) => {
+  if (fileIds.length === 0) {
+    cy.log('No docs or supplementaryDocs found — skipping file access checks');
+    return;
+  }
+
+  const failures = [];
+
+  fileIds.forEach((id) => {
+    cy.getLicenseFileRaw(id).then((fileResponse) => {
+      if (fileResponse.status !== 200) {
+        failures.push(`licenses/files/${id}/raw returned ${fileResponse.status}`);
+      }
+    });
+  });
+
+  cy.then(() => {
+    expect(failures, failures.join('\n')).to.have.length(0);
+  });
+};
+
 describe('fse-licenses', { retries: { runMode: 1 } }, () => {
   beforeEach(() => {
     // hide sensitive data from the report
@@ -20,38 +82,18 @@ describe('fse-licenses', { retries: { runMode: 1 } }, () => {
     `TC196410 - Verify license file docs are accessible for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'licenses-docs', 'TC196410'] },
     () => {
-      cy.getLicenses().then((response) => {
-        cy.expect(response.status).to.eq(200);
+      fetchAllPages((page, perPage) => cy.getLicenses(page, perPage)).then((licenses) => {
+        verifyFilesAccessible(collectDocFileIds(licenses));
+      });
+    },
+  );
 
-        const licenses = response.body.results ?? response.body;
-        const fileIds = [];
-
-        licenses.forEach((license) => {
-          const docs = license.docs ?? [];
-          const supplementaryDocs = license.supplementaryDocs ?? [];
-
-          // collect all fileUpload IDs
-          docs.forEach((doc) => {
-            if (doc.fileUpload?.id) fileIds.push(doc.fileUpload.id);
-          });
-          supplementaryDocs.forEach((supplementaryDoc) => {
-            if (supplementaryDoc.fileUpload?.id) fileIds.push(supplementaryDoc.fileUpload.id);
-          });
-        });
-
-        if (fileIds.length === 0) {
-          cy.log('No docs or supplementaryDocs found — skipping file access checks');
-          return;
-        }
-
-        fileIds.forEach((id) => {
-          cy.getLicenseFileRaw(id).then((fileResponse) => {
-            cy.expect(
-              fileResponse.status,
-              `licenses/files/${id}/raw returned ${fileResponse.status}`,
-            ).to.eq(200);
-          });
-        });
+  it(
+    `FDOPS-6514 - Verify license amendment file docs are accessible for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'api', 'licenses-docs', 'FDOPS-6514'] },
+    () => {
+      fetchAllPages((page, perPage) => cy.getLicenses(page, perPage)).then((licenses) => {
+        verifyFilesAccessible(collectAmendmentDocFileIds(licenses));
       });
     },
   );
