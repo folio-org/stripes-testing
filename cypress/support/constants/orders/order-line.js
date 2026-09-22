@@ -29,6 +29,8 @@ export const ORDER_LINE_ACCORDION_NAMES = {
   RELATED_INVOICE_LINES: 'Related invoice lines',
   LINKED_INSTANCE: 'Linked instance',
   CUSTOM_FIELDS: 'Custom fields',
+  PAYMENT_TERMS: 'Payment terms',
+  POL_ONGOING_INFO: 'Ongoing order information',
 };
 
 export const ORDER_LINE_PAYMENT_STATUS = {
@@ -151,6 +153,8 @@ export const POLINE_DETAILS_FIELDS = {
   ACQUISITION_METHOD: 'Acquisition method',
   ORDER_FORMAT: 'Order format',
   RECEIPT_STATUS: 'Receipt status',
+  RECEIVING_WORKFLOW: 'Receiving workflow',
+  BINDERY_ACTIVE: 'Bindery active',
   PAYMENT_STATUS: 'Payment status',
   ACCOUNT_NUMBER: 'Account number',
   HOLDING_NAME: 'Holding',

@@ -22,8 +22,11 @@ import {
   ORDER_SEARCH_OPTIONS,
   ORDER_TYPES,
 } from '../../support/constants';
+import { NumberTools } from '../../support/utils';
 
 describe('Orders', () => {
+  let locale;
+
   const testData = {
     fiscalYear: {},
     ledger: {},
@@ -145,6 +148,10 @@ describe('Orders', () => {
 
   before('Create test data', () => {
     cy.getAdminToken();
+    cy.getTenantLocaleApi().then((data) => {
+      locale = data;
+    });
+
     return createFinanceData().then(() => {
       return createOrderData().then(() => {
         cy.createTempUser([Permissions.uiOrdersEdit.gui, Permissions.uiOrdersCreate.gui]).then(
@@ -177,46 +184,56 @@ describe('Orders', () => {
     'C359009 Correct validation of total "Fund distribution" amount (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet', 'C359009'] },
     () => {
-      // Step 1: Search for the order
+      const formatAmount = (value) => NumberTools.formatCurrency(value, locale);
+
+      cy.log('Step 1: Search for the order');
       Orders.searchByParameter(ORDER_SEARCH_OPTIONS.PO_NUMBER, testData.order.poNumber);
       Orders.selectFromResultsList(testData.order.poNumber);
 
-      // Step 2: Click "Add PO line" button
+      cy.log('Step 2: Click "Add PO line" button');
       OrderLines.addPOLine();
 
-      // Step 3: Fill in order line fields
+      cy.log('Step 3: Fill in order line fields');
       OrderLineEditForm.fillOrderLineFields(polData);
 
-      // Step 5: Select Fund A, fill in distribution value, check remaining amount to be distributed
+      cy.log(
+        'Step 5: Select Fund A, fill in distribution value, check remaining amount to be distributed',
+      );
       OrderLines.addFundToPOLWithoutSave(0, testData.funds.fundA, '33.33');
-      OrderLineEditForm.checkRemainingAmountToBeDistributed('60.00');
+      OrderLineEditForm.checkRemainingAmountToBeDistributed(formatAmount(60));
 
-      // Step 6: Select Fund B, fill in distribution value, check remaining amount to be distributed
+      cy.log(
+        'Step 6: Select Fund B, fill in distribution value, check remaining amount to be distributed',
+      );
       OrderLines.addFundToPOLWithoutSave(1, testData.funds.fundB, '33.33');
       OrderLineEditForm.checkPercentageAmountIsEqualTo100();
-      OrderLineEditForm.checkRemainingAmountToBeDistributed('30.01');
+      OrderLineEditForm.checkRemainingAmountToBeDistributed(formatAmount(30.01));
 
-      // Step 7-8: Select Fund C, fill in distribution value, check remaining amount to be distributed
+      cy.log(
+        'Step 7-8: Select Fund C, fill in distribution value, check remaining amount to be distributed',
+      );
       OrderLines.addFundToPOLWithoutSave(2, testData.funds.fundC, '30.33');
       OrderLineEditForm.checkPercentageAmountIsEqualTo100();
-      OrderLineEditForm.checkRemainingAmountToBeDistributed('2.71');
+      OrderLineEditForm.checkRemainingAmountToBeDistributed(formatAmount(2.71));
 
-      // Step 9-10: Add location and quantity
+      cy.log('Step 9-10: Add location and quantity');
       OrderLineEditForm.clickAddLocationButton();
       OrderLines.addLocationToPOLWithoutSave({
         location: testData.location,
         electronicQuantity: '1',
       });
 
-      // Step 11: Attempt to save PO line and check warnings
+      cy.log('Step 11: Attempt to save PO line and check warnings');
       OrderLines.saveOrderLine();
       OrderLineEditForm.checkPercentageAmountIsEqualTo100();
-      OrderLineEditForm.checkRemainingAmountToBeDistributed('2.71');
+      OrderLineEditForm.checkRemainingAmountToBeDistributed(formatAmount(2.71));
 
-      // Step 12-13: Adjust distribution value for Fund C, save PO line, verify warnings and fund distribution table
+      cy.log(
+        'Step 12-13: Adjust distribution value for Fund C, save PO line, verify warnings and fund distribution table',
+      );
       OrderLineEditForm.setFundDistributionValue('33.34', 2);
       OrderLineEditForm.checkPercentageAmountIsEqualTo100(false);
-      OrderLineEditForm.checkRemainingAmountToBeDistributed('0.00');
+      OrderLineEditForm.checkRemainingAmountToBeDistributed(formatAmount(0.0));
       OrderLineEditForm.clickSaveButton({ orderLineCreated: true, orderLineUpdated: false });
       OrderLineDetails.checkFundDistibutionTableContent([
         {
