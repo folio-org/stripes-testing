@@ -123,6 +123,7 @@ describe('Export Manager', () => {
           location.name,
           `${organization.accounts[1].name} (${organization.accounts[1].accountNo})`,
         );
+        cy.wait(10_000);
       });
 
       cy.createTempUser([
@@ -137,17 +138,16 @@ describe('Export Manager', () => {
         permissions.exportManagerDownloadAndResendFiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.waitForAuthRefresh(() => {
-          cy.login(user.username, user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
-          });
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
         });
       });
     });
 
     after(() => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Orders.deleteOrderViaApi(order.id);
       OrderLinesLimit.setPOLLimitViaApi(1);
       Organizations.deleteOrganizationViaApi(organization.id);

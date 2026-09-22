@@ -102,7 +102,7 @@ describe('Organizations', () => {
       Organizations.checkAvailableActionsInTheActionsField();
 
       // update user capabilities to edit organization
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       cy.getCapabilitySetIdViaApi({
         ...testData.newCapabToAssign,
         type: testData.newCapabToAssign.table,
@@ -112,6 +112,7 @@ describe('Organizations', () => {
         })
         .then(() => {
           cy.login(user.username, user.password);
+          cy.reload();
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORGANIZATIONS);
           Organizations.waitLoading();
           OrganizationsSearchAndFilter.searchByParameters('Name', organization.name);

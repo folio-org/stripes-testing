@@ -38,6 +38,7 @@ describe('Receiving', () => {
     let secondInstance;
 
     before('Create test data', () => {
+      cy.clearLocalStorage();
       cy.getAdminToken();
 
       acquisitionUnit = AcquisitionUnits.getDefaultAcquisitionUnit({

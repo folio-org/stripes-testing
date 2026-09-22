@@ -16,6 +16,7 @@ import PatronGroups from '../../../../../support/fragments/settings/users/patron
 import SettingsMenu from '../../../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
+import { poll } from '../../../../../support/utils/polling';
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
@@ -39,6 +40,16 @@ describe('Consortia', () => {
                 },
               );
               cy.setTenant(Affiliations.College);
+              // without this wait the user is created without a patron group
+              poll(
+                () => cy.getPatronGroupsApi({ limit: 1000 }),
+                (patronGroups) => patronGroups.some(({ group }) => group === sharedPatronGroup.payload.group),
+                {
+                  delay: 1000,
+                  timeout: 60000,
+                  errorMessage: `Shared patron group "${sharedPatronGroup.payload.group}" was not shared with the "${tenantNames.college}" tenant`,
+                },
+              );
               cy.createTempUser([], sharedPatronGroup.payload.group).then((userAProperties) => {
                 userAData = userAProperties;
               });
@@ -76,7 +87,7 @@ describe('Consortia', () => {
 
         after('Delete users data', () => {
           cy.resetTenant();
-          cy.getAdminToken();
+          cy.getAdminToken(false);
           Users.deleteViaApi(userBData.userId);
           cy.setTenant(Affiliations.College);
           Users.deleteViaApi(userAData.userId);

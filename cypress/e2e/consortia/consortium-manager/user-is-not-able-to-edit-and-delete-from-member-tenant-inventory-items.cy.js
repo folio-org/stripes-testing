@@ -6,11 +6,15 @@ import LoanTypesConsortiumManager from '../../../support/fragments/consortium-ma
 import MaterialTypesConsortiumManager from '../../../support/fragments/consortium-manager/inventory/items/materialTypesConsortiumManager';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import ItemNoteTypes from '../../../support/fragments/settings/inventory/items/itemNoteTypes';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../support/fragments/settings/inventory/settingsInventory';
 import LoanTypes from '../../../support/fragments/settings/inventory/items/loanTypes';
 import MaterialTypes from '../../../support/fragments/settings/inventory/items/materialTypes';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import { APPLICATION_NAMES, INVENTORY_SETTINGS_SECTION_LABELS } from '../../../support/constants';
 
 const testData = {
   centralSharedItemNoteTypes: {
@@ -76,7 +80,7 @@ describe('Consortium manager', () => {
             permissions.inventoryCRUDItemNoteTypes.gui,
             permissions.uiCreateEditDeleteLoanTypes.gui,
           ]);
-          ItemNoteTypes.createItemNoteTypeViaApi(testData.collegeLocalItemNoteTypes);
+          ItemNoteTypes.createItemNoteTypeViaApi(testData.collegeLocalItemNoteTypes.name);
           LoanTypes.createLoanTypesViaApi(testData.collegeLocalLoanTypes);
           cy.resetTenant();
           cy.getAdminToken();
@@ -88,6 +92,7 @@ describe('Consortium manager', () => {
           MaterialTypes.createMaterialTypesViaApi(testData.universityMaterialTypes);
           cy.resetTenant();
           cy.login(testData.user401725.username, testData.user401725.password);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         });
       });
 
@@ -101,11 +106,12 @@ describe('Consortium manager', () => {
       });
 
       it(
-        'C401725 ser is NOT able to edit and delete from member tenant "Inventory - Items" settings shared via "Consortium manager" app (consortia) (thunderjet)',
+        'C401725 User is NOT able to edit and delete from member tenant "Inventory - Items" settings shared via "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet', 'C401725'] },
         () => {
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(SettingsMenu.itemNoteTypesPath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_SECTION_LABELS.ITEM_NOTE_TYPES);
           ItemNoteTypes.verifyConsortiumItemNoteTypesInTheList({
             name: testData.centralSharedItemNoteTypes.payload.name,
           });
@@ -120,7 +126,8 @@ describe('Consortium manager', () => {
           ItemNoteTypes.verifyItemNoteTypesAbsentInTheList({
             name: testData.collegeLocalItemNoteTypes.name,
           });
-          cy.visit(SettingsMenu.loanTypesPath);
+          cy.wait(2000);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.LOAN_TYPES);
           LoanTypes.verifyLoanTypesInTheList({
             name: testData.centralSharedLoanTypes.payload.name,
           });
@@ -135,9 +142,10 @@ describe('Consortium manager', () => {
           LoanTypes.verifyLoanTypesAbsentInTheList({
             name: testData.collegeLocalLoanTypes.name,
           });
-
+          cy.wait(2000);
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-          cy.visit(SettingsMenu.materialTypePath);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.MATERIAL_TYPES);
           MaterialTypes.verifyConsortiumMaterialTypesInTheList({
             name: testData.centralSharedMaterialTypes.payload.name,
           });

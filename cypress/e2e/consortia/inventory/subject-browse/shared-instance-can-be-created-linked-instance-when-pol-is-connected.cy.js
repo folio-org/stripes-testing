@@ -2,8 +2,10 @@ import Affiliations, { tenantNames } from '../../../../support/dictionary/affili
 import Permissions from '../../../../support/dictionary/permissions';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import { NewOrder, Orders } from '../../../../support/fragments/orders';
 import OrderLines from '../../../../support/fragments/orders/orderLines';
+import SelectInstanceModal from '../../../../support/fragments/orders/modals/selectInstanceModal';
 import { NewOrganization, Organizations } from '../../../../support/fragments/organizations';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
@@ -16,8 +18,8 @@ describe('Inventory', () => {
   describe('Subject Browse', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
-      const instancePrefix = `C422238 Instance ${randomPostfix}`;
-      const subjectPrefix = `C422238 Subject ${randomPostfix}`;
+      const instancePrefix = `C411665 Instance ${randomPostfix}`;
+      const subjectPrefix = `C411665 Subject ${randomPostfix}`;
       const testData = {
         collegeHoldings: [],
         universityHoldings: [],
@@ -94,7 +96,7 @@ describe('Inventory', () => {
 
       after('Delete user, data', () => {
         cy.resetTenant();
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         Users.deleteViaApi(testData.userProperties.userId);
         cy.setTenant(Affiliations.College);
         Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Pending' });
@@ -117,8 +119,11 @@ describe('Inventory', () => {
           Orders.searchByParameter('PO number', testData.order.poNumber);
           Orders.selectFromResultsList(testData.order.poNumber);
           OrderLines.addPOLine();
-          OrderLines.selectRandomInstanceInTitleLookUP(testData.sharedInstance.title, 0);
-          OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+          OrderLines.clickTitleLookUp();
+          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          SelectInstanceModal.searchByName(testData.sharedInstance.title);
+          SelectInstanceModal.selectInstance();
+          OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
           OrderLines.backToEditingOrder();
           Orders.openOrder();
           OrderLines.selectPOLInOrder();

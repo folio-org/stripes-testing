@@ -102,6 +102,7 @@ describe('Invoices', () => {
         );
         cy.visit(TopMenu.invoicesPath);
         Invoices.createRolloverInvoiceWithFY(invoice, organization.name, defaultFiscalYear);
+        cy.wait(10_000);
       });
     });
 
