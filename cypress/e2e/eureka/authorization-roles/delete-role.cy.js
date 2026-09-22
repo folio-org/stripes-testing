@@ -23,43 +23,47 @@ describe('Eureka', () => {
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsToAssign,
-            capabSetsToAssign,
-          );
-          if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
-          cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then(
-            (role) => {
-              testData.roleId = role.id;
-              cy.getCapabilitiesApi(10, undefined, { query: 'visible=true' }).then((capabs) => {
-                cy.getCapabilitySetsApi(3, { query: 'visible=true' }).then((capabSets) => {
-                  cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
-                    testData.roleId = roleId;
-                    cy.addCapabilitiesToNewRoleApi(
-                      roleId,
-                      capabs.map((capab) => capab.id),
-                    );
-                    cy.addCapabilitySetsToNewRoleApi(
-                      roleId,
-                      capabSets.map((capab) => capab.id),
-                    );
-                    cy.addRolesToNewUserApi(createdUserProperties.userId, [roleId]);
+          cy.createTempUser([]).then((createdUserProperties2) => {
+            testData.userA = createdUserProperties2;
+            cy.assignCapabilitiesToExistingUser(
+              testData.user.userId,
+              capabsToAssign,
+              capabSetsToAssign,
+            );
+            if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
+            cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then(
+              (role) => {
+                testData.roleId = role.id;
+                cy.getCapabilitiesApi(10, undefined, { query: 'visible=true' }).then((capabs) => {
+                  cy.getCapabilitySetsApi(3, { query: 'visible=true' }).then((capabSets) => {
+                    cy.getUserRoleIdByNameApi(testData.roleName).then((roleId) => {
+                      testData.roleId = roleId;
+                      cy.addCapabilitiesToNewRoleApi(
+                        roleId,
+                        capabs.map((capab) => capab.id),
+                      );
+                      cy.addCapabilitySetsToNewRoleApi(
+                        roleId,
+                        capabSets.map((capab) => capab.id),
+                      );
+                      cy.addRolesToNewUserApi(createdUserProperties2.userId, [roleId]);
+                    });
                   });
                 });
-              });
-              cy.login(testData.user.username, testData.user.password, {
-                path: TopMenu.settingsAuthorizationRoles,
-                waiter: AuthorizationRoles.waitContentLoading,
-              });
-            },
-          );
+                cy.login(testData.user.username, testData.user.password, {
+                  path: TopMenu.settingsAuthorizationRoles,
+                  waiter: AuthorizationRoles.waitContentLoading,
+                });
+              },
+            );
+          });
         });
       });
 
       after('Delete role, user', () => {
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         Users.deleteViaApi(testData.user.userId);
+        Users.deleteViaApi(testData.userA.userId);
         cy.deleteAuthorizationRoleApi(testData.roleId, true);
       });
 
