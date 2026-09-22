@@ -92,6 +92,21 @@ export default {
     resource: 'UI-Myprofile Settings Main-Nav-Order',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiConsortiaSettingsSettingsMembershipView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Consortia-Settings Settings Membership',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiConsortiaSettingsSettingsMembershipEdit: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Consortia-Settings Settings Membership',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
+  settingsConsortiaSettingsEnabledView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'Settings Consortia-Settings Enabled',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
 
   // Data capability sets
   capabilities: {

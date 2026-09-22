@@ -177,6 +177,7 @@ describe('Orders', { retries: { runMode: 1 } }, () => {
                             InteractorsTools.checkCalloutMessage(
                               `The purchase order line ${orderNumber}-1 was successfully updated`,
                             );
+                            cy.wait(10_000);
                           });
                         },
                       );
