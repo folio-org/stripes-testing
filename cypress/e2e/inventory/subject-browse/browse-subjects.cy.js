@@ -55,7 +55,7 @@ describe('Inventory', () => {
 
     it(
       'C350393 Verify selecting row from Browse Result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C350393', 'eurekaPhase1'] },
+      { tags: ['smoke', 'criticalPath', 'spitfire', 'C350393', 'eurekaPhase1'] },
       () => {
         BrowseSubjects.waitForSubjectToAppear(item.instanceSubjectName);
         BrowseSubjects.searchBrowseSubjects(item.instanceSubjectName);

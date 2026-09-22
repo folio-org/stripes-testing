@@ -199,7 +199,7 @@ describe('Inventory', () => {
 
     it(
       'C347918 Verify selecting row from browse result list (spitfire)',
-      { tags: ['criticalPath', 'spitfire', 'C347918', 'eurekaPhase1'] },
+      { tags: ['smoke', 'criticalPath', 'spitfire', 'C347918', 'eurekaPhase1'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
