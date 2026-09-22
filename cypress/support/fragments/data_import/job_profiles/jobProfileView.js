@@ -24,6 +24,7 @@ const addTagForSelectOption = MultiSelectOption(including('Add tag for:'));
 const jobProfilesList = MultiColumnList({ id: 'job-profiles-list' });
 const deletedProfilePane = Pane('Job profile deleted');
 const deletedProfileMessage = 'Not available - this job profile has been deleted';
+const jobsUsingThisProfileAccordion = Accordion('Jobs using this profile');
 
 export const deletedCalloutMessage = (profileName) => `The job profile "${profileName}" was successfully deleted`;
 
@@ -232,24 +233,36 @@ export default {
     cy.get('[data-test-profile-link]').should('not.exist');
   },
 
-  verifyJobsUsingThisProfileSection(fileName) {
+  verifyJobsUsingThisProfileSection(fileName, isShown = true) {
     const newFileName = fileName.replace('.mrc', '');
-    cy.do(
-      Accordion('Jobs using this profile')
-        .find(MultiColumnListCell({ content: including(newFileName) }))
-        .perform((element) => {
-          const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+    const jobCell = jobsUsingThisProfileAccordion.find(
+      MultiColumnListCell({ content: including(newFileName) }),
+    );
 
-          cy.expect(
-            viewPane
-              .find(MultiColumnListRow({ rowIndexInParent: rowNumber }))
-              .find(MultiColumnListCell({ columnIndex: 0 }))
-              .find(Link({ href: including('/data-import/job-summary/') }))
-              .exists(),
-          );
-        }),
+    if (!isShown) {
+      cy.expect(jobCell.absent());
+      return;
+    }
+
+    cy.do(
+      jobCell.perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+        cy.expect(
+          viewPane
+            .find(MultiColumnListRow({ rowIndexInParent: rowNumber }))
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .find(Link({ href: including('/data-import/job-summary/') }))
+            .exists(),
+        );
+      }),
     );
   },
+
+  verifyJobsUsingThisProfileRowsCount(rowsCount) {
+    cy.expect(jobsUsingThisProfileAccordion.find(MultiColumnList()).has({ rowCount: rowsCount }));
+  },
+
   // open the new tab in the current tab
   openLogDetailsPageView(fileName) {
     const newFileName = fileName.replace('.mrc', '');
