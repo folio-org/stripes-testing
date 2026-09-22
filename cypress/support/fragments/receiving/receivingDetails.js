@@ -447,6 +447,22 @@ export default {
     cy.do(actionsBtn.click());
   },
 
+  checkReceivedAccordionActionsMenuOptions(optionLabels = [], { shouldExist = true } = {}) {
+    cy.do(receivedSection.find(Button(COMMON_BUTTON_LABELS.ACTIONS)).click());
+    optionLabels.forEach((label) => {
+      const option = DropdownMenu().find(Button(label));
+
+      cy.expect(shouldExist ? option.exists() : option.absent());
+    });
+  },
+
+  clickReceivedAccordionActionsMenuOption(optionLabel) {
+    cy.do([
+      receivedSection.find(Button(COMMON_BUTTON_LABELS.ACTIONS)).click(),
+      DropdownMenu().find(Button(optionLabel)).click(),
+    ]);
+  },
+
   clickNextPageButtonInBoundItemsAccordion() {
     cy.do(boundItemsAccordion.find(Button(COMMON_BUTTON_LABELS.NEXT)).click());
   },
