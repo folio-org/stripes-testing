@@ -91,7 +91,6 @@ describe('MARC', () => {
             }
           });
         }
-        cy.syncSpecifications(bibSpecId);
       });
 
       it(
@@ -187,6 +186,7 @@ describe('MARC', () => {
               ]).then((userProperties) => {
                 user = userProperties;
 
+                cy.wait(10_000);
                 toggleAllUndefinedValidationRules(bibSpecId, { enable: true });
 
                 cy.login(user.username, user.password, {
