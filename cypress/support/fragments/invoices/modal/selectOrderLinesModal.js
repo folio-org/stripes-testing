@@ -60,6 +60,15 @@ export default {
   selectFromSearchResults(index = 0) {
     cy.do(selectOrderLinesModal.find(MultiColumnListRow({ index })).find(Checkbox()).click());
   },
+  checkOrderLineSelected(index = 0) {
+    cy.expect([
+      selectOrderLinesModal
+        .find(MultiColumnListRow({ index }))
+        .find(Checkbox())
+        .has({ checked: true }),
+      saveButton.has({ disabled: false }),
+    ]);
+  },
   clickSaveButton() {
     cy.do(saveButton.click());
     cy.wait(2000);
