@@ -741,12 +741,12 @@ export default {
   selectOrderLines: () => {
     cy.do(Button('Order lines').click());
   },
-  selectOrdersPane: () => {
-    cy.wait(4000);
+  selectOrdersPane: ({ waitMs = DEFAULT_WAIT_TIME } = {}) => {
+    cy.wait(waitMs);
     cy.do(orderLinesPane.find(Button('Orders')).click());
   },
-  createPOLineViaActions: () => {
-    cy.wait(6000);
+  createPOLineViaActions: ({ waitMs = 6000 } = {}) => {
+    cy.wait(waitMs);
     cy.do([
       Accordion({ id: 'POListing' }).find(Button('Actions')).click(),
       Button('Add PO line').click(),

@@ -29,6 +29,8 @@ export const ORDER_LINE_ACCORDION_NAMES = {
   RELATED_INVOICE_LINES: 'Related invoice lines',
   LINKED_INSTANCE: 'Linked instance',
   CUSTOM_FIELDS: 'Custom fields',
+  PAYMENT_TERMS: 'Payment terms',
+  POL_ONGOING_INFO: 'Ongoing order information',
 };
 
 export const ORDER_LINE_PAYMENT_STATUS = {

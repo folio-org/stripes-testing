@@ -625,7 +625,7 @@ describe('Orders', () => {
       cy.log(
         'Step 10. Check "Multi-year prepayment" checkbox; Fill in required fields; Select current FY in "Starting fiscal year" dropdown; Remove all FY cards; Click "Save & close" button',
       );
-      OrderLineEditForm.enableMultiYearPrepayment();
+      OrderLineEditForm.toggleMultiYearPrepayment();
       OrderLineEditForm.fillItemDetails({ title: testData.secondPolTitle });
       OrderLineEditForm.fillPoLineDetails({
         acquisitionMethod: ACQUISITION_METHOD_NAMES_IN_PROFILE.OTHER,
