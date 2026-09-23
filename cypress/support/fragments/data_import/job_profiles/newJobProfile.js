@@ -36,6 +36,15 @@ const getDefaultJobProfile = (name) => {
   return defaultjobProfile;
 };
 
+function clickAddActionButton() {
+  cy.do(
+    HTML({ className: including('linker-button'), id: 'type-selector-dropdown-linker-root' })
+      .find(Button())
+      .click(),
+  );
+  cy.do(actionsButton.click());
+}
+
 function linkActionProfileByName(profileName) {
   // TODO move to const and rewrite functions
   cy.do(
@@ -90,6 +99,7 @@ function waitLoading() {
 
 export default {
   getDefaultJobProfile,
+  clickAddActionButton,
   linkActionProfileByName,
   linkMatchProfileForMatches,
   linkActionProfileForMatches,

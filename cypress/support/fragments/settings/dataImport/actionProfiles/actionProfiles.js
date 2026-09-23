@@ -139,6 +139,9 @@ export default {
   verifySearchResult: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
   },
+  verifyProfileAbsentFromList: (profileName) => {
+    cy.expect(resultsPane.find(MultiColumnListCell(profileName)).absent());
+  },
 
   verifyProfilesIsSortedInAlphabeticalOrder: () => {
     const cells = [];

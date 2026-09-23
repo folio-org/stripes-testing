@@ -181,6 +181,9 @@ export default {
   verifySearchResult: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
   },
+  verifyProfileAbsentFromList: (profileName) => {
+    cy.expect(resultsPane.find(MultiColumnListCell(profileName)).absent());
+  },
   checkSuccessDelitionCallout: (profileName) => {
     cy.expect(
       Callout({
@@ -227,16 +230,16 @@ export default {
   getDefaultMappingProfile({
     incomingRecordType = 'MARC_AUTHORITY',
     existingRecordType = 'MARC_AUTHORITY',
-    mappingFields = [],
+    mappingFieldsData = [],
     id = uuid(),
     name,
     isDeleteProfile = false,
   } = {}) {
-    const mappingFieldsNames = mappingFields.map(({ name: fieldName }) => fieldName);
+    const mappingFieldsNames = mappingFieldsData.map(({ name: fieldName }) => fieldName);
     const updatedMappingFields = mappingDetails[existingRecordType].mappingFields.reduce(
       (acc, it) => {
         if (mappingFieldsNames.includes(it.name)) {
-          const field = mappingFields.find(({ name: fieldName }) => fieldName === it.name);
+          const field = mappingFieldsData.find(({ name: fieldName }) => fieldName === it.name);
           return [...acc, { ...it, ...field }];
         }
         return [...acc, it];
@@ -254,7 +257,12 @@ export default {
         existingRecordType,
         description: '',
         mappingDetails: isDeleteProfile
-          ? {}
+          ? {
+            // eslint-disable-next-line no-unused-vars
+            ...(({ marcMappingOption, mappingFields, ...rest }) => rest)(
+              mappingDetails[existingRecordType],
+            ),
+          }
           : {
             ...mappingDetails[existingRecordType],
             mappingFields: updatedMappingFields,

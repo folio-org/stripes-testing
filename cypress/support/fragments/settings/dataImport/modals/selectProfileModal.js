@@ -25,6 +25,17 @@ export default {
     ]);
     cy.expect(selectProfileModal.find(HTML(including('1 record found'))).exists());
   },
+  searchProfileAbsent(profileName) {
+    cy.wait(1000);
+    cy.do([
+      selectProfileModal.find(TextField({ name: 'query' })).fillIn(profileName),
+      selectProfileModal.find(Button('Search')).click(),
+    ]);
+    cy.expect(selectProfileModal.find(HTML(including('0 records found'))).exists());
+    cy.expect(
+      selectProfileModal.find(MultiColumnListCell({ content: including(profileName) })).absent(),
+    );
+  },
   selectProfile(profileName) {
     cy.do(
       selectProfileModal.find(MultiColumnListCell({ content: including(profileName) })).click(),
