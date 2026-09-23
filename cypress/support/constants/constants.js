@@ -1000,6 +1000,13 @@ export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_HOLDINGS_AND_SRS: 'Default - Create Holdings and SRS MARC Holdings',
 };
 
+export const DEFAULT_ACTION_PROFILE_NAMES = {
+  CREATE_INSTANCE: 'Default - Create instance',
+  CREATE_AUTHORITY: 'Default - Create MARC Authority',
+  CREATE_MARC_HOLDINGS: 'Default - Create MARC holdings',
+  DELETE_AUTHORITY: 'Default - Delete MARC Authority records',
+};
+
 export const DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES = {
   INSTANCES: 'Default instances export job profile',
   HOLDINGS: 'Default holdings export job profile',
