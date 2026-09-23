@@ -4,6 +4,7 @@ import InventoryInstances, {
 import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import { parseSanityParameters } from '../../../../../support/utils/users';
 
 const { user, memberTenant } = parseSanityParameters();
 

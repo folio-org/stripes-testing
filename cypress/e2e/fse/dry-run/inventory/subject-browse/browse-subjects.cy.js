@@ -2,6 +2,7 @@ import InventoryInstances from '../../../../../support/fragments/inventory/inven
 import BrowseSubjects from '../../../../../support/fragments/inventory/search/browseSubjects';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import { parseSanityParameters } from '../../../../../support/utils/users';
 
 const { user, memberTenant } = parseSanityParameters();
 
@@ -16,7 +17,7 @@ describe('Inventory', () => {
   describe('Subject Browse', () => {
     before('create test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password, { log: false })
+      cy.getUserToken(user.username, user.password, { log: false });
 
       const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
       cy.getInstanceById(instanceId).then((body) => {
@@ -35,7 +36,7 @@ describe('Inventory', () => {
 
     after('delete test data', () => {
       cy.setTenant(memberTenant.id);
-      cy.getUserToken(user.username, user.password, { log: false })
+      cy.getUserToken(user.username, user.password, { log: false });
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
     });
 
