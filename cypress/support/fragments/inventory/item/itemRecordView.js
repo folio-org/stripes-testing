@@ -408,6 +408,9 @@ export default {
   openHotlinkToPOL: (POLnumber) => {
     cy.do(acquisitionAccordion.find(Link(POLnumber)).click());
   },
+  openHoldingsRecord(holding) {
+    cy.do(itemViewPane.find(Link({ href: including(holding) })).click());
+  },
   checkItemCirculationHistory: (date, servicePointName, userName) => {
     cy.expect([
       circulationHistoryAccordion.find(KeyValue('Check in date')).has({ value: including(date) }),

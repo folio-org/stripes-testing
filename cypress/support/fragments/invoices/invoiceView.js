@@ -57,6 +57,7 @@ const invoiceFundDistributionSection = invoiceDetailsPane.find(
 const invoiceLevelAdjustmentsSection = invoiceDetailsPane.find(
   Section({ id: 'invoiceAdjustments' }),
 );
+const extendedInformationAccordion = Accordion({ id: 'extendedInformation' });
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -239,9 +240,14 @@ export default {
       }
     });
   },
+  expandExtendedInformationAccordion() {
+    cy.do(extendedInformationAccordion.clickHeader());
+    cy.expect(extendedInformationAccordion.has({ open: true }));
+  },
   checkInvoiceDetails({
     title,
     invoiceInformation = [],
+    extendedInformation = [],
     invoiceLines,
     invoiceFundDistributions,
     invoiceLevelAdjustments,
@@ -272,6 +278,10 @@ export default {
               cy.wrap(normalizedText).should('include', value);
             });
         });
+    });
+
+    extendedInformation.forEach(({ key, value }) => {
+      cy.expect(extendedInformationAccordion.find(KeyValue(key)).has({ value: including(value) }));
     });
 
     vendorDetails.forEach(({ key, value }) => {
