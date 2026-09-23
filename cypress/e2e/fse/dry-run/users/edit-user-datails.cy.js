@@ -59,6 +59,7 @@ describe('Users', () => {
     UsersSearchPane.searchByUsername(testData.testUser.username);
     UserEdit.openEdit();
     UserEdit.editUserDetails(testData.editUser);
+    UserEdit.selectFirstAvailablePatronGroup();
     Modals.confirmModalIfAny();
     UserEdit.saveAndClose();
     UsersCard.openExtendedInformationAccordion();

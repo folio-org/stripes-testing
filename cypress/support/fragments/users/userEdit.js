@@ -350,6 +350,13 @@ export default {
     cy.wait(500);
   },
 
+  selectFirstAvailablePatronGroup() {
+    cy.get('#adduser_group').find('option').then((options) => {
+      const texts = [...options].map(opt => opt.text);
+      this.changePatronGroup(texts[1]); // Select the first available option (index 1)
+    });
+  },
+
   searchForPermission(permission) {
     cy.do(permissionsSearch.fillIn(permission));
     cy.expect(permissionsSearch.is({ value: permission }));
