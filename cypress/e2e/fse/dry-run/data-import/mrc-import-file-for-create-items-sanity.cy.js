@@ -24,7 +24,6 @@ import SettingsDataImport, {
 } from '../../../../support/fragments/settings/dataImport/settingsDataImport';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
-import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import { parseSanityParameters } from '../../../../support/utils/users';
 
@@ -129,7 +128,6 @@ describe('Data Import', () => {
     after('Delete test data', () => {
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password, { log: false }).then(() => {
-        Users.deleteViaApi(user.userId);
         // delete generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(specialJobProfile.profileName);
         collectionOfProfiles.forEach((profile) => {

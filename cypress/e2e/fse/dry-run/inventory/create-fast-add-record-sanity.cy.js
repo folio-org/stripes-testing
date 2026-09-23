@@ -11,13 +11,14 @@ import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import { parseSanityParameters } from '../../../../support/utils/users';
+import InstanceStatusTypes from '../../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
 
 const { user, memberTenant } = parseSanityParameters();
 
 describe('Inventory', () => {
   describe('Fast Add', () => {
     const fastAddNewRecordFormDetails = {
-      instanceStatusCodeValue: 'uncat',
+      instanceStatusCodeValue: null,
       resourceTitle: `Monograph${getRandomPostfix()}`,
       resourceType: 'text',
       permanentLocationOption: '',
@@ -43,7 +44,10 @@ describe('Inventory', () => {
       cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
         fastAddNewRecordFormDetails.permanentLoanType = loanTypes[0].name;
       });
-      FastAdd.changeDefaultInstanceStatusViaApi('uncat');
+      InstanceStatusTypes.getViaApi({ limit: 1 }).then((types) => {
+        fastAddNewRecordFormDetails.instanceStatusCodeValue = types[0].code;
+        FastAdd.changeDefaultInstanceStatusViaApi(types[0].code);
+      });
 
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password);

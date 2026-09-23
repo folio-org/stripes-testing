@@ -95,7 +95,7 @@ describe('MARC', () => {
       after('Deleting user, data', () => {
         cy.getUserToken(user.username, user.password, { log: false }).then(() => {
           createdRecordIDs.forEach((id, index) => {
-            if (index) MarcAuthority.deleteViaAPI(id);
+            if (index) MarcAuthority.deleteViaAPI(id, true);
             else InventoryInstance.deleteInstanceViaApi(id);
           });
         });
@@ -114,9 +114,9 @@ describe('MARC', () => {
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedValue);
           QuickMarcEditor.checkButtonsEnabled();
           QuickMarcEditor.checkContent(testData.updatedValue, 7);
-          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.cancelUpdateLinkedBibs();
+          QuickMarcEditor.checkUpdateLinkedBibModalAbsent();
           QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
           QuickMarcEditor.closeModalWithEscapeKey();
           QuickMarcEditor.checkUpdateLinkedBibModalAbsent();

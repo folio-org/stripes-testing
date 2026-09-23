@@ -434,7 +434,9 @@ describe('Data Import', () => {
           testData.nameForCSVFile,
           testData.jobProfileNameForExport,
         );
-        ExportFile.downloadExportedMarcFile(testData.nameMarcFileForImportUpdate);
+        ExportFile.downloadExportedMarcFile(testData.nameMarcFileForImportUpdate, {
+          originalName: testData.nameForCSVFile.replace('csv', ''),
+        });
 
         // create mapping and action profiles
         TopMenuNavigation.openAppFromDropdown(
