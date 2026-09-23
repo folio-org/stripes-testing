@@ -8,7 +8,7 @@ describe('MARC Specifications - Backup and Sync to LOC Defaults', () => {
     cy.getAdminToken();
   });
 
-  it('Backup all MARC specifications and sync to LOC defaults', { tags: ['dryRun'] }, () => {
+  it('C00002 Backup all MARC specifications and sync to LOC defaults', { tags: ['dryRun', 'C00002'] }, () => {
     cy.log('📦 Backing up MARC specifications...');
 
     // Step 1: Fetch all specifications with full details (include=all)

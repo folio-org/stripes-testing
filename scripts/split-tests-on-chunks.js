@@ -93,8 +93,12 @@ function splitTestsOnChunks(numberOfThreads, grepTags, envVars = '', printSpecs 
     `\nTotal number of tests: ${testSpecs.reduce((acc, val) => acc + val.ids.length, 0)}\n`,
   );
 
+  // Remove empty testIds and testSpecFiles from chunks
   for (const chunk of chunks) {
     chunk.testIds = chunk.testIds.filter(element => element !== null && element !== undefined && element !== '');
+  }
+  for (const chunk of chunksWithSpecFiles) {
+    chunk.testSpecFiles = chunk.testSpecFiles.filter(element => element !== null && element !== undefined && element !== '');
   }
 
   chunks = chunks.filter((chunk) => chunk.testIds.length > 0);

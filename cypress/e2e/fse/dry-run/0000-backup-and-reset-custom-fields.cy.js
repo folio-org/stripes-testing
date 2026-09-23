@@ -19,7 +19,7 @@ describe('Backup and reset of user custom fields', () => {
     });
   });
 
-  it('Backup user custom fields and set all as not required', { tags: ['dryRun'] }, () => {
+  it('C00001 Backup user custom fields and set all as not required', { tags: ['dryRun', 'C00001'] }, () => {
     cy.log('Backing up user custom fields...');
     CustomFields.getCustomFieldsViaApi(usersModuleId).then((getBody) => {
       if (getBody.customFields.length) {
