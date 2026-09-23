@@ -16,7 +16,7 @@ describe('Restore user custom fields from the back-up', () => {
     });
   });
 
-  it('Restore custom fields', { tags: ['dryRun'] }, () => {
+  it('C00003 Restore custom fields', { tags: ['dryRun', 'C00003'] }, () => {
     cy.log('Checking for custom fields backup file...');
     cy.task('findFiles', BACKUP_FILE_PATH).then((fileExists) => {
       if (!fileExists) {
