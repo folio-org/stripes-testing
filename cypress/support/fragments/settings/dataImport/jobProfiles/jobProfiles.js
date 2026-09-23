@@ -4,6 +4,7 @@ import JobProfileEditForm from './jobProfileEditForm';
 
 import getRandomPostfix from '../../../../utils/stringTools';
 import { PROFILE_TYPE_NAMES } from '../../../../constants';
+import ArrayUtils from '../../../../utils/arrays';
 
 const marcAuthorityUpdateJobProfile = {
   profile: {
@@ -74,5 +75,22 @@ export default {
         this.deleteJobProfileViaApi(jobProfile.id);
       });
     });
+  },
+  verifyProfilesIsSortedInAlphabeticalOrder: () => {
+    const cells = [];
+    cy.get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(($row) => {
+        cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
+          .invoke('text')
+          .then((cellValue) => {
+            cy.wait(500);
+            cells.push(cellValue);
+          });
+      })
+      .then(() => {
+        const isSorted = ArrayUtils.checkIsSortedAlphabetically({ array: cells });
+        cy.expect(isSorted, 'Job profiles sorted alphabetically').to.equal(true);
+      });
   },
 };

@@ -417,6 +417,7 @@ export default {
             matchDetails: [
               {
                 incomingRecordType: recordType,
+                matchCriterion: 'EXACTLY_MATCHES',
                 incomingMatchExpression: {
                   fields: [
                     { label: 'field', value: incomingRecordFields.field },

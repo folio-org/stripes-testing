@@ -9,7 +9,9 @@ import {
 } from '../../../../../../interactors';
 import ArrayUtils from '../../../../utils/arrays';
 
-const selectProfileModal = Modal({ header: matching(/Select (?:Action|Field Mapping) Profiles/) });
+const selectProfileModal = Modal({
+  header: matching(/Select (?:Action|Field Mapping|Match) Profiles/),
+});
 
 export default {
   waitLoading() {
@@ -29,6 +31,10 @@ export default {
     );
     cy.expect(selectProfileModal.absent());
   },
+  close() {
+    cy.do(selectProfileModal.find(Button({ icon: 'times' })).click());
+    cy.expect(selectProfileModal.absent());
+  },
   verifyProfilesIsSortedInAlphabeticalOrder: () => {
     const cells = [];
     cy.get('#list-plugin-find-records')
@@ -45,7 +51,7 @@ export default {
       })
       .then(() => {
         const isSorted = ArrayUtils.checkIsSortedAlphabetically({ array: cells });
-        cy.expect(isSorted).to.equal(true);
+        cy.expect(isSorted, 'Action profiles sorted alphabetically').to.equal(true);
       });
   },
 };

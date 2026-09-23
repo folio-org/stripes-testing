@@ -971,6 +971,26 @@ export default {
   fillTemporaryLoanType: (loanType) => cy.do(TextField('Temporary loan type').fillIn(loanType)),
   fillIllPolicy: (policy) => cy.do(TextField('ILL policy').fillIn(`"${policy}"`)),
   fillBatchGroup: (group) => cy.do(batchGroupField.fillIn(group)),
+  // "Batch group" lives in the "Invoice information" accordion (Section id="invoice-information",
+  // per fieldMappingProfileEditForm.js) - same "last matching button" pattern as
+  // verifyProductIdTypeDropdown uses for its own accordion's Accepted values button
+  openBatchGroupAcceptedValues: () => {
+    cy.get('#invoice-information').find('button:contains("Accepted values"):last').click();
+    cy.expect(DropdownMenu({ visible: true }).exists());
+  },
+  // "Acquisitions units" lives in the same "Invoice information" accordion - it is the 3rd
+  // "Accepted values" button rendered in that accordion
+  openAcquisitionsUnitsAcceptedValues: () => {
+    cy.get('#invoice-information').find('button:contains("Accepted values"):eq(2)').click();
+    cy.expect(DropdownMenu({ visible: true }).exists());
+  },
+  getAcceptedValuesDropdownItems: () => {
+    return cy
+      .then(() => DropdownMenu({ visible: true }).buttons())
+      .then((buttons) => {
+        return [...buttons].map((button) => button.textContent.trim()).filter(Boolean);
+      });
+  },
   fillPaymentMethod: (method) => cy.do(paymentMethodField.fillIn(method)),
   fillCurrency: (currency) => cy.do(currencyField.fillIn(currency)),
   fillInvoiceDate: (date) => cy.do(TextField('Invoice date*').fillIn(date)),
