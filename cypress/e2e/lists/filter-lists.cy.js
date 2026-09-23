@@ -282,7 +282,7 @@ describe('Lists', () => {
         Lists.getListsPaneRecordsCount().then((recordsCountBeforeClear) => {
           Lists.clickOnClearFilterButton(recordTypesFilters.accordionName);
           Lists.verifyClearFilterButtonAbsent(recordTypesFilters.accordionName);
-          Lists.verifyRecordTypeFilterCleared();
+          Lists.verifyRecordTypeSelectedinFilter([]);
           Lists.getListsPaneRecordsCount().then((recordsCountAfterClear) => {
             expect(recordsCountAfterClear).to.equal(recordsCountBeforeClear);
           });
@@ -306,7 +306,7 @@ describe('Lists', () => {
         Lists.verifyListsFilteredByRecordType('Users');
         // #10 Click on "Reset all"
         Lists.resetAllFilters();
-        Lists.verifyRecordTypeFilterCleared();
+        Lists.verifyRecordTypeSelectedinFilter([]);
         Lists.verifyClearFilterButtonAbsent(recordTypesFilters.accordionName);
         Lists.verifyResetAllButtonDisabled();
         Lists.verifyCheckboxChecked('Active');

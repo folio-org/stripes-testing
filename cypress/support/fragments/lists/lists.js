@@ -1217,10 +1217,6 @@ const UI = {
     cy.expect(filterPane.find(MultiSelect()).has({ selected: type }));
   },
 
-  verifyRecordTypeFilterCleared() {
-    cy.expect(filterPane.find(MultiSelect()).has({ selected: [] }));
-  },
-
   verifyRecordTypeFilterDropdownContainsOptions(options) {
     options.forEach((option) => {
       cy.expect(MultiSelectOption(including(option)).exists());
