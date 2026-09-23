@@ -107,6 +107,12 @@ export default {
   checkCurrency(currency) {
     cy.expect(Button({ id: 'currency' }).has({ singleValue: currency }));
   },
+  checkCurrencyCode(currencyCode) {
+    cy.expect(Button({ id: 'currency' }).has({ singleValue: including(`(${currencyCode})`) }));
+  },
+  checkExchangeRate(exchangeRate) {
+    cy.expect(extendedInfoFields.exchangeRate.has({ value: String(exchangeRate) }));
+  },
   verifyAccountingCode(accountingCode) {
     cy.expect(vendorFields.accountingCode.has({ singleValue: including(accountingCode) }));
   },
