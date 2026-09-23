@@ -178,7 +178,7 @@ describe('Lists', () => {
           // Step 4: Select "IN" operator
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IN);
-          QueryModal.verifyQueryAreaContent('(items.status_name in ())');
+          QueryModal.verifyQueryAreaContent('(items.status_name in [])');
 
           // Step 5: Select multiple item status values
           itemStatuses.forEach((status) => {

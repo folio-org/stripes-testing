@@ -68,7 +68,7 @@ describe('Bulk-edit', () => {
         QueryModal.verifyOperatorColumn();
         QueryModal.verifyOperatorsList(stringStoresUuidButMillionOperators);
         QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-        QueryModal.verifyQueryAreaContent('(instances.id in ())');
+        QueryModal.verifyQueryAreaContent('(instances.id in [])');
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueTextfield(`${firstItem.instanceId},${secondItem.instanceId}`);
         QueryModal.verifyQueryAreaContent(

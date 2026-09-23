@@ -112,7 +112,7 @@ describe(
           QueryModal.verifyQueryAreaContent('');
           QueryModal.verifyOperatorColumn();
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-          QueryModal.verifyQueryAreaContent('(items.status_name in ())');
+          QueryModal.verifyQueryAreaContent('(items.status_name in [])');
           QueryModal.verifyValueColumn();
           QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.AVAILABLE);
           QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.AGED_TO_LOST);
