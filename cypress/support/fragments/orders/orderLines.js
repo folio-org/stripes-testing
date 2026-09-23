@@ -34,6 +34,7 @@ import {
   ORDER_LINE_EXPORT_CSV_FIELDS,
   ORDER_LINE_FILTER_LABELS,
   RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
+  RESULTS_PANE_NOT_FOUND_MESSAGE,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -2821,6 +2822,10 @@ export default {
     this.filterByCheckboxOptions(ORDER_LINE_FILTER_LABELS.RUSH, options);
   },
 
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, tags);
+  },
+
   filterByCreatedBy(userName) {
     FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.CREATED_BY);
     cy.do(findUserButton.click());
@@ -2839,6 +2844,26 @@ export default {
 
   removeMultiSelectChips(filterLabel, values = []) {
     FiltersPaneHelper.removeMultiSelectChips(filtersPane, filterLabel, values);
+  },
+
+  verifyDonorFilterAccordionExpanded(expanded = true) {
+    cy.expect(donorFilterAccordion.has({ open: expanded }));
+  },
+
+  expandDonorFilter() {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.DONOR);
+    this.verifyDonorFilterAccordionExpanded();
+  },
+
+  verifyDonorFilterValues(values = []) {
+    this.assertMultiSelectFilterValues(ORDER_LINE_FILTER_LABELS.DONOR, values, {
+      expandAccordion: false,
+    });
+    cy.expect(donorLookUpTrigger.exists());
+  },
+
+  clickDonorLookUp() {
+    cy.do(donorLookUpTrigger.click());
   },
 
   filterByDonors(names = []) {
@@ -2891,11 +2916,7 @@ export default {
   },
 
   verifyNoResultsFoundMessage() {
-    cy.expect(
-      searchResultsPane
-        .find(HTML(including('No results found. Please check your filters.')))
-        .exists(),
-    );
+    cy.expect(searchResultsPane.find(HTML(including(RESULTS_PANE_NOT_FOUND_MESSAGE))).exists());
   },
 
   verifySearchCriteriaMessage() {
@@ -2929,6 +2950,12 @@ export default {
       cy.expect(searchResultsPane.find(MultiColumnListCell({ content: title })).exists());
     });
     this.assertResultsCount(titles.length);
+  },
+
+  verifyTitlesAbsentInResults(titles = []) {
+    titles.forEach((title) => {
+      cy.expect(searchResultsPane.find(MultiColumnListCell({ content: title })).absent());
+    });
   },
 
   assertResultsActionIsDisabled(actionButtonName, expectedDisabledState = true) {

@@ -12,6 +12,7 @@ import {
   Section,
   Warning,
   MultiColumnListHeader,
+  HTML,
 } from '../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -391,6 +392,9 @@ export default {
         );
       });
     });
+  },
+  verifyLocationAbsentInSection(locationName) {
+    cy.expect(locationDetailsSection.find(HTML(including(locationName))).absent());
   },
   verifyLinesDetailTitle(title) {
     cy.expect(orderLineDetailsSection.find(headerLinesDetail).has({ text: including(title) }));
