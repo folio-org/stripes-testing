@@ -18,6 +18,10 @@ export default {
       submitButton.has({ disabled: false, visible: true }),
     ]);
   },
+  fillNotes(notes) {
+    cy.do(notesTextArea.fillIn(notes));
+    cy.expect(notesTextArea.has({ value: notes }));
+  },
   clickCancelButton() {
     cy.do(cancelButton.click());
     cy.expect(closeConfirmationModal.absent());

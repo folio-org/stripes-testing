@@ -364,7 +364,7 @@ describe('Data Export', () => {
 
     after('delete test data', () => {
       cy.resetTenant();
-      cy.getAdminToken();
+      cy.getAdminToken(false);
 
       cy.withinTenant(Affiliations.College, () => {
         instances.forEach((instance) => {
@@ -539,6 +539,7 @@ describe('Data Export', () => {
           waiter: DataExportLogs.waitLoading,
         });
         cy.wait(20000);
+        cy.reload();
         ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
 
         // Step 8: Upload duplicated CSV file

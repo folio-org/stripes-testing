@@ -1,24 +1,27 @@
+import {
+  ACQUISITION_METHOD_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ORDER_FORMAT_NAMES,
+  POL_CREATE_INVENTORY_SETTINGS_VIEW,
+  POLINE_DETAILS_FIELDS,
+  RECEIVING_WORKFLOW_NAMES,
+} from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../support/fragments/topMenu';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../support/fragments/users/users';
-import Funds from '../../support/fragments/finance/funds/funds';
 import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderLineDetails from '../../support/fragments/orders/orderLineDetails';
+import OrderLineEditForm, {
+  orderLineFields,
+} from '../../support/fragments/orders/orderLineEditForm';
 import Orders from '../../support/fragments/orders/orders';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import Budgets from '../../support/fragments/finance/budgets/budgets';
-import { ORDER_FORMAT_NAMES } from '../../support/constants';
+import Organizations from '../../support/fragments/organizations/organizations';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Orders', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const firstFund = { ...Funds.defaultUiFund };
-  const firstOrder = {
+  const order = {
     ...NewOrder.getDefaultOngoingOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
@@ -26,52 +29,43 @@ describe('Orders', () => {
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
-  const firstBudget = {
-    ...Budgets.getDefaultBudget(),
-    allocated: 1000,
+  const polData = {
+    itemDetails: {
+      title: `AT_C468200_PEMixPOLine_${getRandomPostfix()}`,
+    },
+    poLineDetails: {
+      acquisitionMethod: ACQUISITION_METHOD_NAMES.DEPOSITORY,
+      materialType: MATERIAL_TYPE_NAMES.BOOK,
+    },
+    costDetails: {
+      physicalUnitPrice: '10',
+      quantityPhysical: '1',
+      electronicUnitPrice: '10',
+      quantityElectronic: '1',
+    },
   };
-  let enterUser;
-  let firstOrderNumber;
-  let servicePointId;
+  let user;
+  let orderNumber;
   let location;
 
   before(() => {
+    cy.clearLocalStorage();
     cy.getAdminToken();
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      firstBudget.fiscalYearId = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        firstFund.ledgerId = defaultLedger.id;
-
-        Funds.createViaApi(firstFund).then((fundResponse) => {
-          firstFund.id = fundResponse.fund.id;
-          firstBudget.fundId = fundResponse.fund.id;
-          Budgets.createViaApi(firstBudget);
-
-          ServicePoints.getViaApi().then((servicePoint) => {
-            servicePointId = servicePoint[0].id;
-            NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-              location = res;
-              Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-                organization.id = responseOrganizations;
-                firstOrder.vendor = organization.id;
-                Orders.createOrderViaApi(firstOrder).then((firstOrderResponse) => {
-                  firstOrder.id = firstOrderResponse.id;
-                  firstOrderNumber = firstOrderResponse.poNumber;
-                });
-              });
-            });
-          });
+    Locations.getViaApiAnyDefault().then((locations) => {
+      location = locations[0];
+      Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+        organization.id = responseOrganizations;
+        order.vendor = organization.id;
+        Orders.createOrderViaApi(order).then((orderResponse) => {
+          order.id = orderResponse.id;
+          orderNumber = orderResponse.poNumber;
         });
       });
     });
 
     cy.createTempUser([permissions.uiOrdersEdit.gui, permissions.uiOrdersCreate.gui]).then(
       (userProperties) => {
-        enterUser = userProperties;
+        user = userProperties;
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
@@ -82,31 +76,91 @@ describe('Orders', () => {
 
   after(() => {
     cy.getAdminToken();
-    Budgets.deleteViaApi(firstBudget.id);
-    Funds.deleteFundViaApi(firstFund.id);
-    Ledgers.deleteLedgerViaApi(defaultLedger.id);
-    FiscalYears.deleteFiscalYearViaApi(firstFiscalYear.id);
-    Users.deleteViaApi(enterUser.userId);
+    Orders.deleteOrderViaApi(order.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
+    Users.deleteViaApi(user.userId);
   });
 
   it(
     'C468200 Set "Bindery active" flag true when creating a POL with Order format = "P/E Mix" (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C468200'] },
     () => {
-      Orders.searchByParameter('PO number', firstOrderNumber);
-      Orders.selectFromResultsList(firstOrderNumber);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 2);
-      OrderLines.binderyActivePEMixPOLineInfo(
-        firstFund,
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+
+      // Step 1: On "PO lines" accordion click "Actions" -> "Add PO line"
+      Orders.createPOLineViaActions();
+      OrderLineEditForm.checkOrderLineDetailsSection([
+        { label: 'binderyActive', conditions: { checked: false } },
+      ]);
+
+      // Step 2: Scroll down to "PO line details" accordion and check "Bindery active" checkbox
+      OrderLineEditForm.clickBinderyActiveCheckbox();
+      OrderLineEditForm.checkOrderLineDetailsSection([
+        { label: 'binderyActive', conditions: { checked: true } },
+        {
+          label: 'checkinItems',
+          conditions: {
+            checkedOptionText: RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,
+            disabled: true,
+          },
+        },
+      ]);
+
+      // Step 3: Click on "Order format" dropdown to expand it
+      OrderLineEditForm.checkSelectOptions(orderLineFields.orderFormat, [
+        ' ',
+        ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE,
         ORDER_FORMAT_NAMES.PE_MIX,
-        '10',
-        '1',
-        '20',
-        location.name,
-      );
-      OrderLines.verifyPOLDetailsIsOpened();
-      OrderLines.checkBinderyActiveStatus(true);
+      ]);
+
+      // Step 4: Pick "P/E mix" option from "Order format" dropdown
+      OrderLineEditForm.fillPoLineDetails({ orderFormat: ORDER_FORMAT_NAMES.PE_MIX });
+
+      // Step 5: Scroll down to "Physical resource details" accordion
+      OrderLineEditForm.checkPhysicalResourceDetailsSection([
+        {
+          label: 'createInventory',
+          conditions: {
+            checkedOptionText: POL_CREATE_INVENTORY_SETTINGS_VIEW.INSTANCE_HOLDING_ITEM,
+            disabled: true,
+          },
+        },
+      ]);
+
+      // Step 6: Fill in remaining required fields and click "Save & close" button
+      OrderLineEditForm.fillOrderLineFields(polData);
+      OrderLineEditForm.clickAddLocationButton();
+      OrderLineEditForm.expandLocationDropdown(0);
+      OrderLineEditForm.selectLocationFromDropdown(location.name);
+      OrderLineEditForm.fillLocationDetails([{ quantityPhysical: '1', quantityElectronic: '1' }]);
+      OrderLineEditForm.clickSaveButton({ orderLineCreated: true, orderLineUpdated: false });
+
+      // Step 7: Check the "Purchase order line" accordion on POL details pane
+      OrderLineDetails.waitLoading();
+      OrderLineDetails.checkOrderLineDetails({
+        poLineInformation: [
+          {
+            key: POLINE_DETAILS_FIELDS.BINDERY_ACTIVE,
+            value: { checked: true, disabled: true },
+            checkbox: true,
+          },
+          {
+            key: POLINE_DETAILS_FIELDS.ORDER_FORMAT,
+            value: ORDER_FORMAT_NAMES.PE_MIX,
+          },
+          {
+            key: POLINE_DETAILS_FIELDS.RECEIVING_WORKFLOW,
+            value: RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,
+          },
+        ],
+        physicalResourceDetails: [
+          {
+            key: POLINE_DETAILS_FIELDS.CREATE_INVENTORY,
+            value: POL_CREATE_INVENTORY_SETTINGS_VIEW.INSTANCE_HOLDING_ITEM,
+          },
+        ],
+      });
     },
   );
 });

@@ -15,8 +15,7 @@ describe('Invoices', () => {
       ...NewInvoice.defaultUiInvoice,
       accountingCode: organization.erpCode,
       vendorName: organization.name,
-      invoiceLineNumber:
-        '<a\\shref=\\"\\/invoice\\/view(?:\\S+)\\/line\\/(?:\\S+)\\/view\\">2<\\/a>',
+      invoiceLineNumber: '2',
     },
   };
 
@@ -78,7 +77,7 @@ describe('Invoices', () => {
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkRelatedInvoiceLinesTableContent([
         {
-          invoiceNumber: testData.invoice.invoiceNumber,
+          vendorInvoiceNo: testData.invoice.invoiceNumber,
           invoiceLineNumber: testData.invoice.invoiceLineNumber,
           vendorCode: testData.organization.code,
         },

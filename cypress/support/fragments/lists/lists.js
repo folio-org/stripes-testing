@@ -32,6 +32,7 @@ import {
   Tooltip,
 } from '../../../../interactors';
 import ArrayUtils from '../../utils/arrays';
+import { formatNumber } from '../../utils/numberTools';
 import { poll } from '../../utils/polling';
 import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import { embeddedTableHeadersMap, extractValuesForTableType } from '../bulk-edit/query-modal';
@@ -721,10 +722,14 @@ const UI = {
   },
 
   verifyRecordsNumber(number, isVerifyPaneHeader = true) {
+    // UI renders counts with thousands separators, e.g. 1841 -> "1,841".
+    // Non-numeric values (e.g. 'No') are used as is.
+    const rawNumber = String(number).replace(/,/g, '');
+    const recordsFoundText = `${rawNumber.trim() && !Number.isNaN(Number(rawNumber)) ? formatNumber(Number(rawNumber)) : number} records found`;
     if (isVerifyPaneHeader) {
-      cy.get('[class^=paneHeader-]').contains(`${number} records found`).should('be.visible');
+      cy.get('[class^=paneHeader-]').contains(recordsFoundText).should('be.visible');
     }
-    cy.get('#results-viewer-accordion').contains(`${number} records found`).should('be.visible');
+    cy.get('#results-viewer-accordion').contains(recordsFoundText).should('be.visible');
   },
 
   verifySingleRecordNumber(isVerifyPaneHeader = true) {

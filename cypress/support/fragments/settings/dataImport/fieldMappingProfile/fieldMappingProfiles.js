@@ -9,6 +9,7 @@ import {
   PaneContent,
   Form,
   MultiColumnList,
+  DropdownMenu,
 } from '../../../../../../interactors';
 import mappingDetails from './mappingDetails';
 import ResultsPane from '../resultsPane';
@@ -71,6 +72,7 @@ const duplicate = () => {
 export default {
   openNewMappingProfileForm,
   search,
+  duplicate,
   mappingProfileForDuplicate,
   clearSearchField: () => {
     cy.do(searchField.focus());
@@ -104,6 +106,10 @@ export default {
   verifyActionMenu: () => {
     cy.do([Pane({ id: 'full-screen-view' }).find(actionsButton).click()]);
     cy.expect([editButton.exists(), deleteButton.exists(), dublicateButton.exists()]);
+  },
+  closeActionMenu: () => {
+    cy.do([Pane({ id: 'full-screen-view' }).find(actionsButton).click()]);
+    cy.expect(DropdownMenu().absent());
   },
   createInvoiceMappingProfile: (mappingProfile, defaultProfile) => {
     search(defaultProfile);

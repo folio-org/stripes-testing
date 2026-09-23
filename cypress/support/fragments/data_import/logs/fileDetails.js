@@ -395,7 +395,7 @@ export default {
     cy.wait(2000);
     cy.do(
       jobSummaryTable
-        .find(MultiColumnListRow({ indexRow: 'row-3' }))
+        .find(MultiColumnListRow({ indexRow: 'row-4' }))
         .find(MultiColumnListCell(index))
         .find(Link({ href: including('/data-import/job-summary') }))
         .click(),

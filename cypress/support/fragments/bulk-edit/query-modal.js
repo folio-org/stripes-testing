@@ -978,10 +978,14 @@ export default {
     cy.wait(1000);
   },
 
-  fillInValueMultiselect(text, row = 0) {
+  fillInValueMultiselect(text, row = 0, { exactMatch = false } = {}) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).fillIn(text)]);
     cy.wait(2000);
-    cy.do([MultiSelectOption(including(text)).click()]);
+    if (exactMatch) {
+      cy.do([MultiSelectOption(text).click()]);
+    } else {
+      cy.do([MultiSelectOption(including(text)).click()]);
+    }
     cy.do(buildQueryModal.click());
   },
 

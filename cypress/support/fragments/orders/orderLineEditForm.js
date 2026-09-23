@@ -1,4 +1,5 @@
 import {
+  Accordion,
   AcqFundDistribution,
   Button,
   Callout,
@@ -42,6 +43,7 @@ const FORM_SECTION_IDS = {
   COST_DETAILS: 'costDetails',
   FUND_DISTRIBUTION: 'fundDistributionAccordion',
   LOCATION: 'location',
+  PHYSICAL_RESOURCE_DETAILS: 'physical',
 };
 const FORM_FIELD_NAMES = {
   ACQUISITION_METHOD: 'acquisitionMethod',
@@ -56,7 +58,11 @@ const FORM_FIELD_NAMES = {
   EXCHANGE_RATE: 'cost.exchangeRate',
   CLAIMING_ACTIVE: 'claimingActive',
   CLAIMING_INTERVAL: 'claimingInterval',
+  BINDERY_ACTIVE: 'details.isBinderyActive',
+  CREATE_INVENTORY_PHYSICAL: 'physical.createInventory',
   TITLE_OR_PACKAGE: 'titleOrPackage',
+  PRODUCT_ID: 'details.productIds[0].productId',
+  PRODUCT_ID_TYPE: 'details.productIds[0].productIdType',
   RECEIVING_NOTE: 'details.receivingNote',
   SUBSCRIPTION_FROM: 'details.subscriptionFrom',
   SUBSCRIPTION_TO: 'details.subscriptionTo',
@@ -89,6 +95,7 @@ const FORM_LABELS = {
     'This is a Manual PO so all POLs are excluded from automated export workflows',
   REMOVE_FISCAL_YEAR: 'Remove fiscal year',
   SHOW_HIDDEN_FIELDS: 'Show hidden fields',
+  ADD_PRODUCT_ID: 'Add product ID and product ID type',
 };
 const FIELD_SELECTORS = {
   LOCATION_ID: 'field-locations',
@@ -129,6 +136,9 @@ const fundDistributionDetailsSection = orderLineEditFormRoot.find(
   Section({ id: FORM_SECTION_IDS.FUND_DISTRIBUTION }),
 );
 const locationSection = orderLineEditFormRoot.find(Section({ id: FORM_SECTION_IDS.LOCATION }));
+const physicalResourceDetailsSection = orderLineEditFormRoot.find(
+  Section({ id: FORM_SECTION_IDS.PHYSICAL_RESOURCE_DETAILS }),
+);
 const automaticExportCheckboxName = FIELD_SELECTORS.AUTOMATIC_EXPORT;
 const automaticExportInfoIconSelector = FIELD_SELECTORS.INFO_POPOVER_TRIGGER;
 const cancelButton = Button(COMMON_BUTTON_LABELS.CANCEL);
@@ -147,6 +157,8 @@ const itemDetailsFields = {
     TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_FROM }),
   ),
   subscriptionTo: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_TO })),
+  productId: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PRODUCT_ID })),
+  productIdType: itemDetailsSection.find(Select({ name: FORM_FIELD_NAMES.PRODUCT_ID_TYPE })),
 };
 
 export const orderLineFields = {
@@ -162,6 +174,13 @@ export const orderLineFields = {
   ),
   claimingInterval: orderLineDetailsSection.find(
     TextField({ name: FORM_FIELD_NAMES.CLAIMING_INTERVAL }),
+  ),
+  binderyActive: orderLineDetailsSection.find(Checkbox({ name: FORM_FIELD_NAMES.BINDERY_ACTIVE })),
+};
+
+export const physicalResourceDetailsFields = {
+  createInventory: physicalResourceDetailsSection.find(
+    Select({ name: FORM_FIELD_NAMES.CREATE_INVENTORY_PHYSICAL }),
   ),
 };
 
@@ -247,6 +266,12 @@ export default {
   },
   checkCostDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: costDetailsFields });
+  },
+  checkPhysicalResourceDetailsSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: physicalResourceDetailsFields });
+  },
+  clickBinderyActiveCheckbox() {
+    cy.do(orderLineFields.binderyActive.click());
   },
   setUserLimit(limit) {
     cy.get(FIELD_SELECTORS.USER_LIMIT).clear().type(limit);
@@ -336,6 +361,11 @@ export default {
     SelectInstanceModal.searchByName(instanceTitle);
     SelectInstanceModal.selectInstance(instanceTitle);
   },
+  addProductId({ productId, productIdType }) {
+    cy.do(itemDetailsSection.find(Button(FORM_LABELS.ADD_PRODUCT_ID)).click());
+    cy.do(itemDetailsFields.productId.fillIn(productId));
+    cy.do(itemDetailsFields.productIdType.choose(productIdType));
+  },
   fillItemDetails(itemDetails) {
     Object.entries(itemDetails).forEach(([key, value]) => {
       cy.do(itemDetailsFields[key].fillIn(value));
@@ -362,7 +392,7 @@ export default {
     if (poLineDetails.materialType) {
       if (poLineDetails.orderFormat === ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE) {
         cy.do(
-          Select({ name: FORM_FIELD_NAMES.MATERIAL_TYPE_ERERESOURCE }).choose(
+          Select({ name: FORM_FIELD_NAMES.MATERIAL_TYPE_ERESOURCE }).choose(
             poLineDetails.materialType,
           ),
         );
@@ -395,7 +425,7 @@ export default {
   fillCostDetails(costDetails) {
     Object.entries(costDetails).forEach(([key, value]) => {
       if (costDetailsFields[key]) {
-        cy.do(costDetailsFields[key].fillIn(value));
+        cy.do(costDetailsFields[key].fillIn(String(value)));
       }
     });
   },
@@ -478,6 +508,10 @@ export default {
 
   selectFundDistribution(fund, index) {
     this.selectFundDistributionDropDownValue(FUND_DISTRIBUTION_LABELS.FUND_ID, fund, index);
+  },
+
+  expandAccordion(label) {
+    cy.do(orderLineEditFormRoot.find(Accordion(including(label))).expand());
   },
 
   expandFundIdDropdown(index = 0) {
@@ -604,12 +638,12 @@ export default {
       );
     }
   },
-  clickCancelButton(shouldModalExsist = false) {
-    cy.wait(20000);
+  clickCancelButton(shouldModalExist = false, { waitMs = 20000 } = {}) {
+    cy.wait(waitMs);
     cy.expect(cancelButton.has({ disabled: false }));
     cy.do(cancelButton.click());
 
-    if (!shouldModalExsist) {
+    if (!shouldModalExist) {
       cy.expect(orderLineEditFormRoot.absent());
     }
   },
@@ -635,8 +669,8 @@ export default {
     cy.wait(2000);
   },
 
-  cancelWithUnsavedChanges({ keepEditing = false } = {}) {
-    this.clickCancelButton(true);
+  cancelWithUnsavedChanges({ keepEditing = false, waitMs } = {}) {
+    this.clickCancelButton(true, { waitMs });
     AreYouSureModal.verifyAreYouSureForm(true);
 
     if (keepEditing) {
@@ -760,6 +794,28 @@ export default {
         .find(Button({ icon: 'trash' }))
         .click(),
     );
+  },
+
+  checkFundDistributionFundSelected({ fund, index = 0 }) {
+    cy.expect(
+      fundDistributionDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID)))
+        .has({ value: including(fund) }),
+    );
+  },
+
+  checkLocationSelected({ location, index = 0 }) {
+    cy.expect([
+      locationSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Selection(including(FORM_LABELS.FILTER_NAME_CODE)))
+        .has({ value: including(location) }),
+      locationSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .exists(),
+    ]);
   },
 
   checkFundRestrictionErrorToastPresent() {

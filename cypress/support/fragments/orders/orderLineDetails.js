@@ -728,6 +728,13 @@ export default {
         .has({ checked: true, disabled: true }),
     );
   },
+  assertMultiYearPrepaymentUnchecked() {
+    cy.expect(
+      ongoingOrderSection
+        .find(Checkbox({ labelText: ORDER_LINE_FORM_LABELS.MULTI_YEAR_PREPAYMENT }))
+        .has({ checked: false, disabled: true }),
+    );
+  },
   assertMultiYearPrepaymentAbsent() {
     cy.expect(
       ongoingOrderSection

@@ -51,6 +51,7 @@ const orderTemplateLocationDetailsSection = orderTemplateForm.find(Section({ id:
 const orderTemplatePoLineTagsSection = orderTemplateForm.find(Section({ id: 'polTags' }));
 
 const saveButton = Button({ id: 'save-order-template-button' });
+const fundIdSelection = Selection(including('Fund ID'));
 
 const infoSectionFields = {
   templateName: orderTemplateInfoSection.find(TextField({ name: 'templateName' })),
@@ -270,6 +271,41 @@ export default {
     return SelectionList()
       .find(SelectionOption(including(locationName)))
       .exists();
+  },
+
+  verifyLocationSelected({ location, index = 0 }) {
+    cy.expect(
+      orderTemplateLocationDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Selection(including('Name (code)')))
+        .has({ value: including(location) }),
+    );
+  },
+
+  clickAddFundDistributionButton() {
+    cy.do(orderTemplateFundDetailsSection.find(Button('Add fund distribution')).click());
+  },
+
+  selectFundDistribution({ fundName, fundCode, index = 0 }) {
+    const label = `${fundName} (${fundCode})`;
+
+    cy.do([
+      orderTemplateFundDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(fundIdSelection)
+        .open(),
+      SelectionList().filter(label),
+      SelectionOption(including(label)).click(),
+    ]);
+  },
+
+  verifyFundDistributionSelected({ fundCode, index = 0 }) {
+    cy.expect(
+      orderTemplateFundDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(fundIdSelection)
+        .has({ value: including(fundCode) }),
+    );
   },
 
   clickExpandAllAccordions() {

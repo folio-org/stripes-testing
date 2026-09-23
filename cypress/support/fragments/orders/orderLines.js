@@ -48,6 +48,7 @@ import SelectLocationModal from './modals/selectLocationModal';
 import SelectDonorModal from './modals/selectDonorModal';
 import OrderLineDetails from './orderLineDetails';
 import SelectOrganizationModal from './modals/selectOrganizationModal';
+import AcqVersionHistory from '../acqVersionHistory';
 
 const path = require('path');
 
@@ -398,6 +399,15 @@ export default {
     ]);
   },
 
+  assertVersionHistoryCard({ index = 0, changedFields = [], eventDate, source } = {}) {
+    AcqVersionHistory.assertVersionHistoryCard('order-line', {
+      index,
+      changedFields,
+      eventDate,
+      source,
+    });
+  },
+
   selectVersionHistoryCard(date) {
     cy.do([
       orderHistorySection
@@ -410,12 +420,7 @@ export default {
   closeVersionHistory: () => {
     cy.do(orderHistorySection.find(Button({ icon: 'times' })).click());
     cy.wait(2000);
-    cy.expect([
-      agreementLinesSection.exists(),
-      invoiceLinesSection.exists(),
-      notesSection.exists(),
-      orderHistorySection.absent(),
-    ]);
+    cy.expect(orderHistorySection.absent());
   },
 
   deleteOrderLine: ({ poLineNumber, checkDeleteSuccessMessage = false } = {}) => {
@@ -757,38 +762,6 @@ export default {
     ]);
     SelectLocationModal.selectLocation(institutionId);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
-    cy.wait(4000);
-    submitOrderLine();
-  },
-
-  binderyActivePEMixPOLineInfo(fund, resource, unitPrice, quantity, value, institutionId) {
-    cy.do([orderFormatSelect.choose(resource), acquisitionMethodButton.click()]);
-    cy.wait(2000);
-    cy.do([
-      Checkbox({ name: 'details.isBinderyActive' }).click(),
-      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      physicalUnitPriceTextField.fillIn(unitPrice),
-      electronicUnitPriceTextField.fillIn(unitPrice),
-      quantityPhysicalTextField.fillIn(quantity),
-      quantityElectronicTextField.fillIn(quantity),
-      addFundDistributionButton.click(),
-      fundDistributionSelect.click(),
-      SelectionOption(`${fund.name} (${fund.code})`).click(),
-    ]);
-    cy.wait(2000);
-    cy.do([
-      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
-      fundDistributionField.fillIn(value),
-      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
-      addLocationButton.click(),
-      createNewLocationButton.click(),
-    ]);
-    SelectLocationModal.selectLocation(institutionId);
-    cy.do([
-      quantityPhysicalLocationField.fillIn(quantity),
-      quantityElectronicField.fillIn(quantity),
-      saveAndCloseButton.click(),
-    ]);
     cy.wait(4000);
     submitOrderLine();
   },

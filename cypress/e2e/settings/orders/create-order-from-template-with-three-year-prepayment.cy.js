@@ -437,14 +437,14 @@ describe('Settings | Orders', () => {
       OrderTemplateForm.clickPaymentTermsInfoIcon();
 
       cy.log('Step 5. Check "Multi-year prepayment" checkbox');
-      OrderTemplateForm.enableMultiYearPrepayment();
+      OrderTemplateForm.toggleMultiYearPrepayment();
 
       // Expected: checkbox checked; Payment terms active/expanded with blank Total price,
       // disabled blank Prepayment term, blank Starting fiscal year, "Remaining amount ... $0.00"
       OrderTemplateForm.assertMultiYearPrepaymentChecked();
       OrderTemplateForm.assertPaymentTermsExpanded();
       OrderTemplateForm.assertPrepaymentTermsRemainingAmount(formatAmount(0));
-      OrderTemplateForm.assertPaymentTermsInitialState();
+      OrderTemplateForm.assertPaymentTermsState();
 
       cy.log('Step 6. Expand "Starting fiscal year" dropdown in the "Payment terms" accordion');
       OrderTemplateForm.toggleStartingFiscalYearDropdown();

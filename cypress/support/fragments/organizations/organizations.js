@@ -1141,6 +1141,10 @@ export default {
     cy.wait(2000);
   },
 
+  checkOrganizationStatusInEditForm: (status) => {
+    cy.expect(organizationStatus.has({ checkedOptionText: status }));
+  },
+
   changeOrganizationStatus: (status) => {
     cy.wait(4000);
     cy.do([organizationStatus.choose(status), saveAndClose.click()]);
@@ -1843,6 +1847,10 @@ export default {
 
   editOrganizationName: (organization) => {
     cy.do([organizationNameField.fillIn(`${organization.name}-edited`), saveAndClose.click()]);
+  },
+
+  editOrganizationCode: (code) => {
+    cy.do([organizationCodeField.fillIn(code), saveAndClose.click()]);
   },
 
   editOrganizationDescription: (organization) => {

@@ -36,7 +36,7 @@ const fromDate = moment.utc().subtract(2, 'days');
 const toDate = moment.utc().add(2, 'days');
 const dueDate = moment.utc().add(2, 'days');
 const newToDate = moment.utc().subtract(1, 'days');
-const dateFallsMessage = 'renewal date falls outside of date ranges in fixed loan policy';
+const dateFallsMessage = 'Renewal date falls outside of date ranges in fixed loan policy';
 let sourceId;
 const loanPolicyBody = {
   id: uuid(),

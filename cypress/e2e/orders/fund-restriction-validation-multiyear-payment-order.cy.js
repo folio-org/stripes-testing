@@ -495,20 +495,20 @@ describe('Orders', () => {
       OrderLineEditForm.openFundSelectorInPaymentTermsCard({ fyCode: fy1.code });
       // Expected: Fund A is absent because its Loc1 restriction is not satisfied.
       OrderLineEditForm.verifyFundInDropdown(fundA.name, fundA.code, false);
-      OrderLineEditForm.closeFundSelectorInPaymentTermsCard();
+      OrderLineEditForm.closeSelectionList();
 
       cy.log('Step 10. Expand Fund ID in the FY2 card');
       OrderLineEditForm.openFundSelectorInPaymentTermsCard({ fyCode: fy2.code });
       // Expected: Fund A is absent because its Loc1 restriction is not satisfied.
       OrderLineEditForm.verifyFundInDropdown(fundA.name, fundA.code, false);
-      OrderLineEditForm.closeFundSelectorInPaymentTermsCard();
+      OrderLineEditForm.closeSelectionList();
 
       cy.log('Step 11. Add a fund distribution in FY2 and expand its Fund ID dropdown');
       OrderLineEditForm.addFundDistributionInFYCard(fy2.code);
       OrderLineEditForm.openFundSelectorInPaymentTermsCard({ fyCode: fy2.code, rowIndex: 1 });
       // Expected: Fund A is also absent from a newly added distribution.
       OrderLineEditForm.verifyFundInDropdown(fundA.name, fundA.code, false);
-      OrderLineEditForm.closeFundSelectorInPaymentTermsCard();
+      OrderLineEditForm.closeSelectionList();
 
       cy.log('Step 12. Remove the location and click Add location');
       OrderLineEditForm.removeLocationRow();
@@ -638,7 +638,7 @@ describe('Orders', () => {
       cy.log(
         'Step 22. Enable multi-year prepayment, select FY1 and Fund A, add a location, and expand Name (code)',
       );
-      OrderLineEditForm.enableMultiYearPrepayment();
+      OrderLineEditForm.toggleMultiYearPrepayment();
       OrderLineEditForm.fillPrepaymentTotalPrice(PAYMENT_TERMS.TOTAL_PRICE);
       OrderLineEditForm.selectStartingFiscalYear(fy1.code);
       OrderLineEditForm.addFundDistributionInFYCard(fy1.code);

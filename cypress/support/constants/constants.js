@@ -151,6 +151,7 @@ export const BATCH_GROUP = {
 export const RECORD_STATUSES = {
   CREATED: 'Created',
   UPDATED: 'Updated',
+  DELETED: 'Deleted',
   NO_ACTION: 'No action',
   DASH: 'No value set-',
   BLANK: 'No value set',
@@ -997,6 +998,13 @@ export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_INSTANCE_AND_SRS: 'Default - Create instance and SRS MARC Bib',
   CREATE_AUTHORITY: 'Default - Create SRS MARC Authority',
   CREATE_HOLDINGS_AND_SRS: 'Default - Create Holdings and SRS MARC Holdings',
+};
+
+export const DEFAULT_ACTION_PROFILE_NAMES = {
+  CREATE_INSTANCE: 'Default - Create instance',
+  CREATE_AUTHORITY: 'Default - Create MARC Authority',
+  CREATE_MARC_HOLDINGS: 'Default - Create MARC holdings',
+  DELETE_AUTHORITY: 'Default - Delete MARC Authority records',
 };
 
 export const DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES = {

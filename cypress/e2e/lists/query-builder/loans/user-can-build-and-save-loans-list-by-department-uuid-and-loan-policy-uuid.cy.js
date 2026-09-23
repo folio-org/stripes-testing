@@ -400,7 +400,7 @@ describe('Lists', () => {
             QueryModal.clickRunQueryAndSave();
             QueryModal.verifyClosed();
             Lists.verifyListSavedCalloutMessage(listData.name);
-            Lists.verifyQuery('users.department_id is null/empty False');
+            Lists.verifyQuery('users.department_ids is null/empty False');
             Lists.verifyRefreshCompleteCallout(recordCount);
 
             // Step 7: Click "Actions" menu => "Edit list", then click "Edit query" button
@@ -410,9 +410,7 @@ describe('Lists', () => {
             QueryModal.verifySelectedField(LOANS_FIELDS.USER.DEPARTMENT_UUIDS);
             QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IS_NULL);
             QueryModal.verifySelectedValue('False');
-            QueryModal.verifyQueryAreaContent(
-              `(users.department_ids == ${testData.departments[0].id})`,
-            );
+            Lists.verifyQuery('users.department_ids is null/empty False');
 
             // Step 8: Change first field to Loan policy — UUID
             QueryModal.selectField(LOANS_FIELDS.LOAN_POLICY.UUID);

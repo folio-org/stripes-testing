@@ -139,9 +139,9 @@ describe('Data Import', () => {
         // check created counter in the Summary table
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems.created, 0);
         // check No action counter in the Summary table
-        FileDetails.checkInvoiceInSummaryTable(quantityOfItems.noAction, 2);
+        FileDetails.checkInvoiceInSummaryTable(quantityOfItems.noAction, 3);
         // check Error counter in the Summary table
-        FileDetails.checkInvoiceInSummaryTable(quantityOfItems.error, 3);
+        FileDetails.checkInvoiceInSummaryTable(quantityOfItems.error, 4);
         FileDetails.filterRecordsWithError(FileDetails.visibleColumnsInSummaryTable.INVOICE);
         FileDetails.verifyQuantityOfRecordsWithError(quantityOfItems.recordsWithErrors);
         FileDetails.verifyLogSummaryTableIsHidden();

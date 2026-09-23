@@ -66,6 +66,10 @@ describe('Data Import', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         Logs.openViewAllLogs();
         LogsViewAll.openUserIdAccordion();
+        // force increased limit to get all users
+        cy.intercept('GET', /\/metadata-provider\/jobExecutions\/users\?.*limit=\d+/, (req) => {
+          req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+        });
         LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
         Logs.openFileDetails('No file name');
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
