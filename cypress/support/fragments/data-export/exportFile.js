@@ -89,10 +89,10 @@ const removeMarcField = ({ inputFileName, outputFileName, fieldTag }) => {
   });
 };
 
-const downloadExportedMarcFile = (fileName) => {
+const downloadExportedMarcFile = (fileName, { originalName = null } = {}) => {
   const query =
     '(status=(COMPLETED OR COMPLETED_WITH_ERRORS OR FAIL)) sortby completedDate/sort.descending';
-  const limit = '1';
+  const limit = originalName ? '100' : '1';
   const queryString = new URLSearchParams({ limit, query });
 
   // get file id and job id
@@ -102,10 +102,13 @@ const downloadExportedMarcFile = (fileName) => {
     isDefaultSearchParamsRequired: false,
   })
     .then(({ body: { jobExecutions } }) => {
+      const targetExecution = originalName
+        ? jobExecutions.filter((exec) => exec.exportedFiles[0]?.fileName.includes(originalName))[0]
+        : jobExecutions[0];
       const {
         id,
         exportedFiles: [{ fileId }],
-      } = jobExecutions[0];
+      } = targetExecution;
 
       // get the link to download exported file
       return cy.okapiRequest({

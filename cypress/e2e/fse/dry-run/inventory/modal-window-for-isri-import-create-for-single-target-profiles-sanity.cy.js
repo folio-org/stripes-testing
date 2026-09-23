@@ -21,7 +21,7 @@ describe('Inventory', () => {
       cy.setTenant(memberTenant.id);
       cy.allure().logCommandSteps(false);
       cy.getUserToken(user.username, user.password);
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication, false);
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
 
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {

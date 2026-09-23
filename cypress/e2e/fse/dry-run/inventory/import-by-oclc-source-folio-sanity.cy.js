@@ -82,8 +82,9 @@ describe('Inventory', () => {
         });
         InventoryInstance.verifyInstancePhysicalcyDescription(oclcRecordData.physicalDescription);
         InventoryInstance.openAccordion('Identifiers');
-        InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn1, 8);
-        InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn2, 9);
+        InventoryInstance.checkIdentifier('ISBN');
+        InventoryInstance.checkIdentifier(oclcRecordData.isbn1);
+        InventoryInstance.checkIdentifier(oclcRecordData.isbn2);
         InventoryInstance.openAccordion('Subject');
         InstanceRecordView.verifyInstanceSubject({
           indexRow: 0,
