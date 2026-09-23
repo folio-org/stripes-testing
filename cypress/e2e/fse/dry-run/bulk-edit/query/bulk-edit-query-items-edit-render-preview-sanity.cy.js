@@ -5,17 +5,19 @@ import QueryModal, {
   QUERY_OPERATIONS,
 } from '../../../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import ItemNoteTypes from '../../../../../support/fragments/settings/inventory/items/itemNoteTypes';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import { parseSanityParameters } from '../../../../../support/utils/users';
 
 const { user, memberTenant } = parseSanityParameters();
+const noteType = `AT_C440063_ItemNoteType_${getRandomPostfix()}`;
+let noteTypeId;
 let instanceTypeId;
 let holdingsTypeId;
 let locationId1;
 let locationId2;
 let loanTypeId;
 let materialTypeId;
-let noteType;
 const item = {
   instanceName: `AT_C440063_FolioInstance_${getRandomPostfix()}`,
   barcode: getRandomPostfix(),
@@ -38,11 +40,11 @@ describe('Bulk-edit', () => {
             locationId1 = locations[0].id;
             locationId2 = locations[1].id;
           });
-          InventoryInstances.getItemNoteTypes({
-            limit: 1,
-          }).then((noteTypes) => {
-            noteType = noteTypes[0].name;
+          ItemNoteTypes.createItemNoteTypeViaApi(noteType).then((id) => {
+            noteTypeId = id;
+            cy.wait(5000);
           });
+
           cy.getLoanTypes({ limit: 1 }).then((res) => {
             loanTypeId = res[0].id;
           });
@@ -87,6 +89,7 @@ describe('Bulk-edit', () => {
       cy.getUserToken(user.username, user.password, { log: false });
       cy.setTenant(memberTenant.id);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
+      ItemNoteTypes.deleteItemNoteTypeViaApi(noteTypeId);
     });
 
     it(
@@ -125,6 +128,7 @@ describe('Bulk-edit', () => {
         const columnNameNote = noteType;
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(columnNameNote);
         BulkEditSearchPane.verifyResultColumnTitles(columnNameNote);
+        BulkEditSearchPane.clearSearchColumnNameTextfield();
         BulkEditSearchPane.searchColumnName('fewoh', false);
         BulkEditSearchPane.clearSearchColumnNameTextfield();
         BulkEditSearchPane.verifyActionsDropdownScrollable();

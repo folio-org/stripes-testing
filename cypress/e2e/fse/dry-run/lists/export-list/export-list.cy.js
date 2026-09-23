@@ -12,6 +12,15 @@ describe('Lists', () => {
       visibility: 'Shared',
     };
 
+    before('Log in', () => {
+      cy.allure().logCommandSteps(false);
+      cy.login(user.username, user.password, {
+        path: TopMenu.listsPath,
+        waiter: Lists.waitLoading,
+      });
+      cy.allure().logCommandSteps();
+    });
+
     beforeEach('Create a user', () => {
       cy.setTenant(memberTenant.id);
       cy.allure().logCommandSteps(false);
@@ -30,12 +39,7 @@ describe('Lists', () => {
       'C411809 Export list: Not canned lists (corsair)',
       { tags: ['dryRun', 'corsair', 'C411809'] },
       () => {
-        cy.allure().logCommandSteps(false);
-        cy.login(user.username, user.password, {
-          path: TopMenu.listsPath,
-          waiter: Lists.waitLoading,
-        });
-        cy.allure().logCommandSteps();
+        cy.visit(TopMenu.listsPath);
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -60,12 +64,7 @@ describe('Lists', () => {
       'C411811 Export list: Inactive lists (corsair)',
       { tags: ['dryRun', 'corsair', 'C411811'] },
       () => {
-        cy.allure().logCommandSteps(false);
-        cy.login(user.username, user.password, {
-          path: TopMenu.listsPath,
-          waiter: Lists.waitLoading,
-        });
-        cy.allure().logCommandSteps();
+        cy.visit(TopMenu.listsPath);
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);
@@ -83,12 +82,7 @@ describe('Lists', () => {
       'C411812 Export list: Refresh is in progress (corsair)',
       { tags: ['dryRun', 'corsair', 'C411812'] },
       () => {
-        cy.allure().logCommandSteps(false);
-        cy.login(user.username, user.password, {
-          path: TopMenu.listsPath,
-          waiter: Lists.waitLoading,
-        });
-        cy.allure().logCommandSteps();
+        cy.visit(TopMenu.listsPath);
         Lists.openNewListPane();
         Lists.setName(listData.name);
         Lists.setDescription(listData.name);

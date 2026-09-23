@@ -10,7 +10,6 @@ import {
   including,
   KeyValue,
   Link,
-  ListRow,
   Modal,
   MultiColumnListCell,
   MultiColumnListHeader,
@@ -170,7 +169,9 @@ const UI = {
     cy.get('[id^=selected-field-option]').contains(query.field);
     cy.get('[data-testid="operator-option-0"]').contains(query.operator);
     // Check the selected value in the Selection component by looking at the button text
-    cy.get('[data-testid="data-input-select-boolType"]').find('button').should('contain', query.value);
+    cy.get('[data-testid="data-input-select-boolType"]')
+      .find('button')
+      .should('contain', query.value);
   },
 
   closeQueryEditor() {
@@ -534,7 +535,7 @@ const UI = {
 
   verifyListIsPresent(listName) {
     cy.wait(5000);
-    return cy.get('*[class^="mclRowContainer"]').contains(listName).should('be.visible');
+    cy.expect(MultiColumnListCell({ content: listName, column: 'List name' }).exists());
   },
 
   verifyRecordsNumber(number) {
@@ -548,8 +549,7 @@ const UI = {
 
   openList(listName) {
     cy.do(
-      ListRow(including(listName))
-        .find(MultiColumnListCell({ content: listName }))
+      MultiColumnListCell({ content: listName, column: 'List name' })
         .find(Button(listName))
         .click(),
     );
@@ -692,7 +692,9 @@ const UI = {
   },
 
   verifyRecordTypeFilterDropdownNoMatchingItem() {
-    cy.get('[class^=multiSelectEmptyMessage-]').contains('No matching items found!').should('be.visible');
+    cy.get('[class^=multiSelectEmptyMessage-]')
+      .contains('No matching items found!')
+      .should('be.visible');
   },
 
   verifyCheckboxChecked(name) {
@@ -783,9 +785,7 @@ const UI = {
 
   verifyNoEntityTypePermissionsWarning() {
     cy.expect(
-      HTML(
-        including('You do not have the required permissions to use the Lists app'),
-      ).exists(),
+      HTML(including('You do not have the required permissions to use the Lists app')).exists(),
     );
   },
 
@@ -892,8 +892,7 @@ const QueryBuilder = {
     cy.get('#field-option-0').click();
     cy.contains(parameter).click();
     cy.get('[data-testid="operator-option-0"]').select(operator);
-    cy.get('[data-testid="data-input-select-boolType"]').find('button').click();
-    cy.do(SelectionList().select(value));
+    cy.get('[data-testid="data-input-select-boolType"]').select(value);
     cy.do(testQuery.click());
     cy.wait(2000);
     cy.do(runQueryAndSave.click());
@@ -1145,14 +1144,16 @@ const API = {
 
   createViaApi(list) {
     function createList(listToCreate) {
-      return cy.okapiRequest({
-        method: 'POST',
-        path: 'lists',
-        body: listToCreate,
-        isDefaultSearchParamsRequired: false,
-      }).then((newListResponse) => {
-        return newListResponse.body;
-      });
+      return cy
+        .okapiRequest({
+          method: 'POST',
+          path: 'lists',
+          body: listToCreate,
+          isDefaultSearchParamsRequired: false,
+        })
+        .then((newListResponse) => {
+          return newListResponse.body;
+        });
     }
 
     const newList = JSON.parse(JSON.stringify(list));
@@ -1267,7 +1268,7 @@ const API = {
         searchParams: {
           field: `${fieldName}`,
           search: '',
-        }
+        },
       })
       .then((response) => {
         return response.body;
@@ -1282,7 +1283,11 @@ const API = {
     };
   },
 
-  generateCustomEntityTypeBodyWithSources(entityTypeName = '', entityTypeSources, privateEntityType = true) {
+  generateCustomEntityTypeBodyWithSources(
+    entityTypeName = '',
+    entityTypeSources,
+    privateEntityType = true,
+  ) {
     return {
       ...this.generateCustomEntityTypeBodyWithoutSources(entityTypeName, privateEntityType),
       sources: [...entityTypeSources],
@@ -1290,7 +1295,9 @@ const API = {
   },
 
   getSimpleUsersEntityTypeSourceTargetId() {
-    return cy.wrap(true).then(() => { return 'f2615ea6-450b-425d-804d-6a495afd9308'; });
+    return cy.wrap(true).then(() => {
+      return 'f2615ea6-450b-425d-804d-6a495afd9308';
+    });
   },
 
   generateSimpleUsersEntityTypeSource() {
@@ -1301,7 +1308,7 @@ const API = {
         type: 'entity-type',
         targetId: targetSourceId,
         essentialOnly: false,
-        useIdColumns: true
+        useIdColumns: true,
       };
     });
   },
