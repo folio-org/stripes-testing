@@ -52,12 +52,22 @@ describe('Lists', () => {
       { tags: ['criticalPath', 'athena', 'C506687'] },
       () => {
         // Step 1: Select filters
+        Lists.verifyCheckboxChecked('Active');
         Lists.clickOnCheckbox('Shared');
+        Lists.clickOnCheckbox('User generated');
         Lists.selectRecordTypeFilter(Lists.recordTypes.users);
 
-        // Verify filters are selected
+        // Verify the fields are populated with appropriate values
+        Lists.verifyCheckboxChecked('Active');
         Lists.verifyCheckboxChecked('Shared');
+        Lists.verifyCheckboxChecked('User generated');
         Lists.verifyRecordTypeSelectedinFilter([Lists.recordTypes.users]);
+
+        // Verify according lists are displayed in the main pane
+        Lists.verifyListsFilteredByStatus(['Active']);
+        Lists.verifyListsFilteredByVisibility(['Shared']);
+        Lists.verifyListsFilteredBySource(['User generated']);
+        Lists.verifyListsFilteredByRecordType(Lists.recordTypes.users);
 
         // Step 2: Navigate to Bulk edit app
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.BULK_EDIT);
@@ -68,7 +78,9 @@ describe('Lists', () => {
         Lists.waitLoading();
 
         // Verify previously selected filters are still selected
+        Lists.verifyCheckboxChecked('Active');
         Lists.verifyCheckboxChecked('Shared');
+        Lists.verifyCheckboxChecked('User generated');
         Lists.verifyRecordTypeSelectedinFilter([Lists.recordTypes.users]);
 
         // Step 4: Click on the created list
@@ -78,7 +90,9 @@ describe('Lists', () => {
         Lists.closeListDetailsPane();
 
         // Verify previously selected filters are still selected
+        Lists.verifyCheckboxChecked('Active');
         Lists.verifyCheckboxChecked('Shared');
+        Lists.verifyCheckboxChecked('User generated');
         Lists.verifyRecordTypeSelectedinFilter([Lists.recordTypes.users]);
       },
     );
