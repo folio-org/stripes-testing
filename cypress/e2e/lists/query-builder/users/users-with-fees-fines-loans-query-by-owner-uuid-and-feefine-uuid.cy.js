@@ -281,7 +281,7 @@ describe('Lists', () => {
           // Step 4: Change to "in", add Owner B UUID; verify 3 records
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.fillInValueTextfield(`${ownerA.id},${ownerB.id}`);
-          QueryModal.verifyQueryAreaContent(`(account.owner_id in (${ownerA.id}, ${ownerB.id}))`);
+          QueryModal.verifyQueryAreaContent(`(account.owner_id in [${ownerA.id}, ${ownerB.id}])`);
           QueryModal.testQuery();
           QueryModal.waitForQueryTestToFinish();
           QueryModal.verifyNumberOfMatchedRecords(3);
@@ -349,7 +349,7 @@ describe('Lists', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.fillInValueTextfield(`${feeFineType1.id},${feeFineType3.id}`);
           QueryModal.verifyQueryAreaContent(
-            `(account.fee_fine_id in (${feeFineType1.id}, ${feeFineType3.id}))`,
+            `(account.fee_fine_id in [${feeFineType1.id}, ${feeFineType3.id}])`,
           );
           QueryModal.testQuery();
           QueryModal.waitForQueryTestToFinish();
