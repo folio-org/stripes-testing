@@ -181,6 +181,7 @@ export const EXPORT_INVOICE_FIELDS = {
 };
 
 export const INVOICE_LINES_TABLE_COLUMN_HEADERS = {
+  LINE_NUMBER: '#',
   POL_NUMBER: 'POL number',
   DESCRIPTION: 'Description',
   FUND_CODE: 'Fund code',
