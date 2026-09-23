@@ -13,6 +13,7 @@ import {
   TextField,
   including,
   matching,
+  not,
   Accordion,
 } from '../../../../../../interactors';
 import InteractorsTools from '../../../../utils/interactorsTools';
@@ -108,6 +109,12 @@ export default {
     // need to wait until value will be selected
     cy.wait(1000);
   },
+  changeExistingRecordSubfieldValue(value) {
+    const subfieldField = TextField({
+      name: 'profile.matchDetails[0].existingMatchExpression.fields[3].value',
+    });
+    cy.do([subfieldField.focus(), subfieldField.fillIn(value)]);
+  },
   changesNotSaved() {
     cy.expect(TextField({ name: 'profile.name' }).exists());
     cy.expect(selectActionProfile.exists());
@@ -124,15 +131,27 @@ export default {
   clickOnExistingRecordByName(name) {
     cy.do(detailsSection.find(Button({ text: name })).click());
   },
-  clickCloseButton({ closeWoSaving = true } = {}) {
+  clickCloseButton({ action = 'closeWithoutSaving' } = {}) {
     cy.expect(closeButton.has({ disabled: false }));
     cy.do(closeButton.click());
 
-    if (closeWoSaving) {
-      const confirmModal = ConfirmationModal('Are you sure?');
-      cy.expect(confirmModal.has({ message: 'There are unsaved changes' }));
-      cy.do(confirmModal.confirm('Close without saving'));
+    if (action === 'noChanges') {
+      cy.wait(300);
+      cy.expect(matchProfileForm.absent());
+      return;
     }
+
+    const confirmModal = ConfirmationModal('Are you sure?');
+    cy.expect(confirmModal.has({ message: 'There are unsaved changes' }));
+
+    if (action === 'keepEditing') {
+      cy.do(confirmModal.cancel('Keep editing'));
+      cy.wait(300);
+      cy.expect([confirmModal.absent(), matchProfileForm.exists()]);
+      return;
+    }
+
+    cy.do(confirmModal.confirm('Close without saving'));
     cy.wait(300);
     cy.expect(matchProfileForm.absent());
   },
@@ -157,6 +176,16 @@ export default {
   verifyDetailsSection: (options) => {
     options.forEach((option) => {
       cy.get(`#panel-existing-edit [data-id=${option}]`).should('exist');
+    });
+  },
+  verifyDetailsSectionAbsent: (options) => {
+    options.forEach((option) => {
+      cy.get(`#panel-existing-edit [data-id=${option}]`).should('not.exist');
+    });
+  },
+  verifyMatchCriteriaDoesNotContain(texts) {
+    texts.forEach((text) => {
+      cy.expect(matchCriteriaAccordion.has({ content: not(including(text)) }));
     });
   },
 
