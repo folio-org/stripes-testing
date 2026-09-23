@@ -66,13 +66,36 @@ export default {
   checkExportAllPolFieldsRadioButton() {
     cy.do(exportSettingsModal.find(allOrderLineFieldsRadioButton).click());
   },
+  checkExportSelectedPoFieldsRadioButton() {
+    cy.do(exportSettingsModal.find(selectedOrderFieldsRadioButton).click());
+  },
+  checkExportSelectedPolFieldsRadioButton() {
+    cy.do(exportSettingsModal.find(selectedOrderLineFieldsRadioButton).click());
+  },
+  verifyPoFieldsDropdownDisabled(isDisabled = true) {
+    cy.expect(selectPoFieldsDropdown.has({ disabled: isDisabled }));
+  },
+  verifyPolFieldsDropdownDisabled(isDisabled = true) {
+    cy.expect(selectPolFieldsDropdown.has({ disabled: isDisabled }));
+  },
+  verifyExportButtonDisabled(isDisabled = true) {
+    cy.expect(exportButton.has({ disabled: isDisabled }));
+  },
+  verifySelectedPoFields(fields) {
+    fields.forEach((field) => {
+      cy.expect(selectPoFieldsDropdown.has({ selected: including(field) }));
+    });
+  },
+  verifySelectedPolFields(fields) {
+    fields.forEach((field) => {
+      cy.expect(selectPolFieldsDropdown.has({ selected: including(field) }));
+    });
+  },
   selectOrderFieldsToExport(option) {
     cy.do([
       selectedOrderFieldsRadioButton.click(),
       selectPoFieldsDropdown.toggle(),
-      MultiSelectMenu()
-        .find(MultiSelectOption(including(option)))
-        .click(),
+      MultiSelectMenu().find(MultiSelectOption(option)).click(),
     ]);
   },
   selectOrderLineFieldsToExport(option) {

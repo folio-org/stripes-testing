@@ -339,6 +339,16 @@ export default {
         );
       }
     });
+
+    if (!records.length) {
+      cy.expect(
+        linkedInstancesDetailsSection.has({ text: including('The list contains no items') }),
+      );
+    }
+  },
+  checkTitleIsNotLink(title) {
+    this.checkItemDetailsSection([{ key: 'Title', value: title }]);
+    cy.expect(itemDetailsSection.find(KeyValue('Title')).find(Link()).absent());
   },
   checkItemDetailsSection(itemDetails = []) {
     this.checkSectionData({ details: itemDetails, section: itemDetailsSection });
