@@ -128,7 +128,7 @@ describe('Bulk-edit', () => {
           QueryModal.selectField(usersFieldValues.userId);
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.fillInValueTextfield(userUUIDs);
-          QueryModal.verifyQueryAreaContent(`(users.id in (${userUUIDs.replace(/,/g, ', ')}))`);
+          QueryModal.verifyQueryAreaContent(`(users.id in [${userUUIDs.replace(/,/g, ', ')}])`);
           QueryModal.testQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyNumberOfMatchedRecords(2);
@@ -148,7 +148,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('2 user');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(users.id in (${userUUIDs.replace(/,/g, ', ')}))`,
+              `(users.id in [${userUUIDs.replace(/,/g, ', ')}])`,
             );
             BulkEditSearchPane.verifyPaginatorInMatchedRecords(2);
 
@@ -195,7 +195,7 @@ describe('Bulk-edit', () => {
             // Step 9: Verify confirmation screen
             BulkEditActions.verifyUsersDeletedSuccessfully(2, 1);
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(users.id in (${userUUIDs.replace(/,/g, ', ')}))`,
+              `(users.id in [${userUUIDs.replace(/,/g, ', ')}])`,
             );
             BulkEditSearchPane.verifyPaneRecordsChangedCount(0);
 
@@ -239,7 +239,7 @@ describe('Bulk-edit', () => {
             // Step 16: Download "File with the query used to trigger the bulk edit"
             BulkEditLogs.downloadQueryStatementFile();
             FileManager.verifyFileIncludes(fileNames.queryStatementFilename, [
-              `(users.id in (${userUUIDs.replace(/,/g, ', ')}))`,
+              `(users.id in [${userUUIDs.replace(/,/g, ', ')}])`,
             ]);
 
             // Step 17: Download "File with the matching records"

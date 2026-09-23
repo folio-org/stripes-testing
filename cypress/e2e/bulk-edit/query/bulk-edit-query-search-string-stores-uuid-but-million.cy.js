@@ -72,7 +72,7 @@ describe('Bulk-edit', () => {
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueTextfield(`${firstItem.instanceId},${secondItem.instanceId}`);
         QueryModal.verifyQueryAreaContent(
-          `(instances.id in (${firstItem.instanceId}, ${secondItem.instanceId}))`,
+          `(instances.id in [${firstItem.instanceId}, ${secondItem.instanceId}])`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();

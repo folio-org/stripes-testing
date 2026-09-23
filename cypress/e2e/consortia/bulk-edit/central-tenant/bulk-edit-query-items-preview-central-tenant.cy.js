@@ -810,7 +810,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('0 item');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(items.id in (${itemUUIDs.replace(/,/g, ', ')}))`,
+              `(items.id in [${itemUUIDs.replace(/,/g, ', ')}])`,
             );
             BulkEditSearchPane.verifyErrorLabel(11);
 

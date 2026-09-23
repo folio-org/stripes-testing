@@ -87,7 +87,7 @@ describe('Bulk-edit', () => {
               value: `${instances[0].uuid},${instances[1].uuid}`,
               expectedCount: 2,
               expectedInstances: [instances[0], instances[1]],
-              queryAreaContent: `(instance.id in (${instances[0].uuid}, ${instances[1].uuid}))`,
+              queryAreaContent: `(instance.id in [${instances[0].uuid}, ${instances[1].uuid}])`,
             },
             {
               queryField: instanceFieldValues.instanceHrid,

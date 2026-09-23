@@ -130,7 +130,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('0 instance');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(instance.id in (${instances[0].uuid}, ${instances[1].uuid}, ${invalidUUID}))`,
+              `(instance.id in [${instances[0].uuid}, ${instances[1].uuid}, ${invalidUUID}])`,
             );
             BulkEditSearchPane.verifyErrorLabel(2);
             BulkEditSearchPane.verifyShowWarningsCheckbox(true, false);
