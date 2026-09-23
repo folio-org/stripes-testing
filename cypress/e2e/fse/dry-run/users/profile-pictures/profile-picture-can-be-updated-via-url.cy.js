@@ -53,6 +53,7 @@ describe('Users', () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
         UsersCard.waitLoading();
         UserEdit.openEdit();
+        UserEdit.selectFirstAvailablePatronGroup();
         UserEdit.verifyProfileCardIsPresented();
         UserEdit.verifyButtonsStateForProfilePicture([{ value: 'External URL' }]);
         UserEdit.setPictureFromExternalUrl(testData.externalPictureUrl);

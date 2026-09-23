@@ -60,8 +60,10 @@ export default {
       addCustomFieldDropdown.choose('Multi-select'),
       TextField('Field label*').fillIn(data.fieldLabel),
       MultiColumnListRow({ indexRow: 'row-0' }).find(TextField()).fillIn(data.label1),
-      MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label2),
     ]);
+    cy.do(MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).focus());
+    cy.wait(500);
+    cy.do(MultiColumnListRow({ indexRow: 'row-1' }).find(TextField()).fillIn(data.label2));
   },
 
   clickAddOptionButton() {
@@ -69,6 +71,12 @@ export default {
   },
 
   fillOptionInRow(rowIndex, optionText) {
+    cy.do(
+      MultiColumnListRow({ indexRow: `row-${rowIndex}` })
+        .find(TextField())
+        .focus(),
+    );
+    cy.wait(500);
     cy.do(
       MultiColumnListRow({ indexRow: `row-${rowIndex}` })
         .find(TextField())
