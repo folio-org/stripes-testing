@@ -2822,6 +2822,10 @@ export default {
     this.filterByCheckboxOptions(ORDER_LINE_FILTER_LABELS.RUSH, options);
   },
 
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, tags);
+  },
+
   filterByCreatedBy(userName) {
     FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.CREATED_BY);
     cy.do(findUserButton.click());

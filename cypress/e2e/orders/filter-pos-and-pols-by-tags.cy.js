@@ -102,6 +102,7 @@ describe('Orders', () => {
     () => {
       // Step 1: Expand "Tags" accordion on "Search & filter" pane of "Orders" pane
       Orders.resetFiltersIfActive();
+      cy.wait(1000);
       Orders.expandFilterAccordion(ORDER_TAGS_FILTER);
       Orders.assertMultiSelectFilterValues(ORDER_TAGS_FILTER, []);
 

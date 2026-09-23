@@ -149,7 +149,7 @@ describe('Orders', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken();
+    cy.getAdminToken(false);
     Orders.deleteOrderViaApi(testData.order.id);
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     OrderTemplates.deleteOrderTemplateViaApi(testData.orderTemplate.id);

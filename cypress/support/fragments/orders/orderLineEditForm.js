@@ -584,4 +584,13 @@ export default {
   checkAccountNumberIsBlank() {
     cy.expect(vendorDetailsFields.accountNumber.has({ checkedOptionText: ' ' }));
   },
+
+  removeLocationByIndex(index = 0) {
+    cy.do(
+      locationSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    );
+  },
 };

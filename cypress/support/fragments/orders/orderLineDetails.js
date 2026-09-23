@@ -12,6 +12,7 @@ import {
   Section,
   Warning,
   MultiColumnListHeader,
+  HTML,
 } from '../../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';

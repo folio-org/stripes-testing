@@ -27,12 +27,15 @@ import {
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
+import MultiColumnListHelper from '../multiColumnList';
+import FiltersPaneHelper from '../filtersPane';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import deleteHoldingsModalReceivingFullScreen from './modals/deleteHoldingsModaReceivinglFullScreen';
 import ReceivingDetails from './receivingDetails';
 import ReceivingStates from './receivingStates';
 
 const receivingResultsSection = Section({ id: 'receiving-results-pane' });
+const filtersPane = Pane({ id: 'receiving-filters-pane' });
 const rootsection = PaneContent({ id: 'pane-title-details-content' });
 const actionsButton = Button('Actions');
 const receivingSuccessful = 'Receiving successful';
@@ -212,6 +215,26 @@ export default {
     cy.do(Button('Quick receive').click());
     cy.wait(1000);
     InteractorsTools.checkCalloutMessage('The piece  was successfully received');
+  },
+
+  assertReceivingResults(titles = []) {
+    if (!titles.length) {
+      cy.expect(receivingResultsSection.find(HTML(including('No results found'))).exists());
+      return;
+    }
+    titles.forEach((title) => {
+      cy.expect(receivingResultsList.find(MultiColumnListCell({ content: title })).exists());
+    });
+    MultiColumnListHelper.assertRowCount(receivingResultsList, titles.length);
+  },
+
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(filtersPane, { disabled });
+  },
+
+  clearAllFilters() {
+    FiltersPaneHelper.clearAllFilters(filtersPane);
+    this.assertResetAllButtonState({ disabled: true });
   },
 
   addPieceProcess: (caption, enumeration) => {
