@@ -122,7 +122,7 @@ describe('Lists', () => {
           // Step 5: Select "in" operator
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IN);
-          QueryModal.verifyQueryAreaContent('(vendor_organization.edi_vendor_edi_type in ())');
+          QueryModal.verifyQueryAreaContent('(vendor_organization.edi_vendor_edi_type in [])');
 
           // Step 6: Select value from dropdown (pre-populated EDI vendor types)
           QueryModal.chooseFromValueMultiselect(ediVendorType);

@@ -558,7 +558,7 @@ describe('Lists', () => {
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyNumberOfRowsInPreviewTable(4);
           QueryModal.verifyQueryAreaContent(
-            `(fiscal_year.id in (${testData.fiscalYear1.id}, ${testData.fiscalYear2.id}))`,
+            `(fiscal_year.id in [${testData.fiscalYear1.id}, ${testData.fiscalYear2.id}])`,
           );
 
           QueryModal.verifyMatchedRecordsByIdentifier(
@@ -622,7 +622,7 @@ describe('Lists', () => {
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyNumberOfRowsInPreviewTable(3);
           QueryModal.verifyQueryAreaContent(
-            `(expense_class.id in (${testData.expenseClass1.id}, ${testData.expenseClass2.id}))`,
+            `(expense_class.id in [${testData.expenseClass1.id}, ${testData.expenseClass2.id}])`,
           );
           // Invoice #1 line 1 (Electronic), Invoice #1 line 2 (Print), Invoice #2 line 1 (Electronic) shown; Invoice #2 line 2 absent
           QueryModal.verifyMatchedRecordsByIdentifier(

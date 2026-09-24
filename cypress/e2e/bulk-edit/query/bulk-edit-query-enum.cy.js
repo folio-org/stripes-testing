@@ -60,7 +60,7 @@ describe('Bulk-edit', () => {
         QueryModal.verifyOperatorColumn();
         QueryModal.verifyOperatorsList(enumOperators);
         QueryModal.selectOperator('not in');
-        QueryModal.verifyQueryAreaContent('(items.status_name not in ())');
+        QueryModal.verifyQueryAreaContent('(items.status_name not in [])');
         QueryModal.verifyValueColumn();
         QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.ON_ORDER);
         QueryModal.chooseFromValueMultiselect(ITEM_STATUS_NAMES.AGED_TO_LOST);

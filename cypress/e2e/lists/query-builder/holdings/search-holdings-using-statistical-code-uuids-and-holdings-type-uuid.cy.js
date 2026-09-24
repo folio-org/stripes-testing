@@ -248,7 +248,7 @@ describe('Lists', () => {
           );
           QueryModal.testQuery();
           QueryModal.verifyQueryAreaContent(
-            `(holdings_type.id in (${testData.holdingsType1.id}, ${testData.holdingsType2.id})) AND (holdings.instance_id == ${testData.instanceId})`,
+            `(holdings_type.id in [${testData.holdingsType1.id}, ${testData.holdingsType2.id}]) AND (holdings.instance_id == ${testData.instanceId})`,
           );
           // All 4 holdings match
           QueryModal.verifyNumberOfRowsInPreviewTable(4);
