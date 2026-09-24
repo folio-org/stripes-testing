@@ -327,6 +327,21 @@ export default {
 
     return EditPieceModal;
   },
+  openEditPieceModalByFormat(pieceFormat) {
+    cy.do(
+      expectedSection
+        .find(
+          MultiColumnListCell({
+            column: EXPECTED_TABLE_COLUMN_HEADERS.PIECE_FORMAT,
+            content: pieceFormat,
+          }),
+        )
+        .click(),
+    );
+    EditPieceModal.waitLoading();
+
+    return EditPieceModal;
+  },
   openReceivingEditForm() {
     cy.do([buttons.Actions.click(), buttons.Edit.click()]);
     ReceivingEditForm.waitLoading();

@@ -69,6 +69,8 @@ const poInfoSectionFields = {
 const poLineDetailsSectionFields = {
   poLineDetailsSection: orderTemplateLineDetailsSection.find(Button('PO line details')),
   acquisitionMethod: orderTemplateLineDetailsSection.find(Selection('Acquisition method')),
+  receiptStatus: orderTemplateLineDetailsSection.find(Select({ name: 'receiptStatus' })),
+  checkinItems: orderTemplateLineDetailsSection.find(Select({ name: 'checkinItems' })),
 };
 
 const defaultSections = {
@@ -183,7 +185,7 @@ export default {
       cy.do(poInfoSectionFields.orderType.choose(orderType));
     }
   },
-  fillPoLineDetailsFields({ acquisitionMethod }) {
+  fillPoLineDetailsFields({ acquisitionMethod, receiptStatus }) {
     cy.do(poLineDetailsSectionFields.poLineDetailsSection.click());
 
     if (acquisitionMethod) {
@@ -192,6 +194,14 @@ export default {
         SelectionOption(acquisitionMethod).click(),
       ]);
     }
+    if (receiptStatus) {
+      cy.do(poLineDetailsSectionFields.receiptStatus.choose(receiptStatus));
+    }
+  },
+  checkPoLineDetailsFields(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(poLineDetailsSectionFields[label].has(conditions));
+    });
   },
   checkValidationError({ templateName } = {}) {
     if (templateName) {
@@ -317,6 +327,16 @@ export default {
     cy.do(
       orderTemplateForm.perform((el) => {
         el.querySelector(`input[name="hiddenFields.${fieldName}"]`).click();
+      }),
+    );
+  },
+
+  verifyFieldVisibilityControl(fieldName, { hidden = false } = {}) {
+    cy.do(
+      orderTemplateForm.perform((el) => {
+        const isHidden = el.querySelector(`input[name="hiddenFields.${fieldName}"]`).checked;
+
+        expect(isHidden, `"${fieldName}" field is hidden`).to.equal(hidden);
       }),
     );
   },

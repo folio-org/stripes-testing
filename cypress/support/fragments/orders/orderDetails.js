@@ -132,6 +132,11 @@ export default {
         .click(),
     );
   },
+  checkActionsMenuContent(actions = [], { shouldExist = true } = {}) {
+    actions.forEach((action) => {
+      cy.expect(shouldExist ? Button(action).exists() : Button(action).absent());
+    });
+  },
   copyOrderNumber(poNumber) {
     cy.do(
       orderInfoSection
