@@ -49,7 +49,7 @@ describe('Calendar', () => {
 
     it(
       'C360954 Sort headings on "All calendars" tab (bama)',
-      { tags: ['smokeBama', 'bama'] },
+      { tags: ['smokeBama', 'bama', 'C360954'] },
       () => {
         const calendars = [];
         const servicePoints = [];

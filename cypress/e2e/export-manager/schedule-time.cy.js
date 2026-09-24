@@ -11,7 +11,7 @@ describe('Export Manager', () => {
 
   it(
     'C350699 Verify the schedule time -- AM/PM format (athena)',
-    { tags: ['extendedPathBama', 'bama'] },
+    { tags: ['extendedPathBama', 'bama', 'C350699'] },
     () => {
       TransferFeeFine.selectTransferCriteriaSchedulePeriod('Days');
 

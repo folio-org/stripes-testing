@@ -27,7 +27,7 @@ describe('Export Manager', () => {
 
   it(
     'C350638 Verify permissions to manage transfer criteria and other transfer settings (bama) (TaaS)',
-    { tags: ['extendedPathBama', 'bama'] },
+    { tags: ['extendedPathBama', 'bama', 'C350638'] },
     () => {
       // #1 Go to Settings > Users > Fee/fine > Transfer criteria
       // Transfer criteria option is in the list of Fee/fine options
