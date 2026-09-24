@@ -14,12 +14,13 @@ const fetchAllPages = (getPage, page = 1, collected = []) => {
   });
 };
 
-const collectDocFileIds = (records) => {
+const collectDocFileIds = (records, extraFields = []) => {
   const fileIds = [];
 
   records.forEach((record) => {
     const docs = record.docs ?? [];
     const supplementaryDocs = record.supplementaryDocs ?? [];
+    const extraDocs = extraFields.flatMap((field) => record[field] ?? []);
 
     // collect all fileUpload IDs
     docs.forEach((doc) => {
@@ -27,6 +28,9 @@ const collectDocFileIds = (records) => {
     });
     supplementaryDocs.forEach((supplementaryDoc) => {
       if (supplementaryDoc.fileUpload?.id) fileIds.push(supplementaryDoc.fileUpload.id);
+    });
+    extraDocs.forEach((extraDoc) => {
+      if (extraDoc.fileUpload?.id) fileIds.push(extraDoc.fileUpload.id);
     });
   });
 
@@ -77,7 +81,7 @@ describe('fse-agreements', { retries: { runMode: 1 } }, () => {
     { tags: ['fse', 'api', 'agreements-docs', 'TC196411'] },
     () => {
       fetchAllPages((page, perPage) => cy.getAgreements(page, perPage)).then((agreements) => {
-        verifyFilesAccessible(collectDocFileIds(agreements));
+        verifyFilesAccessible(collectDocFileIds(agreements, ['externalLicenseDocs']));
       });
     },
   );
