@@ -28,7 +28,7 @@ export const FUND_DETAILS_FIELDS = {
   LEDGER: 'Ledger',
   STATUS: 'Status',
   TYPE: 'Type',
-  GROUPS: 'Groups',
+  GROUP: 'Group',
   ACQUISITION_UNITS: 'Acquisition units',
   TRANSFER_FROM: 'Transfer from',
   TRANSFER_TO: 'Transfer to',
