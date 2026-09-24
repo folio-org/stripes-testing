@@ -209,7 +209,7 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.fillInValueTextfield(holdingsUUIDs);
           QueryModal.verifyQueryAreaContent(
-            `(holdings.id in (${holdingsUUIDs.replace(/,/g, ', ')}))`,
+            `(holdings.id in [${holdingsUUIDs.replace(/,/g, ', ')}])`,
           );
           QueryModal.testQueryDisabled(false);
 
@@ -232,7 +232,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('14 holdings');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(holdings.id in (${holdingsUUIDs.replace(/,/g, ', ')}))`,
+              `(holdings.id in [${holdingsUUIDs.replace(/,/g, ', ')}])`,
             );
             BulkEditSearchPane.verifyPaginatorInMatchedRecords(14);
             BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
@@ -568,7 +568,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('0 holdings');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(holdings.id in (${holdingsUUIDs.replace(/,/g, ', ')}))`,
+              `(holdings.id in [${holdingsUUIDs.replace(/,/g, ', ')}])`,
             );
             BulkEditSearchPane.verifyErrorLabel(11);
 

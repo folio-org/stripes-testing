@@ -110,13 +110,21 @@ describe('Lists', () => {
     const recordTypesFilters = {
       accordionName: 'Record types',
       filters: [
-        'Loans',
-        'Items',
-        'Users',
-        'Purchase order lines with titles',
+        'Fee/Fine accounts with users',
         'Holdings',
         'Instances',
+        'Instances with MARC bibliographic',
+        'Items',
+        'Loans',
         'Organizations',
+        'Purchase order lines',
+        'Purchase order lines with titles',
+        'Purchase orders',
+        'Receiving pieces',
+        'Receiving titles',
+        'Transactions',
+        'Users',
+        'Users with fees/fines, loans',
       ],
     };
     const sourceFilters = {
@@ -134,11 +142,11 @@ describe('Lists', () => {
       cy.getAdminToken();
       cy.createTempUser([
         Permissions.listsAll.gui,
-        Permissions.uiUsersView.gui,
         Permissions.uiOrdersCreate.gui,
+        Permissions.uiOrganizationsViewEditCreate.gui,
         Permissions.inventoryAll.gui,
+        Permissions.uiUsersView.gui,
         Permissions.uiUsersViewLoans.gui,
-        Permissions.uiOrganizationsView.gui,
         Permissions.ordersStorageAcquisitionMethodsCollectionGet.gui,
       ]).then((userProperties) => {
         userData.username = userProperties.username;
@@ -179,7 +187,7 @@ describe('Lists', () => {
     });
 
     it(
-      'C411804 Filter section: Statuses (athena) (TaaS)',
+      'C411804 Filter section: Status (athena) (TaaS)',
       { tags: ['criticalPath', 'athena', 'C411804', 'eurekaPhase1'] },
       () => {
         // #2 Click on "Status" accordion on the "Filter" pane
@@ -196,6 +204,9 @@ describe('Lists', () => {
         Lists.verifyResetAllButtonEnabled();
         // #5 Click on "Reset all"
         Lists.resetAllFilters();
+        Lists.verifyResetAllButtonDisabled();
+        Lists.verifyCheckboxChecked('Active');
+        Lists.verifyClearFilterButton(statusFilters.accordionName);
         Lists.verifyListsFilteredByStatus(['Active']);
       },
     );
@@ -221,6 +232,7 @@ describe('Lists', () => {
         // #5 Click on "x"
         Lists.clickOnClearFilterButton(visibilityFilter.accordionName);
         Lists.verifyVisibilityAccordionDefaultContent();
+        Lists.verifyClearFilterButtonAbsent(visibilityFilter.accordionName);
         Lists.verifyResetAllButtonDisabled();
         // #6 Click on "Private" checkbox
         Lists.clickOnCheckbox('Private');
@@ -251,18 +263,53 @@ describe('Lists', () => {
       'C411806 Filter section: Record types (athena) (TaaS)',
       { tags: ['criticalPath', 'athena', 'C411806', 'eurekaPhase1'] },
       () => {
+        // #2 Click on "Record types" accordion to collapse it
         Lists.clickOnAccordionInFilter(recordTypesFilters.accordionName);
         Lists.verifyAccordionCollapsedInFilter(recordTypesFilters.accordionName);
+        // #3 Click on "Record types" accordion again to expand it
         Lists.clickOnAccordionInFilter(recordTypesFilters.accordionName);
-        Lists.verifyAccordionCollapsedInFilter(recordTypesFilters.accordionName);
-        recordTypesFilters.filters.forEach((filter) => {
-          Lists.selectRecordTypeFilter(filter);
-          Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
-          Lists.verifyResetAllButtonEnabled();
-          Lists.verifyListsFilteredByRecordType(filter);
-          Lists.resetAllFilters();
+        Lists.verifyAccordionExpandedInFilter(recordTypesFilters.accordionName);
+        Lists.verifyRecordTypeMultiSelectDropdownDisplayed();
+        // #4 Click multi-select dropdown and check the list of record types
+        Lists.openRecordTypeFilter();
+        Lists.verifyRecordTypeFilterDropdownContainsOptions(recordTypesFilters.filters);
+        // #5 Select all record types in the multi-select dropdown
+        Lists.selectRecordTypeFilter(recordTypesFilters.filters);
+        Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
+        Lists.verifyResetAllButtonEnabled();
+        Lists.verifyListsFilteredByRecordType(recordTypesFilters.filters);
+        // #6 Click on "x" next to "Record types" accordion
+        Lists.getListsPaneRecordsCount().then((recordsCountBeforeClear) => {
+          Lists.clickOnClearFilterButton(recordTypesFilters.accordionName);
           Lists.verifyClearFilterButtonAbsent(recordTypesFilters.accordionName);
+          Lists.verifyRecordTypeSelectedinFilter([]);
+          Lists.getListsPaneRecordsCount().then((recordsCountAfterClear) => {
+            expect(recordsCountAfterClear).to.equal(recordsCountBeforeClear);
+          });
         });
+        // #7 Select "Loans" in the multi-select dropdown
+        Lists.selectRecordTypeFilter('Loans');
+        Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
+        Lists.verifyResetAllButtonEnabled();
+        Lists.verifyListsFilteredByRecordType('Loans');
+        // #8 Uncheck "Loans" and select "Items" in the multi-select dropdown
+        Lists.deselectRecordTypeFilter('Loans');
+        Lists.selectRecordTypeFilter('Items');
+        Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
+        Lists.verifyResetAllButtonEnabled();
+        Lists.verifyListsFilteredByRecordType('Items');
+        // #9 Uncheck "Items" and select "Users" in the multi-select dropdown
+        Lists.deselectRecordTypeFilter('Items');
+        Lists.selectRecordTypeFilter('Users');
+        Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
+        Lists.verifyResetAllButtonEnabled();
+        Lists.verifyListsFilteredByRecordType('Users');
+        // #10 Click on "Reset all"
+        Lists.resetAllFilters();
+        Lists.verifyRecordTypeSelectedinFilter([]);
+        Lists.verifyClearFilterButtonAbsent(recordTypesFilters.accordionName);
+        Lists.verifyResetAllButtonDisabled();
+        Lists.verifyCheckboxChecked('Active');
       },
     );
 

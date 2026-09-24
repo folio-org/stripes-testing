@@ -69,6 +69,8 @@ const sourceAccordion = filterPane.find(Accordion('Source'));
 const resetAllButton = filterPane.find(Button('Reset all'));
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = filterPane.find(Button('Search'));
+const collapseFilterPaneButton = Button({ icon: 'caret-left' });
+const expandFilterPaneButton = Button({ icon: 'caret-right' });
 const clearSearchButton = Button({ id: 'clickable-input-record-search-clear-field' });
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
 const editQueryButton = Button('Edit query');
@@ -1061,6 +1063,7 @@ const UI = {
 
   clickOnAccordionInFilter(accordionName) {
     cy.do(filterPane.find(Accordion(accordionName)).clickHeader());
+    cy.wait(500);
   },
 
   verifyAccordionExpandedInFilter(accordionName) {
@@ -1111,13 +1114,23 @@ const UI = {
   },
 
   collapseFilterPane() {
-    cy.get('button[icon=caret-left]').click();
+    cy.do(collapseFilterPaneButton.click());
     cy.wait(1000);
   },
 
   expandFilterPane() {
-    cy.get('button[icon=caret-right]').click();
+    cy.do(expandFilterPaneButton.click());
     cy.wait(1000);
+  },
+
+  verifyCollapseFilterPaneTooltip(tooltipText = 'Collapse Search & filter pane') {
+    cy.do(collapseFilterPaneButton.hoverMouse());
+    cy.expect(Tooltip({ text: tooltipText }).exists());
+  },
+
+  verifyExpandFilterPaneTooltip(tooltipText = 'Expand Search & filter pane') {
+    cy.do(expandFilterPaneButton.hoverMouse());
+    cy.expect(Tooltip({ text: tooltipText }).exists());
   },
 
   selectActiveLists() {
@@ -1181,6 +1194,10 @@ const UI = {
     cy.wait(1000);
   },
 
+  verifyRecordTypeMultiSelectDropdownDisplayed() {
+    cy.expect(recordTypesAccordion.find(MultiSelect()).exists());
+  },
+
   openRecordTypeFilter() {
     cy.do(filterPane.find(MultiSelect()).open());
     cy.wait(1000);
@@ -1193,6 +1210,11 @@ const UI = {
 
   selectRecordTypeFilter(type) {
     cy.do(filterPane.find(MultiSelect()).choose(type));
+    cy.wait(1000);
+  },
+
+  deselectRecordTypeFilter(type) {
+    cy.do(filterPane.find(MultiSelect()).remove(type));
     cy.wait(1000);
   },
 
@@ -1473,13 +1495,14 @@ const UI = {
 
   verifyListsFilteredByRecordType: (filter) => {
     cy.wait(500);
+    const filters = Array.isArray(filter) ? filter : [filter];
     cy.get('div[class^="mclRowContainer--"]')
       .find('[data-row-index]')
       .each(($row) => {
         cy.get('[class*="mclCell-"]:nth-child(2)', { withinSubject: $row })
           .invoke('text')
           .then((cellValue) => {
-            cy.expect(cellValue).to.equal(filter);
+            cy.expect(cellValue).to.be.oneOf(filters);
           });
       });
   },

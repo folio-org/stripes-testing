@@ -78,7 +78,7 @@ describe('Lists', () => {
           // Step 5: Select "IN" option
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IN);
-          QueryModal.verifyQueryAreaContent('(items.statistical_code_names in ())');
+          QueryModal.verifyQueryAreaContent('(items.statistical_code_names in [])');
 
           // Step 6: Click on "Value" dropdown
           QueryModal.verifyValueMultiselectMenuIncludesOption(testData.statisticalCodeOption);
@@ -100,7 +100,7 @@ describe('Lists', () => {
 
           // Expected: Operator is displayed and added to query
           QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IN);
-          QueryModal.verifyQueryAreaContent('(mtypes.name in ())');
+          QueryModal.verifyQueryAreaContent('(mtypes.name in [])');
 
           // Step 10: Click on "Value" dropdown
           QueryModal.verifyValueMultiselectMenuIncludesOption(testData.materialTypeName);

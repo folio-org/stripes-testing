@@ -57,6 +57,7 @@ const invoiceFundDistributionSection = invoiceDetailsPane.find(
 const invoiceLevelAdjustmentsSection = invoiceDetailsPane.find(
   Section({ id: 'invoiceAdjustments' }),
 );
+const extendedInformationAccordion = Accordion({ id: 'extendedInformation' });
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -99,6 +100,18 @@ export default {
   },
   checkInvoiceLinesTableContent(records = []) {
     records.forEach((record, index) => {
+      if (record.number) {
+        cy.expect(
+          invoiceLinesSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: INVOICE_LINES_TABLE_COLUMN_HEADERS.LINE_NUMBER,
+              }),
+            )
+            .has({ content: String(record.number) }),
+        );
+      }
       if (record.poNumber) {
         cy.expect(
           invoiceLinesSection
@@ -227,9 +240,14 @@ export default {
       }
     });
   },
+  expandExtendedInformationAccordion() {
+    cy.do(extendedInformationAccordion.clickHeader());
+    cy.expect(extendedInformationAccordion.has({ open: true }));
+  },
   checkInvoiceDetails({
     title,
     invoiceInformation = [],
+    extendedInformation = [],
     invoiceLines,
     invoiceFundDistributions,
     invoiceLevelAdjustments,
@@ -260,6 +278,10 @@ export default {
               cy.wrap(normalizedText).should('include', value);
             });
         });
+    });
+
+    extendedInformation.forEach(({ key, value }) => {
+      cy.expect(extendedInformationAccordion.find(KeyValue(key)).has({ value: including(value) }));
     });
 
     vendorDetails.forEach(({ key, value }) => {

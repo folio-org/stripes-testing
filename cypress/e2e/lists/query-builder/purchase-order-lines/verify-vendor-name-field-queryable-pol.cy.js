@@ -127,7 +127,7 @@ describe('Lists', () => {
           // Step 5: Select "in" operator
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IN);
-          QueryModal.verifyQueryAreaContent('(vendor_organization.name in ())');
+          QueryModal.verifyQueryAreaContent('(vendor_organization.name in [])');
 
           // Step 6: Select vendor name using organization lookup
           QueryModal.clickOrganizationLookup();

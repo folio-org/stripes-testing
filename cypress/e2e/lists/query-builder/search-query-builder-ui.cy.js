@@ -489,7 +489,7 @@ describe('Lists', () => {
           .then(() => {
             return Lists.waitForCustomFieldToBeQueryable(
               `User — ${testData.customField.name}`,
-              recordType
+              recordType,
             );
           });
       });
@@ -947,7 +947,7 @@ describe('Lists', () => {
           const instanceIds = testData.instanceIds;
           const value = instanceIds.join(',');
           const formattedValue = instanceIds.join(', ');
-          const expectedQuery = `(instance.id in (${formattedValue}))`;
+          const expectedQuery = `(instance.id in [${formattedValue}])`;
 
           listName = getTestEntityValue('C446019_List');
           openQueryBuilder(recordType);
