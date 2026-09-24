@@ -161,10 +161,10 @@ export default {
     cy.expect(actionsButton.exists());
   },
   selectMappingProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
-  checkMappingProfilePresented: (mappingProfileName) => {
+  checkMappingProfilePresented: (mappingProfileName, { closeView = true } = {}) => {
     search(mappingProfileName);
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
-    FieldMappingProfileView.closeViewMode(mappingProfileName);
+    if (closeView) FieldMappingProfileView.closeViewMode(mappingProfileName);
   },
   checkListOfExistingProfilesIsDisplayed: () => {
     cy.wait(2000);

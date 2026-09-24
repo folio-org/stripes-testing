@@ -33,7 +33,15 @@ export default {
     ]);
     cy.expect(selectProfileModal.find(HTML(including('0 records found'))).exists());
     cy.expect(
-      selectProfileModal.find(MultiColumnListCell({ content: including(profileName) })).absent(),
+      selectProfileModal
+        .find(
+          HTML(
+            including(
+              `No results found for "${profileName}". Please check your spelling and filters.`,
+            ),
+          ),
+        )
+        .exists(),
     );
   },
   selectProfile(profileName) {

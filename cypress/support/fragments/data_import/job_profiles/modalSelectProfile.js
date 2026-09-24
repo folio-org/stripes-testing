@@ -36,8 +36,7 @@ export default {
       type === 'match' ? 'Select Match Profiles' : 'Select Action Profiles',
     );
     cy.wait(2000);
-    cy.do(MultiColumnListCell(name).click());
-    cy.expect(MultiColumnListCell(name).absent());
+    cy.do(ModalSelectProfile.find(MultiColumnListCell(name)).click());
     cy.expect(ModalSelectProfile.absent());
   },
 };
