@@ -64,7 +64,7 @@ describe('Funds', () => {
       Funds.clickRestrictByLocationsCheckbox();
       Funds.varifyLocationSectionAbsent();
       Funds.save();
-      Funds.varifyFundIsSaved();
+      Funds.verifyFundIsSaved();
       Funds.waitForFundDetailsLoading();
       Funds.verifyCheckboxState('Restrict use by location', false);
       Funds.editBudget();

@@ -148,6 +148,18 @@ export default {
   },
   checkExpectedTableContent(records = []) {
     records.forEach((record, index) => {
+      if (record.status) {
+        cy.expect(
+          expectedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: EXPECTED_TABLE_COLUMN_HEADERS.STATUS,
+              }),
+            )
+            .has({ content: including(record.status) }),
+        );
+      }
       if (record.copyNumber) {
         cy.expect(
           expectedSection
@@ -253,6 +265,64 @@ export default {
               MultiColumnListCell({ row: index, column: RECEIVED_TABLE_COLUMN_HEADERS.CHRONOLOGY }),
             )
             .has({ content: including(record.chronology) }),
+        );
+      }
+      if (record.comment) {
+        cy.expect(
+          receivedSection
+            .find(
+              MultiColumnListCell({ row: index, column: RECEIVED_TABLE_COLUMN_HEADERS.COMMENT }),
+            )
+            .has({ content: including(record.comment) }),
+        );
+      }
+      if (record.receivedDate) {
+        cy.expect(
+          receivedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: RECEIVED_TABLE_COLUMN_HEADERS.RECEIVED_DATE,
+              }),
+            )
+            .has({ content: including(record.receivedDate) }),
+        );
+      }
+      if (record.holdingsLocation) {
+        cy.expect(
+          receivedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: RECEIVED_TABLE_COLUMN_HEADERS.HOLDINGS_LOCATION,
+              }),
+            )
+            .has({ content: including(record.holdingsLocation) }),
+        );
+      }
+      if (record.displayToPublic !== undefined) {
+        cy.expect(
+          receivedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: RECEIVED_TABLE_COLUMN_HEADERS.DISPLAY_TO_PUBLIC,
+              }),
+            )
+            .find(Checkbox({ disabled: true }))
+            .has({ checked: record.displayToPublic, disabled: true }),
+        );
+      }
+      if (record.request) {
+        cy.expect(
+          receivedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: RECEIVED_TABLE_COLUMN_HEADERS.REQUEST,
+              }),
+            )
+            .has({ content: including(record.request) }),
         );
       }
     });

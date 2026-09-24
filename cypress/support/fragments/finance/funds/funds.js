@@ -1194,7 +1194,7 @@ export default {
     InteractorsTools.checkCalloutMessage(`Budget ${fund.code}-${fiscalYear.code} has been saved`);
   },
 
-  varifyFundIsSaved: () => {
+  verifyFundIsSaved: () => {
     InteractorsTools.checkCalloutMessage('Fund has been saved');
   },
 
