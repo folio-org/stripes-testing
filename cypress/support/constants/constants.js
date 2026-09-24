@@ -1819,6 +1819,7 @@ export const COMMON_BUTTON_LABELS = {
   NEW: 'New',
   OK: 'Ok',
   PREVIOUS: 'Previous',
+  RECEIVE: 'Receive',
   REMOVE: 'Remove',
   RESET_ALL: 'Reset all',
   SAVE: 'Save',

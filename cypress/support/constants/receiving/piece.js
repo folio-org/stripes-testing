@@ -70,6 +70,25 @@ export const RECEIVING_PIECE_FORM_ACTIONS_LABELS = {
   UNRECEIVABLE: 'Unreceivable',
 };
 
+export const RECEIVE_LIST_COLUMN_HEADERS = {
+  DISPLAY_SUMMARY: 'Display summary',
+  ENUMERATION: 'Enumeration',
+  CHRONOLOGY: 'Chronology',
+  COPY_NUMBER: 'Copy number',
+  ACCESSION_NUMBER: 'Accession number',
+  BARCODE: 'Barcode',
+  PIECE_FORMAT: 'Piece format',
+  EXPECTED_RECEIPT_DATE: 'Expected receipt date',
+  REQUEST: 'Request',
+  COMMENT: 'Comment',
+  SELECT_LOCATION: 'Select location',
+  STATUS: 'Status',
+  CALL_NUMBER: 'Call number',
+  CREATE_ITEM: 'Create item',
+  DISPLAY_ON_HOLDING: 'Display on holding',
+  SUPPLEMENT: 'Supplement',
+};
+
 export const UNRECEIVABLE_LIST_COLUMN_HEADERS = {
   BARCODE: 'Barcode',
   DISPLAY_SUMMARY: 'Display summary',
