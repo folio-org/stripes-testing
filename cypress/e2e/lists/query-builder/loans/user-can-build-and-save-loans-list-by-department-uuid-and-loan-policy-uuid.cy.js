@@ -440,7 +440,7 @@ describe('Lists', () => {
               `${testData.loanPolicies[0].id},${testData.loanPolicies[1].id}`,
             );
             QueryModal.verifyQueryAreaContent(
-              `(lpolicy.id in (${testData.loanPolicies[0].id}, ${testData.loanPolicies[1].id}))`,
+              `(lpolicy.id in [${testData.loanPolicies[0].id}, ${testData.loanPolicies[1].id}])`,
             );
             QueryModal.testQuery();
             QueryModal.waitForQueryTestToFinish();

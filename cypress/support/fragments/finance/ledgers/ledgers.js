@@ -1619,9 +1619,19 @@ export default {
     });
   },
 
-  checkLedgerExportRow(fileName, matcher, expected) {
+  checkLedgerExportRowsCount(fileName, rowsCount) {
     cy.readFile(`cypress/downloads/${fileName}`, { log: false }).then((fileContent) => {
       const lines = fileContent.split(/\r?\n/).filter((l) => l.trim().length > 0);
+      expect(lines.length - 1).to.equal(rowsCount);
+    });
+  },
+  checkLedgerExportRow(fileName, matcher, expected) {
+    cy.readFile(`cypress/downloads/${fileName}`, { log: false }).then((fileContent) => {
+      // The file starts with a BOM, which otherwise sticks to the first header name
+      const lines = fileContent
+        .replace(/^\uFEFF/, '')
+        .split(/\r?\n/)
+        .filter((l) => l.trim().length > 0);
       const header = this.parseCsvLine(lines[0]);
       const cell = (rowArr, colName) => {
         const idx = header.indexOf(colName);

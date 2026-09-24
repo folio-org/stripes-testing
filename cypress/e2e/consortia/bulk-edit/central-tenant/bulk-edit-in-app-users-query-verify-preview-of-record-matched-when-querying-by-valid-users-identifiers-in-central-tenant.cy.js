@@ -112,7 +112,7 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.fillInValueTextfield(testIdentifiers.userUuids);
           QueryModal.verifyQueryAreaContent(
-            `(users.id in (${testIdentifiers.userUuids.replace(/,/g, ', ')}))`,
+            `(users.id in [${testIdentifiers.userUuids.replace(/,/g, ', ')}])`,
           );
           QueryModal.testQueryDisabled(false);
 
