@@ -1,119 +1,195 @@
-import permissions from '../../support/dictionary/permissions';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../support/fragments/finance/funds/funds';
-import Groups from '../../support/fragments/finance/groups/groups';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  FUND_DISTRIBUTION_TYPES,
+  ORDER_STATUSES,
+} from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
+import {
+  Budgets,
+  FinanceHelper,
+  FiscalYears,
+  FundDetails,
+  Funds,
+  Groups,
+  Ledgers,
+} from '../../support/fragments/finance';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import { NumberTools } from '../../support/utils';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('Finance', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const defaultLedger = { ...Ledgers.defaultUiLedger, restrictEncumbrance: false };
-  const defaultFund = { ...Funds.defaultUiFund };
-  const defaultOrder = {
-    ...NewOrder.defaultOneTimeOrder,
-    orderType: 'Ongoing',
-    ongoing: { isSubscription: false, manualRenewal: false },
-    approved: true,
-    reEncumber: true,
+  const allocatedAmount = 1000;
+  // Estimated price exceeds the budget allocation, so the budget runs a deficit
+  const orderLinePrice = 1100;
+
+  const testData = {
+    organization: NewOrganization.getDefaultOrganization(),
+    fiscalYear: {},
+    ledger: {},
+    group: {},
+    fund: {},
+    budget: {},
+    acquisitionMethodId: null,
+    order: {},
+    orderLine: {},
+    user: {},
+    locale: 'en-US',
   };
-  const defaultGroup = { ...Groups.defaultUiGroup };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  const allocatedQuantity = '1000';
-  let user;
-  let location;
 
-  before(() => {
-    cy.getAdminToken();
-    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-      defaultFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
-        Groups.createViaApi(defaultGroup).then((firstGroupResponse) => {
-          defaultGroup.id = firstGroupResponse.id;
-        });
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
+  const createGroup = () => {
+    return Groups.createViaApi(Groups.getDefaultGroup()).then((group) => {
+      testData.group = group;
+    });
+  };
 
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-          Funds.closeBudgetDetails();
-          Funds.addGroupToFund(defaultGroup.name);
-          InteractorsTools.checkCalloutMessage('Fund has been saved');
+  const createBudgetWithFundLedgerAndFiscalYear = () => {
+    const { fiscalYear, ledger, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
+      ledger: { restrictEncumbrance: false, restrictExpenditures: false },
+      budget: { allocated: allocatedAmount },
+    });
+
+    testData.fiscalYear = fiscalYear;
+    testData.ledger = ledger;
+    testData.fund = fund;
+    testData.budget = budget;
+  };
+
+  const addFundToGroup = () => {
+    return Funds.getFundsViaApi({ query: `id=="${testData.fund.id}"` }).then(({ funds }) => {
+      return Funds.updateFundViaApi(funds[0], [testData.group.id]);
+    });
+  };
+
+  const createOrganization = () => {
+    return Organizations.createOrganizationViaApi(testData.organization).then((id) => {
+      testData.organization.id = id;
+    });
+  };
+
+  const createOpenOrderWithLine = () => {
+    return cy
+      .getAcquisitionMethodsApi({
+        query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+      })
+      .then(({ body }) => {
+        testData.acquisitionMethodId = body.acquisitionMethods[0].id;
+
+        return Orders.createOrderViaApi(
+          NewOrder.getDefaultOrder({ vendorId: testData.organization.id }),
+        );
+      })
+      .then((order) => {
+        testData.order = order;
+
+        return OrderLines.createOrderLineViaApi(
+          BasicOrderLine.getDefaultOrderLine({
+            purchaseOrderId: order.id,
+            acquisitionMethod: testData.acquisitionMethodId,
+            listUnitPrice: orderLinePrice,
+            poLineEstimatedPrice: orderLinePrice,
+            fundDistribution: [
+              {
+                code: testData.fund.code,
+                fundId: testData.fund.id,
+                distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
+                value: 100,
+              },
+            ],
+          }),
+        );
+      })
+      .then((orderLine) => {
+        testData.orderLine = orderLine;
+
+        return Orders.updateOrderViaApi({
+          ...testData.order,
+          workflowStatus: ORDER_STATUSES.OPEN,
         });
       });
-    });
+  };
+
+  const createUserAndLogin = () => {
+    return cy
+      .createTempUser([
+        Permissions.uiFinanceViewFiscalYear.gui,
+        Permissions.uiFinanceViewFundAndBudget.gui,
+        Permissions.uiFinanceViewGroups.gui,
+        Permissions.uiFinanceViewLedger.gui,
+      ])
+      .then((userProperties) => {
+        testData.user = userProperties;
+
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.fiscalYearPath,
+          waiter: FiscalYears.waitLoading,
+        });
+      });
+  };
+
+  before('Create test data', () => {
     cy.getAdminToken();
-    cy.getLocations({ limit: 1 }).then((res) => {
-      location = res;
+    cy.getTenantLocaleApi().then((locale) => {
+      testData.locale = locale;
     });
 
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-    });
-    defaultOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
-    Orders.createApprovedOrderForRollover(defaultOrder, true).then((firstOrderResponse) => {
-      defaultOrder.id = firstOrderResponse.id;
-      Orders.checkCreatedOrder(defaultOrder);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-        defaultFund,
-        '1100',
-        '1',
-        '1100',
-        location.name,
-      );
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-    });
-    cy.createTempUser([
-      permissions.uiFinanceViewFiscalYear.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewLedger.gui,
-      permissions.uiFinanceViewLedger.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.fiscalYearPath,
-        waiter: FiscalYears.waitForFiscalYearDetailsLoading,
-      });
-    });
+    createGroup()
+      .then(createBudgetWithFundLedgerAndFiscalYear)
+      .then(addFundToGroup)
+      .then(createOrganization)
+      .then(createOpenOrderWithLine)
+      .then(createUserAndLogin);
   });
 
-  after(() => {
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
+  after('Delete test data', () => {
+    cy.getAdminToken().then(() => {
+      Users.deleteViaApi(testData.user.userId);
+      Organizations.deleteOrganizationViaApi(testData.organization.id);
+    });
   });
 
   it(
     'C377030 "Available balance" is displayed as a negative number when running a deficit (thunderjet)',
-    { tags: ['criticalPathBroken', 'thunderjet', 'C377030'] },
+    { tags: ['criticalPath', 'thunderjet', 'C377030'] },
     () => {
-      FinanceHelp.searchByName(defaultFiscalYear.name);
-      FiscalYears.selectFiscalYear(defaultFiscalYear.name);
-      FiscalYears.checkAvailableBalance('$1,000.00', '($100.00)');
-      FiscalYears.clickOnLedgerTab();
-      FinanceHelp.searchByName(defaultLedger.name);
-      Ledgers.selectLedger(defaultLedger.name);
-      FiscalYears.checkAvailableBalance('$1,000.00', '($100.00)');
-      Ledgers.clickOnFundTab();
-      FinanceHelp.searchByName(defaultFund.name);
-      Funds.selectFund(defaultFund.name);
-      Funds.selectBudgetDetails();
-      FiscalYears.checkAvailableBalance('$1,000.00', '($100.00)');
+      const format = (value) => NumberTools.formatCurrency(value, testData.locale);
+      const deficit = format(allocatedAmount - orderLinePrice);
+      const balance = { cash: format(allocatedAmount), available: deficit };
+
+      // Step 1: Open "Fiscal year #1" details
+      FinanceHelper.searchByName(testData.fiscalYear.name);
+      const FiscalYearDetails = FiscalYears.selectFiscalYear(testData.fiscalYear.name);
+      FiscalYearDetails.checkFiscalYearDetails({
+        financialSummary: { balance },
+        ledgers: [{ name: testData.ledger.name, available: deficit }],
+        groups: [{ name: testData.group.name, available: deficit }],
+        funds: [{ name: testData.fund.name, available: deficit }],
+      });
+
+      // Steps 2-3: Open Ledger details
+      FinanceHelper.selectLedgersNavigation();
+      FinanceHelper.searchByName(testData.ledger.name);
+      const LedgerDetails = Ledgers.selectLedger(testData.ledger.name);
+      LedgerDetails.checkLedgerDetails({ financialSummary: { balance } });
+
+      // Steps 4-5: Open Group details
+      FinanceHelper.selectGroupsNavigation();
+      Groups.searchByName(testData.group.name);
+      const GroupDetails = Groups.selectGroupByName(testData.group.name);
+      GroupDetails.checkGroupDetails({ financialSummary: { balance } });
+
+      // Steps 6-7: Open "Fund A" details
+      FinanceHelper.selectFundsNavigation();
+      FinanceHelper.searchByName(testData.fund.name);
+      Funds.selectFund(testData.fund.name);
+      FundDetails.checkFundDetails({
+        currentBudget: {
+          name: testData.budget.name,
+          allocated: format(allocatedAmount),
+          available: deficit,
+        },
+      });
     },
   );
 });
