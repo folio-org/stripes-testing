@@ -118,10 +118,10 @@ export default {
     };
   },
   deleteBudgetWithFundLedgerAndFYViaApi({ id: budgetId, fundId, ledgerId, fiscalYearId }) {
-    this.deleteViaApi(budgetId);
-    Funds.deleteFundViaApi(fundId);
-    Ledgers.deleteLedgerViaApi(ledgerId);
-    FiscalYears.deleteFiscalYearViaApi(fiscalYearId);
+    this.deleteViaApi(budgetId, false);
+    Funds.deleteFundViaApi(fundId, false);
+    Ledgers.deleteLedgerViaApi(ledgerId, false);
+    FiscalYears.deleteFiscalYearViaApi(fiscalYearId, false);
   },
 
   batchProcessTransactions(batchBody) {
