@@ -55,6 +55,7 @@ const generatePackageBodyForUpdate = (updatedPackageData) => {
       type: updatedPackageData.type,
       attributes: {
         name: updatedPackageData.attributes.name,
+        customDisplayName: updatedPackageData.attributes.customDisplayName,
         isSelected: updatedPackageData.attributes.isSelected,
         allowKbToAddTitles: updatedPackageData.attributes.allowKbToAddTitles,
         contentType: updatedPackageData.attributes.contentType,
@@ -248,6 +249,19 @@ export default {
     cy.expect(
       resultSection
         .find(ListItem({ className: including('list-item-'), h3Value: packageName }))
+        .exists(),
+    );
+  },
+
+  verifyPackageWithPackageDisplayNameExistsInResults(packageName, packageDisplayName) {
+    cy.expect(
+      resultSection
+        .find(
+          ListItem({
+            className: including('list-item-'),
+            h3Value: `${packageName} (${packageDisplayName})`,
+          }),
+        )
         .exists(),
     );
   },
@@ -462,6 +476,15 @@ export default {
           beginCoverage: beginDate,
           endCoverage: endDate,
         };
+        this.updatePackageViaApi(data);
+      });
+    });
+  },
+
+  setPackageCustomDisplayNameViaAPI(packageName, customDisplayName) {
+    this.getPackageViaApi(packageName).then((searchResponse) => {
+      this.getPackageDataViaApi(searchResponse.body.data[0].id).then(({ body: { data } }) => {
+        data.attributes.customDisplayName = customDisplayName;
         this.updatePackageViaApi(data);
       });
     });
