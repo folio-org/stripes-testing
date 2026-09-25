@@ -20,4 +20,5 @@ export const FINANCIAL_ACTIVITY_OVERRAGES = {
 
 export const FISCAL_YEARS_VIEW_FIELDS = {
   NAME: 'Name',
+  PERIOD_END_DATE: 'Period End Date (UTC)',
 };
