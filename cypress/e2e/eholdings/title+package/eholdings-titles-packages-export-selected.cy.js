@@ -161,15 +161,14 @@ describe('eHoldings', () => {
               ExportManagerSearchPane.searchByEHoldings();
 
               // Step 11: verify the job row - Job ID, Status, Job type, Source all in one row
+              // Step 12: download the exported ".csv" file by clicking the "Job ID" hyperlink
+              ExportManagerSearchPane.exportJobRecursively({ jobId });
               ExportManagerSearchPane.verifyJobDataInResults([
                 jobId,
                 'Successful',
                 'eHoldings',
                 testData.user.username,
               ]);
-
-              // Step 12: download the exported ".csv" file by clicking the "Job ID" hyperlink
-              ExportManagerSearchPane.exportJobRecursively({ jobId });
 
               // Verify the downloaded file name matches "..._<<resourceId>>_resource.csv" - must
               // run inside this callback (after the download actually completes) and after
@@ -196,9 +195,12 @@ describe('eHoldings', () => {
               cy.expect(data[0]['Custom Alternative Names']).to.equal(
                 testData.package.customAltNames.join(' | '),
               );
-              EHOLDINGS_PACKAGE_HEADERS.forEach((header) => {
-                cy.expect(data[0]).to.have.property(header);
-              });
+              // A single assertion over all headers at once instead of looping cy.expect per
+              // header, which just adds command-log overhead without checking anything extra
+              const missingPackageHeaders = EHOLDINGS_PACKAGE_HEADERS.filter(
+                (header) => !(header in data[0]),
+              );
+              expect(missingPackageHeaders, 'Missing Package CSV columns').to.have.length(0);
               verifyNoSemicolonSeparatedValues(data[0], PACKAGE_MULTI_VALUE_FIELDS);
             });
 
@@ -212,9 +214,10 @@ describe('eHoldings', () => {
               cy.expect(data.length).to.equal(1);
               cy.expect(data[0]['Title Name']).to.equal(testData.recource.title);
               cy.expect(data[0]['Title Holdings Status']).to.equal(testData.package.status);
-              EHOLDINGS_TITLE_HEADERS.forEach((header) => {
-                cy.expect(data[0]).to.have.property(header);
-              });
+              const missingTitleHeaders = EHOLDINGS_TITLE_HEADERS.filter(
+                (header) => !(header in data[0]),
+              );
+              expect(missingTitleHeaders, 'Missing Title CSV columns').to.have.length(0);
               // Multi-value fields (e.g. Contributors, ISBN Online, Subjects) must use " | " -
               // never ";" - to separate multiple values within the same field
               verifyNoSemicolonSeparatedValues(data[0], TITLE_MULTI_VALUE_FIELDS);
