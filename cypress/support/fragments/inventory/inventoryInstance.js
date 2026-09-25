@@ -1892,6 +1892,13 @@ export default {
             .has({ content: including(item.receiptStatus) }),
         );
       }
+      if (item.dateOpened) {
+        cy.expect(
+          acquisitionAccordion
+            .find(MultiColumnListCell({ row: index, column: 'Date opened' }))
+            .has({ content: including(item.dateOpened) }),
+        );
+      }
       if (item.unit) {
         cy.expect(
           acquisitionAccordion

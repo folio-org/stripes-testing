@@ -17,6 +17,8 @@ export default {
     return `$${Number(amount).toFixed(2)} could not be transferred to the budget ${firstBudgetName} because it exceeds the allowable expenditure limit for ${secondBudgetName} and ledger fund restrictions are active.`;
   },
   totalAllocationCannotBeLessThanZero: 'Total allocation cannot be less than zero',
+  exportAllocationStartedSuccessfully:
+    'Please wait while the worksheet is generated. Your download will start automatically',
 
   // API errorCodes
   budgetNotFoundForFiscalYear: 'budgetNotFoundForFiscalYear',

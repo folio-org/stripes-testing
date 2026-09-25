@@ -456,6 +456,10 @@ export default {
     }
   },
 
+  checkReceivingHistoryCount(count) {
+    cy.expect(receivingHistorySection.find(MultiColumnList()).has({ rowCount: count }));
+  },
+
   checkNotesByType(
     noteTypeRowIndex,
     columnHeader,
