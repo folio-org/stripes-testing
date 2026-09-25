@@ -10,7 +10,7 @@ import {
   TRANSACTION_TYPES,
 } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
-import { Budgets, TransactionDetails } from '../../support/fragments/finance';
+import { Budgets, Funds, TransactionDetails } from '../../support/fragments/finance';
 import { InvoiceLineDetails, Invoices, InvoiceView } from '../../support/fragments/invoices';
 import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
@@ -198,12 +198,25 @@ describe('Invoices', () => {
             { key: TRANSACTION_DETAIL_FIELDS.INITIAL_ENCUMBRANCE, value: '$100.00' },
             { key: TRANSACTION_DETAIL_FIELDS.AWAITING_PAYMENT, value: '$150.00' },
             { key: TRANSACTION_DETAIL_FIELDS.EXPENDED, value: '$0.00' },
-            { key: TRANSACTION_DETAIL_FIELDS.STATUS, value: ENCUMBRANCE_STATUSES.UNRELEASED },
+            { key: TRANSACTION_DETAIL_FIELDS.STATUS, value: ENCUMBRANCE_STATUSES.RELEASED },
           ],
         });
 
-        // Step 3 is skipped: it is required only before MODINVOICE-628 is resolved
-
+        // Step 3: Unrelease encumbrace
+        Funds.unreleaseEncumbrance();
+        TransactionDetails.checkTransactionDetails({
+          information: [
+            { key: TRANSACTION_DETAIL_FIELDS.FISCAL_YEAR, value: testData.fiscalYear.code },
+            { key: TRANSACTION_DETAIL_FIELDS.AMOUNT, value: '$0.00' },
+            { key: TRANSACTION_DETAIL_FIELDS.SOURCE, value: testData.orderLine.poLineNumber },
+            { key: TRANSACTION_DETAIL_FIELDS.TYPE, value: TRANSACTION_TYPES.ENCUMBRANCE },
+            { key: TRANSACTION_DETAIL_FIELDS.FROM, value: testData.fund.name },
+            { key: TRANSACTION_DETAIL_FIELDS.INITIAL_ENCUMBRANCE, value: '$100.00' },
+            { key: TRANSACTION_DETAIL_FIELDS.AWAITING_PAYMENT, value: '$150.00' },
+            { key: TRANSACTION_DETAIL_FIELDS.EXPENDED, value: '$0.00' },
+            { key: TRANSACTION_DETAIL_FIELDS.STATUS, value: ENCUMBRANCE_STATUSES.UNRELEASED },
+          ],
+        });
         // Step 4: Cancel Invoice #2
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
         Invoices.selectInvoiceByNumber(testData.invoices.second.vendorInvoiceNo);
