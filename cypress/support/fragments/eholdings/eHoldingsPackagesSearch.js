@@ -31,6 +31,15 @@ export default {
     cy.do(selectionStatusAccordion.find(RadioButton(selectionStatus)).click());
     eHoldingsPackages.waitLoading();
   },
+  // Opens the accordion, checks the given options, then closes it again so a following
+  // bySelectionStatus() call (which always toggles the header open) still works as expected
+  verifySelectionStatusOptions: (options) => {
+    cy.do(selectionStatusAccordion.clickHeader());
+    options.forEach((option) => {
+      cy.expect(selectionStatusAccordion.find(RadioButton(option)).exists());
+    });
+    cy.do(selectionStatusAccordion.clickHeader());
+  },
   byName(name = '*') {
     cy.do(TextField({ id: 'eholdings-search' }).fillIn(name));
     cy.do(Button('Search').click());
