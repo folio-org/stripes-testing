@@ -116,16 +116,24 @@ const packageExportFieldOptions = [
   'Access Status Type',
   'Agreements',
   'Automatically Select titles',
+  'Custom alternative names',
   'Custom Coverage',
+  'Custom description',
+  'Exclude from MARC export',
   'Hide in Full Text Finder',
   'Hide in Publication Finder',
   'Holdings status',
+  'Managed alternative names',
+  'Managed description',
   'Notes',
+  'Package access',
   'Package Content Type',
+  'Package display name',
   'Package Id',
   'Package Level Token',
   'Package Name',
   'Package Type',
+  'Package URL',
   'Provider Id',
   'Provider Level Token',
   'Provider Name',
@@ -212,6 +220,7 @@ export default {
 
   selectPackageFieldsToExport: (value) => {
     cy.do(packageFieldsSelect.select(value));
+    cy.expect(packageFieldsSelect.has({ selected: including(value) }));
   },
 
   clickExportSelectedTitleFields() {

@@ -27,12 +27,21 @@ describe('eHoldings', () => {
       packageName: 'Gale OneFile: Science',
       fileName: `C353946autoTestFile${getRandomPostfix()}.csv`,
       fileMask: '*_resource.csv',
+      packageData: `C353946_package_data_${getRandomPostfix()}.csv`,
+      titleData: `C353946_title_data_${getRandomPostfix()}.csv`,
     };
     const calloutMessage =
       'is in progress and will be available on the Export manager app. The export may take several minutes to complete.';
 
     before('Creating user, logging in', () => {
       cy.getAdminToken();
+      EHoldingsPackages.getPackageViaApi(testData.packageName).then(({ body }) => {
+        const matchedPackage = body.data.find(
+          (pack) => pack.attributes.name === testData.packageName,
+        );
+        testData.packageId = matchedPackage.id;
+      });
+
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
         Permissions.uiAgreementsSearchAndView.gui,
@@ -53,6 +62,8 @@ describe('eHoldings', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
+      FileManager.deleteFileFromDownloadsByMask(testData.packageData);
+      FileManager.deleteFileFromDownloadsByMask(testData.titleData);
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     });
 
@@ -60,51 +71,108 @@ describe('eHoldings', () => {
       'C353946 Export of selected "Package+Title" with all fields of "Package" and "Title" selected by multi-select option (promin)',
       { tags: ['extendedPath', 'promin', 'C353946'] },
       () => {
+        // Step 1-2: Fill in the search query, click "Search"
         EHoldingsPackagesSearch.byName(testData.packageName);
+        EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();
+
+        // Step 3: "Selection status" accordion shows All/Selected/Not selected options
+        EHoldingsPackagesSearch.verifySelectionStatusOptions(['All', 'Selected', 'Not selected']);
+
+        // Step 4: Click on the "Selected" status
         EHoldingsPackagesSearch.bySelectionStatus(FILTER_STATUSES.SELECTED);
         EHoldingsPackages.verifyPackageInResults(testData.packageName);
 
+        // Step 5: Click on the "Package" record titled "Gale OneFile: Science"
         EHoldingsPackages.openPackage();
         EHoldingsPackageView.waitLoading();
 
+        // Step 6: Titles accordion - click on a "Title" record with "Selected" status
         EHoldingsPackageView.selectTitleRecord();
+        eHoldingsResourceView.getResourceDetails().then((details) => {
+          testData.resource = details;
+        });
 
+        // Step 7: Actions > "Export package (CSV)" - openExportModal() verifies the modal
+        // content itself (with packageView: false, since opened from the Title/Resource view)
         eHoldingsResourceView.openExportModal();
 
+        // Step 8: switch both sections to "Export selected fields" - Export button disabled
         EHoldingsPackageView.clickExportSelectedPackageFields();
         EHoldingsPackageView.clickExportSelectedTitleFields();
         ExportSettingsModal.verifyExportButtonDisabled();
 
+        // Step 9-10: select every Package field - Export button becomes enabled
         EHoldingsPackageView.verifySelectedPackageFieldsOptions();
         EHOLDINGS_EXPORT_FIELDS.PACKAGE.forEach((packageField) => {
           EHoldingsPackageView.selectPackageFieldsToExport(packageField);
         });
         EHoldingsPackageView.verifySelectedPackageFieldsToExport(EHOLDINGS_EXPORT_FIELDS.PACKAGE);
+        ExportSettingsModal.verifyExportButtonDisabled(false);
 
+        // Step 11-12: select every Title field
         EHoldingsPackageView.verifySelectedTitleFieldsOptions();
         EHOLDINGS_EXPORT_FIELDS.TITLE.forEach((titleField) => {
           EHoldingsPackageView.selectTitleFieldsToExport(titleField);
         });
         EHoldingsPackageView.verifySelectedTitleFieldsToExport(EHOLDINGS_EXPORT_FIELDS.TITLE);
 
+        // Step 13: click "Export" - back on the Title detail view, success toast shown
         ExportSettingsModal.clickExportButton();
+        eHoldingsResourceView.waitLoading();
         EHoldingsPackageView.verifyCalloutMessage(calloutMessage);
-        EHoldingsPackageView.getJobIDFromCalloutMessage().then((id) => {
-          const jobId = id;
 
+        EHoldingsPackageView.getJobIDFromCalloutMessage().then((jobId) => {
+          // Step 14: Export manager - verify the job row (Job ID, Status, Job type, Source)
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EXPORT_MANAGER);
           ExportManagerSearchPane.searchByEHoldings();
-          ExportManagerSearchPane.verifyResult(jobId);
 
-          ExportManagerSearchPane.exportJob(jobId);
+          // Step 15: download the exported ".csv" file, verify its name format
+          ExportManagerSearchPane.exportJobRecursively({ jobId });
+          ExportManagerSearchPane.verifyJobDataInResults([
+            jobId,
+            'Successful',
+            'eHoldings',
+            testData.user.username,
+          ]);
           ExportFile.downloadCSVFile(testData.fileName, testData.fileMask);
+
           FileManager.verifyFile(
             eHoldingsResourceView.verifyPackagesResourceExportedFileName,
             testData.fileMask,
             ExportManagerSearchPane.verifyContentOfExportFile,
-            ...EHOLDINGS_PACKAGE_HEADERS,
-            ...EHOLDINGS_TITLE_HEADERS,
+            [testData.packageName],
           );
+
+          // Step 16: "Package" row (1st row) - known values, all Package fields are present
+          FileManager.writeToSeparateFile({
+            readFileName: testData.fileMask,
+            writeFileName: testData.packageData,
+            lines: [0, 2],
+          });
+          FileManager.convertCsvToJson(testData.packageData).then((data) => {
+            cy.expect(data[0]['Package Name']).to.equal(testData.packageName);
+            cy.expect(data[0]['Package Id']).to.equal(testData.packageId);
+            const missingPackageHeaders = EHOLDINGS_PACKAGE_HEADERS.filter(
+              (header) => !(header in data[0]),
+            );
+            expect(missingPackageHeaders, 'Missing Package CSV columns').to.have.length(0);
+          });
+
+          // Step 16: "Title" row (starting 4th row) - only 1 Title record, known value, and
+          // all Title fields are present
+          FileManager.writeToSeparateFile({
+            readFileName: testData.fileMask,
+            writeFileName: testData.titleData,
+            lines: [2],
+          });
+          FileManager.convertCsvToJson(testData.titleData).then((data) => {
+            cy.expect(data.length).to.equal(1);
+            cy.expect(data[0]['Title Name']).to.equal(testData.resource.title);
+            const missingTitleHeaders = EHOLDINGS_TITLE_HEADERS.filter(
+              (header) => !(header in data[0]),
+            );
+            expect(missingTitleHeaders, 'Missing Title CSV columns').to.have.length(0);
+          });
         });
       },
     );
