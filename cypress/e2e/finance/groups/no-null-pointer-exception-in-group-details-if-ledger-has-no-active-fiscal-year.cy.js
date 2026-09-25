@@ -106,7 +106,7 @@ describe('Finance', () => {
           information: [
             {
               key: FISCAL_YEARS_VIEW_FIELDS.PERIOD_END_DATE,
-              value: `12/31/${previousYear}, 11:59 PM`,
+              value: `12/31/${previousYear}, 12:00 AM`,
             },
           ],
         });
