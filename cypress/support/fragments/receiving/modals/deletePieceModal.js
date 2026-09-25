@@ -8,6 +8,8 @@ const confirmButton = Button('Confirm');
 const cancelButton = deletePieceModal.find(Button('Cancel'));
 const deleteHoldingsButton = deletePieceModal.find(Button('Delete Holdings and Item'));
 const deleteItemButton = deletePieceModal.find(Button('Delete item'));
+const deleteOnlyHoldingsButton = deletePieceModal.find(Button('Delete Holdings'));
+const deletePieceButton = deletePieceModal.find(Button('Delete'));
 
 const content =
   'This piece is connected to records in inventory. There are no other items connected to the related Holdings record. After deleting this piece would you like FOLIO to delete the Holdings?';
@@ -16,8 +18,16 @@ export default {
   waitLoading() {
     cy.expect(deletePieceModal.exists());
   },
-  verifyModalView(lsLastPiece = true) {
-    if (lsLastPiece) {
+  verifyModalView(lsLastPiece = true, { hasItem = true } = {}) {
+    if (lsLastPiece && !hasItem) {
+      cy.expect([
+        deletePieceModal.has({ header: 'Delete piece' }),
+        deletePieceModal.has({ message: content }),
+        cancelButton.has({ disabled: false, visible: true }),
+        deleteOnlyHoldingsButton.has({ disabled: false, visible: true }),
+        deletePieceButton.has({ disabled: false, visible: true }),
+      ]);
+    } else if (lsLastPiece) {
       cy.expect([
         deletePieceModal.has({ header: 'Delete piece' }),
         deletePieceModal.has({ message: content }),
@@ -43,6 +53,9 @@ export default {
   },
   clickDeleteItemButton({ pieceDeleted = true } = {}) {
     this.clickDeleteButton({ button: deleteItemButton, pieceDeleted });
+  },
+  clickDeletePieceButton({ pieceDeleted = true } = {}) {
+    this.clickDeleteButton({ button: deletePieceButton, pieceDeleted });
   },
   clickConfirmButton({ pieceDeleted = true } = {}) {
     cy.expect(confirmButton.has({ disabled: false }));

@@ -138,7 +138,10 @@ describe('Data Import', () => {
           orderNumber = polNumber.replace(/-\d+$/, '');
         });
         productIdentifiers.forEach((id) => {
-          OrderLines.verifyProductIdentifier(id.identifier, id.productIdType, id.rowIndex);
+          OrderLines.verifyProductIdentifier(
+            { productId: id.identifier, productIdType: id.productIdType },
+            id.rowIndex,
+          );
         });
       },
     );

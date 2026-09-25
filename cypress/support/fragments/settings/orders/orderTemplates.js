@@ -111,6 +111,15 @@ export default {
       })
       .then(({ body }) => body);
   },
+  getOrderTemplateByNameViaApi(templateName) {
+    return cy
+      .okapiRequest({
+        path: 'orders/order-templates',
+        searchParams: { query: `templateName=="${templateName}"`, limit: 1 },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.orderTemplates?.[0]);
+  },
   deleteOrderTemplateViaApi(orderTemplateId) {
     return cy.okapiRequest({
       method: 'DELETE',
