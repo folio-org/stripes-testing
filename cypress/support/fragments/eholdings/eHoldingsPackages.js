@@ -60,6 +60,7 @@ const generatePackageBodyForUpdate = (updatedPackageData) => {
         allowKbToAddTitles: updatedPackageData.attributes.allowKbToAddTitles,
         contentType: updatedPackageData.attributes.contentType,
         customCoverage: updatedPackageData.attributes.customCoverage,
+        customAltNames: updatedPackageData.attributes.customAltNames,
         visibilityData: updatedPackageData.attributes.visibilityData,
         isCustom: updatedPackageData.attributes.isCustom,
         proxy: updatedPackageData.attributes.proxy,
@@ -343,12 +344,22 @@ export default {
   updatePackageViaApi(updatedPackageData) {
     const packageId = updatedPackageData.id;
     const packageBody = generatePackageBodyForUpdate(updatedPackageData);
-    cy.okapiRequest({
+    return cy.okapiRequest({
       method: 'PUT',
       path: `eholdings/packages/${packageId}`,
       contentTypeHeader: 'application/vnd.api+json',
       body: packageBody,
       isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  // Returns the package's previous "customAltNames" value, so a caller mutating a shared/live
+  // (non-test-owned) package can restore it afterward instead of leaving the change in place
+  setCustomAltNamesViaApi(packageId, customAltNames) {
+    return this.getPackageDataViaApi(packageId).then(({ body: { data } }) => {
+      const previousCustomAltNames = data.attributes.customAltNames;
+      data.attributes.customAltNames = customAltNames;
+      return this.updatePackageViaApi(data).then(() => previousCustomAltNames);
     });
   },
 
