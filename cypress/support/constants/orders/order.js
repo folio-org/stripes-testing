@@ -126,10 +126,22 @@ export const ORDER_VIEW_FIELD_LABELS = {
   TOTAL_CREDITED: 'Total credited',
   REASON_FOR_CLOSURE: 'Reason for closure',
   NOTES_ON_CLOSURE: 'Notes on closure',
+  ASSIGNED_TO: 'Assigned to',
+  BILL_TO: 'Bill to',
+  SHIP_TO: 'Ship to',
+  ACQUISITION_UNITS: 'Acquisition units',
+  MANUAL: 'Manual',
+  RE_ENCUMBER: 'Re-encumber',
+  SUBSCRIPTION: 'Subscription',
+  RENEWAL_INTERVAL: 'Renewal interval',
+  RENEWAL_DATE: 'Renewal date',
+  MANUAL_RENEWAL: 'Manual renewal',
+  NOTES: 'Notes',
 };
 
 export const ORDER_AND_ORDER_LINE_BUTTONS = {
   ADD_POL: 'Add POL',
   SAVE_AND_OPEN: 'Save & open order',
   CREATE_NEW_PURCHASE_ORDER: 'Create new purchase order',
+  SHOW_HIDDEN_FIELDS: 'Show hidden fields',
 };

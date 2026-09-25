@@ -75,3 +75,11 @@ export const getExportAddressFieldValue = (
     ? `"${addressMap.get(addressId).name}""${addressMap.get(addressId).address}"`
     : invalidReferenceLabel;
 };
+
+export const getFullName = (user) => {
+  const lastName = user?.personal?.lastName ?? '';
+  const firstName = user?.personal?.firstName ?? '';
+  const middleName = user?.personal?.middleName ?? '';
+
+  return `${lastName}${firstName ? ', ' : ' '}${firstName} ${middleName}`;
+};
