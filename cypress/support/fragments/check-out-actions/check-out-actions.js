@@ -374,6 +374,12 @@ export default {
     cy.expect(userPane.find(Link(including(partialName))).exists());
   },
 
+  verifyCustomFieldsAbsentInPatronPane(customFieldNames) {
+    customFieldNames.forEach((name) => {
+      cy.expect(userPane.find(HTML(including(name))).absent());
+    });
+  },
+
   waitLoading() {
     cy.expect(Pane('Scan patron card').exists());
     cy.expect(Pane('Scan items').exists());

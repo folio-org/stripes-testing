@@ -777,6 +777,10 @@ export default {
     cy.do(Accordion('Contact information').clickHeader());
   },
 
+  verifyNoAddressesFound() {
+    cy.expect(contactInformationAccordion.find(HTML(including('No addresses found'))).exists());
+  },
+
   verifyEmail(email) {
     cy.expect(KeyValue('Email').has({ value: email }));
   },
