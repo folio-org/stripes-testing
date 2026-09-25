@@ -29,6 +29,8 @@ export default {
   notEnoughMoneyInFundError(fundCode) {
     return `One or more fund distributions on this order can not be encumbered, because there is not enough money in [${fundCode}].`;
   },
+  notEnoughMoneyInFundsErrorPrefix:
+    'One or more fund distributions on this order can not be encumbered, because there is not enough money in',
   encumbranceNotUpdated:
     'The encumbrances were correctly created during the rollover or have already been updated.',
   noCurrentBudgetForFund(fundCode, fiscalYearCode) {
