@@ -28,6 +28,7 @@ describe('eHoldings', () => {
       packageExportFields: ['Agreements', 'Custom Coverage', 'Notes'],
       packageExportFieldsRearranged: ['Custom Coverage', 'Notes', 'Agreements'],
       titleExportFields: ['Contributors', 'Custom label', 'Description'],
+      titleExportFieldsRearranged: ['Custom label', 'Description', 'Contributors'],
       title: 'AAHE-ERIC/Higher Education Research Report',
     };
     const calloutMessage =
@@ -135,7 +136,10 @@ describe('eHoldings', () => {
         // Step 13-14: delete one Title field option, then re-add it by typing its value + Enter
         EHoldingsPackageView.closeTitleFieldOption(testData.titleExportFields[0]);
         EHoldingsPackageView.fillInTitleFieldsToExport(testData.titleExportFields[0]);
-        EHoldingsPackageView.verifySelectedTitleFieldsToExport(testData.titleExportFields);
+        EHoldingsPackageView.verifySelectedTitleFieldsToExport(
+          testData.titleExportFieldsRearranged,
+        );
+        cy.wait(2000);
 
         // Step 15: click "Export" - success toast shown
         ExportSettingsModal.clickExportButton();

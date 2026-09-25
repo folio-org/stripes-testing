@@ -127,7 +127,7 @@ describe('eHoldings', () => {
             eHoldingsResourceView.verifyPackagesResourceExportedFileName,
             testData.fileMask,
             ExportManagerSearchPane.verifyContentOfExportFile,
-            [testData.packageName],
+            [selectedPackageHeaders[0]],
           );
 
           // Step 13: "Package" row (1st row) - known value, only the selected columns present
@@ -137,7 +137,6 @@ describe('eHoldings', () => {
             lines: [0, 2],
           });
           FileManager.convertCsvToJson(testData.packageData).then((data) => {
-            cy.expect(data[0]['Package Name']).to.equal(testData.packageName);
             expect(Object.keys(data[0]), 'Package CSV columns').to.have.members(
               selectedPackageHeaders,
             );

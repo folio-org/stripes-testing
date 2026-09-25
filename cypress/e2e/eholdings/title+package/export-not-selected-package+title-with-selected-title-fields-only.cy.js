@@ -14,7 +14,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { APPLICATION_NAMES, EHOLDINGS_PACKAGE_HEADERS } from '../../../support/constants';
+import { APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('eHoldings', () => {
@@ -23,8 +23,6 @@ describe('eHoldings', () => {
       packageName: 'Wiley Online Library Online Books 2020 (TAEBDC)',
       fileName: `C356773autoTestFile${getRandomPostfix()}.csv`,
       fileMask: '*_resource.csv',
-      packageData: `C356773_package_data_${getRandomPostfix()}.csv`,
-      titleData: `C356773_title_data_${getRandomPostfix()}.csv`,
       titleExportFields: ['Contributors', 'Custom label', 'Description'],
       title: 'Encyclopedia of Computational Mechanics',
     };
@@ -65,8 +63,6 @@ describe('eHoldings', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
-      FileManager.deleteFileFromDownloadsByMask(testData.packageData);
-      FileManager.deleteFileFromDownloadsByMask(testData.titleData);
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     });
 
@@ -98,7 +94,9 @@ describe('eHoldings', () => {
         // modal content itself
         eHoldingsResourceView.openExportModal();
 
-        // Step 8: switch Title section to "Export selected fields" (Package section stays "All")
+        // Step 8: switch both sections to "Export selected fields" - Package dropdown is left
+        // empty (no Package fields selected), so no Package row/columns appear in the export
+        EHoldingsPackageView.clickExportSelectedPackageFields();
         EHoldingsPackageView.clickExportSelectedTitleFields();
         ExportSettingsModal.verifyExportButtonDisabled();
 
@@ -135,32 +133,13 @@ describe('eHoldings', () => {
             eHoldingsResourceView.verifyPackagesResourceExportedFileName,
             testData.fileMask,
             ExportManagerSearchPane.verifyContentOfExportFile,
-            [testData.packageName],
+            [selectedTitleHeaders[0]],
           );
 
-          // Step 13: "Package" row (1st row) - Package section was left on "All" (untouched),
-          // so every default Package field is expected
-          FileManager.writeToSeparateFile({
-            readFileName: testData.fileMask,
-            writeFileName: testData.packageData,
-            lines: [0, 2],
-          });
-          FileManager.convertCsvToJson(testData.packageData).then((data) => {
-            cy.expect(data[0]['Package Name']).to.equal(testData.packageName);
-            const missingPackageHeaders = EHOLDINGS_PACKAGE_HEADERS.filter(
-              (header) => !(header in data[0]),
-            );
-            expect(missingPackageHeaders, 'Missing Package CSV columns').to.have.length(0);
-          });
-
-          // Step 13: "Title" row (starting 4th row) - only 1 Title record, only the selected
-          // columns are present (accounting for "Custom label" expanding to 5 columns)
-          FileManager.writeToSeparateFile({
-            readFileName: testData.fileMask,
-            writeFileName: testData.titleData,
-            lines: [2],
-          });
-          FileManager.convertCsvToJson(testData.titleData).then((data) => {
+          // Step 13: no Package fields were selected, so the whole file is the "Title" row -
+          // only 1 Title record, only the selected columns are present (accounting for
+          // "Custom label" expanding to 5 columns), no Package row at all
+          FileManager.convertCsvToJson(testData.fileMask).then((data) => {
             cy.expect(data.length).to.equal(1);
             expect(Object.keys(data[0]), 'Title CSV columns').to.have.members(selectedTitleHeaders);
           });

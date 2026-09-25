@@ -334,6 +334,7 @@ export default {
 
   selectTitleFieldsToExport: (value) => {
     cy.do(titleFieldsSelect.select(value));
+    cy.expect(titleFieldsSelect.has({ selected: including(value) }));
   },
 
   verifySelectedTitleFieldsToExport(titleFieldsArray) {

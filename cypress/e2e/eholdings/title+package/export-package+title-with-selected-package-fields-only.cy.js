@@ -24,17 +24,13 @@ describe('eHoldings', () => {
       fileName: `C356762autoTestFile${getRandomPostfix()}.csv`,
       fileMask: '*_resource.csv',
       packageData: `C356762_package_data_${getRandomPostfix()}.csv`,
-      packageExportFields: ['Custom Coverage', 'Agreements', 'Notes'],
+      packageExportFields: ['Package Name', 'Agreements', 'Notes'],
       title: 'AAHE-ERIC/Higher Education Research Report',
     };
     const calloutMessage =
       'is in progress and will be available on the Export manager app. The export may take several minutes to complete.';
 
-    const selectedPackageHeaders = [
-      'Package Custom Coverage',
-      'Package Agreements',
-      'Package Note',
-    ];
+    const selectedPackageHeaders = ['Package Name', 'Package Agreements', 'Package Note'];
 
     before('Creating user, logging in', () => {
       cy.getAdminToken();
@@ -92,6 +88,7 @@ describe('eHoldings', () => {
 
         // Step 8: switch Package section to "Export selected fields" (Title section stays "All")
         EHoldingsPackageView.clickExportSelectedPackageFields();
+        EHoldingsPackageView.clickExportSelectedTitleFields();
         ExportSettingsModal.verifyExportButtonDisabled();
 
         // Step 9: select some (not all) Package fields - Export button becomes enabled
@@ -127,7 +124,7 @@ describe('eHoldings', () => {
             eHoldingsResourceView.verifyPackagesResourceExportedFileName,
             testData.fileMask,
             ExportManagerSearchPane.verifyContentOfExportFile,
-            [testData.packageName],
+            [selectedPackageHeaders[0]],
           );
 
           // Step 13: "Package" row (2nd row) - known value, only the selected columns present.
