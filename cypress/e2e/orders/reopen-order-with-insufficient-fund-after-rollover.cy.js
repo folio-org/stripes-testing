@@ -3,6 +3,7 @@ import {
   BUDGET_STATUSES,
   FUND_DISTRIBUTION_TYPES,
   FUND_STATUSES,
+  LEDGER_ROLLOVER_BUDGET_VALUE,
   LEDGER_STATUSES,
   ORDER_FORMAT_NAMES,
   ORDER_SEARCH_OPTIONS,
@@ -12,6 +13,7 @@ import {
   ORDER_VIEW_FIELD_LABELS,
   POL_CREATE_INVENTORY_SETTINGS,
   REQUEST_METHOD,
+  TRANSACTION_TYPES,
 } from '../../support/constants';
 import {
   Budgets,
@@ -53,6 +55,7 @@ const R = {
   ORDER_1: 'order1',
   ORDER_2: 'order2',
   USER: 'user',
+  LOCALE: 'locale',
 };
 
 const TEST_VALUES = {
@@ -62,11 +65,13 @@ const TEST_VALUES = {
   VENDOR_NAME: 'AT_C1464358_Vendor',
   VENDOR_CODE: 'AT_C1464358',
   ORDER_PREFIX: 'AT_C1464358_Order',
-  CURRENCY: { locale: 'en-US', currency: 'USD' },
   FUNDS_PARAMETER_KEY: 'finance.funds',
 };
 
-const expectedCurrency = (value) => formatCurrency(value, TEST_VALUES.CURRENCY);
+const expectedCurrency = (value, locale) => formatCurrency(value, {
+  locale: locale.locale,
+  currency: locale.currency,
+});
 
 const parseFundCodes = (value) => value
   .replace(/^\[|\]$/g, '')
@@ -85,7 +90,7 @@ const createFundDistribution = (fund, value, expenseClassId) => ({
 describe('Orders', () => {
   const flow = new ExecutionFlowManager();
   const postfix = getRandomPostfix();
-  const series = getRandomLetters(2);
+  const series = getRandomLetters(5);
 
   const waitForResults = (trigger) => PaneRequestWaiter.waitForPaneRequests({
     pane: PANE_REQUEST_PROFILE_NAMES.ORDERS,
@@ -112,12 +117,18 @@ describe('Orders', () => {
             acquisitionMethod: body.acquisitionMethods[0].id,
             purchaseOrderId: createdOrder.id,
             listUnitPrice: TEST_VALUES.LINE_PRICE,
+            currency: f.get(R.LOCALE).currency,
             fundDistribution: [fundDistribution],
             orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE,
             locations: [],
             physical: { createInventory: POL_CREATE_INVENTORY_SETTINGS.NONE },
           }),
         ))
+        .then((createdOrderLine) => {
+          expect(createdOrderLine.cost.currency).to.equal(f.get(R.LOCALE).currency);
+
+          return createdOrderLine;
+        })
         .then(() => Orders.updateOrderViaApi({
           ...createdOrder,
           workflowStatus: ORDER_STATUSES.OPEN,
@@ -160,9 +171,12 @@ describe('Orders', () => {
       summary: [
         {
           key: ORDER_VIEW_FIELD_LABELS.TOTAL_ESTIMATED_PRICE,
-          value: expectedCurrency(TEST_VALUES.LINE_PRICE),
+          value: expectedCurrency(TEST_VALUES.LINE_PRICE, flow.get(R.LOCALE)),
         },
-        { key: ORDER_VIEW_FIELD_LABELS.TOTAL_ENCUMBERED, value: expectedCurrency(0) },
+        {
+          key: ORDER_VIEW_FIELD_LABELS.TOTAL_ENCUMBERED,
+          value: expectedCurrency(0, flow.get(R.LOCALE)),
+        },
       ],
     });
   };
@@ -170,6 +184,10 @@ describe('Orders', () => {
   before('Create C1464358 preconditions', () => {
     cy.getAdminToken();
     cy.clearLocalStorage();
+
+    cy.getTenantLocaleApi().then((locale) => {
+      flow.set(R.LOCALE, locale, (originalLocale) => cy.setTenantLocaleApi(originalLocale));
+    });
 
     flow
       .step((f) => {
@@ -179,21 +197,29 @@ describe('Orders', () => {
 
         const fiscalYear1 = {
           ...FiscalYears.getDefaultFiscalYear(),
+          currency: f.get(R.LOCALE).currency,
           code: `FYA${series}${new Date().getFullYear()}`,
           ...DateTools.getFullFiscalYearStartAndEnd(0),
         };
         const fiscalYear2 = {
           ...FiscalYears.getDefaultFiscalYear(),
+          currency: f.get(R.LOCALE).currency,
           code: `FYA${series}${new Date().getFullYear() + 1}`,
           ...DateTools.getFullFiscalYearStartAndEnd(1),
         };
 
         return FiscalYears.createViaApi(fiscalYear1)
-          .then((createdFY1) => f.set(R.FY1, createdFY1, () => FiscalYears.deleteFiscalYearViaApi(createdFY1.id, false)))
+          .then((createdFY1) => {
+            expect(createdFY1.currency).to.equal(f.get(R.LOCALE).currency);
+            return f.set(R.FY1, createdFY1, () => FiscalYears.deleteFiscalYearViaApi(createdFY1.id, false));
+          })
           .then(() => FiscalYears.createViaApi(fiscalYear2))
-          .then((createdFY2) => f.set(R.FY2, createdFY2, () => Budgets.getBudgetViaApi({ query: `fiscalYearId==${createdFY2.id}` })
-            .then(({ budgets = [] }) => budgets.forEach(({ id }) => Budgets.deleteViaApi(id, false)))
-            .then(() => FiscalYears.deleteFiscalYearViaApi(createdFY2.id, false))));
+          .then((createdFY2) => {
+            expect(createdFY2.currency).to.equal(f.get(R.LOCALE).currency);
+            return f.set(R.FY2, createdFY2, () => Budgets.getBudgetViaApi({ query: `fiscalYearId==${createdFY2.id}` })
+              .then(({ budgets = [] }) => budgets.forEach(({ id }) => Budgets.deleteViaApi(id, false)))
+              .then(() => FiscalYears.deleteFiscalYearViaApi(createdFY2.id, false)));
+          });
       })
       .step((f) => {
         cy.log(
@@ -290,8 +316,8 @@ describe('Orders', () => {
             {
               rolloverAllocation: true,
               adjustAllocation: Number(TEST_VALUES.ROLLOVER_ADJUSTMENT),
-              rolloverBudgetValue: 'None',
-              addAvailableTo: 'Allocation',
+              rolloverBudgetValue: LEDGER_ROLLOVER_BUDGET_VALUE.NONE,
+              addAvailableTo: TRANSACTION_TYPES.ALLOCATION,
               setAllowances: false,
             },
           ],
@@ -353,9 +379,12 @@ describe('Orders', () => {
         summary: [
           {
             key: ORDER_VIEW_FIELD_LABELS.TOTAL_ESTIMATED_PRICE,
-            value: expectedCurrency(TEST_VALUES.LINE_PRICE),
+            value: expectedCurrency(TEST_VALUES.LINE_PRICE, flow.get(R.LOCALE)),
           },
-          { key: ORDER_VIEW_FIELD_LABELS.TOTAL_ENCUMBERED, value: expectedCurrency(0) },
+          {
+            key: ORDER_VIEW_FIELD_LABELS.TOTAL_ENCUMBERED,
+            value: expectedCurrency(0, flow.get(R.LOCALE)),
+          },
         ],
       });
 
