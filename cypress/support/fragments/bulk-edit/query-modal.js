@@ -458,6 +458,7 @@ export const organizationFieldValues = {
   code: 'Organization — Code',
   name: 'Organization — Name',
   uuid: 'Organization — UUID',
+  typeNames: 'Organization — Type names',
 };
 export const purchaseOrderLinesFieldValues = {
   poNumber: 'PO — PO number',
