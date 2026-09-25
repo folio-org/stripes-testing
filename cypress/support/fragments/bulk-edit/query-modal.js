@@ -438,6 +438,7 @@ export const organizationFieldValues = {
   code: 'Organization — Code',
   name: 'Organization — Name',
   uuid: 'Organization — UUID',
+  typeNames: 'Organization — Type names',
 };
 export const purchaseOrderLinesFieldValues = {
   poNumber: 'PO — PO number',
@@ -1607,5 +1608,12 @@ export default {
     const targetCell = MultiColumnListCell(partialMatch ? including(expectedValue) : expectedValue);
     if (isFound) cy.expect(targetCell.exists());
     else cy.expect(targetCell.absent());
+  },
+
+  verifyAllPreviewRowsContain(expectedText) {
+    cy.get('[id="results-viewer-table"] [data-row-index]').should(($rows) => {
+      expect($rows.length, 'preview rows').to.be.greaterThan(0);
+      [...$rows].forEach((row) => expect(row.innerText).to.contain(expectedText));
+    });
   },
 };
