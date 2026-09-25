@@ -56,7 +56,7 @@ describe('Calendar', () => {
 
     it(
       'C365116 Permissions -> User with Settings (Calendar): Can create and assign new calendars (bama)',
-      { tags: ['smokeBama', 'bama'] },
+      { tags: ['smokeBama', 'bama', 'C365116'] },
       () => {
         PaneActions.allCalendarsPane.openAllCalendarsPane();
         PaneActions.allCalendarsPane.checkActionMenuPresent();

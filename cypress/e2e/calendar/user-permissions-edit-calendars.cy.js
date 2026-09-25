@@ -56,7 +56,7 @@ describe('Calendar', () => {
 
     it(
       'C365118 Permissions -> User with Settings (Calendar): Can edit and reassign existing calendars (bama)',
-      { tags: ['smokeBama', 'bama'] },
+      { tags: ['smokeBama', 'bama', 'C365118'] },
       () => {
         PaneActions.allCalendarsPane.openAllCalendarsPane();
         PaneActions.allCalendarsPane.checkActionMenuAbsent();
