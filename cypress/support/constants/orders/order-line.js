@@ -167,6 +167,9 @@ export const POLINE_DETAILS_FIELDS = {
   CURRENCY: 'Currency',
   EXPENSE_CLASS: 'Expense class',
   EXCHANGE_RATE: 'Exchange rate',
+  CURRENT_EXCHANGE_RATE: 'Current exchange rate',
+  USE_SET_EXCHANGE_RATE: 'Use set exchange rate',
+  SET_EXCHANGE_RATE: 'Set exchange rate',
   USER_LIMIT: 'User limit',
   RECEIVING_NOTE: 'Receiving note',
 };

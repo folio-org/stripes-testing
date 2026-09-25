@@ -51,6 +51,15 @@ const infoSectionFields = {
   billTo: orderInfoSection.find(Selection('Bill to')),
   shipTo: orderInfoSection.find(Selection('Ship to')),
   tags: orderInfoSection.find(MultiSelect({ label: 'Tags' })),
+  manualPo: orderInfoSection.find(Checkbox({ name: 'manualPo' })),
+  reEncumber: orderInfoSection.find(Checkbox({ name: 'reEncumber' })),
+};
+
+const templateNameSelection = orderEditFormRoot.find(Selection(including('Template name')));
+
+const customFields = {
+  select: (label) => orderEditFormRoot.find(Select(label)),
+  textArea: (label) => orderEditFormRoot.find(TextArea(label)),
 };
 
 const ongoingInformationFields = {
@@ -139,6 +148,20 @@ export default {
   },
   checkOngoingOrderInformationSection(fields = []) {
     this.checkFieldsConditions({ fields, section: ongoingInformationFields });
+  },
+  verifyOngoingOrderInformationSectionAbsent() {
+    cy.expect(ongoingInformationSection.absent());
+  },
+  checkCustomFieldsSection(fields = []) {
+    fields.forEach(({ type, label, conditions }) => {
+      cy.expect(customFields[type](label).has(conditions));
+    });
+  },
+  verifySelectedOrderTemplate(templateName) {
+    cy.expect(templateNameSelection.has({ value: including(templateName) }));
+  },
+  selectBlankOrderTemplate() {
+    cy.do([templateNameSelection.open(), SelectionList().select('')]);
   },
   getOrderNumber() {
     return cy.then(() => infoSectionFields.poNumber.value());
