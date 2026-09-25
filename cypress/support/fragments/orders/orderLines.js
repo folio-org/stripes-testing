@@ -2557,26 +2557,34 @@ export default {
     ]);
   },
 
-  verifyProductIdentifier: (productId, productIdType, rowIndex = 0) => {
-    if (productIdType) {
-      cy.expect([
-        MultiColumnList({ id: 'list-product-ids' })
-          .find(MultiColumnListRow({ index: rowIndex }))
-          .find(MultiColumnListCell({ columnIndex: 0 }))
-          .has({ content: productId }),
-        MultiColumnList({ id: 'list-product-ids' })
-          .find(MultiColumnListRow({ index: rowIndex }))
-          .find(MultiColumnListCell({ columnIndex: 2 }))
-          .has({ content: productIdType }),
-      ]);
-    } else {
+  verifyProductIdentifier: ({ productId, qualifier, productIdType }, rowIndex = 0) => {
+    const productIdRow = MultiColumnList({ id: 'list-product-ids' }).find(
+      MultiColumnListRow({ index: rowIndex }),
+    );
+
+    if (productId !== undefined) {
       cy.expect(
-        MultiColumnList({ id: 'list-product-ids' })
-          .find(MultiColumnListRow({ index: rowIndex }))
-          .find(MultiColumnListCell({ columnIndex: 0 }))
+        productIdRow
+          .find(MultiColumnListCell({ column: 'Product ID' }))
           .has({ content: productId }),
       );
     }
+    if (qualifier !== undefined) {
+      cy.expect(
+        productIdRow.find(MultiColumnListCell({ column: 'Qualifier' })).has({ content: qualifier }),
+      );
+    }
+    if (productIdType !== undefined) {
+      cy.expect(
+        productIdRow
+          .find(MultiColumnListCell({ column: 'Product ID type' }))
+          .has({ content: productIdType }),
+      );
+    }
+  },
+
+  verifyTextAbsentInItemDetails(text) {
+    cy.expect(itemDetailsSection.find(HTML(including(text))).absent());
   },
 
   openDonorInformationSection() {

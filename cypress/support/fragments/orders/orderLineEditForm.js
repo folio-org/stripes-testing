@@ -96,6 +96,8 @@ const FORM_LABELS = {
   REMOVE_FISCAL_YEAR: 'Remove fiscal year',
   SHOW_HIDDEN_FIELDS: 'Show hidden fields',
   ADD_PRODUCT_ID: 'Add product ID and product ID type',
+  RECEIVING_RECORDS_MESSAGE:
+    'This order has receiving records. These quantities can only be edited by working with the records in the receiving app.',
 };
 const FIELD_SELECTORS = {
   LOCATION_ID: 'field-locations',
@@ -157,6 +159,7 @@ const itemDetailsFields = {
     TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_FROM }),
   ),
   subscriptionTo: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_TO })),
+  publicationDate: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PUBLICATION_DATE })),
   productId: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PRODUCT_ID })),
   productIdType: itemDetailsSection.find(Select({ name: FORM_FIELD_NAMES.PRODUCT_ID_TYPE })),
 };
@@ -203,6 +206,8 @@ const costDetailsFields = {
   quantityElectronic: costDetailsSection.find(
     TextField({ name: FORM_FIELD_NAMES.QUANTITY_ELECTRONIC }),
   ),
+  currency: costDetailsSection.find(Button({ id: 'currency' })),
+  currentExchangeRate: costDetailsSection.find(KeyValue('Current exchange rate')),
   useSetExchangeRate: costDetailsSection.find(
     Checkbox({ id: FORM_FIELD_NAMES.USE_SET_EXCHANGE_RATE }),
   ),
@@ -210,6 +215,11 @@ const costDetailsFields = {
   calculatedTotalAmount: costDetailsSection.find(
     KeyValue(FORM_FIELD_NAMES.CALCULATED_TOTAL_AMOUNT),
   ),
+};
+
+const locationFields = {
+  quantityPhysical: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].quantityPhysical` })),
+  quantityElectronic: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].quantityElectronic` })),
 };
 
 const fundDistributionFields = {
@@ -224,6 +234,9 @@ const buttons = {
   [ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_OPEN]: saveAndOpenOrderButton,
   [COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING]: saveAndKeepEditingButton,
   [COMMON_BUTTON_LABELS.SAVE_AND_CREATE_ANOTHER]: saveAndCreateAnotherButton,
+  [ORDER_AND_ORDER_LINE_BUTTONS.SHOW_HIDDEN_FIELDS]: Button(
+    including(ORDER_AND_ORDER_LINE_BUTTONS.SHOW_HIDDEN_FIELDS),
+  ),
 };
 const requiredFields = [
   { fieldName: POLINE_DETAILS_FIELDS.ORDER_FORMAT, field: orderLineFields.orderFormat },
@@ -266,6 +279,11 @@ export default {
   },
   checkCostDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: costDetailsFields });
+  },
+  checkCostDetailsFieldsAbsent(labels = []) {
+    labels.forEach((label) => {
+      cy.expect(costDetailsSection.find(HTML(including(label))).absent());
+    });
   },
   checkPhysicalResourceDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: physicalResourceDetailsFields });
@@ -361,10 +379,23 @@ export default {
     SelectInstanceModal.searchByName(instanceTitle);
     SelectInstanceModal.selectInstance(instanceTitle);
   },
-  addProductId({ productId, productIdType }) {
+  addProductId({ productId, productIdType, index = 0 }) {
+    const productIdTypeName = `details.productIds[${index}].productIdType`;
+
     cy.do(itemDetailsSection.find(Button(FORM_LABELS.ADD_PRODUCT_ID)).click());
-    cy.do(itemDetailsFields.productId.fillIn(productId));
-    cy.do(itemDetailsFields.productIdType.choose(productIdType));
+    cy.do(
+      itemDetailsSection
+        .find(TextField({ name: `details.productIds[${index}].productId` }))
+        .fillIn(productId),
+    );
+    cy.get(`#${FORM_SECTION_IDS.ITEM_DETAILS} select[name="${productIdTypeName}"]`)
+      .select(productIdType)
+      .blur();
+    cy.expect(
+      itemDetailsSection
+        .find(Select({ name: productIdTypeName }))
+        .has({ checkedOptionText: productIdType }),
+    );
   },
   fillItemDetails(itemDetails) {
     Object.entries(itemDetails).forEach(([key, value]) => {
@@ -424,8 +455,10 @@ export default {
   },
   fillCostDetails(costDetails) {
     Object.entries(costDetails).forEach(([key, value]) => {
-      if (costDetailsFields[key]) {
-        cy.do(costDetailsFields[key].fillIn(String(value)));
+      const field = costDetailsFields[key];
+
+      if (field) {
+        cy.do(value === true ? field.click() : field.fillIn(String(value)));
       }
     });
   },
@@ -796,6 +829,18 @@ export default {
     );
   },
 
+  checkLocationsSection(fields = []) {
+    fields.forEach(({ label, index = 0, conditions }) => {
+      cy.expect(locationFields[label](index).has(conditions));
+    });
+  },
+
+  checkReceivingRecordsMessage(isPresent = true) {
+    const message = locationSection.find(HTML(including(FORM_LABELS.RECEIVING_RECORDS_MESSAGE)));
+
+    cy.expect(isPresent ? message.exists() : message.absent());
+  },
+
   checkFundDistributionFundSelected({ fund, index = 0 }) {
     cy.expect(
       fundDistributionDetailsSection
@@ -832,5 +877,9 @@ export default {
 
   checkAccountNumberIsBlank() {
     cy.expect(vendorDetailsFields.accountNumber.has({ checkedOptionText: ' ' }));
+  },
+
+  selectBlankReceiptStatus() {
+    cy.do(orderLineFields.receiptStatus.choose(''));
   },
 };
