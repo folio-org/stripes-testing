@@ -209,15 +209,18 @@ const api = {
     );
   },
 
-  checkVoidedTransactionInList({ amount, tooltipText }) {
+  checkVoidedTransactionInList({ amount, tooltipText, rowIndex }) {
     const transactionRow = transactionResultsList.find(
-      MultiColumnListRow({ content: including(amount), isContainer: true }),
+      rowIndex === undefined
+        ? MultiColumnListRow({ content: including(amount), isContainer: true })
+        : MultiColumnListRow({ rowIndexInParent: `row-${rowIndex}` }),
     );
     const amountCell = transactionRow.find(
       MultiColumnListCell({ column: TRANSACTION_LIST_COLUMNS.AMOUNT }),
     );
 
     cy.expect([
+      amountCell.has({ content: including(amount) }),
       amountCell.find(HTML({ className: including('voided') })).exists(),
       amountCell.find(Button({ ariaLabel: 'info' })).exists(),
     ]);

@@ -63,6 +63,8 @@ export const INVOICE_VIEW_FIELDS = {
   CANCELLATION_NOTE: 'Cancellation note',
   CALCULATED_TOTAL_AMOUNT: 'Calculated total amount',
   CALCULATED_TOTAL_AMOUNT_EXCHANGED: 'Calculated total amount (Exchanged)',
+  CURRENCY: 'Currency',
+  EXCHANGE_RATE: 'Exchange rate',
   FISCAL_YEAR: 'Fiscal year',
   INVOICE_DATE: 'Invoice date',
   INVOICE_STATUS: 'Status',

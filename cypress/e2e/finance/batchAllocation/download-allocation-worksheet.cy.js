@@ -10,6 +10,7 @@ import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import BatchEditBudget from '../../../support/fragments/finance/ledgers/batchEditBudget';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import States from '../../../support/fragments/finance/states';
 
 describe('Finance', () => {
   describe('Batch allocation', () => {
@@ -142,7 +143,7 @@ describe('Finance', () => {
 
     it(
       'C648502 Download allocation worksheet (CSV) from Ledger view (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'C648502'] },
+      { tags: ['criticalPath', 'thunderjet', 'C648502', 'nonParallel'] },
       () => {
         Ledgers.searchByName(ledger.name);
         Ledgers.selectLedger(ledger.name);
@@ -150,9 +151,7 @@ describe('Finance', () => {
         BatchEditBudget.cancelBatchEditBudget();
         BatchEditBudget.clickDownloadAllocationWorksheet();
         BatchEditBudget.clickConfirmButton();
-        InteractorsTools.checkCalloutMessage(
-          'Please wait while the worksheet is generated. Your download will start automatically',
-        );
+        InteractorsTools.checkCalloutMessage(States.exportAllocationStartedSuccessfully);
         Ledgers.checkColumnNamesInDownloadedLedgerAllocationWorksheet(
           `${fiscalYear2.code}${ledger.code}.csv`,
         );
@@ -160,9 +159,7 @@ describe('Finance', () => {
         BatchEditBudget.clickDownloadAllocationWorksheet();
         BatchEditBudget.selectFiscalYearInConfirmModal(fiscalYear1);
         BatchEditBudget.clickConfirmButton();
-        InteractorsTools.checkCalloutMessage(
-          'Please wait while the worksheet is generated. Your download will start automatically',
-        );
+        InteractorsTools.checkCalloutMessage(States.exportAllocationStartedSuccessfully);
         Ledgers.checkColumnNamesInDownloadedLedgerAllocationWorksheet(
           `${fiscalYear1.code}${ledger.code}.csv`,
         );
