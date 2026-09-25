@@ -984,6 +984,12 @@ export default {
     cy.get('#invoice-information').find('button:contains("Accepted values"):eq(2)').click();
     cy.expect(DropdownMenu({ visible: true }).exists());
   },
+  // "Accounting code" lives in the "Vendor information" accordion (Section id="vendor-information",
+  // per fieldMappingProfileEditForm.js) - it is the only "Accepted values" button rendered there
+  openAccountingCodeAcceptedValues: () => {
+    cy.get('#vendor-information').find('button:contains("Accepted values"):last').click();
+    cy.expect(DropdownMenu({ visible: true }).exists());
+  },
   getAcceptedValuesDropdownItems: () => {
     return cy
       .then(() => DropdownMenu({ visible: true }).buttons())

@@ -5,7 +5,7 @@ export default HTML.extend('section')
   .filters({
     id: (el) => el.getAttribute('id'),
     title: (el) => el.querySelector('[class^=paneTitleLabel-]')?.textContent,
-    label: (el) => el.querySelector('[class^=labelArea-]').textContent,
+    label: (el) => el.querySelector('[class^=labelArea-]')?.textContent || '',
     expanded: (el) => el.querySelector('[class^=content-wrap]').className.includes('expanded'),
     mark: (el) => el.querySelector('mark').textContent,
     error: (el) => el.querySelector('[class^=feedbackError]').textContent,
