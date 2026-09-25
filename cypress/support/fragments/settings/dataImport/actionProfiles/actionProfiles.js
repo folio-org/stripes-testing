@@ -65,23 +65,25 @@ export default {
       })
       .then(({ body }) => body);
   },
-  createActionProfileViaApi(actionProfile) {
+  createActionProfileViaApi(actionProfile, failOnStatusCode = true) {
     return cy.okapiRequest({
       method: 'POST',
       path: 'data-import-profiles/actionProfiles',
       body: actionProfile,
+      failOnStatusCode,
     });
   },
-  deleteActionProfileViaApi(profileId) {
+  deleteActionProfileViaApi(profileId, ignoreErrors) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `data-import-profiles/actionProfiles/${profileId}`,
+      failOnStatusCode: !ignoreErrors,
     });
   },
-  deleteActionProfileByNameViaApi(profileName) {
+  deleteActionProfileByNameViaApi(profileName, { ignoreErrors = false } = {}) {
     this.getActionProfilesViaApi({ query: `name="${profileName}"` }).then(({ actionProfiles }) => {
       actionProfiles.forEach((actionProfile) => {
-        this.deleteActionProfileViaApi(actionProfile.id);
+        this.deleteActionProfileViaApi(actionProfile.id, ignoreErrors);
       });
     });
   },
@@ -138,6 +140,9 @@ export default {
   verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),
   verifySearchResult: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
+  },
+  verifyProfileAbsentFromList: (profileName) => {
+    cy.expect(resultsPane.find(MultiColumnListCell(profileName)).absent());
   },
 
   verifyProfilesIsSortedInAlphabeticalOrder: () => {

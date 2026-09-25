@@ -399,10 +399,12 @@ export default {
     );
   },
 
-  verifyActionsMenuOptionsDisabled(optionNames) {
-    this.expandActionsDropdown();
+  verifyActionsMenuOptionsDisabled(optionNames, { isDisabled = true, openMenu = true } = {}) {
+    if (openMenu) this.expandActionsDropdown();
     const options = Array.isArray(optionNames) ? optionNames : [optionNames];
-    cy.expect(options.map((option) => DropdownMenu().find(Button(option)).has({ disabled: true })));
+    cy.expect(
+      options.map((option) => DropdownMenu().find(Button(option)).has({ disabled: isDisabled })),
+    );
   },
 
   verifySectionOverrideProtectedFields() {

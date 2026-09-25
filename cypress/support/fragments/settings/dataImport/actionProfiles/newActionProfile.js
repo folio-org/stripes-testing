@@ -145,6 +145,16 @@ export default {
     });
   },
 
+  verifyFolioRecordTypeOptionsDoesNotContainText: (text) => {
+    cy.wait(1000);
+    cy.then(() => recordTypeselect.allOptionsText()).then((arrayOfOptions) => {
+      const hasText = arrayOfOptions.some((option) => option.includes(text));
+      expect(hasText, `Some of the "FOLIO record type" options contain text "${text}"`).to.equal(
+        false,
+      );
+    });
+  },
+
   verifySelectedFolioRecordType(option) {
     cy.wait(1000);
     cy.expect(recordTypeselect.has({ content: including(option) }));

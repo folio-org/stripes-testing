@@ -261,6 +261,21 @@ export default {
     );
   },
 
+  openInstanceInInventoryByTitle: (title, itemStatus = 'Created') => {
+    cy.do(
+      MultiColumnListCell({ content: title }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+        cy.do(
+          resultsList
+            .find(MultiColumnListCell({ row: Number(rowNumber.slice(4)), columnIndex: 3 }))
+            .find(Link(itemStatus))
+            .click(),
+        );
+      }),
+    );
+  },
+
   openInstanceInInventoryByStatus: (itemStatus) => {
     cy.do(
       resultsList
