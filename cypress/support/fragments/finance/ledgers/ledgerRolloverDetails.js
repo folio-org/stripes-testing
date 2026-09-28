@@ -7,9 +7,9 @@ import {
   RepeatableFieldItem,
   Section,
   Select,
+  TextField,
   including,
   matching,
-  TextField,
 } from '../../../../../interactors';
 import UnpaidInvoiceListModal from '../modals/unpaidInvoiceListModal';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -135,6 +135,14 @@ export default {
         fieldItem.find(Select({ label: including('Based on') })).click(),
         fieldItem.find(Select({ label: including('Based on') })).choose(encumbrances.basedOn),
       ]);
+    }
+
+    if (encumbrances.increaseBy) {
+      cy.do(
+        fieldItem
+          .find(TextField({ label: including('Increase by') }))
+          .fillIn(String(encumbrances.increaseBy)),
+      );
     }
   },
   clickContinueInConfirmationModal() {

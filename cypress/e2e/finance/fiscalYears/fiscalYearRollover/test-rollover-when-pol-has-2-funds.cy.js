@@ -1,3 +1,8 @@
+import {
+  ROLLOVER_ERROR_MESSAGES,
+  ROLLOVER_ERROR_TYPES,
+  ROLLOVER_FAILED_ACTIONS,
+} from '../../../../support/constants';
 import permissions from '../../../../support/dictionary/permissions';
 import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
@@ -212,9 +217,9 @@ describe('Finance', () => {
           Ledgers.checkDownloadedErrorFile({
             fileName: `${fileNameDate}-error.csv`,
             ledgerRolloverId,
-            errorType: 'Order',
-            failedAction: 'Create encumbrance',
-            errorMessage: `[WARNING] Part of the encumbrances belong to the ledger, which has not been rollovered. Ledgers to rollover: ${secondLedger.name} (id=${secondLedger.id})`,
+            errorType: ROLLOVER_ERROR_TYPES.ORDER,
+            failedAction: ROLLOVER_FAILED_ACTIONS.CREATE_ENCUMBRANCE,
+            errorMessage: ROLLOVER_ERROR_MESSAGES.LEDGER_NOT_ROLLED_OVER(secondLedger),
             amount: '30',
             fundId: firstFund.id,
             orderId: thirdOrder.id,
@@ -260,9 +265,9 @@ describe('Finance', () => {
           Ledgers.checkDownloadedErrorFile({
             fileName: `${fileNameDate}-error.csv`,
             ledgerRolloverId,
-            errorType: 'Order',
-            failedAction: 'Create encumbrance',
-            errorMessage: `[WARNING] Part of the encumbrances belong to the ledger, which has not been rollovered. Ledgers to rollover: ${firstLedger.name} (id=${firstLedger.id})`,
+            errorType: ROLLOVER_ERROR_TYPES.ORDER,
+            failedAction: ROLLOVER_FAILED_ACTIONS.CREATE_ENCUMBRANCE,
+            errorMessage: ROLLOVER_ERROR_MESSAGES.LEDGER_NOT_ROLLED_OVER(firstLedger),
             amount: '20',
             fundId: secondFund.id,
             orderId: thirdOrder.id,
