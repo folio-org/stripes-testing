@@ -117,4 +117,8 @@ export default {
       path: `orders/order-templates/${orderTemplateId}`,
     });
   },
+  openEditForm() {
+    cy.do([actionsButton.click(), DropdownMenu().find(Button('Edit')).click()]);
+    OrderTemplateForm.waitLoading();
+  },
 };

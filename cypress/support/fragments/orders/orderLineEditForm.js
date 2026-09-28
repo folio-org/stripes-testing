@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  Callout,
   HTML,
   KeyValue,
   Popover,
@@ -30,18 +31,110 @@ import SelectInstanceModal from './modals/selectInstanceModal';
 import SelectLocationModal from './modals/selectLocationModal';
 import OrderStates from './orderStates';
 
-const orderLineEditFormRoot = Section({ id: 'pane-poLineForm' });
-const itemDetailsSection = orderLineEditFormRoot.find(Section({ id: 'itemDetails' }));
-const orderLineDetailsSection = orderLineEditFormRoot.find(Section({ id: 'lineDetails' }));
-const vendorDetailsSection = orderLineEditFormRoot.find(Section({ id: 'vendor' }));
-const ongoingOrderSection = orderLineEditFormRoot.find(Section({ id: 'ongoingOrder' }));
-const costDetailsSection = orderLineEditFormRoot.find(Section({ id: 'costDetails' }));
+const FORM_SECTION_IDS = {
+  FORM: 'pane-poLineForm',
+  ITEM_DETAILS: 'itemDetails',
+  ORDER_LINE_DETAILS: 'lineDetails',
+  VENDOR: 'vendor',
+  ONGOING_ORDER: 'ongoingOrder',
+  COST_DETAILS: 'costDetails',
+  FUND_DISTRIBUTION: 'fundDistributionAccordion',
+  LOCATION: 'location',
+  PHYSICAL_RESOURCE_DETAILS: 'physical',
+};
+const FORM_FIELD_NAMES = {
+  ACQUISITION_METHOD: 'acquisitionMethod',
+  ORDER_FORMAT: 'orderFormat',
+  RECEIPT_STATUS: 'receiptStatus',
+  CHECKIN_ITEMS: 'checkinItems',
+  PAYMENT_STATUS: 'paymentStatus',
+  LOCATION_ID: 'locations[0].locationId',
+  LOCATION_QUANTITY_PHYSICAL: 'locations[0].quantityPhysical',
+  LOCATION_QUANTITY_ELECTRONIC: 'locations[0].quantityElectronic',
+  USER_LIMIT: 'eresource.userLimit',
+  EXCHANGE_RATE: 'cost.exchangeRate',
+  CLAIMING_ACTIVE: 'claimingActive',
+  CLAIMING_INTERVAL: 'claimingInterval',
+  BINDERY_ACTIVE: 'details.isBinderyActive',
+  CREATE_INVENTORY_PHYSICAL: 'physical.createInventory',
+  TITLE_OR_PACKAGE: 'titleOrPackage',
+  RECEIVING_NOTE: 'details.receivingNote',
+  SUBSCRIPTION_FROM: 'details.subscriptionFrom',
+  SUBSCRIPTION_TO: 'details.subscriptionTo',
+  RENEWAL_NOTE: 'renewalNote',
+  MATERIAL_TYPE_ERESOURCE: 'eresource.materialType',
+  MATERIAL_TYPE_PHYSICAL: 'physical.materialType',
+  VENDOR_ACCOUNT: 'vendorDetail.vendorAccount',
+  PUBLICATION_DATE: 'publicationDate',
+  PUBLISHER: 'publisher',
+  EDITION: 'edition',
+  LIST_UNIT_PRICE: 'cost.listUnitPrice',
+  LIST_UNIT_PRICE_ELECTRONIC: 'cost.listUnitPriceElectronic',
+  QUANTITY_PHYSICAL: 'cost.quantityPhysical',
+  QUANTITY_ELECTRONIC: 'cost.quantityElectronic',
+  USE_SET_EXCHANGE_RATE: 'use-set-exchange-rate',
+  CALCULATED_TOTAL_AMOUNT: 'Calculated total amount (Exchanged)',
+};
+const FUND_DISTRIBUTION_LABELS = {
+  FUND_ID: 'Fund ID',
+  EXPENSE_CLASS: 'Expense class',
+};
+const FORM_LABELS = {
+  ADD_LOCATION: 'Add location',
+  ADD_FUND_DISTRIBUTION: 'Add fund distribution',
+  TITLE_LOOKUP: 'Title look-up',
+  LOCATION_LOOKUP: 'Location look-up',
+  FILTER_NAME_CODE: 'Name (code)',
+  REQUIRED_FIELD_ERROR: 'Required!',
+  AUTO_EXPORT_INFO_MESSAGE:
+    'This is a Manual PO so all POLs are excluded from automated export workflows',
+  REMOVE_FISCAL_YEAR: 'Remove fiscal year',
+  SHOW_HIDDEN_FIELDS: 'Show hidden fields',
+};
+const FIELD_SELECTORS = {
+  LOCATION_ID: 'field-locations',
+  FUND_DISTRIBUTION_VALUE: 'fundDistribution',
+  AUTOMATIC_EXPORT: 'automaticExport',
+  INFO_POPOVER_TRIGGER: '[data-test-info-popover-trigger]',
+  REMOVE_FISCAL_YEAR_BUTTON: 'button[icon="trash"][aria-label="Remove fiscal year"]',
+  USER_LIMIT: '[name="eresource.userLimit"]',
+  EXCHANGE_RATE: '[name="cost.exchangeRate"]',
+  TEXT_FIELD_WRAPPER: '[class*="textField"]',
+  ALERT: '[role="alert"]',
+  COLUMN: '[class*="col-"]',
+  FEEDBACK_ERROR: 'feedbackError',
+  REPEATABLE_FIELD_LIST: '[data-test-repeatable-field-list]',
+  FIELDSET: 'fieldset',
+  LOCATION_ID_INPUT: 'field-locations[{index}].locationId',
+  UNKNOWN_FIELD_ERROR: 'Unknown field: ',
+};
+const VALIDATION_MESSAGES = {
+  INVALID_LOCATION_FUND: 'Location-restricted fund applied to invalid location',
+};
+
+const orderLineEditFormRoot = Section({ id: FORM_SECTION_IDS.FORM });
+const itemDetailsSection = orderLineEditFormRoot.find(
+  Section({ id: FORM_SECTION_IDS.ITEM_DETAILS }),
+);
+const orderLineDetailsSection = orderLineEditFormRoot.find(
+  Section({ id: FORM_SECTION_IDS.ORDER_LINE_DETAILS }),
+);
+const vendorDetailsSection = orderLineEditFormRoot.find(Section({ id: FORM_SECTION_IDS.VENDOR }));
+const ongoingOrderSection = orderLineEditFormRoot.find(
+  Section({ id: FORM_SECTION_IDS.ONGOING_ORDER }),
+);
+const costDetailsSection = orderLineEditFormRoot.find(
+  Section({ id: FORM_SECTION_IDS.COST_DETAILS }),
+);
 const fundDistributionDetailsSection = orderLineEditFormRoot.find(
   Section({ id: 'fundDistributionAccordion' }),
 );
-const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
-const automaticExportCheckboxName = 'automaticExport';
-const automaticExportInfoIconSelector = '[data-test-info-popover-trigger]';
+const locationSection = orderLineEditFormRoot.find(Section({ id: FORM_SECTION_IDS.LOCATION }));
+const physicalResourceDetailsSection = orderLineEditFormRoot.find(
+  Section({ id: FORM_SECTION_IDS.PHYSICAL_RESOURCE_DETAILS }),
+);
+const automaticExportCheckboxName = FIELD_SELECTORS.AUTOMATIC_EXPORT;
+const automaticExportInfoIconSelector = FIELD_SELECTORS.INFO_POPOVER_TRIGGER;
 const cancelButton = Button(COMMON_BUTTON_LABELS.CANCEL);
 const saveButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_CLOSE);
 const saveAndOpenOrderButton = Button(ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_OPEN);
@@ -59,13 +152,26 @@ const itemDetailsFields = {
 };
 
 export const orderLineFields = {
-  acquisitionMethod: orderLineDetailsSection.find(Selection({ name: 'acquisitionMethod' })),
-  orderFormat: orderLineDetailsSection.find(Select({ name: 'orderFormat' })),
-  receiptStatus: orderLineDetailsSection.find(Select({ name: 'receiptStatus' })),
-  checkinItems: orderLineDetailsSection.find(Select({ name: 'checkinItems' })),
-  paymentStatus: orderLineDetailsSection.find(Select({ name: 'paymentStatus' })),
-  claimingActive: orderLineDetailsSection.find(Checkbox({ name: 'claimingActive' })),
-  claimingInterval: orderLineDetailsSection.find(TextField({ name: 'claimingInterval' })),
+  acquisitionMethod: orderLineDetailsSection.find(
+    Selection({ name: FORM_FIELD_NAMES.ACQUISITION_METHOD }),
+  ),
+  orderFormat: orderLineDetailsSection.find(Select({ name: FORM_FIELD_NAMES.ORDER_FORMAT })),
+  receiptStatus: orderLineDetailsSection.find(Select({ name: FORM_FIELD_NAMES.RECEIPT_STATUS })),
+  checkinItems: orderLineDetailsSection.find(Select({ name: FORM_FIELD_NAMES.CHECKIN_ITEMS })),
+  paymentStatus: orderLineDetailsSection.find(Select({ name: FORM_FIELD_NAMES.PAYMENT_STATUS })),
+  claimingActive: orderLineDetailsSection.find(
+    Checkbox({ name: FORM_FIELD_NAMES.CLAIMING_ACTIVE }),
+  ),
+  claimingInterval: orderLineDetailsSection.find(
+    TextField({ name: FORM_FIELD_NAMES.CLAIMING_INTERVAL }),
+  ),
+  binderyActive: orderLineDetailsSection.find(Checkbox({ name: FORM_FIELD_NAMES.BINDERY_ACTIVE })),
+};
+
+export const physicalResourceDetailsFields = {
+  createInventory: physicalResourceDetailsSection.find(
+    Select({ name: FORM_FIELD_NAMES.CREATE_INVENTORY_PHYSICAL }),
+  ),
 };
 
 export const vendorDetailsFields = {
@@ -87,9 +193,11 @@ const costDetailsFields = {
 };
 
 const fundDistributionFields = {
-  expenseClass: (index = 0) => fundDistributionDetailsSection
-    .find(RepeatableFieldItem({ index }))
-    .find(Selection(including('Expense class'))),
+  expenseClass: (index = 0) => {
+    return fundDistributionDetailsSection
+      .find(RepeatableFieldItem({ index }))
+      .find(Selection(including('Expense class')));
+  },
 };
 
 const buttons = {
@@ -137,6 +245,12 @@ export default {
   },
   checkCostDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: costDetailsFields });
+  },
+  checkPhysicalResourceDetailsSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: physicalResourceDetailsFields });
+  },
+  clickBinderyActiveCheckbox() {
+    cy.do(orderLineFields.binderyActive.click());
   },
   setUserLimit(limit) {
     cy.get('[name="eresource.userLimit"]').clear().type(limit);
@@ -592,5 +706,35 @@ export default {
         .find(Button({ icon: 'trash' }))
         .click(),
     );
+  },
+
+  checkFundDistributionFundSelected({ fund, index = 0 }) {
+    cy.expect(
+      fundDistributionDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID)))
+        .has({ value: including(fund) }),
+    );
+  },
+
+  checkLocationSelected({ location, index = 0 }) {
+    cy.expect([
+      locationSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Selection(including(FORM_LABELS.FILTER_NAME_CODE)))
+        .has({ value: including(location) }),
+      locationSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .exists(),
+    ]);
+  },
+
+  checkFundRestrictionErrorToastPresent() {
+    cy.expect(Callout(including(VALIDATION_MESSAGES.INVALID_LOCATION_FUND)).exists());
+  },
+
+  checkFundRestrictionErrorToastAbsent() {
+    cy.expect(Callout(including(VALIDATION_MESSAGES.INVALID_LOCATION_FUND)).absent());
   },
 };

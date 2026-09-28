@@ -2,18 +2,33 @@ import {
   Button,
   Checkbox,
   Form,
+  PaneHeader,
   Section,
   Select,
   Selection,
   SelectionOption,
+  SelectionList,
+  RepeatableFieldItem,
   TextArea,
   TextField,
+  including,
 } from '../../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../../constants';
+import {
+  DEFAULT_WAIT_TIME,
+  ORDER_LINE_FORM_LABELS,
+  COMMON_BUTTON_LABELS,
+} from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import SearchHelper from '../../finance/financeHelper';
+import AreYouSureModal from '../../orders/modals/areYouSureModal';
+
+const LOCATION_FIELD_ID_PREFIX = 'field-locations';
 
 const orderTemplateForm = Form({ id: 'order-template-form' });
+const orderTemplateEditorPaneHeader = PaneHeader({
+  id: 'paneHeaderorder-settings-order-templates-editor',
+});
+const closeFormButton = orderTemplateEditorPaneHeader.find(Button({ icon: 'times' }));
 const orderTemplateInfoSection = orderTemplateForm.find(Section({ id: 'templateInfo' }));
 const orderTemplatePoInfoSection = orderTemplateForm.find(Section({ id: 'poInfo' }));
 const orderTemplateOngoingSection = orderTemplateForm.find(Section({ id: 'ongoing' }));
@@ -35,6 +50,7 @@ const orderTemplateLocationDetailsSection = orderTemplateForm.find(Section({ id:
 const orderTemplatePoLineTagsSection = orderTemplateForm.find(Section({ id: 'polTags' }));
 
 const saveButton = Button({ id: 'save-order-template-button' });
+const fundIdSelection = Selection(including('Fund ID'));
 
 const infoSectionFields = {
   templateName: orderTemplateInfoSection.find(TextField({ name: 'templateName' })),
@@ -158,5 +174,126 @@ export default {
     if (templateCreated) {
       InteractorsTools.checkCalloutMessage('The template was saved');
     }
+  },
+
+  closeForm(shouldModalExist = false) {
+    // The legacy order-template editor has no Cancel action; its pane-header X closes the form.
+    cy.do(closeFormButton.click());
+
+    if (!shouldModalExist) {
+      cy.expect(orderTemplateForm.absent());
+    }
+  },
+
+  closeFormWithUnsavedChanges({ keepEditing = false } = {}) {
+    this.closeForm(true);
+    AreYouSureModal.verifyAreYouSureForm(true);
+
+    if (keepEditing) {
+      AreYouSureModal.clickKeepEditingButton();
+      cy.expect(orderTemplateForm.exists());
+    } else {
+      AreYouSureModal.clickCloseWithoutSavingButton();
+      AreYouSureModal.verifyAreYouSureForm(false);
+      cy.expect(orderTemplateForm.absent());
+    }
+  },
+
+  selectCurrency(currency = 'USD') {
+    const field = orderTemplateCostDetailsSection.find(
+      Selection(including(ORDER_LINE_FORM_LABELS.CURRENCY)),
+    );
+
+    cy.do([
+      field.perform((el) => el.scrollIntoView()),
+      field.open(),
+      SelectionList().filter(currency),
+      SelectionOption(including(currency)).click(),
+    ]);
+  },
+
+  clickAddLocationButton() {
+    cy.do(
+      orderTemplateLocationDetailsSection.find(Button(ORDER_LINE_FORM_LABELS.ADD_LOCATION)).click(),
+    );
+  },
+
+  expandLocationNameCodeDropdown(index = 0) {
+    cy.do(Button({ id: `${LOCATION_FIELD_ID_PREFIX}[${index}].locationId` }).click());
+  },
+
+  selectLocationFromDropdown(locationName) {
+    cy.do([SelectionList().filter(locationName), SelectionOption(including(locationName)).click()]);
+  },
+
+  removeLocationByIndex(index = 0) {
+    cy.do(
+      orderTemplateLocationDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    );
+  },
+
+  locationOptionExists(locationName) {
+    return SelectionList()
+      .find(SelectionOption(including(locationName)))
+      .exists();
+  },
+
+  verifyLocationSelected({ location, index = 0 }) {
+    cy.expect(
+      orderTemplateLocationDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Selection(including('Name (code)')))
+        .has({ value: including(location) }),
+    );
+  },
+
+  clickAddFundDistributionButton() {
+    cy.do(orderTemplateFundDetailsSection.find(Button('Add fund distribution')).click());
+  },
+
+  selectFundDistribution({ fundName, fundCode, index = 0 }) {
+    const label = `${fundName} (${fundCode})`;
+
+    cy.do([
+      orderTemplateFundDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(fundIdSelection)
+        .open(),
+      SelectionList().filter(label),
+      SelectionOption(including(label)).click(),
+    ]);
+  },
+
+  verifyFundDistributionSelected({ fundCode, index = 0 }) {
+    cy.expect(
+      orderTemplateFundDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(fundIdSelection)
+        .has({ value: including(fundCode) }),
+    );
+  },
+
+  clickExpandAllAccordions() {
+    cy.do(orderTemplateForm.find(Button(COMMON_BUTTON_LABELS.EXPAND_ALL)).click());
+  },
+
+  /* Fields visibility */
+  toggleFieldVisibilityIcon(fieldName) {
+    cy.do(
+      orderTemplateForm.perform((el) => {
+        el.querySelector(`input[name="hiddenFields.${fieldName}"]`).click();
+      }),
+    );
+  },
+
+  toggleMultiYearPrepaymentVisibility() {
+    this.toggleFieldVisibilityIcon('multiYearPayment');
+  },
+
+  togglePaymentTermsVisibility() {
+    this.toggleFieldVisibilityIcon('paymentTerms');
   },
 };

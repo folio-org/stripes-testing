@@ -1766,6 +1766,8 @@ export const COMMON_BUTTON_LABELS = {
   CONTINUE: 'Continue',
   CREATE: 'Create',
   DELETE: 'Delete',
+  EDIT: 'Edit',
+  EXPAND_ALL: 'Expand all',
   NEXT: 'Next',
   NEW: 'New',
   OK: 'Ok',
