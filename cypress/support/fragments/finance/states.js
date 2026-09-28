@@ -19,6 +19,8 @@ export default {
   totalAllocationCannotBeLessThanZero: 'Total allocation cannot be less than zero',
   exportAllocationStartedSuccessfully:
     'Please wait while the worksheet is generated. Your download will start automatically',
+  allocationsUpdatedSuccessfully: 'Allocations have been updated successfully.',
+  budgetsCreatedSuccessfully: 'Budgets have been created successfully.',
 
   // API errorCodes
   budgetNotFoundForFiscalYear: 'budgetNotFoundForFiscalYear',

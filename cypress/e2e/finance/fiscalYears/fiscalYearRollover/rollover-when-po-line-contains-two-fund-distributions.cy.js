@@ -1,3 +1,7 @@
+import {
+  ROLLOVER_ERROR_MESSAGES,
+  ROLLOVER_ERRORS_CSV_HEADERS,
+} from '../../../../support/constants';
 import { Permissions } from '../../../../support/dictionary';
 import {
   FinanceHelper,
@@ -184,9 +188,9 @@ describe('Finance', () => {
         // Open downloaded file, Check *"Encumbered (Budget)"* column
         FileManager.convertCsvToJson(testData.fileName).then((data) => {
           const rolloverError = data[0];
-          const expectedError = `[WARNING] Part of the encumbrances belong to the ledger, which has not been rollovered. Ledgers to rollover: ${ledgers.second.name} (id=${ledgers.second.id})`;
-
-          cy.expect(rolloverError['Error message']).to.equal(expectedError);
+          cy.expect(rolloverError[ROLLOVER_ERRORS_CSV_HEADERS.ERROR_MESSAGE]).to.equal(
+            ROLLOVER_ERROR_MESSAGES.LEDGER_NOT_ROLLED_OVER(ledgers.second),
+          );
         });
 
         // Go back to "Ledger name" pane
