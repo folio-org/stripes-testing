@@ -1,6 +1,5 @@
 import Permissions from '../../../../support/dictionary/permissions';
 import { Lists } from '../../../../support/fragments/lists/lists';
-import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
 describe('Lists', () => {
@@ -113,10 +112,7 @@ describe('Lists', () => {
       'C788720 Verify that the fields/properties are defined correctly in the entity type Simple SRS record (athena)',
       { tags: ['extendedPath', 'athena', 'C788720'] },
       () => {
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.listsPath,
-          waiter: Lists.waitLoading,
-        });
+        cy.getUserToken(userData.username, userData.password);
 
         // #1 Send GET {Base_URL}/entity-types?includeAll=true
         Lists.getAllEntityTypesIncludeAllViaApi().then((response) => {
