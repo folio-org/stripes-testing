@@ -134,6 +134,15 @@ export default {
     });
   },
 
+  checkCreateItemCheckbox() {
+    const createItemCheckbox = editPieceModal.find(
+      Checkbox(RECEIVING_PIECE_FORM_FIELD_LABELS.CREATE_ITEM),
+    );
+
+    cy.do(createItemCheckbox.click());
+    cy.expect(createItemCheckbox.has({ checked: true }));
+  },
+
   checkDisplayOnHoldingCheckbox() {
     cy.do(displayOnHoldingCheckbox.click());
   },

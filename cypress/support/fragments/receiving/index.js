@@ -1,3 +1,4 @@
+export { default as BindPiecesForm } from './bindPiecesForm';
 export { default as PieceForm } from './pieceForm';
 export { default as Receivings } from './receiving';
 export { default as ReceivingDetails } from './receivingDetails';

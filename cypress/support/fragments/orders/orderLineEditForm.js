@@ -58,6 +58,8 @@ const FORM_FIELD_NAMES = {
   BINDERY_ACTIVE: 'details.isBinderyActive',
   CREATE_INVENTORY_PHYSICAL: 'physical.createInventory',
   TITLE_OR_PACKAGE: 'titleOrPackage',
+  PRODUCT_ID: 'details.productIds[0].productId',
+  PRODUCT_ID_TYPE: 'details.productIds[0].productIdType',
   RECEIVING_NOTE: 'details.receivingNote',
   SUBSCRIPTION_FROM: 'details.subscriptionFrom',
   SUBSCRIPTION_TO: 'details.subscriptionTo',
@@ -90,6 +92,7 @@ const FORM_LABELS = {
     'This is a Manual PO so all POLs are excluded from automated export workflows',
   REMOVE_FISCAL_YEAR: 'Remove fiscal year',
   SHOW_HIDDEN_FIELDS: 'Show hidden fields',
+  ADD_PRODUCT_ID: 'Add product ID and product ID type',
 };
 const FIELD_SELECTORS = {
   LOCATION_ID: 'field-locations',
@@ -145,10 +148,14 @@ const publicher = TextField({ name: 'publisher' });
 const edition = TextField({ name: 'edition' });
 
 const itemDetailsFields = {
-  title: itemDetailsSection.find(TextField({ name: 'titleOrPackage' })),
-  receivingNote: itemDetailsSection.find(TextArea({ name: 'details.receivingNote' })),
-  subscriptionFrom: itemDetailsSection.find(TextField({ name: 'details.subscriptionFrom' })),
-  subscriptionTo: itemDetailsSection.find(TextField({ name: 'details.subscriptionTo' })),
+  title: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.TITLE_OR_PACKAGE })),
+  receivingNote: itemDetailsSection.find(TextArea({ name: FORM_FIELD_NAMES.RECEIVING_NOTE })),
+  subscriptionFrom: itemDetailsSection.find(
+    TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_FROM }),
+  ),
+  subscriptionTo: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_TO })),
+  productId: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PRODUCT_ID })),
+  productIdType: itemDetailsSection.find(Select({ name: FORM_FIELD_NAMES.PRODUCT_ID_TYPE })),
 };
 
 export const orderLineFields = {
@@ -326,6 +333,11 @@ export default {
     this.clickTitleLookUpButton();
     SelectInstanceModal.searchByName(instanceTitle);
     SelectInstanceModal.selectInstance(instanceTitle);
+  },
+  addProductId({ productId, productIdType }) {
+    cy.do(itemDetailsSection.find(Button(FORM_LABELS.ADD_PRODUCT_ID)).click());
+    cy.do(itemDetailsFields.productId.fillIn(productId));
+    cy.do(itemDetailsFields.productIdType.choose(productIdType));
   },
   fillItemDetails(itemDetails) {
     Object.entries(itemDetails).forEach(([key, value]) => {
