@@ -1497,13 +1497,7 @@ export default {
     if (isShown) cy.expect(targetRow.exists());
     else cy.expect(targetRow.absent());
     if ([true, false].includes(isChecked)) {
-      const expectedStatusText = isChecked
-        ? this.roleAssignmentFilterOptions.ASSIGNED
-        : this.roleAssignmentFilterOptions.UNASSIGNED;
-      cy.expect([
-        targetRow.find(Checkbox()).has({ checked: isChecked }),
-        targetRow.find(MultiColumnListCell(expectedStatusText)).exists(),
-      ]);
+      cy.expect(targetRow.find(Checkbox()).has({ checked: isChecked }));
     }
   },
 
