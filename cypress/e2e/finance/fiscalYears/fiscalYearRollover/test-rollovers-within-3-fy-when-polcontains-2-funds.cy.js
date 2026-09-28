@@ -21,9 +21,13 @@ import {
   INVOICE_STATUSES,
   ORDER_STATUSES,
   POL_CREATE_INVENTORY_SETTINGS,
+  ROLLOVER_ERROR_MESSAGES,
+  ROLLOVER_ERROR_TYPES,
+  ROLLOVER_FAILED_ACTIONS,
 } from '../../../../support/constants';
 import { CodeTools, StringTools } from '../../../../support/utils';
 import DateTools from '../../../../support/utils/dateTools';
+import FileManager from '../../../../support/utils/fileManager';
 
 describe('Finance', () => {
   describe('Fiscal Year Rollover', () => {
@@ -353,6 +357,11 @@ describe('Finance', () => {
     });
 
     after(() => {
+      ['error', 'result'].forEach((fileType) => {
+        FileManager.deleteFile(
+          `${Cypress.config('downloadsFolder')}/${testData.fileNameDate}-${fileType}.csv`,
+        );
+      });
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
         Organizations.deleteOrganizationViaApi(testData.organization.id);
@@ -377,9 +386,9 @@ describe('Finance', () => {
           Ledgers.checkDownloadedErrorFile({
             fileName: `${testData.fileNameDate}-error.csv`,
             ledgerRolloverId,
-            errorType: 'Order',
-            failedAction: 'Create encumbrance',
-            errorMessage: `[WARNING] Part of the encumbrances belong to the ledger, which has not been rollovered. Ledgers to rollover: ${testData.ledgers.second.name} (id=${testData.ledgers.second.id})`,
+            errorType: ROLLOVER_ERROR_TYPES.ORDER,
+            failedAction: ROLLOVER_FAILED_ACTIONS.CREATE_ENCUMBRANCE,
+            errorMessage: ROLLOVER_ERROR_MESSAGES.LEDGER_NOT_ROLLED_OVER(testData.ledgers.second),
             amount: '30',
             fundId: testData.funds.fundA.id,
             orderId: testData.orders.third.id,
@@ -425,9 +434,9 @@ describe('Finance', () => {
           Ledgers.checkDownloadedErrorFile({
             fileName: `${testData.fileNameDate}-error.csv`,
             ledgerRolloverId,
-            errorType: 'Order',
-            failedAction: 'Create encumbrance',
-            errorMessage: `[WARNING] Part of the encumbrances belong to the ledger, which has not been rollovered. Ledgers to rollover: ${testData.ledgers.first.name} (id=${testData.ledgers.first.id})`,
+            errorType: ROLLOVER_ERROR_TYPES.ORDER,
+            failedAction: ROLLOVER_FAILED_ACTIONS.CREATE_ENCUMBRANCE,
+            errorMessage: ROLLOVER_ERROR_MESSAGES.LEDGER_NOT_ROLLED_OVER(testData.ledgers.first),
             amount: '20',
             fundId: testData.funds.fundB.id,
             orderId: testData.orders.third.id,
