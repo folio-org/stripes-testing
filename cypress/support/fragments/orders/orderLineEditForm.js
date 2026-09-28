@@ -6,6 +6,7 @@ import {
   Checkbox,
   HTML,
   KeyValue,
+  Link,
   Popover,
   RepeatableField,
   RepeatableFieldItem,
@@ -95,6 +96,8 @@ const FORM_LABELS = {
   AUTO_EXPORT_INFO_MESSAGE:
     'This is a Manual PO so all POLs are excluded from automated export workflows',
   REMOVE_FISCAL_YEAR: 'Remove fiscal year',
+  EDIT_IN_RECEIVING: 'Edit in receiving',
+  SELECT_HOLDINGS: 'Select holdings',
   SHOW_HIDDEN_FIELDS: 'Show hidden fields',
   ADD_PRODUCT_ID: 'Add product ID and product ID type',
   RECEIVING_RECORDS_MESSAGE:
@@ -224,6 +227,9 @@ const costDetailsFields = {
 const locationFields = {
   quantityPhysical: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].quantityPhysical` })),
   quantityElectronic: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].quantityElectronic` })),
+  holding: (index = 0) => locationSection
+    .find(RepeatableFieldItem({ index }))
+    .find(Selection(including(FORM_LABELS.SELECT_HOLDINGS))),
 };
 
 const fundDistributionFields = {
@@ -607,12 +613,18 @@ export default {
     cy.wait(1000);
   },
 
-  checkLocationDropdownOptions(expectedLocations) {
+  checkLocationDropdownOptions(expectedLocations, { exactMatch = true } = {}) {
     cy.then(() => SelectionList().optionList()).then((actualOptions) => {
-      expect(actualOptions.sort()).to.deep.equal(
-        expectedLocations.sort(),
-        `Expected locations: ${JSON.stringify(expectedLocations)}, but got: ${JSON.stringify(actualOptions)}`,
-      );
+      if (exactMatch) {
+        expect(actualOptions.sort()).to.deep.equal(
+          expectedLocations.sort(),
+          `Expected locations: ${JSON.stringify(expectedLocations)}, but got: ${JSON.stringify(actualOptions)}`,
+        );
+      } else {
+        expectedLocations.forEach((location) => {
+          expect(actualOptions, `Expected location "${location}"`).to.include(location);
+        });
+      }
     });
   },
 
@@ -858,6 +870,22 @@ export default {
     cy.expect(isPresent ? message.exists() : message.absent());
   },
 
+  checkLocationIsNonEditable({ locationName, index = 0 } = {}) {
+    const locationItem = locationSection.find(RepeatableFieldItem({ index }));
+
+    cy.expect([
+      locationItem
+        .find(KeyValue(FORM_LABELS.SELECT_HOLDINGS))
+        .has({ value: including(locationName) }),
+      locationItem.find(Selection(including(FORM_LABELS.SELECT_HOLDINGS))).absent(),
+      locationItem.find(Button({ icon: 'trash' })).has({ disabled: true }),
+    ]);
+  },
+
+  clickEditInReceivingLink() {
+    cy.do(locationSection.find(Link(including(FORM_LABELS.EDIT_IN_RECEIVING))).click());
+  },
+
   checkFundDistributionFundSelected({ fund, index = 0 }) {
     cy.expect(
       fundDistributionDetailsSection
@@ -872,12 +900,30 @@ export default {
       locationSection
         .find(RepeatableFieldItem({ index }))
         .find(Selection(including(FORM_LABELS.FILTER_NAME_CODE)))
-        .has({ value: including(location) }),
+        .has({ singleValue: location ? including(location) : '' }),
       locationSection
         .find(RepeatableFieldItem({ index }))
         .find(Button({ icon: 'trash' }))
         .exists(),
     ]);
+  },
+
+  checkLocationsSectionIsEmpty() {
+    cy.expect(locationSection.find(RepeatableFieldItem()).absent());
+  },
+
+  expandHoldingsDropdown(index = 0) {
+    cy.do(locationSection.find(Button({ id: `field-locations[${index}].holdingId` })).click());
+    cy.wait(1000);
+  },
+
+  clearLocationSelection(index = 0) {
+    cy.do(
+      locationSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'times-circle-solid' }))
+        .click(),
+    );
   },
 
   checkFundRestrictionErrorToastPresent() {
