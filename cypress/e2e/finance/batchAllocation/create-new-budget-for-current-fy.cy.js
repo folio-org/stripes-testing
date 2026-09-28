@@ -11,6 +11,7 @@ import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
 import BudgetDetails from '../../../support/fragments/finance/budgets/budgetDetails';
 import FinanceHelper from '../../../support/fragments/finance/financeHelper';
 import LedgerDetails from '../../../support/fragments/finance/ledgers/ledgerDetails';
+import States from '../../../support/fragments/finance/states';
 
 describe('Finance', () => {
   describe('Batch allocation', () => {
@@ -85,7 +86,7 @@ describe('Finance', () => {
         BatchEditBudget.assertTotalAllocatedAfter(funds[0].name, '100.00');
         BatchEditBudget.assertTotalAllocatedAfter(funds[1].name, '150.00');
         BatchEditBudget.clickSaveAndCloseButton();
-        InteractorsTools.checkCalloutMessage('Allocations have been updated successfully.');
+        InteractorsTools.checkCalloutMessage(States.allocationsUpdatedSuccessfully);
         LedgerDetails.openFundDetails(funds[0].name);
         Funds.checkFundStatus('Active');
         FundDetails.checkFundDetails({
