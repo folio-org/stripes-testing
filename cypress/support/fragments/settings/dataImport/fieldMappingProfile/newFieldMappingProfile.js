@@ -624,7 +624,7 @@ export default {
     }
     // Vendor information section
     if (profile.organizationName) {
-      selectOrganizationByName(profile.organizationName);
+      selectOrganizationByName(profile.organizationName, Accordion('Vendor information'));
     }
     if (profile.accountingCode) {
       cy.do(
