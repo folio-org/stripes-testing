@@ -47,8 +47,8 @@ describe('Calendar', () => {
     });
 
     it(
-      'C360944 Checking the view of calendar on "Monthly calendar view" tab (bama)',
-      { tags: ['smokeBama', 'bama', 'C360944'] },
+      'C360944 Checking the view of calendar on "Monthly calendar view" tab (helios)',
+      { tags: ['smoke', 'helios', 'C360944'] },
       () => {
         PaneActions.monthlyCalendarView.checkPrevAndNextButtons({
           servicePointName: testServicePoint.name,

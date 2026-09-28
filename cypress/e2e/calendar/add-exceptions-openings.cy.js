@@ -48,8 +48,8 @@ describe('Calendar', () => {
     });
 
     it(
-      'C360951 Add exceptions--openings to regular hours for service point (bama)',
-      { tags: ['smokeBama', 'bama', 'C360951'] },
+      'C360951 Add exceptions--openings to regular hours for service point (helios)',
+      { tags: ['smoke', 'helios', 'C360951'] },
       () => {
         PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
         PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(

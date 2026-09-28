@@ -1,14 +1,13 @@
-import PaneActions from '../../support/fragments/calendar/pane-actions';
-
 import permissions from '../../support/dictionary/permissions';
-import {
+import Calendar, {
   createCalendar,
   createServicePoint,
   deleteCalendar,
-  deleteServicePoint,
-  openCalendarSettings,
+  deleteServicePoint
 } from '../../support/fragments/calendar/calendar';
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
+import TopMenu from '../../support/fragments/topMenu';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -19,11 +18,6 @@ describe('Calendar', () => {
     before(() => {
       // login as admin so necessary state can be created
       cy.loginAsAdmin();
-
-      // get admin token to use in okapiRequest to retrieve service points
-      if (!Cypress.env('token')) {
-        cy.getAdminToken();
-      }
 
       // reset db state
       deleteServicePoint(testServicePoint.id, false);
@@ -36,18 +30,16 @@ describe('Calendar', () => {
           testCalendarResponse = calResponse.body;
         });
       });
-      cy.logout();
 
-      openCalendarSettings();
       cy.createTempUser([permissions.calendarView.gui]).then((userProperties) => {
-        cy.login(userProperties.username, userProperties.password);
-        openCalendarSettings();
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.settingsCalendarPath,
+          waiter: Calendar.waitCalendarPaneToLoad,
+        });
       });
     });
 
     after(() => {
-      cy.logout();
-
       // login as admin to teardown testing data
       cy.loginAsAdmin();
       deleteServicePoint(testServicePoint.id, true);
@@ -55,8 +47,8 @@ describe('Calendar', () => {
     });
 
     it(
-      'C361625 Permissions -> User with Settings (Calendar): Can view existing calendars (bama)',
-      { tags: ['smokeBama', 'bama', 'C361625'] },
+      'C361625 Permissions -> User with Settings (Calendar): Can view existing calendars (helios)',
+      { tags: ['smoke', 'helios', 'C361625'] },
       () => {
         PaneActions.allCalendarsPane.openAllCalendarsPane();
         PaneActions.allCalendarsPane.checkActionMenuAbsent();

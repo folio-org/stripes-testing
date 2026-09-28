@@ -1,27 +1,53 @@
-import settingsMenu from '../../support/fragments/settingsMenu';
+import { Permissions } from '../../support/dictionary';
+import TopMenu from '../../support/fragments/topMenu';
 import TransferFeeFine from '../../support/fragments/users/transferFeeFine';
+import Users from '../../support/fragments/users/users';
 
 describe('Export Manager', () => {
-  before(() => {
-    cy.loginAsAdmin({
-      path: settingsMenu.usersTransferCriteria,
-      waiter: TransferFeeFine.waitLoadingTransferCriteria,
+  let user;
+
+  before('Create test data', () => {
+    cy.createTempUser([
+      Permissions.exportManagerAll.gui,
+      Permissions.transferExports.gui,
+      Permissions.settingsUsersCRUD.gui,
+      Permissions.uiUserAccounts.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.transferCriteriaPath,
+        waiter: TransferFeeFine.waitLoadingTransferCriteria,
+      });
+    });
+  });
+
+  after('Delete test data', () => {
+    cy.getAdminToken().then(() => {
+      Users.deleteViaApi(user.userId);
     });
   });
 
   it(
-    'C350699 Verify the schedule time -- AM/PM format (athena)',
-    { tags: ['extendedPathBama', 'bama', 'C350699'] },
+    'C350699 Verify the schedule time -- AM/PM format (helios)',
+    { tags: ['extendedPath', 'helios', 'C350699'] },
     () => {
       TransferFeeFine.selectTransferCriteriaSchedulePeriod('Days');
 
-      const amTime = '9:15 AM';
-      TransferFeeFine.typeScheduleTime(amTime);
-      TransferFeeFine.verifyScheduleTime(amTime);
+      const hourAM = '9';
+      const minuteAM = '45';
+      const timeAM = `${hourAM}:${minuteAM} AM`;
 
-      const pmTime = '6:20 PM';
-      TransferFeeFine.typeScheduleTime(pmTime);
-      TransferFeeFine.verifyScheduleTime(pmTime);
+      TransferFeeFine.openTimePicker();
+      TransferFeeFine.typeScheduleTime(hourAM, minuteAM, 'AM');
+      TransferFeeFine.verifyScheduleTime(timeAM);
+
+      const hourPM = '6';
+      const minutePM = '20';
+      const timePM = `${hourPM}:${minutePM} PM`;
+
+      TransferFeeFine.openTimePicker();
+      TransferFeeFine.typeScheduleTime(hourPM, minutePM, 'PM');
+      TransferFeeFine.verifyScheduleTime(timePM);
     },
   );
 });

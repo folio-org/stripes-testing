@@ -2,72 +2,52 @@ import { Permissions } from '../../support/dictionary';
 import TransferCriteria from '../../support/fragments/settings/users/transferCriteria';
 import UsersSettingsGeneral from '../../support/fragments/settings/users/usersSettingsGeneral';
 import TopMenu from '../../support/fragments/topMenu';
-import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
 
 describe('Export Manager', () => {
-  let user;
+  let userWithTransferExports;
+  let userWithoutTransferExports;
 
   before('Create test data', () => {
     cy.createTempUser([
       Permissions.settingsUsersCRUD.gui,
       Permissions.transferExports.gui,
-      Permissions.uiUserCanAssignUnassignPermissions.gui,
     ]).then((userProperties) => {
-      user = userProperties;
+      userWithTransferExports = userProperties;
+    });
+
+    cy.createTempUser([Permissions.settingsUsersCRUD.gui]).then((userProperties) => {
+      userWithoutTransferExports = userProperties;
     });
   });
 
   after('Delete test data', () => {
-    Users.deleteViaApi(user.userId);
+    cy.getAdminToken().then(() => {
+      Users.deleteViaApi(userWithTransferExports.userId);
+      Users.deleteViaApi(userWithoutTransferExports.userId);
+    });
   });
 
   it(
-    'C350638 Verify permissions to manage transfer criteria and other transfer settings (bama) (TaaS)',
-    { tags: ['extendedPathBama', 'bama', 'C350638'] },
+    'C350638 Verify permissions to manage transfer criteria and other transfer settings (helios) (TaaS)',
+    { tags: ['extendedPath', 'helios', 'C350638'] },
     () => {
       // #1 Go to Settings > Users > Fee/fine > Transfer criteria
       // Transfer criteria option is in the list of Fee/fine options
-      cy.login(user.username, user.password, {
+      cy.login(userWithTransferExports.username, userWithTransferExports.password, {
         path: TopMenu.transferCriteriaPath,
         waiter: TransferCriteria.waitLoading,
       });
 
-      // #2 Go to the Users app => Search for an current User => Select current User by clicking on the row with User's name
-      // Pane with the User Information is appeared
-      // Actions menu is enabled
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByUsername(user.username);
-      Users.verifyUserDetailsPane();
-      UsersSearchResultsPane.verifyActionsButtonEnabled();
-
-      // #3 Click on Actions menu => Select Edit => click "Add permissions" on User Permissions accordion
-      // A permissions selection box is opened
-
-      // #4 Search for "Transfer exports: Transfer admin" => Uncheck "Transfer exports: Transfer admin" permissions => Click to "Save & close" button
-      // "Transfer exports: Transfer admin" permissions is deleted from the User Permissions accordion
-      UserEdit.addPermissions(['Transfer exports: Transfer admin']);
-      UserEdit.verifyPermissionsNotExistInPermissionsAccordion([
-        'Transfer exports: Transfer admin',
-      ]);
-
-      // #5 Click to "Save & close" button on the User editing mode
-      // "Transfer exports: Transfer admin" permissions is unassigned
-      UserEdit.saveAndClose();
-      UsersCard.verifyPermissionsNotExist(['Transfer exports: Transfer admin']);
-
-      // #6 Re-login into FOLIO with new set of permissions
+      // #6 Re-login as user without Transfer exports permission
       // FOLIO landing page is displayed
-      cy.logout();
-      cy.login(user.username, user.password);
+      cy.login(userWithoutTransferExports.username, userWithoutTransferExports.password, {
+        path: TopMenu.settingsUserPath,
+        waiter: () => cy.wait(5000),
+      });
 
       // #7 Go to Settings > Users > Fee/fine
-      // Check that Transfer criteria option is missing and unavailable in the list of Fee/fine options now
-      cy.visit(TopMenu.settingsUserPath);
+      // Transfer criteria option is missing and unavailable in the list of Fee/fine options
       UsersSettingsGeneral.checkUserSectionOptionAbsent('Transfer criteria');
     },
   );

@@ -55,8 +55,8 @@ describe('Calendar', () => {
     });
 
     it(
-      'C360960 Sort headings on "Current calendar assignments" tab (bama)',
-      { tags: ['smokeBama', 'bama', 'C360960'] },
+      'C360960 Sort headings on "Current calendar assignments" tab (helios)',
+      { tags: ['smoke', 'helios', 'C360960'] },
       () => {
         const calendars = [];
         const servicePoints = [];
