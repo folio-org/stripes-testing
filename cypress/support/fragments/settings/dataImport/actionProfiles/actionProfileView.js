@@ -88,10 +88,12 @@ export default {
         .exists(),
     );
   },
-  verifyActionsMenuOptionsDisabled(optionNames) {
-    cy.do(viewPane.find(actionsButton).click());
+  verifyActionsMenuOptionsDisabled(optionNames, { isDisabled = true, openMenu = true } = {}) {
+    if (openMenu) cy.do(viewPane.find(actionsButton).click());
     const options = Array.isArray(optionNames) ? optionNames : [optionNames];
-    cy.expect(options.map((option) => DropdownMenu().find(Button(option)).has({ disabled: true })));
+    cy.expect(
+      options.map((option) => DropdownMenu().find(Button(option)).has({ disabled: isDisabled })),
+    );
   },
   checkCalloutMessage: (message) => {
     cy.expect(Callout({ textContent: including(message) }).exists());

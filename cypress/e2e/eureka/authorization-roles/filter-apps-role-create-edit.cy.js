@@ -87,17 +87,13 @@ describe('Eureka', () => {
           AuthorizationRoles.selectApplicationInModal(testData.selectedApplications[0]);
           AuthorizationRoles.selectApplicationInModal(testData.selectedApplications[1]);
           AuthorizationRoles.toggleFilterOptionInSelectAppModal(selectAppFilterOptions.UNSELECTED);
-          AuthorizationRoles.checkApplicationCountInModal(allTenantApplications.length);
-          AuthorizationRoles.checkApplicationShownInModal(
-            testData.selectedApplications[0],
-            true,
-            true,
+          AuthorizationRoles.checkApplicationCountInModal(
+            allTenantApplications.length - testData.selectedApplications.length,
           );
-          AuthorizationRoles.checkApplicationShownInModal(
-            testData.selectedApplications[1],
-            true,
-            true,
-          );
+          // The two just-checked apps are currently selected (even though unsaved), so they
+          // don't appear in the "Unselected" list
+          AuthorizationRoles.checkApplicationShownInModal(testData.selectedApplications[0], false);
+          AuthorizationRoles.checkApplicationShownInModal(testData.selectedApplications[1], false);
           AuthorizationRoles.checkApplicationShownInModal(additionalApplications[0], true, false);
           AuthorizationRoles.checkClearFilterButtonInSelectAppModal();
           AuthorizationRoles.checkButtonsEnabledInSelectAppModal({ resetAll: true, search: false });
@@ -121,9 +117,20 @@ describe('Eureka', () => {
           );
           AuthorizationRoles.checkApplicationShownInModal(additionalApplications[0], true, false);
 
-          // Step 6: Click on "Selected" variant
+          // Step 6: Click on "Selected" variant. "Reset all" (step 5) doesn't clear checkboxes,
+          // so the two apps checked in step 4 are still selected
           AuthorizationRoles.toggleFilterOptionInSelectAppModal(selectAppFilterOptions.SELECTED);
-          AuthorizationRoles.checkApplicationCountInModal(0);
+          AuthorizationRoles.checkApplicationCountInModal(testData.selectedApplications.length);
+          AuthorizationRoles.checkApplicationShownInModal(
+            testData.selectedApplications[0],
+            true,
+            true,
+          );
+          AuthorizationRoles.checkApplicationShownInModal(
+            testData.selectedApplications[1],
+            true,
+            true,
+          );
           AuthorizationRoles.checkClearFilterButtonInSelectAppModal();
 
           // Step 7: Click (x) close button right to the "Application selected status"
@@ -190,11 +197,14 @@ describe('Eureka', () => {
           AuthorizationRoles.checkApplicationShownInModal(additionalApplications[0], true, false);
           AuthorizationRoles.checkClearFilterButtonInSelectAppModal(false);
 
-          // Step 12: Select several more applications > Click on "Selected" variant
+          // Step 12: Select several more applications > Click on "Selected" variant. All 4
+          // checked apps (the original 2 plus these 2) are now current selections
           AuthorizationRoles.selectApplicationInModal(additionalApplications[0]);
           AuthorizationRoles.selectApplicationInModal(additionalApplications[1]);
           AuthorizationRoles.toggleFilterOptionInSelectAppModal(selectAppFilterOptions.SELECTED);
-          AuthorizationRoles.checkApplicationCountInModal(testData.selectedApplications.length);
+          AuthorizationRoles.checkApplicationCountInModal(
+            testData.selectedApplications.length + additionalApplications.length,
+          );
           AuthorizationRoles.checkApplicationShownInModal(
             testData.selectedApplications[0],
             true,
@@ -205,6 +215,8 @@ describe('Eureka', () => {
             true,
             true,
           );
+          AuthorizationRoles.checkApplicationShownInModal(additionalApplications[0], true, true);
+          AuthorizationRoles.checkApplicationShownInModal(additionalApplications[1], true, true);
           AuthorizationRoles.checkClearFilterButtonInSelectAppModal();
           AuthorizationRoles.checkButtonsEnabledInSelectAppModal({ resetAll: true, search: false });
 

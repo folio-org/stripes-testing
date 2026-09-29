@@ -8,6 +8,7 @@ import {
   MultiColumnListRow,
   SearchField,
   Section,
+  Selection,
   SelectionList,
   TextField,
 } from '../../../../../interactors';
@@ -15,6 +16,7 @@ import {
 const batchAllocationButton = Button('Batch allocations');
 const downloadAllocationWorksheetButton = Button('Download allocation worksheet (CSV)');
 const batchAllocationModal = Modal('Select fiscal year');
+const fiscalYearSelection = batchAllocationModal.find(Selection(including('Fiscal year')));
 const saveAndClose = Button('Save & close');
 const ledgerDetailsSection = Section({ id: 'pane-ledger-details' });
 const actionsButton = Button('Actions');
@@ -93,23 +95,14 @@ export default {
   },
 
   searchFiscalYearInBatchAllocation(fiscalYear) {
-    cy.get('button[id^="selection-"]', { timeout: 5000 }).click();
-    cy.get('input[role="combobox"][aria-autocomplete="list"]', { timeout: 5000 })
-      .filter(':visible')
-      .first()
-      .clear()
-      .type(fiscalYear.code, { delay: 0 });
+    cy.wait(3000);
+    cy.do([fiscalYearSelection.open(), SelectionList().filter(fiscalYear.code)]);
   },
 
   selectFiscalYearInBatchAllocation(fiscalYear) {
-    cy.then(() => {
-      return cy.do(SelectionList().select(including(fiscalYear.code)));
-    }).then(
-      () => {},
-      () => {
-        cy.get('ul[role="listbox"] li[role="option"]').contains(fiscalYear.code).click();
-      },
-    );
+    cy.do(SelectionList().select(fiscalYear.code));
+    cy.wait(3000);
+    cy.expect(fiscalYearSelection.has({ value: including(fiscalYear.code) }));
   },
 
   expectEmptySelectionList() {
@@ -129,10 +122,9 @@ export default {
 
   verifyBatchEditBudget(expectedFunds) {
     cy.get('#batch-allocation-form-content').should('exist');
-
     cy.get('#batch-allocation-form-content')
       .find('div[role="row"]')
-      .then(($rows) => {
+      .should(($rows) => {
         const dataRows = $rows.toArray().filter((r) => {
           const idx = r.getAttribute('aria-rowindex');
           return idx && Number(idx) > 1;
@@ -167,15 +159,28 @@ export default {
             expect(budgetNameCell).to.equal(ef.budgetName);
           } else {
             // eslint-disable-next-line no-unused-expressions
-            expect(budgetNameCell === '' || budgetNameCell === '-' || budgetNameCell == null).to.be
-              .true;
+            expect(
+              budgetNameCell === '' ||
+                budgetNameCell === '-' ||
+                budgetNameCell === 'No value set-' ||
+                budgetNameCell == null,
+            ).to.be.true;
           }
 
           // 4) Total allocated (before)
           const allocBeforeCell = $row.find('div[role="gridcell"]').eq(3).text().trim();
-          expect(allocBeforeCell, `Total allocated (before) in row ${idx}`).to.equal(
-            ef.allocatedBefore,
-          );
+          if (ef.allocatedBefore != null) {
+            expect(allocBeforeCell, `Total allocated (before) in row ${idx}`).to.equal(
+              ef.allocatedBefore,
+            );
+          } else {
+            // eslint-disable-next-line no-unused-expressions
+            expect(
+              allocBeforeCell === '' ||
+                allocBeforeCell === '-' ||
+                allocBeforeCell === 'No value set-',
+            ).to.be.true;
+          }
         });
       });
   },
