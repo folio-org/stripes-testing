@@ -84,9 +84,10 @@ describe('Orders', () => {
       OrderLineEditForm.fillItemDetails({ title: testData.orderLineTitle });
 
       // Step 4-5: Click "Add product ID and product ID type", select "ISBN" type and enter non-ISBN Product ID
-      OrderLineEditForm.addProductId({
+      OrderLineEditForm.fillProductId({
         productId: INVALID_PRODUCT_ID,
         productIdType: PRODUCT_ID_TYPE,
+        clickAddButton: true,
       });
       OrderLineEditForm.checkItemDetailsSection([
         { label: 'title', conditions: { value: testData.orderLineTitle } },
