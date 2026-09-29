@@ -6,6 +6,8 @@ import AgreementViewDetails from '../../../support/fragments/agreements/agreemen
 import Agreements from '../../../support/fragments/agreements/agreements';
 import EditAgreement from '../../../support/fragments/agreements/editAgreement';
 import Licenses from '../../../support/fragments/licenses/licenses';
+import AgreementLines from '../../../support/fragments/agreements/agreementLines';
+import SearchAndFilterAgreementLines from '../../../support/fragments/agreements/searchAndFilterAgreementLines';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
@@ -26,6 +28,18 @@ describe('fse-agreements - UI (no data manipulation)', () => {
     () => {
       SearchAgreements.verifyAgreementsFilterPane();
       Agreements.checkSwitchToLocalKbDisplayed();
+    },
+  );
+
+  it(
+    `FDOPS-6233 - verify Acquisition units filter is present in agreements and agreement lines panes for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'agreements', 'acquisition-units', 'FDOPS-6233'] },
+    () => {
+      SearchAgreements.verifyAcquisitionUnitsFilterPresent();
+
+      AgreementLines.openAgreementLinesTab();
+      AgreementLines.waitLoading();
+      SearchAndFilterAgreementLines.verifyAcquisitionUnitsFilterPresent();
     },
   );
 });

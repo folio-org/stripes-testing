@@ -18,6 +18,10 @@ const defaultAgreementLine = (agreementId) => {
 export default {
   defaultAgreementLine,
 
+  openAgreementLinesTab() {
+    cy.do(agreementLinesToggleButton.click());
+  },
+
   waitLoading() {
     cy.expect(rootSection.exists());
     cy.do(

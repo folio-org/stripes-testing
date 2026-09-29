@@ -5,6 +5,8 @@ const selectInternalContactButton = Button({ id: 'agreement-internal-contacts-fi
 const internalContactFilterList = SelectionList({
   id: 'sl-container-agreement-internal-contacts-filter',
 });
+const agreementsFilterPane = Pane({ id: 'agreements-tab-filter-pane' });
+const acquisitionUnitsFilterAccordion = agreementsFilterPane.find(Accordion('Acquisition units'));
 
 export default {
   search(name) {
@@ -41,5 +43,9 @@ export default {
 
   verifyAgreementsFilterPane() {
     cy.expect(Pane({ id: 'agreements-tab-filter-pane' }).exists());
+  },
+
+  verifyAcquisitionUnitsFilterPresent() {
+    cy.expect(acquisitionUnitsFilterAccordion.exists());
   },
 };

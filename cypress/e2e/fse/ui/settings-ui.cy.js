@@ -6,7 +6,19 @@ import ConsortiumManager from '../../../support/fragments/settings/consortium-ma
 import Modals from '../../../support/fragments/modals';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import NumberGeneratorSettings from '../../../support/fragments/settings/users/numberGeneratorSettings';
-import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
+import NumberGeneratorSequences from '../../../support/fragments/settings/service-interaction/numberGeneratorSequences';
+import SettingsDataExport from '../../../support/fragments/data-export/settingsDataExport';
+import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import SingleJobProfile from '../../../support/fragments/data-export/exportJobProfile/singleJobProfile';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../support/fragments/settings/inventory/settingsInventory';
+import DisplaySettings from '../../../support/fragments/settings/inventory/instance-holdings-item/displaySettings';
+import {
+  CAPABILITY_TYPES,
+  CAPABILITY_ACTIONS,
+  DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES,
+} from '../../../support/constants';
 
 describe('fse-settings - UI (no data manipulation)', () => {
   beforeEach(() => {
@@ -44,12 +56,53 @@ describe('fse-settings - UI (no data manipulation)', () => {
   );
 
   it(
-    `FDOPS-6233 - verify Number generator options are displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'ui', 'settings', 'users', 'number-generator', 'FDOPS-6233'] },
+    `FDOPS-xxxxx - verify Number generator options are displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'settings', 'users', 'number-generator', 'FDOPS-xxxxx'] },
     () => {
       cy.visit(SettingsMenu.numberGeneratorOptionsPath);
       NumberGeneratorSettings.waitLoading();
       NumberGeneratorSettings.checkBarcodeOptionsExist();
+    },
+  );
+
+  it(
+    `FDOPS-xxxxx - verify Number generator sequences list the new scopes for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'settings', 'service-interaction', 'number-generator', 'FDOPS-xxxx'] },
+    () => {
+      cy.visit(SettingsMenu.numberGeneratorSequencesPath);
+      NumberGeneratorSequences.waitLoading();
+      NumberGeneratorSequences.checkSequenceGroupsExist();
+    },
+  );
+
+  it(
+    `FDOPS-xxxxx - verify default data export job profiles are present and locked for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'settings', 'data-export', 'FDOPS-xxxxx'] },
+    () => {
+      SettingsDataExport.goToSettingsDataExport();
+      ExportJobProfiles.goToJobProfilesTab();
+      ExportJobProfiles.waitLoading();
+      ExportJobProfiles.verifyDefaultProfileLockStatus(
+        DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.LINKED_DATA,
+        true,
+      );
+
+      ExportJobProfiles.clickProfileNameFromTheList(
+        DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.LINKED_DATA,
+      );
+      SingleJobProfile.waitLoading(DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.LINKED_DATA);
+      SingleJobProfile.openActions();
+      SingleJobProfile.verifyActionsMenuItems({ edit: false, duplicate: true, delete: false });
+    },
+  );
+
+  it(
+    `FDOPS-xxxx - verify tenant default display columns for Inventory search are configurable for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'settings', 'inventory', 'FDOPS-xxxx'] },
+    () => {
+      SettingsInventory.goToSettingsInventory();
+      SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.DISPLAY_SETTINGS);
+      DisplaySettings.waitloading();
     },
   );
 });

@@ -1,5 +1,8 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import Licenses from '../../../support/fragments/licenses/licenses';
+import Amendments from '../../../support/fragments/licenses/amendments';
+import SearchAndFilterLicenses from '../../../support/fragments/licenses/searchAndFilterLicenses';
+import SearchAndFilterAmendments from '../../../support/fragments/licenses/searchAndFilterAmendments';
 
 describe('fse-licenses - UI (no data manipulation)', () => {
   beforeEach(() => {
@@ -17,6 +20,18 @@ describe('fse-licenses - UI (no data manipulation)', () => {
     { tags: ['sanity', 'fse', 'ui', 'licenses', 'TC195331'] },
     () => {
       Licenses.waitLoading();
+    },
+  );
+
+  it(
+    `FDOPS-6233 - verify Acquisition units filter is present in licenses and amendments panes for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'licenses', 'acquisition-units', 'FDOPS-6233'] },
+    () => {
+      SearchAndFilterLicenses.verifyAcquisitionUnitsFilterPresent();
+
+      Amendments.openAmendmentsTab();
+      Amendments.waitLoading();
+      SearchAndFilterAmendments.verifyAcquisitionUnitsFilterPresent();
     },
   );
 });
