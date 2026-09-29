@@ -24,6 +24,9 @@ import Users from '../../../../../support/fragments/users/users';
 import { ExecutionFlowManager } from '../../../../../support/utils';
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 import ConfirmCreate from '../../../../../support/fragments/consortium-manager/modal/confirm-create';
+import SettingsUsers, {
+  SETTINGS_TABS,
+} from '../../../../../support/fragments/settings/users/settingsUsers';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -236,7 +239,9 @@ describe('Consortia', () => {
             );
 
             cy.log('Step 19. Verify the edited department in the central tenant Settings app');
-            cy.visit(SettingsMenu.departments);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+            SettingsMenu.selectUsers();
+            SettingsUsers.selectSettingsTab(SETTINGS_TABS.DEPARTMENTS);
             Departments.waitLoading();
             Departments.verifyDepartmentsInTheList({
               name: editedDepartment.name,
@@ -246,11 +251,13 @@ describe('Consortia', () => {
 
             cy.log('Step 20. Switch to member-1 and verify the deleted department is absent');
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+            SettingsUsers.selectSettingsTab(SETTINGS_TABS.DEPARTMENTS);
             Departments.waitLoading();
             Departments.verifyGroupAbsentInTheList({ name: department.name });
 
             cy.log('Step 21. Switch to member-2 and verify its department remains');
             ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
+            SettingsUsers.selectSettingsTab(SETTINGS_TABS.DEPARTMENTS);
             Departments.waitLoading();
             Departments.verifyDepartmentsInTheList({
               name: department.name,
