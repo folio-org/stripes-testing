@@ -46,8 +46,8 @@ describe('Calendar', () => {
     });
 
     it(
-      'C360958 Create -> Add new calendar for service point (bama)',
-      { tags: ['smokeBama', 'bama'] },
+      'C360958 Create -> Add new calendar for service point (helios)',
+      { tags: ['smoke', 'helios', 'C360958'] },
       () => {
         PaneActions.openCalendarWithServicePoint(testServicePoint.name);
         PaneActions.individualCalendarPane.close(testCalendarResponse.name);

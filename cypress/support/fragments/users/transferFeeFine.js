@@ -1,4 +1,4 @@
-import { Button, Modal, TextField, Select, Pane } from '../../../../interactors';
+import { Button, Modal, TextField, Select, Pane, including, matching } from '../../../../interactors';
 
 const rootModal = Modal({ id: 'transfer-modal' });
 const ownerSelect = rootModal.find(Select({ id: 'ownerId' }));
@@ -6,7 +6,7 @@ const transferAccountSelect = rootModal.find(Select({ name: 'method' }));
 const confirmModal = Modal('Confirm fee/fine transfer');
 const transferButton = rootModal.find(Button({ id: 'submit-button' }));
 const confirmButton = confirmModal.find(Button('Confirm'));
-const transferPane = Pane('Transfer criteria');
+const transferPane = Pane('Transfer configuration');
 
 export default {
   waitLoading: () => {
@@ -18,20 +18,30 @@ export default {
   },
 
   selectTransferCriteriaSchedulePeriod(period = 'Days') {
-    cy.do(Select({ name: 'schedulePeriod' }).choose(period));
+    cy.do(Select({ name: 'scheduling.frequency' }).choose(period));
   },
 
-  typeScheduleTime(time) {
-    // time: string like 9:15 AM
-    cy.do([
-      TextField({ name: 'scheduleTime' }).fillIn(time),
-      Button({ icon: 'clock' }).click(),
-      Button('Set time').click(),
-    ]);
+  openTimePicker() {
+    // Id starts with "timepicker-toggle-button"
+    cy.do(Button({ id: matching('^timepicker-toggle-button.*') }).click());
+    cy.wait(500);
+  },
+
+  typeScheduleTime(hour, minute, period) {
+    // hour: string like '9'
+    // minute: string like '15'
+    // period: string like 'AM' or 'PM'
+    cy.do(TextField({ id: including('hour-input') }).fillIn(hour));
+    cy.do(TextField({ id: including('minute-input') }).fillIn(minute));
+    cy.do(Select({ id: including('period-toggle') }).choose(period));
+    cy.wait(500);
+    // Id ending with "-set-time"
+    cy.do(Button({ id: matching('.*-set-time$') }).click());
+    cy.wait(500);
   },
 
   verifyScheduleTime(time) {
-    cy.expect(TextField({ name: 'scheduleTime', value: time }).exists());
+    cy.expect(TextField({ name: 'scheduling.time', value: time }).exists());
   },
 
   checkAmount: (amount) => cy.expect(rootModal.find(TextField({ name: 'amount' })).has({ value: amount.toFixed(2) })),
