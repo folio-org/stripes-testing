@@ -312,3 +312,8 @@ export const ORDER_LINE_FORM_LABELS = {
   STARTING_FISCAL_YEAR: 'Starting fiscal year',
   CURRENCY: 'Currency',
 };
+
+export const ORDER_LINE_FORM_MESSAGES = {
+  RECEIVING_WORKFLOW_INFO:
+    'Selecting synchronized will keep the order quantity and the number of pieces to be received, in sync. This also means updating one will update the other. When the order is opened, the system will generate pieces based on the quantity order. Selecting “independent order and receipt quantity” will allow you to manage the number of receiving pieces and their locations independently. You can convert a POL to independent at anytime but you cannot convert back to synchronized when the order is open or closed.',
+};

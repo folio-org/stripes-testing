@@ -1071,6 +1071,17 @@ export default {
     cy.do(moveItemsButton.click());
   },
 
+  verifyItemCheckboxesInHolding(holdingName, itemsCount = 1) {
+    for (let index = 0; index < itemsCount; index++) {
+      cy.expect(
+        Accordion({ label: including(`Holdings: ${holdingName}`) })
+          .find(MultiColumnListRow({ index }))
+          .find(Checkbox())
+          .exists(),
+      );
+    }
+  },
+
   moveHoldingsToAnotherInstance: (newInstanceHrId) => {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
