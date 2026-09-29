@@ -408,6 +408,10 @@ export default {
     });
   },
 
+  verifyVersionsCount(count) {
+    AcqVersionHistory.verifyVersionsCount('order-line', count);
+  },
+
   selectVersionHistoryCard(date) {
     cy.do([
       orderHistorySection
