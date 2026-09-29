@@ -3,6 +3,7 @@ import {
   APPLICATION_NAMES,
   DEFAULT_WAIT_TIME,
   REQUEST_METHOD,
+  UUID_V4_PATTERN,
 } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
@@ -33,7 +34,11 @@ describe('Consortia', () => {
     describe('Manage local settings', () => {
       describe('Manage local Departments', () => {
         const flow = new ExecutionFlowManager();
-        const R = { USER: 'user' };
+        const R = {
+          DEPARTMENT_ID: 'departmentId',
+          USER: 'user',
+        };
+
         const department = {
           name: getTestEntityValue('Local_department_407743'),
           code: getTestEntityValue('LD407743'),
@@ -85,16 +90,6 @@ describe('Consortia', () => {
         after('Delete test data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-
-          Departments.getViaApi({ query: `name=="${editedDepartment.name}"` }).then((records) => {
-            records.forEach((record) => {
-              cy.sendPublishCoordinatorPublication({
-                url: `/departments/${record.id}`,
-                method: REQUEST_METHOD.DELETE,
-                tenants: [Affiliations.Consortia, Affiliations.College, Affiliations.University],
-              });
-            });
-          });
           flow.cleanup();
         });
 
@@ -129,12 +124,37 @@ describe('Consortia', () => {
             cy.log('Step 7. Leave the Share checkbox unchecked');
             ConsortiaControlledVocabularyPaneset.verifyShareCheckboxState({ isChecked: false });
 
+            cy.intercept(
+              'GET',
+              new RegExp(
+                String.raw`\/consortia/${UUID_V4_PATTERN}/publications\/${UUID_V4_PATTERN}/results`,
+              ),
+            ).as('publicationResults');
+
             cy.log('Step 8. Save the local department');
             ConsortiaControlledVocabularyPaneset.clickSave();
             ConfirmCreate.waitLoadingConfirmCreate(department.name);
 
             cy.log('Step 9. Confirm saving the department for the selected members');
             ConfirmCreate.clickConfirm();
+
+            cy.wait('@publicationResults').then(({ response }) => {
+              let departmentId;
+
+              try {
+                departmentId = JSON.parse(response.body.publicationResults[0].response).id;
+              } catch (error) {
+                console.log(error, departmentId);
+              }
+
+              flow.set(R.DEPARTMENT_ID, departmentId, () => {
+                cy.sendPublishCoordinatorPublication({
+                  url: `/departments/${departmentId}`,
+                  method: REQUEST_METHOD.DELETE,
+                  tenants: [Affiliations.Consortia, Affiliations.College, Affiliations.University],
+                });
+              });
+            });
 
             const membersString = [tenantNames.college, tenantNames.central, tenantNames.university]
               .sort((a, b) => a.localeCompare(b))
