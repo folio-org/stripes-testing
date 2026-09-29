@@ -38,7 +38,7 @@ describe('Calendar', () => {
       deleteServicePoint(testServicePoint.id, true);
     });
 
-    it('C360943 Delete -> Delete existing calendar (bama)', { tags: ['smokeBama', 'bama'] }, () => {
+    it('C360943 Delete -> Delete existing calendar (helios)', { tags: ['smoke', 'helios', 'C360943'] }, () => {
       PaneActions.allCalendarsPane.openAllCalendarsPane();
       PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
       PaneActions.individualCalendarPane.selectDeleteAction({
