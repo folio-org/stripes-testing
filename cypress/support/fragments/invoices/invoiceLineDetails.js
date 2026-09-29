@@ -12,7 +12,12 @@ import {
   Section,
   including,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME, RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS } from '../../constants';
+import {
+  DEFAULT_WAIT_TIME,
+  INVOICE_LEVEL_ADJUSTMENTS_COLUMNS,
+  RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS,
+  THE_LIST_CONTAINS_NO_ITEMS,
+} from '../../constants';
 import FundDetails from '../finance/funds/fundDetails';
 import TransactionDetails from '../finance/transactions/transactionDetails';
 import InvoiceLineEditForm from './invoiceLineEditForm';
@@ -33,6 +38,7 @@ const fundDistributionsSection = invoiceLineDetailsPane.find(
   Section({ id: 'invoiceLineFundDistribution' }),
 );
 
+const adjustmentsSection = invoiceLineDetailsPane.find(Section({ id: 'invoiceLineAdjustments' }));
 const relatedInvoiceLinesSection = invoiceLineDetailsPane.find(
   Section({ id: 'otherRelatedInvoiceLines' }),
 );
@@ -62,7 +68,13 @@ export default {
 
     cy.do([polNumberLink.perform((el) => el.removeAttribute('target')), polNumberLink.click()]);
   },
-  checkInvoiceLineDetails({ title, subtitle, invoiceLineInformation = [], checkboxes = [] } = {}) {
+  checkInvoiceLineDetails({
+    title,
+    subtitle,
+    invoiceLineInformation = [],
+    checkboxes = [],
+    adjustments,
+  } = {}) {
     if (title) {
       cy.expect(invoiceLineDetailsPane.has({ title: `View invoice line - ${title}` }));
     }
@@ -77,6 +89,55 @@ export default {
     checkboxes.forEach(({ locator, conditions }) => {
       cy.expect(informationSection.find(Checkbox(locator)).has(conditions));
     });
+    if (adjustments) {
+      this.checkAdjustmentsTableContent(adjustments);
+    }
+  },
+  checkAdjustmentColumnItem(rowIndex, columnName, value) {
+    cy.expect(
+      adjustmentsSection
+        .find(MultiColumnListCell({ row: rowIndex, column: columnName }))
+        .has({ content: including(value) }),
+    );
+  },
+  checkAdjustmentsTableContent(records = []) {
+    records.forEach((record, index) => {
+      if (record.description) {
+        this.checkAdjustmentColumnItem(
+          index,
+          INVOICE_LEVEL_ADJUSTMENTS_COLUMNS.DESCRIPTION,
+          record.description,
+        );
+      }
+
+      if (record.value) {
+        this.checkAdjustmentColumnItem(
+          index,
+          INVOICE_LEVEL_ADJUSTMENTS_COLUMNS.VALUE,
+          record.value,
+        );
+      }
+
+      if (record.prorate) {
+        this.checkAdjustmentColumnItem(
+          index,
+          INVOICE_LEVEL_ADJUSTMENTS_COLUMNS.PRORATE,
+          record.prorate,
+        );
+      }
+
+      if (record.relationToTotal) {
+        this.checkAdjustmentColumnItem(
+          index,
+          INVOICE_LEVEL_ADJUSTMENTS_COLUMNS.RELATION_TO_TOTAL,
+          record.relationToTotal,
+        );
+      }
+    });
+
+    if (!records.length) {
+      cy.expect(adjustmentsSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
+    }
   },
   checkRelatedInvoiceLineColumnItem(rowIndex, columnName, value) {
     cy.expect(
@@ -265,13 +326,6 @@ export default {
   checkFundListIsEmpty: () => {
     cy.expect(
       Section({ id: 'invoiceLineFundDistribution' })
-        .find(HTML(including('The list contains no items')))
-        .exists(),
-    );
-  },
-  checkAdjustmentsListIsEmpty: () => {
-    cy.expect(
-      Section({ id: 'invoiceLineAdjustments' })
         .find(HTML(including('The list contains no items')))
         .exists(),
     );

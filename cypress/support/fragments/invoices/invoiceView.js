@@ -20,6 +20,7 @@ import {
   INVOICE_LEVEL_FUND_DISTRIBUTION_COLUMNS,
   INVOICE_LINES_TABLE_COLUMN_HEADERS,
   INVOICE_POL_PAYMENT_STATUSES,
+  THE_LIST_CONTAINS_NO_ITEMS,
 } from '../../constants';
 import interactorsTools from '../../utils/interactorsTools';
 import InvoiceEditForm from './invoiceEditForm';
@@ -58,6 +59,7 @@ const invoiceLevelAdjustmentsSection = invoiceDetailsPane.find(
   Section({ id: 'invoiceAdjustments' }),
 );
 const extendedInformationAccordion = Accordion({ id: 'extendedInformation' });
+const linksAndDocumentsAccordion = Accordion({ id: 'documents' });
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -244,6 +246,13 @@ export default {
     cy.do(extendedInformationAccordion.clickHeader());
     cy.expect(extendedInformationAccordion.has({ open: true }));
   },
+  expandLinksDocumentsAccordion() {
+    cy.do(linksAndDocumentsAccordion.clickHeader());
+    cy.expect(linksAndDocumentsAccordion.has({ open: true }));
+  },
+  verifyVoucherAccordionAbsent() {
+    cy.expect(voucherInformationSection.absent());
+  },
   checkInvoiceDetails({
     title,
     invoiceInformation = [],
@@ -429,7 +438,13 @@ export default {
       );
     });
   },
-  checkDocumentsSection({ linkName, externalUrl, documentName, shouldExpand = true } = {}) {
+  checkDocumentsSection({
+    linkName,
+    externalUrl,
+    documentName,
+    shouldExpand = true,
+    isEmpty = false,
+  } = {}) {
     if (shouldExpand) {
       cy.do(linksAndDocumentsSection.toggle());
     }
@@ -454,6 +469,13 @@ export default {
           content: documentName,
         }),
       );
+    }
+    if (isEmpty) {
+      cy.expect([
+        linksAndDocumentsSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }),
+        linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Link name' })).absent(),
+        linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Document name' })).absent(),
+      ]);
     }
   },
   copyOrderNumber(vendorInvoiceNo) {
