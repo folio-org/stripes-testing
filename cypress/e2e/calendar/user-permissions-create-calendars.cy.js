@@ -40,8 +40,8 @@ describe('Calendar', () => {
     });
 
     after(() => {
-      // // login as admin to teardown testing data
-      cy.loginAsAdmin();
+      // login as admin to teardown testing data
+      cy.getAdminToken();
       deleteServicePoint(testServicePoint.id, true);
       deleteCalendar(testCalendarResponse.id);
     });
