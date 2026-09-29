@@ -2,6 +2,7 @@ import {
   Accordion,
   Button,
   Checkbox,
+  DropdownMenu,
   including,
   KeyValue,
   Link,
@@ -293,12 +294,14 @@ export default {
       MultiColumnListRow({ content: including(identifier), isContainer: false }),
     );
 
-    columns.forEach(({ columnName, value = identifier }) => {
-      cy.expect(
-        targetRow
-          .find(MultiColumnListCell({ column: columnName }))
-          .has({ content: including(value) }),
-      );
+    columns.forEach(({ columnName, value = identifier, absent = false }) => {
+      const targetCell = targetRow.find(MultiColumnListCell({ column: columnName }));
+
+      if (absent) {
+        cy.expect(targetCell.absent());
+      } else {
+        cy.expect(targetCell.has({ content: value === '' ? '' : including(value) }));
+      }
     });
   },
 
@@ -351,6 +354,27 @@ export default {
     OrderLineEditForm.waitLoading();
 
     return OrderLineEditForm;
+  },
+  expandPoLinesActionsDropdown() {
+    const poLinesActionsButton = polListingAccordion.find(actionsButton);
+
+    cy.then(() => poLinesActionsButton.ariaExpanded()).then((expanded) => {
+      if (expanded !== 'true') {
+        cy.do(poLinesActionsButton.click());
+      }
+    });
+    cy.expect(DropdownMenu().exists());
+  },
+  checkPoLinesActionsMenuContent(columnNames = []) {
+    cy.expect(DropdownMenu().find(Button('Add PO line')).exists());
+    columnNames.forEach((columnName) => {
+      cy.expect(DropdownMenu().find(Checkbox(columnName)).exists());
+    });
+  },
+  togglePoLinesColumns(columnNames = []) {
+    columnNames.forEach((columnName) => {
+      cy.do(DropdownMenu().find(Checkbox(columnName)).click());
+    });
   },
   verifyPOLCount(ordersCount) {
     if (ordersCount === 0) {
