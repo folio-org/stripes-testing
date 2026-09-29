@@ -109,9 +109,10 @@ describe('Orders', () => {
 
       // Step 3: Fill in "Title" field and add "Product ID" with "Product ID type"
       OrderLineEditForm.fillItemDetails({ title: testData.orderLineTitle });
-      OrderLineEditForm.addProductId({
+      OrderLineEditForm.fillProductId({
         productId: testData.issn,
         productIdType: PRODUCT_ID_TYPE,
+        clickAddButton: true,
       });
       OrderLineEditForm.checkItemDetailsSection([
         { label: 'title', conditions: { value: testData.orderLineTitle } },
