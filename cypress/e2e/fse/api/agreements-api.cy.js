@@ -88,7 +88,7 @@ describe('fse-agreements', { retries: { runMode: 1 } }, () => {
 
   it(
     `FDOPS-6502 - Verify entitlement file docs are accessible for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'api', 'entitlements-docs', 'FDOPS-6502'] },
+    { tags: ['fse', 'api', 'agreements-docs', 'FDOPS-6502'] },
     () => {
       fetchAllPages((page, perPage) => cy.getEntitlements(page, perPage)).then((entitlements) => {
         verifyFilesAccessible(collectDocFileIds(entitlements));
