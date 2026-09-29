@@ -655,6 +655,14 @@ export default {
     cy.do([targetField.find(Selection()).open(), targetField.find(Selection()).filter(string)]);
   },
 
+  verifyFilteredFieldOptions(searchText, expectedOptions, row = 0) {
+    this.filterFieldSelectionList(searchText, row);
+    expectedOptions.forEach((option) => {
+      cy.expect(SelectionList().has({ optionList: including(option) }));
+    });
+    this.closeOpenedSelection();
+  },
+
   verifyFilterOptionsListInputInFocus() {
     cy.get('input[aria-label=" options filter"]').should('be.focused');
   },

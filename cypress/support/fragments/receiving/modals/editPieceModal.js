@@ -135,6 +135,13 @@ export default {
       cy.expect(editPieceFields[label].has(conditions));
     });
   },
+  verifyItemStatus(itemStatus) {
+    cy.expect(
+      editPieceModal
+        .find(KeyValue(RECEIVING_PIECE_FORM_FIELD_LABELS.ITEM_STATUS))
+        .has({ value: itemStatus }),
+    );
+  },
 
   fillPieceDetails(fields = {}) {
     Object.entries(fields).forEach(([label, value]) => {

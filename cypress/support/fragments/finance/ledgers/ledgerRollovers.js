@@ -1,5 +1,20 @@
 import uuid from 'uuid';
-import { HTML, MultiColumnListCell, Section, including } from '../../../../../interactors';
+import {
+  Accordion,
+  Button,
+  Checkbox,
+  HTML,
+  MultiColumnList,
+  MultiColumnListCell,
+  Section,
+  TextField,
+  including,
+} from '../../../../../interactors';
+import {
+  COMMON_BUTTON_LABELS,
+  DATE_RANGE_FIELD_LABELS,
+  LEDGER_ROLLOVER_LOGS_COLUMNS,
+} from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import States from '../states';
 
@@ -7,17 +22,74 @@ const ledgerRolloversResultsSection = Section({ id: 'rollover-logs-results-pane'
 const ledgerRolloversTableRoot = ledgerRolloversResultsSection.find(
   HTML({ id: 'rollover-logs-list' }),
 );
+const ledgerRolloversList = MultiColumnList({ id: 'rollover-logs-list' });
+const resetFiltersButton = Button(COMMON_BUTTON_LABELS.RESET_ALL);
+
+const expandFilterAccordion = (accordion) => {
+  cy.then(() => accordion.open()).then((isOpen) => {
+    if (!isOpen) {
+      cy.do(accordion.clickHeader());
+    }
+  });
+};
 
 export default {
   waitLoading() {
     cy.expect(ledgerRolloversResultsSection.exists());
   },
-  checkTableContent({ records = [] } = {}) {
+  checkFiltersPane({ dateFilters = [], checkboxFilters = [] } = {}) {
+    cy.expect(resetFiltersButton.has({ disabled: true }));
+
+    dateFilters.forEach((label) => {
+      const accordion = Accordion(label);
+
+      expandFilterAccordion(accordion);
+      cy.expect([
+        accordion.find(TextField(DATE_RANGE_FIELD_LABELS.FROM)).exists(),
+        accordion.find(TextField(DATE_RANGE_FIELD_LABELS.TO)).exists(),
+        accordion.find(Button(COMMON_BUTTON_LABELS.APPLY)).exists(),
+      ]);
+    });
+
+    checkboxFilters.forEach(({ label, options = [] }) => {
+      const accordion = Accordion(label);
+
+      expandFilterAccordion(accordion);
+      options.forEach((option) => {
+        cy.expect(accordion.find(Checkbox(option)).has({ checked: false }));
+      });
+    });
+  },
+  checkTableContent({ records = [], columns } = {}) {
+    if (columns) {
+      cy.expect(ledgerRolloversList.has({ columns }));
+    }
+
     records.forEach((record, index) => {
+      if (record.startTime) {
+        cy.expect(
+          ledgerRolloversTableRoot
+            .find(
+              MultiColumnListCell({ row: index, column: LEDGER_ROLLOVER_LOGS_COLUMNS.START_TIME }),
+            )
+            .has({ content: including(record.startTime) }),
+        );
+      }
+
+      if (record.endTime) {
+        cy.expect(
+          ledgerRolloversTableRoot
+            .find(
+              MultiColumnListCell({ row: index, column: LEDGER_ROLLOVER_LOGS_COLUMNS.END_TIME }),
+            )
+            .has({ content: including(record.endTime) }),
+        );
+      }
+
       if (record.status) {
         cy.expect(
           ledgerRolloversTableRoot
-            .find(MultiColumnListCell({ row: index, column: 'Status' }))
+            .find(MultiColumnListCell({ row: index, column: LEDGER_ROLLOVER_LOGS_COLUMNS.STATUS }))
             .has({ content: including(record.status) }),
         );
       }
@@ -25,7 +97,7 @@ export default {
       if (record.errors) {
         cy.expect(
           ledgerRolloversTableRoot
-            .find(MultiColumnListCell({ row: index, column: 'Errors' }))
+            .find(MultiColumnListCell({ row: index, column: LEDGER_ROLLOVER_LOGS_COLUMNS.ERRORS }))
             .has({ content: including(record.errors) }),
         );
       }
@@ -33,7 +105,7 @@ export default {
       if (record.results) {
         cy.expect(
           ledgerRolloversTableRoot
-            .find(MultiColumnListCell({ row: index, column: 'Results' }))
+            .find(MultiColumnListCell({ row: index, column: LEDGER_ROLLOVER_LOGS_COLUMNS.RESULTS }))
             .has({ content: including(record.results) }),
         );
       }
@@ -41,7 +113,9 @@ export default {
       if (record.settings) {
         cy.expect(
           ledgerRolloversTableRoot
-            .find(MultiColumnListCell({ row: index, column: 'Settings' }))
+            .find(
+              MultiColumnListCell({ row: index, column: LEDGER_ROLLOVER_LOGS_COLUMNS.SETTINGS }),
+            )
             .has({ content: including(record.settings) }),
         );
       }
@@ -49,7 +123,7 @@ export default {
       if (record.source) {
         cy.expect(
           ledgerRolloversTableRoot
-            .find(MultiColumnListCell({ row: index, column: 'Source' }))
+            .find(MultiColumnListCell({ row: index, column: LEDGER_ROLLOVER_LOGS_COLUMNS.SOURCE }))
             .has({ content: including(record.source) }),
         );
       }
@@ -57,7 +131,9 @@ export default {
   },
   exportRolloverResult({ row = 0, exportStarted = true } = {}) {
     cy.do(
-      ledgerRolloversTableRoot.find(MultiColumnListCell({ column: 'Results', row })).hrefClick(),
+      ledgerRolloversTableRoot
+        .find(MultiColumnListCell({ column: LEDGER_ROLLOVER_LOGS_COLUMNS.RESULTS, row }))
+        .hrefClick(),
     );
 
     if (exportStarted) {

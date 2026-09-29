@@ -178,9 +178,13 @@ describe('Eureka', () => {
 
         // Step 8: Click on "Un/Select All" checkbox in the right part of the modal
         UserEdit.selectAllRolesInRolesModal({ isChecked: null });
-        // Expected: Selected in precondition role disappears, the list is empty
+        // Expected: Role from precondition stays shown, now unchecked - the "Assigned" filter
+        // reflects only saved state, and the unassignment isn't saved yet
         // The counter on the bottom of the modal shows 0
-        UserEdit.verifyRoleInModal(testData.setTwoRoleNames[0], { isShown: false });
+        UserEdit.verifyRoleInModal(testData.setTwoRoleNames[0], {
+          isShown: true,
+          isChecked: false,
+        });
         UserEdit.checkRolesSelectedCounterInModal(0);
 
         // Step 9: Click "Save & close" button
@@ -248,9 +252,13 @@ describe('Eureka', () => {
 
         // Step 15: Click on "Un/Select All" checkbox in the right part of the modal
         UserEdit.selectAllRolesInRolesModal({ isChecked: null });
-        // Expected: Selected in precondition role disappears, list is empty
+        // Expected: Role from precondition stays shown, now unchecked - the "Assigned" filter
+        // reflects only saved state, and the unassignment isn't saved yet
         // The counter on the bottom on the modal shows 1 (additional role from precondition)
-        UserEdit.verifyRoleInModal(testData.setTwoRoleNames[0], { isShown: false });
+        UserEdit.verifyRoleInModal(testData.setTwoRoleNames[0], {
+          isShown: true,
+          isChecked: false,
+        });
         UserEdit.checkRolesSelectedCounterInModal(1);
 
         // Step 16: Click "Save & Close" button
