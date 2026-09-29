@@ -5,6 +5,7 @@ import {
   Callout,
   Dropdown,
   DropdownMenu,
+  Modal,
   Pane,
   Section,
   Select,
@@ -215,6 +216,16 @@ export default {
 
   saveAndClose: () => cy.do(Button('Save as profile & Close').click()),
   close: () => cy.do(closeButton.click()),
+  closeWithoutSaving: () => {
+    cy.do(closeButton.click());
+    cy.expect(
+      Modal('Are you sure?')
+        .find(Button('Close without saving'))
+        .has({ visible: true, disabled: false }),
+    );
+    cy.do(Modal('Are you sure?').find(Button('Close without saving')).click());
+    cy.expect(Pane('New match profile').absent());
+  },
   fillMatchProfileForm: ({
     profileName,
     incomingRecordFields,

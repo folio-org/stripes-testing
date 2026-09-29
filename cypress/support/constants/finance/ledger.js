@@ -50,3 +50,16 @@ export const ROLLOVER_RESULT_CSV_HEADERS = {
   EXPENSE_CLASS_CREDITED: 'Credited (Exp Class)',
   PERCENTAGE_OF_TOTAL_EXPENDED: 'Percentage of total expended',
 };
+
+export const ROLLOVER_ERRORS_CSV_HEADERS = {
+  LEDGER_ROLLOVER_ID: 'Ledger rollover ID',
+  ERROR_TYPE: 'Error type',
+  FAILED_ACTION: 'Failed action',
+  ERROR_MESSAGE: 'Error message',
+  AMOUNT: 'Amount',
+  FUND_ID: 'Fund ID',
+  FUND_CODE: 'Fund code',
+  PURCHASE_ORDER_ID: 'Purchase order ID',
+  PURCHASE_ORDER_LINE_NUMBER: 'Purchase order line number',
+  PURCHASE_ORDER_LINE_ID: 'Purchase order line ID',
+};

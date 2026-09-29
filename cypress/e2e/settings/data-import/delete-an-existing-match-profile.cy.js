@@ -46,6 +46,7 @@ describe('Data Import', () => {
       },
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const matchProfileToCreate = {
       profileName: `C2341 autotest matchProfileForCreate${getRandomPostfix()}`,

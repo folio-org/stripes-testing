@@ -10,10 +10,22 @@ describe('eHoldings', () => {
   describe('Package', () => {
     const testData = {
       searchQuery: 'JSTOR',
+      searchQuerySelectedPackage: 'JSTOR Access Initiative',
+      searchQueryNotSelectedPackage: 'JSTOR South Asia Open Archives (SAOA)',
       selectedStatus: 'Selected',
+      customDisplayName: 'JSTOR test Collection',
     };
 
     before('Creating user, logging in', () => {
+      cy.getAdminToken();
+      EHoldingsPackages.setPackageCustomDisplayNameViaAPI(
+        testData.searchQuerySelectedPackage,
+        testData.customDisplayName,
+      );
+      EHoldingsPackages.setPackageCustomDisplayNameViaAPI(
+        testData.searchQueryNotSelectedPackage,
+        '',
+      );
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
         Permissions.uieHoldingsRecordsEdit.gui,
@@ -28,6 +40,7 @@ describe('eHoldings', () => {
 
     after('Deleting user, data', () => {
       cy.getAdminToken();
+      EHoldingsPackages.setPackageCustomDisplayNameViaAPI(testData.searchQuerySelectedPackage, '');
       Users.deleteViaApi(testData.userId);
     });
 
@@ -37,6 +50,11 @@ describe('eHoldings', () => {
       () => {
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.searchQuery);
+        EHoldingsPackages.verifyPackageWithPackageDisplayNameExistsInResults(
+          testData.searchQuerySelectedPackage,
+          testData.customDisplayName,
+        );
+        EHoldingsPackages.verifyPackageExistsInResults(testData.searchQueryNotSelectedPackage);
         EHoldingsPackagesSearch.bySelectionStatus(testData.selectedStatus);
         EHoldingsPackages.verifyOnlySelectedPackagesInResults();
       },

@@ -27,6 +27,7 @@ import VersionHistory from './orderVersionHistory';
 import OrderStates from './orderStates';
 
 const orderLineDetailsSection = Section({ id: 'order-lines-details' });
+const orderLineDetailsVersionViewSection = Section({ id: 'order-line-version-view' });
 const paneHeaderOrderLinesDetailes = orderLineDetailsSection.find(
   PaneHeader({ id: 'paneHeaderorder-lines-details' }),
 );
@@ -142,9 +143,9 @@ export default {
       CancelConfirmationModal.clickCancelOrderLineButton();
     }
   },
-  checActionsMenuContent(actions = []) {
+  checActionsMenuContent(actions = [], { shouldExist = true } = {}) {
     actions.forEach((action) => {
-      cy.expect(Button(action).exists());
+      cy.expect(shouldExist ? Button(action).exists() : Button(action).absent());
     });
   },
   changeInstanceConnection({ expand = true } = {}) {
@@ -404,6 +405,21 @@ export default {
     this.checkItemDetailsSection([{ key: 'Title', value: title }]);
     cy.expect(itemDetailsSection.find(KeyValue('Title')).find(Link()).absent());
   },
+  checkFieldIsHighlighted(label) {
+    cy.expect(orderLineDetailsVersionViewSection.has({ mark: label }));
+  },
+  checkTitleIsLink(title, { rowIndex = 0 } = {}) {
+    cy.expect([
+      itemDetailsSection
+        .find(KeyValue('Title'))
+        .find(Link(including(title)))
+        .exists(),
+      linkedInstancesDetailsSection
+        .find(MultiColumnListCell({ row: rowIndex, column: 'Title' }))
+        .find(Link(including(title)))
+        .exists(),
+    ]);
+  },
   checkItemDetailsSection(itemDetails = []) {
     this.checkSectionData({ details: itemDetails, section: itemDetailsSection });
   },
@@ -418,6 +434,11 @@ export default {
   },
   checkCostDetailsSection(costDetails = []) {
     this.checkSectionData({ details: costDetails, section: costDetailsSection });
+  },
+  checkCostDetailsFieldsAbsent(labels = []) {
+    labels.forEach((label) => {
+      cy.expect(costDetailsSection.find(HTML(including(label))).absent());
+    });
   },
   checkPhysicalResourceDetails(physicalResourceDetails = []) {
     this.checkSectionData({

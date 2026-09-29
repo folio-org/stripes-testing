@@ -12,6 +12,7 @@ const groupDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-group-details' }
 const fiscalYearSelect = informationSection
   .find(KeyValue(GROUP_VIEW_FIELDS.FISCAL_YEAR))
   .find(Select());
+const FISCAL_YEAR_OPTION_GROUPS = { CURRENT: 'Current:', PREVIOUS: 'Previous:' };
 
 export default {
   ...FinanceDetails,
@@ -24,6 +25,12 @@ export default {
   },
   selectFiscalYear(fiscalYearCode) {
     cy.do(fiscalYearSelect.choose(fiscalYearCode));
+  },
+  checkFiscalYearDropdownOptions({ current = [], previous = [] } = {}) {
+    cy.then(() => fiscalYearSelect.optionsByGroup()).then((groups) => {
+      expect(groups[FISCAL_YEAR_OPTION_GROUPS.CURRENT] ?? []).to.deep.equal(current);
+      expect(groups[FISCAL_YEAR_OPTION_GROUPS.PREVIOUS] ?? []).to.deep.equal(previous);
+    });
   },
   checkInformation(information = []) {
     information.forEach(({ key, value }) => {

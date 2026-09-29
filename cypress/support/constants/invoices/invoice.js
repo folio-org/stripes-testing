@@ -109,6 +109,7 @@ export const CURRENCIES = {
   USD: 'US Dollar (USD)',
   UZS: 'Uzbekistani Som (UZS)',
   UAH: 'Ukrainian Hryvnia (UAH)',
+  AMD: 'Armenian Dram (AMD)',
 };
 
 export const INVOICE_SEARCH_INDEX_LABELS = {

@@ -106,6 +106,16 @@ Cypress.Commands.add('logoutViaApi', () => {
   });
 });
 
+Cypress.Commands.add('logoutAllViaApi', (additionalHeaders = {}) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'authn/logout-all',
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
+    additionalHeaders,
+  });
+});
+
 Cypress.Commands.add('updateCredentials', (username, oldPassword, newPassword, userId) => {
   const body = userId
     ? { username, password: oldPassword, newPassword, userId }

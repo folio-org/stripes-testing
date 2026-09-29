@@ -458,6 +458,7 @@ export const organizationFieldValues = {
   code: 'Organization — Code',
   name: 'Organization — Name',
   uuid: 'Organization — UUID',
+  typeNames: 'Organization — Type names',
 };
 export const purchaseOrderLinesFieldValues = {
   poNumber: 'PO — PO number',
@@ -652,6 +653,14 @@ export default {
     const targetField = RepeatableFieldItem({ index: row });
 
     cy.do([targetField.find(Selection()).open(), targetField.find(Selection()).filter(string)]);
+  },
+
+  verifyFilteredFieldOptions(searchText, expectedOptions, row = 0) {
+    this.filterFieldSelectionList(searchText, row);
+    expectedOptions.forEach((option) => {
+      cy.expect(SelectionList().has({ optionList: including(option) }));
+    });
+    this.closeOpenedSelection();
   },
 
   verifyFilterOptionsListInputInFocus() {

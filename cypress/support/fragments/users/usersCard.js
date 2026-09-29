@@ -831,10 +831,48 @@ export default {
     cy.expect(userRolesAccordion.has({ open: isExpanded }));
   },
 
+  // Idempotent - only expands if currently collapsed. Useful after navigating away and back
+  // (e.g. via cy.go('back')), where accordion state may or may not have survived
+  ensureUserRolesAccordionExpanded() {
+    cy.do(userRolesAccordion.expand());
+    cy.expect(userRolesAccordion.has({ open: true }));
+  },
+
   verifyUserRoleNames(roleNames) {
     roleNames.forEach((roleName) => {
       cy.expect(userRolesAccordion.find(HTML(roleName)).exists());
     });
+  },
+
+  verifyUserRoleIsLink(roleName) {
+    cy.expect(userRolesAccordion.find(Link(roleName)).exists());
+  },
+
+  verifyUserRoleIsPlainText(roleName) {
+    cy.expect([
+      userRolesAccordion.find(Link(roleName)).absent(),
+      userRolesAccordion.find(HTML(roleName)).exists(),
+    ]);
+  },
+
+  // Cypress can't verify target="_blank" behavior by actually clicking it - that risks a real
+  // new tab opening in CI. Instead this asserts the link's original target is "_blank" (which
+  // by web-standard definition guarantees clicking it would leave the current page alone),
+  // then removes that target and clicks, so the role's own detail page opens (and can be
+  // verified) in the current tab
+  clickUserRoleLink(roleName) {
+    const link = userRolesAccordion.find(Link(roleName));
+    // .perform() may not retry the way .click() does, so wait for the link with a regular
+    // interactor assertion first
+    cy.expect(link.exists());
+    cy.do(
+      link.perform((element) => {
+        expect(element.target).to.equal('_blank');
+        element.removeAttribute('target');
+        element.click();
+      }),
+    );
+    cy.wait(2000);
   },
 
   verifyUserRoleNamesOrdered(roleNames) {

@@ -474,12 +474,16 @@ export default {
     }
   },
 
-  verifyMarkAsSuppressedFromDiscoveryWarning() {
-    cy.expect(
-      rootSection
-        .find(HTML(including('Warning: Instance is marked suppressed from discovery')))
-        .exists(),
+  verifyMarkAsSuppressedFromDiscoveryWarning(isDisplayed = true) {
+    const element = rootSection.find(
+      HTML(including('Warning: Instance is marked suppressed from discovery')),
     );
+
+    if (isDisplayed) {
+      cy.expect(element.exists());
+    } else {
+      cy.expect(element.absent());
+    }
   },
 
   verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning() {

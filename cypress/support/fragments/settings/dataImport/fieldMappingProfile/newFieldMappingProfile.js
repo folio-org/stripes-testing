@@ -18,7 +18,6 @@ import {
   Pane,
   Popover,
   RepeatableFieldItem,
-  SearchField,
   Select,
   TextArea,
   TextField,
@@ -29,6 +28,7 @@ import {
   FOLIO_RECORD_TYPE,
   INCOMING_RECORD_NAMES,
   INSTANCE_STATUS_TERM_NAMES,
+  INVENTORY_ITEMS,
   LOCATION_NAMES,
 } from '../../../../constants';
 import getRandomPostfix from '../../../../utils/stringTools';
@@ -154,8 +154,8 @@ const save = () => {
   cy.do(saveButton.click());
   cy.wait(1500);
 };
-const selectOrganizationByName = (organizationName) => {
-  cy.do(organizationLookUpButton.click());
+const selectOrganizationByName = (organizationName, accordion = orderInformationAccordion) => {
+  cy.do(accordion.find(organizationLookUpButton).click());
   cy.expect(organizationModal.exists());
   cy.do([
     organizationModal.find(searchField).fillIn(organizationName),
@@ -291,6 +291,15 @@ const addVendor = (profile) => {
   ]);
   cy.expect(MultiColumnListCell(profile.vendor).exists());
   cy.do(MultiColumnListCell({ content: profile.vendor }).click());
+};
+
+const fillVendorByFirstResult = (vendorName, accordion = orderInformationAccordion) => {
+  cy.do([
+    accordion.find(organizationLookUpButton).click(),
+    organizationModal.find(searchField).fillIn(vendorName),
+    organizationModal.find(searchButton).click(),
+  ]);
+  selectFromResultsList();
 };
 
 const addMaterialSupplier = (profile) => {
@@ -615,7 +624,7 @@ export default {
     }
     // Vendor information section
     if (profile.organizationName) {
-      selectOrganizationByName(profile.organizationName);
+      selectOrganizationByName(profile.organizationName, Accordion('Vendor information'));
     }
     if (profile.accountingCode) {
       cy.do(
@@ -685,7 +694,9 @@ export default {
     save();
   },
 
-  fillOrderMappingProfile: (profile) => {
+  fillOrderMappingProfile: (profile, options = {}) => {
+    const { useFirstVendorResult = false, skipLocation = false } = options;
+
     // Summary section
     fillSummaryInMappingProfile(profile);
     // Order information section
@@ -693,7 +704,11 @@ export default {
       purchaseOrderStatus.fillIn(`"${profile.orderStatus}"`),
       orderInformationAccordion.find(approvedCheckbox).click(),
     ]);
-    addVendor(profile);
+    if (useFirstVendorResult) {
+      fillVendorByFirstResult(profile.vendor);
+    } else {
+      addVendor(profile);
+    }
     if (profile.reEncumber) {
       cy.do(reEncumberField.fillIn(`"${profile.reEncumber}"`));
     }
@@ -760,7 +775,9 @@ export default {
       cy.do(electronicUnitPriceField.fillIn(profile.electronicUnitPrice));
     }
     addFundDistriction(profile);
-    addLocation(profile);
+    if (!skipLocation) {
+      addLocation(profile);
+    }
     addMaterialSupplier(profile);
     if (profile.createInventory) {
       cy.do(
@@ -814,6 +831,7 @@ export default {
   fillItemIdentifier: (identifier) => cy.do(TextField('Item identifier').fillIn(identifier)),
   fillAccessionNumber: (number) => cy.do(TextField('Accession number').fillIn(number)),
   fillCopyNumber: (number) => cy.do(TextField('Copy number').fillIn(number)),
+  fillEnumeration: (value) => cy.do(TextField(INVENTORY_ITEMS.ENUMERATION).fillIn(value)),
   fillVendorInvoiceNumber: (number) => cy.do(TextField('Vendor invoice number*').fillIn(number)),
   fillQuantity: (quantity) => cy.do(TextField('Quantity*').fillIn(quantity)),
   fillSubTotal: (number) => cy.do(TextField('Sub-total*').fillIn(number)),
@@ -1002,6 +1020,12 @@ export default {
     cy.get('#invoice-information').find('button:contains("Accepted values"):eq(2)').click();
     cy.expect(DropdownMenu({ visible: true }).exists());
   },
+  // "Accounting code" lives in the "Vendor information" accordion (Section id="vendor-information",
+  // per fieldMappingProfileEditForm.js) - it is the only "Accepted values" button rendered there
+  openAccountingCodeAcceptedValues: () => {
+    cy.get('#vendor-information').find('button:contains("Accepted values"):last').click();
+    cy.expect(DropdownMenu({ visible: true }).exists());
+  },
   getAcceptedValuesDropdownItems: () => {
     return cy
       .then(() => DropdownMenu({ visible: true }).buttons())
@@ -1070,14 +1094,7 @@ export default {
   },
 
   fillVendorName: (vendorName) => {
-    cy.do([
-      organizationLookUpButton.click(),
-      Modal('Select Organization')
-        .find(SearchField({ id: 'input-record-search' }))
-        .fillIn(vendorName),
-      Modal('Select Organization').find(searchButton).click(),
-    ]);
-    selectFromResultsList();
+    selectOrganizationByName(vendorName, Accordion('Vendor information'));
   },
 
   addFieldMappingsForMarc: () => {

@@ -384,8 +384,8 @@ describe('Lists', () => {
       );
 
       it(
-        'C451524 C451523 Search for organizations in the query builder using "Orgs — Is donor" field (athena)',
-        { tags: ['criticalPath', 'athena', 'C451524', 'C451523'] },
+        'C451523 Search for organizations in the query builder using "Orgs — Is donor" field (athena)',
+        { tags: ['criticalPath', 'athena', 'C451523'] },
         () => {
           const fqlQuery = { 'organization.is_donor': { $eq: 'false' } };
 

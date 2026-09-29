@@ -55,10 +55,12 @@ const generatePackageBodyForUpdate = (updatedPackageData) => {
       type: updatedPackageData.type,
       attributes: {
         name: updatedPackageData.attributes.name,
+        customDisplayName: updatedPackageData.attributes.customDisplayName,
         isSelected: updatedPackageData.attributes.isSelected,
         allowKbToAddTitles: updatedPackageData.attributes.allowKbToAddTitles,
         contentType: updatedPackageData.attributes.contentType,
         customCoverage: updatedPackageData.attributes.customCoverage,
+        customAltNames: updatedPackageData.attributes.customAltNames,
         visibilityData: updatedPackageData.attributes.visibilityData,
         isCustom: updatedPackageData.attributes.isCustom,
         proxy: updatedPackageData.attributes.proxy,
@@ -252,6 +254,19 @@ export default {
     );
   },
 
+  verifyPackageWithPackageDisplayNameExistsInResults(packageName, packageDisplayName) {
+    cy.expect(
+      resultSection
+        .find(
+          ListItem({
+            className: including('list-item-'),
+            h3Value: `${packageName} (${packageDisplayName})`,
+          }),
+        )
+        .exists(),
+    );
+  },
+
   verifyCustomPackage(packageName, contentType = undefined, calloutMessage, alternateName) {
     cy.do(addNewPackageButton.click());
     eHoldingsNewCustomPackage.waitLoading();
@@ -329,12 +344,22 @@ export default {
   updatePackageViaApi(updatedPackageData) {
     const packageId = updatedPackageData.id;
     const packageBody = generatePackageBodyForUpdate(updatedPackageData);
-    cy.okapiRequest({
+    return cy.okapiRequest({
       method: 'PUT',
       path: `eholdings/packages/${packageId}`,
       contentTypeHeader: 'application/vnd.api+json',
       body: packageBody,
       isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  // Returns the package's previous "customAltNames" value, so a caller mutating a shared/live
+  // (non-test-owned) package can restore it afterward instead of leaving the change in place
+  setCustomAltNamesViaApi(packageId, customAltNames) {
+    return this.getPackageDataViaApi(packageId).then(({ body: { data } }) => {
+      const previousCustomAltNames = data.attributes.customAltNames;
+      data.attributes.customAltNames = customAltNames;
+      return this.updatePackageViaApi(data).then(() => previousCustomAltNames);
     });
   },
 
@@ -462,6 +487,15 @@ export default {
           beginCoverage: beginDate,
           endCoverage: endDate,
         };
+        this.updatePackageViaApi(data);
+      });
+    });
+  },
+
+  setPackageCustomDisplayNameViaAPI(packageName, customDisplayName) {
+    this.getPackageViaApi(packageName).then((searchResponse) => {
+      this.getPackageDataViaApi(searchResponse.body.data[0].id).then(({ body: { data } }) => {
+        data.attributes.customDisplayName = customDisplayName;
         this.updatePackageViaApi(data);
       });
     });

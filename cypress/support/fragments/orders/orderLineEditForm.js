@@ -6,6 +6,7 @@ import {
   Checkbox,
   HTML,
   KeyValue,
+  Link,
   Popover,
   RepeatableField,
   RepeatableFieldItem,
@@ -57,6 +58,7 @@ const FORM_FIELD_NAMES = {
   USER_LIMIT: 'eresource.userLimit',
   EXCHANGE_RATE: 'cost.exchangeRate',
   CLAIMING_ACTIVE: 'claimingActive',
+  SUPPRESS_INSTANCE_FROM_DISCOVERY: 'suppressInstanceFromDiscovery',
   CLAIMING_INTERVAL: 'claimingInterval',
   BINDERY_ACTIVE: 'details.isBinderyActive',
   CREATE_INVENTORY_PHYSICAL: 'physical.createInventory',
@@ -94,8 +96,12 @@ const FORM_LABELS = {
   AUTO_EXPORT_INFO_MESSAGE:
     'This is a Manual PO so all POLs are excluded from automated export workflows',
   REMOVE_FISCAL_YEAR: 'Remove fiscal year',
+  EDIT_IN_RECEIVING: 'Edit in receiving',
+  SELECT_HOLDINGS: 'Select holdings',
   SHOW_HIDDEN_FIELDS: 'Show hidden fields',
   ADD_PRODUCT_ID: 'Add product ID and product ID type',
+  RECEIVING_RECORDS_MESSAGE:
+    'This order has receiving records. These quantities can only be edited by working with the records in the receiving app.',
 };
 const FIELD_SELECTORS = {
   LOCATION_ID: 'field-locations',
@@ -157,8 +163,12 @@ const itemDetailsFields = {
     TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_FROM }),
   ),
   subscriptionTo: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_TO })),
+  publicationDate: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PUBLICATION_DATE })),
   productId: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PRODUCT_ID })),
   productIdType: itemDetailsSection.find(Select({ name: FORM_FIELD_NAMES.PRODUCT_ID_TYPE })),
+  suppressInstanceFromDiscovery: itemDetailsSection.find(
+    Checkbox({ name: FORM_FIELD_NAMES.SUPPRESS_INSTANCE_FROM_DISCOVERY }),
+  ),
 };
 
 export const orderLineFields = {
@@ -203,6 +213,8 @@ const costDetailsFields = {
   quantityElectronic: costDetailsSection.find(
     TextField({ name: FORM_FIELD_NAMES.QUANTITY_ELECTRONIC }),
   ),
+  currency: costDetailsSection.find(Button({ id: 'currency' })),
+  currentExchangeRate: costDetailsSection.find(KeyValue('Current exchange rate')),
   useSetExchangeRate: costDetailsSection.find(
     Checkbox({ id: FORM_FIELD_NAMES.USE_SET_EXCHANGE_RATE }),
   ),
@@ -210,6 +222,14 @@ const costDetailsFields = {
   calculatedTotalAmount: costDetailsSection.find(
     KeyValue(FORM_FIELD_NAMES.CALCULATED_TOTAL_AMOUNT),
   ),
+};
+
+const locationFields = {
+  quantityPhysical: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].quantityPhysical` })),
+  quantityElectronic: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].quantityElectronic` })),
+  holding: (index = 0) => locationSection
+    .find(RepeatableFieldItem({ index }))
+    .find(Selection(including(FORM_LABELS.SELECT_HOLDINGS))),
 };
 
 const fundDistributionFields = {
@@ -224,6 +244,9 @@ const buttons = {
   [ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_OPEN]: saveAndOpenOrderButton,
   [COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING]: saveAndKeepEditingButton,
   [COMMON_BUTTON_LABELS.SAVE_AND_CREATE_ANOTHER]: saveAndCreateAnotherButton,
+  [ORDER_AND_ORDER_LINE_BUTTONS.SHOW_HIDDEN_FIELDS]: Button(
+    including(ORDER_AND_ORDER_LINE_BUTTONS.SHOW_HIDDEN_FIELDS),
+  ),
 };
 const requiredFields = [
   { fieldName: POLINE_DETAILS_FIELDS.ORDER_FORMAT, field: orderLineFields.orderFormat },
@@ -267,11 +290,29 @@ export default {
   checkCostDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: costDetailsFields });
   },
+  checkCostDetailsFieldsAbsent(labels = []) {
+    labels.forEach((label) => {
+      cy.expect(costDetailsSection.find(HTML(including(label))).absent());
+    });
+  },
   checkPhysicalResourceDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: physicalResourceDetailsFields });
   },
   clickBinderyActiveCheckbox() {
     cy.do(orderLineFields.binderyActive.click());
+  },
+  clickSuppressInstanceFromDiscoveryCheckbox() {
+    cy.do(itemDetailsFields.suppressInstanceFromDiscovery.click());
+  },
+  verifySuppressInstanceFromDiscoveryInfoPopover() {
+    cy.do(itemDetailsSection.find(Button({ icon: 'info' })).click());
+    cy.expect(
+      Popover().has({
+        content: including(
+          'When true this will suppress any instance record that is created when this order is Opened. If the order line is linked to an existing instance using the Title Lookup or it is matched to an existing instance by product identifier. This flag will not suppress the existing instance.',
+        ),
+      }),
+    );
   },
   setUserLimit(limit) {
     cy.get(FIELD_SELECTORS.USER_LIMIT).clear().type(limit);
@@ -361,10 +402,23 @@ export default {
     SelectInstanceModal.searchByName(instanceTitle);
     SelectInstanceModal.selectInstance(instanceTitle);
   },
-  addProductId({ productId, productIdType }) {
+  addProductId({ productId, productIdType, index = 0 }) {
+    const productIdTypeName = `details.productIds[${index}].productIdType`;
+
     cy.do(itemDetailsSection.find(Button(FORM_LABELS.ADD_PRODUCT_ID)).click());
-    cy.do(itemDetailsFields.productId.fillIn(productId));
-    cy.do(itemDetailsFields.productIdType.choose(productIdType));
+    cy.do(
+      itemDetailsSection
+        .find(TextField({ name: `details.productIds[${index}].productId` }))
+        .fillIn(productId),
+    );
+    cy.get(`#${FORM_SECTION_IDS.ITEM_DETAILS} select[name="${productIdTypeName}"]`)
+      .select(productIdType)
+      .blur();
+    cy.expect(
+      itemDetailsSection
+        .find(Select({ name: productIdTypeName }))
+        .has({ checkedOptionText: productIdType }),
+    );
   },
   fillItemDetails(itemDetails) {
     Object.entries(itemDetails).forEach(([key, value]) => {
@@ -424,8 +478,10 @@ export default {
   },
   fillCostDetails(costDetails) {
     Object.entries(costDetails).forEach(([key, value]) => {
-      if (costDetailsFields[key]) {
-        cy.do(costDetailsFields[key].fillIn(String(value)));
+      const field = costDetailsFields[key];
+
+      if (field) {
+        cy.do(value === true ? field.click() : field.fillIn(String(value)));
       }
     });
   },
@@ -557,12 +613,18 @@ export default {
     cy.wait(1000);
   },
 
-  checkLocationDropdownOptions(expectedLocations) {
+  checkLocationDropdownOptions(expectedLocations, { exactMatch = true } = {}) {
     cy.then(() => SelectionList().optionList()).then((actualOptions) => {
-      expect(actualOptions.sort()).to.deep.equal(
-        expectedLocations.sort(),
-        `Expected locations: ${JSON.stringify(expectedLocations)}, but got: ${JSON.stringify(actualOptions)}`,
-      );
+      if (exactMatch) {
+        expect(actualOptions.sort()).to.deep.equal(
+          expectedLocations.sort(),
+          `Expected locations: ${JSON.stringify(expectedLocations)}, but got: ${JSON.stringify(actualOptions)}`,
+        );
+      } else {
+        expectedLocations.forEach((location) => {
+          expect(actualOptions, `Expected location "${location}"`).to.include(location);
+        });
+      }
     });
   },
 
@@ -796,6 +858,34 @@ export default {
     );
   },
 
+  checkLocationsSection(fields = []) {
+    fields.forEach(({ label, index = 0, conditions }) => {
+      cy.expect(locationFields[label](index).has(conditions));
+    });
+  },
+
+  checkReceivingRecordsMessage(isPresent = true) {
+    const message = locationSection.find(HTML(including(FORM_LABELS.RECEIVING_RECORDS_MESSAGE)));
+
+    cy.expect(isPresent ? message.exists() : message.absent());
+  },
+
+  checkLocationIsNonEditable({ locationName, index = 0 } = {}) {
+    const locationItem = locationSection.find(RepeatableFieldItem({ index }));
+
+    cy.expect([
+      locationItem
+        .find(KeyValue(FORM_LABELS.SELECT_HOLDINGS))
+        .has({ value: including(locationName) }),
+      locationItem.find(Selection(including(FORM_LABELS.SELECT_HOLDINGS))).absent(),
+      locationItem.find(Button({ icon: 'trash' })).has({ disabled: true }),
+    ]);
+  },
+
+  clickEditInReceivingLink() {
+    cy.do(locationSection.find(Link(including(FORM_LABELS.EDIT_IN_RECEIVING))).click());
+  },
+
   checkFundDistributionFundSelected({ fund, index = 0 }) {
     cy.expect(
       fundDistributionDetailsSection
@@ -810,12 +900,30 @@ export default {
       locationSection
         .find(RepeatableFieldItem({ index }))
         .find(Selection(including(FORM_LABELS.FILTER_NAME_CODE)))
-        .has({ value: including(location) }),
+        .has({ singleValue: location ? including(location) : '' }),
       locationSection
         .find(RepeatableFieldItem({ index }))
         .find(Button({ icon: 'trash' }))
         .exists(),
     ]);
+  },
+
+  checkLocationsSectionIsEmpty() {
+    cy.expect(locationSection.find(RepeatableFieldItem()).absent());
+  },
+
+  expandHoldingsDropdown(index = 0) {
+    cy.do(locationSection.find(Button({ id: `field-locations[${index}].holdingId` })).click());
+    cy.wait(1000);
+  },
+
+  clearLocationSelection(index = 0) {
+    cy.do(
+      locationSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'times-circle-solid' }))
+        .click(),
+    );
   },
 
   checkFundRestrictionErrorToastPresent() {
@@ -832,5 +940,9 @@ export default {
 
   checkAccountNumberIsBlank() {
     cy.expect(vendorDetailsFields.accountNumber.has({ checkedOptionText: ' ' }));
+  },
+
+  selectBlankReceiptStatus() {
+    cy.do(orderLineFields.receiptStatus.choose(''));
   },
 };

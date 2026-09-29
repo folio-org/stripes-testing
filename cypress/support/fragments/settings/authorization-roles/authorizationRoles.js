@@ -758,6 +758,13 @@ export default {
     if (roleDescription) cy.expect(roleDescriptionInView.has({ value: roleDescription }));
   },
 
+  // Lighter-weight than verifyRoleViewPane() - just confirms we landed on this role's own
+  // detail pane, without the "last updated" time-window check (which assumes the check runs
+  // right after creating/editing the role, not after unrelated navigation earlier in a test)
+  verifyRoleDetailPaneOpened(roleName) {
+    cy.expect([Pane(roleName).exists(), roleNameInView.has({ value: roleName })]);
+  },
+
   closeRoleDetailView: (roleName) => {
     cy.do(
       PaneHeader(roleName)
@@ -1400,5 +1407,11 @@ export default {
   checkUnselectSetConfirmModalShown: (isShown = true) => {
     if (isShown) cy.expect(unselectSetConfirmModal.exists());
     else cy.expect(unselectSetConfirmModal.absent());
+  },
+
+  goBackWithWait({ waitTime = 4000, checkNoSpinner = true } = {}) {
+    cy.go('back');
+    cy.wait(waitTime);
+    if (checkNoSpinner) cy.expect(Spinner().absent());
   },
 };
