@@ -220,7 +220,7 @@ export default {
           .find(
             MultiColumnListCell({
               column: 'Start',
-              content: including(addExceptionsOpeningExpectedUIValues.startTime),
+              content: including(addExceptionsOpeningExpectedUIValues.startDate),
             }),
           )
           .exists(),
@@ -412,6 +412,7 @@ export default {
       cy.do([Pane(calendarName).clickAction('Edit')]);
 
       cy.url().should('match', /\/settings\/calendar\/active\/edit\/.+$/g);
+      cy.wait(3000); // wait for the edit form to load
     },
     clickNewButton() {
       cy.do(PaneHeader('Current calendar assignments').find(Button('New')).click());

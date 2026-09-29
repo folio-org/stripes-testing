@@ -5,6 +5,7 @@ const { splitTestsOnChunks } = require('./split-tests-on-chunks');
 let numberOfThreadsArg = 1;
 let grepTagsArg = '';
 let envVarsArg = '';
+let useOriginalTags = false;
 
 // print process.argv
 argv.forEach((val, index) => {
@@ -18,6 +19,10 @@ argv.forEach((val, index) => {
   if (val.includes('env=')) {
     envVarsArg = val.replace('env=', '');
   }
+  if (val.includes('useOriginalTags') || (val.includes('runAsIs'))) {
+    console.log('useOriginalTags flag detected, passing tags as is, without splitting into chunks.');
+    useOriginalTags = true;
+  }
 });
 
 if (grepTagsArg === '') {
@@ -26,7 +31,7 @@ if (grepTagsArg === '') {
 
 console.log(`\nNumber of threads: ${numberOfThreadsArg}`);
 console.log(`Environment variables: ${envVarsArg}`);
-console.log(`Tags: ${grepTagsArg}\n`);
+console.log(`Tags: ${grepTagsArg}`);
+console.log(`Use original tags: ${useOriginalTags}\n`);
 
-
-splitTestsOnChunks(numberOfThreadsArg, grepTagsArg, envVarsArg);
+splitTestsOnChunks(numberOfThreadsArg, grepTagsArg, envVarsArg, false, useOriginalTags);

@@ -960,6 +960,10 @@ export default {
     });
   },
 
+  verifyNoAddressesFound() {
+    cy.expect(HTML(including('No addresses found')).exists());
+  },
+
   addAddress(type = 'Home') {
     cy.expect(Button('Add address').exists());
     cy.do(Button('Add address').click());

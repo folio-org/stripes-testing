@@ -123,6 +123,65 @@ export default {
     ]);
   },
 
+  clickAddRowInExceptions() {
+    cy.do(Accordion('Exceptions').find(Button('Add row')).click());
+  },
+
+  verifyExceptionsRowExists(rowIndex) {
+    cy.expect(
+      Accordion('Exceptions')
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .exists(),
+    );
+  },
+
+  verifyExceptionsStatusDropdownOptions(rowIndex) {
+    cy.expect(
+      Accordion('Exceptions')
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(MultiColumnListCell({ column: 'Status' }))
+        .find(Select())
+        .exists(),
+    );
+  },
+
+  clickPlusSignInExceptionsRow(rowIndex) {
+    cy.do(
+      Accordion('Exceptions')
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(MultiColumnListCell({ column: 'Actions' }))
+        .find(Button({ ariaLabel: 'plus-sign' }))
+        .click(),
+    );
+  },
+
+  verifyOpeningsSubRowExists(rowIndex) {
+    // clicking + stacks a second datepicker group inside the row's cells
+    cy.get(`[data-row-index="row-${rowIndex}"] [data-test-datepicker-container]`)
+      .should('have.length.gte', 2);
+  },
+
+  clickTrashInExceptionsRow(rowIndex) {
+    cy.do(
+      Accordion('Exceptions')
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(MultiColumnListCell({ column: 'Actions' }))
+        .find(Button({ ariaLabel: 'trash' }))
+        .click(),
+    );
+  },
+
+  verifyOpeningsSubRowAbsent(rowIndex) {
+    // trash deletes the entire exception row; the row at this index is now the "Add row" button row
+    cy.expect(
+      Accordion('Exceptions')
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(MultiColumnListCell({ column: 'Status' }))
+        .find(Select())
+        .absent(),
+    );
+  },
+
   addOpeningExceptions(addExceptionsOpeningData) {
     // index 2 is used since only 2 closure exceptions exist in the fixture
     const [startYear, startMonth, startDay] = addExceptionsOpeningData.startDate.split('-');

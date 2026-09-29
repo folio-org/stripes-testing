@@ -115,6 +115,13 @@ const physicalResourceDetailsAccordion = Accordion('Physical resource details');
 const eResourcesDetails = Accordion('E-resources details');
 const fundDistributionAccordion = Accordion({ id: 'FundDistribution' });
 const polListingAccordion = Section({ id: 'POListing' });
+const breakInstanceConnectionModal = Modal({ id: 'break-instance-connection-confirmation' });
+const breakInstanceConnectionCancelButton = breakInstanceConnectionModal.find(
+  Button({ id: 'clickable-break-instance-connection-confirmation-cancel' }),
+);
+const breakInstanceConnectionConfirmButton = breakInstanceConnectionModal.find(
+  Button({ id: 'clickable-break-instance-connection-confirmation-confirm' }),
+);
 const quantityElectronicField = TextField({ name: 'locations[0].quantityElectronic' });
 const noteTitle = `Autotest Title_${getRandomPostfix()}`;
 const orderHistorySection = Section({ id: 'versions-history-pane-order-line' });
@@ -2082,21 +2089,27 @@ export default {
     cy.do(itemDetailsSection.find(Button({ icon: 'info' })).click());
   },
 
+  verifyRemoveInstanceConnectionModal: (instanceTitle) => {
+    cy.expect([
+      breakInstanceConnectionModal.has({ header: 'Remove instance connection' }),
+      breakInstanceConnectionModal.has({
+        message: including(
+          'Making this change will remove the link between the POL and selected inventory instance. Are you sure you would like to proceed with making this change and unlink this POL from the inventory instance',
+        ),
+      }),
+      breakInstanceConnectionModal.has({ message: including(instanceTitle) }),
+      breakInstanceConnectionCancelButton.has({ disabled: false }),
+      breakInstanceConnectionConfirmButton.has({ disabled: false }),
+    ]);
+  },
+
   removeInstanceConnectionModal: () => {
-    cy.do(
-      Modal({ id: 'break-instance-connection-confirmation' })
-        .find(Button({ id: 'clickable-break-instance-connection-confirmation-confirm' }))
-        .click(),
-    );
+    cy.do(breakInstanceConnectionConfirmButton.click());
     cy.wait(4000);
   },
 
   cancelRemoveInstanceConnectionModal: () => {
-    cy.do(
-      Modal({ id: 'break-instance-connection-confirmation' })
-        .find(Button({ id: 'clickable-break-instance-connection-confirmation-cancel' }))
-        .click(),
-    );
+    cy.do(breakInstanceConnectionCancelButton.click());
     cy.wait(6000);
   },
 
