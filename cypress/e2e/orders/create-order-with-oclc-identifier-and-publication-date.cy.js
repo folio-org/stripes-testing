@@ -136,9 +136,10 @@ describe('Orders', () => {
         title: testData.orderLineTitle,
         publicationDate: POL_PUBLICATION_DATE,
       });
-      OrderLineEditForm.addProductId({
+      OrderLineEditForm.fillProductId({
         productId: testData.orderLineOclc,
         productIdType: OCLC,
+        clickAddButton: true,
       });
       OrderLineEditForm.checkItemDetailsSection([
         { label: 'title', conditions: { value: testData.orderLineTitle } },
@@ -163,10 +164,11 @@ describe('Orders', () => {
 
       // Step 9: Edit "OCLC" Product ID, add "ISBN" product identifier -> Click "Save & close"
       OrderLineEditForm.fillItemDetails({ productId: testData.orderLineUpdatedOclc });
-      OrderLineEditForm.addProductId({
+      OrderLineEditForm.fillProductId({
         productId: testData.orderLineIsbn,
         productIdType: ISBN,
         index: 1,
+        clickAddButton: true,
       });
       OrderLineEditForm.clickSaveButton();
       OrderLineDetails.waitLoading();

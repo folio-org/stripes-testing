@@ -4,9 +4,11 @@ import {
   Callout,
   HTML,
   KeyValue,
+  Label,
   Link,
   Popover,
   RepeatableField,
+  RepeatableFieldAddButton,
   RepeatableFieldItem,
   Section,
   Select,
@@ -64,6 +66,7 @@ const FORM_FIELD_NAMES = {
   TITLE_OR_PACKAGE: 'titleOrPackage',
   PRODUCT_ID: 'details.productIds[0].productId',
   PRODUCT_ID_TYPE: 'details.productIds[0].productIdType',
+  PRODUCT_ID_QUALIFIER: 'details.productIds[0].qualifier',
   RECEIVING_NOTE: 'details.receivingNote',
   INTERNAL_NOTE: 'description',
   IS_ACKNOWLEDGED: 'details.isAcknowledged',
@@ -174,6 +177,7 @@ const itemDetailsFields = {
   edition: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.EDITION })),
   productId: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PRODUCT_ID })),
   productIdType: itemDetailsSection.find(Select({ name: FORM_FIELD_NAMES.PRODUCT_ID_TYPE })),
+  qualifier: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PRODUCT_ID_QUALIFIER })),
   suppressInstanceFromDiscovery: itemDetailsSection.find(
     Checkbox({ name: FORM_FIELD_NAMES.SUPPRESS_INSTANCE_FROM_DISCOVERY }),
   ),
@@ -202,8 +206,21 @@ export const physicalResourceDetailsFields = {
   ),
 };
 
+export const eResourcesDetailsFields = {
+  createInventory: Select({ name: FORM_FIELD_NAMES.CREATE_INVENTORY_ERESOURCE }),
+};
+
 export const vendorDetailsFields = {
   accountNumber: vendorDetailsSection.find(Select({ name: 'vendorDetail.vendorAccount' })),
+};
+
+const vendorReferenceNumberFields = {
+  refNumber: (index = 0) => vendorDetailsSection.find(
+    TextField({ name: `vendorDetail.referenceNumbers[${index}].refNumber` }),
+  ),
+  refNumberType: (index = 0) => vendorDetailsSection.find(
+    Select({ name: `vendorDetail.referenceNumbers[${index}].refNumberType` }),
+  ),
 };
 
 const ongoingInformationFields = {
@@ -308,6 +325,9 @@ export default {
   checkPhysicalResourceDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: physicalResourceDetailsFields });
   },
+  checkEResourcesDetailsSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: eResourcesDetailsFields });
+  },
   clickBinderyActiveCheckbox() {
     cy.do(orderLineFields.binderyActive.click());
   },
@@ -326,6 +346,15 @@ export default {
         ),
       }),
     );
+  },
+  verifyReceivingWorkflowInfoPopover(message) {
+    cy.do(
+      orderLineDetailsSection
+        .find(Label(including(POLINE_DETAILS_FIELDS.RECEIVING_WORKFLOW)))
+        .find(Button({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover().has({ content: including(message) }));
   },
   setUserLimit(limit) {
     cy.get('[name="eresource.userLimit"]').clear().type(limit);
@@ -411,23 +440,41 @@ export default {
     SelectInstanceModal.searchByName(instanceTitle);
     SelectInstanceModal.selectInstance(instanceTitle);
   },
-  addProductId({ productId, productIdType, index = 0 }) {
-    const productIdTypeName = `details.productIds[${index}].productIdType`;
-
+  clickAddProductIdButton() {
     cy.do(itemDetailsSection.find(Button(FORM_LABELS.ADD_PRODUCT_ID)).click());
-    cy.do(
-      itemDetailsSection
-        .find(TextField({ name: `details.productIds[${index}].productId` }))
-        .fillIn(productId),
-    );
-    cy.get(`#${FORM_SECTION_IDS.ITEM_DETAILS} select[name="${productIdTypeName}"]`)
-      .select(productIdType)
-      .blur();
-    cy.expect(
-      itemDetailsSection
-        .find(Select({ name: productIdTypeName }))
-        .has({ checkedOptionText: productIdType }),
-    );
+  },
+  fillProductId({
+    productId,
+    productIdType,
+    index = 0,
+    clickAddButton = false,
+    checkProductIdType = true,
+  }) {
+    if (clickAddButton) {
+      this.clickAddProductIdButton();
+    }
+    if (productId) {
+      cy.do(
+        itemDetailsSection
+          .find(TextField({ name: `details.productIds[${index}].productId` }))
+          .fillIn(productId),
+      );
+    }
+    if (productIdType) {
+      cy.get(
+        `#${FORM_SECTION_IDS.ITEM_DETAILS} select[name="details.productIds[${index}].productIdType"]`,
+      )
+        .select(productIdType)
+        .blur();
+
+      if (checkProductIdType) {
+        cy.expect(
+          itemDetailsSection
+            .find(Select({ name: `details.productIds[${index}].productIdType` }))
+            .has({ checkedOptionText: productIdType }),
+        );
+      }
+    }
   },
   fillItemDetails(itemDetails) {
     Object.entries(itemDetails).forEach(([key, value]) => {
@@ -491,6 +538,15 @@ export default {
   fillVendorDetails(vendorDetails) {
     if (vendorDetails.accountNumber) {
       cy.do(vendorDetailsFields.accountNumber.choose(including(vendorDetails.accountNumber)));
+    }
+    if (vendorDetails.referenceNumbers) {
+      vendorDetails.referenceNumbers.forEach(({ refNumber, refNumberType }, index) => {
+        cy.do([
+          vendorDetailsSection.find(RepeatableFieldAddButton()).click(),
+          vendorReferenceNumberFields.refNumber(index).fillIn(refNumber),
+          vendorReferenceNumberFields.refNumberType(index).choose(refNumberType),
+        ]);
+      });
     }
   },
   fillCostDetails(costDetails) {
@@ -726,8 +782,14 @@ export default {
     cy.wait(2000);
   },
 
-  cancelWithUnsavedChanges({ keepEditing = false } = {}) {
-    this.clickCancelButton(true);
+  clickSaveAndCloseButton() {
+    cy.expect(saveButton.has({ disabled: false }));
+    // Real click fires native mouse events which trigger re-validation of the previously focused field
+    cy.contains('button', COMMON_BUTTON_LABELS.SAVE_AND_CLOSE).realClick();
+  },
+
+  cancelWithUnsavedChanges({ keepEditing = false, waitMs } = {}) {
+    this.clickCancelButton(true, { waitMs });
     AreYouSureModal.verifyAreYouSureForm(true);
 
     if (keepEditing) {
@@ -756,11 +818,7 @@ export default {
       );
     }
   },
-  clickSaveAndCloseButton() {
-    cy.expect(saveButton.has({ disabled: false }));
-    // Real click fires native mouse events which trigger re-validation of the previously focused field
-    cy.contains('button', COMMON_BUTTON_LABELS.SAVE_AND_CLOSE).realClick();
-  },
+
   clickSaveAndOpenOrderButton({ orderOpened = true, orderLineCreated = true } = {}) {
     cy.expect(saveAndOpenOrderButton.has({ disabled: false }));
     cy.do(saveAndOpenOrderButton.click());
