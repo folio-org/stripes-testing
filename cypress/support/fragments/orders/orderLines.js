@@ -47,6 +47,7 @@ import SelectLocationModal from './modals/selectLocationModal';
 import SelectDonorModal from './modals/selectDonorModal';
 import OrderLineDetails from './orderLineDetails';
 import SelectOrganizationModal from './modals/selectOrganizationModal';
+import AcqVersionHistory from '../acqVersionHistory';
 
 const path = require('path');
 
@@ -388,6 +389,19 @@ export default {
     cy.expect([
       orderHistorySection.find(Card({ headerStart: date })).has({ text: textInformation }),
     ]);
+  },
+
+  assertVersionHistoryCard({ index = 0, changedFields = [], eventDate, source } = {}) {
+    AcqVersionHistory.assertVersionHistoryCard('order-line', {
+      index,
+      changedFields,
+      eventDate,
+      source,
+    });
+  },
+
+  verifyVersionsCount(count) {
+    AcqVersionHistory.verifyVersionsCount('order-line', count);
   },
 
   selectVersionHistoryCard(date) {

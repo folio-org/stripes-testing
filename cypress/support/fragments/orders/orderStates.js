@@ -14,6 +14,7 @@ export default {
   orderSavedSuccessfully: 'The Purchase order - (?:\\d+) has been successfully saved',
   orderOpenedSuccessfully: 'The Purchase order - (?:\\d+) has been successfully opened',
   orderClosedSuccessfully: 'Order was closed',
+  orderDuplicatedSuccessfully: 'The purchase order was successfully duplicated',
   orderUnopenedSuccessfully(orderNumber) {
     return `The Purchase order - ${orderNumber} has been successfully unopened`;
   },

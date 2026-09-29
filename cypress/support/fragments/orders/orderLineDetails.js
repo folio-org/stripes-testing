@@ -26,6 +26,7 @@ import VersionHistory from './orderVersionHistory';
 import OrderStates from './orderStates';
 
 const orderLineDetailsSection = Section({ id: 'order-lines-details' });
+const orderLineDetailsVersionViewSection = Section({ id: 'order-line-version-view' });
 const paneHeaderOrderLinesDetailes = orderLineDetailsSection.find(
   PaneHeader({ id: 'paneHeaderorder-lines-details' }),
 );
@@ -350,6 +351,21 @@ export default {
   checkTitleIsNotLink(title) {
     this.checkItemDetailsSection([{ key: 'Title', value: title }]);
     cy.expect(itemDetailsSection.find(KeyValue('Title')).find(Link()).absent());
+  },
+  checkFieldIsHighlighted(label) {
+    cy.expect(orderLineDetailsVersionViewSection.has({ mark: label }));
+  },
+  checkTitleIsLink(title, { rowIndex = 0 } = {}) {
+    cy.expect([
+      itemDetailsSection
+        .find(KeyValue('Title'))
+        .find(Link(including(title)))
+        .exists(),
+      linkedInstancesDetailsSection
+        .find(MultiColumnListCell({ row: rowIndex, column: 'Title' }))
+        .find(Link(including(title)))
+        .exists(),
+    ]);
   },
   checkItemDetailsSection(itemDetails = []) {
     this.checkSectionData({ details: itemDetails, section: itemDetailsSection });
