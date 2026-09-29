@@ -120,6 +120,16 @@ export default {
         .has({ singleValue: including(holdingName) }),
     );
   },
+  selectHolding(holdingName) {
+    cy.do(editPieceModal.find(Selection({ name: 'holdingId' })).choose(including(holdingName)));
+  },
+  verifySelectedLocation(locationName) {
+    cy.expect(
+      editPieceModal
+        .find(TextField({ name: 'locationId' }))
+        .has({ value: including(locationName) }),
+    );
+  },
   checkFieldsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(editPieceFields[label].has(conditions));
@@ -175,10 +185,10 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(editPieceModal.absent());
   },
-  clickDeleteButton({ isLastPiece = true } = {}) {
+  clickDeleteButton({ isLastPiece = true, hasItem = true } = {}) {
     cy.do(deleteButton.click());
     DeletePieceModal.waitLoading();
-    DeletePieceModal.verifyModalView(isLastPiece);
+    DeletePieceModal.verifyModalView(isLastPiece, { hasItem });
     return DeletePieceModal;
   },
   clickQuickReceiveButton({ peiceReceived = true } = {}) {

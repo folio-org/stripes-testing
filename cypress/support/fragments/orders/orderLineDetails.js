@@ -140,9 +140,9 @@ export default {
       CancelConfirmationModal.clickCancelOrderLineButton();
     }
   },
-  checActionsMenuContent(actions = []) {
+  checActionsMenuContent(actions = [], { shouldExist = true } = {}) {
     actions.forEach((action) => {
-      cy.expect(Button(action).exists());
+      cy.expect(shouldExist ? Button(action).exists() : Button(action).absent());
     });
   },
   changeInstanceConnection({ expand = true } = {}) {
@@ -366,6 +366,11 @@ export default {
   checkCostDetailsSection(costDetails = []) {
     this.checkSectionData({ details: costDetails, section: costDetailsSection });
   },
+  checkCostDetailsFieldsAbsent(labels = []) {
+    labels.forEach((label) => {
+      cy.expect(costDetailsSection.find(HTML(including(label))).absent());
+    });
+  },
   checkPhysicalResourceDetails(physicalResourceDetails = []) {
     this.checkSectionData({
       details: physicalResourceDetails,
@@ -381,12 +386,15 @@ export default {
       }
     });
   },
-  checkLocationsSection({ locations = [] } = {}) {
+  checkLocationsSection({ locations = [], byValue = false } = {}) {
     locations.forEach((locationInformation, index) => {
+      // With byValue, find the row by its first value (e.g. holding/location name) instead of its position
+      const row = byValue ? InfoRow(including(locationInformation[0].value)) : InfoRow({ index });
+
       locationInformation.forEach(({ key, value }) => {
         cy.expect(
           locationDetailsSection
-            .find(InfoRow({ index }))
+            .find(row)
             .find(KeyValue(key))
             .has({ value: including(value) }),
         );

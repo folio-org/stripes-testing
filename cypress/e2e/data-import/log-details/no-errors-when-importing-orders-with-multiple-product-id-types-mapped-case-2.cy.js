@@ -158,7 +158,7 @@ describe('Data Import', () => {
         Logs.openFileDetails(marcFileName);
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
-        OrderLines.verifyProductIdentifier(productInfoUi.productId, productInfoUi.productIdType);
+        OrderLines.verifyProductIdentifier(productInfoUi);
       },
     );
   });
