@@ -1,4 +1,5 @@
 import { NavListItem } from '../../../interactors';
+import { APPLICATION_NAMES } from '../constants';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -139,6 +140,10 @@ export default {
 
   selectOrders() {
     cy.do(NavListItem('Orders').click());
+  },
+
+  selectUsers() {
+    cy.do(NavListItem(APPLICATION_NAMES.USERS).click());
   },
 
   selectRoles() {

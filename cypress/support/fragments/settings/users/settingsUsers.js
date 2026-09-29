@@ -4,6 +4,7 @@ import PatronGroups from './patronGroups';
 const usersPane = Pane('Users');
 
 export const SETTINGS_TABS = {
+  DEPARTMENTS: 'Departments',
   PATRON_GROUPS: 'Patron groups',
 };
 
