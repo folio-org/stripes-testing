@@ -4,6 +4,7 @@ export const INVOICE_LINE_VIEW_FIELDS = {
   DESCRIPTION: 'Description',
   INVOICE_LINE_NUMBER: 'Invoice line number',
   PO_LINE_NUMBER: 'PO line number',
+  RELEASE_ENCUMBRANCE: 'Release encumbrance',
   STATUS: 'Status',
   SUB_TOTAL: 'Sub-total',
   TOTAL_EXCHANGED: 'Total (Exchanged)',

@@ -89,7 +89,7 @@ describe('Invoices', () => {
       Invoices.selectInvoice(invoice.invoiceNumber);
       Invoices.selectInvoiceLine();
       InvoiceLineDetails.checkFundListIsEmpty();
-      InvoiceLineDetails.checkAdjustmentsListIsEmpty();
+      InvoiceLineDetails.checkAdjustmentsTableContent();
       InvoiceLineDetails.closeInvoiceLineDetailsPane();
       Invoices.editInvoice();
       Invoices.addAdjustmentToInvoice(
