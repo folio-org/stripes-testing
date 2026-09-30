@@ -1,4 +1,3 @@
-import { MultiColumnListRow } from '../../../../../interactors';
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
 import QueryModal, { QUERY_OPERATIONS } from '../../../../support/fragments/bulk-edit/query-modal';
 import { LOANS_FIELDS } from '../../../../support/constants/query-builder';
@@ -54,59 +53,67 @@ describe('Lists', () => {
     describe('Loans', () => {
       before('Create test data', () => {
         const createLoanForUser = ({ userData, isClosed = false }) => {
-          return InventoryInstances.getLocations({ limit: 1 }).then((locations) => {
-            const itemBarcode = `${titlePrefix}_${userData.firstName}_${getRandomPostfix()}`;
-            const instanceTitle = `${titlePrefix}_${userData.firstName}_Loan_${getRandomPostfix()}`;
-            const locationId = locations[0].id;
-            userData.itemBarcode = itemBarcode;
+          const itemBarcode = `${titlePrefix}_${userData.firstName}_${getRandomPostfix()}`;
+          const instanceTitle = `${titlePrefix}_${userData.firstName}_Loan_${getRandomPostfix()}`;
+          const ids = {};
+          userData.itemBarcode = itemBarcode;
 
-            return InventoryInstances.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-              return InventoryInstances.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
-                return InventoryInstances.getLoanTypes({ limit: 1 }).then((loanTypes) => {
-                  return InventoryInstances.createFolioInstanceViaApi({
-                    instance: {
-                      instanceTypeId: instanceTypes[0].id,
-                      title: instanceTitle,
-                    },
-                    holdings: [
-                      {
-                        holdingsTypeId: holdingTypes[0].id,
-                        permanentLocationId: locationId,
-                      },
-                    ],
-                    items: [
-                      {
-                        barcode: itemBarcode,
-                        status: { name: 'Available' },
-                        permanentLoanType: { id: loanTypes[0].id },
-                        materialType: { id: testData.materialType.id },
-                      },
-                    ],
-                  }).then(({ instanceId }) => {
-                    testData.instances.push(instanceId);
-
-                    return Checkout.checkoutItemViaApi({
-                      itemBarcode,
-                      servicePointId: servicePoint.id,
-                      userBarcode: userData.barcode,
-                    }).then((loan) => {
-                      userData.loanId = loan.id;
-
-                      if (isClosed) {
-                        return CheckInActions.checkinItemViaApi({
-                          itemBarcode,
-                          servicePointId: servicePoint.id,
-                          checkInDate: new Date().toISOString(),
-                        });
-                      }
-
-                      return null;
-                    });
-                  });
-                });
+          return InventoryInstances.getLocations({ limit: 1 })
+            .then((locations) => {
+              ids.locationId = locations[0].id;
+              return InventoryInstances.getInstanceTypes({ limit: 1 });
+            })
+            .then((instanceTypes) => {
+              ids.instanceTypeId = instanceTypes[0].id;
+              return InventoryInstances.getHoldingTypes({ limit: 1 });
+            })
+            .then((holdingTypes) => {
+              ids.holdingTypeId = holdingTypes[0].id;
+              return InventoryInstances.getLoanTypes({ limit: 1 });
+            })
+            .then((loanTypes) => {
+              return InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId: ids.instanceTypeId,
+                  title: instanceTitle,
+                },
+                holdings: [
+                  {
+                    holdingsTypeId: ids.holdingTypeId,
+                    permanentLocationId: ids.locationId,
+                  },
+                ],
+                items: [
+                  {
+                    barcode: itemBarcode,
+                    status: { name: 'Available' },
+                    permanentLoanType: { id: loanTypes[0].id },
+                    materialType: { id: testData.materialType.id },
+                  },
+                ],
               });
+            })
+            .then(({ instanceId }) => {
+              testData.instances.push(instanceId);
+              return Checkout.checkoutItemViaApi({
+                itemBarcode,
+                servicePointId: servicePoint.id,
+                userBarcode: userData.barcode,
+              });
+            })
+            .then((loan) => {
+              userData.loanId = loan.id;
+
+              if (isClosed) {
+                return CheckInActions.checkinItemViaApi({
+                  itemBarcode,
+                  servicePointId: servicePoint.id,
+                  checkInDate: new Date().toISOString(),
+                });
+              }
+
+              return null;
             });
-          });
         };
 
         const changeUserPatronGroup = (userData, patronGroupId) => {
@@ -182,7 +189,7 @@ describe('Lists', () => {
               LoanDetails.checkAnonymizeAllLoansModalOpen();
               LoanDetails.confirmAnonymizeAllLoans();
 
-              cy.expect(MultiColumnListRow({ rowIndexInParent: 'row-0' }).absent());
+              LoanDetails.verifyClosedLoansListIsEmpty();
               UserLoans.closeLoansHistory();
 
               cy.login(user.username, user.password, {

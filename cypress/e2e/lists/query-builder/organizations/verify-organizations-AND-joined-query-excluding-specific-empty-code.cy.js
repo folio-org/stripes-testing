@@ -5,12 +5,11 @@ import QueryModal, {
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import { ORGANIZATIONS_FIELDS } from '../../../../support/constants/query-builder/organizationsFields';
 import { Lists } from '../../../../support/fragments/lists/lists';
-import { organizationCsvHeaders } from '../../../../support/fragments/lists/lists-file';
+import ListsFile, { organizationCsvHeaders } from '../../../../support/fragments/lists/lists-file';
 import { NewOrganization, Organizations } from '../../../../support/fragments/organizations';
 import SelectOrganizationModal from '../../../../support/fragments/orders/modals/selectOrganizationModal';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 const testCaseId = 'C1525842';
@@ -154,9 +153,9 @@ describe('Lists', () => {
           QueryModal.verifySelectedField(ORGANIZATIONS_FIELDS.ORGANIZATION.DESCRIPTION, 3);
           QueryModal.selectOperator(QUERY_OPERATIONS.CONTAINS, 3);
           QueryModal.verifySelectedOperator(QUERY_OPERATIONS.CONTAINS, 3);
-          QueryModal.fillInValueTextfield(orgDescriptionPrefix, 3);
+          QueryModal.fillInValueTextfield(orgDescription, 3);
           QueryModal.verifyQueryAreaContent(
-            `(organization.code != ${testData.northwindOrg.code}) AND (organization.code not in [${testData.southwindOrg.code}, ${testData.eastCoastLogisticsOrg.code}]) AND (organization.code is null/empty False) AND (organization.description contains ${orgDescriptionPrefix})`,
+            `(organization.code != ${testData.northwindOrg.code}) AND (organization.code not in [${testData.southwindOrg.code}, ${testData.eastCoastLogisticsOrg.code}]) AND (organization.code is null/empty False) AND (organization.description contains ${orgDescription})`,
           );
 
           // Step 6: Click "Test query"
@@ -182,7 +181,7 @@ describe('Lists', () => {
 
           // Verify displayed query
           Lists.verifyQuery(
-            `organization.code != ${testData.northwindOrg.code}) AND (organization.code not in [${testData.southwindOrg.code}, ${testData.eastCoastLogisticsOrg.code}]) AND (organization.code is null/empty False) AND (organization.description contains ${orgDescriptionPrefix}`,
+            `organization.code != ${testData.northwindOrg.code}) AND (organization.code not in [${testData.southwindOrg.code}, ${testData.eastCoastLogisticsOrg.code}]) AND (organization.code is null/empty False) AND (organization.description contains ${orgDescription}`,
           );
 
           // Verify columns in result table
@@ -201,16 +200,13 @@ describe('Lists', () => {
           Lists.verifyExportCallouts(listName);
 
           // Step 10: Open the exported CSV file and inspect the Organization code column
-          FileManager.convertCsvToJson(`${listName}.csv`).then((rows) => {
-            expect(rows.length).to.be.at.least(1);
-
-            const ebscoOrgRow = rows.find(
-              (row) => row[organizationCsvHeaders.code] === testData.ebscoOrg.code,
-            );
-
-            expect(ebscoOrgRow, 'EBSCO organization row in exported CSV').to.be.an('object');
-            expect(ebscoOrgRow[organizationCsvHeaders.code]).to.eq(testData.ebscoOrg.code);
-          });
+          ListsFile.verifyHeaderAndValuesInCsvFileByIdentifier(
+            listName,
+            organizationCsvHeaders.code,
+            testData.ebscoOrg.code,
+            [{ header: organizationCsvHeaders.code, value: testData.ebscoOrg.code }],
+          );
+          ListsFile.verifyCsvFileRowsRecordsNumber(listName, 1);
         },
       );
     });
