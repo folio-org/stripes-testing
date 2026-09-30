@@ -276,8 +276,16 @@ export default {
     FiltersPaneHelper.filterByCheckboxes(searchPane, filterLabel, checkboxLabels);
   },
 
+  filterBySelection(filterLabel, checkboxLabels) {
+    FiltersPaneHelper.filterBySelection(searchPane, filterLabel, checkboxLabels);
+  },
+
   filterByIntegrationTypes(types) {
     this.filterByCheckboxes(EXPORT_MANAGER_JOBS_FILTER_LABELS.INTEGRATION_TYPE, types);
+  },
+
+  filterByExportMethod(exportMethod) {
+    this.filterBySelection(EXPORT_MANAGER_JOBS_FILTER_LABELS.EXPORT_METHOD, exportMethod);
   },
 
   checkFilterOption({ filterName, resetAll = false }) {
@@ -329,8 +337,8 @@ export default {
     cy.expect(jobsDetailsPane.find(HTML('No results found. Please check your filters.')).exists());
   },
 
-  verifyThirdPaneExportJobExist() {
-    cy.wait(10000);
+  verifyThirdPaneExportJobExist({ waitMs = 10_000 } = {}) {
+    cy.wait(waitMs);
     cy.expect(PaneHeader('Export job ').exists());
   },
 
