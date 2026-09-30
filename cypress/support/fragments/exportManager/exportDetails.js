@@ -1,4 +1,5 @@
 import { Button, KeyValue, Pane, including } from '../../../../interactors';
+import { EXPORT_MANAGER_EDI_JOB_FIELD_LABELS } from '../../constants';
 
 const exportDetailsPane = Pane('Export job ');
 const actionsButton = exportDetailsPane.find(Button('Actions'));
@@ -15,20 +16,7 @@ export default {
   downloadExportFile() {
     cy.do([actionsButton.click(), Button('Download').click()]);
   },
-  verifyJobLabels() {
-    const labels = [
-      'Job ID',
-      'Status',
-      'Start time',
-      'End time',
-      'Source',
-      'Organization',
-      'Export method',
-      'Sent to',
-      'File name',
-      'Description',
-      'Error details',
-    ];
+  verifyJobLabels(labels = Object.values(EXPORT_MANAGER_EDI_JOB_FIELD_LABELS)) {
     labels.forEach((label) => {
       cy.expect(KeyValue(label).exists());
     });

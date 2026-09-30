@@ -8,6 +8,7 @@ const { EXPORT_TYPES, FILE_FORMATS, INTEGRATION_TYPES, TRANSMISSION_METHODS } =
 
 export default {
   getDefaultIntegration({
+    integrationName: name,
     vendorId,
     acqMethodId,
     accountNoList = [],
@@ -20,7 +21,7 @@ export default {
     transmissionMethod = TRANSMISSION_METHODS.FTP,
     type = EXPORT_TYPES.EDIFACT_ORDERS,
   } = {}) {
-    const integrationName = `autotest_config_name_${getRandomPostfix()}`;
+    const integrationName = name || `autotest_config_name_${getRandomPostfix()}`;
     return {
       id: uuid(),
       schedulePeriod: 'NONE',
