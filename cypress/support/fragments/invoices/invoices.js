@@ -110,9 +110,11 @@ const getDefaultInvoice = ({
   invoiceDate = moment.utc().format(),
   exportToAccounting = true,
   currency = 'USD',
+  exchangeRate,
 }) => ({
   chkSubscriptionOverlap: true,
   currency,
+  exchangeRate,
   source: 'User',
   batchGroupId,
   batchGroupName,
@@ -183,6 +185,8 @@ export default {
     adjustments,
     acqUnitIds,
     currency,
+    exchangeRate,
+    tags,
   }) {
     const create = (invoice) => {
       cy.okapiRequest({
@@ -197,6 +201,7 @@ export default {
       fiscalYearId,
       batchGroupId,
       currency,
+      exchangeRate,
       vendorId,
       accountingCode,
       invoiceDate,
@@ -210,6 +215,10 @@ export default {
 
     if (acqUnitIds && acqUnitIds.length > 0) {
       invoice.acqUnitIds = acqUnitIds;
+    }
+
+    if (tags?.length > 0) {
+      invoice.tags = { tagList: tags };
     }
 
     if (batchGroupId) {
@@ -283,6 +292,28 @@ export default {
       })
       .then(({ body }) => body);
   },
+  createInvoiceDocumentViaApi({ invoiceId, name, url, data }) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: `invoice/invoices/${invoiceId}/documents`,
+        body: JSON.stringify({
+          documentMetadata: { invoiceId, name, url },
+          contents: data && { data },
+        }),
+        isDefaultSearchParamsRequired: false,
+        contentTypeHeader: 'application/octet-stream',
+      })
+      .then(({ body }) => body);
+  },
+  getInvoiceDocumentsViaApi(invoiceId) {
+    return cy
+      .okapiRequest({
+        path: `invoice/invoices/${invoiceId}/documents`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.documents);
+  },
   createInvoiceWithInvoiceLineViaApi({
     vendorId,
     poLineId,
@@ -297,6 +328,8 @@ export default {
     adjustments,
     acqUnitIds,
     currency,
+    exchangeRate,
+    tags = [],
   }) {
     this.createInvoiceViaApi({
       vendorId,
@@ -308,6 +341,8 @@ export default {
       adjustments,
       acqUnitIds,
       currency,
+      exchangeRate,
+      tags,
     }).then((resp) => {
       cy.wrap(resp).as('invoice');
       const { id: invoiceId, status: invoiceLineStatus } = resp;
