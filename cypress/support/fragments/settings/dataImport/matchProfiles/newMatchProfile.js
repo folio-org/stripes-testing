@@ -415,6 +415,13 @@ export default {
     incomingRecordFields,
     existingRecordFields,
     recordType,
+    // Optional qualifier object (e.g. { comparisonPart: 'ALPHANUMERICS_ONLY' } or
+    // { qualifierType: 'CONTAINS', qualifierValue: '...' }), applied to both sides by default.
+    // Pass incomingQualifier/existingQualifier instead when the two sides differ (e.g. one side
+    // needs {} while the other needs a real qualifier)
+    qualifier,
+    incomingQualifier = qualifier,
+    existingQualifier = qualifier,
   }) => {
     return cy
       .okapiRequest({
@@ -438,6 +445,7 @@ export default {
                   ],
                   staticValueDetails: null,
                   dataValueType: 'VALUE_FROM_RECORD',
+                  ...(incomingQualifier ? { qualifier: incomingQualifier } : {}),
                 },
                 existingRecordType: recordType,
                 existingMatchExpression: {
@@ -449,6 +457,7 @@ export default {
                   ],
                   staticValueDetails: null,
                   dataValueType: 'VALUE_FROM_RECORD',
+                  ...(existingQualifier ? { qualifier: existingQualifier } : {}),
                 },
               },
             ],

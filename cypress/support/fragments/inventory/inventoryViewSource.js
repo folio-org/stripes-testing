@@ -241,10 +241,15 @@ export default {
     });
   },
 
-  checkRowExistsWithTagAndValue(tag, value, isExist = true) {
-    const spacesAfterTag = tag === 'LEADER' ? ' ' : '  ';
+  checkRowExistsWithTagAndValue(tag, value, isExist = true, { raw = false } = {}) {
+    const spacesAfterTag = raw ? '\t' : tag === 'LEADER' ? ' ' : '  ';
     const targetRow = rootSection.find(
-      TableRow({ innerText: and(including(`${tag}${spacesAfterTag}`), including(value)) }),
+      TableRow({
+        [raw ? 'innerTextRaw' : 'innerText']: and(
+          including(`${tag}${spacesAfterTag}`),
+          including(value),
+        ),
+      }),
     );
     if (isExist) cy.expect(targetRow.exists());
     else cy.expect(targetRow.absent());
