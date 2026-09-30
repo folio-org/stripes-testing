@@ -77,7 +77,7 @@ describe('Orders', () => {
       OrderLineEditForm.waitLoading();
       OrderLineEditForm.checkButtonsConditions([
         { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
-        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: true } },
+        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: false } },
       ]);
 
       // Step 3: Fill in the "Title" field

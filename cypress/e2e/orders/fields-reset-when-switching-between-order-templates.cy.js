@@ -223,6 +223,7 @@ describe('Orders', () => {
     Users.deleteViaApi(testData.user.userId);
   });
 
+  // Fails due to the known issue fixed in Umbrellaleaf relese UIOR-1569
   it(
     'C805754 Fields are reset when switching between order templates (thunderjet)',
     { tags: ['criticalPath', 'thunderjet', 'C805754'] },
