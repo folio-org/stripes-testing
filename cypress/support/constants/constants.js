@@ -1963,3 +1963,9 @@ export const HOLDING_TABLE_CONTENT = {
 
 export const UUID_V4_PATTERN =
   '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}';
+
+export const MATCH_PROFILE_QUALIFIER_TYPES = {
+  BEGINS_WITH: 'BEGINS_WITH',
+  ENDS_WITH: 'ENDS_WITH',
+  CONTAINS: 'CONTAINS',
+};
