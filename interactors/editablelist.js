@@ -40,14 +40,14 @@ export const EditableList = MultiColumnList.extend('editable list')
   .locator((el) => el.querySelector('[class^=mclContainer-]').id)
   .filters({
     rowCount: (el) => el.querySelectorAll('[class^=editListRow-]').length,
-    addDisabled: Button({ text: including('+'), disabled: true }).exists(),
+    addDisabled: Button(/new/i, { disabled: true }).exists(),
     editDisabled: Button({ icon: 'edit', disabled: false }).absent(),
     deleteDisabled: Button({ icon: 'trash', disabled: false }).absent(),
-    addButton: Button(including('+')).exists(),
+    addButton: Button(/new/i).exists(),
     editButtons: Button({ icon: 'edit' }).exists(),
     deleteButtons: Button({ icon: 'trash' }).exists(),
     isPresented: (el) => !!el.querySelector('[class^=mclContainer-]'),
   })
   .actions({
-    add: ({ find }) => find(Button(including('+'))).click(),
+    add: ({ find }) => find(Button(/new/i)).click(),
   });
