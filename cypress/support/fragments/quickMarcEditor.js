@@ -452,6 +452,10 @@ const holdingsLocationSelectDisabled = holdingsLocationModal.find(
 const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save & close'));
 const defaultValidLdr = '00000naa\\a2200000uu\\4500';
 const defaultValidHoldingsLdr = '00000nu\\\\\\2200000un\\4500';
+const defaultValidInstance008ValuesString =
+  '260930m\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\111\\1\\\\\\\\\\\\';
+const defaultValidHoldings008ValuesString =
+  '260930\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\';
 const defaultValid008Values = {
   Type: '\\',
   BLvl: '\\',
@@ -560,6 +564,8 @@ export default {
   defaultValid008Values,
   valid008ValuesInstance,
   defaultValid008HoldingsValues,
+  defaultValidInstance008ValuesString,
+  defaultValidHoldings008ValuesString,
   getTag008BoxErrorText,
   tagLengthNumbersOnlyInlineErrorText,
   tag1XXNonRepeatableRequiredCalloutText,
