@@ -29,21 +29,24 @@ Cypress.Commands.add('getConsortiaId', (options = {}) => {
     });
 });
 
-Cypress.Commands.add('assignAffiliationToUser', (affiliationTenantId, targetUserId) => {
-  cy.wait(15000);
-  cy.getConsortiaId().then((consortiaId) => {
-    cy.waitForPrimaryAffiliationSetup(consortiaId, targetUserId);
-    cy.okapiRequest({
-      method: 'POST',
-      path: `consortia/${consortiaId}/user-tenants`,
-      body: {
-        tenantId: affiliationTenantId,
-        userId: targetUserId,
-      },
-      isDefaultSearchParamsRequired: false,
+Cypress.Commands.add(
+  'assignAffiliationToUser',
+  (affiliationTenantId, targetUserId, { waitMs = 15_000 } = {}) => {
+    cy.wait(waitMs);
+    cy.getConsortiaId().then((consortiaId) => {
+      cy.waitForPrimaryAffiliationSetup(consortiaId, targetUserId);
+      cy.okapiRequest({
+        method: 'POST',
+        path: `consortia/${consortiaId}/user-tenants`,
+        body: {
+          tenantId: affiliationTenantId,
+          userId: targetUserId,
+        },
+        isDefaultSearchParamsRequired: false,
+      });
     });
-  });
-});
+  },
+);
 
 Cypress.Commands.add('removeAffiliationFromUser', (tenantId, targetUserId) => {
   cy.getConsortiaId().then((consortiaId) => {

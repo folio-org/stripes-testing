@@ -1,14 +1,15 @@
-import {
+import { Permissions } from '../../support/dictionary';
+import Calendar, {
   createCalendar,
   createServicePoint,
   deleteCalendar,
   deleteServicePoint,
   openCalendarSettings,
 } from '../../support/fragments/calendar/calendar';
-
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
 import PaneActions from '../../support/fragments/calendar/pane-actions';
+import TopMenu from '../../support/fragments/topMenu';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -19,37 +20,42 @@ const addExceptionsOpeningExpectedUIValues = calendarFixtures.expectedUIValues.a
 describe('Calendar', () => {
   describe('Calendar New', () => {
     let testCalendarResponse;
-    before(() => {
-      // login
-      openCalendarSettings(false);
 
-      // get admin token to use in okapiRequest to retrieve service points
-      if (!Cypress.env('token')) {
-        cy.getAdminToken();
-      }
+    before('Create test data and login', () => {
+      cy.loginAsAdmin();
 
-      // reset db state
       deleteServicePoint(testServicePoint.id, false);
 
-      // create test service point and calendar
       createServicePoint(testServicePoint, (response) => {
         testCalendar.assignments = [response.body.id];
 
         createCalendar(testCalendar, (calResponse) => {
           testCalendarResponse = calResponse.body;
         });
-        openCalendarSettings();
+      });
+
+      cy.createTempUser([
+        Permissions.calendarView.gui,
+        Permissions.calendarCreate.gui,
+        Permissions.calendarDelete.gui,
+        Permissions.calendarEditCalendars.gui,
+      ]).then((userProperties) => {
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.settingsCalendarPath,
+          waiter: Calendar.waitCalendarPaneToLoad,
+        });
       });
     });
 
-    after(() => {
-      // delete test calendar
+    after('Delete test data', () => {
+      cy.getAdminToken();
+      deleteServicePoint(testServicePoint.id, true);
       deleteCalendar(testCalendarResponse.id);
     });
 
     it(
-      'C360951 Add exceptions--openings to regular hours for service point (bama)',
-      { tags: ['smokeBama', 'bama'] },
+      'C360951 Add exceptions--openings to regular hours for service point (helios)',
+      { tags: ['smoke', 'helios', 'C360951'] },
       () => {
         PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
         PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(
@@ -57,9 +63,24 @@ describe('Calendar', () => {
         );
         PaneActions.currentCalendarAssignmentsPane.clickEditAction(testCalendar.name);
 
-        CreateCalendarForm.addOpeningExceptions(addExceptionsOpeningData);
+        // #3 Click "Add row" in Exceptions section => New row is added
+        CreateCalendarForm.clickAddRowInExceptions();
+        CreateCalendarForm.verifyExceptionsRowExists(2);
 
-        // intercept http request
+        // #4 Click on "Status" drop-down => Drop-down opens with "Open" and "Closed" options
+        CreateCalendarForm.verifyExceptionsStatusDropdownOptions(2);
+
+        // #5 Select "Open" is covered inside addOpeningExceptions
+
+        // #6 Click "+" in Actions column => New opening row added with date/time fields
+        CreateCalendarForm.clickPlusSignInExceptionsRow(2);
+        CreateCalendarForm.verifyOpeningsSubRowExists(2);
+
+        // #7 Click "Trash" in Actions column => Exception row is deleted
+        CreateCalendarForm.clickTrashInExceptionsRow(2);
+        CreateCalendarForm.verifyOpeningsSubRowAbsent(2);
+
+        // intercept must be set up before save is triggered inside addOpeningExceptions
         cy.intercept(
           Cypress.env('OKAPI_HOST') + '/calendar/calendars/' + testCalendarResponse.id,
           (req) => {
@@ -71,7 +92,8 @@ describe('Calendar', () => {
           },
         ).as('updateCalendar');
 
-        // check that new calendar exists in list of calendars
+        CreateCalendarForm.addOpeningExceptions(addExceptionsOpeningData);
+
         cy.wait('@updateCalendar').then(() => {
           openCalendarSettings();
           PaneActions.allCalendarsPane.openAllCalendarsPane();

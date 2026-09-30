@@ -150,6 +150,24 @@ export default {
       });
   },
 
+  deleteOtherSettingsViaApi(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `circulation/settings/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    });
+  },
+
+  restoreOtherSettingsViaApi(settings) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'circulation/settings',
+      isDefaultSearchParamsRequired: false,
+      body: settings,
+    });
+  },
+
   setOtherSettingsViaApi(params) {
     return this.getOtherSettingsViaApi().then((otherSettingsResp) => {
       let config = otherSettingsResp.body.circulationSettings[0];

@@ -6,9 +6,11 @@ import {
   Checkbox,
   HTML,
   KeyValue,
+  Label,
   Link,
   Popover,
   RepeatableField,
+  RepeatableFieldAddButton,
   RepeatableFieldItem,
   Section,
   Select,
@@ -62,9 +64,11 @@ const FORM_FIELD_NAMES = {
   CLAIMING_INTERVAL: 'claimingInterval',
   BINDERY_ACTIVE: 'details.isBinderyActive',
   CREATE_INVENTORY_PHYSICAL: 'physical.createInventory',
+  CREATE_INVENTORY_ERESOURCE: 'eresource.createInventory',
   TITLE_OR_PACKAGE: 'titleOrPackage',
   PRODUCT_ID: 'details.productIds[0].productId',
   PRODUCT_ID_TYPE: 'details.productIds[0].productIdType',
+  PRODUCT_ID_QUALIFIER: 'details.productIds[0].qualifier',
   RECEIVING_NOTE: 'details.receivingNote',
   SUBSCRIPTION_FROM: 'details.subscriptionFrom',
   SUBSCRIPTION_TO: 'details.subscriptionTo',
@@ -164,8 +168,11 @@ const itemDetailsFields = {
   ),
   subscriptionTo: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_TO })),
   publicationDate: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PUBLICATION_DATE })),
+  publisher: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PUBLISHER })),
+  edition: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.EDITION })),
   productId: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PRODUCT_ID })),
   productIdType: itemDetailsSection.find(Select({ name: FORM_FIELD_NAMES.PRODUCT_ID_TYPE })),
+  qualifier: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PRODUCT_ID_QUALIFIER })),
   suppressInstanceFromDiscovery: itemDetailsSection.find(
     Checkbox({ name: FORM_FIELD_NAMES.SUPPRESS_INSTANCE_FROM_DISCOVERY }),
   ),
@@ -194,8 +201,21 @@ export const physicalResourceDetailsFields = {
   ),
 };
 
+export const eResourcesDetailsFields = {
+  createInventory: Select({ name: FORM_FIELD_NAMES.CREATE_INVENTORY_ERESOURCE }),
+};
+
 export const vendorDetailsFields = {
   accountNumber: vendorDetailsSection.find(Select({ name: FORM_FIELD_NAMES.VENDOR_ACCOUNT })),
+};
+
+const vendorReferenceNumberFields = {
+  refNumber: (index = 0) => vendorDetailsSection.find(
+    TextField({ name: `vendorDetail.referenceNumbers[${index}].refNumber` }),
+  ),
+  refNumberType: (index = 0) => vendorDetailsSection.find(
+    Select({ name: `vendorDetail.referenceNumbers[${index}].refNumberType` }),
+  ),
 };
 
 const ongoingInformationFields = {
@@ -298,6 +318,9 @@ export default {
   checkPhysicalResourceDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: physicalResourceDetailsFields });
   },
+  checkEResourcesDetailsSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: eResourcesDetailsFields });
+  },
   clickBinderyActiveCheckbox() {
     cy.do(orderLineFields.binderyActive.click());
   },
@@ -313,6 +336,15 @@ export default {
         ),
       }),
     );
+  },
+  verifyReceivingWorkflowInfoPopover(message) {
+    cy.do(
+      orderLineDetailsSection
+        .find(Label(including(POLINE_DETAILS_FIELDS.RECEIVING_WORKFLOW)))
+        .find(Button({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover().has({ content: including(message) }));
   },
   setUserLimit(limit) {
     cy.get(FIELD_SELECTORS.USER_LIMIT).clear().type(limit);
@@ -402,23 +434,41 @@ export default {
     SelectInstanceModal.searchByName(instanceTitle);
     SelectInstanceModal.selectInstance(instanceTitle);
   },
-  addProductId({ productId, productIdType, index = 0 }) {
-    const productIdTypeName = `details.productIds[${index}].productIdType`;
-
+  clickAddProductIdButton() {
     cy.do(itemDetailsSection.find(Button(FORM_LABELS.ADD_PRODUCT_ID)).click());
-    cy.do(
-      itemDetailsSection
-        .find(TextField({ name: `details.productIds[${index}].productId` }))
-        .fillIn(productId),
-    );
-    cy.get(`#${FORM_SECTION_IDS.ITEM_DETAILS} select[name="${productIdTypeName}"]`)
-      .select(productIdType)
-      .blur();
-    cy.expect(
-      itemDetailsSection
-        .find(Select({ name: productIdTypeName }))
-        .has({ checkedOptionText: productIdType }),
-    );
+  },
+  fillProductId({
+    productId,
+    productIdType,
+    index = 0,
+    clickAddButton = false,
+    checkProductIdType = true,
+  }) {
+    if (clickAddButton) {
+      this.clickAddProductIdButton();
+    }
+    if (productId) {
+      cy.do(
+        itemDetailsSection
+          .find(TextField({ name: `details.productIds[${index}].productId` }))
+          .fillIn(productId),
+      );
+    }
+    if (productIdType) {
+      cy.get(
+        `#${FORM_SECTION_IDS.ITEM_DETAILS} select[name="details.productIds[${index}].productIdType"]`,
+      )
+        .select(productIdType)
+        .blur();
+
+      if (checkProductIdType) {
+        cy.expect(
+          itemDetailsSection
+            .find(Select({ name: `details.productIds[${index}].productIdType` }))
+            .has({ checkedOptionText: productIdType }),
+        );
+      }
+    }
   },
   fillItemDetails(itemDetails) {
     Object.entries(itemDetails).forEach(([key, value]) => {
@@ -436,6 +486,15 @@ export default {
     }
     if (poLineDetails.orderFormat) {
       cy.do(orderLineFields.orderFormat.choose(poLineDetails.orderFormat));
+      cy.wait(1000);
+    }
+    if (poLineDetails.createInventory) {
+      const createInventoryFieldName =
+        poLineDetails.orderFormat === ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE
+          ? FORM_FIELD_NAMES.CREATE_INVENTORY_ERESOURCE
+          : FORM_FIELD_NAMES.CREATE_INVENTORY_PHYSICAL;
+
+      cy.do(Select({ name: createInventoryFieldName }).choose(poLineDetails.createInventory));
       cy.wait(1000);
     }
     if (poLineDetails.receivingWorkflow) {
@@ -474,6 +533,15 @@ export default {
   fillVendorDetails(vendorDetails) {
     if (vendorDetails.accountNumber) {
       cy.do(vendorDetailsFields.accountNumber.choose(including(vendorDetails.accountNumber)));
+    }
+    if (vendorDetails.referenceNumbers) {
+      vendorDetails.referenceNumbers.forEach(({ refNumber, refNumberType }, index) => {
+        cy.do([
+          vendorDetailsSection.find(RepeatableFieldAddButton()).click(),
+          vendorReferenceNumberFields.refNumber(index).fillIn(refNumber),
+          vendorReferenceNumberFields.refNumberType(index).choose(refNumberType),
+        ]);
+      });
     }
   },
   fillCostDetails(costDetails) {
@@ -729,6 +797,12 @@ export default {
     }
     // wait for changes to be applied
     cy.wait(2000);
+  },
+
+  clickSaveAndCloseButton() {
+    cy.expect(saveButton.has({ disabled: false }));
+    // Real click fires native mouse events which trigger re-validation of the previously focused field
+    cy.contains('button', COMMON_BUTTON_LABELS.SAVE_AND_CLOSE).realClick();
   },
 
   cancelWithUnsavedChanges({ keepEditing = false, waitMs } = {}) {
