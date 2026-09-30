@@ -203,3 +203,10 @@ export const INVOICE_LINES_TABLE_COLUMN_HEADERS = {
   TOTAL_EXCHANGED: 'Total (Exchanged)',
   VENDOR_CODE: 'Vendor code',
 };
+
+export const VOUCHER_LINES_TABLE_COLUMN_HEADERS = {
+  LINE_NUMBER: 'Line number',
+  FUND_CODE: 'Fund code',
+  EXTERNAL_ACCOUNT_NUMBER: 'External account number',
+  AMOUNT: 'Amount',
+};

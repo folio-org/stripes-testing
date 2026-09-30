@@ -2,6 +2,7 @@ import moment from 'moment';
 
 import {
   Button,
+  HTML,
   including,
   KeyValue,
   Link,
@@ -30,6 +31,7 @@ const DeclareLostModal = Modal(DECLARE_LOST_MODAL_TITLE);
 const AnonymizeAllLoansModal = Modal('Anonymize all loans?');
 const AnonymizeModal = Modal('Anonymization prevented');
 const LoanActionsList = MultiColumnList({ id: 'list-loanactions' });
+const ClosedLoansPanel = HTML({ id: 'closed-loans-list-panel' });
 
 const checkDeclareLostButtonActivity = (status) => {
   cy.expect(DeclareLostButton.has({ disabled: status }));
@@ -136,6 +138,15 @@ export default {
     cy.do(AnonymizeModal.find(Button('OK')).click());
     cy.expect(AnonymizeModal.absent());
   },
+  verifyClosedLoansListIsEmpty() {
+    cy.expect([
+      ClosedLoansPanel.find(HTML({ id: 'list-loanshistory-empty' })).has({
+        text: 'The list contains no items',
+      }),
+      ClosedLoansPanel.find(MultiColumnListRow()).absent(),
+    ]);
+  },
+
   checkLoanAbsent(title) {
     cy.expect(KeyValue(title).absent());
   },
