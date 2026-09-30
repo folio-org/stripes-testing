@@ -70,6 +70,7 @@ const FORM_FIELD_NAMES = {
   PRODUCT_ID_TYPE: 'details.productIds[0].productIdType',
   PRODUCT_ID_QUALIFIER: 'details.productIds[0].qualifier',
   RECEIVING_NOTE: 'details.receivingNote',
+  IS_ACKNOWLEDGED: 'details.isAcknowledged',
   SUBSCRIPTION_FROM: 'details.subscriptionFrom',
   SUBSCRIPTION_TO: 'details.subscriptionTo',
   RENEWAL_NOTE: 'renewalNote',
@@ -163,6 +164,9 @@ const edition = TextField({ name: FORM_FIELD_NAMES.EDITION });
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.TITLE_OR_PACKAGE })),
   receivingNote: itemDetailsSection.find(TextArea({ name: FORM_FIELD_NAMES.RECEIVING_NOTE })),
+  mustAcknowledgeReceivingNote: itemDetailsSection.find(
+    Checkbox({ name: FORM_FIELD_NAMES.IS_ACKNOWLEDGED }),
+  ),
   subscriptionFrom: itemDetailsSection.find(
     TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_FROM }),
   ),
@@ -326,6 +330,9 @@ export default {
   },
   clickSuppressInstanceFromDiscoveryCheckbox() {
     cy.do(itemDetailsFields.suppressInstanceFromDiscovery.click());
+  },
+  clickMustAcknowledgeReceivingNoteCheckbox() {
+    cy.do(itemDetailsFields.mustAcknowledgeReceivingNote.click());
   },
   verifySuppressInstanceFromDiscoveryInfoPopover() {
     cy.do(itemDetailsSection.find(Button({ icon: 'info' })).click());
