@@ -5,6 +5,8 @@ export default {
   invoiceLineDeletedMessage: 'Invoice line has been deleted',
   invoiceApprovedMessage: 'Invoice has been approved successfully',
   invoiceApprovedAndPaidMessage: 'Invoice has been approved and paid successfully',
+  invoiceNotApprovedMessage: 'Invoice was not approved',
+  invoiceNotApprovedAndPaidMessage: 'Invoice was not approved/paid',
   invoicePaidMessage: 'Invoice has been paid successfully',
   invoiceCancelledMessage: 'Invoice has been cancelled successfully',
   invoiceDeletedMessage: 'Invoice has been deleted',

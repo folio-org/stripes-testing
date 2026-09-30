@@ -4,3 +4,4 @@ export { default as Invoices } from './invoices';
 export { default as InvoiceView } from './invoiceView';
 export { default as NewInvoice } from './newInvoice';
 export { default as Vouchers } from './vouchers';
+export { default as VoucherView } from './voucherView';

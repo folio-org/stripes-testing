@@ -33,6 +33,7 @@ import PayInvoiceModal from './modal/payInvoiceModal';
 import SelectOrderLinesModal from './modal/selectOrderLinesModal';
 import InvoiceStates from './invoiceStates';
 import UpdatePOLinePaymentStatusModal from './modal/updatePOLinePaymentStatusModal';
+import VoucherView from './voucherView';
 import FundDetails from '../finance/funds/fundDetails';
 
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
@@ -252,6 +253,12 @@ export default {
   },
   verifyVoucherAccordionAbsent() {
     cy.expect(voucherInformationSection.absent());
+  },
+  viewVoucher() {
+    cy.do(voucherInformationSection.find(Button('View voucher')).click());
+    VoucherView.waitLoading();
+
+    return VoucherView;
   },
   checkInvoiceDetails({
     title,
