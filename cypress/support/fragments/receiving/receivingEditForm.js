@@ -1,5 +1,7 @@
 import {
   Button,
+  Checkbox,
+  KeyValue,
   Section,
   TextField,
   MultiSelect,
@@ -9,7 +11,7 @@ import {
   not,
   matching,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import { DEFAULT_WAIT_TIME, POLINE_DETAILS_FIELDS } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import ReceivingStates from './receivingStates';
 
@@ -27,6 +29,10 @@ const itemDetailsFields = {
 
 const lineDetailsFields = {
   poLineNumber: lineDetailsSection.find(TextField({ name: 'poLine.poLineNumber', disabled: true })),
+  receivingNote: lineDetailsSection.find(KeyValue(POLINE_DETAILS_FIELDS.RECEIVING_NOTE)),
+  mustAcknowledgeReceivingNote: lineDetailsSection.find(
+    Checkbox(POLINE_DETAILS_FIELDS.MUST_ACKNOWLEDGE_RECEIVING_NOTE),
+  ),
 };
 
 const cancelButton = receivingEditForm.find(Button('Cancel'));
@@ -58,9 +64,19 @@ export default {
       cy.expect(itemDetailsFields.title.has({ value: title }));
     }
   },
-  checLineDetailsFields({ poLineNumber }) {
+  checLineDetailsFields({ poLineNumber, receivingNote, mustAcknowledgeReceivingNote }) {
     if (poLineNumber) {
       cy.expect(lineDetailsFields.poLineNumber.has({ value: poLineNumber }));
+    }
+    if (receivingNote) {
+      cy.expect(lineDetailsFields.receivingNote.has({ value: including(receivingNote) }));
+    }
+    if (mustAcknowledgeReceivingNote !== undefined) {
+      cy.expect(
+        lineDetailsFields.mustAcknowledgeReceivingNote.has({
+          checked: mustAcknowledgeReceivingNote,
+        }),
+      );
     }
   },
   fillReceivingsFields({ itemDetails, lineDetails }) {
