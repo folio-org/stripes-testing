@@ -260,6 +260,7 @@ const fundDistributionFields = {
   fund: (index = 0) => fundDistributionDetailsSection
     .find(RepeatableFieldItem({ index }))
     .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID))),
+  fundIdButton: (index = 0) => fundDistributionDetailsSection.find(Button({ id: `fundDistribution[${index}].fundId` })),
   expenseClass: (index = 0) => fundDistributionDetailsSection
     .find(RepeatableFieldItem({ index }))
     .find(Selection(including('Expense class'))),
@@ -589,6 +590,13 @@ export default {
 
   clickAddFundDistributionButton() {
     cy.do([fundDistributionDetailsSection.find(Button(FORM_LABELS.ADD_FUND_DISTRIBUTION)).click()]);
+  },
+
+  scrollToItemDetailsSection() {
+    // real wheel event scrolls the page like a user, so open dropdowns react to it
+    cy.get(`#${FORM_SECTION_IDS.FORM}`).realMouseWheel({ deltaY: -5000, scrollBehavior: false });
+    cy.get(`[id="${FORM_SECTION_IDS.ITEM_DETAILS}"]`).should('be.visible');
+    cy.wait(1000);
   },
 
   scrollToFundDistributionSection() {

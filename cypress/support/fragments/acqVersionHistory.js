@@ -36,6 +36,23 @@ export default {
     cy.wait(DEFAULT_WAIT_TIME);
   },
 
+  checkVersionHistoryCardIsActive(entityType, { index, isActive = true }) {
+    cy.expect(
+      Section({ id: `versions-history-pane-${entityType}` })
+        .find(Card({ index }))
+        .find(Button({ icon: 'clock', disabled: isActive }))
+        .exists(),
+    );
+  },
+
+  clickVersionHistoryCardTitle(entityType, { index }) {
+    cy.get(`#versions-history-pane-${entityType} [class^=card-]`)
+      .eq(index)
+      .find('[data-testid="version-card-title-button"]')
+      .click();
+    cy.wait(DEFAULT_WAIT_TIME);
+  },
+
   verifyVersionsCount(entityType, count) {
     cy.expect(
       Section({ id: `versions-history-pane-${entityType}` })

@@ -12,6 +12,7 @@ import {
   MultiColumnListRow,
   PaneHeader,
   Section,
+  Tooltip,
   Warning,
   MultiColumnListHeader,
 } from '../../../../interactors';
@@ -74,7 +75,7 @@ export default {
   },
 
   checkPOLinePaneAbsent() {
-    cy.expect(orderLineDetailsSection.absent());
+    cy.expect([orderLineDetailsSection.absent(), orderLineDetailsVersionViewSection.absent()]);
   },
 
   checkFieldsHasCopyIcon(fields = []) {
@@ -408,7 +409,55 @@ export default {
   checkFieldIsHighlighted(label) {
     cy.expect(orderLineDetailsVersionViewSection.has({ mark: label }));
   },
-  checkTitleIsLink(title, { rowIndex = 0 } = {}) {
+  checkVersionHistoryButtonTooltip() {
+    cy.do(orderLineDetailsSection.find(versionHistoryButton).hoverMouse());
+    cy.expect(Tooltip().has({ text: 'Version history' }));
+  },
+  checkHighlightedFieldsInVersionHistoryView(labels = []) {
+    if (!labels.length) {
+      cy.get('#order-line-version-view mark').should('not.exist');
+      return;
+    }
+    cy.get('#order-line-version-view mark').then(($marks) => {
+      const marked = [...$marks].map((el) => el.textContent);
+      labels.forEach((label) => expect(marked, `"${label}" is highlighted`).to.include(label));
+    });
+  },
+  checkFieldsInVersionHistoryView(fields = []) {
+    fields.forEach(({ key, value }) => {
+      cy.expect(
+        orderLineDetailsVersionViewSection.find(KeyValue(key)).has({ value: including(value) }),
+      );
+    });
+  },
+  checkFundDistributionTable({ rows = [], absentColumns = [] } = {}) {
+    const fundDistributionTable = Section({ id: 'FundDistribution' });
+
+    cy.expect(fundDistributionTable.exists());
+    rows.forEach((row, rowIndex) => {
+      Object.entries(row).forEach(([column, value]) => {
+        cy.expect(
+          fundDistributionTable
+            .find(MultiColumnListCell({ row: rowIndex, column }))
+            .has({ content: including(value) }),
+        );
+      });
+    });
+    absentColumns.forEach((column) => {
+      cy.expect(fundDistributionTable.find(MultiColumnListHeader(column)).absent());
+    });
+  },
+  checkTitleIsLink(title, { rowIndex = 0, isVersionView = false } = {}) {
+    if (isVersionView) {
+      cy.expect(
+        orderLineDetailsVersionViewSection
+          .find(KeyValue('Title'))
+          .find(Link(including(title)))
+          .exists(),
+      );
+      return;
+    }
+
     cy.expect([
       itemDetailsSection
         .find(KeyValue('Title'))

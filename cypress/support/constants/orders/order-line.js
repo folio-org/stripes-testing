@@ -14,6 +14,15 @@ export const ORDER_LINE_SEARCH_INDEX_LABELS = {
   VOLUMES: 'Volumes',
 };
 
+export const POLINE_FUND_DISTRIBUTION_COLUMNS = {
+  FUND: 'Fund',
+  EXPENSE_CLASS: 'Expense class',
+  VALUE: 'Value',
+  AMOUNT: 'Amount',
+  INITIAL_ENCUMBRANCE: 'Initial encumbrance',
+  CURRENT_ENCUMBRANCE: 'Current encumbrance',
+};
+
 export const ORDER_LINE_ACCORDION_NAMES = {
   ITEM_DETAILS: 'Item details',
   PURCHASE_ORDER_LINE: 'Purchase order line',
@@ -26,6 +35,7 @@ export const ORDER_LINE_ACCORDION_NAMES = {
   E_RESOURCES_DETAILS: 'E-resources details',
   ROUTING_LISTS: 'Routing lists',
   NOTES: 'Notes',
+  RELATED_AGREEMENTS: 'Related agreements',
   RELATED_INVOICE_LINES: 'Related invoice lines',
   LINKED_INSTANCE: 'Linked instance',
   CUSTOM_FIELDS: 'Custom fields',
@@ -165,7 +175,9 @@ export const POLINE_DETAILS_FIELDS = {
   QUANTITY_ELECTRONIC: 'Quantity electronic',
   CREATE_INVENTORY: 'Create inventory',
   CURRENCY: 'Currency',
+  CREATED_ON: 'Created on',
   EXPENSE_CLASS: 'Expense class',
+  ESTIMATED_PRICE: 'Estimated price',
   EXCHANGE_RATE: 'Exchange rate',
   CURRENT_EXCHANGE_RATE: 'Current exchange rate',
   USE_SET_EXCHANGE_RATE: 'Use set exchange rate',

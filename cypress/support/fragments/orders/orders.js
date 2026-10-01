@@ -22,6 +22,7 @@ import {
   SelectionOption,
   Spinner,
   TextField,
+  Tooltip,
   matching,
   SelectionList,
 } from '../../../../interactors';
@@ -1017,6 +1018,32 @@ export default {
       Section({ id: 'relatedInvoices' }).absent(),
       Section({ id: 'versions-history-pane-order' }).exists(),
     ]);
+  },
+
+  checkVersionHistoryButtonTooltip() {
+    cy.do(orderDetailsPane.find(Button({ id: 'version-history-btn' })).hoverMouse());
+    cy.expect(Tooltip().has({ text: 'Version history' }));
+  },
+
+  checkHighlightedFieldsInVersionView(labels = []) {
+    if (!labels.length) {
+      cy.get('#order-version-view mark').should('not.exist');
+      return;
+    }
+    cy.get('#order-version-view mark').then(($marks) => {
+      const marked = [...$marks].map((el) => el.textContent);
+      labels.forEach((label) => expect(marked, `"${label}" is highlighted`).to.include(label));
+    });
+  },
+
+  checkFieldsInVersionHistoryView(fields = []) {
+    fields.forEach(({ key, value }) => {
+      cy.expect(
+        Section({ id: 'order-version-view' })
+          .find(KeyValue(key))
+          .has({ value: including(value) }),
+      );
+    });
   },
 
   checkVersionHistoryCard(eventDate, { changedFields, isCurrent, source }) {
