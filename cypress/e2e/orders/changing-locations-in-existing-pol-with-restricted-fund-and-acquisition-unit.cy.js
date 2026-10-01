@@ -1,3 +1,4 @@
+import { including } from '../../../interactors';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
@@ -224,7 +225,9 @@ describe('Orders', () => {
       OrderLineDetails.openOrderLineEditForm();
 
       // Step 3: Check the Fund displayed in "Fund distribution" accordion
-      OrderLineEditForm.checkFundDistributionFundSelected({ fund: testData.fund.code });
+      OrderLineEditForm.checkFundDistributionSection([
+        { label: 'fund', conditions: { singleValue: including(testData.fund.code) } },
+      ]);
 
       // Step 4: Check the existing location record in "Location" accordion
       OrderLineEditForm.checkLocationSelected({ location: location1.name });
