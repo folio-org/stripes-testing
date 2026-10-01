@@ -1795,7 +1795,7 @@ export default {
     cy.do(searchButton.click());
   },
 
-  searchByName: (name) => {
+  searchByName(name) {
     cy.do(searchField.selectIndex('Name'));
     this.fillSearchInput(name);
     this.clickSearchButton();
