@@ -43,7 +43,7 @@ const FILTER_PANES = {
   INVOICES: 'invoice-filters-pane',
 };
 
-const { PANE_REQUEST_PROFILE_NAMES } = PaneRequestWaiter;
+const { PANE_REQUEST_PHASES, PANE_REQUEST_PROFILE_NAMES } = PaneRequestWaiter;
 
 const PANE_PROFILES = {
   [FILTER_PANES.CLAIMING]: PANE_REQUEST_PROFILE_NAMES.CLAIMING,
@@ -90,7 +90,10 @@ describe('Acquisition units', () => {
     flow
       .step((currentFlow) => {
         return AcquisitionUnits.createAcquisitionUnitViaApi(
-          AcquisitionUnits.getDefaultAcquisitionUnit({ protectRead: false }),
+          AcquisitionUnits.getDefaultAcquisitionUnit({
+            name: `AT_C1385303_AU_${postfix}`,
+            protectRead: false,
+          }),
         )
           .then((unit) => currentFlow.set(R.ACQUISITION_UNIT, unit, () => AcquisitionUnits.deleteAcquisitionUnitViaApi(unit.id, false)))
           .then(() => {
@@ -296,7 +299,7 @@ describe('Acquisition units', () => {
 
   const openPaneAndWaitForFilters = (pane, trigger) => PaneRequestWaiter.waitForPaneRequests({
     pane,
-    phase: 'filters',
+    phase: PANE_REQUEST_PHASES.FILTERS,
     trigger,
   });
 

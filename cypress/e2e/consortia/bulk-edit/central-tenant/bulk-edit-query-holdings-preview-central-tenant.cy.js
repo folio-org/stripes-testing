@@ -209,7 +209,7 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.fillInValueTextfield(holdingsUUIDs);
           QueryModal.verifyQueryAreaContent(
-            `(holdings.id in (${holdingsUUIDs.replace(/,/g, ', ')}))`,
+            `(holdings.id in [${holdingsUUIDs.replace(/,/g, ', ')}])`,
           );
           QueryModal.testQueryDisabled(false);
 
@@ -232,7 +232,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('14 holdings');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(holdings.id in (${holdingsUUIDs.replace(/,/g, ', ')}))`,
+              `(holdings.id in [${holdingsUUIDs.replace(/,/g, ', ')}])`,
             );
             BulkEditSearchPane.verifyPaginatorInMatchedRecords(14);
             BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
@@ -394,6 +394,9 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
 
             // Step 16: Verify matched Holdings by Instance UUID
+            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+            );
             folioInstance.holdingIdsCollege
               .concat(folioInstance.holdingIdsUniversity)
               .forEach((holdingId) => {
@@ -457,6 +460,10 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyPaginatorInMatchedRecords(3);
 
             // Step 20: Verify only College holdings matched
+            BulkEditActions.openActions();
+            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+            );
             folioInstance.holdingIdsCollege.forEach((holdingId) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
                 holdingId,
@@ -503,6 +510,10 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyPaginatorInMatchedRecords(3);
 
             // Step 23: Verify only College holdings matched
+            BulkEditActions.openActions();
+            BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+              BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_HOLDINGS.HOLDINGS_UUID,
+            );
             folioInstance.holdingIdsCollege.forEach((holdingId) => {
               BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifierInResultsAccordion(
                 holdingId,
@@ -557,7 +568,7 @@ describe('Bulk-edit', () => {
             BulkEditSearchPane.verifyBulkEditQueryPaneExists();
             BulkEditSearchPane.verifyRecordsCountInBulkEditQueryPane('0 holdings');
             BulkEditSearchPane.verifyQueryHeadLine(
-              `(holdings.id in (${holdingsUUIDs.replace(/,/g, ', ')}))`,
+              `(holdings.id in [${holdingsUUIDs.replace(/,/g, ', ')}])`,
             );
             BulkEditSearchPane.verifyErrorLabel(11);
 

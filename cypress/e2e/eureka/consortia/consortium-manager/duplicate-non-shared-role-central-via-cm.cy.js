@@ -14,7 +14,6 @@ import AuthorizationRoles, {
 } from '../../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import { including } from '../../../../../interactors';
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
-import Capabilities from '../../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -23,14 +22,14 @@ describe('Eureka', () => {
     const duplicateRoleNamePart = `${originalRoleName} (duplicate)`;
     const roleCapabilities = [
       {
-        table: CAPABILITY_TYPES.DATA,
-        resource: 'Capabilities',
+        type: CAPABILITY_TYPES.DATA,
+        resource: 'UI-Tags',
         action: CAPABILITY_ACTIONS.MANAGE,
       },
       {
-        table: CAPABILITY_TYPES.DATA,
-        resource: 'Role-Capability-Sets',
-        action: CAPABILITY_ACTIONS.MANAGE,
+        type: CAPABILITY_TYPES.DATA,
+        resource: 'UI-Notes Item',
+        action: CAPABILITY_ACTIONS.DELETE,
       },
     ];
     let assignedUser;
@@ -43,18 +42,13 @@ describe('Eureka', () => {
       CapabilitySets.uiConsortiaSettingsConsortiumManagerEdit,
     ];
     const capabSetsToAssignMember = [CapabilitySets.uiAuthorizationRolesSettingsAdmin];
-    const capabsToAssignCentral = [Capabilities.settingsEnabled];
 
     before('Create users, data', () => {
       cy.getAdminToken();
       cy.createTempUser([])
         .then((userProperties) => {
           userData = userProperties;
-          cy.assignCapabilitiesToExistingUser(
-            userData.userId,
-            capabsToAssignCentral,
-            capabSetsToAssignCentral,
-          );
+          cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssignCentral);
         })
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.College, userData.userId);
@@ -66,7 +60,6 @@ describe('Eureka', () => {
               originalRoleId = role.id;
               cy.then(() => {
                 roleCapabilities.forEach((capability) => {
-                  capability.type = capability.table;
                   cy.getCapabilityIdViaApi(capability).then((capabId) => {
                     roleCapabIds.push(capabId);
                   });

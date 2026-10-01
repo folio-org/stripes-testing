@@ -12,7 +12,7 @@ describe('Eureka', () => {
         capabilitySets: [
           {
             table: 'Data',
-            resource: 'Acquisitions-Units Memberships',
+            resource: 'Organizations Settings',
             action: 'Manage',
           },
           {
@@ -24,47 +24,17 @@ describe('Eureka', () => {
         capabilitiesInSets: [
           {
             table: 'Data',
-            resource: 'Acquisitions-Units Memberships Collection',
-            action: 'View',
+            resource: 'Organizations Settings',
+            action: 'Manage',
           },
           {
-            table: 'Data',
-            resource: 'Acquisitions-Units Memberships Item',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Acquisitions-Units Memberships Item',
-            action: 'Edit',
-          },
-          {
-            table: 'Data',
-            resource: 'Acquisitions-Units Memberships Item',
-            action: 'Create',
-          },
-          {
-            table: 'Data',
-            resource: 'Acquisitions-Units Memberships Item',
-            action: 'Delete',
-          },
-          {
-            table: 'Data',
-            resource: 'Finance Expense-Classes Item',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Finance Funds Item',
+            table: 'Settings',
+            resource: 'UI-Organizations Settings',
             action: 'View',
           },
           {
             table: 'Procedural',
             resource: 'UI-Invoice Invoice Pay',
-            action: 'Execute',
-          },
-          {
-            table: 'Procedural',
-            resource: 'Invoice Item Pay',
             action: 'Execute',
           },
         ],
@@ -74,11 +44,11 @@ describe('Eureka', () => {
             Procedural: 1,
           },
           capabilities: {
-            Data: 5,
-            Procedural: 2,
+            Data: 1,
+            Settings: 1,
+            Procedural: 1,
           },
         },
-        absentCapabilitySetTable: 'Settings',
         capabSetIds: [],
         capabIds: [],
       };
@@ -146,7 +116,6 @@ describe('Eureka', () => {
           Object.entries(testData.expectedRowCounts.capabilitySets).forEach(([table, count]) => {
             AuthorizationRoles.checkCountOfCapabilitySetRows(table, count);
           });
-          AuthorizationRoles.verifyCapabilitySetTableAbsent(testData.absentCapabilitySetTable);
           testData.capabilitySets.forEach((set) => {
             AuthorizationRoles.verifyCheckboxesCountInCapabilitySetRow(set, 1);
           });
@@ -154,16 +123,9 @@ describe('Eureka', () => {
           Object.entries(testData.expectedRowCounts.capabilities).forEach(([table, count]) => {
             AuthorizationRoles.checkCountOfCapabilityRows(table, count);
           });
-          AuthorizationRoles.verifyCapabilityTableAbsent(testData.absentCapabilitySetTable);
-          testData.capabilitiesInSets
-            .filter((capab, index) => index < 1 && index > 4)
-            .forEach((capability) => {
-              AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(capability, 1);
-            });
-          AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(
-            testData.capabilitiesInSets[1],
-            4,
-          );
+          testData.capabilitiesInSets.forEach((capability) => {
+            AuthorizationRoles.verifyCheckboxesCountInCapabilityRow(capability, 1);
+          });
         },
       );
     });

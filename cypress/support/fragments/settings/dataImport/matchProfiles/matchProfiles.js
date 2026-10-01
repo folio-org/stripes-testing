@@ -11,6 +11,7 @@ import {
 import ResultsPane from '../resultsPane';
 import MatchProfileEditForm from './matchProfileEditForm';
 import NewMatchProfile from './newMatchProfile';
+import ArrayUtils from '../../../../utils/arrays';
 
 const actionsButton = Button('Actions');
 const viewPane = Pane({ id: 'view-match-profile-pane' });
@@ -115,6 +116,23 @@ export default {
   verifySearchFieldIsEmpty: () => cy.expect(TextField({ id: 'input-search-match-profiles-field' }).has({ value: '' })),
   verifySearchResult: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
+  },
+  verifyProfilesIsSortedInAlphabeticalOrder: () => {
+    const cells = [];
+    cy.get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(($row) => {
+        cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
+          .invoke('text')
+          .then((cellValue) => {
+            cy.wait(500);
+            cells.push(cellValue);
+          });
+      })
+      .then(() => {
+        const isSorted = ArrayUtils.checkIsSortedAlphabetically({ array: cells });
+        cy.expect(isSorted, 'Match profiles sorted alphabetically').to.equal(true);
+      });
   },
   getMatchProfilesViaApi(searchParams) {
     return cy

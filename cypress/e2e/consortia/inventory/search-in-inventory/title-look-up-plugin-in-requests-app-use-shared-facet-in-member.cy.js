@@ -201,7 +201,7 @@ describe('Inventory', () => {
         NewRequest.enableTitleLevelRequest();
         NewRequest.openTitleLookUp();
         SelectInstanceModal.waitLoading();
-        SelectInstanceModal.verifyAccordionExistance(sharedAccordion.name);
+        SelectInstanceModal.verifyAccordionExistence(sharedAccordion.name);
 
         // 3 Uncheck selected option in "Held by" face
         SelectInstanceModal.clearDefaultFilter(Dropdowns.HELDBY);

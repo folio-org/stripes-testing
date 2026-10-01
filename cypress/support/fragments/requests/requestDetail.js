@@ -212,6 +212,16 @@ export default {
     cy.do(actionsButton.click());
   },
 
+  verifyActionsMenuIsEmpty(
+    options = ['Edit', 'Cancel request', 'Duplicate', 'Move request', 'Reorder queue'],
+  ) {
+    cy.do(actionsButton.click());
+    options.forEach((option) => {
+      cy.expect(availableOptions[option].absent());
+    });
+    cy.do(actionsButton.click());
+  },
+
   verifyCancelRequestOptionDisplayed() {
     cy.expect(cancelRequestButton.exists());
   },

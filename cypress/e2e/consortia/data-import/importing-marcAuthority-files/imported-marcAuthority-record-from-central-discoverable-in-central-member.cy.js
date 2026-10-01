@@ -56,7 +56,7 @@ describe('Data Import', () => {
 
       after('Delete users, data', () => {
         cy.resetTenant();
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         Users.deleteViaApi(users.userProperties.userId);
         MarcAuthority.deleteViaAPI(createdAuthorityID);
       });

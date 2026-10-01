@@ -243,7 +243,7 @@ export default {
     );
   },
 
-  verifyAccordionExistance(accordionName) {
+  verifyAccordionExistence(accordionName) {
     cy.expect(Accordion(accordionName).exists());
   },
 

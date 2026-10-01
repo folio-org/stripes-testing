@@ -58,7 +58,7 @@ const renewConfirmationTable = {
   },
   content: {
     status: 'Item not renewed',
-    statusDetails: 'loan is not renewable',
+    statusDetails: 'Loan is not renewable',
   },
 };
 const overrideTable = {

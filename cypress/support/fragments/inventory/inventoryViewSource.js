@@ -84,8 +84,14 @@ export default {
     );
   },
 
-  verifyRecordNotContainsDuplicatedContent: (value) => {
-    cy.get(`td:contains("${value}")`).then((elements) => elements.length === 1);
+  verifyRecordNotContainsDuplicatedContent: (value, { exactMatch = false } = {}) => {
+    if (exactMatch) {
+      cy.get('td')
+        .filter((_, el) => Cypress.$(el).text().trim() === value)
+        .should('have.length', 1);
+    } else {
+      cy.get(`td:contains("${value}")`).then((elements) => elements.length === 1);
+    }
   },
 
   verifyRecordContainsDuplicatedContent: (value, quantity) => {
@@ -235,10 +241,15 @@ export default {
     });
   },
 
-  checkRowExistsWithTagAndValue(tag, value, isExist = true) {
-    const spacesAfterTag = tag === 'LEADER' ? ' ' : '  ';
+  checkRowExistsWithTagAndValue(tag, value, isExist = true, { raw = false } = {}) {
+    const spacesAfterTag = raw ? '\t' : tag === 'LEADER' ? ' ' : '  ';
     const targetRow = rootSection.find(
-      TableRow({ innerText: and(including(`${tag}${spacesAfterTag}`), including(value)) }),
+      TableRow({
+        [raw ? 'innerTextRaw' : 'innerText']: and(
+          including(`${tag}${spacesAfterTag}`),
+          including(value),
+        ),
+      }),
     );
     if (isExist) cy.expect(targetRow.exists());
     else cy.expect(targetRow.absent());

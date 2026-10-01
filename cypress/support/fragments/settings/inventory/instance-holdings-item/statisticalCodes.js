@@ -10,11 +10,13 @@ import {
 import getRandomPostfix from '../../../../utils/stringTools';
 import InteractorsTools from '../../../../utils/interactorsTools';
 
-const defaultStatisticalCode = {
-  source: 'local',
-  code: `autotest_code_${getRandomPostfix()}`,
-  name: `autotest_statistical_code_${getRandomPostfix()}`,
-  statisticalCodeTypeId: '3abd6fc2-b3e4-4879-b1e1-78be41769fe3',
+const getDefaultStatisticalCode = () => {
+  return {
+    source: 'local',
+    code: `autotest_code_${getRandomPostfix()}`,
+    name: `autotest_statistical_code_${getRandomPostfix()}`,
+    statisticalCodeTypeId: '3abd6fc2-b3e4-4879-b1e1-78be41769fe3',
+  };
 };
 const rootPane = Pane('Statistical codes');
 const columnNames = [
@@ -65,7 +67,7 @@ export default {
     });
   },
   getListOfStatisticalCodesNames,
-  createViaApi(body = defaultStatisticalCode) {
+  createViaApi(body = getDefaultStatisticalCode()) {
     return cy
       .okapiRequest({
         method: 'POST',

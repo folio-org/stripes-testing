@@ -49,31 +49,31 @@ describe('Lists', () => {
         // Step 3: Click on "Build query" without adding List name
         Lists.verifyBuildQueryButtonIsDisabled();
 
-        // Step 4: Add list name and click on "Build query"
-        Lists.setName(listName);
-        Lists.verifyBuildQueryButtonIsDisabled();
-
-        // Step 5: Check the "List information" section
-        Lists.verifyListInformationAccordionIsExpanded();
-
-        // Step 6: Click on "Collapse all"
-        Lists.clickOnCollapseAllButton();
-        Lists.verifyListInformationAccordionIsExpanded(false);
-        Lists.verifyCollapseAllButtonAbsent();
-
-        // Step 7: Click on "Expand all"
-        Lists.clickOnExpandAllButton();
-
         // Verify default values
         Lists.verifyVisibility('Shared', true);
         Lists.verifyVisibility('Private', false);
         Lists.verifyStatus('Active', true);
         Lists.verifyStatus('Inactive', false);
 
-        // Step 8: Save without list name
-        Lists.clearName();
+        // Step 4: Check the "List information" section, check there is no "Collapse all" button on the page
+        Lists.verifyListInformationAccordionIsExpanded();
+        Lists.verifyCollapseAllButtonAbsent();
+
+        // Step 5: Click on "List information" accordion to collapse it
+        Lists.clickOnListInformationAccordion();
+        Lists.verifyListInformationAccordionIsExpanded(false);
+
+        // Step 6: Click on "List information" accordion to expand it
+        Lists.clickOnListInformationAccordion();
+        Lists.verifyListInformationAccordionIsExpanded();
+
+        // Step 7: Save without list names
         Lists.verifySaveButtonIsDisabled();
         Lists.verifyEmptyListNameErrorMessage();
+
+        // Step 8: Add list name and click on "Build query"
+        Lists.setName(listName);
+        Lists.verifyBuildQueryButtonIsDisabled();
 
         // Step 9: Add list name
         Lists.setName(listName);

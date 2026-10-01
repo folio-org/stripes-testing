@@ -452,6 +452,10 @@ const holdingsLocationSelectDisabled = holdingsLocationModal.find(
 const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save & close'));
 const defaultValidLdr = '00000naa\\a2200000uu\\4500';
 const defaultValidHoldingsLdr = '00000nu\\\\\\2200000un\\4500';
+const defaultValidInstance008ValuesString =
+  '260930m\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\111\\1\\\\\\\\\\\\';
+const defaultValidHoldings008ValuesString =
+  '260930\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\';
 const defaultValid008Values = {
   Type: '\\',
   BLvl: '\\',
@@ -560,6 +564,8 @@ export default {
   defaultValid008Values,
   valid008ValuesInstance,
   defaultValid008HoldingsValues,
+  defaultValidInstance008ValuesString,
+  defaultValidHoldings008ValuesString,
   getTag008BoxErrorText,
   tagLengthNumbersOnlyInlineErrorText,
   tag1XXNonRepeatableRequiredCalloutText,
@@ -1260,12 +1266,20 @@ export default {
     }
   },
 
+  getRowIndexByTag(tag) {
+    return cy.then(() => getRowInteractorByTagName(tag).index());
+  },
+
   moveFieldUp(rowNumber) {
     cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).click());
   },
 
   moveFieldDown(rowNumber) {
     cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).click());
+  },
+
+  moveFieldDownByTag(tag) {
+    cy.do(getRowInteractorByTagName(tag).find(arrowDownButton).click());
   },
 
   moveFieldUpWithEnter(rowNumber) {
@@ -1390,6 +1404,47 @@ export default {
         cy.expect(Spinner().absent()),
       ]);
     }
+  },
+
+  verifyRowLinkedByTag(tag, { isLinked = true, contentPart = null } = {}) {
+    const targetRow = contentPart
+      ? QuickMarcEditorRow({ tagValue: tag, content: including(contentPart) })
+      : QuickMarcEditorRow({ tagValue: tag });
+    const textBoxes = {
+      content: targetRow.find(TextArea({ name: including('].content') })),
+      controlled: targetRow.find(TextArea({ name: including('].subfieldGroups.controlled') })),
+      uncontrolledAlpha: targetRow.find(
+        TextArea({ name: including('].subfieldGroups.uncontrolledAlpha') }),
+      ),
+      zeroSubfield: targetRow.find(TextArea({ name: including('].subfieldGroups.zeroSubfield') })),
+      uncontrolledNumber: targetRow.find(
+        TextArea({ name: including('].subfieldGroups.uncontrolledNumber') }),
+      ),
+    };
+    if (isLinked) {
+      cy.expect([
+        textBoxes.content.absent(),
+        textBoxes.controlled.exists(),
+        textBoxes.uncontrolledAlpha.exists(),
+        textBoxes.zeroSubfield.exists(),
+        textBoxes.uncontrolledNumber.exists(),
+        targetRow.find(unlinkIconButton).exists(),
+        targetRow.find(viewAuthorityIconButton).exists(),
+        targetRow.find(linkToMarcRecordButton).absent(),
+      ]);
+    } else {
+      cy.expect([
+        textBoxes.content.exists(),
+        textBoxes.controlled.absent(),
+        textBoxes.uncontrolledAlpha.absent(),
+        textBoxes.zeroSubfield.absent(),
+        textBoxes.uncontrolledNumber.absent(),
+        targetRow.find(unlinkIconButton).absent(),
+        targetRow.find(viewAuthorityIconButton).absent(),
+        targetRow.find(linkToMarcRecordButton).exists(),
+      ]);
+    }
+    cy.expect(targetRow.find(Spinner()).absent());
   },
 
   verifyTagFieldAfterLinking(
@@ -2910,40 +2965,6 @@ export default {
       'ui-quick-marc.record.fixedField-MultiLvl-text',
       'Multipart resource record level',
     );
-  },
-
-  checkDefaultFieldsInOrder() {
-    cy.expect(
-      QuickMarcEditorRow({ index: 0 })
-        .find(TextField('Field'))
-        .has({ value: 'LDR', disabled: true }),
-    );
-    cy.expect(
-      QuickMarcEditorRow({ index: 1 })
-        .find(TextField('Field'))
-        .has({ value: '001', disabled: true }),
-    );
-    this.checkEmptyContent('001');
-    cy.expect(
-      QuickMarcEditorRow({ index: 2 })
-        .find(TextField('Field'))
-        .has({ value: '005', disabled: false }),
-    );
-    this.checkFourthBoxEditable(2, false);
-    this.checkEmptyContent('005');
-    cy.expect(
-      QuickMarcEditorRow({ index: 3 })
-        .find(TextField('Field'))
-        .has({ value: '008', disabled: false }),
-    );
-    this.checkOnlyBackslashesIn008Boxes();
-    cy.expect(
-      QuickMarcEditorRow({ index: 4 })
-        .find(TextField('Field'))
-        .has({ value: '999', disabled: true }),
-    );
-    this.verifyTagField(4, '999', 'f', 'f', '', '');
-    this.verifyAllBoxesInARowAreDisabled(4);
   },
 
   checkEditableQuickMarcFormIsOpened: () => {

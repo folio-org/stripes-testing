@@ -2,6 +2,7 @@ import { Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { EHOLDINGS_PACKAGE_CONTENT_TYPES } from '../../../support/constants/constants';
 import {
   EHoldingsPackages,
   EHoldingsPackagesSearch,
@@ -14,7 +15,7 @@ import {
 } from '../../../support/fragments/eholdings';
 
 describe('eHoldings', () => {
-  describe('Package', () => {
+  describe('Title+Package', () => {
     const testData = {
       streamingPackageName: `AT_C350749_streaming_${getRandomPostfix()}`,
       mixedPackageName: `AT_C350749_mixed_${getRandomPostfix()}`,
@@ -22,35 +23,21 @@ describe('eHoldings', () => {
       titleName2: `AT_C350749_Title_${getRandomPostfix()}`,
       customLabelValue1: `value_C350749_${getRandomPostfix()}`,
       customLabelValue2: `value_C350749_${getRandomPostfix()}`,
-      streamingContentType: 'Streaming Media',
-      mixedContentType: 'Mixed Content',
+      streamingContentType: EHOLDINGS_PACKAGE_CONTENT_TYPES.STREAMING_MEDIA,
+      mixedContentType: EHOLDINGS_PACKAGE_CONTENT_TYPES.MIXED_CONTENT,
+      customLabel1: null,
+      customLabel2: null,
     };
     const titlesToCreate = [
       { package: testData.streamingPackageName, title: testData.titleName1 },
       { package: testData.mixedPackageName, title: testData.titleName2 },
     ];
-    const packageTitlePairs = [
-      {
-        packageName: testData.streamingPackageName,
-        contentType: testData.streamingContentType,
-        title: testData.titleName1,
-        customLabel: null,
-        customValue: testData.customLabelValue1,
-      },
-      {
-        packageName: testData.mixedPackageName,
-        contentType: testData.mixedContentType,
-        title: testData.titleName2,
-        customLabel: null,
-        customValue: testData.customLabelValue2,
-      },
-    ];
 
-    before('Creating user, packages via API, titles via UI and logging in', () => {
+    before('Creating user, packages via API, titles via UI', () => {
       cy.getAdminToken();
       cy.getEHoldingsCustomLabelsViaAPI().then((labels) => {
-        packageTitlePairs[0].customLabel = labels[0].attributes.displayLabel;
-        packageTitlePairs[1].customLabel = labels[1].attributes.displayLabel;
+        testData.customLabel1 = labels[0].attributes.displayLabel;
+        testData.customLabel2 = labels[1].attributes.displayLabel;
       });
 
       cy.createTempUser([
@@ -102,7 +89,7 @@ describe('eHoldings', () => {
     });
 
     after('Deleting user, data', () => {
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         EHoldingsPackages.deletePackageViaAPI(testData.streamingPackageName, true);
         EHoldingsPackages.deletePackageViaAPI(testData.mixedPackageName, true);
         Users.deleteViaApi(testData.user.userId);
@@ -110,7 +97,7 @@ describe('eHoldings', () => {
     });
 
     it(
-      'C350749 Edit title custom label for Streaming Media then Mixed Content package (eHoldings > Package)',
+      'C350749 Editing Title+Package with "Mixed Content"/ "Streaming Media" content type (eHoldings > Title+Package)',
       { tags: ['extendedPath', 'promin', 'C350749'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
@@ -118,24 +105,81 @@ describe('eHoldings', () => {
           waiter: EHoldingsSearch.waitLoading,
         });
 
+        // Step 1: Switch to Packages tab
         EHoldingsSearch.switchToPackages();
-        packageTitlePairs.forEach(
-          ({ packageName, contentType, title, customLabel, customValue }) => {
-            EHoldingsPackagesSearch.byName(packageName);
-            cy.wait(2000);
-            EHoldingsPackages.openPackageWithExpectedTitels(1);
-            EHoldingsPackages.verifyContentType(contentType);
-            cy.wait(2000);
-            EHoldingsPackage.openTitle(title);
-            EHoldingsTitle.editTitle();
-            EHoldingsResourceEdit.fillCustomLabelValue(customLabel, customValue);
-            EHoldingsResourceEdit.saveAndClose();
-            cy.wait(2000);
-            EHoldingsResourceView.verifyCustomLabelValue(customLabel, customValue);
-            cy.visit(TopMenu.eholdingsPath);
-            EHoldingsSearch.waitLoading();
-            EHoldingsSearch.switchToPackages();
-          },
+
+        // Step 2: Open Content type accordion; verify all content type options are listed
+        EHoldingsPackagesSearch.verifyContentTypeOptions(
+          Object.values(EHOLDINGS_PACKAGE_CONTENT_TYPES),
+        );
+
+        // Step 3: Select "Streaming Media" content type
+        EHoldingsPackagesSearch.selectContentType(testData.streamingContentType);
+
+        // Step 4: Search for the Streaming Media package
+        EHoldingsPackagesSearch.byName(testData.streamingPackageName);
+
+        // Step 5: Open the package record
+        EHoldingsPackages.openPackageWithExpectedTitels(1);
+
+        // Step 6: Verify Content type value in Package information
+        EHoldingsPackages.verifyContentType(testData.streamingContentType);
+
+        // Step 7: Open the title from the Titles accordion
+        EHoldingsPackage.openTitle(testData.titleName1);
+
+        // Step 8: Verify Package content type in Resource information
+        EHoldingsResourceView.verifyPackageContentType(testData.streamingContentType);
+
+        // Step 9: Open title editing page via Actions > Edit
+        EHoldingsTitle.editTitle();
+
+        // Step 10: Edit a custom label value
+        EHoldingsResourceEdit.fillCustomLabelValue(
+          testData.customLabel1,
+          testData.customLabelValue1,
+        );
+
+        // Step 11: Save & close; verify "Title was updated" toast
+        EHoldingsResourceEdit.saveAndClose();
+        EHoldingsResourceView.waitLoading();
+
+        // Step 12: Verify custom label change is saved
+        EHoldingsResourceView.verifyCustomLabelValue(
+          testData.customLabel1,
+          testData.customLabelValue1,
+        );
+
+        // Step 13: Close title detail view → close package detail view
+        EHoldingsTitle.closeHoldingsTitleView();
+        EHoldingsPackage.closePackage();
+
+        // Step 14: Open Content type accordion again; verify all content type options are listed
+        EHoldingsPackagesSearch.verifyContentTypeOptions(
+          Object.values(EHOLDINGS_PACKAGE_CONTENT_TYPES),
+        );
+
+        // Step 15: Select "Mixed Content" content type
+        EHoldingsPackagesSearch.selectContentType(testData.mixedContentType);
+
+        // Step 16: Search for the Mixed Content package
+        EHoldingsPackagesSearch.byName(testData.mixedPackageName);
+
+        // Step 17: Repeat steps 5-12 for Mixed Content package
+        EHoldingsPackages.openPackageWithExpectedTitels(1);
+        EHoldingsPackages.verifyContentType(testData.mixedContentType);
+        EHoldingsPackage.openTitle(testData.titleName2);
+        EHoldingsResourceView.verifyPackageContentType(testData.mixedContentType);
+        EHoldingsTitle.editTitle();
+        EHoldingsResourceEdit.fillCustomLabelValue(
+          testData.customLabel2,
+          testData.customLabelValue2,
+        );
+        EHoldingsResourceEdit.saveAndClose();
+        EHoldingsResourceView.waitLoading();
+        EHoldingsResourceView.verifyCustomLabelValue(
+          testData.customLabel2,
+          testData.customLabelValue2,
         );
       },
     );

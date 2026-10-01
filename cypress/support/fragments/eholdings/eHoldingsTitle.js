@@ -72,15 +72,23 @@ export default {
   },
 
   openResource: (packageNumber = 0) => {
-    cy.then(() => packagesSection.find(ListItem({ index: packageNumber })).h4Value()).then(
-      (packageName) => {
+    cy.get('#titleShowPackages li')
+      .eq(packageNumber)
+      .find('h4')
+      .invoke('text')
+      .then((packageNameRaw) => {
+        const packageName = packageNameRaw.trim();
         cy.then(() => Pane().title()).then((titleName) => {
-          cy.do(packagesSection.find(ListItem({ index: packageNumber }).find(Button())).click());
+          // eslint-disable-next-line cypress/no-force
+          cy.get('#titleShowPackages li')
+            .eq(packageNumber)
+            .find('button, [role=button], a')
+            .first()
+            .click({ force: true });
           EHoldingsResourceView.waitLoading();
           EHoldingsResourceView.checkNames(packageName, titleName);
         });
-      },
-    );
+      });
   },
   openPackage({ packageName, titleName }) {
     cy.do(

@@ -134,39 +134,6 @@ export default {
     cy.do(deleteButton.click());
   },
 
-  createViaApi: (agreement = defaultAgreement) => {
-    return cy
-      .okapiRequest({
-        method: REQUEST_METHOD.POST,
-        path: 'erm/sas',
-        body: agreement,
-        isDefaultSearchParamsRequired: false,
-      })
-      .then((response) => response.body);
-  },
-
-  deleteViaApi: (agreementId) => {
-    return cy.okapiRequest({
-      method: REQUEST_METHOD.DELETE,
-      path: `erm/sas/${agreementId}`,
-      isDefaultSearchParamsRequired: false,
-      failOnStatusCode: false,
-    });
-  },
-
-  getIdViaApi: (searchParams) => {
-    return cy
-      .okapiRequest({
-        method: REQUEST_METHOD.GET,
-        path: 'erm/sas',
-        searchParams,
-        isDefaultSearchParamsRequired: false,
-      })
-      .then((response) => {
-        return response.body[0].id;
-      });
-  },
-
   switchToLocalKBSearch() {
     cy.do(Button('Local KB search').click());
   },
@@ -208,5 +175,52 @@ export default {
         cy.get('select[data-test-org-role-field]').select(option.val());
       });
     NewAgreement.save();
+  },
+
+  /* API */
+  createViaApi: (agreement = defaultAgreement) => {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.POST,
+        path: 'erm/sas',
+        body: agreement,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body);
+  },
+
+  deleteViaApi: (agreementId) => {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.DELETE,
+      path: `erm/sas/${agreementId}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    });
+  },
+
+  getIdViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.GET,
+        path: 'erm/sas',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body[0].id;
+      });
+  },
+
+  getLocalKBPackages(searchParams) {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.GET,
+        path: 'erm/packages',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
   },
 };

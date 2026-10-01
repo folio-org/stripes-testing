@@ -47,6 +47,22 @@ export default {
         return response.body;
       });
   },
+  getBudgetFromStorageViaApi(budgetId) {
+    return cy
+      .okapiRequest({
+        path: `finance-storage/budgets/${budgetId}`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
+  updateBudgetInStorageViaApi(budget) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `finance-storage/budgets/${budget.id}`,
+      body: budget,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
   updateBudgetViaApi(budget) {
     return cy
       .okapiRequest({
@@ -118,10 +134,10 @@ export default {
     };
   },
   deleteBudgetWithFundLedgerAndFYViaApi({ id: budgetId, fundId, ledgerId, fiscalYearId }) {
-    this.deleteViaApi(budgetId);
-    Funds.deleteFundViaApi(fundId);
-    Ledgers.deleteLedgerViaApi(ledgerId);
-    FiscalYears.deleteFiscalYearViaApi(fiscalYearId);
+    this.deleteViaApi(budgetId, false);
+    Funds.deleteFundViaApi(fundId, false);
+    Ledgers.deleteLedgerViaApi(ledgerId, false);
+    FiscalYears.deleteFiscalYearViaApi(fiscalYearId, false);
   },
 
   batchProcessTransactions(batchBody) {

@@ -105,6 +105,8 @@ const dateFromField = TextField({ name: 'startDate' });
 const dateToField = TextField({ name: 'endDate' });
 const dateRangeFromField = dateRangeAccordion.find(dateFromField);
 const dateRangeToField = dateRangeAccordion.find(dateToField);
+const dateCreatedFromField = dateCreatedAccordion.find(dateFromField);
+const dateCreatedToField = dateCreatedAccordion.find(dateToField);
 const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
@@ -220,6 +222,7 @@ export default {
   invalidDateErrorText,
   dateOrderErrorText,
   dateRangeAccordion,
+  dateCreatedAccordion,
   uriCharLimitErrorText,
 
   effectiveLocation: {
@@ -1468,6 +1471,37 @@ export default {
     else if (fromError === false) this.verifyErrorMessageInTextField(dateRangeFromField, false);
     if (toError) this.verifyErrorMessageInTextField(dateRangeToField, true, toError);
     else if (toError === false) this.verifyErrorMessageInTextField(dateRangeToField, false);
+  },
+
+  verifyDateCreatedAccordionValues(fromDate, toDate) {
+    cy.expect([
+      dateCreatedFromField.has({ value: fromDate }),
+      dateCreatedToField.has({ value: toDate }),
+      dateCreatedAccordion.find(filterApplyButton).exists(),
+    ]);
+  },
+
+  filterByDateCreated(dateFrom, dateTo, fromError, toError) {
+    cy.intercept('/search/instances**').as('searchCall');
+    cy.do([dateCreatedFromField.fillIn(dateFrom), dateCreatedToField.fillIn(dateTo)]);
+    if (fromError !== dateOrderErrorText) this.checkDateCreatedFieldsValidation(fromError, toError);
+    else this.checkDateCreatedFieldsValidation(false, false);
+    cy.do(dateCreatedAccordion.find(filterApplyButton).click());
+    if (fromError !== dateOrderErrorText) this.checkDateCreatedFieldsValidation(fromError, toError);
+    else {
+      this.checkDateCreatedFieldsValidation(false, false);
+      this.verifyErrorMessageInAccordion(dateCreatedAccordion, dateOrderErrorText);
+    }
+    if (!fromError && !toError) cy.wait('@searchCall').its('response.statusCode').should('eq', 200);
+    cy.wait(1000);
+  },
+
+  checkDateCreatedFieldsValidation(fromError, toError) {
+    cy.wait(500);
+    if (fromError) this.verifyErrorMessageInTextField(dateCreatedFromField, true, fromError);
+    else if (fromError === false) this.verifyErrorMessageInTextField(dateCreatedFromField, false);
+    if (toError) this.verifyErrorMessageInTextField(dateCreatedToField, true, toError);
+    else if (toError === false) this.verifyErrorMessageInTextField(dateCreatedToField, false);
   },
 
   verifyErrorMessageInTextField(textFieldInteractor, isError = true, errorText) {

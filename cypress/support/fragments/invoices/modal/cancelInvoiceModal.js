@@ -36,4 +36,7 @@ export default {
       InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCancelledMessage);
     }
   },
+  fillInCancelationNote(cancellationNote) {
+    cy.do(cancellationNoteTextArea.fillIn(cancellationNote));
+  },
 };

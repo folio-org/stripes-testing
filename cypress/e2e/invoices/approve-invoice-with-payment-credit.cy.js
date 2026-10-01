@@ -12,6 +12,7 @@ import { Invoices, NewInvoice } from '../../support/fragments/invoices';
 import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
+import Approvals from '../../support/fragments/settings/invoices/approvals';
 import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import Users from '../../support/fragments/users/users';
@@ -32,6 +33,8 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
+
+    Approvals.setApprovePayValueViaApi(false);
     const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi();
     testData.fiscalYear = fiscalYear;
     testData.fund = fund;
@@ -108,7 +111,7 @@ describe('Invoices', () => {
 
   it(
     'C347897 Approve invoice with both payment and credit (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'C347897'] },
+    { tags: ['criticalPath', 'thunderjet', 'C347897', 'nonParallel'] },
     () => {
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLinePOLLookUWithSubTotal(testData.orderNumber, '10');

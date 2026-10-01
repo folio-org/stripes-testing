@@ -66,20 +66,20 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(itemFieldValues.itemUuid);
         QueryModal.verifySelectedField(itemFieldValues.itemUuid);
-        QueryModal.verifyQueryAreaContent('(items.id  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator('not in');
         QueryModal.fillInValueTextfield(item.itemId);
         QueryModal.fillInValueTextfield(`${item.itemId},`);
         QueryModal.fillInValueTextfield(`${item.itemId},${secondItem.itemId}`);
         QueryModal.verifyQueryAreaContent(
-          `(items.id not in (${item.itemId}, ${secondItem.itemId}))`,
+          `(items.id not in [${item.itemId}, ${secondItem.itemId}])`,
         );
         QueryModal.selectOperator('in');
         QueryModal.fillInValueTextfield(item.itemId);
         QueryModal.fillInValueTextfield(`${item.itemId},`);
         QueryModal.fillInValueTextfield(`${item.itemId},${secondItem.itemId}`);
-        QueryModal.verifyQueryAreaContent(`(items.id in (${item.itemId}, ${secondItem.itemId}))`);
+        QueryModal.verifyQueryAreaContent(`(items.id in [${item.itemId}, ${secondItem.itemId}])`);
         QueryModal.clickTestQuery();
         QueryModal.verifyPreviewOfRecordsMatched();
         QueryModal.clickRunQuery();

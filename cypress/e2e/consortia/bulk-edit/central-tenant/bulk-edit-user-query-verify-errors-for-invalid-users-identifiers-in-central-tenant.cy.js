@@ -96,7 +96,7 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.fillInValueTextfield(invalidUserIds);
           QueryModal.verifyQueryAreaContent(
-            `(users.id in (${invalidUserIds.replace(/,/g, ', ')}))`,
+            `(users.id in [${invalidUserIds.replace(/,/g, ', ')}])`,
           );
           QueryModal.testQueryDisabled(false);
 

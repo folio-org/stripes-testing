@@ -543,6 +543,10 @@ export default {
     cy.expect(setCriteriaPane.exists());
   },
 
+  verifySetCriteriaPaneFocused() {
+    cy.expect(setCriteriaPane.find(identifierToggle).has({ focused: true }));
+  },
+
   verifyCsvViewPermission() {
     this.verifyUsersRadioAbsent();
     cy.expect([

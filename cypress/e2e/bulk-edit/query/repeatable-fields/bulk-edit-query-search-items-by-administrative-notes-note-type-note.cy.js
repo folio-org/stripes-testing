@@ -267,7 +267,7 @@ describe('Bulk-edit', () => {
           QueryModal.selectField(itemFieldValues.itemNotesNoteType);
           QueryModal.verifySelectedField(itemFieldValues.itemNotesNoteType);
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-          QueryModal.fillInValueMultiselect(ITEM_NOTE_TYPES.NOTE);
+          QueryModal.fillInValueMultiselect(ITEM_NOTE_TYPES.NOTE, 0, { exactMatch: true });
           QueryModal.fillInValueMultiselect(ITEM_NOTE_TYPES.COPY_NOTE);
           QueryModal.clickTestQuery();
           QueryModal.verifyQueryAreaContent(

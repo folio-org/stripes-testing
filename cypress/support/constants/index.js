@@ -3,6 +3,7 @@ export * from './acquisition-units';
 export * from './claiming';
 export * from './consortia';
 export * from './constants';
+export * from './dashboard';
 export * from './export-manager';
 export * from './finance';
 export * from './inventory';

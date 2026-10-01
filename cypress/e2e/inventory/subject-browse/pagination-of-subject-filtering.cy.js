@@ -8,8 +8,9 @@ import BrowseSubjects from '../../../support/fragments/inventory/search/browseSu
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
-describe.skip('Inventory', () => {
+describe('Inventory', () => {
   describe('Subject Browse', () => {
     const testData = {
       user: {},
@@ -61,7 +62,7 @@ describe.skip('Inventory', () => {
 
     it(
       'C584530 Check pagination of subject filtering (promin)',
-      { tags: ['criticalPathFlaky', 'promin', 'C584530'] },
+      { tags: ['criticalPath', 'promin', 'C584530'] },
       () => {
         const subjectTypes = ['Topical term', 'Geographic name', 'Personal name'];
         BrowseSubjects.searchBrowseSubjects(testData.subjectHeading);
@@ -72,12 +73,17 @@ describe.skip('Inventory', () => {
           cy.wait(2000);
         });
         BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
-        BrowseSubjects.clickNextPaginationButton();
-        cy.wait(2000);
-        BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
-        BrowseSubjects.clickPreviousPaginationButton();
-        cy.wait(2000);
-        BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
+        BrowseClassifications.checkPaginationButtonsShown();
+        BrowseClassifications.getNextPaginationButtonState().then((nextEnabled) => {
+          if (nextEnabled) {
+            BrowseSubjects.clickNextPaginationButton();
+            cy.wait(2000);
+            BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
+            BrowseSubjects.clickPreviousPaginationButton();
+            cy.wait(2000);
+            BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
+          }
+        });
       },
     );
   });

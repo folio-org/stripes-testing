@@ -25,4 +25,14 @@ export default {
     cy.expect(usersList.exists());
     cy.do([selectUserModal.find(MultiColumnListCell(including(userName))).click()]);
   },
+
+  findAndSelectUserInNameColumn(userName) {
+    this.searchForNote(userName);
+    cy.expect(usersList.exists());
+    cy.do([
+      selectUserModal
+        .find(MultiColumnListCell({ content: including(userName), column: 'Name' }))
+        .click(),
+    ]);
+  },
 };

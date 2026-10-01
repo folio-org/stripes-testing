@@ -1,4 +1,6 @@
 import { HTML, including } from '@interactors/html';
+import { Marc, Record } from 'marcjs';
+import { Readable } from 'stream';
 import {
   Button,
   Checkbox,
@@ -11,12 +13,16 @@ import {
   Section,
 } from '../../../../interactors';
 import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
-import { JOB_STATUS_NAMES } from '../../constants';
+import { JOB_STATUS_NAMES, EXISTING_RECORD_NAMES } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import FileManager from '../../utils/fileManager';
-import MarcAuthorities from '../marcAuthority/marcAuthorities';
+import MarcAuthorities, {
+  defaultLDR,
+  valid008ValuesString,
+} from '../marcAuthority/marcAuthorities';
 import MarcAuthoritiesSearch from '../marcAuthority/marcAuthoritiesSearch';
 import MarcAuthority from '../marcAuthority/marcAuthority';
+import QuickMarcEditor from '../quickMarcEditor';
 import TopMenu from '../topMenu';
 import JobProfiles from './job_profiles/jobProfiles';
 import Logs from './logs/logs';
@@ -138,6 +144,95 @@ const importFile = (profileName, uniqueFileName) => {
   });
 };
 
+// Shared by editMarcFieldsInAllRecords and createMarcFile. '\\' = blank, matching how default
+// LDR/008 constants (e.g. QuickMarcEditor.defaultValidLdr) are written.
+const toMarcIndicator = (indicator) => (indicator === '\\' ? ' ' : indicator);
+const toMarcBlanks = (content) => content.split('\\').join(' ');
+const parseSubfields = (content) => content
+  .split(/\$(?=\S)/)
+  .filter(Boolean)
+  .flatMap((part) => [part[0], part.slice(1).trim()]);
+const toMarcField = ({ tag, content, indicators }) => (indicators
+  ? [tag, indicators.map(toMarcIndicator).join(''), ...parseSubfields(content)]
+  : [tag, content]);
+
+// Tags < '010' are control fields (no indicators/subfields); >= '010' are data fields.
+const isControlFieldTag = (tag) => tag < '010';
+
+const MARC_FILE_DEFAULTS = {
+  [EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC]: {
+    ldr: QuickMarcEditor.defaultValidLdr,
+    defaultFields: { '008': QuickMarcEditor.defaultValidInstance008ValuesString },
+  },
+  [EXISTING_RECORD_NAMES.MARC_AUTHORITY]: {
+    ldr: defaultLDR,
+    // No default 001 - it's the natural ID and must be unique, so supply your own
+    defaultFields: { '008': valid008ValuesString },
+  },
+  [EXISTING_RECORD_NAMES.MARC_HOLDINGS]: {
+    ldr: QuickMarcEditor.defaultValidHoldingsLdr,
+    defaultFields: { '008': QuickMarcEditor.defaultValidHoldings008ValuesString },
+  },
+};
+
+// Builds a marcjs Record from a flat { tag, content, indicators }[] list on top of the record
+// type's default LDR/008. 'LDR' is the leader pseudo-tag (not repeatable - throws if given twice).
+// content: null omits the field entirely; undefined keeps it but empty; a string sets it.
+// indicators: data fields only, defaults to ['\\', '\\'] when omitted.
+// Defaults (LDR/008, and only those) are used only when the caller gives no entry for that tag at
+// all; nothing is ever required, since testing a missing/malformed field is a legitimate use case.
+const buildMarcRecord = (recordType, fields = []) => {
+  const defaults = MARC_FILE_DEFAULTS[recordType];
+  if (!defaults) {
+    throw new Error(
+      `createMarcFile: unknown record type "${recordType}" - expected one of: ${Object.keys(
+        MARC_FILE_DEFAULTS,
+      ).join(', ')}`,
+    );
+  }
+
+  const ldrEntries = fields.filter((field) => field.tag === 'LDR');
+  if (ldrEntries.length > 1) {
+    throw new Error(
+      `createMarcFile: ${ldrEntries.length} LDR entries provided - LDR is not repeatable`,
+    );
+  }
+  const ldrOverride = ldrEntries[0]?.content;
+  const leader = toMarcBlanks(ldrOverride ?? defaults.ldr);
+
+  const defaultFieldTags = Object.keys(defaults.defaultFields);
+  const resolvedDefaultFields = defaultFieldTags.flatMap((tag) => {
+    const providedEntries = fields.filter((field) => field.tag === tag);
+    if (providedEntries.length === 0) {
+      return [{ tag, content: defaults.defaultFields[tag] }];
+    }
+    return providedEntries.filter((field) => field.content !== null);
+  });
+
+  const otherFields = fields
+    .filter((field) => field.tag !== 'LDR' && !defaultFieldTags.includes(field.tag))
+    .filter((field) => field.content !== null);
+
+  const record = new Record();
+  record.leader = leader;
+
+  [...resolvedDefaultFields, ...otherFields].forEach((field) => {
+    if (isControlFieldTag(field.tag)) {
+      record.append([field.tag, toMarcBlanks(field.content ?? '')]);
+    } else {
+      record.append(
+        toMarcField({
+          tag: field.tag,
+          indicators: field.indicators ?? ['\\', '\\'],
+          content: field.content ?? '',
+        }),
+      );
+    }
+  });
+
+  return record;
+};
+
 export default {
   ...DataImportAPI,
   importFile,
@@ -243,6 +338,69 @@ export default {
         FileManager.createFile(`cypress/fixtures/${finalFileName}`, newContent);
       });
     });
+  },
+
+  // Adds, edits, and removes MARC fields in every record of a (possibly multi-record) ".mrc" file,
+  // using marcjs to keep the leader/directory correctly in sync - a plain text edit (editMarcFile)
+  // cannot do this once a field's byte length changes, e.g. when a field is added or removed.
+  // Field specs use the same { tag, indicators, content } shape as cy.createMarcAuthorityViaAPI /
+  // cy.createMarcBibliographicViaAPI ('\\' = blank indicator, content = "$a foo $b bar"); omit
+  // `indicators` for a control field (e.g. tag '001').
+  //  - addFields: [{ tag, indicators, content }] - appended to every record
+  //  - removeTags: ['670', '953'] - every field with one of these tags is removed
+  //  - editFields: [{ tag, content, indicators, occurrence = 0 }] - replaces the content (and, if
+  //    given, the indicators) of the Nth (0-based) existing field with that tag; indicators are
+  //    left as-is when not provided
+  editMarcFieldsInAllRecords(
+    inputFileName,
+    outputFileName,
+    { addFields = [], removeTags = [], editFields = [] } = {},
+  ) {
+    return FileManager.readFile(`cypress/fixtures/${inputFileName}`).then((fileContent) => {
+      const readable = new Readable();
+      readable.push(Buffer.from(fileContent, 'utf8'));
+      readable.push(null);
+
+      const reader = Marc.stream(readable, 'Iso2709');
+      const updatedRecords = [];
+
+      return new Promise((resolve, reject) => {
+        reader.on('data', (record) => {
+          record.fields = record.fields.filter((field) => !removeTags.includes(field[0]));
+
+          editFields.forEach(({ tag, content, indicators, occurrence = 0 }) => {
+            const matchingIndexes = record.fields
+              .map((field, index) => (field[0] === tag ? index : -1))
+              .filter((index) => index !== -1);
+            const targetIndex = matchingIndexes[occurrence];
+            if (targetIndex === undefined) return;
+
+            const existingField = record.fields[targetIndex];
+            const existingIndicators =
+              existingField.length > 2 ? [existingField[1][0], existingField[1][1]] : undefined;
+            record.fields[targetIndex] = toMarcField({
+              tag,
+              content,
+              indicators: indicators || existingIndicators,
+            });
+          });
+
+          addFields.forEach((field) => record.append(toMarcField(field)));
+
+          updatedRecords.push(record.as('iso2709'));
+        });
+        reader.on('error', reject);
+        reader.on('end', () => resolve(updatedRecords.join('')));
+      }).then((updatedContent) => FileManager.createFile(`cypress/fixtures/${outputFileName}`, updatedContent));
+    });
+  },
+
+  // Builds a MARC file from scratch (one record) - see buildMarcRecord above for the field spec.
+  // For cases the API is too strict for (negative tests) or where import itself is under test.
+  // Single-record for now; buildMarcRecord stays separate so multi-record can be added later.
+  createMarcFile({ fileName, recordType = EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC, fields } = {}) {
+    const record = buildMarcRecord(recordType, fields);
+    return FileManager.createFile(`cypress/fixtures/${fileName}`, record.as('iso2709'));
   },
 
   replace999SubfieldsInPreupdatedFile(exportedFileName, preUpdatedFileName, finalFileName) {

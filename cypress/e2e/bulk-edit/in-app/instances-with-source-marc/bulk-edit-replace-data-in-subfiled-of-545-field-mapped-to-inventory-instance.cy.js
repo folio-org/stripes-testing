@@ -162,7 +162,6 @@ describe(
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
           // Step 11: Confirm changes
-          const currentTimestampUpToMinutes = DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
           BulkEditActions.confirmChanges();
           BulkEditActions.verifyMessageBannerInAreYouSureForm(1);
           BulkEditSearchPane.verifyExactChangesUnderColumnsByIdentifier(
@@ -177,20 +176,24 @@ describe(
           BulkEditActions.verifyDownloadPreviewInMarcFormatButtonEnabled();
           BulkEditActions.downloadPreviewInMarcFormat();
 
+          const currentTimestampUpToMinutes = DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
           const currentTimestampUpToMinutesOneMinuteAfter =
             DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
+          const currentTimestampUpToMinutesTwoMinuteAfter =
+            DateTools.getCurrentISO8601TimestampUpToMinutesUTC(2);
           const assertionsOnMarcFileContent = [
             {
               uuid: marcInstance.uuid,
               assertions: [
-                (record) => {
+                (record) =>
+                  // eslint-disable-next-line implicit-arrow-linebreak
                   expect(
-                    record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
-                      record
-                        .get('005')[0]
-                        .value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
-                  ).to.be.true;
-                },
+                    [
+                      currentTimestampUpToMinutes,
+                      currentTimestampUpToMinutesOneMinuteAfter,
+                      currentTimestampUpToMinutesTwoMinuteAfter,
+                    ].some((prefix) => record.get('005')[0].value.startsWith(prefix)),
+                  ).to.be.true,
 
                 (record) => {
                   expect(record.fields[4]).to.deep.eq([

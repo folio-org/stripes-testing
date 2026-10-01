@@ -82,7 +82,6 @@ describe('MARC', () => {
           MarcAuthority.selectSourceFile(testData.authoritySourceFile);
 
           // Step 3: Select valid values in 008 field
-          QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tags.tag008);
           MarcAuthority.setValid008DropdownValues();
           QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tags.tag008, false);
 

@@ -13,7 +13,7 @@ describe('Eureka', () => {
         applicationName: 'app-platform-minimal',
         firstSelectedCapabilitySet: {
           table: 'Data',
-          resource: 'Configuration',
+          resource: 'UI-Tags',
           action: 'Manage',
         },
         secondSelectedCapabilitySet: {
@@ -24,77 +24,12 @@ describe('Eureka', () => {
         capabilitiesInSelectedSets: [
           {
             table: 'Data',
-            resource: 'Configuration',
+            resource: 'UI-Tags',
             action: 'Manage',
           },
           {
             table: 'Data',
-            resource: 'Configuration Entries Collection',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Configuration Entries Item',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Configuration Entries Item',
-            action: 'Edit',
-          },
-          {
-            table: 'Data',
-            resource: 'Configuration Entries Item',
-            action: 'Create',
-          },
-          {
-            table: 'Data',
-            resource: 'Configuration Entries Item',
-            action: 'Delete',
-          },
-          {
-            table: 'Data',
-            resource: 'Configuration Audit Collection',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Note Links Collection',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Note Links Collection',
-            action: 'Edit',
-          },
-          {
-            table: 'Data',
-            resource: 'Note Types Collection',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Note Types Item',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Notes Collection',
-            action: 'View',
-          },
-          {
-            table: 'Data',
-            resource: 'Notes Item',
-            action: 'View',
-          },
-          {
-            table: 'Data',
             resource: 'UI-Notes Item',
-            action: 'View',
-          },
-          {
-            table: 'Settings',
-            resource: 'Module Notes Enabled',
             action: 'View',
           },
           {
@@ -109,8 +44,7 @@ describe('Eureka', () => {
             Procedural: 1,
           },
           capabilities: {
-            Data: 14,
-            Settings: 2,
+            Data: 2,
             Procedural: 1,
           },
         },

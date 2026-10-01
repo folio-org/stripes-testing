@@ -129,7 +129,7 @@ describe('Lists', () => {
       });
 
       it(
-        "C784444 Verify that it's possible to update the Single select custom fields, and all existing queries are still available (athena)",
+        'C784444 Verify that it\'s possible to update the Single select custom fields, and all existing queries are still available (athena)',
         { tags: ['criticalPath', 'athena', 'C784444'] },
         () => {
           listName = getTestEntityValue('C784444_List');

@@ -21,10 +21,18 @@ export const assertPhase = (phase) => {
   if (!PHASES.has(phase)) throw new Error(`Unsupported pane request phase: ${phase}`);
 };
 
-export const getRoutes = (pane, phase) => {
+export const getRoutes = (pane, phase, conditions = {}) => {
   assertPhase(phase);
 
-  return uniqueRoutes([...(getProfile(pane)[phase] || [])]);
+  const profile = getProfile(pane);
+  // Variants replace (rather than extend) the normal primary routes. This is
+  // what lets ISBN conversion precede a list request that may never be sent.
+  // Declaration order is intentional when more than one predicate can match.
+  const variant =
+    phase === PANE_REQUEST_PHASES.RESULTS &&
+    profile.resultVariants?.find(({ when }) => when({ conditions }));
+
+  return uniqueRoutes([...(variant?.routes || profile[phase] || [])]);
 };
 
 export const getResponseDependencies = (pane, phase) => {
@@ -37,9 +45,11 @@ export const getResponseDependencies = (pane, phase) => {
   );
 };
 
-export const getRegisteredRoutes = (pane, phase) => {
+export const getRegisteredRoutes = (pane, phase, conditions = {}) => {
+  // Dependency aliases must exist before the trigger. Which dependencies are
+  // required is knowable only after earlier responses arrive.
   return uniqueRoutes([
-    ...getRoutes(pane, phase),
+    ...getRoutes(pane, phase, conditions),
     ...getResponseDependencies(pane, phase).map(({ route }) => route),
   ]);
 };

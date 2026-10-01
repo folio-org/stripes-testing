@@ -23,8 +23,9 @@ import { INSTANCE_SOURCE_NAMES } from '../../../../support/constants';
 const testData = {
   user: {},
   listName: `AT_C552522_List_${getRandomPostfix()}`,
-  instanceTitle: `AT_C552522_LocalInstance_${getRandomPostfix()}`,
-  itemBarcode: `AT_C552522_Item_${getRandomPostfix()}`,
+  itemIds: [],
+  holdingIds: [],
+  instanceIds: [],
 };
 const todayDate = DateTools.getCurrentDate();
 const userPermissions = [
@@ -44,43 +45,45 @@ describe('Lists', () => {
           testData.instanceTypeId = instanceTypes[0].id;
         });
 
-        // Create local instance, holding, and item in College (Tenant_A)
-        cy.withinTenant(Affiliations.College, () => {
-          cy.getLocations({ limit: 1 }).then((location) => {
-            testData.locationId = location.id;
-          });
-          cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
-            testData.loanTypeId = loanTypes[0].id;
-          });
-          cy.getDefaultMaterialType().then((materialType) => {
-            testData.materialTypeId = materialType.id;
-          });
-          InventoryHoldings.getHoldingsFolioSource().then((source) => {
-            testData.sourceId = source.id;
-          });
+        [Affiliations.College, Affiliations.University].forEach((tenant) => {
+          // Create local instances, holdings, and items
+          cy.withinTenant(tenant, () => {
+            cy.getLocations({ limit: 1 }).then((location) => {
+              testData.locationId = location.id;
+            });
+            cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
+              testData.loanTypeId = loanTypes[0].id;
+            });
+            cy.getDefaultMaterialType().then((materialType) => {
+              testData.materialTypeId = materialType.id;
+            });
+            InventoryHoldings.getHoldingsFolioSource().then((source) => {
+              testData.sourceId = source.id;
+            });
 
-          cy.then(() => {
-            InventoryInstances.createFolioInstanceViaApi({
-              instance: {
-                instanceTypeId: testData.instanceTypeId,
-                title: testData.instanceTitle,
-              },
-            }).then(({ instanceId }) => {
-              testData.instanceId = instanceId;
-              InventoryHoldings.createHoldingRecordViaApi({
-                instanceId,
-                permanentLocationId: testData.locationId,
-                sourceId: testData.sourceId,
-              }).then((holding) => {
-                testData.holdingsId = holding.id;
-                InventoryItems.createItemViaApi({
-                  barcode: testData.itemBarcode,
-                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                  holdingsRecordId: testData.holdingsId,
-                  materialType: { id: testData.materialTypeId },
-                  permanentLoanType: { id: testData.loanTypeId },
-                }).then((item) => {
-                  testData.itemId = item.id;
+            cy.then(() => {
+              InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId: testData.instanceTypeId,
+                  title: `AT_C552522_LocalInstance_${getRandomPostfix()}`,
+                },
+              }).then(({ instanceId }) => {
+                testData.instanceIds.push(instanceId);
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId,
+                  permanentLocationId: testData.locationId,
+                  sourceId: testData.sourceId,
+                }).then((holding) => {
+                  testData.holdingIds.push(holding.id);
+                  InventoryItems.createItemViaApi({
+                    barcode: `AT_C552522_Item_${getRandomPostfix()}`,
+                    status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                    holdingsRecordId: holding.id,
+                    materialType: { id: testData.materialTypeId },
+                    permanentLoanType: { id: testData.loanTypeId },
+                  }).then((item) => {
+                    testData.itemIds.push(item.id);
+                  });
                 });
               });
             });
@@ -109,16 +112,13 @@ describe('Lists', () => {
       after('Delete test data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        cy.withinTenant(Affiliations.College, () => {
-          if (testData.itemId) {
-            InventoryItems.deleteItemViaApi(testData.itemId);
-          }
-          if (testData.holdingsId) {
-            InventoryHoldings.deleteHoldingRecordViaApi(testData.holdingsId);
-          }
-          if (testData.instanceId) {
-            InventoryInstance.deleteInstanceViaApi(testData.instanceId);
-          }
+
+        [Affiliations.College, Affiliations.University].forEach((tenant, index) => {
+          cy.withinTenant(tenant, () => {
+            InventoryItems.deleteItemViaApi(testData.itemIds[index]);
+            InventoryHoldings.deleteHoldingRecordViaApi(testData.holdingIds[index]);
+            InventoryInstance.deleteInstanceViaApi(testData.instanceIds[index]);
+          });
         });
 
         if (testData.user.userId) {
@@ -143,7 +143,7 @@ describe('Lists', () => {
           // Step 3: Select "Item — Created date" field
           QueryModal.selectField(itemFieldValues.itemCreatedDate);
           QueryModal.verifySelectedField(itemFieldValues.itemCreatedDate);
-          QueryModal.verifyQueryAreaContent('(items.created_date  )');
+          QueryModal.verifyQueryAreaContent('');
 
           // Step 4: Verify supported operators for "Item — Created date" field
           QueryModal.verifyOperatorsList(dateTimeOperators);
@@ -157,31 +157,31 @@ describe('Lists', () => {
           // Step 6: Verify preview shows local item with correct shared columns
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.clickShowColumnsButton();
-          QueryModal.clickCheckboxInShowColumns(itemFieldValues.itemBarcode);
+          QueryModal.clickCheckboxInShowColumns(itemFieldValues.itemUuid);
           QueryModal.clickCheckboxInShowColumns(instanceFieldValues.instanceSource);
           QueryModal.clickShowColumnsButton();
           QueryModal.verifyMatchedRecordsByIdentifier(
-            testData.itemBarcode,
+            testData.itemIds[0],
             instanceFieldValues.instanceShared,
             'Local',
           );
           QueryModal.verifyMatchedRecordsByIdentifier(
-            testData.itemBarcode,
+            testData.itemIds[0],
             instanceFieldValues.affiliationName,
             tenantNames.college,
           );
           QueryModal.verifyMatchedRecordsByIdentifier(
-            testData.itemBarcode,
+            testData.itemIds[0],
             holdingsFieldValues.affiliationName,
             tenantNames.college,
           );
           QueryModal.verifyMatchedRecordsByIdentifier(
-            testData.itemBarcode,
+            testData.itemIds[0],
             itemFieldValues.affiliationName,
             tenantNames.college,
           );
           QueryModal.verifyMatchedRecordsByIdentifier(
-            testData.itemBarcode,
+            testData.itemIds[0],
             instanceFieldValues.instanceSource,
             INSTANCE_SOURCE_NAMES.FOLIO,
           );
@@ -205,7 +205,7 @@ describe('Lists', () => {
           QueryModal.verify();
           QueryModal.selectField(itemFieldValues.itemCreatedDate);
           QueryModal.verifySelectedField(itemFieldValues.itemCreatedDate);
-          QueryModal.verifyQueryAreaContent('(items.created_date  )');
+          QueryModal.verifyQueryAreaContent('');
           QueryModal.verifyOperatorsList(dateTimeOperators);
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
           QueryModal.pickDate(todayDate);

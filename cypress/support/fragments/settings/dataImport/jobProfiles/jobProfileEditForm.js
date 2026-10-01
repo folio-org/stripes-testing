@@ -71,6 +71,14 @@ export default {
       ]);
     }
   },
+  clickAddProfileButton(optionLabel) {
+    cy.do([
+      addActionProfileButton.click(),
+      Section({ id: 'menu-actions-type-selector-menu-linker-root' })
+        .find(Button(optionLabel))
+        .click(),
+    ]);
+  },
   fillOverviewProfileFields({ action, name }) {
     cy.do([
       addActionProfileButton.click(),

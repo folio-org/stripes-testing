@@ -209,7 +209,7 @@ describe('Lists', () => {
           // Step 3: Add new row
           QueryModal.addNewRow();
           QueryModal.verifyQueryAreaContent(
-            `(items.additional_call_numbers[*]->call_number == ${testData.callNumber1.callNumber}) AND (  )`,
+            `(items.additional_call_numbers[*]->call_number == ${testData.callNumber1.callNumber})`,
           );
 
           // Step 4: Query by "Prefix" contains "um_b.170495"

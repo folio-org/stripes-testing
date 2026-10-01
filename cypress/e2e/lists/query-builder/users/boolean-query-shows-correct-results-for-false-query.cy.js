@@ -68,7 +68,7 @@ describe('Lists', () => {
           // Step 3: Select "User — Active" field
           QueryModal.selectField(usersFieldValues.userActive);
           QueryModal.verifySelectedField(usersFieldValues.userActive);
-          QueryModal.verifyQueryAreaContent('(users.active  )');
+          QueryModal.verifyQueryAreaContent('');
           QueryModal.verifyOperatorColumn();
 
           // Step 4: Select "equals" operator

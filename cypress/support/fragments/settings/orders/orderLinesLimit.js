@@ -21,15 +21,19 @@ export default {
     return OrderStorageSettings.updateSettingViaApi(setting);
   },
 
+  deletePOLLimit(setting) {
+    return OrderStorageSettings.deleteSettingViaApi(setting);
+  },
+
   setPOLLimitViaApi(limit) {
     const value = String(limit);
-    this.getPOLLimit().then((settings) => {
+    return this.getPOLLimit().then((settings) => {
       if (settings.length) {
         const current = settings[0];
-        this.updatePOLLimit({ ...current, value });
-      } else {
-        this.createPOLLimit({ value });
+        return this.updatePOLLimit({ ...current, value });
       }
+
+      return this.createPOLLimit({ value });
     });
   },
 

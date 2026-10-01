@@ -115,18 +115,21 @@ describe('Orders', () => {
       OrderLines.backToEditingOrder();
       Orders.cancelOrder();
     });
-    cy.createTempUser([
-      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiOrdersEdit.gui,
-      permissions.uiOrdersReopenPurchaseOrders.gui,
-      permissions.uiOrdersUnopenpurchaseorders.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
+    cy.getAdminToken().then(() => {
+      cy.wait(3000);
+      cy.createTempUser([
+        permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
+        permissions.uiOrdersApprovePurchaseOrders.gui,
+        permissions.uiFinanceViewFundAndBudget.gui,
+        permissions.uiOrdersEdit.gui,
+        permissions.uiOrdersReopenPurchaseOrders.gui,
+        permissions.uiOrdersUnopenpurchaseorders.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
       });
     });
   });

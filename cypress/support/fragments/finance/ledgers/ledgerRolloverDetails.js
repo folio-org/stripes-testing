@@ -7,6 +7,7 @@ import {
   RepeatableFieldItem,
   Section,
   Select,
+  TextField,
   including,
   matching,
 } from '../../../../../interactors';
@@ -74,6 +75,14 @@ export default {
         cy.do(Checkbox({ name: `budgetsRollover[${index}].rolloverAllocation` }).click());
       }
 
+      if (details.adjustAllocation) {
+        cy.do(
+          TextField({ name: `budgetsRollover[${index}].adjustAllocation` }).fillIn(
+            details.adjustAllocation,
+          ),
+        );
+      }
+
       if (details.rolloverBudget) {
         cy.do([
           Select({ name: `budgetsRollover[${index}].rolloverBudgetValue` }).click(),
@@ -126,6 +135,14 @@ export default {
         fieldItem.find(Select({ label: including('Based on') })).click(),
         fieldItem.find(Select({ label: including('Based on') })).choose(encumbrances.basedOn),
       ]);
+    }
+
+    if (encumbrances.increaseBy) {
+      cy.do(
+        fieldItem
+          .find(TextField({ label: including('Increase by') }))
+          .fillIn(String(encumbrances.increaseBy)),
+      );
     }
   },
   clickContinueInConfirmationModal() {

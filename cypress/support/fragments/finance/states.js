@@ -1,5 +1,6 @@
 export default {
   fundSavedSuccessfully: 'Fund has been saved',
+  fiscalYearSavedSuccessfully: 'Fiscal year has been saved',
   budgetCreatedSuccessfully: 'Budget (?:\\S+) successfully created for fund (?:\\S+)',
   budgetHasNotBeenCreated: 'Budget has not been created',
   budgetExportStartedSuccessfully: 'Export of (?:\\S+) data has started',
@@ -10,8 +11,21 @@ export default {
   amountAllocatedSuccessfully: '(?:\\S+) was successfully allocated to the budget (?:\\S+)',
   rolloverTestStartedSuccessfully: '(?:\\S+) rollover test has started successfully',
   rolloverExportStartedSuccessfully: 'Export of budget results has been started',
+  budgetTotalsRecalculatedSuccessfully:
+    'Budget totals have been updated based on current budget transactions',
   exceedExpenditureLimitError: (amount, firstBudgetName, secondBudgetName) => {
     return `$${Number(amount).toFixed(2)} could not be transferred to the budget ${firstBudgetName} because it exceeds the allowable expenditure limit for ${secondBudgetName} and ledger fund restrictions are active.`;
   },
   totalAllocationCannotBeLessThanZero: 'Total allocation cannot be less than zero',
+  exportAllocationStartedSuccessfully:
+    'Please wait while the worksheet is generated. Your download will start automatically',
+  allocationsUpdatedSuccessfully: 'Allocations have been updated successfully.',
+  budgetsCreatedSuccessfully: 'Budgets have been created successfully.',
+
+  // API errorCodes
+  budgetNotFoundForFiscalYear: 'budgetNotFoundForFiscalYear',
+
+  // API errorMessages
+  couldNotFindActiveBudgetInCurrentFY:
+    'Could not find an active budget for a fund with the current fiscal year of another fund in the fund distribution',
 };

@@ -160,7 +160,7 @@ describe('Orders', () => {
       Receiving.quickReceivePieceFromDropdown();
       Receiving.clickOnPOLnumber(`${firstOrderNumber}-1`);
       OrderLineDetails.checkOrderLineDetails({
-        purchaseOrderLineInformation: [
+        poLineInformation: [
           { key: POLINE_DETAILS_FIELDS.RECEIPT_STATUS, value: RECEIPT_STATUS_VIEW.ONGOING },
           {
             key: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,

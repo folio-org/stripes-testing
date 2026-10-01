@@ -16,7 +16,6 @@ import ConsortiumManager from '../../../../support/fragments/settings/consortium
 import UsersCard from '../../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
-import Capabilities from '../../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -26,12 +25,12 @@ describe('Eureka', () => {
       capabilitySets: [
         {
           type: CAPABILITY_TYPES.DATA,
-          resource: 'Login',
+          resource: 'UI-Tags',
           action: CAPABILITY_ACTIONS.MANAGE,
         },
         {
           type: CAPABILITY_TYPES.SETTINGS,
-          resource: 'Settings Notes Enabled',
+          resource: 'UI-Authorization-Roles Settings',
           action: CAPABILITY_ACTIONS.VIEW,
         },
       ],
@@ -52,18 +51,7 @@ describe('Eureka', () => {
     const capabSetsToAssignUniversity = [
       CapabilitySets.uiAuthorizationRolesSettingsEdit,
       CapabilitySets.uiAuthorizationRolesUsersSettingsManage,
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Settings',
-        action: CAPABILITY_ACTIONS.EDIT,
-      },
-      {
-        type: CAPABILITY_TYPES.SETTINGS,
-        resource: 'UI-Authorization-Roles Users Settings',
-        action: CAPABILITY_ACTIONS.MANAGE,
-      },
     ];
-    const capabsToAssign = [Capabilities.settingsEnabled];
     const capabSetIds = [];
     let userAData;
     let userBData;
@@ -84,11 +72,7 @@ describe('Eureka', () => {
           userBData = userProperties;
         });
       }).then(() => {
-        cy.assignCapabilitiesToExistingUser(
-          userAData.userId,
-          capabsToAssign,
-          capabSetsToAssignCentral,
-        );
+        cy.assignCapabilitiesToExistingUser(userAData.userId, [], capabSetsToAssignCentral);
         cy.assignAffiliationToUser(Affiliations.College, userAData.userId);
         cy.assignAffiliationToUser(Affiliations.University, userBData.userId);
         cy.createAuthorizationRoleApi(testData.roleName).then((role) => {
@@ -106,18 +90,10 @@ describe('Eureka', () => {
         cy.createTempUser([]).then((userProperties) => {
           assignUser2Data = userProperties;
         });
-        cy.assignCapabilitiesToExistingUser(
-          userAData.userId,
-          capabsToAssign,
-          capabSetsToAssignCollege,
-        );
+        cy.assignCapabilitiesToExistingUser(userAData.userId, [], capabSetsToAssignCollege);
         cy.setTenant(Affiliations.University);
         cy.wait(10000);
-        cy.assignCapabilitiesToExistingUser(
-          userBData.userId,
-          capabsToAssign,
-          capabSetsToAssignUniversity,
-        );
+        cy.assignCapabilitiesToExistingUser(userBData.userId, [], capabSetsToAssignUniversity);
       });
     });
 

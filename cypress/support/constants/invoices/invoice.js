@@ -6,6 +6,7 @@ export const INVOICE_ACTION_MENU_BUTTONS = {
   DUPLICATE: 'Duplicate',
   EDIT: 'Edit',
   PAY: 'Pay',
+  PRINT_VOUCHER: 'Print voucher',
 };
 
 export const INVOICE_STATUSES = {
@@ -28,14 +29,48 @@ export const INVOICE_POL_PAYMENT_STATUSES = {
   PARTIALLY_PAID_UI: 'Partially paid',
 };
 
+export const INVOICE_FILTERS_LABELS = {
+  ACQUISITION_UNIT: 'Acquisition unit',
+  APPROVAL_DATE: 'Approval date',
+  BATCH_GROUP: 'Batch group',
+  CREATED_BY: 'Created by',
+  CREATED_BY_INVOICE_LINE: 'Created by (invoice line)',
+  DATE_CREATED: 'Date created',
+  DATE_CREATED_INVOICE_LINE: 'Date created (invoice line)',
+  DATE_UPDATED: 'Date updated',
+  DATE_UPDATED_INVOICE_LINE: 'Date updated (invoice line)',
+  EXPENSE_CLASS: 'Expense class',
+  EXPORT_TO_ACCOUNTING: 'Export to accounting',
+  FISCAL_YEAR: 'Fiscal year',
+  FUND_CODE: 'Fund code',
+  INVOICE_DATE: 'Invoice date',
+  INVOICE_STATUS: 'Status',
+  LOCK_TOTAL: 'Lock total',
+  PAYMENT_DATE: 'Payment date',
+  PAYMENT_DUE: 'Payment due',
+  PAYMENT_METHOD: 'Payment method',
+  SOURCE: 'Source',
+  TAGS: 'Tags',
+  TOTAL_AMOUNT: 'Total amount',
+  UPDATED_BY: 'Updated by',
+  UPDATED_BY_INVOICE_LINE: 'Updated by (invoice line)',
+  VENDOR_NAME: 'Vendor name',
+};
+
 export const INVOICE_VIEW_FIELDS = {
   ACQUISITION_UNITS: 'Acquisition units',
+  APPROVED_BY: 'Approved by',
+  APPROVED_DATE: 'Approved date',
   BATCH_GROUP: 'Batch group',
+  CANCELLATION_NOTE: 'Cancellation note',
   CALCULATED_TOTAL_AMOUNT: 'Calculated total amount',
   CALCULATED_TOTAL_AMOUNT_EXCHANGED: 'Calculated total amount (Exchanged)',
+  CURRENCY: 'Currency',
+  EXCHANGE_RATE: 'Exchange rate',
   FISCAL_YEAR: 'Fiscal year',
   INVOICE_DATE: 'Invoice date',
   INVOICE_STATUS: 'Status',
+  PAYMENT_DATE: 'Payment date',
   PAYMENT_METHOD: 'Payment method',
   SUB_TOTAL: 'Sub-total',
   TOTAL_ADJUSTMENTS: 'Total adjustments',
@@ -77,6 +112,7 @@ export const CURRENCIES = {
   USD: 'US Dollar (USD)',
   UZS: 'Uzbekistani Som (UZS)',
   UAH: 'Ukrainian Hryvnia (UAH)',
+  AMD: 'Armenian Dram (AMD)',
 };
 
 export const INVOICE_SEARCH_INDEX_LABELS = {
@@ -148,4 +184,29 @@ export const EXPORT_INVOICE_FIELDS = {
   VENDOR_CODE: 'Vendor code',
   VENDOR_INVOICE_NO: 'Vendor invoice number',
   VENDOR_NAME: 'Vendor name',
+};
+
+export const INVOICE_LINES_TABLE_COLUMN_HEADERS = {
+  LINE_NUMBER: '#',
+  POL_NUMBER: 'POL number',
+  DESCRIPTION: 'Description',
+  FUND_CODE: 'Fund code',
+  PO_STATUS: 'PO status',
+  RECEIPT_STATUS: 'Receipt status',
+  PAYMENT_STATUS: 'Payment status',
+  VENDOR_REFERENCE_NUMBER: 'Vendor reference number',
+  QUANTITY: 'Quantity',
+  SUB_TOTAL: 'Sub-total',
+  ADJUSTMENTS: 'Adjustments',
+  RELEASE_ENCUMBRANCE: 'Release encumbrance',
+  TOTAL: 'Total',
+  TOTAL_EXCHANGED: 'Total (Exchanged)',
+  VENDOR_CODE: 'Vendor code',
+};
+
+export const VOUCHER_LINES_TABLE_COLUMN_HEADERS = {
+  LINE_NUMBER: 'Line number',
+  FUND_CODE: 'Fund code',
+  EXTERNAL_ACCOUNT_NUMBER: 'External account number',
+  AMOUNT: 'Amount',
 };

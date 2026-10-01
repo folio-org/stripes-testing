@@ -134,7 +134,7 @@ describe('Lists', () => {
           // Step 2: Select "Item — Year, caption" field
           QueryModal.selectField(itemFieldValues.yearCaption);
           QueryModal.verifySelectedField(itemFieldValues.yearCaption);
-          QueryModal.verifyQueryAreaContent('(items.year_caption  )');
+          QueryModal.verifyQueryAreaContent('');
           QueryModal.verifyOperatorsList(STRING_OPERATORS);
 
           // Step 3: Test with "Equals" operator

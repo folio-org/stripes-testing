@@ -188,8 +188,8 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(fileNameForMatch);
         Logs.checkJobStatus(fileNameForMatch, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForMatch);
-        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 2);
-        FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 2);
+        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 3);
+        FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 3);
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,

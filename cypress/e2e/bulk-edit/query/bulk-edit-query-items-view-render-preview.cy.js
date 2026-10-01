@@ -80,10 +80,10 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(itemFieldValues.itemStatus);
         QueryModal.verifySelectedField(itemFieldValues.itemStatus);
-        QueryModal.verifyQueryAreaContent('(items.status_name  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-        QueryModal.verifyQueryAreaContent('(items.status_name in ())');
+        QueryModal.verifyQueryAreaContent('(items.status_name in [])');
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.CHECKED_OUT);
         QueryModal.fillInValueMultiselect(ITEM_STATUS_NAMES.AGED_TO_LOST);

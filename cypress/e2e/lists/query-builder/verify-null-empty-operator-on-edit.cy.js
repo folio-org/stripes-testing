@@ -64,7 +64,7 @@ describe('Lists', () => {
         // Step 2: Configure first query condition: Organization Code, is null/empty, False
         QueryModal.selectField(organizationFieldValues.code);
         QueryModal.verifySelectedField(organizationFieldValues.code);
-        QueryModal.verifyQueryAreaContent('(organization.code  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL);
         QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IS_NULL);
         QueryModal.verifyQueryAreaContent('(organization.code is null/empty )');

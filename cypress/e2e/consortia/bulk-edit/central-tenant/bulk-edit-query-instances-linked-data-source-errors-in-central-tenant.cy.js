@@ -206,6 +206,36 @@ describe('Bulk-edit', () => {
             BulkEditLogs.verifyEditingColumnValue(user.username, 'Query');
             BulkEditLogs.verifyProcessedColumnValue(user.username, '3');
             BulkEditLogs.verifyNumberOfRecordsColumnValue(user.username, '3');
+
+            // Step 5: Click on the "..." action element in the row with the Bulk Edit job and verify the available files
+            BulkEditLogs.clickActionsRunBy(user.username);
+            BulkEditLogs.verifyLogsRowActionWhenRunQueryWithErrors();
+
+            // Step 6: Download "File with identifiers of the records affected by bulk update"
+            BulkEditLogs.downloadQueryIdentifiers();
+            ExportFile.verifyFileIncludes(fileNames.identifiersQueryFilename, [
+              marcInstance.uuid,
+              folioInstance.uuid,
+              linkedDataInstance.uuid,
+            ]);
+
+            // Step 7: Download "File with the matching records"
+            BulkEditLogs.downloadFileWithMatchingRecords();
+            [marcInstance, folioInstance].forEach((instance) => {
+              BulkEditFiles.verifyValueInRowByUUID(
+                fileNames.matchedRecordsCSV,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+                instance.uuid,
+                BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.INSTANCE_UUID,
+                instance.uuid,
+              );
+            });
+
+            // Step 8: Download "File with errors encountered during the record matching"
+            BulkEditLogs.downloadFileWithErrorsEncountered();
+            ExportFile.verifyFileIncludes(fileNames.errorsFromMatching, [
+              `ERROR,${linkedDataInstance.uuid},${ERROR_MESSAGES.LINKED_DATA_SOURCE_NOT_SUPPORTED}`,
+            ]);
           });
         },
       );

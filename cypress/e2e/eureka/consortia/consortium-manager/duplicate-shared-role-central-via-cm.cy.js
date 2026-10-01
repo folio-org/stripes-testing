@@ -15,7 +15,6 @@ import { including } from '../../../../../interactors';
 import ConsortiumManagerApp from '../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
-import Capabilities from '../../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Consortium manager (Eureka)', () => {
@@ -24,14 +23,14 @@ describe('Eureka', () => {
     const duplicateRoleNamePart = `${sharedRoleName} (duplicate)`;
     const roleCapabilities = [
       {
-        table: CAPABILITY_TYPES.DATA,
-        resource: 'Capabilities',
+        type: CAPABILITY_TYPES.DATA,
+        resource: 'UI-Tags',
         action: CAPABILITY_ACTIONS.MANAGE,
       },
       {
-        table: CAPABILITY_TYPES.DATA,
-        resource: 'Role-Capability-Sets',
-        action: CAPABILITY_ACTIONS.MANAGE,
+        type: CAPABILITY_TYPES.DATA,
+        resource: 'UI-Notes Item',
+        action: CAPABILITY_ACTIONS.DELETE,
       },
     ];
     let userData;
@@ -43,7 +42,6 @@ describe('Eureka', () => {
       CapabilitySets.uiConsortiaSettingsConsortiumManagerEdit,
     ];
     const capabSetsToAssignMember = [CapabilitySets.uiAuthorizationRolesSettingsAdmin];
-    const capabsToAssignMember = [Capabilities.settingsEnabled];
     const assignUserCentral = {};
     const assignUserCollege = {};
 
@@ -63,18 +61,13 @@ describe('Eureka', () => {
           cy.createTempUser([]).then((assignUserProperties) => {
             Object.assign(assignUserCollege, assignUserProperties);
           });
-          cy.assignCapabilitiesToExistingUser(
-            userData.userId,
-            capabsToAssignMember,
-            capabSetsToAssignMember,
-          );
+          cy.assignCapabilitiesToExistingUser(userData.userId, [], capabSetsToAssignMember);
           cy.resetTenant();
           // Create the shared role in Central
           cy.createAuthorizationRoleApi(sharedRoleName).then((role) => {
             sharedRoleId = role.id;
             cy.then(() => {
               roleCapabilities.forEach((capability) => {
-                capability.type = capability.table;
                 cy.getCapabilityIdViaApi(capability).then((capabId) => {
                   roleCapabIds.push(capabId);
                 });

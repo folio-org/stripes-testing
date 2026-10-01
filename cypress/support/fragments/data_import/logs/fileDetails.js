@@ -261,6 +261,21 @@ export default {
     );
   },
 
+  openInstanceInInventoryByTitle: (title, itemStatus = 'Created') => {
+    cy.do(
+      MultiColumnListCell({ content: title }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+        cy.do(
+          resultsList
+            .find(MultiColumnListCell({ row: Number(rowNumber.slice(4)), columnIndex: 3 }))
+            .find(Link(itemStatus))
+            .click(),
+        );
+      }),
+    );
+  },
+
   openInstanceInInventoryByStatus: (itemStatus) => {
     cy.do(
       resultsList
@@ -349,6 +364,21 @@ export default {
     );
   },
 
+  openAuthorityByTitle: (title, itemStatus = 'Created') => {
+    cy.do(
+      MultiColumnListCell({ content: title }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+        cy.do(
+          resultsList
+            .find(MultiColumnListCell({ row: Number(rowNumber.slice(4)), columnIndex: 6 }))
+            .find(Link(itemStatus))
+            .click(),
+        );
+      }),
+    );
+  },
+
   openJsonScreen: (title) => {
     cy.get('#search-results-list')
       .find('a')
@@ -380,7 +410,7 @@ export default {
     cy.wait(2000);
     cy.do(
       jobSummaryTable
-        .find(MultiColumnListRow({ indexRow: 'row-3' }))
+        .find(MultiColumnListRow({ indexRow: 'row-4' }))
         .find(MultiColumnListCell(index))
         .find(Link({ href: including('/data-import/job-summary') }))
         .click(),

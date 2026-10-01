@@ -7,6 +7,7 @@ import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('eHoldings', () => {
   describe('Package', () => {
@@ -49,6 +50,9 @@ describe('eHoldings', () => {
         EHoldingsPackages.openPackageWithExpectedName(testData.package);
         EHoldingsPackage.waitLoading(testData.package);
         EHoldingsPackage.addToHoldings();
+        InteractorsTools.checkCalloutContainsMessage('');
+        cy.reload();
+        cy.wait(1000);
         EHoldingsPackage.verifySelectedPackage();
 
         EHoldingsPackage.editProxyActions();

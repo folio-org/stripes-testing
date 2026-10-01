@@ -458,6 +458,9 @@ export default {
     // TODO need to wait until page is uploaded
     cy.wait(3500);
   },
+  openJobProfile: (jobProfileName) => {
+    cy.do(dataImportList.find(Link(jobProfileName)).click());
+  },
   clickNextPaginationButton: () => {
     cy.get('#list-data-import-next-paging-button').then(($button) => {
       if (!$button.prop('disabled')) {

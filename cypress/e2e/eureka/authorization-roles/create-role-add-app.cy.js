@@ -21,57 +21,47 @@ describe('Eureka', () => {
         ],
         originalCapabilities: [
           {
-            table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Validation Validate',
-            action: CAPABILITY_ACTIONS.EXECUTE,
-          },
-          {
-            table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Users-keycloak Password-Reset-Link Validate',
-            action: CAPABILITY_ACTIONS.EXECUTE,
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'UI-Tags Settings',
+            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         newCapabilitySet: {
-          table: CAPABILITY_TYPES.SETTINGS,
-          resource: 'Erm Settings',
+          table: CAPABILITY_TYPES.DATA,
+          resource: 'UI-Agreements Agreements',
           action: CAPABILITY_ACTIONS.VIEW,
         },
         newCapabilitiesInSet: [
           {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Erm Settings',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Erm Settings Collection',
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'UI-Agreements Agreements',
             action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         newCapabilities: [
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Erm Agreements',
-            action: CAPABILITY_ACTIONS.EDIT,
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'UI-Agreements Agreements File',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Erm Agreements Item',
-            action: CAPABILITY_ACTIONS.VIEW,
+            resource: 'UI-Agreements AppSettings',
+            action: CAPABILITY_ACTIONS.MANAGE,
           },
         ],
         expectedRowCounts: {
           capabilitySets: {
-            Settings: 1,
+            Data: 1,
             Procedural: 1,
           },
           capabilities: {
-            Data: 12,
-            Settings: 4,
-            Procedural: 3,
+            Data: 3,
+            Settings: 1,
+            Procedural: 2,
           },
         },
-        absentCapabilitySetTables: [CAPABILITY_TYPES.DATA],
+        absentCapabilitySetTables: [CAPABILITY_TYPES.SETTINGS],
         capabSetIds: [],
         capabIds: [],
       };

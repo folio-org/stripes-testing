@@ -37,7 +37,7 @@ export const RECEIVING_PIECE_FORM_FIELD_LABELS = {
   BOUND: 'Bound',
   CALL_NUMBER: 'Call number',
   CHRONOLOGY: 'Chronology',
-  COMMENTS: 'Comments',
+  COMMENT: 'Comment',
   COPY_NUMBER: 'Copy number',
   CREATE_ITEM: 'Create item',
   DISPLAY_ON_HOLDING: 'Display on holding',
@@ -60,6 +60,7 @@ export const RECEIVING_PIECE_FORM_ACTIONS_LABELS = {
   CANCEL: 'Cancel',
   DELAY_CLAIM: 'Delay claim',
   DELETE: 'Delete',
+  EXPECT: 'Expect',
   MARK_LATE: 'Mark late',
   QUICK_RECEIVE: 'Quick receive',
   SAVE_AND_CLOSE: 'Save & close',
@@ -67,4 +68,34 @@ export const RECEIVING_PIECE_FORM_ACTIONS_LABELS = {
   SEND_CLAIM: 'Send claim',
   UNRECEIVE: 'Unreceive',
   UNRECEIVABLE: 'Unreceivable',
+};
+
+export const RECEIVE_LIST_COLUMN_HEADERS = {
+  DISPLAY_SUMMARY: 'Display summary',
+  ENUMERATION: 'Enumeration',
+  CHRONOLOGY: 'Chronology',
+  COPY_NUMBER: 'Copy number',
+  ACCESSION_NUMBER: 'Accession number',
+  BARCODE: 'Barcode',
+  PIECE_FORMAT: 'Piece format',
+  EXPECTED_RECEIPT_DATE: 'Expected receipt date',
+  REQUEST: 'Request',
+  COMMENT: 'Comment',
+  SELECT_LOCATION: 'Select location',
+  STATUS: 'Status',
+  CALL_NUMBER: 'Call number',
+  CREATE_ITEM: 'Create item',
+  DISPLAY_ON_HOLDING: 'Display on holding',
+  SUPPLEMENT: 'Supplement',
+};
+
+export const UNRECEIVABLE_LIST_COLUMN_HEADERS = {
+  BARCODE: 'Barcode',
+  DISPLAY_SUMMARY: 'Display summary',
+  ENUMERATION: 'Enumeration',
+  PIECE_FORMAT: 'Piece format',
+  REQUEST: 'Request',
+  COMMENT: 'Comment',
+  SELECT_LOCATION: 'Select location',
+  CALL_NUMBER: 'Call number',
 };

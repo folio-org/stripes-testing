@@ -5,25 +5,24 @@ import {
   locations,
   materialTypes,
   organizations,
-  settingsEntries,
   tenantAddresses,
 } from '../routes';
 import { batchCount } from '../utils/batching';
 import { responseRecords } from '../utils/responses';
-import { tagsDependency } from './common';
+import { tagFilterRoutes } from './common';
 
+/** Claiming resolves each wrapper piece's vendor ID for the result table. */
 export const claimingProfile = {
   filters: [
     acquisitionUnits,
     customFields,
     locations,
     materialTypes,
-    settingsEntries,
     tenantAddresses,
+    ...tagFilterRoutes,
   ],
   results: [claimingPieces],
   responseDependencies: [
-    tagsDependency,
     {
       route: organizations,
       dependsOn: [claimingPieces.id],

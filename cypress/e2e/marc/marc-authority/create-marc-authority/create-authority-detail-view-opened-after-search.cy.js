@@ -81,7 +81,6 @@ describe('MARC', () => {
           MarcAuthority.contains(existingAuthorityHeading);
 
           MarcAuthorities.clickActionsAndNewAuthorityButton();
-          QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tag008);
           MarcAuthority.setValid008DropdownValues();
           QuickMarcEditor.checkSomeDropdownsMarkedAsInvalid(testData.tag008, false);
           MarcAuthority.selectSourceFile(testData.authoritySourceFile);

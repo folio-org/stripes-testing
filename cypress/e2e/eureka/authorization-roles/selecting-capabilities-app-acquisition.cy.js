@@ -13,25 +13,20 @@ describe('Eureka', () => {
         applicationName: 'app-acquisitions',
         capabilitySets: [
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Memberships',
-            action: CAPABILITY_ACTIONS.MANAGE,
-          },
-          {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'UI-Invoice Invoice Pay',
+            resource: 'UI-Finance',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         capabilities: [
           {
             table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Module Finance Enabled',
+            resource: 'UI-Invoice Settings',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Invoice Item Cancel',
+            resource: 'UI-Invoice Invoice Cancel',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
@@ -91,7 +86,6 @@ describe('Eureka', () => {
           cy.login(testData.user.username, testData.user.password, {
             path: TopMenu.settingsAuthorizationRoles,
             waiter: AuthorizationRoles.waitContentLoading,
-            authRefresh: true,
           });
         });
       });
@@ -115,6 +109,7 @@ describe('Eureka', () => {
           AuthorizationRoles.selectApplicationInModal(testData.applicationName);
           AuthorizationRoles.clickSaveInModal();
           AuthorizationRoles.verifyAppNamesInCapabilityTables([testData.applicationName]);
+          AuthorizationRoles.toggleShowHiddenCapabilities();
           resourceNames.forEach((resourceName) => {
             AuthorizationRoles.verifyResourceOrAppPresent(resourceName, 1);
           });

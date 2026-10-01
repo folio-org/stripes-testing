@@ -8,9 +8,9 @@ import {
   Ledgers,
 } from '../../../support/fragments/finance';
 import FundDetails from '../../../support/fragments/finance/funds/fundDetails';
+import States from '../../../support/fragments/finance/states';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import States from '../../../support/fragments/finance/states';
 import { NumberTools } from '../../../support/utils';
 
 const toNormalizedMoney = (value, locale) => {
@@ -82,7 +82,6 @@ describe('Finance', () => {
       'C825296 Meaningful error toast message appears when money transfer is unsuccessful (thunderjet) (TaaS)',
       { tags: ['extendedPath', 'thunderjet', 'C825296'] },
       () => {
-        cy.log('<----- STEP 1 ----->');
         FinanceHelper.searchByName(fundA.name);
         Funds.selectFund(fundA.name);
         const BudgetDetails = FundDetails.openCurrentBudgetDetails();
@@ -95,22 +94,19 @@ describe('Finance', () => {
           ],
         });
 
-        cy.log('<----- STEP 2 ----->');
         const AddTransferModal = BudgetDetails.openAddTransferModal();
         AddTransferModal.verifyFromFieldValue('');
         AddTransferModal.verifyToFieldValue(fundA.name);
 
-        cy.log('<----- STEP 3 ----->');
         AddTransferModal.fillTransferDetails({
           amount: '200',
           description: 'C825296 Test transfer',
           fromFund: fundB.name,
         });
         AddTransferModal.verifyModalView();
-        Funds.checkAmountInputError(States.totalAllocationCannotBeLessThanZero);
         AddTransferModal.verifyConfirmButtonDisabled(true);
+        AddTransferModal.expectErrorPresent(States.totalAllocationCannotBeLessThanZero);
 
-        cy.log('<----- STEP 4 ----->');
         AddTransferModal.closeModal();
         BudgetDetails.checkBudgetDetails({
           summary: [

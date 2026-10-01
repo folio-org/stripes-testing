@@ -704,6 +704,7 @@ export default {
   },
   deleteStatisticalCodeByName(statisticalCode) {
     cy.contains(statisticalCode)
+      .scrollIntoView()
       .should('be.visible')
       .closest('[data-test-repeatable-field-list-item="true"]')
       .find('button[data-test-repeatable-field-remove-item-button="true"]')

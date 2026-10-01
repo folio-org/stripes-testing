@@ -2,16 +2,18 @@ import {
   Button,
   Checkbox,
   HTML,
+  MultiColumnList,
   MultiColumnListRow,
+  Pane,
   Section,
+  TextArea,
   TextField,
   including,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import { DEFAULT_WAIT_TIME, RECEIVE_LIST_COLUMN_HEADERS } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import SelectLocationModal from '../orders/modals/selectLocationModal';
 import ReceivingStates from './receivingStates';
-import DeleteHoldingsModalReceivingFullScreen from './modals/deleteHoldingsModaReceivinglFullScreen';
 
 const receivingsListEditForm = Section({ id: 'pane-title-receive-list' });
 const receinigsListTable = receivingsListEditForm.find(HTML({ id: 'title-receive-list' }));
@@ -19,6 +21,7 @@ const receinigsListTable = receivingsListEditForm.find(HTML({ id: 'title-receive
 const cancelButton = receivingsListEditForm.find(Button('Cancel'));
 const receiveButton = receivingsListEditForm.find(Button('Receive'));
 
+const SELECT_ALL_PIECES_CHECKBOX = 'Select all pieces';
 const buttons = {
   Cancel: cancelButton,
   Receive: receiveButton,
@@ -33,6 +36,28 @@ export default {
     fields.forEach(({ label, conditions }) => {
       cy.expect(buttons[label].has(conditions));
     });
+  },
+  verifyFormView({ polNumber, titleName } = {}) {
+    cy.expect(Pane({ title: `${polNumber} - ${titleName}` }).exists());
+    cy.expect(Checkbox({ ariaLabel: SELECT_ALL_PIECES_CHECKBOX }).has({ checked: false }));
+
+    Object.values(RECEIVE_LIST_COLUMN_HEADERS).forEach((content) => {
+      cy.expect(
+        receivingsListEditForm.find(MultiColumnList()).has({ columns: including(content) }),
+      );
+    });
+
+    cy.expect(cancelButton.has({ disabled: false }));
+    cy.expect(receiveButton.has({ disabled: true }));
+  },
+  receiveAll({ receiveSaved = true } = {}) {
+    cy.do([
+      Checkbox({ ariaLabel: SELECT_ALL_PIECES_CHECKBOX }).clickInput(),
+      receiveButton.click(),
+    ]);
+    if (receiveSaved) {
+      InteractorsTools.checkCalloutMessage(ReceivingStates.receiveSavedSuccessfully);
+    }
   },
   checkReceivingItemFieldValue({ fieldName, fieldValue, rowIndex = 0, strictMode = true } = {}) {
     cy.expect(
@@ -61,18 +86,36 @@ export default {
       });
     }
   },
-  fillReceivingFields({ barcode, rowIndex = 0, checked = true } = {}) {
-    if (barcode) {
-      cy.do(
-        receinigsListTable
-          .find(TextField({ name: `receivedItems[${rowIndex}].barcode` }))
-          .fillIn(barcode),
+  fillReceivingFields({
+    rowIndex = 0,
+    checked = true,
+    comment,
+    displayOnHolding,
+    ...textFields
+  } = {}) {
+    Object.entries(textFields).forEach(([fieldName, value]) => {
+      const field = receinigsListTable.find(
+        TextField({ name: `receivedItems[${rowIndex}].${fieldName}` }),
       );
-      cy.expect(
-        receinigsListTable
-          .find(TextField({ name: `receivedItems[${rowIndex}].barcode` }))
-          .has({ value: barcode }),
+
+      cy.do(field.fillIn(value));
+      cy.expect(field.has({ value }));
+    });
+    if (comment) {
+      const commentField = receinigsListTable.find(
+        TextArea({ name: `receivedItems[${rowIndex}].comment` }),
       );
+
+      cy.do(commentField.fillIn(comment));
+      cy.expect(commentField.has({ value: comment }));
+    }
+    if (displayOnHolding) {
+      const displayOnHoldingCheckbox = receinigsListTable.find(
+        Checkbox({ name: `receivedItems[${rowIndex}].displayOnHolding` }),
+      );
+
+      cy.do(displayOnHoldingCheckbox.click());
+      cy.expect(displayOnHoldingCheckbox.has({ checked: true }));
     }
     if (checked) {
       cy.do(
@@ -106,7 +149,6 @@ export default {
     cy.do(receiveButton.click());
 
     if (receiveSaved) {
-      DeleteHoldingsModalReceivingFullScreen.deleteHoldingsModal({ action: 'Keep Holdings' });
       InteractorsTools.checkCalloutMessage(ReceivingStates.receiveSavedSuccessfully);
     }
   },

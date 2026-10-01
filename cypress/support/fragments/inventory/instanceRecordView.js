@@ -109,6 +109,11 @@ const viewSource = () => {
   cy.do(viewSourceButton.click());
 };
 
+const checkViewSourceButtonIsDisabled = () => {
+  cy.do(rootSection.find(actionsButton).click());
+  cy.expect(viewSourceButton.has({ disabled: true }));
+};
+
 const verifyAdministrativeNote = (value, isExist = true) => {
   if (isExist) {
     cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());
@@ -234,6 +239,7 @@ export default {
   verifySrsMarcRecord,
   verifyImportedFieldExists,
   viewSource,
+  checkViewSourceButtonIsDisabled,
   verifyAdministrativeNote,
   verifyInstanceNote,
   verifyStatisticalCode,
@@ -468,12 +474,16 @@ export default {
     }
   },
 
-  verifyMarkAsSuppressedFromDiscoveryWarning() {
-    cy.expect(
-      rootSection
-        .find(HTML(including('Warning: Instance is marked suppressed from discovery')))
-        .exists(),
+  verifyMarkAsSuppressedFromDiscoveryWarning(isDisplayed = true) {
+    const element = rootSection.find(
+      HTML(including('Warning: Instance is marked suppressed from discovery')),
     );
+
+    if (isDisplayed) {
+      cy.expect(element.exists());
+    } else {
+      cy.expect(element.absent());
+    }
   },
 
   verifyMarkAsSuppressedFromDiscoveryAndStaffSuppressedWarning() {

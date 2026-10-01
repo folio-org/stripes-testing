@@ -8,98 +8,55 @@ import CapabilitySets from '../../../support/dictionary/capabilitySets';
 describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
-      const applications = ['app-complete', 'app-platform-minimal'];
+      const applications = ['app-acquisitions', 'app-platform-minimal', 'app-platform-complete'];
       const testData = {
         roleName: `AT_C553052_UserRole_${getRandomPostfix()}`,
         capabilitySets: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Units',
-            action: CAPABILITY_ACTIONS.MANAGE,
+            resource: 'UI-Calendar',
+            action: CAPABILITY_ACTIONS.VIEW,
+            application: applications[2],
           },
           {
             table: CAPABILITY_TYPES.DATA,
             resource: 'UI-Notes Item',
             action: CAPABILITY_ACTIONS.VIEW,
+            application: applications[1],
           },
         ],
         capabilitiesInSets: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Units',
-            action: CAPABILITY_ACTIONS.MANAGE,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Units Collection',
+            resource: 'UI-Calendar',
             action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Units Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Units Item',
-            action: CAPABILITY_ACTIONS.EDIT,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Units Item',
-            action: CAPABILITY_ACTIONS.CREATE,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Units Item',
-            action: CAPABILITY_ACTIONS.DELETE,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Links Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Note Types Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Notes Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Notes Item',
-            action: CAPABILITY_ACTIONS.VIEW,
+            application: applications[2],
           },
           {
             table: CAPABILITY_TYPES.DATA,
             resource: 'UI-Notes Item',
             action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Module Notes Enabled',
-            action: CAPABILITY_ACTIONS.VIEW,
+            application: applications[1],
           },
         ],
         capabilities: [
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Accounts Item',
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'UI-Orders Settings Order-Templates',
             action: CAPABILITY_ACTIONS.CREATE,
+            application: applications[0],
+          },
+          {
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'UI-Users Settings',
+            action: CAPABILITY_ACTIONS.VIEW,
+            application: applications[2],
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Roles Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
+            resource: 'Organizations Settings',
+            action: CAPABILITY_ACTIONS.MANAGE,
+            application: applications[0],
           },
         ],
         capabSetIds: [],
@@ -171,34 +128,34 @@ describe('Eureka', () => {
           AuthorizationRoles.selectApplicationInModal(applications[1], false);
           AuthorizationRoles.clickSaveInModal({ confirmUnselect: true });
           testData.capabilitySets
-            .filter((item) => item.application === applications[0])
+            .filter((item) => item.application !== applications[1])
             .forEach((set) => {
               AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set);
             });
           testData.capabilities
-            .filter((item) => item.application === applications[0])
+            .filter((item) => item.application !== applications[1])
             .forEach((capability) => {
               AuthorizationRoles.verifyCapabilityCheckboxChecked(capability);
             });
           testData.capabilitiesInSets
-            .filter((item) => item.application === applications[0])
+            .filter((item) => item.application !== applications[1])
             .forEach((capability) => {
               AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
             });
 
           AuthorizationRoles.clickUnassignAllCapabilitiesButton();
           testData.capabilitySets
-            .filter((item) => item.application === applications[0])
+            .filter((item) => item.application !== applications[1])
             .forEach((set) => {
               AuthorizationRoles.verifyCapabilitySetCheckboxChecked(set, false);
             });
           testData.capabilities
-            .filter((item) => item.application === applications[0])
+            .filter((item) => item.application !== applications[1])
             .forEach((capability) => {
               AuthorizationRoles.verifyCapabilityCheckboxChecked(capability, false);
             });
           testData.capabilitiesInSets
-            .filter((item) => item.application === applications[0])
+            .filter((item) => item.application !== applications[1])
             .forEach((capability) => {
               AuthorizationRoles.verifyCapabilityCheckboxChecked(capability, false);
             });

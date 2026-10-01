@@ -8,28 +8,7 @@ describe('Lists', () => {
     const srsBibEntityTypeId = 'c47c6e6c-a897-4dd4-938c-ad5fea981a19';
     const expectedFields = [
       {
-        labelAlias: 'SRS record — Created by user UUID',
-        queryable: true,
-        visibleByDefault: false,
-        hidden: false,
-        essential: true,
-      },
-      {
-        labelAlias: 'SRS record — Created date',
-        queryable: true,
-        visibleByDefault: false,
-        hidden: false,
-        essential: true,
-      },
-      {
         labelAlias: 'SRS record — External HRID',
-        queryable: true,
-        visibleByDefault: true,
-        hidden: false,
-        essential: true,
-      },
-      {
-        labelAlias: 'SRS record — External UUID',
         queryable: true,
         visibleByDefault: true,
         hidden: false,
@@ -71,49 +50,7 @@ describe('Lists', () => {
         essential: true,
       },
       {
-        labelAlias: 'SRS record — Record type',
-        queryable: true,
-        visibleByDefault: true,
-        hidden: false,
-        essential: true,
-      },
-      {
-        labelAlias: 'SRS record — Snapshot UUID',
-        queryable: true,
-        visibleByDefault: false,
-        hidden: false,
-        essential: true,
-      },
-      {
         labelAlias: 'SRS record — State',
-        queryable: true,
-        visibleByDefault: true,
-        hidden: false,
-        essential: true,
-      },
-      {
-        labelAlias: 'SRS record — Suppress from discovery',
-        queryable: true,
-        visibleByDefault: true,
-        hidden: false,
-        essential: true,
-      },
-      {
-        labelAlias: 'SRS record — Updated by user UUID..',
-        queryable: true,
-        visibleByDefault: false,
-        hidden: false,
-        essential: true,
-      },
-      {
-        labelAlias: 'SRS record — Updated date',
-        queryable: true,
-        visibleByDefault: false,
-        hidden: false,
-        essential: true,
-      },
-      {
-        labelAlias: 'SRS record — UUID..',
         queryable: true,
         visibleByDefault: true,
         hidden: false,

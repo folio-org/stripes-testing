@@ -104,7 +104,7 @@ describe('Orders', () => {
         [...Array(orderLinesCount).keys()].forEach((index) => {
           const OrderLineDetails = OrderDetails.openPolDetails(`${poNumber}-${index + 1}`);
           OrderLineDetails.checkOrderLineDetails({
-            purchaseOrderLineInformation: [
+            poLineInformation: [
               {
                 key: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
                 value: ORDER_LINE_PAYMENT_STATUS.AWAITING_PAYMENT,

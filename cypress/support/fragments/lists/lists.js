@@ -23,15 +23,20 @@ import {
   not,
   or,
   Pane,
+  PaneHeader,
   RadioButton,
+  SearchField,
   SelectionList,
   TextArea,
   TextField,
   Tooltip,
 } from '../../../../interactors';
-import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import ArrayUtils from '../../utils/arrays';
+import { formatNumber } from '../../utils/numberTools';
 import { poll } from '../../utils/polling';
+import getRandomPostfix, { pluralize } from '../../utils/stringTools';
+import { embeddedTableHeadersMap, extractValuesForTableType } from '../bulk-edit/query-modal';
+import SelectUser from '../users/modal/selectUser';
 
 const listInformationAccording = Accordion('List information');
 const queryAccordion = Accordion({ id: 'results-viewer-accordion' });
@@ -60,11 +65,38 @@ const newLink = Link('New');
 const statusAccordion = filterPane.find(Accordion('Status'));
 const visibilityAccordion = filterPane.find(Accordion('Visibility'));
 const recordTypesAccordion = filterPane.find(Accordion('Record types'));
+const sourceAccordion = filterPane.find(Accordion('Source'));
 const resetAllButton = filterPane.find(Button('Reset all'));
+const searchField = SearchField({ id: 'input-record-search' });
+const searchButton = filterPane.find(Button('Search'));
+const collapseFilterPaneButton = Button({ icon: 'caret-left' });
+const expandFilterPaneButton = Button({ icon: 'caret-right' });
+const clearSearchButton = Button({ id: 'clickable-input-record-search-clear-field' });
 const clearFilterButton = Button({ icon: 'times-circle-solid' });
 const editQueryButton = Button('Edit query');
 const resultViewerTable = MultiColumnList({ id: 'results-viewer-table' });
+const resultViewerTableSelector = '#results-viewer-table';
 const listsTable = MultiColumnList();
+
+// The sort affordance of a <MultiColumnList> header is a CSS pseudo-element driven by the
+// header's own class name, so the icon shown next to a column is asserted through the
+// class + aria-sort pair:
+//   "^" (caret up)    -> mclAscending     + aria-sort="ascending"
+//   "v" (caret down)  -> mclDescending    + aria-sort="descending"
+//   "up-down"         -> mclSortIndicator + aria-sort="none"
+//   no icon           -> none of them     + aria-sort="none"
+const sortIconClasses = {
+  ascending: 'mclAscending',
+  descending: 'mclDescending',
+  unsorted: 'mclSortIndicator',
+};
+const listsTableRowSelector = 'div[class^="mclRowContainer--"] [data-row-index]';
+const rowIndexOf = (row) => Number(row.getAttribute('data-row-index').replace('row-', ''));
+const displayedListNames = ($rows) => {
+  return [...$rows]
+    .sort((a, b) => rowIndexOf(a) - rowIndexOf(b))
+    .map((row) => row.querySelector('[role=gridcell]').innerText.trim());
+};
 
 const activeCheckbox = Checkbox({ id: 'clickable-filter-status-active' });
 const inactiveCheckbox = Checkbox({ id: 'clickable-filter-status-inactive' });
@@ -74,13 +106,17 @@ const privateCheckbox = Checkbox({ id: 'clickable-filter-visibility-private' });
 const deleteConfirmationModal = Modal('Delete list');
 const cancelConfirmationModal = Modal('Are you sure?');
 const buildQueryModal = Modal('Build query');
+const selectUserModal = Modal('Select User');
+const selectUserSearchField = selectUserModal.find(TextField({ name: 'query' }));
+const selectUserSearchButton = selectUserModal.find(Button('Search'));
+const selectUserResetAllButton = selectUserModal.find(Button('Reset all'));
 
 const cancelQueryButton = buildQueryModal.find(Button('Cancel'));
-const linkSelector = 'a[data-test-text-link="true"]';
 
 const constants = {
   cannedListInactivePatronsWithOpenLoans: 'Inactive patrons with open loans',
   recordTypes: {
+    authority: 'Authority',
     users: 'Users',
     instances: 'Instances',
     holdings: 'Holdings',
@@ -99,12 +135,14 @@ const constants = {
     vouchers: 'Vouchers',
     instancesWithMarcBibliographic: 'Instances with MARC bibliographic',
     receivingPieces: 'Receiving pieces',
+    receivingTitles: 'Receiving titles',
     feeFineAccountsWithUsers: 'Fee/Fine accounts with users',
     usersWithFeeFineLoans: 'Users with fees/fines, loans',
     usersWithManualBlocks: 'Users with manual blocks',
     lostItemsRequiringActualCost: 'Lost items requiring actual cost',
     loans: 'Loans',
     orderInvoiceAnalysis: 'Order — Invoice Analysis',
+    agreementsInvoicesOrders: 'Agreements - Invoices - Orders',
   },
   userColumns: [
     'User — Active',
@@ -180,7 +218,7 @@ const UI = {
   },
 
   clickOnListInformationAccordion() {
-    cy.do(listInformationAccording.click());
+    cy.do(listInformationAccording.clickHeader());
     cy.wait(500);
   },
 
@@ -193,16 +231,8 @@ const UI = {
     cy.expect(listInformationAccording.has({ open: isExpanded }));
   },
 
-  clickOnCollapseAllButton() {
-    cy.get(linkSelector).contains('Collapse all').click();
-  },
-
   verifyCollapseAllButtonAbsent() {
-    cy.get(linkSelector).contains('Collapse all').should('not.exist');
-  },
-
-  clickOnExpandAllButton() {
-    cy.get(linkSelector).contains('Expand all').click();
+    cy.expect(HTML('Collapse all').absent());
   },
 
   clickOnQueryAccordion() {
@@ -528,6 +558,27 @@ const UI = {
     cy.wait(1000);
   },
 
+  selectRecordTypeByKeywords(searchTerm, keywords) {
+    cy.get('button[name=recordType]').click();
+    cy.do(SelectionList().filter(searchTerm));
+    cy.do(
+      SelectionList().perform((element) => {
+        // Highlight markup and punctuation can differ between FQM/UI releases. Matching all
+        // supplied words against textContent keeps the choice semantic and release-tolerant.
+        const option = [...element.querySelectorAll('li')].find(({ textContent }) => {
+          return keywords.every((keyword) => textContent.includes(keyword));
+        });
+
+        if (!option) {
+          throw new Error(`No record type contains all keywords: ${keywords.join(', ')}`);
+        }
+
+        option.click();
+      }),
+    );
+    cy.wait(1000);
+  },
+
   verifySelectedOptionsInRecordTypeDropdown(type) {
     cy.get('[data-test-selection-option-segment=true]').contains(type).should('be.visible');
   },
@@ -671,10 +722,14 @@ const UI = {
   },
 
   verifyRecordsNumber(number, isVerifyPaneHeader = true) {
+    // UI renders counts with thousands separators, e.g. 1841 -> "1,841".
+    // Non-numeric values (e.g. 'No') are used as is.
+    const rawNumber = String(number).replace(/,/g, '');
+    const recordsFoundText = `${rawNumber.trim() && !Number.isNaN(Number(rawNumber)) ? formatNumber(Number(rawNumber)) : number} records found`;
     if (isVerifyPaneHeader) {
-      cy.get('[class^=paneHeader-]').contains(`${number} records found`).should('be.visible');
+      cy.get('[class^=paneHeader-]').contains(recordsFoundText).should('be.visible');
     }
-    cy.get('#results-viewer-accordion').contains(`${number} records found`).should('be.visible');
+    cy.get('#results-viewer-accordion').contains(recordsFoundText).should('be.visible');
   },
 
   verifySingleRecordNumber(isVerifyPaneHeader = true) {
@@ -682,6 +737,19 @@ const UI = {
       cy.get('[class^=paneHeader-]').contains('1 record found').should('be.visible');
     }
     cy.get('#results-viewer-accordion').contains('1 record found').should('be.visible');
+  },
+
+  verifyLandingPageRecordsCount(number) {
+    cy.expect(listsPane.has({ subtitle: including(`${number} records found`) }));
+  },
+
+  verifyListDetailsHeaderWithIcon(listName) {
+    cy.expect(PaneHeader(including(listName)).exists());
+    cy.get('[class^=paneHeader-]')
+      .contains(listName)
+      .parents('[class^=paneHeader-]')
+      .find('[class*="appIcon"]')
+      .should('be.visible');
   },
 
   verifyQuery(query) {
@@ -716,6 +784,16 @@ const UI = {
   verifyResultColumnDisplayed(columnName) {
     cy.do(resultViewerTable.scrollHeaderIntoView(columnName));
     cy.expect(resultViewerTable.find(MultiColumnListHeader(columnName)).exists());
+  },
+
+  verifyNoRecordsInListDetails() {
+    cy.contains('No records found').should('be.visible');
+    cy.get(`${resultViewerTableSelector} [data-row-index]`).should('not.exist');
+  },
+
+  verifyRecordValueAbsentInResultTable(value, timeout = 2000) {
+    cy.wait(timeout);
+    cy.expect(resultViewerTable.find(MultiColumnListCell(value)).absent());
   },
 
   verifyLandingPageTableColumns(expectedColumns) {
@@ -805,6 +883,87 @@ const UI = {
   clickLandingPagePreviousButton() {
     cy.do(listsTable.find(Button('Previous')).click());
     cy.wait(1000);
+  },
+
+  getLandingPageColumnHeader(columnName) {
+    return cy
+      .get('[role=columnheader]')
+      .filter((_, header) => header.innerText.trim() === columnName);
+  },
+
+  clickLandingPageColumnHeader(columnName) {
+    cy.do(listsTable.find(MultiColumnListHeader(columnName)).click());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+  },
+
+  // iconType is one of 'ascending', 'descending', 'unsorted' (the "up-down" icon) or 'none'
+  verifyLandingPageColumnSortIcon(columnName, iconType) {
+    const expectedClass = sortIconClasses[iconType];
+    const expectedAriaSort = expectedClass && iconType !== 'unsorted' ? iconType : 'none';
+    this.getLandingPageColumnHeader(columnName).should(($header) => {
+      expect($header.attr('aria-sort'), `"${columnName}" column aria-sort`).to.equal(
+        expectedAriaSort,
+      );
+      Object.entries(sortIconClasses).forEach(([icon, className]) => {
+        const assertion = expect($header.attr('class'), `"${columnName}" column "${icon}" icon`);
+        if (className === expectedClass) assertion.to.contain(className);
+        else assertion.to.not.contain(className);
+      });
+    });
+  },
+
+  verifyLandingPageColumnIsNotSortable(columnName) {
+    this.verifyLandingPageColumnSortIcon(columnName, 'none');
+    this.getLandingPageColumnHeader(columnName)
+      .find('[data-test-clickable-header]')
+      .should('not.exist');
+  },
+
+  verifyDisplayedListsOrder(expectedListNames) {
+    cy.get(listsTableRowSelector).should(($rows) => {
+      expect(displayedListNames($rows)).to.deep.equal(expectedListNames);
+    });
+  },
+
+  // The next two pin a result set down without asserting an exact records count, which a search
+  // on a common word cannot do: it also matches lists left behind by other tests.
+  verifyListsArePresent(listNames) {
+    cy.get(listsTableRowSelector).should(($rows) => {
+      const displayed = displayedListNames($rows);
+      listNames.forEach((name) => {
+        expect(displayed, `"${name}" is displayed`).to.include(name);
+      });
+    });
+  },
+
+  verifyListsAreNotPresent(listNames) {
+    cy.get(listsTableRowSelector).should(($rows) => {
+      const displayed = displayedListNames($rows);
+      listNames.forEach((name) => {
+        expect(displayed, `"${name}" is not displayed`).to.not.include(name);
+      });
+    });
+  },
+
+  // Checks the order of the expected lists relative to each other, ignoring any other row.
+  // Use it when the table also holds a list whose position cannot be predicted, e.g. a system
+  // generated list whose records count is environment data.
+  verifyDisplayedListsRelativeOrder(expectedListNames) {
+    cy.get(listsTableRowSelector).should(($rows) => {
+      const isExpected = (name) => expectedListNames.includes(name);
+      expect(displayedListNames($rows).filter(isExpected)).to.deep.equal(expectedListNames);
+    });
+  },
+
+  // Only the top rows are checked, so this works on a page holding more lists than the
+  // expected ones (a <MultiColumnList> renders only the rows around the viewport).
+  verifyFirstDisplayedListsOrder(expectedListNames) {
+    cy.get(listsTableRowSelector).should(($rows) => {
+      expect(displayedListNames($rows).slice(0, expectedListNames.length)).to.deep.equal(
+        expectedListNames,
+      );
+    });
   },
 
   verifyResultCellContains(rowIndex, columnName, content) {
@@ -904,6 +1063,7 @@ const UI = {
 
   clickOnAccordionInFilter(accordionName) {
     cy.do(filterPane.find(Accordion(accordionName)).clickHeader());
+    cy.wait(500);
   },
 
   verifyAccordionExpandedInFilter(accordionName) {
@@ -929,6 +1089,21 @@ const UI = {
     ]);
   },
 
+  verifySourceAccordionDefaultContent() {
+    cy.expect([
+      sourceAccordion.find(Checkbox('System')).has({ checked: false }),
+      sourceAccordion.find(Checkbox('User generated')).has({ checked: false }),
+    ]);
+  },
+
+  verifyFindUserAccordionDefaultContent(accordionName) {
+    const accordion = filterPane.find(Accordion(accordionName));
+    cy.expect([
+      accordion.find(TextField()).has({ value: '' }),
+      accordion.find(Button('Find User')).exists(),
+    ]);
+  },
+
   verifyRecordTypesAccordionDefaultContent() {
     cy.expect([
       recordTypesAccordion.find(Checkbox('Items')).has({ checked: false }),
@@ -939,18 +1114,36 @@ const UI = {
   },
 
   collapseFilterPane() {
-    cy.get('button[icon=caret-left]').click();
+    cy.do(collapseFilterPaneButton.click());
     cy.wait(1000);
   },
 
   expandFilterPane() {
-    cy.get('button[icon=caret-right]').click();
+    cy.do(expandFilterPaneButton.click());
     cy.wait(1000);
+  },
+
+  verifyCollapseFilterPaneTooltip(tooltipText = 'Collapse Search & filter pane') {
+    cy.do(collapseFilterPaneButton.hoverMouse());
+    cy.expect(Tooltip({ text: tooltipText }).exists());
+  },
+
+  verifyExpandFilterPaneTooltip(tooltipText = 'Expand Search & filter pane') {
+    cy.do(expandFilterPaneButton.hoverMouse());
+    cy.expect(Tooltip({ text: tooltipText }).exists());
   },
 
   selectActiveLists() {
     cy.wait(1000);
     cy.do(activeCheckbox.checkIfNotSelected());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+    cy.wait(1000);
+  },
+
+  unselectActiveLists() {
+    cy.wait(1000);
+    cy.do(activeCheckbox.uncheckIfSelected());
     cy.wait(1000);
     this.waitForSpinnerToDisappear();
     cy.wait(1000);
@@ -980,9 +1173,29 @@ const UI = {
     cy.wait(1000);
   },
 
+  selectSystemSource() {
+    cy.wait(1000);
+    cy.do(sourceAccordion.find(Checkbox('System')).checkIfNotSelected());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+    cy.wait(1000);
+  },
+
+  selectUserGeneratedSource() {
+    cy.wait(1000);
+    cy.do(sourceAccordion.find(Checkbox('User generated')).checkIfNotSelected());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+    cy.wait(1000);
+  },
+
   clickOnCheckbox(name) {
     cy.do(filterPane.find(Checkbox(name)).click());
     cy.wait(1000);
+  },
+
+  verifyRecordTypeMultiSelectDropdownDisplayed() {
+    cy.expect(recordTypesAccordion.find(MultiSelect()).exists());
   },
 
   openRecordTypeFilter() {
@@ -997,6 +1210,11 @@ const UI = {
 
   selectRecordTypeFilter(type) {
     cy.do(filterPane.find(MultiSelect()).choose(type));
+    cy.wait(1000);
+  },
+
+  deselectRecordTypeFilter(type) {
+    cy.do(filterPane.find(MultiSelect()).remove(type));
     cy.wait(1000);
   },
 
@@ -1052,6 +1270,57 @@ const UI = {
     );
   },
 
+  clickOnFindUserButton(accordionName) {
+    cy.do(filterPane.find(Accordion(accordionName)).find(Button('Find User')).click());
+  },
+
+  verifySelectUserModalDefaultContent() {
+    cy.expect([
+      selectUserModal.exists(),
+      selectUserModal.find(HTML(including('User search'))).exists(),
+      selectUserSearchButton.has({ disabled: true }),
+      selectUserResetAllButton.has({ disabled: true }),
+      selectUserModal.find(Accordion('Status')).exists(),
+      selectUserModal.find(Accordion('Patron group')).exists(),
+      selectUserModal.find(Accordion('User type')).exists(),
+      selectUserModal.find(HTML(including('User Search Results'))).exists(),
+      selectUserModal.find(HTML(including('Enter search criteria to start'))).exists(),
+      selectUserModal.find(HTML(including('Choose a filter or enter a search'))).exists(),
+    ]);
+  },
+
+  findAndSelectUserInModal(userName) {
+    cy.do([selectUserSearchField.fillIn(userName), selectUserSearchButton.click()]);
+    cy.expect(selectUserModal.find(MultiColumnListCell(including(userName))).exists());
+    cy.do(selectUserModal.find(MultiColumnListRow({ index: 0 })).click());
+    cy.expect(selectUserModal.absent());
+  },
+
+  verifyFindUserFieldDisplaysUser(accordionName, userName) {
+    cy.expect(
+      filterPane
+        .find(Accordion(accordionName))
+        .find(TextField())
+        .has({ value: including(userName) }),
+    );
+  },
+
+  verifyNoResultsFoundMessage() {
+    cy.expect(
+      HTML(including('No results found. Please check your spelling and filters.')).exists(),
+    );
+  },
+
+  verifyNumberOfListsDisplayed(count) {
+    cy.get('div[class^="mclRowContainer--"]').find('[data-row-index]').should('have.length', count);
+  },
+
+  verifyAtLeastOneListDisplayed() {
+    cy.get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .should('have.length.at.least', 1);
+  },
+
   resetAllFilters() {
     cy.wait(1000);
     cy.get('button[id="clickable-reset-all"]').then((element) => {
@@ -1075,6 +1344,106 @@ const UI = {
 
   verifyResetAllButtonDisabled() {
     cy.expect(resetAllButton.has({ disabled: true }));
+  },
+
+  fillInSearchField(searchTerm) {
+    cy.do(searchField.fillIn(searchTerm));
+  },
+
+  pressEnterInSearchField() {
+    cy.get('#input-record-search').type('{enter}');
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+  },
+
+  clickOnSearchButton() {
+    cy.do(searchButton.click());
+    cy.wait(1000);
+    this.waitForSpinnerToDisappear();
+  },
+
+  verifyListsPaneRecordsCount(count) {
+    let text;
+    if (count === 0) {
+      text = 'No records found';
+    } else if (count === 1) {
+      text = '1 record found';
+    } else {
+      text = `${count} records found`;
+    }
+    cy.get('[class^=paneHeader-]').contains(text).should('be.visible');
+  },
+
+  getListsPaneRecordsCount() {
+    const pattern = /([\d,]+) records? found/;
+    return cy
+      .get('[class^=paneHeader-]')
+      .contains(pattern)
+      .invoke('text')
+      .then((text) => Number(text.match(pattern)[1].replace(/,/g, '')));
+  },
+
+  // Use on searches broad enough to also match lists left behind by other tests, where the
+  // exact number of results is not this test's to predict.
+  verifyListsPaneRecordsCountAtLeast(count) {
+    const pattern = /([\d,]+) records? found/;
+    cy.get('[class^=paneHeader-]')
+      .contains(pattern)
+      .invoke('text')
+      .then((text) => {
+        const displayedCount = Number(text.match(pattern)[1].replace(/,/g, ''));
+        expect(displayedCount, 'lists found, shown under the "Lists" pane label').to.be.at.least(
+          count,
+        );
+      });
+  },
+
+  verifyNoResultsFoundForSearchTerm(searchTerm) {
+    cy.contains(
+      `No results found for "${searchTerm}". Please check your spelling and filters.`,
+    ).should('be.visible');
+  },
+
+  verifySearchFieldDisplayed() {
+    cy.expect(searchField.exists());
+  },
+
+  verifySearchFieldValue(value) {
+    cy.expect(searchField.has({ value }));
+  },
+
+  verifySearchFieldEmpty() {
+    cy.expect(searchField.has({ value: '' }));
+  },
+
+  verifySearchButtonEnabled() {
+    cy.expect(searchButton.has({ disabled: false }));
+  },
+
+  verifySearchButtonDisabled() {
+    cy.expect(searchButton.has({ disabled: true }));
+  },
+
+  verifyClearSearchButtonDisplayed() {
+    cy.expect(clearSearchButton.exists());
+  },
+
+  verifyClearSearchButtonAbsent() {
+    cy.expect(clearSearchButton.absent());
+  },
+
+  clickOnClearSearchButton() {
+    cy.do(clearSearchButton.click());
+  },
+
+  selectCreatedByFilter(userName) {
+    cy.do(Button({ id: 'created-by-filter-button' }).click());
+    SelectUser.findAndSelectUserInNameColumn(userName);
+  },
+
+  selectUpdatedByFilter(userName) {
+    cy.do(Button({ id: 'updated-by-filter-button' }).click());
+    SelectUser.findAndSelectUserInNameColumn(userName);
   },
 
   selectList(listName) {
@@ -1126,13 +1495,14 @@ const UI = {
 
   verifyListsFilteredByRecordType: (filter) => {
     cy.wait(500);
+    const filters = Array.isArray(filter) ? filter : [filter];
     cy.get('div[class^="mclRowContainer--"]')
       .find('[data-row-index]')
       .each(($row) => {
         cy.get('[class*="mclCell-"]:nth-child(2)', { withinSubject: $row })
           .invoke('text')
           .then((cellValue) => {
-            cy.expect(cellValue).to.equal(filter);
+            cy.expect(cellValue).to.be.oneOf(filters);
           });
       });
   },
@@ -1153,6 +1523,39 @@ const UI = {
           cy.expect(cell).to.be.oneOf(filters);
         });
       });
+  },
+
+  verifyListsFilteredBySource: (filters) => {
+    const cells = [];
+    cy.get('[role=columnheader]').then((headers) => {
+      const columnIndex =
+        [...headers].findIndex((header) => header.innerText.trim() === 'Source') + 1;
+
+      cy.get('div[class^="mclRowContainer--"]')
+        .find('[data-row-index]')
+        .each(($row) => {
+          cy.get(`[class*="mclCell-"]:nth-child(${columnIndex})`, { withinSubject: $row })
+            .invoke('text')
+            .then((cellValue) => {
+              cells.push(cellValue);
+            });
+        })
+        .then(() => {
+          const expectSystem = filters.includes('System');
+          const expectUserGenerated = filters.includes('User generated');
+
+          cells.forEach((cell) => {
+            if (expectSystem && !expectUserGenerated) {
+              cy.expect(cell).to.equal('System');
+            } else if (expectUserGenerated && !expectSystem) {
+              cy.expect(cell).to.not.equal('System');
+              cy.expect(cell).to.not.equal('');
+            } else {
+              cy.expect(cell).to.not.equal('');
+            }
+          });
+        });
+    });
   },
 
   verifySourceColumnCellDisplaysOnSingleLine() {
@@ -1401,8 +1804,7 @@ const QueryBuilder = {
     return cy.xpath(`.//h3[starts-with(., "${searchTerm}")]`).then(($element) => {
       cy.wrap(true).then(() => {
         const text = $element.text().replace(`${searchTerm}`, '').replace(' records', '');
-        const parsedText = text.replace(text.substr(text.indexOf('.')), '');
-        return parsedText;
+        return text.replace(text.substr(text.indexOf('.')), '');
       });
     });
   },
@@ -1418,6 +1820,59 @@ const QueryBuilder = {
         const match = text.match(/(\d+) records? found/);
         return match ? Number(match[1]) : 0;
       });
+  },
+
+  verifyEmbeddedTableInResultsRow(tableType, identifier, expectedData, tableIndex = 0) {
+    const headers = embeddedTableHeadersMap[tableType];
+    if (!headers) {
+      throw new Error(
+        `Unknown table type: ${tableType}. Available types: ${Object.keys(embeddedTableHeadersMap).join(', ')}`,
+      );
+    }
+
+    // Normalize input to always be an array
+    const dataToVerify = Array.isArray(expectedData) ? expectedData : [expectedData];
+
+    cy.then(() => resultViewerTable.find(MultiColumnListCell(identifier)).row()).then(
+      (rowIndex) => {
+        // Find the DynamicTable specifically within this row
+        cy.get(`[data-row-index="row-${rowIndex}"]`).within(() => {
+          // Verify table headers
+          cy.get('[class^="DynamicTable-"]')
+            .eq(tableIndex)
+            .find('tr')
+            .eq(0)
+            .then((headerRow) => {
+              const headerCells = headerRow.find('th');
+
+              headers.forEach((header, index) => {
+                cy.wrap(headerCells.eq(index)).should('have.text', header);
+              });
+            });
+
+          // Verify each expected row exists
+          dataToVerify.forEach((dataObj) => {
+            const expectedValues = extractValuesForTableType(tableType, dataObj);
+
+            cy.get('[class^="DynamicTable-"]')
+              .find('tbody tr')
+              .should(($rows) => {
+                const matchingRow = Array.from($rows).find((row) => {
+                  const rowText = Cypress.$(row).text().trim();
+                  const expectedRowText = expectedValues.join('').trim();
+                  return rowText === expectedRowText;
+                });
+
+                if (!matchingRow) {
+                  throw new Error(
+                    `Could not find a row in table "${tableType}" containing all values: [${expectedValues.join(', ')}] for entity with identifier "${identifier}"`,
+                  );
+                }
+              });
+          });
+        });
+      },
+    );
   },
 };
 
@@ -1450,6 +1905,22 @@ const API = {
         },
         fields: ['users.active', 'user.id'],
         uiQuery: 'users.id == 1234567890',
+      };
+    });
+  },
+
+  buildQueryOnSingleUserById(userId) {
+    return this.getAllEntityTypesViaApi().then((response) => {
+      const filteredEntityTypeId = response.body.entityTypes.find(
+        (entityType) => entityType.label === 'Users',
+      ).id;
+      return {
+        query: {
+          entityTypeId: filteredEntityTypeId,
+          fqlQuery: `{"users.id":{"$eq":"${userId}"}}`,
+        },
+        fields: ['users.active', 'users.id'],
+        uiQuery: `users.id == ${userId}`,
       };
     });
   },
@@ -1548,6 +2019,12 @@ const API = {
     return cy.okapiRequest({
       method: 'GET',
       path: 'lists',
+    });
+  },
+
+  getTotalRecordsViaApi() {
+    return this.getViaApi().then((response) => {
+      return response.body.totalRecords;
     });
   },
 

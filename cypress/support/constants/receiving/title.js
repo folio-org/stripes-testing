@@ -33,3 +33,48 @@ export const RECEIVING_BOUND_ITEMS_COLUMN_LABELS = {
   DISPLAY_SUMMARY: 'Display summary',
   STATUS: 'Status',
 };
+export const EXPECTED_TABLE_COLUMN_HEADERS = {
+  SEQUENCE: 'Sequence',
+  DISPLAY_SUMMARY: 'Display summary',
+  STATUS: 'Status',
+  COPY_NUMBER: 'Copy number',
+  ENUMERATION: 'Enumeration',
+  CHRONOLOGY: 'Chronology',
+  COMMENT: 'Comment',
+  PIECE_FORMAT: 'Piece format',
+  EXPECTED_RECEIPT_DATE: 'Expected receipt date',
+  HOLDINGS_LOCATION: 'Holdings location',
+  DISPLAY_TO_PUBLIC: 'Display to public',
+  REQUEST: 'Request',
+};
+
+export const RECEIVED_TABLE_COLUMN_HEADERS = {
+  SEQUENCE: 'Sequence',
+  BARCODE: 'Barcode',
+  DISPLAY_SUMMARY: 'Display summary',
+  COPY_NUMBER: 'Copy number',
+  ENUMERATION: 'Enumeration',
+  CHRONOLOGY: 'Chronology',
+  COMMENT: 'Comment',
+  PIECE_FORMAT: 'Piece format',
+  RECEIVED_DATE: 'Received date',
+  HOLDINGS_LOCATION: 'Holdings location',
+  DISPLAY_TO_PUBLIC: 'Display to public',
+  REQUEST: 'Request',
+};
+
+export const UNRECEIVABLE_TABLE_COLUMN_HEADERS = {
+  SEQUENCE: 'Sequence',
+  BARCODE: 'Barcode',
+  DISPLAY_SUMMARY: 'Display summary',
+  COPY_NUMBER: 'Copy number',
+  ENUMERATION: 'Enumeration',
+  CHRONOLOGY: 'Chronology',
+  COMMENT: 'Comment',
+  PIECE_FORMAT: 'Piece format',
+  RECEIVED_DATE: 'Received date',
+  HOLDINGS_LOCATION: 'Holdings location',
+  DISPLAY_TO_PUBLIC: 'Display to public',
+  REQUEST: 'Request',
+  CALL_NUMBER: 'Call number',
+};

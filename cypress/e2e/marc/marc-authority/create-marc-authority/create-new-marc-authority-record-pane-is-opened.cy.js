@@ -58,7 +58,7 @@ describe('MARC', () => {
           MarcAuthorities.clickNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);
           QuickMarcEditor.checkRecordStatusNew();
-          QuickMarcEditor.checkDefaultFieldsInOrder();
+          MarcAuthority.checkDefaultFieldsInOrder();
           MarcAuthority.checkSourceFileSelectShown();
 
           // 3 Check "LDR" field

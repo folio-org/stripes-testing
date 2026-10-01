@@ -114,7 +114,7 @@ describe('Lists', () => {
           // Step 2-3: Search for "Instance — Tenant ID" field and select it
           QueryModal.selectField(instanceFieldValues.instanceTenantId);
           QueryModal.verifySelectedField(instanceFieldValues.instanceTenantId);
-          QueryModal.verifyQueryAreaContent('(instance.tenant_id  )');
+          QueryModal.verifyQueryAreaContent('');
 
           // Step 4: Verify supported operators for "Instance — Tenant ID" field
           QueryModal.verifyOperatorsList(STRING_STORES_UUID_OPERATORS);

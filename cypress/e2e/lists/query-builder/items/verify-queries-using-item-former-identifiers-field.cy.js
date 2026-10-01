@@ -128,7 +128,7 @@ describe('Lists', () => {
           // Step 2: Select "Item — Former identifiers" field
           QueryModal.selectField(itemFieldValues.itemFormerIdentifiers);
           QueryModal.verifySelectedField(itemFieldValues.itemFormerIdentifiers);
-          QueryModal.verifyQueryAreaContent('(items.former_ids  )');
+          QueryModal.verifyQueryAreaContent('');
           QueryModal.verifyOperatorsList(STRING_OPERATORS);
 
           // Step 3: Test with "is null/empty" operator

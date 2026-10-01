@@ -173,12 +173,12 @@ describe('Lists', () => {
           // Step 3: Select "Item — Status" field
           QueryModal.selectField(itemFieldValues.itemStatus);
           QueryModal.verifySelectedField(itemFieldValues.itemStatus);
-          QueryModal.verifyQueryAreaContent('(items.status_name  )');
+          QueryModal.verifyQueryAreaContent('');
 
           // Step 4: Select "IN" operator
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IN);
-          QueryModal.verifyQueryAreaContent('(items.status_name in ())');
+          QueryModal.verifyQueryAreaContent('(items.status_name in [])');
 
           // Step 5: Select multiple item status values
           itemStatuses.forEach((status) => {
@@ -190,9 +190,7 @@ describe('Lists', () => {
 
           // Add AND condition
           QueryModal.addNewRow();
-          QueryModal.verifyQueryAreaContent(
-            `(items.status_name in [${itemStatuses.join(', ')}]) AND (  )`,
-          );
+          QueryModal.verifyQueryAreaContent(`(items.status_name in [${itemStatuses.join(', ')}])`);
 
           // Select Instance title field
           QueryModal.selectField(itemFieldValues.instanceTitle, 1);

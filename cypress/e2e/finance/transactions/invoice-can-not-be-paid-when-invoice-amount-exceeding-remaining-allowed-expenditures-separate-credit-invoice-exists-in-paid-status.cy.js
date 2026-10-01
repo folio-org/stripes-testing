@@ -257,7 +257,7 @@ describe('Finance: Transactions', () => {
 
   it(
     'C496166 Invoice can NOT be paid when invoice amount exceeding remaining allowed expenditures (separate credit invoice exists in "Paid" status) (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'C496166'] },
+    { tags: ['criticalPath', 'thunderjet', 'C496166', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(thirdInvoice.invoiceNumber);
       Invoices.selectInvoice(thirdInvoice.invoiceNumber);

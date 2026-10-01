@@ -15,7 +15,11 @@ import {
 import {
   COMMON_BUTTON_LABELS,
   DEFAULT_WAIT_TIME,
+  EXPECTED_TABLE_COLUMN_HEADERS,
+  RECEIVED_TABLE_COLUMN_HEADERS,
   RECEIVING_BOUND_ITEMS_COLUMN_LABELS,
+  THE_LIST_CONTAINS_NO_ITEMS,
+  UNRECEIVABLE_TABLE_COLUMN_HEADERS,
 } from '../../constants';
 import { ItemRecordView } from '../inventory';
 import InventoryInstance from '../inventory/inventoryInstance';
@@ -34,10 +38,12 @@ const titleInformationSection = receivingDetailsSection.find(Section({ id: 'info
 const orderLineDetailsSection = receivingDetailsSection.find(Section({ id: 'polDetails' }));
 const expectedSection = receivingDetailsSection.find(Section({ id: 'expected' }));
 const receivedSection = receivingDetailsSection.find(Section({ id: 'received' }));
+const unreceivableSection = receivingDetailsSection.find(Section({ id: 'unreceivable' }));
 const routingListSection = receivingDetailsSection.find(Section({ id: 'routing-list' }));
 const routingListAccordionButton = Button({ id: 'accordion-toggle-button-routing-list' });
 const expectedRowsSelector = '#expected [class*="mclRowFormatterContainer"]';
 const receivedRowsSelector = '#received [class*="mclRowFormatterContainer"]';
+const unreceivableRowsSelector = '#unreceivable [class*="mclRowFormatterContainer"]';
 
 const boundItemsAccordion = Section({ id: 'boundItems' });
 const boundItemsList = MultiColumnList({ id: 'bound-items-list' });
@@ -121,38 +127,76 @@ export default {
   },
   verifyExpectedRecordsCount(expectedCount) {
     if (expectedCount === 0) {
-      cy.expect(expectedSection.has({ text: including('The list contains no items') }));
+      cy.expect(expectedSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
     } else {
       cy.get(expectedRowsSelector).should('have.length', expectedCount);
     }
   },
   verifyReceivedRecordsCount(receivedCount) {
     if (receivedCount === 0) {
-      cy.expect(receivedSection.has({ text: including('The list contains no items') }));
+      cy.expect(receivedSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
     } else {
       cy.get(receivedRowsSelector).should('have.length', receivedCount);
     }
   },
+  verifyUnreceivableRecordsCount(unreceivableCount) {
+    if (unreceivableCount === 0) {
+      cy.expect(unreceivableSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
+    } else {
+      cy.get(unreceivableRowsSelector).should('have.length', unreceivableCount);
+    }
+  },
   checkExpectedTableContent(records = []) {
     records.forEach((record, index) => {
+      if (record.status) {
+        cy.expect(
+          expectedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: EXPECTED_TABLE_COLUMN_HEADERS.STATUS,
+              }),
+            )
+            .has({ content: including(record.status) }),
+        );
+      }
       if (record.copyNumber) {
         cy.expect(
           expectedSection
-            .find(MultiColumnListCell({ row: index, column: 'Copy number' }))
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: EXPECTED_TABLE_COLUMN_HEADERS.COPY_NUMBER,
+              }),
+            )
             .has({ content: including(record.copyNumber) }),
+        );
+      }
+      if (record.comment) {
+        cy.expect(
+          expectedSection
+            .find(
+              MultiColumnListCell({ row: index, column: EXPECTED_TABLE_COLUMN_HEADERS.COMMENT }),
+            )
+            .has({ content: including(record.comment) }),
         );
       }
       if (record.format) {
         cy.expect(
           expectedSection
-            .find(MultiColumnListCell({ row: index, column: 'Piece format' }))
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: EXPECTED_TABLE_COLUMN_HEADERS.PIECE_FORMAT,
+              }),
+            )
             .has({ content: including(record.format) }),
         );
       }
     });
 
     if (!records.length) {
-      cy.expect(expectedSection.has({ text: including('The list contains no items') }));
+      cy.expect(expectedSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
     }
   },
   checkReceivedTableContent(records = []) {
@@ -160,49 +204,187 @@ export default {
       if (record.barcode) {
         cy.expect(
           receivedSection
-            .find(MultiColumnListCell({ row: index, column: 'Barcode' }))
+            .find(
+              MultiColumnListCell({ row: index, column: RECEIVED_TABLE_COLUMN_HEADERS.BARCODE }),
+            )
             .has({ content: including(record.barcode) }),
         );
       }
       if (record.format) {
         cy.expect(
           receivedSection
-            .find(MultiColumnListCell({ row: index, column: 'Piece format' }))
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: RECEIVED_TABLE_COLUMN_HEADERS.PIECE_FORMAT,
+              }),
+            )
             .has({ content: including(record.format) }),
         );
       }
       if (record.displaySummary) {
         cy.expect(
           receivedSection
-            .find(MultiColumnListCell({ row: index, column: 'Display summary' }))
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: RECEIVED_TABLE_COLUMN_HEADERS.DISPLAY_SUMMARY,
+              }),
+            )
             .has({ content: including(record.displaySummary) }),
         );
       }
       if (record.copyNumber) {
         cy.expect(
           receivedSection
-            .find(MultiColumnListCell({ row: index, column: 'Copy number' }))
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: RECEIVED_TABLE_COLUMN_HEADERS.COPY_NUMBER,
+              }),
+            )
             .has({ content: including(record.copyNumber) }),
         );
       }
       if (record.enumeration) {
         cy.expect(
           receivedSection
-            .find(MultiColumnListCell({ row: index, column: 'Enumeration' }))
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: RECEIVED_TABLE_COLUMN_HEADERS.ENUMERATION,
+              }),
+            )
             .has({ content: including(record.enumeration) }),
         );
       }
       if (record.chronology) {
         cy.expect(
           receivedSection
-            .find(MultiColumnListCell({ row: index, column: 'Chronology' }))
+            .find(
+              MultiColumnListCell({ row: index, column: RECEIVED_TABLE_COLUMN_HEADERS.CHRONOLOGY }),
+            )
             .has({ content: including(record.chronology) }),
+        );
+      }
+      if (record.comment) {
+        cy.expect(
+          receivedSection
+            .find(
+              MultiColumnListCell({ row: index, column: RECEIVED_TABLE_COLUMN_HEADERS.COMMENT }),
+            )
+            .has({ content: including(record.comment) }),
+        );
+      }
+      if (record.receivedDate) {
+        cy.expect(
+          receivedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: RECEIVED_TABLE_COLUMN_HEADERS.RECEIVED_DATE,
+              }),
+            )
+            .has({ content: including(record.receivedDate) }),
+        );
+      }
+      if (record.holdingsLocation) {
+        cy.expect(
+          receivedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: RECEIVED_TABLE_COLUMN_HEADERS.HOLDINGS_LOCATION,
+              }),
+            )
+            .has({ content: including(record.holdingsLocation) }),
+        );
+      }
+      if (record.displayToPublic !== undefined) {
+        cy.expect(
+          receivedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: RECEIVED_TABLE_COLUMN_HEADERS.DISPLAY_TO_PUBLIC,
+              }),
+            )
+            .find(Checkbox({ disabled: true }))
+            .has({ checked: record.displayToPublic, disabled: true }),
+        );
+      }
+      if (record.request) {
+        cy.expect(
+          receivedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: RECEIVED_TABLE_COLUMN_HEADERS.REQUEST,
+              }),
+            )
+            .has({ content: including(record.request) }),
         );
       }
     });
 
     if (!records.length) {
-      cy.expect(receivedSection.has({ text: including('The list contains no items') }));
+      cy.expect(receivedSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
+    }
+  },
+  checkUnreceivableTableContent(records = []) {
+    records.forEach((record, index) => {
+      if (record.barcode) {
+        cy.expect(
+          unreceivableSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: UNRECEIVABLE_TABLE_COLUMN_HEADERS.BARCODE,
+              }),
+            )
+            .has({ content: including(record.barcode) }),
+        );
+      }
+      if (record.displaySummary) {
+        cy.expect(
+          unreceivableSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: UNRECEIVABLE_TABLE_COLUMN_HEADERS.DISPLAY_SUMMARY,
+              }),
+            )
+            .has({ content: including(record.displaySummary) }),
+        );
+      }
+      if (record.copyNumber) {
+        cy.expect(
+          unreceivableSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: UNRECEIVABLE_TABLE_COLUMN_HEADERS.COPY_NUMBER,
+              }),
+            )
+            .has({ content: including(record.copyNumber) }),
+        );
+      }
+      if (record.comment) {
+        cy.expect(
+          unreceivableSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: UNRECEIVABLE_TABLE_COLUMN_HEADERS.COMMENT,
+              }),
+            )
+            .has({ content: including(record.comment) }),
+        );
+      }
+    });
+
+    if (!records.length) {
+      cy.expect(unreceivableSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
     }
   },
   openEditPieceModal({ row = 0, section = 'Expected' } = {}) {
@@ -212,6 +394,21 @@ export default {
       : receivedSection.find(MultiColumnListCell({ row, column: 'Barcode' }));
 
     cy.do(itemEdit.click());
+
+    return EditPieceModal;
+  },
+  openEditPieceModalByFormat(pieceFormat) {
+    cy.do(
+      expectedSection
+        .find(
+          MultiColumnListCell({
+            column: EXPECTED_TABLE_COLUMN_HEADERS.PIECE_FORMAT,
+            content: pieceFormat,
+          }),
+        )
+        .click(),
+    );
+    EditPieceModal.waitLoading();
 
     return EditPieceModal;
   },
@@ -333,6 +530,22 @@ export default {
       cy.expect(checkbox.has({ checked: true, disabled: false }));
     });
     cy.do(actionsBtn.click());
+  },
+
+  checkReceivedAccordionActionsMenuOptions(optionLabels = [], { shouldExist = true } = {}) {
+    cy.do(receivedSection.find(Button(COMMON_BUTTON_LABELS.ACTIONS)).click());
+    optionLabels.forEach((label) => {
+      const option = DropdownMenu().find(Button(label));
+
+      cy.expect(shouldExist ? option.exists() : option.absent());
+    });
+  },
+
+  clickReceivedAccordionActionsMenuOption(optionLabel) {
+    cy.do([
+      receivedSection.find(Button(COMMON_BUTTON_LABELS.ACTIONS)).click(),
+      DropdownMenu().find(Button(optionLabel)).click(),
+    ]);
   },
 
   clickNextPageButtonInBoundItemsAccordion() {

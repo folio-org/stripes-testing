@@ -54,8 +54,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C613150 Verify that the checkbox custom fields are queryable (corsair)',
-        { tags: ['extendedPath', 'corsair', 'C613150'] },
+        'C613150 Verify that the checkbox custom fields are queryable (athena)',
+        { tags: ['extendedPath', 'athena', 'C613150'] },
         () => {
           cy.login(userData.username, userData.password, {
             path: TopMenu.listsPath,

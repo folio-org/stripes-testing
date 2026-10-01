@@ -1,136 +1,199 @@
-import permissions from '../../support/dictionary/permissions';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Funds from '../../support/fragments/finance/funds/funds';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import Organizations from '../../support/fragments/organizations/organizations';
+import {
+  ACQUISITION_METHOD_NAMES,
+  COMMON_BUTTON_LABELS,
+  MATERIAL_TYPE_NAMES,
+  ORDER_FORMAT_NAMES,
+  ORDER_TYPES,
+  POLINE_DETAILS_FIELDS,
+} from '../../support/constants';
+import { Budgets } from '../../support/fragments/finance';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import getRandomPostfix from '../../support/utils/stringTools';
+import { ExpenseClasses } from '../../support/fragments/settings/finance';
+import { OrderDetails, OrderLineEditForm, Orders } from '../../support/fragments/orders';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import Permissions from '../../support/dictionary/permissions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import NewExpenseClass from '../../support/fragments/settings/finance/newExpenseClass';
-import getRandomPostfix from '../../support/utils/stringTools';
-import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
 
 describe('Orders', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
-  const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const defaultFund = { ...Funds.defaultUiFund };
-  const order = {
-    ...NewOrder.defaultOneTimeOrder,
-    approved: true,
-    orderType: 'One-time',
-  };
-  const firstExpenseClass = {
-    ...NewExpenseClass.defaultUiBatchGroup,
+  const testData = {
+    organization: NewOrganization.getDefaultOrganization(),
+    fund: {},
+    budget: {},
+    expenseClasses: [],
+    location: {},
+    order: {},
+    user: {},
   };
 
-  const secondExpenseClass = {
-    ...NewExpenseClass.defaultUiBatchGroup,
-    name: `AT_Class_${getRandomPostfix()}_1`,
-    code: `${getRandomPostfix()}_1`,
+  const createExpenseClass = () => {
+    return ExpenseClasses.createExpenseClassViaApi(ExpenseClasses.getDefaultExpenseClass()).then(
+      (expenseClass) => {
+        testData.expenseClasses.push(expenseClass);
+      },
+    );
   };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  const allocatedQuantity = '100';
-  let user;
-  let servicePointId;
-  let location;
 
-  before(() => {
-    cy.getAdminToken();
+  const createExpenseClasses = () => {
+    return createExpenseClass().then(createExpenseClass);
+  };
 
-    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-      defaultFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
+  const createFinanceData = () => {
+    const financeData = Budgets.createBudgetWithFundLedgerAndFYViaApi({
+      budget: { allocated: 100 },
+      expenseClasses: testData.expenseClasses,
+    });
 
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
+    testData.fund = financeData.fund;
+    testData.budget = financeData.budget;
+  };
 
-          cy.loginAsAdmin({
-            path: TopMenu.settingsFinanceExpenseClassesPath,
-            waiter: SettingsFinance.waitExpenseClassesLoading,
-          });
-          SettingsFinance.createNewExpenseClass(firstExpenseClass);
-          SettingsFinance.createNewExpenseClass(secondExpenseClass);
+  const createOrganization = () => {
+    return Organizations.createOrganizationViaApi(testData.organization).then((id) => {
+      testData.organization.id = id;
+    });
+  };
 
-          cy.visit(TopMenu.fundPath);
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-          Funds.editBudget();
-          Funds.addTwoExpensesClass(firstExpenseClass.name, secondExpenseClass.name);
+  const createLocation = () => {
+    return ServicePoints.getViaApi().then((servicePoints) => {
+      return NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePoints[0].id)).then(
+        (location) => {
+          testData.location = location;
+        },
+      );
+    });
+  };
+
+  const createUserAndLogin = () => {
+    return cy
+      .createTempUser([Permissions.uiOrdersCreate.gui, Permissions.uiOrdersEdit.gui])
+      .then((userProperties) => {
+        testData.user = userProperties;
+
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
         });
       });
-    });
+  };
+
+  before('Create test data', () => {
     cy.getAdminToken();
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
 
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-    });
-    order.vendor = organization.name;
-
-    cy.createTempUser([
-      permissions.uiOrdersCreate.gui,
-      permissions.uiOrdersEdit.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
-    });
+    createExpenseClasses()
+      .then(createFinanceData)
+      .then(createOrganization)
+      .then(createLocation)
+      .then(createUserAndLogin);
   });
 
-  after(() => {
-    cy.loginAsAdmin({
-      path: TopMenu.fundPath,
-      waiter: Funds.waitLoading,
+  after('Delete test data', () => {
+    cy.getAdminToken().then(() => {
+      if (testData.order.id) {
+        Orders.deleteOrderViaApi(testData.order.id);
+      }
+      Users.deleteViaApi(testData.user.userId);
+      Organizations.deleteOrganizationViaApi(testData.organization.id);
+      NewLocation.deleteInstitutionCampusLibraryLocationViaApi(
+        testData.location.institutionId,
+        testData.location.campusId,
+        testData.location.libraryId,
+        testData.location.id,
+      );
+      Budgets.getBudgetByIdViaApi(testData.budget.id).then((budget) => {
+        Budgets.updateBudgetViaApi({ ...budget, statusExpenseClasses: [] });
+        Budgets.deleteBudgetWithFundLedgerAndFYViaApi(testData.budget);
+        testData.expenseClasses.forEach(({ id }) => ExpenseClasses.deleteExpenseClassViaApi(id));
+      });
     });
-    FinanceHelp.clickFundButton();
-    FinanceHelp.searchByName(defaultFund.name);
-    Funds.selectFund(defaultFund.name);
-    Funds.selectBudgetDetails();
-    Funds.editBudget();
-    Funds.deleteAllExpenseClasses();
-    Funds.deleteBudgetViaActions();
-    Funds.deleteFundViaActions();
-    cy.visit(TopMenu.settingsFinanceExpenseClassesPath);
-    SettingsFinance.deleteExpenseClass(firstExpenseClass);
-    SettingsFinance.deleteExpenseClass(secondExpenseClass);
-    Orders.deleteOrderViaApi(order.id);
-    Users.deleteViaApi(user.userId);
   });
 
   it(
     'C402773 PO line for "One-time" order can not be saved when "Expense class" field is empty (thunderjet)',
-    { tags: ['criticalPathBroken', 'thunderjet', 'C402773'] },
+    { tags: ['criticalPath', 'thunderjet', 'C402773'] },
     () => {
-      Orders.createApprovedOrderForRollover(order, true).then((firstOrderResponse) => {
-        order.id = firstOrderResponse.id;
-        OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-        OrderLines.fillInPOLineInfoforPhysicalMaterialWithFundWithoutECAndCheckRequiredField(
-          defaultFund,
-          '20',
-          '1',
-          '20',
-          location.name,
-        );
+      // Step 1: Open "Create purchase order" page
+      const OrderEditForm = Orders.clickCreateNewOrder();
+      OrderEditForm.checkButtonsConditions([
+        { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
+        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: true } },
+      ]);
+
+      // Step 2: Fill in order fields
+      OrderEditForm.fillOrderFields({
+        orderInfo: {
+          organizationName: testData.organization.name,
+          orderType: ORDER_TYPES.ONE_TIME,
+        },
       });
+      OrderEditForm.checkButtonsConditions([
+        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: false } },
+      ]);
+
+      // Step 3: Save the order
+      OrderEditForm.clickSaveButton();
+      OrderDetails.waitLoading();
+      cy.url().then((url) => {
+        testData.order.id = url.match(/\/orders\/view\/([^/?]+)/)?.[1];
+      });
+
+      // Step 4: Open "Add PO line" page
+      OrderDetails.selectAddPOLine();
+      OrderLineEditForm.checkButtonsConditions([
+        { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
+        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: true } },
+      ]);
+
+      // Step 5: Fill in mandatory PO line fields
+      OrderLineEditForm.fillOrderLineFields({
+        itemDetails: { title: `AT_C402773_Instance_${getRandomPostfix()}` },
+        poLineDetails: {
+          acquisitionMethod: ACQUISITION_METHOD_NAMES.APPROVAL_PLAN,
+          orderFormat: ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE,
+          materialType: MATERIAL_TYPE_NAMES.BOOK,
+        },
+        costDetails: {
+          physicalUnitPrice: '1',
+          quantityPhysical: '1',
+        },
+      });
+      OrderLineEditForm.checkButtonsConditions([
+        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: false } },
+      ]);
+
+      // Step 6: Add fund distribution without expense class
+      OrderLineEditForm.clickAddFundDistributionButton();
+      OrderLineEditForm.expandFundIdDropdown();
+      OrderLineEditForm.selectFundFromOpenDropdown(testData.fund.name, testData.fund.code);
+
+      // Step 7: Add location
+      OrderLineEditForm.clickAddLocationButton();
+      OrderLineEditForm.expandLocationDropdown(0);
+      OrderLineEditForm.selectLocationFromDropdown(testData.location.name);
+      OrderLineEditForm.fillOrderLineFields({
+        locationDetails: [{ quantityPhysical: '1' }],
+      });
+
+      // Step 8: PO line can not be saved without expense class
+      OrderLineEditForm.clickSaveButton({ orderLineUpdated: false });
+      OrderLineEditForm.waitLoading();
+      OrderLineEditForm.checkRequiredFields([POLINE_DETAILS_FIELDS.EXPENSE_CLASS]);
+
+      // Step 9: Delete fund distribution record
+      OrderLineEditForm.deleteFundDistribution();
+
+      // Step 10: Add fund distribution without expense class once again
+      OrderLineEditForm.clickAddFundDistributionButton();
+      OrderLineEditForm.expandFundIdDropdown();
+      OrderLineEditForm.selectFundFromOpenDropdown(testData.fund.name, testData.fund.code);
+      OrderLineEditForm.expandExpenseClassDropdown();
+
+      // Step 11: PO line still can not be saved without expense class
+      OrderLineEditForm.clickSaveButton({ orderLineUpdated: false });
+      OrderLineEditForm.waitLoading();
+      OrderLineEditForm.checkRequiredFields([POLINE_DETAILS_FIELDS.EXPENSE_CLASS]);
     },
   );
 });

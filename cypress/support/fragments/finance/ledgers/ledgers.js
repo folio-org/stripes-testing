@@ -20,7 +20,13 @@ import {
   including,
   Callout,
 } from '../../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../../constants';
+import {
+  DEFAULT_WAIT_TIME,
+  EXPORT_FUND_FIELDS,
+  ROLLOVER_ERRORS_CSV_HEADERS,
+  ROLLOVER_RESULT_CSV_HEADERS,
+} from '../../../constants';
+import FileManager from '../../../utils/fileManager';
 import InteractorsTools from '../../../utils/interactorsTools';
 import getRandomPostfix from '../../../utils/stringTools';
 import FinanceHelper from '../financeHelper';
@@ -150,7 +156,7 @@ export default {
     cy.do([rolloverConfirmButton.click()]);
   },
 
-  fillInclearRolloverInfo(fiscalYear) {
+  fillInClearRolloverInfo(fiscalYear) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
     cy.do([fiscalYearSelect.choose(fiscalYear)]);
@@ -875,20 +881,7 @@ export default {
       const header = this.parseCsvLine(headerLine).map((s) => s.replace(/^"|"$/g, ''));
       header[0] = header[0].replace(/^\uFEFF/, '');
 
-      const EXPECTED_HEADER = [
-        'Ledger rollover ID',
-        'Error type',
-        'Failed action',
-        'Error message',
-        'Amount',
-        'Fund ID',
-        'Fund code',
-        'Purchase order ID',
-        'Purchase order line number',
-        'Purchase order line ID',
-      ];
-
-      expect(header).to.deep.equal(EXPECTED_HEADER);
+      expect(header).to.deep.equal(Object.values(ROLLOVER_ERRORS_CSV_HEADERS));
 
       const row = this.parseCsvLine(dataLine).map((s) => s.replace(/^"|"$/g, ''));
       expect(row[0]).to.equal(ledgerRolloverId);
@@ -908,10 +901,69 @@ export default {
     });
   },
 
+  checkRolloverErrorsCsvContent({ fileName, fundIds = [] }) {
+    return FileManager.readFile(`${Cypress.config('downloadsFolder')}/${fileName}`).then(
+      (fileContent) => {
+        const [headerLine, ...recordLines] = fileContent
+          .split(/\r?\n/)
+          .filter((line) => line.trim());
+        const header = this.parseCsvLine(headerLine).map((column) => this.clean(column).replace(/^\uFEFF/, ''));
+
+        expect(header, 'CSV file header').to.deep.equal(Object.values(ROLLOVER_ERRORS_CSV_HEADERS));
+
+        const fundIdIndex = header.indexOf(ROLLOVER_ERRORS_CSV_HEADERS.FUND_ID);
+        const recordedFundIds = recordLines.map((line) => this.clean(this.parseCsvLine(line)[fundIdIndex]));
+
+        fundIds.forEach((fundId) => {
+          expect(recordedFundIds, `CSV file contains error record for fund "${fundId}"`).to.include(
+            fundId,
+          );
+        });
+      },
+    );
+  },
+
   deleteDownloadedFile(fileName) {
     cy.wait(6000);
-    const filePath = `cypress\\downloads\\${fileName}`;
-    cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
+    FileManager.deleteFile(`${Cypress.config('downloadsFolder')}/${fileName}`);
+  },
+
+  checkRolloverResultCsvContent({ fileName, funds = [] }) {
+    return FileManager.readFile(`${Cypress.config('downloadsFolder')}/${fileName}`).then(
+      (fileContent) => {
+        const [headerLine, ...recordLines] = fileContent
+          .split(/\r?\n/)
+          .filter((line) => line.trim());
+        const header = this.parseCsvLine(headerLine).map((column) => this.clean(column).replace(/^\uFEFF/, ''));
+
+        expect(header, 'CSV file header').to.deep.equal(Object.values(ROLLOVER_RESULT_CSV_HEADERS));
+
+        const records = recordLines.map((line) => {
+          const cells = this.parseCsvLine(line).map((cell) => this.clean(cell));
+
+          return Object.fromEntries(header.map((column, index) => [column, cells[index]]));
+        });
+
+        funds.forEach(({ name, expenseClassName, columns = {} }) => {
+          const record = records.find(
+            (item) => item[EXPORT_FUND_FIELDS.FUND_NAME] === name &&
+              (!expenseClassName ||
+                item[ROLLOVER_RESULT_CSV_HEADERS.EXPENSE_CLASS_NAME] === expenseClassName),
+          );
+
+          expect(Boolean(record), `CSV file contains record for fund "${name}"`).to.equal(true);
+
+          Object.entries(columns).forEach(([column, expectedValue]) => {
+            const actualValue =
+              typeof expectedValue === 'number'
+                ? Number(record[column].replace(/[^0-9.-]/g, ''))
+                : record[column];
+
+            expect(actualValue, `Fund "${name}", column "${column}"`).to.equal(expectedValue);
+          });
+        });
+      },
+    );
   },
 
   fillInTestRolloverInfoCashBalanceWithNotActiveAllocation(
@@ -1580,9 +1632,19 @@ export default {
     });
   },
 
-  checkLedgerExportRow(fileName, matcher, expected) {
+  checkLedgerExportRowsCount(fileName, rowsCount) {
     cy.readFile(`cypress/downloads/${fileName}`, { log: false }).then((fileContent) => {
       const lines = fileContent.split(/\r?\n/).filter((l) => l.trim().length > 0);
+      expect(lines.length - 1).to.equal(rowsCount);
+    });
+  },
+  checkLedgerExportRow(fileName, matcher, expected) {
+    cy.readFile(`cypress/downloads/${fileName}`, { log: false }).then((fileContent) => {
+      // The file starts with a BOM, which otherwise sticks to the first header name
+      const lines = fileContent
+        .replace(/^\uFEFF/, '')
+        .split(/\r?\n/)
+        .filter((l) => l.trim().length > 0);
       const header = this.parseCsvLine(lines[0]);
       const cell = (rowArr, colName) => {
         const idx = header.indexOf(colName);

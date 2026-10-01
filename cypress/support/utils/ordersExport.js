@@ -3,6 +3,7 @@ import {
   ORDER_EXPORT_CSV_FIELDS,
   ORDER_LINE_EXPORT_CSV_FIELDS,
 } from '../constants';
+import { FUND_DISTRIBUTION_TYPES } from '../constants/finance/fund';
 import {
   formatDateTime,
   getExportAddressFieldValue,
@@ -12,6 +13,31 @@ import { getFullName } from './users';
 
 const LIST_SEPARATOR = ' | ';
 const joinList = (list = []) => list.join(LIST_SEPARATOR);
+
+export const parsePrepaymentFiscalYearDistribution = (value = '') => value
+  .split(LIST_SEPARATOR)
+  .filter(Boolean)
+  .map((entry) => {
+    const values = (entry.match(/"([^"]*)"/g) || []).map((item) => item.slice(1, -1));
+
+    if (values.length < 5) {
+      return null;
+    }
+
+    const isPercentage = values[3].endsWith('%');
+
+    return {
+      fyCode: values[0],
+      fundCode: values[1],
+      expenseClass: values[2],
+      value: isPercentage ? values[3].slice(0, -1) : values[3],
+      distributionType: isPercentage
+        ? FUND_DISTRIBUTION_TYPES.PERCENTAGE
+        : FUND_DISTRIBUTION_TYPES.AMOUNT,
+      amount: values[4],
+    };
+  })
+  .filter(Boolean);
 
 export const getOrderLineExportLocationFieldValue = (
   orderLine,

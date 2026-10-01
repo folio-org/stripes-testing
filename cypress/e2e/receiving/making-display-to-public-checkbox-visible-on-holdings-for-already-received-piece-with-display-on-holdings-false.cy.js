@@ -171,7 +171,7 @@ describe('Receiving', () => {
       Orders.receiveOrderViaActions();
 
       // Step 6: Select title in the search result
-      Receiving.selectLinkFromResultsList();
+      Receiving.selectFromResultsList(testData.orderLine.titleOrPackage);
 
       // Step 7: Click on the piece in the "Received" accordion and verify checkboxes presence and state
       Receiving.selectRecordInReceivedList();

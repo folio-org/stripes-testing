@@ -8,9 +8,13 @@ import {
   TextArea,
   TextField,
   matching,
+  including,
   Modal,
 } from '../../../../../interactors';
-import { RECEIVING_PIECE_FORM_FIELD_LABELS } from '../../../constants';
+import {
+  RECEIVING_PIECE_FORM_ACTIONS_LABELS,
+  RECEIVING_PIECE_FORM_FIELD_LABELS,
+} from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import ReceivingStates from '../receivingStates';
 import SelectLocationModal from '../../orders/modals/selectLocationModal';
@@ -32,6 +36,7 @@ const unreceivableButton = Button('Unreceivable');
 const saveAndCloseButton = editPieceModal.find(Button('Save & close'));
 const actionsDropdownButton = Button({ dataTestID: 'dropdown-trigger-button' });
 const unreceiveButton = Button('Unreceive');
+const expectButton = Button(RECEIVING_PIECE_FORM_ACTIONS_LABELS.EXPECT);
 
 const editPieceFields = {
   [RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_SUMMARY]: editPieceModal.find(
@@ -50,7 +55,7 @@ const editPieceFields = {
   [RECEIVING_PIECE_FORM_FIELD_LABELS.EXPECTED_RECEIPT_DATE]: editPieceModal.find(
     TextField({ name: 'receiptDate' }),
   ),
-  [RECEIVING_PIECE_FORM_FIELD_LABELS.COMMENTS]: editPieceModal.find(TextArea({ name: 'comment' })),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.COMMENT]: editPieceModal.find(TextArea({ name: 'comment' })),
   [RECEIVING_PIECE_FORM_FIELD_LABELS.ORDER_LINE_LOCATIONS]: editPieceModal.find(
     KeyValue('Order line locations'),
   ),
@@ -66,6 +71,13 @@ const editPieceFields = {
   ),
   [RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_TO_PUBLIC]: editPieceModal.find(
     Checkbox({ name: 'displayToPublic' }),
+  ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.BARCODE]: editPieceModal.find(TextField({ name: 'barcode' })),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.CALL_NUMBER]: editPieceModal.find(
+    TextField({ name: 'callNumber' }),
+  ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.ACCESSION_NUMBER]: editPieceModal.find(
+    TextField({ name: 'accessionNumber' }),
   ),
 };
 
@@ -101,10 +113,34 @@ export default {
       }
     });
   },
+  verifySelectedHolding(holdingName) {
+    cy.expect(
+      editPieceModal
+        .find(Selection({ name: 'holdingId' }))
+        .has({ singleValue: including(holdingName) }),
+    );
+  },
+  selectHolding(holdingName) {
+    cy.do(editPieceModal.find(Selection({ name: 'holdingId' })).choose(including(holdingName)));
+  },
+  verifySelectedLocation(locationName) {
+    cy.expect(
+      editPieceModal
+        .find(TextField({ name: 'locationId' }))
+        .has({ value: including(locationName) }),
+    );
+  },
   checkFieldsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(editPieceFields[label].has(conditions));
     });
+  },
+  verifyItemStatus(itemStatus) {
+    cy.expect(
+      editPieceModal
+        .find(KeyValue(RECEIVING_PIECE_FORM_FIELD_LABELS.ITEM_STATUS))
+        .has({ value: itemStatus }),
+    );
   },
 
   fillPieceDetails(fields = {}) {
@@ -113,6 +149,15 @@ export default {
 
       cy.do(editPieceFields[label].fillIn(value));
     });
+  },
+
+  checkCreateItemCheckbox() {
+    const createItemCheckbox = editPieceModal.find(
+      Checkbox(RECEIVING_PIECE_FORM_FIELD_LABELS.CREATE_ITEM),
+    );
+
+    cy.do(createItemCheckbox.click());
+    cy.expect(createItemCheckbox.has({ checked: true }));
   },
 
   checkDisplayOnHoldingCheckbox() {
@@ -147,10 +192,10 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(editPieceModal.absent());
   },
-  clickDeleteButton({ isLastPiece = true } = {}) {
+  clickDeleteButton({ isLastPiece = true, hasItem = true } = {}) {
     cy.do(deleteButton.click());
     DeletePieceModal.waitLoading();
-    DeletePieceModal.verifyModalView(isLastPiece);
+    DeletePieceModal.verifyModalView(isLastPiece, { hasItem });
     return DeletePieceModal;
   },
   clickQuickReceiveButton({ peiceReceived = true } = {}) {
@@ -161,6 +206,18 @@ export default {
       InteractorsTools.checkCalloutMessage(
         matching(new RegExp(ReceivingStates.pieceReceivedSuccessfully)),
       );
+    }
+  },
+  clickExpectButton(isSuccess = true) {
+    cy.do(expectButton.click());
+    if (isSuccess) {
+      InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
+    }
+  },
+  clickUnreceivableButton(isSuccess = true) {
+    cy.do(unreceivableButton.click());
+    if (isSuccess) {
+      InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
     }
   },
   clickSaveAndCloseButton({ pieceSaved = true } = {}) {

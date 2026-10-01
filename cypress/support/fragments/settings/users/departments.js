@@ -34,11 +34,12 @@ export default {
       .then((response) => response.body.id);
   },
 
-  deleteViaApi: (id) => {
+  deleteViaApi: (id, { failOnStatusCode = false } = {}) => {
     return cy.okapiRequest({
       method: REQUEST_METHOD.DELETE,
       path: `departments/${id}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
 

@@ -33,7 +33,7 @@ export default {
         return body;
       });
   },
-  deleteExpenseClassViaApi(expenseClassId, { failOnStatusCode } = {}) {
+  deleteExpenseClassViaApi(expenseClassId, { failOnStatusCode = false } = {}) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `finance/expense-classes/${expenseClassId}`,

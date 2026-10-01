@@ -23,12 +23,16 @@ import {
   Spinner,
   TextField,
   matching,
+  SelectionList,
 } from '../../../../interactors';
 import {
+  COMMON_BUTTON_LABELS,
   DEFAULT_WAIT_TIME,
+  ORDER_AND_ORDER_LINE_BUTTONS,
   ORDER_FILTER_LABELS,
   ORDER_SYSTEM_CLOSING_REASONS,
   RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
+  RESULTS_PANE_NOT_FOUND_MESSAGE,
 } from '../../constants';
 import AcqVersionHistory from '../acqVersionHistory';
 import FiltersPaneHelper from '../filtersPane';
@@ -38,12 +42,16 @@ import FileManager from '../../utils/fileManager';
 import InteractorsTools from '../../utils/interactorsTools';
 import SearchHelper from '../finance/financeHelper';
 import MultiColumnListHelper from '../multiColumnList';
+import SelectUser from '../invoices/modal/selectUser';
+import CloseConfirmationModal from './modals/closeConfirmationModal';
+import DuplicateConfirmationModal from './modals/duplicateConfirmationModal';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import OrderDetails from './orderDetails';
 import OrderEditForm from './orderEditForm';
 import OrderLines from './orderLines';
 import OrderStates from './orderStates';
+import orderLineEditForm from './orderLineEditForm';
 
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorders-results-pane-subtitle"]/span';
 const actionsButton = Button('Actions');
@@ -65,6 +73,14 @@ const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
 const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
 const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
 const ordersResultsPane = Pane({ id: 'orders-results-pane' });
+const createdByFilterSection = ordersFiltersPane.find(Accordion(ORDER_FILTER_LABELS.CREATED_BY));
+const findUserButton = createdByFilterSection.find(
+  Button({ id: 'metadata.createdByUserId-button' }),
+);
+const updatedByFilterSection = ordersFiltersPane.find(Accordion(ORDER_FILTER_LABELS.UPDATED_BY));
+const findUpdatedByUserButton = updatedByFilterSection.find(
+  Button({ id: 'metadata.updatedByUserId-button' }),
+);
 const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
 const purchaseOrderSection = Section({ id: 'purchaseOrder' });
 const purchaseOrderLineLimitReachedModal = Modal({ id: 'data-test-lines-limit-modal' });
@@ -99,6 +115,11 @@ export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
     cy.wait(ms);
     cy.expect([ordersFiltersPane.exists(), ordersResultsPane.exists()]);
+  },
+
+  verifyOrdersResultsPaneContentExists(ms = DEFAULT_WAIT_TIME) {
+    cy.expect(ordersResults.exists());
+    cy.wait(ms);
   },
 
   waitSettingsPageLoading() {
@@ -194,12 +215,15 @@ export default {
     cy.do([TextField({ name: 'poNumber' }).fillIn(poNumber), saveAndClose.click()]);
   },
 
-  duplicateOrder() {
+  duplicateOrder({ verifyModal = false } = {}) {
     expandActionsDropdown();
-    cy.do([
-      Button('Duplicate').click(),
-      Button({ id: 'clickable-order-clone-confirmation-confirm' }).click(),
-    ]);
+    cy.do(Button('Duplicate').click());
+
+    if (verifyModal) {
+      DuplicateConfirmationModal.verifyModalView();
+    }
+
+    DuplicateConfirmationModal.confirm();
   },
 
   assignOrderToAdmin: (rowNumber = 0) => {
@@ -227,10 +251,18 @@ export default {
     ]);
   },
 
-  closeOrder: (reason) => {
+  closeOrder: (reason, isSuccess = true, note) => {
     expandActionsDropdown();
-    cy.do([Button('Close order').click(), Select('Reason').choose(reason), submitButton.click()]);
-    InteractorsTools.checkCalloutMessage('Order was closed');
+    cy.do([Button('Close order').click(), Select('Reason').choose(reason)]);
+
+    if (note) {
+      CloseConfirmationModal.fillNotes(note);
+    }
+
+    cy.do(submitButton.click());
+    if (isSuccess) {
+      InteractorsTools.checkCalloutMessage('Order was closed');
+    }
   },
 
   reOpenOrder: (orderNumber) => {
@@ -348,7 +380,26 @@ export default {
   createOrderByTemplate(templateName) {
     cy.do([actionsButton.click(), newButton.click(), Button({ id: 'order-template' }).click()]);
     cy.wait(6000);
-    cy.do([SelectionOption(templateName).click(), saveAndClose.click()]);
+    cy.do([
+      SelectionList().filter(templateName),
+      SelectionOption(templateName).click(),
+      saveAndClose.click(),
+    ]);
+  },
+
+  // Creates an order from a template via the UI and returns the created order body
+  // (used to register cleanup for UI-created orders per the "no direct API delete" rule).
+  createOrderByTemplateAndCapture(templateName) {
+    cy.intercept('POST', '/orders/composite-orders**').as('newOrderByTemplate');
+
+    this.createOrderByTemplate(templateName);
+
+    return cy.wait('@newOrderByTemplate', getLongDelay()).then(({ response }) => {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(OrderStates.orderSavedSuccessfully)),
+      );
+      return cy.then(() => response.body);
+    });
   },
 
   createOrderForRollover(order, isApproved = false) {
@@ -383,6 +434,10 @@ export default {
 
   checkZeroSearchResultsHeader() {
     this.assertResultsCount(0);
+  },
+
+  assertNoResultsFound() {
+    cy.expect(ordersResults.find(HTML(RESULTS_PANE_NOT_FOUND_MESSAGE)).exists());
   },
 
   createOrderWithAU(order, AUName, isApproved = false) {
@@ -487,9 +542,7 @@ export default {
   },
 
   checkOrderIsNotOpened: (fundCode) => {
-    InteractorsTools.checkCalloutErrorMessage(
-      `One or more fund distributions on this order can not be encumbered, because there is not enough money in [${fundCode}].`,
-    );
+    InteractorsTools.checkCalloutErrorMessage(OrderStates.notEnoughMoneyInFundError(fundCode));
   },
 
   checkInvalidLocationErrorMessage: (polNumber) => {
@@ -579,6 +632,9 @@ export default {
   },
   checkOrderlineFilterInList: (orderLineNumber) => {
     cy.expect(orderLineList.has(Link(orderLineNumber)));
+  },
+  assertOrderLineAbsent(orderLineNumber) {
+    cy.expect(orderLineList.find(Link(orderLineNumber)).absent());
   },
   closeThirdPane: () => {
     cy.do([
@@ -685,12 +741,12 @@ export default {
   selectOrderLines: () => {
     cy.do(Button('Order lines').click());
   },
-  selectOrdersPane: () => {
-    cy.wait(4000);
+  selectOrdersPane: ({ waitMs = DEFAULT_WAIT_TIME } = {}) => {
+    cy.wait(waitMs);
     cy.do(orderLinesPane.find(Button('Orders')).click());
   },
-  createPOLineViaActions: () => {
-    cy.wait(6000);
+  createPOLineViaActions: ({ waitMs = 6000 } = {}) => {
+    cy.wait(waitMs);
     cy.do([
       Accordion({ id: 'POListing' }).find(Button('Actions')).click(),
       Button('Add PO line').click(),
@@ -828,6 +884,58 @@ export default {
     }
   },
 
+  verifyHeaderAndValuesInCsvFileByIdentifier(
+    exportedFileName,
+    identifierHeader,
+    identifierValue,
+    targetValues,
+  ) {
+    const fileName = `${exportedFileName}.csv`;
+
+    return FileManager.convertCsvToJson(fileName).then((jsonDataArray) => {
+      // eslint-disable-next-line no-unused-expressions
+      expect(jsonDataArray).to.be.an('array').and.not.be.empty;
+
+      const targetRow = jsonDataArray.find((row) => row[identifierHeader] === identifierValue);
+
+      // eslint-disable-next-line no-unused-expressions
+      expect(targetRow).to.exist;
+
+      targetValues.forEach((pair) => {
+        const actualValue = targetRow[pair.header];
+
+        expect(actualValue).to.equal(pair.value);
+      });
+    });
+  },
+
+  verifyColumnHeaderExistsInCsvFile(fileName, columnHeaders, isExist = true) {
+    return FileManager.convertCsvToJson(fileName).then((jsonDataArray) => {
+      if (!jsonDataArray || jsonDataArray.length === 0) {
+        throw new Error(`CSV file is empty or could not be converted to JSON: ${fileName}`);
+      }
+
+      // Get actual column headers from the first row's keys
+      const actualHeaders = Object.keys(jsonDataArray[0]);
+
+      if (isExist) {
+        columnHeaders.forEach((columnHeader) => {
+          expect(actualHeaders).to.include(columnHeader);
+        });
+      } else {
+        columnHeaders.forEach((columnHeader) => {
+          expect(actualHeaders).to.not.include(columnHeader);
+        });
+      }
+    });
+  },
+
+  verifyCSVFileRecordsNumber(fileName, recordsNumber) {
+    return FileManager.convertCsvToJson(fileName).then((jsonDataArray) => {
+      expect(jsonDataArray).to.have.length(recordsNumber);
+    });
+  },
+
   verifySaveCSVQueryFileName(actualName) {
     // valid name example: order-export-2022-06-24-12_08.csv
     const expectedFileNameMask = /order-export-\d{4}-\d{2}-\d{2}-\d{2}_\d{2}.csv/gm;
@@ -870,9 +978,31 @@ export default {
   checkPurchaseOrderLineLimitReachedModal: () => {
     cy.expect([
       purchaseOrderLineLimitReachedModal.exists(),
-      purchaseOrderLineLimitReachedModal.find(Button('Ok')).exists(),
-      purchaseOrderLineLimitReachedModal.find(Button('Create new purchase order')).exists(),
+      purchaseOrderLineLimitReachedModal.has({ header: 'Purchase order line limit reached' }),
+      purchaseOrderLineLimitReachedModal.has({
+        content: including(
+          'This would exceed the maximum number of purchase order lines permitted by system settings.For more information contact your system administrator.',
+        ),
+      }),
+      purchaseOrderLineLimitReachedModal.find(Button(COMMON_BUTTON_LABELS.OK)).exists(),
+      purchaseOrderLineLimitReachedModal
+        .find(Button(ORDER_AND_ORDER_LINE_BUTTONS.CREATE_NEW_PURCHASE_ORDER))
+        .exists(),
     ]);
+  },
+
+  clickOkinPOLLimitModal: () => {
+    cy.do(purchaseOrderLineLimitReachedModal.find(Button(COMMON_BUTTON_LABELS.OK)).click());
+    cy.expect(purchaseOrderLineLimitReachedModal.absent());
+  },
+
+  clickCreateNewOrderInPOLLimitModal: () => {
+    cy.do(
+      purchaseOrderLineLimitReachedModal
+        .find(Button(ORDER_AND_ORDER_LINE_BUTTONS.CREATE_NEW_PURCHASE_ORDER))
+        .click(),
+    );
+    cy.expect(orderLineEditForm.waitLoading());
   },
 
   openVersionHistory() {
@@ -1060,6 +1190,10 @@ export default {
   assertMultiSelectFilterOptions:
     FiltersPaneHelper.buildMultiSelectFilterOptionsValuesAssertion(ordersFiltersPane),
 
+  assertCheckboxFilterValues(filterLabel, values, options) {
+    FiltersPaneHelper.assertCheckboxFilterValues(ordersFiltersPane, filterLabel, values, options);
+  },
+
   assertFundCodeFilterValues(expectedValues, options = {}) {
     this.assertMultiSelectFilterValues(ORDER_FILTER_LABELS.FUND_CODE, expectedValues, options);
   },
@@ -1068,8 +1202,13 @@ export default {
     this.assertMultiSelectFilterOptions(ORDER_FILTER_LABELS.FUND_CODE, expectedOptions, options);
   },
 
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(ordersFiltersPane, { disabled });
+  },
+
   resetAllFilters() {
     FiltersPaneHelper.clearAllFilters(ordersFiltersPane);
+    this.assertResetAllButtonState({ disabled: true });
   },
 
   clearFilter(filterLabel) {
@@ -1082,11 +1221,49 @@ export default {
     FiltersPaneHelper.filterByMultiSelectOptions(ordersFiltersPane, filterLabel, options);
   },
 
+  filterByCheckboxes(filterLabel, values, options) {
+    FiltersPaneHelper.filterByCheckboxes(ordersFiltersPane, filterLabel, values, options);
+  },
+
+  filterByTextField(filterLabel, value, options) {
+    FiltersPaneHelper.filterByTextField(ordersFiltersPane, filterLabel, value, options);
+  },
+
   filterByFundCodes(codes = []) {
     this.filterByMultiSelectOptions(ORDER_FILTER_LABELS.FUND_CODE, codes);
   },
 
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_FILTER_LABELS.TAGS, tags);
+  },
+
+  filterByCreatedBy(userName) {
+    FiltersPaneHelper.expandFilterAccordion(ordersFiltersPane, ORDER_FILTER_LABELS.CREATED_BY);
+    cy.do(findUserButton.click());
+    SelectUser.selectUser(userName);
+  },
+
+  filterByUpdatedBy(userName) {
+    FiltersPaneHelper.expandFilterAccordion(ordersFiltersPane, ORDER_FILTER_LABELS.UPDATED_BY);
+    cy.do(findUpdatedByUserButton.click());
+    SelectUser.selectUser(userName);
+  },
+
   removeMultiSelectChips(filterLabel, values = []) {
     FiltersPaneHelper.removeMultiSelectChips(ordersFiltersPane, filterLabel, values);
+  },
+
+  clickVendorLookUp() {
+    FiltersPaneHelper.expandFilterAccordion(ordersFiltersPane, ORDER_FILTER_LABELS.VENDOR);
+    cy.do(ordersFiltersPane.find(Button('Organization look-up')).click());
+  },
+
+  verifyVendorFilterValue(value) {
+    cy.expect(
+      ordersFiltersPane
+        .find(Accordion(ORDER_FILTER_LABELS.VENDOR))
+        .find(TextField())
+        .has({ value: including(value) }),
+    );
   },
 };

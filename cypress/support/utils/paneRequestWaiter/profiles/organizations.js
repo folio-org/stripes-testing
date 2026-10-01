@@ -1,8 +1,8 @@
-import { acquisitionUnits, organizations, organizationTypes, settingsEntries } from '../routes';
-import { tagsDependency } from './common';
+import { acquisitionUnits, organizations, organizationTypes } from '../routes';
+import { tagFilterRoutes } from './common';
 
+/** Organizations has conditional tag data but no result-reference requests. */
 export const organizationsProfile = {
-  filters: [acquisitionUnits, organizationTypes, settingsEntries],
+  filters: [acquisitionUnits, organizationTypes, ...tagFilterRoutes],
   results: [organizations],
-  responseDependencies: [tagsDependency],
 };

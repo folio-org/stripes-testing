@@ -190,6 +190,16 @@ export default {
       .then(({ body }) => body);
   },
 
+  getCategoriesViaApi(query) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'organizations-storage/categories',
+        searchParams: query ? { query } : {},
+      })
+      .then(({ body }) => body);
+  },
+
   createTypesViaApi(types) {
     return cy
       .okapiRequest({

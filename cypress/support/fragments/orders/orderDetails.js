@@ -2,17 +2,20 @@ import {
   Accordion,
   Button,
   Checkbox,
+  DropdownMenu,
   including,
   KeyValue,
   Link,
+  MetaSection,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
   Pane,
   PaneHeader,
   Section,
+  Select,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import { DEFAULT_WAIT_TIME, ORDER_VIEW_FIELD_LABELS } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import ExportDetails from '../exportManager/exportDetails';
 import InventoryInstance from '../inventory/inventoryInstance';
@@ -26,13 +29,17 @@ import OrderLineDetails from './orderLineDetails';
 import OrderLineEditForm from './orderLineEditForm';
 import OrderLines from './orderLines';
 
+const FISCAL_YEAR_OPTION_GROUPS = { CURRENT: 'Current', PREVIOUS: 'Previous' };
+
 const orderDetailsPane = Pane({ id: 'order-details' });
 const actionsButton = Button('Actions');
 
 const orderInfoSection = orderDetailsPane.find(Section({ id: 'purchaseOrder' }));
 const ongoingOrderInfoSection = orderDetailsPane.find(Section({ id: 'ongoing' }));
 const poSummarySection = orderDetailsPane.find(Section({ id: 'POSummary' }));
+const fiscalYearSelect = poSummarySection.find(Select(ORDER_VIEW_FIELD_LABELS.FISCAL_YEAR));
 const polListingAccordion = Section({ id: 'POListing' });
+const customFieldsAccordion = Section({ id: 'customFieldsPO' });
 
 const exportDetailsSection = orderDetailsPane.find(Section({ id: 'exportDetails' }));
 const relatedInvoicesSection = orderDetailsPane.find(Section({ id: 'relatedInvoices' }));
@@ -59,7 +66,6 @@ export default {
   checkOrderStatus(orderStatus) {
     cy.expect(poSummarySection.find(KeyValue('Workflow status')).has({ value: orderStatus }));
   },
-
   checkPurchaseOrderPaneAbsent() {
     cy.expect(orderDetailsPane.absent());
   },
@@ -79,7 +85,12 @@ export default {
       );
     });
   },
-  checkOrderDetails({ orderInformation = [], ongoingInformation = [], summary = [] } = {}) {
+  checkOrderDetails({
+    orderInformation = [],
+    ongoingInformation = [],
+    summary = [],
+    fieldsNotDisplayed = [],
+  } = {}) {
     orderInformation.forEach(({ key, value, checkbox }) => {
       if (checkbox) {
         cy.expect(orderInfoSection.find(Checkbox(key)).has(value));
@@ -99,10 +110,21 @@ export default {
     summary.forEach(({ key, value, checkbox }) => {
       if (checkbox) {
         cy.expect(poSummarySection.find(Checkbox(key)).has(value));
+      } else if (key === ORDER_VIEW_FIELD_LABELS.FISCAL_YEAR) {
+        cy.expect(fiscalYearSelect.has({ checkedOptionText: including(String(value)) }));
       } else {
         cy.expect(poSummarySection.find(KeyValue(key)).has({ value: including(value) }));
       }
     });
+    if (fieldsNotDisplayed) {
+      fieldsNotDisplayed.forEach((field) => {
+        if (field === ORDER_VIEW_FIELD_LABELS.FISCAL_YEAR) {
+          cy.expect(poSummarySection.find(Select(field)).absent());
+        } else {
+          cy.expect(orderDetailsPane.find(KeyValue(field)).absent());
+        }
+      });
+    }
   },
   expandActionsDropdown() {
     cy.do(
@@ -110,6 +132,11 @@ export default {
         .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
         .click(),
     );
+  },
+  checkActionsMenuContent(actions = [], { shouldExist = true } = {}) {
+    actions.forEach((action) => {
+      cy.expect(shouldExist ? Button(action).exists() : Button(action).absent());
+    });
   },
   copyOrderNumber(poNumber) {
     cy.do(
@@ -128,7 +155,7 @@ export default {
 
     return OrderEditForm;
   },
-  closeOrder({ orderNumber, confirm = true } = {}) {
+  closeOrder({ orderNumber, confirm = true, checkSuccess = true } = {}) {
     this.expandActionsDropdown();
     cy.do(Button('Cancel').click());
 
@@ -137,7 +164,7 @@ export default {
     }
 
     if (confirm) {
-      CloseConfirmationModal.clickSubmitButton();
+      CloseConfirmationModal.clickSubmitButton(checkSuccess);
     }
   },
   openOrder({ orderNumber, confirm = true } = {}) {
@@ -262,6 +289,22 @@ export default {
     }
   },
 
+  checkOrderLineInTableByIdentifier(identifier, columns = [{ columnName: 'POL number' }]) {
+    const targetRow = polListingAccordion.find(
+      MultiColumnListRow({ content: including(identifier), isContainer: false }),
+    );
+
+    columns.forEach(({ columnName, value = identifier, absent = false }) => {
+      const targetCell = targetRow.find(MultiColumnListCell({ column: columnName }));
+
+      if (absent) {
+        cy.expect(targetCell.absent());
+      } else {
+        cy.expect(targetCell.has({ content: value === '' ? '' : including(value) }));
+      }
+    });
+  },
+
   checkRelatedInvoiceColumnItem(rowIndex, columnName, value) {
     cy.expect(
       relatedInvoicesSection
@@ -312,19 +355,32 @@ export default {
 
     return OrderLineEditForm;
   },
+  expandPoLinesActionsDropdown() {
+    const poLinesActionsButton = polListingAccordion.find(actionsButton);
+
+    cy.then(() => poLinesActionsButton.ariaExpanded()).then((expanded) => {
+      if (expanded !== 'true') {
+        cy.do(poLinesActionsButton.click());
+      }
+    });
+    cy.expect(DropdownMenu().exists());
+  },
+  checkPoLinesActionsMenuContent(columnNames = []) {
+    cy.expect(DropdownMenu().find(Button('Add PO line')).exists());
+    columnNames.forEach((columnName) => {
+      cy.expect(DropdownMenu().find(Checkbox(columnName)).exists());
+    });
+  },
+  togglePoLinesColumns(columnNames = []) {
+    columnNames.forEach((columnName) => {
+      cy.do(DropdownMenu().find(Checkbox(columnName)).click());
+    });
+  },
   verifyPOLCount(ordersCount) {
     if (ordersCount === 0) {
-      cy.expect(
-        Accordion({ label: including('PO lines') })
-          .find(MultiColumnList({ id: 'POListing' }))
-          .absent(),
-      );
+      cy.expect(polListingAccordion.find(MultiColumnList()).absent());
     } else {
-      cy.expect(
-        Accordion({ label: including('PO lines') })
-          .find(MultiColumnList({ id: 'POListing' }))
-          .has({ rowCount: ordersCount }),
-      );
+      cy.expect(polListingAccordion.find(MultiColumnList()).has({ rowCount: ordersCount }));
     }
   },
 
@@ -369,5 +425,44 @@ export default {
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .click(),
     );
+  },
+
+  verifyValuesInCustomFieldsAccordion(customFieldName, customFieldValue, isCheckBox = false) {
+    if (isCheckBox) {
+      cy.expect(
+        customFieldsAccordion
+          .find(KeyValue({ label: customFieldName }))
+          .find(Checkbox())
+          .has({ checked: customFieldValue, disabled: true }),
+      );
+    } else {
+      cy.expect(
+        customFieldsAccordion
+          .find(KeyValue(customFieldName))
+          .has({ value: including(customFieldValue) }),
+      );
+    }
+  },
+  toggleMetadataAccordion(isOpen = true) {
+    cy.do(MetaSection().clickHeader());
+    cy.expect(MetaSection().has({ open: isOpen }));
+  },
+
+  verifyMetadataContent({ updated, updatedBy, created, createdBy } = {}) {
+    if (updated) cy.expect(MetaSection({ updatedText: including(updated) }).exists());
+    if (updatedBy) cy.expect(MetaSection({ updatedByText: including(updatedBy) }).exists());
+    if (created) cy.expect(MetaSection({ createdText: including(created) }).exists());
+    if (createdBy) cy.expect(MetaSection({ createdByText: including(createdBy) }).exists());
+  },
+
+  selectFiscalYear(fiscalYearCode) {
+    cy.do(fiscalYearSelect.choose(fiscalYearCode));
+  },
+
+  checkFiscalYearDropdownOptions({ current = [], previous = [] } = {}) {
+    cy.then(() => fiscalYearSelect.optionsByGroup()).then((groups) => {
+      expect(groups[FISCAL_YEAR_OPTION_GROUPS.CURRENT] || []).to.deep.equal(current);
+      expect(groups[FISCAL_YEAR_OPTION_GROUPS.PREVIOUS] || []).to.deep.equal(previous);
+    });
   },
 };

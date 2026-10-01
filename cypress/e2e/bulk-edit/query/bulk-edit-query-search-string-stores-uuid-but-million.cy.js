@@ -64,15 +64,15 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(itemFieldValues.instanceId);
         QueryModal.verifySelectedField(itemFieldValues.instanceId);
-        QueryModal.verifyQueryAreaContent('(instances.id  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.verifyOperatorsList(stringStoresUuidButMillionOperators);
         QueryModal.selectOperator(QUERY_OPERATIONS.IN);
-        QueryModal.verifyQueryAreaContent('(instances.id in ())');
+        QueryModal.verifyQueryAreaContent('(instances.id in [])');
         QueryModal.verifyValueColumn();
         QueryModal.fillInValueTextfield(`${firstItem.instanceId},${secondItem.instanceId}`);
         QueryModal.verifyQueryAreaContent(
-          `(instances.id in (${firstItem.instanceId}, ${secondItem.instanceId}))`,
+          `(instances.id in [${firstItem.instanceId}, ${secondItem.instanceId}])`,
         );
         QueryModal.testQueryDisabled(false);
         QueryModal.runQueryDisabled();

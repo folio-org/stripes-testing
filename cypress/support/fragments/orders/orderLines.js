@@ -34,6 +34,7 @@ import {
   ORDER_LINE_EXPORT_CSV_FIELDS,
   ORDER_LINE_FILTER_LABELS,
   RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
+  RESULTS_PANE_NOT_FOUND_MESSAGE,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -41,14 +42,25 @@ import FiltersPaneHelper from '../filtersPane';
 import OrderStates from './orderStates';
 import SearchHelper from '../finance/financeHelper';
 import MultiColumnListHelper from '../multiColumnList';
+import SelectUser from '../invoices/modal/selectUser';
 import SelectInstanceModal from './modals/selectInstanceModal';
 import SelectLocationModal from './modals/selectLocationModal';
 import SelectDonorModal from './modals/selectDonorModal';
 import OrderLineDetails from './orderLineDetails';
+import SelectOrganizationModal from './modals/selectOrganizationModal';
+import AcqVersionHistory from '../acqVersionHistory';
 
 const path = require('path');
 
 const filtersPane = PaneContent({ id: 'order-lines-filters-pane-content' });
+const createdByFilterSection = filtersPane.find(Accordion(ORDER_LINE_FILTER_LABELS.CREATED_BY));
+const findUserButton = createdByFilterSection.find(
+  Button({ id: 'metadata.createdByUserId-button' }),
+);
+const updatedByFilterSection = filtersPane.find(Accordion(ORDER_LINE_FILTER_LABELS.UPDATED_BY));
+const findUpdatedByUserButton = updatedByFilterSection.find(
+  Button({ id: 'metadata.updatedByUserId-button' }),
+);
 const receivedtitleDetails = PaneContent({ id: 'receiving-results-pane-content' });
 const resetButton = Button('Reset all');
 const saveAndCloseButton = Button('Save & close');
@@ -62,7 +74,6 @@ const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
 const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderFormat' });
 const buttonFVendorFilter = Button({ id: 'accordion-toggle-button-purchaseOrder.vendor' });
 const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
-const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
 const physicalUnitPrice = '10';
 const quantityPhysical = '5';
 const electronicUnitPrice = '10';
@@ -104,6 +115,13 @@ const physicalResourceDetailsAccordion = Accordion('Physical resource details');
 const eResourcesDetails = Accordion('E-resources details');
 const fundDistributionAccordion = Accordion({ id: 'FundDistribution' });
 const polListingAccordion = Section({ id: 'POListing' });
+const breakInstanceConnectionModal = Modal({ id: 'break-instance-connection-confirmation' });
+const breakInstanceConnectionCancelButton = breakInstanceConnectionModal.find(
+  Button({ id: 'clickable-break-instance-connection-confirmation-cancel' }),
+);
+const breakInstanceConnectionConfirmButton = breakInstanceConnectionModal.find(
+  Button({ id: 'clickable-break-instance-connection-confirmation-confirm' }),
+);
 const quantityElectronicField = TextField({ name: 'locations[0].quantityElectronic' });
 const noteTitle = `Autotest Title_${getRandomPostfix()}`;
 const orderHistorySection = Section({ id: 'versions-history-pane-order-line' });
@@ -120,6 +138,7 @@ const donorsInformationSection = Section({ id: 'donorsInformation' });
 // Results pane
 const searchResultsPane = Pane({ id: 'order-lines-results-pane' });
 const locationLookUpButton = Button('Location look-up');
+const organizationLookupTrigger = Button('Organization look-up');
 
 // Edit form
 // PO Line details section
@@ -127,7 +146,6 @@ const lineDetails = Section({ id: 'lineDetails' });
 const poLineDetails = {
   receiptStatus: lineDetails.find(Select('Receipt status')),
 };
-const selectLocationsModal = Modal('Select locations');
 const submitOrderLine = () => {
   cy.wait(4000);
   const submitButton = Button('Submit');
@@ -148,6 +166,13 @@ const titleLookupTrigger = Button({ id: 'find-instance-trigger' });
 // Filters
 const donorFilterAccordion = Accordion(ORDER_LINE_FILTER_LABELS.DONOR);
 const donorLookUpTrigger = donorFilterAccordion.find(Button('Donor look-up'));
+const linkedPackagePolFilterAccordion = filtersPane.find(
+  Accordion(ORDER_LINE_FILTER_LABELS.LINKED_PACKAGE_POL),
+);
+const linkedPackagePolTextField = linkedPackagePolFilterAccordion.find(TextField());
+const linkedPackagePolLookUpTrigger = linkedPackagePolFilterAccordion.find(
+  Button('Linked package POL lookup'),
+);
 
 const checkQuantityPhysical = (quantity) => {
   cy.expect(Accordion('Cost details').find(KeyValue('Quantity physical')).has({ value: quantity }));
@@ -248,6 +273,14 @@ export default {
           .has({ content: title }),
       );
     }
+  },
+
+  checkOrderLineFilterInList: (orderLineNumber) => {
+    cy.expect(orderLineList.find(Link(orderLineNumber)).exists());
+  },
+
+  assertOrderLineAbsent(orderLineNumber) {
+    cy.expect(orderLineList.find(Link(orderLineNumber)).absent());
   },
 
   checkCreatedPOLineResource: (orderLineTitleName, recourceName, fund) => {
@@ -373,6 +406,19 @@ export default {
     ]);
   },
 
+  assertVersionHistoryCard({ index = 0, changedFields = [], eventDate, source } = {}) {
+    AcqVersionHistory.assertVersionHistoryCard('order-line', {
+      index,
+      changedFields,
+      eventDate,
+      source,
+    });
+  },
+
+  verifyVersionsCount(count) {
+    AcqVersionHistory.verifyVersionsCount('order-line', count);
+  },
+
   selectVersionHistoryCard(date) {
     cy.do([
       orderHistorySection
@@ -385,12 +431,7 @@ export default {
   closeVersionHistory: () => {
     cy.do(orderHistorySection.find(Button({ icon: 'times' })).click());
     cy.wait(2000);
-    cy.expect([
-      agreementLinesSection.exists(),
-      invoiceLinesSection.exists(),
-      notesSection.exists(),
-      orderHistorySection.absent(),
-    ]);
+    cy.expect(orderHistorySection.absent());
   },
 
   deleteOrderLine: ({ poLineNumber, checkDeleteSuccessMessage = false } = {}) => {
@@ -536,13 +577,6 @@ export default {
       Select('Create inventory*').choose('Instance, holdings, item'),
       saveAndCloseButton.click(),
     ]);
-  },
-
-  POLineInfoEditWithReceiptNotRequiredStatus() {
-    cy.do(Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED));
-    cy.expect(receivingWorkflowSelect.disabled());
-    save();
-    submitOrderLine();
   },
 
   POLineInfoEditWithPendingReceiptStatus() {
@@ -739,38 +773,6 @@ export default {
     ]);
     SelectLocationModal.selectLocation(institutionId);
     cy.do([quantityPhysicalLocationField.fillIn(quantity), saveAndCloseButton.click()]);
-    cy.wait(4000);
-    submitOrderLine();
-  },
-
-  binderyActivePEMixPOLineInfo(fund, resource, unitPrice, quantity, value, institutionId) {
-    cy.do([orderFormatSelect.choose(resource), acquisitionMethodButton.click()]);
-    cy.wait(2000);
-    cy.do([
-      Checkbox({ name: 'details.isBinderyActive' }).click(),
-      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
-      physicalUnitPriceTextField.fillIn(unitPrice),
-      electronicUnitPriceTextField.fillIn(unitPrice),
-      quantityPhysicalTextField.fillIn(quantity),
-      quantityElectronicTextField.fillIn(quantity),
-      addFundDistributionButton.click(),
-      fundDistributionSelect.click(),
-      SelectionOption(`${fund.name} (${fund.code})`).click(),
-    ]);
-    cy.wait(2000);
-    cy.do([
-      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
-      fundDistributionField.fillIn(value),
-      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
-      addLocationButton.click(),
-      createNewLocationButton.click(),
-    ]);
-    SelectLocationModal.selectLocation(institutionId);
-    cy.do([
-      quantityPhysicalLocationField.fillIn(quantity),
-      quantityElectronicField.fillIn(quantity),
-      saveAndCloseButton.click(),
-    ]);
     cy.wait(4000);
     submitOrderLine();
   },
@@ -1216,7 +1218,7 @@ export default {
     cy.do(searchResultsPane.find(Link(POlinenumber)).click());
   },
 
-  varifyOrderlineInResultsList: (POlinenumber) => {
+  verifyOrderLineInResultsList: (POlinenumber) => {
     cy.expect(searchResultsPane.find(Link(POlinenumber)).exists());
   },
 
@@ -1806,16 +1808,6 @@ export default {
     cy.do(Checkbox({ id: 'clickable-filter-paymentStatus-ongoing' }).click());
   },
 
-  selectFilterSubscriptionFromPOL: (newDate) => {
-    cy.do([
-      buttonSubscriptionFromFilter.click(),
-      TextField('From').fillIn(newDate),
-      TextField('To').fillIn(newDate),
-      Button('Apply').click(),
-      buttonSubscriptionFromFilter.click(),
-    ]);
-  },
-
   selectPOLInOrder: (index = 0) => {
     cy.do(
       polListingAccordion
@@ -2097,21 +2089,27 @@ export default {
     cy.do(itemDetailsSection.find(Button({ icon: 'info' })).click());
   },
 
+  verifyRemoveInstanceConnectionModal: (instanceTitle) => {
+    cy.expect([
+      breakInstanceConnectionModal.has({ header: 'Remove instance connection' }),
+      breakInstanceConnectionModal.has({
+        message: including(
+          'Making this change will remove the link between the POL and selected inventory instance. Are you sure you would like to proceed with making this change and unlink this POL from the inventory instance',
+        ),
+      }),
+      breakInstanceConnectionModal.has({ message: including(instanceTitle) }),
+      breakInstanceConnectionCancelButton.has({ disabled: false }),
+      breakInstanceConnectionConfirmButton.has({ disabled: false }),
+    ]);
+  },
+
   removeInstanceConnectionModal: () => {
-    cy.do(
-      Modal({ id: 'break-instance-connection-confirmation' })
-        .find(Button({ id: 'clickable-break-instance-connection-confirmation-confirm' }))
-        .click(),
-    );
+    cy.do(breakInstanceConnectionConfirmButton.click());
     cy.wait(4000);
   },
 
   cancelRemoveInstanceConnectionModal: () => {
-    cy.do(
-      Modal({ id: 'break-instance-connection-confirmation' })
-        .find(Button({ id: 'clickable-break-instance-connection-confirmation-cancel' }))
-        .click(),
-    );
+    cy.do(breakInstanceConnectionCancelButton.click());
     cy.wait(6000);
   },
 
@@ -2576,26 +2574,34 @@ export default {
     ]);
   },
 
-  verifyProductIdentifier: (productId, productIdType, rowIndex = 0) => {
-    if (productIdType) {
-      cy.expect([
-        MultiColumnList({ id: 'list-product-ids' })
-          .find(MultiColumnListRow({ index: rowIndex }))
-          .find(MultiColumnListCell({ columnIndex: 0 }))
-          .has({ content: productId }),
-        MultiColumnList({ id: 'list-product-ids' })
-          .find(MultiColumnListRow({ index: rowIndex }))
-          .find(MultiColumnListCell({ columnIndex: 2 }))
-          .has({ content: productIdType }),
-      ]);
-    } else {
+  verifyProductIdentifier: ({ productId, qualifier, productIdType }, rowIndex = 0) => {
+    const productIdRow = MultiColumnList({ id: 'list-product-ids' }).find(
+      MultiColumnListRow({ index: rowIndex }),
+    );
+
+    if (productId !== undefined) {
       cy.expect(
-        MultiColumnList({ id: 'list-product-ids' })
-          .find(MultiColumnListRow({ index: rowIndex }))
-          .find(MultiColumnListCell({ columnIndex: 0 }))
+        productIdRow
+          .find(MultiColumnListCell({ column: 'Product ID' }))
           .has({ content: productId }),
       );
     }
+    if (qualifier !== undefined) {
+      cy.expect(
+        productIdRow.find(MultiColumnListCell({ column: 'Qualifier' })).has({ content: qualifier }),
+      );
+    }
+    if (productIdType !== undefined) {
+      cy.expect(
+        productIdRow
+          .find(MultiColumnListCell({ column: 'Product ID type' }))
+          .has({ content: productIdType }),
+      );
+    }
+  },
+
+  verifyTextAbsentInItemDetails(text) {
+    cy.expect(itemDetailsSection.find(HTML(including(text))).absent());
   },
 
   openDonorInformationSection() {
@@ -2692,19 +2698,18 @@ export default {
     submitOrderLine();
   },
 
-  selectLocationInFilters: (locationName) => {
-    cy.wait(4000);
-    cy.do([
-      Button({ id: 'accordion-toggle-button-pol-location-filter' }).click(),
-      locationLookUpButton.click(),
-      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
-      Button('Search').click(),
-    ]);
-    cy.wait(2000);
-    cy.do([
-      selectLocationsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
-      selectLocationsModal.find(Button('Save')).click(),
-    ]);
+  selectLocationInFilters(locationName, options = {}) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(locationLookUpButton.click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectLocation(locationName, { multiselect: true, ...options });
+  },
+
+  selectMultipleLocationsInFilters(locationNames) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.LOCATION);
+    cy.do(locationLookUpButton.click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.selectMultipleLocations(locationNames);
   },
 
   selectOrders: () => {
@@ -2781,15 +2786,6 @@ export default {
     cy.expect(Pane({ id: 'pane-poLineForm' }).exists());
   },
 
-  verifyExpenseClassRequiredFieldWarningMessage() {
-    cy.get('[id="fundDistribution[0].expenseClassId"]')
-      .parent()
-      .parent()
-      .find('[role="alert"]')
-      .contains('Required!')
-      .should('be.visible');
-  },
-
   fillCostDetailsForPhysicalOrderType(physicalPrice, quantity) {
     cy.do([
       physicalUnitPriceTextField.fillIn(physicalPrice),
@@ -2801,8 +2797,29 @@ export default {
     MultiColumnListHelper.sortListBy(searchResultsPane.find(orderLineList), columnName);
   },
 
+  assertResetAllButtonState({ disabled }) {
+    FiltersPaneHelper.assertResetAllButtonState(filtersPane, { disabled });
+  },
+
+  expandFilterAccordion(filterLabel) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, filterLabel);
+  },
+
+  clearSearchField() {
+    cy.get('#order-lines-filters-pane-content').find('#input-record-search').clear();
+  },
+
+  clearAllFilters(filterLabel) {
+    FiltersPaneHelper.clearAllFilters(filtersPane, filterLabel);
+    this.assertResetAllButtonState({ disabled: true });
+  },
+
   clearFilter(filterLabel) {
     FiltersPaneHelper.clearFilter(filtersPane, filterLabel);
+  },
+
+  filterByDateRange(filterLabel, { from, to }) {
+    FiltersPaneHelper.filterByDateRange(filtersPane, filterLabel, { from, to });
   },
 
   filterByCheckboxOptions(filterLabel, options = []) {
@@ -2817,12 +2834,48 @@ export default {
     this.filterByCheckboxOptions(ORDER_LINE_FILTER_LABELS.RUSH, options);
   },
 
+  filterByCreatedBy(userName) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.CREATED_BY);
+    cy.do(findUserButton.click());
+    SelectUser.selectUser(userName);
+  },
+
+  filterByUpdatedBy(userName) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.UPDATED_BY);
+    cy.do(findUpdatedByUserButton.click());
+    SelectUser.selectUser(userName);
+  },
+
   filterByFundCodes(codes = []) {
     this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.FUND_CODE, codes);
   },
 
+  filterByTags(tags = []) {
+    this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, tags);
+  },
+
   removeMultiSelectChips(filterLabel, values = []) {
     FiltersPaneHelper.removeMultiSelectChips(filtersPane, filterLabel, values);
+  },
+
+  verifyDonorFilterAccordionExpanded(expanded = true) {
+    cy.expect(donorFilterAccordion.has({ open: expanded }));
+  },
+
+  expandDonorFilter() {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.DONOR);
+    this.verifyDonorFilterAccordionExpanded();
+  },
+
+  verifyDonorFilterValues(values = []) {
+    this.assertMultiSelectFilterValues(ORDER_LINE_FILTER_LABELS.DONOR, values, {
+      expandAccordion: false,
+    });
+    cy.expect(donorLookUpTrigger.exists());
+  },
+
+  clickDonorLookUp() {
+    cy.do(donorLookUpTrigger.click());
   },
 
   filterByDonors(names = []) {
@@ -2836,22 +2889,90 @@ export default {
     SelectDonorModal.assertModalClosed();
   },
 
+  filterByVendor(vendor) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, ORDER_LINE_FILTER_LABELS.VENDOR);
+    cy.expect(organizationLookupTrigger.exists());
+    cy.do(organizationLookupTrigger.click());
+    SelectOrganizationModal.verifyModalView();
+    SelectOrganizationModal.findOrganization(vendor);
+  },
+
+  filterByOrderFormats(formatLabels = []) {
+    this.filterByCheckboxOptions(ORDER_LINE_FILTER_LABELS.ORDER_FORMAT, formatLabels);
+  },
+
+  filterBySubscriptionFrom({ from, to }) {
+    this.filterByDateRange(ORDER_LINE_FILTER_LABELS.SUBSCRIPTION_FROM, { from, to });
+  },
+
+  verifyLinkedPackagePolFilterAccordionExpanded(expanded = true) {
+    cy.expect(linkedPackagePolFilterAccordion.has({ open: expanded }));
+  },
+
+  expandLinkedPackagePolFilter() {
+    FiltersPaneHelper.expandFilterAccordion(
+      filtersPane,
+      ORDER_LINE_FILTER_LABELS.LINKED_PACKAGE_POL,
+    );
+    this.verifyLinkedPackagePolFilterAccordionExpanded();
+  },
+
+  verifyLinkedPackagePolFilterValue(value = '') {
+    cy.expect([
+      linkedPackagePolTextField.has({ value, disabled: true }),
+      linkedPackagePolLookUpTrigger.exists(),
+    ]);
+  },
+
+  clickLinkedPackagePolLookUp() {
+    cy.do(linkedPackagePolLookUpTrigger.click());
+  },
+
+  verifyNoResultsFoundMessage() {
+    cy.expect(searchResultsPane.find(HTML(including(RESULTS_PANE_NOT_FOUND_MESSAGE))).exists());
+  },
+
+  verifySearchCriteriaMessage() {
+    cy.expect(
+      searchResultsPane
+        .find(PaneHeader({ subtitle: including('Enter search criteria to start search') }))
+        .exists(),
+    );
+  },
+
   assertNoFiltersApplied() {
     cy.expect(searchResultsPane.find(HTML(including(RESULTS_PANE_CHOOSE_FILTER_MESSAGE))).exists());
   },
 
   assertResultsCount(expectedCount) {
-    searchResultsPane
-      .find(
-        PaneHeader({ subtitle: `${expectedCount} record${expectedCount === 1 ? '' : 's'} found` }),
-      )
-      .exists();
+    cy.expect(
+      searchResultsPane
+        .find(
+          PaneHeader({
+            subtitle: `${expectedCount} record${expectedCount === 1 ? '' : 's'} found`,
+          }),
+        )
+        .exists(),
+    );
   },
 
   assertOrderLinesResults(rowsConfig) {
     cy.expect(searchResultsPane.exists());
     MultiColumnListHelper.assertRowsCellsContent(searchResultsPane, rowsConfig);
     this.assertResultsCount(rowsConfig.length);
+  },
+
+  assertTitlesInResults(titles = []) {
+    titles.forEach((title) => {
+      cy.expect(searchResultsPane.find(MultiColumnListCell({ content: title })).exists());
+    });
+    this.assertResultsCount(titles.length);
+  },
+
+  verifyTitlesAbsentInResults(titles = []) {
+    titles.forEach((title) => {
+      cy.expect(searchResultsPane.find(MultiColumnListCell({ content: title })).absent());
+    });
   },
 
   assertResultsActionIsDisabled(actionButtonName, expectedDisabledState = true) {
@@ -2866,6 +2987,8 @@ export default {
     FiltersPaneHelper.buildMultiSelectFilterValuesAssertion(filtersPane),
   assertMultiSelectFilterOptions:
     FiltersPaneHelper.buildMultiSelectFilterOptionsValuesAssertion(filtersPane),
+
+  assertCheckboxFilterValues: FiltersPaneHelper.buildCheckboxFilterValuesAssertion(filtersPane),
 
   assertFundCodeFilterValues(expectedValues, options = {}) {
     this.assertMultiSelectFilterValues(ORDER_LINE_FILTER_LABELS.FUND_CODE, expectedValues, options);

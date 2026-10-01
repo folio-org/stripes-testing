@@ -4,7 +4,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
 import { CAPABILITY_TYPES, CAPABILITY_ACTIONS } from '../../../support/constants';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
-import Capabilities from '../../../support/dictionary/capabilities';
 
 describe('Eureka', () => {
   describe('Settings', () => {
@@ -13,26 +12,31 @@ describe('Eureka', () => {
         roleName: `AT_C624254_UserRole_${getRandomPostfix()}`,
         originalCapabilitySet: {
           table: CAPABILITY_TYPES.SETTINGS,
-          resource: 'Serials-Management Settings',
+          resource: 'UI-Tenant-Settings Settings',
           action: CAPABILITY_ACTIONS.VIEW,
         },
         originalCapabilitiesInSet: [
           {
             table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Serials-Management Settings',
+            resource: 'UI-Tenant-Settings Settings',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.SETTINGS,
+            resource: 'UI-Tenant-Settings Settings Location View',
             action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         originalCapabilities: [
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Auth Token',
+            resource: 'UI-Inventory Item',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         capabilitySetsColumnToSelect: {
           type: CAPABILITY_TYPES.SETTINGS,
-          action: CAPABILITY_ACTIONS.CREATE,
+          action: CAPABILITY_ACTIONS.EDIT,
         },
         capabilityColumnToSelect: {
           type: CAPABILITY_TYPES.PROCEDURAL,
@@ -43,8 +47,8 @@ describe('Eureka', () => {
           action: CAPABILITY_ACTIONS.EDIT,
         },
         notSelectedCapabilityColumn: {
-          type: CAPABILITY_TYPES.DATA,
-          action: CAPABILITY_ACTIONS.MANAGE,
+          type: CAPABILITY_TYPES.SETTINGS,
+          action: CAPABILITY_ACTIONS.DELETE,
         },
         absentCapabilitySetTables: [CAPABILITY_TYPES.DATA, CAPABILITY_TYPES.PROCEDURAL],
         capabSetIds: [],
@@ -57,16 +61,10 @@ describe('Eureka', () => {
         CapabilitySets.roleCapabilitySets,
       ];
 
-      const capabsForTestUser = [Capabilities.settingsEnabled];
-
       before('Create role, user', () => {
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
-          cy.assignCapabilitiesToExistingUser(
-            testData.user.userId,
-            capabsForTestUser,
-            capabSetsForTestUser,
-          );
+          cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsForTestUser);
           if (Cypress.env('runAsAdmin')) cy.updateRolesForUserApi(testData.user.userId, []);
           cy.createAuthorizationRoleApi(testData.roleName, testData.roleDescription).then(
             (role) => {
@@ -108,6 +106,10 @@ describe('Eureka', () => {
           AuthorizationRoles.searchRole(testData.roleName);
           AuthorizationRoles.clickOnRoleName(testData.roleName);
           AuthorizationRoles.openForEdit();
+          AuthorizationRoles.clickSelectApplication();
+          AuthorizationRoles.verifySelectApplicationModal();
+          AuthorizationRoles.selectAllApplicationsInModal();
+          AuthorizationRoles.clickSaveInModal();
           AuthorizationRoles.verifyCapabilitySetCheckboxChecked(testData.originalCapabilitySet);
           testData.originalCapabilitiesInSet.forEach((capability) => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);

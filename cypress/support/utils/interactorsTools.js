@@ -108,7 +108,7 @@ export default {
     cy.expect(Callout({ textContent: text }).is({ type: calloutType }));
   },
   checkCalloutContainsMessage: (text, calloutType = calloutTypes.success) => {
-    cy.expect(Callout({ textContent: including(text) }).is({ type: calloutType }));
+    cy.expect(Callout({ textContent: including(text), type: calloutType }).exists());
   },
   checkCalloutDuplicatedMessage: (integrationName, calloutType = 'success') => {
     const cleanName = integrationName.replace(/^Integration\s+/i, '');

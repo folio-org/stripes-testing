@@ -359,9 +359,9 @@ export default {
         }
       },
       {
-        limit: 15,
+        limit: 17,
         delay: 5000,
-        timeout: 70000,
+        timeout: 80000,
       },
     );
   },

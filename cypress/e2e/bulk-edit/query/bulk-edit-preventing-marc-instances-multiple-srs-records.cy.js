@@ -13,6 +13,7 @@ import QueryModal, {
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
+import BulkEditLogs from '../../../support/fragments/bulk-edit/bulk-edit-logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import { including } from '../../../../interactors';
 
@@ -33,6 +34,7 @@ describe('Bulk-edit', () => {
         permissions.uiInventoryViewCreateEditInstances.gui,
         permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         permissions.bulkEditQueryView.gui,
+        permissions.bulkEditLogsView.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -154,6 +156,26 @@ describe('Bulk-edit', () => {
 
           // Step 7: Download errors CSV
           BulkEditActions.downloadErrors();
+          ExportFile.verifyFileIncludes(fileNames.errorsFromMatching, [
+            'ERROR',
+            marcInstance.uuid,
+            ERROR_MESSAGES.MULTIPLE_SRS_RECORDS_ASSOCIATED,
+            originalSrsId,
+            duplicatedSrsId,
+          ]);
+
+          // Step 8: Go to "Logs" tab and verify available files for the job
+          BulkEditSearchPane.openLogsSearch();
+          BulkEditLogs.checkInstancesCheckbox();
+          BulkEditLogs.clickActionsRunBy(user.username);
+          BulkEditLogs.verifyLogsRowActionWhenRunQueryWithErrorsWithoutModification();
+
+          // Step 9: Download "File with identifiers of the records affected by bulk update"
+          BulkEditLogs.downloadQueryIdentifiers();
+          ExportFile.verifyFileIncludes(fileNames.identifiersQueryFilename, [marcInstance.uuid]);
+
+          // Step 10: Download "File with errors encountered during the record matching"
+          BulkEditLogs.downloadFileWithErrorsEncountered();
           ExportFile.verifyFileIncludes(fileNames.errorsFromMatching, [
             'ERROR',
             marcInstance.uuid,

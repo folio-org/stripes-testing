@@ -230,6 +230,10 @@ export default {
     );
   },
 
+  openJobProfile: (jobProfileName) => {
+    cy.do(MultiColumnList({ id: 'job-logs-list' }).find(Link(jobProfileName)).click());
+  },
+
   getCreatedItemsTitle: (rowIndex = 0) => cy.then(() => searchResultList
     .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
     .find(Link({ href: including('/data-import/log/') }))

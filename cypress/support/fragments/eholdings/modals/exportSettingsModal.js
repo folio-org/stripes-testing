@@ -57,6 +57,7 @@ export default {
     cy.expect(exportSettingsModal.absent());
   },
   clickExportButton({ exportStarted = true } = {}) {
+    cy.wait(2000);
     cy.do(exportButton.click());
     cy.expect(exportSettingsModal.absent());
 

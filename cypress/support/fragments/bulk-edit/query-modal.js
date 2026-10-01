@@ -31,17 +31,25 @@ const runQueryButton = buildQueryModal.find(Button(or('Run query', 'Run query & 
 const runQueryAndSave = buildQueryModal.find(Button('Run query & save'));
 const xButton = buildQueryModal.find(Button({ ariaLabel: 'Close ' }));
 const previewTable = buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' }));
+const resultsTableSelector = '#results-viewer-table';
+const columnCheckbox = '[data-test-checkbox]';
+const buildQueryFormTableSelector = `[role="dialog"][aria-label="Build query"] ${resultsTableSelector}`;
+const getResultsTableSelector = (inBuildQueryForm) => {
+  return inBuildQueryForm ? buildQueryFormTableSelector : resultsTableSelector;
+};
 const plusButton = Button({ icon: 'plus-sign' });
 const trashButton = Button({ icon: 'trash' });
-const selectFieldButton = Button({ id: 'field-option-0' });
 const showColumnsButton = buildQueryModal.find(Button('Show columns'));
 const valueSelection = Selection({ dataTestId: including('data-input-select-') });
 const fieldSelection = Selection({ id: including('field-option-') });
+const showColumnsSearchField = TextField({ placeholder: 'Search fields' });
+const marcTextField = (part, row) => TextField({ testid: `marc-${part}-${row}` });
+const valueTextField = (row) => TextField({ testid: `input-value-${row}` });
 
 const booleanValues = ['AND'];
 
 // Embedded table headers mapping for different table types
-const embeddedTableHeadersMap = {
+export const embeddedTableHeadersMap = {
   electronicAccess: [
     'URL relationship',
     'URI',
@@ -76,6 +84,9 @@ const embeddedTableHeadersMap = {
     'Distribution type',
     'Value',
   ],
+  // Multi-year payment terms are rendered as a nested table in every supported
+  // PO-line-based Lists entity. Keep this order aligned with the UI table headers.
+  polPaymentTerms: ['Fiscal year', 'Code', 'Fund', 'Expense class', 'Distribution type', 'Value'],
   polLocations: ['Name', 'Code', 'Quantity electronic', 'Quantity physical'],
   userAddress: [
     'City',
@@ -87,6 +98,31 @@ const embeddedTableHeadersMap = {
     'Primary address',
     'Line 2',
   ],
+  organizationAddresses: [
+    'Address line 1',
+    'Address line 2',
+    'City',
+    'State/region',
+    'Zip code',
+    'Country',
+    'Categories',
+  ],
+  organizationUrls: ['URL', 'Description', 'Categories', 'Notes'],
+  organizationAccounts: [
+    'Name',
+    'Account number',
+    'Description',
+    'Accounting code',
+    'Payment method',
+    'Status',
+    'Contact info',
+    'Library code',
+    'Library EDI code',
+    'Notes',
+    'Acquisition unit names',
+  ],
+  organizationEmails: ['Email', 'Description', 'Categories'],
+  organizationPhoneNumbers: ['Phone number', 'Categories', 'Type'],
   additionalCallNumbers: ['Call number', 'Prefix', 'Suffix', 'Type'],
 };
 
@@ -103,6 +139,110 @@ export const embeddedFields = {
   subjects: ['Subject headings', 'Subject source', 'Subject type'],
   identifiers: ['Identifier', 'Identifier type'],
   classifications: ['Classification', 'Classification identifier type'],
+};
+
+export const extractValuesForTableType = (tableType, dataObj) => {
+  switch (tableType) {
+    case 'electronicAccess':
+      return [
+        dataObj.relationship,
+        dataObj.uri,
+        dataObj.linkText,
+        dataObj.materialsSpecification,
+        dataObj.publicNote,
+      ];
+    case 'notes':
+      return [dataObj.noteType, dataObj.note, dataObj.staffOnly];
+    case 'statements':
+    case 'statementsForSupplements':
+    case 'statementsForIndexes':
+      return [dataObj.statement, dataObj.note, dataObj.staffNote];
+    case 'receivingHistory':
+      return [dataObj.publicDisplay, dataObj.enumeration, dataObj.chronology];
+    case 'contributors':
+      return [
+        dataObj.name,
+        dataObj.contributorNameType,
+        dataObj.contributorType,
+        dataObj.contributorTypeFreeText,
+        dataObj.primary,
+      ];
+    case 'alternativeTitles':
+      return [dataObj.alternativeTitle, dataObj.alternativeTitleType];
+    case 'subjects':
+      return [dataObj.subjectHeadings, dataObj.subjectSource, dataObj.subjectType];
+    case 'publications':
+      return [dataObj.publisher, dataObj.role, dataObj.place, dataObj.dateOfPublication];
+    case 'identifiers':
+      return [dataObj.identifierType, dataObj.identifier];
+    case 'classifications':
+      return [dataObj.classificationIdentifierType, dataObj.classification];
+    case 'polFundDistribution':
+      return [
+        dataObj.code,
+        dataObj.encumbranceUUID,
+        dataObj.fund,
+        dataObj.expenseClass,
+        dataObj.distributionType,
+        dataObj.value,
+      ];
+    case 'polPaymentTerms':
+      return [
+        dataObj.fiscalYear,
+        dataObj.code,
+        dataObj.fund,
+        dataObj.expenseClass,
+        dataObj.distributionType,
+        dataObj.value,
+      ];
+    case 'userAddress':
+      return [
+        dataObj.city,
+        dataObj.region,
+        dataObj.country,
+        dataObj.postalCode,
+        dataObj.line1,
+        dataObj.type,
+        dataObj.primaryAddress,
+        dataObj.line2,
+      ];
+    case 'organizationAddresses':
+      return [
+        dataObj.addressLine1,
+        dataObj.addressLine2,
+        dataObj.city,
+        dataObj.stateRegion,
+        dataObj.zipCode,
+        dataObj.country,
+        dataObj.categories,
+      ];
+    case 'additionalCallNumbers':
+      return [dataObj.callNumber, dataObj.prefix, dataObj.suffix, dataObj.type];
+    case 'polLocations':
+      return [dataObj.name, dataObj.code, dataObj.quantityElectronic, dataObj.quantityPhysical];
+    case 'organizationUrls':
+      return [dataObj.url, dataObj.description, dataObj.categories, dataObj.notes];
+    case 'organizationAccounts':
+      return [
+        dataObj.name,
+        dataObj.accountNumber,
+        dataObj.description,
+        dataObj.accountingCode,
+        dataObj.paymentMethod,
+        dataObj.status,
+        dataObj.contactInfo,
+        dataObj.libraryCode,
+        dataObj.libraryEdiCode,
+        dataObj.notes,
+        dataObj.acquisitionUnitNames,
+      ];
+    case 'organizationEmails':
+      return [dataObj.email, dataObj.description, dataObj.categories];
+    case 'organizationPhoneNumbers':
+      return [dataObj.phoneNumber, dataObj.categories, dataObj.type];
+    default:
+      throw new Error(`Unknown table type: ${tableType}`);
+  }
 };
 
 export const holdingsFieldValues = {
@@ -159,6 +299,7 @@ export const holdingsFieldValues = {
   holdingsAdditionalCallNumbersSuffix: 'Holdings — Holdings additional call numbers — Suffix',
   holdingsAdditionalCallNumbersType: 'Holdings — Holdings additional call numbers — Type',
   holdingsTypeType: 'Holdings type — Type',
+  holdingsTypeUuid: 'Holdings type — Type UUID',
 };
 export const instanceFieldValues = {
   administrativeNotes: 'Instance — Administrative notes',
@@ -207,6 +348,7 @@ export const instanceFieldValues = {
   natureOfContent: 'Instance — Nature of content',
   editions: 'Instance — Editions',
   physicalDescriptions: 'Instance — Physical descriptions',
+  alternativeTitles: 'Instance — Alternative titles',
   alternativeTitlesAlternativeTitle: 'Instance — Alternative titles — Alternative title',
   alternativeTitlesAlternativeTitleType: 'Instance — Alternative titles — Alternative title type',
   subjectsSubjectHeadings: 'Instance — Subjects — Subject headings',
@@ -316,9 +458,11 @@ export const organizationFieldValues = {
   code: 'Organization — Code',
   name: 'Organization — Name',
   uuid: 'Organization — UUID',
+  typeNames: 'Organization — Type names',
 };
 export const purchaseOrderLinesFieldValues = {
   poNumber: 'PO — PO number',
+  poType: 'PO — Order type',
   paymentStatus: 'POL — Payment status',
   createdAt: 'POL — Created at',
   title: 'POL — Title or package',
@@ -329,6 +473,11 @@ export const purchaseOrderLinesFieldValues = {
   vendorOrgEdiType: 'Vendor org — EDI vendor type',
   vendorOrgName: 'Vendor org — Name',
   acquisitionUnitNames: 'PO — Acquisition unit names',
+  fundDistributionCode: 'POL — Fund distribution — Code',
+  fundDistributionDistributionType: 'POL — Fund distribution — Distribution type',
+  fundDistributionEncumbranceUUID: 'POL — Fund distribution — Encumbrance UUID',
+  fundDistributionExpenseClass: 'POL — Fund distribution — Expense class',
+  fundDistributionFund: 'POL — Fund distribution — Fund',
 };
 export const dateTimeOperators = [
   'Select operator',
@@ -481,16 +630,13 @@ export default {
   },
 
   selectField(selection, row = 0) {
-    cy.do(
-      RepeatableFieldItem({ index: row })
-        .find(Selection({ id: `field-option-${row}` }))
-        .choose(selection),
-    );
+    cy.do(RepeatableFieldItem({ index: row }).find(fieldSelection).choose(selection));
     cy.wait(1000);
   },
 
-  clickSelectFieldButton() {
-    cy.do(selectFieldButton.click());
+  clickSelectFieldButton(row = 0) {
+    cy.wait(300);
+    cy.do(RepeatableFieldItem({ index: row }).find(fieldSelection).find(Button()).click());
   },
 
   typeInAndSelectField(string, row = 0) {
@@ -509,15 +655,28 @@ export default {
     cy.do([targetField.find(Selection()).open(), targetField.find(Selection()).filter(string)]);
   },
 
+  verifyFilteredFieldOptions(searchText, expectedOptions, row = 0) {
+    this.filterFieldSelectionList(searchText, row);
+    expectedOptions.forEach((option) => {
+      cy.expect(SelectionList().has({ optionList: including(option) }));
+    });
+    this.closeOpenedSelection();
+  },
+
+  verifyFilterOptionsListInputInFocus() {
+    cy.get('input[aria-label=" options filter"]').should('be.focused');
+  },
+
   verifyFieldOptionAbsentInTheList() {
     cy.expect(SelectionList().has({ optionList: ['-List is empty-'] }));
     this.closeOpenedSelection();
   },
 
   verifySelectedField(selection, row = 0) {
-    cy.get(
-      `[data-testid="row-${row}"] [class^="col-sm-4"] [id="selected-field-option-${row}-item"]`,
-    ).should('have.text', selection);
+    cy.get(`[data-testid="row-${row}"] [class^="col-sm-4"] [id^="selected-field-option-"]`).should(
+      'have.text',
+      selection,
+    );
   },
 
   verifyOperatorColumn() {
@@ -654,11 +813,33 @@ export default {
     this.closeOpenedSelection();
   },
 
+  verifyAvailableFieldOptionsBySearch(expectedFields, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+
+    expectedFields.forEach((field) => {
+      // Large FQM field lists are virtualized, so an unfiltered optionList only contains
+      // the rows currently mounted in the dropdown. Searching mounts the relevant option.
+      cy.do([targetSelection.open(), targetSelection.filter(field)]);
+      cy.expect(SelectionList().has({ optionList: including(field) }));
+      cy.do(targetSelection.filter(''));
+      this.closeOpenedSelection();
+    });
+  },
+
   verifyFieldOptionAbsent(expectedFields, row = 0) {
     const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
     cy.do(targetSelection.open());
     expectedFields.forEach((field) => {
       cy.expect(SelectionList().has({ optionList: not(including(field)) }));
+    });
+    this.closeOpenedSelection();
+  },
+
+  verifyFieldOptionExists(expectedFields, row = 0) {
+    const targetSelection = RepeatableFieldItem({ index: row }).find(fieldSelection);
+    cy.do(targetSelection.open());
+    expectedFields.forEach((field) => {
+      cy.expect(SelectionList().has({ optionList: including(field) }));
     });
     this.closeOpenedSelection();
   },
@@ -735,6 +916,21 @@ export default {
     cy.wait(1000);
   },
 
+  /**
+   * Selects one value from a searchable, potentially virtualized value list.
+   *
+   * @param {string} choice Exact displayed option to select.
+   * @param {number} [row=0] Zero-based query-condition row containing the value control.
+   */
+  chooseValueSelectBySearch(choice, row = 0) {
+    // Selection.open() crashes in Cypress 12 for this asynchronously rendered value
+    // control. Limit the DOM workaround to opening it; use interactors for the list.
+    cy.get(`[data-testid="row-${row}"] [data-testid^="data-input-select-"] button`).click();
+    cy.then(() => cy.do(SelectionList().filter(choice)));
+    cy.then(() => cy.do(SelectionList().select(choice)));
+    cy.wait(1000);
+  },
+
   verifySelectedValue(expectedValue, row = 0) {
     cy.expect(
       RepeatableFieldItem({ index: row }).find(valueSelection).has({ singleValue: expectedValue }),
@@ -791,10 +987,14 @@ export default {
     cy.wait(1000);
   },
 
-  fillInValueMultiselect(text, row = 0) {
+  fillInValueMultiselect(text, row = 0, { exactMatch = false } = {}) {
     cy.do([RepeatableFieldItem({ index: row }).find(MultiSelect()).fillIn(text)]);
     cy.wait(2000);
-    cy.do([MultiSelectOption(including(text)).click()]);
+    if (exactMatch) {
+      cy.do([MultiSelectOption(text).click()]);
+    } else {
+      cy.do([MultiSelectOption(including(text)).click()]);
+    }
     cy.do(buildQueryModal.click());
   },
 
@@ -1010,8 +1210,116 @@ export default {
     });
   },
 
+  verifyAllPreviewRowsContain(expectedText) {
+    cy.get('[id="results-viewer-table"] [data-row-index]').should(($rows) => {
+      expect($rows.length, 'preview rows').to.be.greaterThan(0);
+      [...$rows].forEach((row) => expect(row.innerText).to.contain(expectedText));
+    });
+  },
+
+  /**
+   * Verifies how many preview rows belong to one test entity.
+   *
+   * This is useful for non-unique query conditions in shared tenants, where unrelated
+   * records may also match but the current run must still contribute an exact row count.
+   *
+   * @param {string} expectedText Run-specific text present in each target row.
+   * @param {number} expectedCount Exact number of matching preview rows.
+   */
+  verifyPreviewRowsWithContentCount(expectedText, expectedCount) {
+    const scrollableSelector = 'div[aria-label="Build query"] div[class^="mclScrollable"]';
+    const rowSelector = '[id="results-viewer-table"] [data-row-index]';
+
+    cy.get(scrollableSelector).then(($scrollable) => {
+      const element = $scrollable[0];
+      const maxTop = Math.max(element.scrollHeight - element.clientHeight, 0);
+      const verticalStep = Math.max(Math.floor(element.clientHeight * 0.8), 1);
+      const topPositions = [];
+      const matchingRowIndexes = new Set();
+
+      for (let top = 0; top < maxTop; top += verticalStep) topPositions.push(top);
+      topPositions.push(maxTop);
+
+      const inspectPosition = (index) => {
+        if (index >= topPositions.length) {
+          expect(
+            [...matchingRowIndexes],
+            `preview rows containing "${expectedText}"`,
+          ).to.have.length(expectedCount);
+          return undefined;
+        }
+
+        return cy
+          .wrap($scrollable, { log: false })
+          .scrollTo('left', topPositions[index], {
+            duration: 0,
+            ensureScrollable: false,
+            log: false,
+          })
+          .wait(100, { log: false })
+          .then(() => {
+            Cypress.$(rowSelector).each((_, row) => {
+              if (row.innerText.includes(expectedText)) {
+                matchingRowIndexes.add(row.getAttribute('data-row-index'));
+              }
+            });
+            return inspectPosition(index + 1);
+          });
+      };
+
+      return inspectPosition(0);
+    });
+  },
+
   verifyRecordWithContent(content) {
     cy.expect(buildQueryModal.find(MultiColumnListCell({ content })).exists());
+  },
+
+  /**
+   * Finds content anywhere in the virtualized query-preview grid.
+   *
+   * Use this for wide or tall composite record types whose off-screen cells are
+   * removed from the DOM. Ordinary previews should use {@link verifyRecordWithContent}.
+   *
+   * @param {string} content Cell content to locate.
+   */
+  verifyRecordWithContentAcrossPreviewTable(content) {
+    const scrollableSelector = 'div[aria-label="Build query"] div[class^="mclScrollable"]';
+    const tableSelector = 'div[aria-label="Build query"] [id="results-viewer-table"]';
+
+    cy.get(scrollableSelector).then(($scrollable) => {
+      const element = $scrollable[0];
+      const maxLeft = Math.max(element.scrollWidth - element.clientWidth, 0);
+      const maxTop = Math.max(element.scrollHeight - element.clientHeight, 0);
+      const horizontalStep = Math.max(Math.floor(element.clientWidth * 0.8), 1);
+      const leftPositions = [];
+
+      for (let left = 0; left < maxLeft; left += horizontalStep) leftPositions.push(left);
+      leftPositions.push(maxLeft);
+
+      // The preview renders only a small vertical window. Searching its top and bottom
+      // is sufficient for the bounded query previews used by Lists (at most ten rows).
+      const topPositions = maxTop > 0 ? [0, maxTop] : [0];
+      const positions = topPositions.flatMap((top) => leftPositions.map((left) => ({ left, top })));
+
+      const searchPosition = (index) => {
+        if (index >= positions.length) {
+          throw new Error(`Could not find preview-table content: "${content}"`);
+        }
+
+        const { left, top } = positions[index];
+        return cy
+          .wrap($scrollable, { log: false })
+          .scrollTo(left, top, { duration: 0, ensureScrollable: false, log: false })
+          .wait(100, { log: false })
+          .then(() => {
+            if (Cypress.$(tableSelector).text().includes(content)) return undefined;
+            return searchPosition(index + 1);
+          });
+      };
+
+      return searchPosition(0);
+    });
   },
 
   verifyQueryReturnsNoResults() {
@@ -1168,6 +1476,19 @@ export default {
     });
   },
 
+  verifyMatchedRecordInMultipleColumnsByIdentifier(identifier, columnHeaderAndValues) {
+    cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((index) => {
+      columnHeaderAndValues.forEach((pair) => {
+        cy.expect(
+          buildQueryModal
+            .find(MultiColumnListRow({ indexRow: `row-${index}` }))
+            .find(MultiColumnListCell({ column: pair.header, content: pair.value }))
+            .exists(),
+        );
+      });
+    });
+  },
+
   verifyRecordWithIdentifierAbsentInResultTable(identifier, timeout = 2000) {
     cy.wait(timeout);
     cy.expect(buildQueryModal.find(MultiColumnListCell(identifier)).absent());
@@ -1177,10 +1498,20 @@ export default {
     cy.expect(buildQueryModal.find(MultiColumnList({ id: 'results-viewer-table' })).absent());
   },
 
+  /**
+   * Verifies the headers and rows of an embedded table in a query-preview record.
+   *
+   * @param {string} tableType Key from {@link embeddedTableHeadersMap}.
+   * @param {string|number} identifier Visible cell value identifying the record, or a zero-based
+   *   preview row index when the identifier column is unmounted by horizontal virtualization.
+   * @param {object|object[]} expectedData Complete embedded-table row or rows to verify.
+   * @param {number} [tableIndex=0] Embedded-table index when a record contains multiple tables.
+   */
   verifyEmbeddedTableInQueryModal(
     tableType,
     identifier,
     expectedData, // Can be a single object or array of objects
+    tableIndex = 0, // Can be used to specify which table to check if there are multiple embeded tables in the same row (default is 0, the first table)
   ) {
     const headers = embeddedTableHeadersMap[tableType];
     if (!headers) {
@@ -1192,11 +1523,12 @@ export default {
     // Normalize input to always be an array
     const dataToVerify = Array.isArray(expectedData) ? expectedData : [expectedData];
 
-    cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then((rowIndex) => {
+    const verifyRow = (rowIndex) => {
       // Find the DynamicTable specifically within this row
       cy.get(`div[aria-label="Build query"] [data-row-index="row-${rowIndex}"]`).within(() => {
         // Verify table headers
         cy.get('[class^="DynamicTable-"]')
+          .eq(tableIndex)
           .find('tr')
           .eq(0)
           .then((headerRow) => {
@@ -1209,7 +1541,7 @@ export default {
 
         // Verify each expected row exists by finding a row containing all expected values
         dataToVerify.forEach((dataObj) => {
-          const expectedValues = this.extractValuesForTableType(tableType, dataObj);
+          const expectedValues = extractValuesForTableType(tableType, dataObj);
 
           // Find a table row that contains all expected values for this data object
           cy.get('[class^="DynamicTable-"]')
@@ -1230,71 +1562,14 @@ export default {
             });
         });
       });
-    });
-  },
+    };
 
-  extractValuesForTableType(tableType, dataObj) {
-    switch (tableType) {
-      case 'electronicAccess':
-        return [
-          dataObj.relationship,
-          dataObj.uri,
-          dataObj.linkText,
-          dataObj.materialsSpecification,
-          dataObj.publicNote,
-        ];
-      case 'notes':
-        return [dataObj.noteType, dataObj.note, dataObj.staffOnly];
-      case 'statements':
-      case 'statementsForSupplements':
-      case 'statementsForIndexes':
-        return [dataObj.statement, dataObj.note, dataObj.staffNote];
-      case 'receivingHistory':
-        return [dataObj.publicDisplay, dataObj.enumeration, dataObj.chronology];
-      case 'contributors':
-        return [
-          dataObj.name,
-          dataObj.contributorNameType,
-          dataObj.contributorType,
-          dataObj.contributorTypeFreeText,
-          dataObj.primary,
-        ];
-      case 'alternativeTitles':
-        return [dataObj.alternativeTitle, dataObj.alternativeTitleType];
-      case 'subjects':
-        return [dataObj.subjectHeadings, dataObj.subjectSource, dataObj.subjectType];
-      case 'publications':
-        return [dataObj.publisher, dataObj.role, dataObj.place, dataObj.dateOfPublication];
-      case 'identifiers':
-        return [dataObj.identifierType, dataObj.identifier];
-      case 'classifications':
-        return [dataObj.classificationIdentifierType, dataObj.classification];
-      case 'polFundDistribution':
-        return [
-          dataObj.code,
-          dataObj.encumbranceUUID,
-          dataObj.fund,
-          dataObj.expenseClass,
-          dataObj.distributionType,
-          dataObj.value,
-        ];
-      case 'userAddress':
-        return [
-          dataObj.city,
-          dataObj.region,
-          dataObj.country,
-          dataObj.postalCode,
-          dataObj.line1,
-          dataObj.type,
-          dataObj.primaryAddress,
-          dataObj.line2,
-        ];
-      case 'additionalCallNumbers':
-        return [dataObj.callNumber, dataObj.prefix, dataObj.suffix, dataObj.type];
-      case 'polLocations':
-        return [dataObj.name, dataObj.code, dataObj.quantityElectronic, dataObj.quantityPhysical];
-      default:
-        throw new Error(`Unknown table type: ${tableType}`);
+    // A numeric identifier addresses a preview row directly. This is required when
+    // horizontal virtualization unmounts the otherwise suitable identifier column.
+    if (Number.isInteger(identifier)) {
+      verifyRow(identifier);
+    } else {
+      cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then(verifyRow);
     }
   },
 
@@ -1353,15 +1628,29 @@ export default {
     );
   },
 
-  verifyContributorsEmbeddedTableInQueryModal(instanceIdentifier, expectedContributors) {
-    this.verifyEmbeddedTableInQueryModal('contributors', instanceIdentifier, expectedContributors);
+  verifyContributorsEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedContributors,
+    tableIndex = 0,
+  ) {
+    this.verifyEmbeddedTableInQueryModal(
+      'contributors',
+      instanceIdentifier,
+      expectedContributors,
+      tableIndex,
+    );
   },
 
-  verifyAlternativeTitlesEmbeddedTableInQueryModal(instanceIdentifier, expectedAlternativeTitles) {
+  verifyAlternativeTitlesEmbeddedTableInQueryModal(
+    instanceIdentifier,
+    expectedAlternativeTitles,
+    tableIndex = 0,
+  ) {
     this.verifyEmbeddedTableInQueryModal(
       'alternativeTitles',
       instanceIdentifier,
       expectedAlternativeTitles,
+      tableIndex,
     );
   },
 
@@ -1392,8 +1681,69 @@ export default {
     this.verifyEmbeddedTableInQueryModal('polFundDistribution', identifier, expectedFundValues);
   },
 
+  /**
+   * Verifies the complete PO-line payment-term schedule in a query-preview record.
+   *
+   * @param {string|number} identifier Visible record identifier or zero-based preview row index.
+   * @param {object|object[]} expectedPaymentTerms Complete expected payment-term schedule.
+   * @param {number} [tableIndex=0] Payment-terms table index within the preview row.
+   */
+  verifyPOLPaymentTermsEmbeddedTableInQueryModal(identifier, expectedPaymentTerms, tableIndex = 0) {
+    const expectedRows = Array.isArray(expectedPaymentTerms) ? expectedPaymentTerms.length : 1;
+
+    this.verifyEmbeddedTableInQueryModal(
+      'polPaymentTerms',
+      identifier,
+      expectedPaymentTerms,
+      tableIndex,
+    );
+
+    // Payment-term expectations describe the complete schedule, including an empty
+    // fiscal-year card. Assert its exact size so unexpected duplicate/missing terms
+    // cannot pass merely because every supplied row was found.
+    const verifyNumberOfRows = (rowIndex) => {
+      cy.get(`div[aria-label="Build query"] [data-row-index="row-${rowIndex}"]`)
+        .find('[class^="DynamicTable-"]')
+        .eq(tableIndex)
+        .find('tbody tr')
+        .should('have.length', expectedRows);
+    };
+
+    if (Number.isInteger(identifier)) {
+      verifyNumberOfRows(identifier);
+    } else {
+      cy.then(() => buildQueryModal.find(MultiColumnListCell(identifier)).row()).then(
+        verifyNumberOfRows,
+      );
+    }
+  },
+
   verifyUserAddressEmbeddedTableInQueryModal(identifier, expectedUserAddress) {
     this.verifyEmbeddedTableInQueryModal('userAddress', identifier, expectedUserAddress);
+  },
+
+  verifyOrganizationAddressesEmbeddedTableInQueryModal(identifier, expectedAddresses) {
+    this.verifyEmbeddedTableInQueryModal('organizationAddresses', identifier, expectedAddresses);
+  },
+
+  verifyOrganizationUrlsEmbeddedTableInQueryModal(identifier, expectedUrls) {
+    this.verifyEmbeddedTableInQueryModal('organizationUrls', identifier, expectedUrls);
+  },
+
+  verifyOrganizationAccountsEmbeddedTableInQueryModal(identifier, expectedAccounts) {
+    this.verifyEmbeddedTableInQueryModal('organizationAccounts', identifier, expectedAccounts);
+  },
+
+  verifyOrganizationEmailsEmbeddedTableInQueryModal(identifier, expectedEmails) {
+    this.verifyEmbeddedTableInQueryModal('organizationEmails', identifier, expectedEmails);
+  },
+
+  verifyOrganizationPhoneNumbersEmbeddedTableInQueryModal(identifier, expectedPhoneNumbers) {
+    this.verifyEmbeddedTableInQueryModal(
+      'organizationPhoneNumbers',
+      identifier,
+      expectedPhoneNumbers,
+    );
   },
 
   verifyAdditionalCallNumbersEmbeddedTableInQueryModal(
@@ -1433,6 +1783,21 @@ export default {
 
   selectCheckboxInShowColumns(columnName) {
     cy.do(Checkbox(columnName).checkIfNotSelected());
+  },
+
+  /**
+   * Selects a column that may not currently be mounted in the virtualized Show columns menu.
+   *
+   * @param {string} columnName Exact displayed column label to find and select.
+   */
+  selectCheckboxInShowColumnsBySearch(columnName) {
+    // Filtering mounts the requested checkbox before Stripes Interactors resolves it.
+    cy.do(showColumnsSearchField.fillIn(columnName));
+    this.selectCheckboxInShowColumns(columnName);
+    cy.expect(Checkbox(columnName).has({ checked: true }));
+    // TextField.clear() clicks the optional times-circle icon, which can disappear
+    // during a Show columns menu rerender. Replacing the value is deterministic.
+    cy.do(showColumnsSearchField.fillIn(''));
   },
 
   uncheckAllShowColumns() {
@@ -1496,5 +1861,147 @@ export default {
     const targetCell = MultiColumnListCell(partialMatch ? including(expectedValue) : expectedValue);
     if (isFound) cy.expect(targetCell.exists());
     else cy.expect(targetCell.absent());
+  },
+
+  verifyMarcSelectorDisplayed(row = 0) {
+    cy.expect([
+      marcTextField('tag', row).has({ required: true, value: '' }),
+      marcTextField('ind1', row).has({ required: false, value: '' }),
+      marcTextField('ind2', row).has({ required: false, value: '' }),
+      marcTextField('subfield', row).has({ required: false, value: '' }),
+    ]);
+  },
+
+  verifyMarcTagValue(tag, row = 0) {
+    cy.expect(marcTextField('tag', row).has({ value: tag }));
+  },
+
+  verifyMarcIndicatorsAndSubfieldValues({ ind1 = '', ind2 = '', subfield = '' } = {}, row = 0) {
+    cy.expect([
+      marcTextField('ind1', row).has({ value: ind1 }),
+      marcTextField('ind2', row).has({ value: ind2 }),
+      marcTextField('subfield', row).has({ value: subfield }),
+    ]);
+  },
+
+  verifyMarcIndicatorsAndSubfieldAbsent(row = 0) {
+    cy.expect([
+      marcTextField('ind1', row).absent(),
+      marcTextField('ind2', row).absent(),
+      marcTextField('subfield', row).absent(),
+    ]);
+  },
+
+  fillInMarcTag(tag, row = 0) {
+    cy.do(marcTextField('tag', row).fillIn(tag));
+    cy.wait(500);
+  },
+
+  fillInMarcIndicator1(value, row = 0) {
+    cy.do(marcTextField('ind1', row).fillIn(value));
+    cy.wait(500);
+  },
+
+  fillInMarcIndicator2(value, row = 0) {
+    cy.do(marcTextField('ind2', row).fillIn(value));
+    cy.wait(500);
+  },
+
+  fillInMarcSubfield(value, row = 0) {
+    cy.do(marcTextField('subfield', row).fillIn(value));
+    cy.wait(500);
+  },
+
+  verifyMarcColumnLockedInShowColumns(columnName) {
+    cy.contains(columnCheckbox, columnName).then(($option) => {
+      const options = $option.parent().children(columnCheckbox);
+
+      expect(options.last().text(), 'last column of the column list').to.contain(columnName);
+      expect($option.attr('class'), `"${columnName}" column checkbox`).to.match(/readOnly/i);
+      cy.wrap($option).find('input').should('be.checked');
+    });
+  },
+
+  verifyResultTableColumnDisplayed(columnName, { inBuildQueryForm = true } = {}) {
+    cy.contains(`${getResultsTableSelector(inBuildQueryForm)} [role=columnheader]`, columnName, {
+      timeout: 15000,
+    }).should('exist');
+  },
+
+  verifyResultTableColumnValues(
+    identifier,
+    columnName,
+    expectedValues,
+    { inBuildQueryForm = true } = {},
+  ) {
+    this.verifyResultTableColumnDisplayed(columnName, { inBuildQueryForm });
+    cy.contains(`${getResultsTableSelector(inBuildQueryForm)} [data-row-index]`, identifier).should(
+      ($row) => {
+        const headers = [...$row.closest(resultsTableSelector).find('[role=columnheader]')].map(
+          (header) => header.textContent.trim(),
+        );
+        const cellText = $row
+          .find('[class*="mclCell-"]')
+          .eq(headers.indexOf(columnName))
+          .text()
+          .trim();
+        const actualValues = cellText ? cellText.split(' | ').sort() : [];
+
+        expect(actualValues, `"${columnName}" values of the "${identifier}" record`).to.deep.equal(
+          [...expectedValues].sort(),
+        );
+      },
+    );
+  },
+
+  fillInMarcValueTextfield(text, row = 0) {
+    cy.do(valueTextField(row).fillIn(text));
+  },
+
+  verifyMarcValueTextfield(expectedValue, row = 0) {
+    cy.expect(valueTextField(row).has({ value: expectedValue }));
+  },
+
+  // The MARC tag, indicator and subfield boxes are validated as the user types, so the keystrokes of a
+  // check have to reach the box without leaving it — hence typing instead of filling the box in
+  typeInMarcTextField(part, text, row = 0) {
+    cy.get(`input[data-testid="marc-${part}-${row}"]`).type(text);
+    cy.wait(500);
+  },
+
+  clearMarcTextField(part, row = 0) {
+    cy.get(`input[data-testid="marc-${part}-${row}"]`).clear();
+    cy.wait(500);
+  },
+
+  blurMarcTextField(part, row = 0) {
+    cy.get(`input[data-testid="marc-${part}-${row}"]`).blur();
+    cy.wait(500);
+  },
+
+  verifyMarcTextFieldError(part, errorMessage, { focused = true, row = 0 } = {}) {
+    cy.expect(
+      marcTextField(part, row).has({
+        error: errorMessage,
+        errorBorder: true,
+        errorIcon: true,
+        focused,
+      }),
+    );
+  },
+
+  verifyMarcTextFieldWithoutError(part, { focused = true, row = 0 } = {}) {
+    cy.expect(
+      marcTextField(part, row).has({
+        error: undefined,
+        errorBorder: false,
+        errorIcon: false,
+        focused,
+      }),
+    );
+  },
+
+  verifyOperatorColumnAbsent() {
+    cy.get('[class^="col-sm-2"][class*="headerCell"]').should('not.exist');
   },
 };

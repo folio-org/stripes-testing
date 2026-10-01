@@ -1,4 +1,13 @@
-import { Button, Form, HTML, Section, TextField, including } from '../../../../../interactors';
+import {
+  Button,
+  Form,
+  HTML,
+  MultiColumnListCell,
+  Section,
+  TextField,
+  including,
+  not,
+} from '../../../../../interactors';
 
 const resultsPane = Section({ id: 'pane-results' });
 const actionsButton = resultsPane.find(Button('Actions'));
@@ -8,6 +17,7 @@ const searchInput = searchForm.find(TextField({ type: 'search' }));
 const searchButton = searchForm.find(Button('Search'));
 
 const searchResults = resultsPane.find(HTML({ className: including('searchResults-') }));
+const noResultsText = 'The list contains no items';
 
 export default {
   waitLoading() {
@@ -20,7 +30,18 @@ export default {
     cy.do([searchInput.fillIn(name), searchButton.click()]);
     cy.wait(300);
   },
-  checkResultsPaneIsEmpty() {
-    cy.expect(searchResults.has({ text: 'The list contains no items' }));
+  checkResultsPaneIsEmpty({ isEmpty = true } = {}) {
+    if (isEmpty) cy.expect(searchResults.has({ text: noResultsText }));
+    else {
+      cy.expect([
+        searchResults.has({ text: not(including(noResultsText)) }),
+        searchResults.find(MultiColumnListCell()).exists(),
+      ]);
+    }
+  },
+
+  clearSearchField() {
+    cy.do(searchInput.clear());
+    cy.expect(searchInput.has({ value: '' }));
   },
 };

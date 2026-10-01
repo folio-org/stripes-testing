@@ -1,10 +1,13 @@
 import { including } from '@interactors/html';
 import {
   Button,
+  Card,
   Checkbox,
+  HTML,
   InfoRow,
   KeyValue,
   Link,
+  MetaSection,
   MultiColumnListCell,
   MultiColumnListRow,
   PaneHeader,
@@ -12,7 +15,7 @@ import {
   Warning,
   MultiColumnListHeader,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import { DEFAULT_WAIT_TIME, ORDER_LINE_FORM_LABELS } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import ExportDetails from '../exportManager/exportDetails';
 import TransactionDetails from '../finance/transactions/transactionDetails';
@@ -21,8 +24,10 @@ import CancelConfirmationModal from './modals/cancelConfirmationModal';
 import SelectInstanceModal from './modals/selectInstanceModal';
 import OrderLineEditForm from './orderLineEditForm';
 import VersionHistory from './orderVersionHistory';
+import OrderStates from './orderStates';
 
 const orderLineDetailsSection = Section({ id: 'order-lines-details' });
+const orderLineDetailsVersionViewSection = Section({ id: 'order-line-version-view' });
 const paneHeaderOrderLinesDetailes = orderLineDetailsSection.find(
   PaneHeader({ id: 'paneHeaderorder-lines-details' }),
 );
@@ -33,6 +38,7 @@ const itemDetailsSection = orderLineDetailsSection.find(Section({ id: 'ItemDetai
 const purchaseOrderLineSection = orderLineDetailsSection.find(Section({ id: 'poLine' }));
 const ongoingOrderSection = orderLineDetailsSection.find(Section({ id: 'ongoingOrder' }));
 const fundDistributionsSection = orderLineDetailsSection.find(Section({ id: 'FundDistribution' }));
+const paymentTermsSection = orderLineDetailsSection.find(Section({ id: 'paymentTerms' }));
 const vendorDetailsSection = orderLineDetailsSection.find(Section({ id: 'Vendor' }));
 const costDetailsSection = orderLineDetailsSection.find(Section({ id: 'CostDetails' }));
 const physicalResourceDetailsSection = orderLineDetailsSection.find(Section({ id: 'physical' }));
@@ -51,6 +57,7 @@ const addRoutingListButton = Button('Add routing list');
 const relatedInvoiceLinesSection = orderLineDetailsSection.find(
   Section({ id: 'relatedInvoiceLines' }),
 );
+const customFieldsAccordion = orderLineDetailsSection.find(Section({ id: 'customFieldsPOLine' }));
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -136,9 +143,9 @@ export default {
       CancelConfirmationModal.clickCancelOrderLineButton();
     }
   },
-  checActionsMenuContent(actions = []) {
+  checActionsMenuContent(actions = [], { shouldExist = true } = {}) {
     actions.forEach((action) => {
-      cy.expect(Button(action).exists());
+      cy.expect(shouldExist ? Button(action).exists() : Button(action).absent());
     });
   },
   changeInstanceConnection({ expand = true } = {}) {
@@ -208,6 +215,13 @@ export default {
   checkWarningMessage(message) {
     cy.expect(orderLineDetailsSection.find(Warning()).has({ message }));
   },
+  checkPurchaseOrderClosedWarning({ reason } = {}) {
+    cy.expect(
+      orderLineDetailsSection
+        .find(Warning({ message: including(OrderStates.purchaseOrderClosedWarning({ reason })) }))
+        .exists(),
+    );
+  },
   checkContributorsSectionContent(contributors = []) {
     contributors.forEach(({ name, type }) => {
       cy.expect(
@@ -269,6 +283,57 @@ export default {
       cy.expect(fundDistributionsSection.has({ text: including('The list contains no items') }));
     }
   },
+
+  assertPaymentTerms({ totalPrice, prepaymentTerm, startingFiscalYear, distributions = [] }) {
+    cy.expect(
+      paymentTermsSection
+        .find(KeyValue('Total price'))
+        .has({ value: including(String(totalPrice)) }),
+    );
+    cy.expect(
+      paymentTermsSection.find(KeyValue('Prepayment term')).has({ value: String(prepaymentTerm) }),
+    );
+    cy.expect(
+      paymentTermsSection
+        .find(KeyValue('Starting fiscal year'))
+        .has({ value: including(startingFiscalYear) }),
+    );
+
+    distributions.forEach(({ fyCode, rows = [] }) => {
+      const card = paymentTermsSection.find(Card({ headerStart: including(fyCode) }));
+
+      cy.expect(card.exists());
+
+      if (!rows.length) {
+        cy.expect(card.find(HTML(including('The list contains no items'))).exists());
+        return;
+      }
+
+      rows.forEach(({ fundName, expenseClass, value, amount }, index) => {
+        const expectations = [
+          card
+            .find(MultiColumnListCell({ row: index, column: 'Fund' }))
+            .has({ content: including(fundName) }),
+          card
+            .find(MultiColumnListCell({ row: index, column: 'Value' }))
+            .has({ content: including(String(value)) }),
+          card
+            .find(MultiColumnListCell({ row: index, column: 'Amount' }))
+            .has({ content: including(String(amount)) }),
+        ];
+
+        if (expenseClass) {
+          expectations.push(
+            card
+              .find(MultiColumnListCell({ row: index, column: 'Expense class' }))
+              .has({ content: including(expenseClass) }),
+          );
+        }
+
+        cy.expect(expectations);
+      });
+    });
+  },
   checkExportDetailsTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.date) {
@@ -329,6 +394,31 @@ export default {
         );
       }
     });
+
+    if (!records.length) {
+      cy.expect(
+        linkedInstancesDetailsSection.has({ text: including('The list contains no items') }),
+      );
+    }
+  },
+  checkTitleIsNotLink(title) {
+    this.checkItemDetailsSection([{ key: 'Title', value: title }]);
+    cy.expect(itemDetailsSection.find(KeyValue('Title')).find(Link()).absent());
+  },
+  checkFieldIsHighlighted(label) {
+    cy.expect(orderLineDetailsVersionViewSection.has({ mark: label }));
+  },
+  checkTitleIsLink(title, { rowIndex = 0 } = {}) {
+    cy.expect([
+      itemDetailsSection
+        .find(KeyValue('Title'))
+        .find(Link(including(title)))
+        .exists(),
+      linkedInstancesDetailsSection
+        .find(MultiColumnListCell({ row: rowIndex, column: 'Title' }))
+        .find(Link(including(title)))
+        .exists(),
+    ]);
   },
   checkItemDetailsSection(itemDetails = []) {
     this.checkSectionData({ details: itemDetails, section: itemDetailsSection });
@@ -344,6 +434,11 @@ export default {
   },
   checkCostDetailsSection(costDetails = []) {
     this.checkSectionData({ details: costDetails, section: costDetailsSection });
+  },
+  checkCostDetailsFieldsAbsent(labels = []) {
+    labels.forEach((label) => {
+      cy.expect(costDetailsSection.find(HTML(including(label))).absent());
+    });
   },
   checkPhysicalResourceDetails(physicalResourceDetails = []) {
     this.checkSectionData({
@@ -371,6 +466,9 @@ export default {
         );
       });
     });
+  },
+  verifyLocationAbsentInSection(locationName) {
+    cy.expect(locationDetailsSection.find(HTML(including(locationName))).absent());
   },
   verifyLinesDetailTitle(title) {
     cy.expect(orderLineDetailsSection.find(headerLinesDetail).has({ text: including(title) }));
@@ -569,6 +667,18 @@ export default {
     );
   },
 
+  toggleMetadataAccordion(isOpen = true) {
+    cy.do(MetaSection().clickHeader());
+    cy.expect(MetaSection().has({ open: isOpen }));
+  },
+
+  verifyMetadataContent({ updated, updatedBy, created, createdBy } = {}) {
+    if (updated) cy.expect(MetaSection({ updatedText: including(updated) }).exists());
+    if (updatedBy) cy.expect(MetaSection({ updatedByText: including(updatedBy) }).exists());
+    if (created) cy.expect(MetaSection({ createdText: including(created) }).exists());
+    if (createdBy) cy.expect(MetaSection({ createdByText: including(createdBy) }).exists());
+  },
+
   checkRelatedInvoiceLinesTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.vendorInvoiceNo) {
@@ -612,5 +722,56 @@ export default {
         this.checkRelatedInvoiceLineColumnItem(index, 'Comment', record.comment);
       }
     });
+  },
+
+  verifyValuesInCustomFieldsAccordion(customFieldName, customFieldValue, isCheckBox = false) {
+    if (isCheckBox) {
+      cy.expect(
+        customFieldsAccordion
+          .find(KeyValue({ label: customFieldName }))
+          .find(Checkbox())
+          .has({ checked: customFieldValue, disabled: true }),
+      );
+    } else {
+      cy.expect(
+        customFieldsAccordion
+          .find(KeyValue(customFieldName))
+          .has({ value: including(customFieldValue) }),
+      );
+    }
+  },
+
+  // --- Multi-year prepayment / Payment terms (view mode) ---
+  assertMultiYearPrepaymentChecked() {
+    cy.expect(
+      ongoingOrderSection
+        .find(Checkbox({ labelText: ORDER_LINE_FORM_LABELS.MULTI_YEAR_PREPAYMENT }))
+        .has({ checked: true, disabled: true }),
+    );
+  },
+  assertMultiYearPrepaymentUnchecked() {
+    cy.expect(
+      ongoingOrderSection
+        .find(Checkbox({ labelText: ORDER_LINE_FORM_LABELS.MULTI_YEAR_PREPAYMENT }))
+        .has({ checked: false, disabled: true }),
+    );
+  },
+  assertMultiYearPrepaymentAbsent() {
+    cy.expect(
+      ongoingOrderSection
+        .find(
+          Checkbox({
+            disabled: true,
+            labelText: ORDER_LINE_FORM_LABELS.MULTI_YEAR_PREPAYMENT,
+          }),
+        )
+        .absent(),
+    );
+  },
+  assertFundDistributionAccordionBlank() {
+    cy.expect(fundDistributionsSection.has({ text: including('The list contains no items') }));
+  },
+  assertPaymentTermsSectionAbsent() {
+    cy.expect(orderLineDetailsSection.find(Section({ id: 'paymentTerms' })).absent());
   },
 };

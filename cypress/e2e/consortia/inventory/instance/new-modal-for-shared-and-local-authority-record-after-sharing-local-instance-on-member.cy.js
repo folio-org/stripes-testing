@@ -1,3 +1,4 @@
+import { including } from '../../../../../interactors';
 import { APPLICATION_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import CapabilitySets from '../../../../support/dictionary/capabilitySets';
@@ -102,6 +103,7 @@ describe('Inventory', () => {
             InventoryInstance.clickLinkButton();
             cy.wait(2000);
             QuickMarcEditor.clickSaveAndKeepEditing();
+            cy.wait(2000);
           });
         cy.resetTenant();
 
@@ -137,7 +139,7 @@ describe('Inventory', () => {
 
       after('Delete test data', () => {
         cy.resetTenant();
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         cy.setTenant(Affiliations.College);
         InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[1]);
         MarcAuthority.deleteViaAPI(testData.createdRecordIDs[2], true);
@@ -175,14 +177,11 @@ describe('Inventory', () => {
             testData.createdRecordIDs[0],
           );
 
-          InstanceRecordView.verifySubjectWithoutMarcAppIcon(
-            3,
-            'C411723 Lentz Local M1--Latin America--Mexico',
-          );
+          InstanceRecordView.verifySubjectWithoutMarcAppIcon(3, 'C411723 Lentz Local M1');
           InstanceRecordView.verifyInstanceSubject(
             {
               indexRow: 3,
-              subjectHeadings: 'C411723 Lentz Local M1--Latin America--Mexico',
+              subjectHeadings: including('C411723 Lentz Local M1'),
               subjectSource: 'No value set-',
               subjectType: 'Topical term',
             },

@@ -2,9 +2,15 @@ import {
   Button,
   Checkbox,
   Modal,
+  MultiColumnListCell,
   MultiColumnListRow,
+  MultiSelect,
+  MultiSelectMenu,
+  MultiSelectOption,
   Pane,
   SearchField,
+  Section,
+  ValueChipRoot,
   including,
 } from '../../../../../interactors';
 import { COMMON_BUTTON_LABELS, DEFAULT_WAIT_TIME } from '../../../constants';
@@ -15,6 +21,13 @@ const searchField = selectOrganizationModal.find(SearchField({ id: 'input-record
 const searchButton = selectOrganizationModal.find(Button(COMMON_BUTTON_LABELS.SEARCH));
 const saveButton = selectOrganizationModal.find(Button(COMMON_BUTTON_LABELS.SAVE));
 const closeButton = selectOrganizationModal.find(Button(COMMON_BUTTON_LABELS.CLOSE));
+
+const typesAccordionToggle = filtersPane.find(
+  Button({ id: 'accordion-toggle-button-org-filter-organizationTypes' }),
+);
+const typesMultiSelect = filtersPane
+  .find(Section({ id: 'org-filter-organizationTypes' }))
+  .find(MultiSelect());
 
 const searchOrganization = (organizationSearchValue, searchIndex) => {
   const searchActions = [];
@@ -60,5 +73,42 @@ export default {
   },
   verifyClosed() {
     cy.expect(selectOrganizationModal.absent());
+  },
+  expandTypesAccordion() {
+    cy.do(typesAccordionToggle.click());
+    cy.expect(typesMultiSelect.exists());
+  },
+  openTypesDropdown() {
+    cy.do(typesMultiSelect.open());
+  },
+  verifyTypesDropdownOptions(types = []) {
+    types.forEach((type) => {
+      cy.expect(
+        MultiSelectMenu()
+          .find(MultiSelectOption(including(type)))
+          .exists(),
+      );
+    });
+  },
+  selectOrganizationType(type) {
+    cy.do(typesMultiSelect.choose([including(type)]));
+    cy.wait(DEFAULT_WAIT_TIME);
+  },
+  verifySelectedOrganizationType(type) {
+    cy.expect(typesMultiSelect.find(ValueChipRoot(type)).exists());
+  },
+  verifyOrganizationInResultsList(organizationName) {
+    cy.expect(
+      selectOrganizationModal
+        .find(MultiColumnListCell({ content: including(organizationName) }))
+        .exists(),
+    );
+  },
+  selectOrganizationByName(organizationName) {
+    cy.do(
+      selectOrganizationModal
+        .find(MultiColumnListCell({ content: including(organizationName) }))
+        .click(),
+    );
   },
 };

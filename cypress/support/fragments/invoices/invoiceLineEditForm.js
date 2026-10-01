@@ -6,9 +6,15 @@ import {
   Selection,
   SelectionList,
   TextField,
+  Warning,
   including,
 } from '../../../../interactors';
-import { COMMON_BUTTON_LABELS, DEFAULT_WAIT_TIME, INVOICE_LINE_VIEW_FIELDS } from '../../constants';
+import {
+  ACCOUNT_STATUSES,
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  INVOICE_LINE_VIEW_FIELDS,
+} from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
 import areYouSureModal from '../settings/bulk-edit/areYouSureModal';
@@ -24,6 +30,7 @@ const cancelButtom = Button(COMMON_BUTTON_LABELS.CANCEL);
 const saveButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_CLOSE);
 const saveAndKeepEditingButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING);
 const clearButton = Button({ icon: 'times-circle-solid' });
+const polLookUpButton = Button('POL look-up');
 const unsavedChangesMessage = 'There are unsaved changes';
 const subTotalSelector = '#subTotal';
 
@@ -35,13 +42,18 @@ const infoFields = {
   releaseEncumbrance: informationSection.find(Checkbox({ name: 'releaseEncumbrance' })),
   quantity: informationSection.find(TextField({ id: 'quantity' })),
   subTotal: informationSection.find(TextField({ id: 'subTotal' })),
+  polNumber: informationSection.find(TextField('POL number')),
 };
 
-const fundFields = {
+const formFields = {
+  [INVOICE_LINE_VIEW_FIELDS.DESCRIPTION]: infoFields.description,
+  'POL number': infoFields.polNumber,
   'Expense class': fundDistributionSection.find(
     Button({ id: 'fundDistributions[0].expenseClassId' }),
   ),
 };
+
+const accountNumberField = informationSection.find(Selection('Account number'));
 
 const buttons = {
   'Release encumbrance': infoFields.releaseEncumbrance,
@@ -68,13 +80,17 @@ export default {
   },
   checkFieldsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
-      cy.expect(fundFields[label].has(conditions));
+      cy.expect(formFields[label].has(conditions));
     });
+  },
+
+  clickPolLookUpButton() {
+    cy.do(invoiceLineEditFormRoot.find(polLookUpButton).click());
   },
 
   selectOrderLines(orderLine) {
     cy.do([
-      Button('POL look-up').click(),
+      polLookUpButton.click(),
       SearchField({ id: 'input-record-search' }).fillIn(orderLine),
       Button('Search').click(),
     ]);
@@ -225,6 +241,22 @@ export default {
           .has({ error: 'Required!' }),
       );
     });
+  },
+
+  checkAccountNumberMarkedInactive() {
+    cy.expect(accountNumberField.has({ value: including(ACCOUNT_STATUSES.INACTIVE) }));
+  },
+
+  checkAccountNumberWarning(shouldHaveWarning = true) {
+    if (shouldHaveWarning) {
+      cy.expect(informationSection.find(Warning()).has({ message: InvoiceStates.inactiveAccount }));
+    } else {
+      cy.expect(informationSection.find(Warning()).absent());
+    }
+  },
+
+  checkAccountNumberSelected(value) {
+    cy.expect(accountNumberField.has({ value: including(value) }));
   },
 
   clearField(fieldName) {

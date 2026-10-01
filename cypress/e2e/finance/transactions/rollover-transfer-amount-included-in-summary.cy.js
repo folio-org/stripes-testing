@@ -211,13 +211,17 @@ describe('Finance', () => {
         // Click "Ledger A" record in "Ledger" accordion
         const LedgerDetails = FiscalYearDetails.openLedgerDetails(ledgers.first.name);
         LedgerDetails.checkLedgerDetails({
-          financialSummary: [{ key: 'Net transfers', value: '$1,000.00' }],
+          financialSummary: {
+            information: [{ key: 'Net transfers', value: '$1,000.00' }],
+          },
         });
 
         // Click "Group" record in "Group" accordion
         const GroupDetails = LedgerDetails.openGroupDetails(group.name);
         GroupDetails.checkGroupDetails({
-          financialSummary: [{ key: 'Net transfers', value: '$2,000.00' }],
+          financialSummary: {
+            information: [{ key: 'Net transfers', value: '$2,000.00' }],
+          },
         });
 
         // Click "Ledger" toggle on "Search & filter" pane
@@ -227,7 +231,9 @@ describe('Finance', () => {
         FinanceHelper.searchByName(ledgers.second.name);
         Ledgers.selectLedger(ledgers.second.name);
         LedgerDetails.checkLedgerDetails({
-          financialSummary: [{ key: 'Net transfers', value: '$1,000.00' }],
+          financialSummary: {
+            information: [{ key: 'Net transfers', value: '$1,000.00' }],
+          },
         });
       },
     );

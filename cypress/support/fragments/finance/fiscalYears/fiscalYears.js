@@ -20,6 +20,7 @@ import getRandomPostfix from '../../../utils/stringTools';
 import DateTools from '../../../utils/dateTools';
 import FiscalYearDetails from './fiscalYearDetails';
 import Headline from '../../../../../interactors/headline';
+import { COMMON_BUTTON_LABELS } from '../../../constants';
 
 const createdFiscalYearNameXpath =
   '//*[@id="paneHeaderpane-fiscal-year-details-pane-title"]/h2/span';
@@ -39,6 +40,12 @@ const fiscalYearButton = Button('Fiscal year');
 const resetButton = Button({ id: 'reset-fiscal-years-filters' });
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
+const cancelButton = Button(COMMON_BUTTON_LABELS.CANCEL);
+
+const buttons = {
+  [COMMON_BUTTON_LABELS.CANCEL]: cancelButton,
+  [COMMON_BUTTON_LABELS.SAVE_AND_CLOSE]: saveAndClose,
+};
 
 export default {
   defaultUiFiscalYear: {
@@ -143,7 +150,7 @@ export default {
     cy.xpath(createdFiscalYearNameXpath).should('be.visible').and('have.text', fiscalYearName);
   },
 
-  filltheStartAndEndDateonCalenderstartDateField: (periodStart, periodEnd) => {
+  fillTheStartAndEndDateOnCalenderStartDateField: (periodStart, periodEnd) => {
     cy.wait(6000);
     cy.do([
       TextField({ name: 'periodStart' }).clear(),
@@ -155,7 +162,7 @@ export default {
     cy.wait(6000);
   },
 
-  filltheStartAndEndDateoncalenderstartDateField2: () => {
+  fillTheStartAndEndDateOnCalenderStartDateField2: () => {
     cy.do([
       TextField({ name: 'periodStart' }).clear(),
       TextField({ name: 'periodStart' }).fillIn('01/01/2024'),
@@ -337,6 +344,21 @@ export default {
       .then(({ body }) => body);
   },
 
+  // Every environment has a pre-seeded current fiscal year following the
+  // "FY<year>" code pattern (e.g. FY2025, FY2026), so reuse it instead of
+  // creating a new one where possible. Falls back to creating one only if it can't be found.
+  getCurrentFiscalYearOrCreateViaApi() {
+    return this.getViaApi({
+      query: `code=="${DateTools.getCurrentFiscalYearCode()}"`,
+    }).then(({ fiscalYears }) => {
+      if (fiscalYears?.length) {
+        return fiscalYears[0];
+      }
+
+      return this.createViaApi(this.defaultUiFiscalYear);
+    });
+  },
+
   getFiscalYearIdByName(fiscalYearName) {
     return this.getViaApi({ query: `name=="${fiscalYearName}"` }).then((response) => {
       if (response.fiscalYears && response.fiscalYears.length > 0) {
@@ -361,5 +383,11 @@ export default {
 
   checkPageTitle(expectedTitle) {
     cy.title().should('eq', expectedTitle);
+  },
+
+  checkButtonsConditions(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(buttons[label].has(conditions));
+    });
   },
 };

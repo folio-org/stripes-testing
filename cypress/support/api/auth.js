@@ -88,12 +88,31 @@ Cypress.Commands.add('getUserToken', (username, password) => {
   });
 });
 
+Cypress.Commands.add('getUsersKeycloakSelf', (additionalHeaders = {}) => {
+  return cy.okapiRequest({
+    path: 'users-keycloak/_self',
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
+    additionalHeaders,
+  });
+});
+
 Cypress.Commands.add('logoutViaApi', () => {
   cy.okapiRequest({
     method: 'POST',
     path: 'authn/logout',
     isDefaultSearchParamsRequired: false,
     failOnStatusCode: false,
+  });
+});
+
+Cypress.Commands.add('logoutAllViaApi', (additionalHeaders = {}) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'authn/logout-all',
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
+    additionalHeaders,
   });
 });
 

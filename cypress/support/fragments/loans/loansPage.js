@@ -219,6 +219,22 @@ export default {
     this.verifyCallNumbersSorted(true);
   },
 
+  verifyCallNumberPresent(callNumber) {
+    cy.expect(MultiColumnListCell({ content: including(callNumber) }).exists());
+  },
+
+  verifyCallNumbersCaseInsensitivelySorted(isDescending = false) {
+    getCallNumberValues().then((callNumbers) => {
+      const sorted = [...callNumbers].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+
+      if (isDescending) {
+        sorted.reverse();
+      }
+
+      cy.expect(callNumbers).to.deep.equal(sorted);
+    });
+  },
+
   verifyClosedLoansVisible() {
     cy.get('body').should('contain', 'Closed');
   },

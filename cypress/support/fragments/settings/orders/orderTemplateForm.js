@@ -1,19 +1,35 @@
 import {
+  Accordion,
   Button,
   Checkbox,
   Form,
+  including,
+  PaneHeader,
+  RepeatableFieldItem,
   Section,
   Select,
   Selection,
+  SelectionList,
   SelectionOption,
   TextArea,
   TextField,
 } from '../../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  ORDER_LINE_FORM_LABELS,
+} from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import SearchHelper from '../../finance/financeHelper';
+import AreYouSureModal from '../../orders/modals/areYouSureModal';
+
+const LOCATION_FIELD_ID_PREFIX = 'field-locations';
 
 const orderTemplateForm = Form({ id: 'order-template-form' });
+const orderTemplateEditorPaneHeader = PaneHeader({
+  id: 'paneHeaderorder-settings-order-templates-editor',
+});
+const closeFormButton = orderTemplateEditorPaneHeader.find(Button({ icon: 'times' }));
 const orderTemplateInfoSection = orderTemplateForm.find(Section({ id: 'templateInfo' }));
 const orderTemplatePoInfoSection = orderTemplateForm.find(Section({ id: 'poInfo' }));
 const orderTemplateOngoingSection = orderTemplateForm.find(Section({ id: 'ongoing' }));
@@ -35,6 +51,7 @@ const orderTemplateLocationDetailsSection = orderTemplateForm.find(Section({ id:
 const orderTemplatePoLineTagsSection = orderTemplateForm.find(Section({ id: 'polTags' }));
 
 const saveButton = Button({ id: 'save-order-template-button' });
+const fundIdSelection = Selection(including('Fund ID'));
 
 const infoSectionFields = {
   templateName: orderTemplateInfoSection.find(TextField({ name: 'templateName' })),
@@ -52,6 +69,8 @@ const poInfoSectionFields = {
 const poLineDetailsSectionFields = {
   poLineDetailsSection: orderTemplateLineDetailsSection.find(Button('PO line details')),
   acquisitionMethod: orderTemplateLineDetailsSection.find(Selection('Acquisition method')),
+  receiptStatus: orderTemplateLineDetailsSection.find(Select({ name: 'receiptStatus' })),
+  checkinItems: orderTemplateLineDetailsSection.find(Select({ name: 'checkinItems' })),
 };
 
 const defaultSections = {
@@ -97,6 +116,21 @@ export default {
     });
   },
 
+  assertPolOngoingOrderSectionAbsent() {
+    cy.expect(orderTemplatePOLOngoingSection.absent());
+  },
+  assertPolOngoingOrderSectionPresent() {
+    cy.expect(orderTemplatePOLOngoingSection.exists());
+  },
+
+  expandAll() {
+    cy.do(orderTemplateForm.find(Button(COMMON_BUTTON_LABELS.EXPAND_ALL)).click());
+  },
+
+  expandAccordion(label) {
+    cy.do(orderTemplateForm.find(Accordion(including(label))).expand());
+  },
+
   fillOrderTemplateFields({ templateInformation, poInformation, poLineDetails } = {}) {
     if (templateInformation) {
       this.fillInfoSectionFields(templateInformation);
@@ -110,7 +144,11 @@ export default {
   },
   fillInfoSectionFields({ templateName, templateCode, templateDescription, hideAll }) {
     if (templateName) {
-      cy.do(infoSectionFields.templateName.fillIn(templateName));
+      cy.do([
+        infoSectionFields.templateName.focus(),
+        infoSectionFields.templateName.fillIn(templateName),
+        infoSectionFields.templateName.blur(),
+      ]);
     }
     if (templateCode) {
       cy.do(infoSectionFields.templateCode.fillIn(templateCode));
@@ -121,6 +159,18 @@ export default {
     if (hideAll) {
       cy.do(infoSectionFields.hideAll.click());
     }
+  },
+  assertInfoSectionFields({ templateName, templateCode }) {
+    const expectations = [];
+
+    if (templateName !== undefined) {
+      expectations.push(infoSectionFields.templateName.has({ value: templateName }));
+    }
+    if (templateCode !== undefined) {
+      expectations.push(infoSectionFields.templateCode.has({ value: templateCode }));
+    }
+
+    cy.expect(expectations);
   },
   fillPoInfoSectionFields({ organizationName, orderType }) {
     cy.do(poInfoSectionFields.poInformationSection.click());
@@ -135,7 +185,7 @@ export default {
       cy.do(poInfoSectionFields.orderType.choose(orderType));
     }
   },
-  fillPoLineDetailsFields({ acquisitionMethod }) {
+  fillPoLineDetailsFields({ acquisitionMethod, receiptStatus }) {
     cy.do(poLineDetailsSectionFields.poLineDetailsSection.click());
 
     if (acquisitionMethod) {
@@ -144,6 +194,14 @@ export default {
         SelectionOption(acquisitionMethod).click(),
       ]);
     }
+    if (receiptStatus) {
+      cy.do(poLineDetailsSectionFields.receiptStatus.choose(receiptStatus));
+    }
+  },
+  checkPoLineDetailsFields(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(poLineDetailsSectionFields[label].has(conditions));
+    });
   },
   checkValidationError({ templateName } = {}) {
     if (templateName) {
@@ -158,5 +216,136 @@ export default {
     if (templateCreated) {
       InteractorsTools.checkCalloutMessage('The template was saved');
     }
+  },
+
+  closeForm(shouldModalExist = false) {
+    // The legacy order-template editor has no Cancel action; its pane-header X closes the form.
+    cy.do(closeFormButton.click());
+
+    if (!shouldModalExist) {
+      cy.expect(orderTemplateForm.absent());
+    }
+  },
+
+  closeFormWithUnsavedChanges({ keepEditing = false } = {}) {
+    this.closeForm(true);
+    AreYouSureModal.verifyAreYouSureForm(true);
+
+    if (keepEditing) {
+      AreYouSureModal.clickKeepEditingButton();
+      cy.expect(orderTemplateForm.exists());
+    } else {
+      AreYouSureModal.clickCloseWithoutSavingButton();
+      AreYouSureModal.verifyAreYouSureForm(false);
+      cy.expect(orderTemplateForm.absent());
+    }
+  },
+
+  selectCurrency(currency = 'USD') {
+    const field = orderTemplateCostDetailsSection.find(
+      Selection(including(ORDER_LINE_FORM_LABELS.CURRENCY)),
+    );
+
+    cy.do([
+      field.perform((el) => el.scrollIntoView()),
+      field.open(),
+      SelectionList().filter(currency),
+      SelectionOption(including(currency)).click(),
+    ]);
+  },
+
+  clickAddLocationButton() {
+    cy.do(
+      orderTemplateLocationDetailsSection.find(Button(ORDER_LINE_FORM_LABELS.ADD_LOCATION)).click(),
+    );
+  },
+
+  expandLocationNameCodeDropdown(index = 0) {
+    cy.do(Button({ id: `${LOCATION_FIELD_ID_PREFIX}[${index}].locationId` }).click());
+  },
+
+  selectLocationFromDropdown(locationName) {
+    cy.do([SelectionList().filter(locationName), SelectionOption(including(locationName)).click()]);
+  },
+
+  removeLocationByIndex(index = 0) {
+    cy.do(
+      orderTemplateLocationDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    );
+  },
+
+  locationOptionExists(locationName) {
+    return SelectionList()
+      .find(SelectionOption(including(locationName)))
+      .exists();
+  },
+
+  verifyLocationSelected({ location, index = 0 }) {
+    cy.expect(
+      orderTemplateLocationDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Selection(including('Name (code)')))
+        .has({ value: including(location) }),
+    );
+  },
+
+  clickAddFundDistributionButton() {
+    cy.do(orderTemplateFundDetailsSection.find(Button('Add fund distribution')).click());
+  },
+
+  selectFundDistribution({ fundName, fundCode, index = 0 }) {
+    const label = `${fundName} (${fundCode})`;
+
+    cy.do([
+      orderTemplateFundDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(fundIdSelection)
+        .open(),
+      SelectionList().filter(label),
+      SelectionOption(including(label)).click(),
+    ]);
+  },
+
+  verifyFundDistributionSelected({ fundCode, index = 0 }) {
+    cy.expect(
+      orderTemplateFundDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(fundIdSelection)
+        .has({ value: including(fundCode) }),
+    );
+  },
+
+  clickExpandAllAccordions() {
+    cy.do(orderTemplateForm.find(Button(COMMON_BUTTON_LABELS.EXPAND_ALL)).click());
+  },
+
+  /* Fields visibility */
+  toggleFieldVisibilityIcon(fieldName) {
+    cy.do(
+      orderTemplateForm.perform((el) => {
+        el.querySelector(`input[name="hiddenFields.${fieldName}"]`).click();
+      }),
+    );
+  },
+
+  verifyFieldVisibilityControl(fieldName, { hidden = false } = {}) {
+    cy.do(
+      orderTemplateForm.perform((el) => {
+        const isHidden = el.querySelector(`input[name="hiddenFields.${fieldName}"]`).checked;
+
+        expect(isHidden, `"${fieldName}" field is hidden`).to.equal(hidden);
+      }),
+    );
+  },
+
+  toggleMultiYearPrepaymentVisibility() {
+    this.toggleFieldVisibilityIcon('multiYearPayment');
+  },
+
+  togglePaymentTermsVisibility() {
+    this.toggleFieldVisibilityIcon('paymentTerms');
   },
 };

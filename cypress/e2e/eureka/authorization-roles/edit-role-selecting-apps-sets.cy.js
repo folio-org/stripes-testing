@@ -16,46 +16,31 @@ describe('Eureka', () => {
         originalCapabilitySets: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Capabilities',
+            resource: 'UI-Tags',
             action: CAPABILITY_ACTIONS.MANAGE,
           },
         ],
         originalCapabilitiesInSets: [
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Capabilities',
+            resource: 'UI-Tags',
+            action: CAPABILITY_ACTIONS.VIEW,
+          },
+          {
+            table: CAPABILITY_TYPES.DATA,
+            resource: 'UI-Tags',
             action: CAPABILITY_ACTIONS.MANAGE,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Capabilities Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Capabilities Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Capability-Sets Capabilities Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Capability-Sets Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
           },
         ],
         originalCapabilities: [
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Auth Token',
+            resource: 'UI-Notes Item Assign-Unassign',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Licenses Admin Action',
+            resource: 'UI-Licenses Licenses File',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
@@ -66,59 +51,40 @@ describe('Eureka', () => {
         },
         newCapabilitiesInSet: [
           {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Finance Budgets-Expense-Classes-Totals Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Finance Expense-Classes Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Finance Fiscal-Years Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Finance Fiscal-Years Item',
-            action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.DATA,
-            resource: 'Finance Fund-Types Collection',
-            action: CAPABILITY_ACTIONS.VIEW,
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'UI-Finance',
+            action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         newCapabilities: [
           {
             table: CAPABILITY_TYPES.SETTINGS,
-            resource: 'Module Finance Enabled',
+            resource: 'UI-Invoice Settings',
             action: CAPABILITY_ACTIONS.VIEW,
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Invoice Item Cancel',
+            resource: 'UI-Receiving',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         expectedRowCounts: {
           capabilitySets: {
+            Data: 1,
             Procedural: 1,
           },
           capabilities: {
             Settings: 1,
             Procedural: 3,
-            Data: 5,
+            Data: 1,
           },
         },
-        absentCapabilitySetTables: [CAPABILITY_TYPES.DATA, CAPABILITY_TYPES.SETTINGS],
+        absentCapabilitySetTables: [CAPABILITY_TYPES.SETTINGS],
         capabSetIds: [],
         capabIds: [],
       };
 
-      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.originalApplications[1]}-.{1,}or.{1,}${testData.newApplication}-.{1,}\\)`;
+      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.originalApplications[0]}-.{1,}or.{1,}${testData.newApplication}-.{1,}\\)`;
       const capabilitiesCallRegExp = new RegExp(`\\/capabilities${regExpBase}`);
       const capabilitySetsCallRegExp = new RegExp(`\\/capability-sets${regExpBase}`);
 
@@ -184,7 +150,7 @@ describe('Eureka', () => {
             AuthorizationRoles.verifyCapabilityCheckboxCheckedAndDisabled(capability);
           });
           AuthorizationRoles.clickSelectApplication();
-          AuthorizationRoles.selectApplicationInModal(testData.originalApplications[0], false);
+          AuthorizationRoles.selectApplicationInModal(testData.originalApplications[1], false);
           AuthorizationRoles.selectApplicationInModal(testData.newApplication);
           cy.wait(1000);
           cy.intercept('GET', '/capabilities?*').as('capabilities');
@@ -203,7 +169,7 @@ describe('Eureka', () => {
           cy.wait(2000);
           AuthorizationRoles.verifyAppNamesInCapabilityTables([
             testData.newApplication,
-            testData.originalApplications[1],
+            testData.originalApplications[0],
           ]);
           AuthorizationRoles.selectCapabilitySetCheckbox(testData.newCapabilitySet);
           testData.newCapabilities.forEach((capability) => {

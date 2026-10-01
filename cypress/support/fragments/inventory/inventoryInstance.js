@@ -36,7 +36,12 @@ import {
   or,
 } from '../../../../interactors';
 import Badge from '../../../../interactors/badge';
-import { REQUEST_METHOD, ITEM_STATUS_NAMES, INSTANCE_STATUS_TERM_NAMES } from '../../constants';
+import {
+  REQUEST_METHOD,
+  ITEM_STATUS_NAMES,
+  INSTANCE_STATUS_TERM_NAMES,
+  HOLDING_TABLE_CONTENT,
+} from '../../constants';
 import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -160,6 +165,7 @@ const classificationAccordion = Accordion('Classification');
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
 const versionHistoryButton = Button({ icon: 'clock' });
 const instanceRelationshipAccordion = Accordion('Instance relationship');
+const clipboardIcon = Button({ icon: 'clipboard' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -1065,6 +1071,17 @@ export default {
     cy.do(moveItemsButton.click());
   },
 
+  verifyItemCheckboxesInHolding(holdingName, itemsCount = 1) {
+    for (let index = 0; index < itemsCount; index++) {
+      cy.expect(
+        Accordion({ label: including(`Holdings: ${holdingName}`) })
+          .find(MultiColumnListRow({ index }))
+          .find(Checkbox())
+          .exists(),
+      );
+    }
+  },
+
   moveHoldingsToAnotherInstance: (newInstanceHrId) => {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
@@ -1269,8 +1286,8 @@ export default {
       () => this.getInstanceViaApi(instanceIdentifier, consortiaId, sourceTenantId),
       (response) => response.body.sharingInstances[0].status === 'COMPLETE',
       {
-        limit: 12,
-        timeout: 60000,
+        limit: 17,
+        timeout: 80000,
         delay: 5000,
       },
     );
@@ -1384,6 +1401,18 @@ export default {
     });
   },
 
+  // verifies the number of "Holdings: ..." accordions - use when several holdings share the
+  // same label (checkIsHoldingsCreated only proves at least one such accordion exists, not the
+  // exact count; interactors has no count assertion, so this falls back to a raw DOM query)
+  verifyHoldingsAccordionsCount: (expectedCount) => {
+    cy.get('[class^="accordion"]')
+      .filter((_, el) => {
+        const label = el.querySelector('[class^="labelArea"]');
+        return !!label && label.textContent.trim().startsWith('Holdings: ');
+      })
+      .should('have.length', expectedCount);
+  },
+
   openHoldingsAccordion: (location) => {
     cy.wait(2000);
     cy.do(Button(including(location)).click());
@@ -1417,7 +1446,9 @@ export default {
     return ItemRecordView;
   },
   checkHoldingsTableContent({ name, records = [], shouldOpen = true } = {}) {
-    const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
+    const holdingsSection = Accordion({
+      label: including(`${HOLDING_TABLE_CONTENT.HOLDINGS} ${name}`),
+    });
 
     if (shouldOpen) {
       cy.do(holdingsSection.clickHeader());
@@ -1428,7 +1459,7 @@ export default {
         cy.expect(
           holdingsSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ column: 'Item: barcode' }))
+            .find(MultiColumnListCell({ column: HOLDING_TABLE_CONTENT.ITEM_BARCODE }))
             .has({ content: including(record.barcode) }),
         );
       }
@@ -1437,8 +1468,35 @@ export default {
         cy.expect(
           holdingsSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ column: 'Status' }))
+            .find(MultiColumnListCell({ column: HOLDING_TABLE_CONTENT.STATUS }))
             .has({ content: including(record.status) }),
+        );
+      }
+
+      if (record.copyNumber) {
+        cy.expect(
+          holdingsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ column: HOLDING_TABLE_CONTENT.COPY_NUMBER }))
+            .has({ content: including(record.copyNumber) }),
+        );
+      }
+
+      if (record.enumeration) {
+        cy.expect(
+          holdingsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ column: HOLDING_TABLE_CONTENT.ENUMERATION }))
+            .has({ content: including(record.enumeration) }),
+        );
+      }
+
+      if (record.chronology) {
+        cy.expect(
+          holdingsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ column: HOLDING_TABLE_CONTENT.CHRONOLOGY }))
+            .has({ content: including(record.chronology) }),
         );
       }
 
@@ -1446,7 +1504,7 @@ export default {
         cy.expect(
           holdingsSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ column: 'Effective location' }))
+            .find(MultiColumnListCell({ column: HOLDING_TABLE_CONTENT.EFFECTIVE_LOCATION }))
             .has({ content: including(record.location) }),
         );
       }
@@ -1810,6 +1868,14 @@ export default {
       cy.expect(listInstanceAcquisitions.has({ rowCount: ordersCount }));
     }
   },
+  openPolFromAcquisitionsAccordion(rowIndex = 0) {
+    cy.do(
+      acquisitionAccordion
+        .find(MultiColumnListCell({ row: rowIndex, column: 'POL number' }))
+        .find(Link())
+        .click(),
+    );
+  },
   checkAcquisitionsDetails(orderLines = [], { href = true } = {}) {
     orderLines.forEach((item, index) => {
       if (item.polNumber) {
@@ -1835,6 +1901,13 @@ export default {
           acquisitionAccordion
             .find(MultiColumnListCell({ row: index, column: 'POL receipt status' }))
             .has({ content: including(item.receiptStatus) }),
+        );
+      }
+      if (item.dateOpened) {
+        cy.expect(
+          acquisitionAccordion
+            .find(MultiColumnListCell({ row: index, column: 'Date opened' }))
+            .has({ content: including(item.dateOpened) }),
         );
       }
       if (item.unit) {
@@ -2042,12 +2115,22 @@ export default {
     cy.expect(targetEl.exists());
   },
 
+  verifyNoCopyIconForItemInHoldings(holdingsLocation, itemIndex = 0) {
+    const holdingSection = Accordion(including(holdingsLocation));
+    cy.expect(
+      holdingSection
+        .find(MultiColumnListCell({ columnIndex: 1, row: itemIndex }))
+        .find(clipboardIcon)
+        .absent(),
+    );
+  },
+
   copyItemBarcode(itemIndex = 0, holdingsLocation, whileMoving = false) {
     const holdingSection = Accordion(including(holdingsLocation));
     cy.do(
       holdingSection
         .find(MultiColumnListCell({ columnIndex: whileMoving ? 3 : 1, row: itemIndex }))
-        .find(Button({ icon: 'clipboard' }))
+        .find(clipboardIcon)
         .click(),
     );
 

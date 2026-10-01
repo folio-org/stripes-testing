@@ -103,7 +103,11 @@ describe('Requests -> Filter Requests with Special Symbols', () => {
               });
 
             UserEdit.addServicePointsViaApi([servicePoint.id], userData.userId, servicePoint.id);
-            cy.login(userData.username, userData.password);
+
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.requestsPath,
+              waiter: Requests.waitLoading,
+            });
           });
       });
   });
@@ -127,7 +131,6 @@ describe('Requests -> Filter Requests with Special Symbols', () => {
     'C374173 Verify filtering Requests by Tags with one special symbol (vega) (TaaS)',
     { tags: ['extendedPath', 'vega', 'C374173'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(itemData.instanceTitle);
       Requests.selectFirstRequest(itemData.instanceTitle);

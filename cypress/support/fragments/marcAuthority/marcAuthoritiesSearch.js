@@ -186,6 +186,11 @@ export default {
     cy.do(rootSection.find(searchButton).click());
   },
 
+  focusOnSearchBox() {
+    cy.do(rootSection.find(searchInput).focus());
+    cy.expect(rootSection.find(searchInput).has({ focused: true }));
+  },
+
   verifyDefaultSearchPaneState() {
     this.verifySearchPaneExpanded(true);
     cy.expect([
@@ -223,6 +228,10 @@ export default {
       dateCreatedAccordion.find(dateToField).fillIn(toDate),
       dateCreatedAccordion.find(applyButton).click(),
     ]);
+  },
+
+  verifyDateCreatedAccordionCollapsed() {
+    cy.expect(dateCreatedAccordion.has({ open: false }));
   },
 
   filterByDateUpdated(fromDate, toDate) {

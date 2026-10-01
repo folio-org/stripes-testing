@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, Link } from '@interactors/html';
 import { v4 as uuidv4 } from 'uuid';
 import {
   Accordion,
@@ -163,12 +163,14 @@ const getReadingRoomAccessOptionValue = (optionValue) => {
 // Expiration date modal appears for only some patron groups based on their settings,
 // so we need to check if it appears and click "Set" if it does.
 const clickSetExpirationDateIfModalExists = () => {
+  cy.wait(2000);
   cy.get('body').then(($body) => {
     if ($body.find('#recalculate_expirationdate_modal').length > 0) {
       cy.do(resetExpirationDateModal.find(recalculateExpirationDateButton).click());
       cy.expect(resetExpirationDateModal.absent());
     }
   });
+  cy.wait(2000);
 };
 
 const getAccordionByLabel = (accordionLabel) => Accordion(accordionLabel);
@@ -299,13 +301,17 @@ export default {
   },
   addServicePointsViaApi,
 
+  waitLoading() {
+    cy.expect(rootPane.exists());
+    cy.wait(3000);
+  },
+
   openEdit() {
     cy.expect(userDetailsPane.find(actionsButton).exists());
     cy.do(userDetailsPane.find(actionsButton).click());
     cy.expect(DropdownMenu().find(editButton).exists());
     cy.do(editButton.click());
-    cy.expect(rootPane.exists());
-    cy.wait(3000);
+    this.waitLoading();
   },
 
   changeMiddleName(midName) {
@@ -954,6 +960,10 @@ export default {
     });
   },
 
+  verifyNoAddressesFound() {
+    cy.expect(HTML(including('No addresses found')).exists());
+  },
+
   addAddress(type = 'Home') {
     cy.expect(Button('Add address').exists());
     cy.do(Button('Add address').click());
@@ -1245,6 +1255,8 @@ export default {
       emailField.fillIn(userData.personal.email),
     ]);
     this.changePatronGroup(patronGroup);
+    clickSetExpirationDateIfModalExists();
+    cy.wait(3000);
     cy.do(saveAndCloseBtn.click());
     return cy.wait('@createUser', { timeout: 80_000 }).then(({ response }) => {
       return response.body.id;
@@ -1415,6 +1427,25 @@ export default {
     }
   },
 
+  // Idempotent - only expands if currently collapsed. Useful after navigating away and back
+  // (e.g. via cy.go('back')), where accordion state may or may not have survived
+  ensureUserRolesAccordionExpanded(isEditable = true) {
+    cy.do(userRolesAccordion.expand());
+    cy.expect(userRolesAccordion.has({ open: true }));
+    if (isEditable) {
+      cy.expect([
+        addRolesButton.exists(),
+        unassignAllRolesButton.has({ disabled: or(true, false) }),
+      ]);
+    } else {
+      cy.expect([
+        addRolesButton.absent(),
+        unassignAllRolesButton.absent(),
+        userRoleDeleteIcon.absent(),
+      ]);
+    }
+  },
+
   verifyUserRolesAccordionEmpty() {
     cy.wait(2000);
     cy.expect([
@@ -1470,14 +1501,58 @@ export default {
     if (isShown) cy.expect(targetRow.exists());
     else cy.expect(targetRow.absent());
     if ([true, false].includes(isChecked)) {
-      const expectedStatusText = isChecked
-        ? this.roleAssignmentFilterOptions.ASSIGNED
-        : this.roleAssignmentFilterOptions.UNASSIGNED;
-      cy.expect([
-        targetRow.find(Checkbox()).has({ checked: isChecked }),
-        targetRow.find(MultiColumnListCell(expectedStatusText)).exists(),
-      ]);
+      cy.expect(targetRow.find(Checkbox()).has({ checked: isChecked }));
     }
+  },
+
+  verifyRoleIsLinkInModal(roleName) {
+    const targetRow = selectRolesModal.find(
+      MultiColumnListRow({
+        innerText: matching(new RegExp(`^${roleName}\\n`)),
+        isContainer: false,
+      }),
+    );
+    cy.expect(targetRow.find(Link(roleName)).exists());
+  },
+
+  // Blanket check across every row currently listed in the modal (not just a sampled role),
+  // comparing the row count against the number of role-detail links actually rendered
+  verifyAllRolesLinkStatusInModal({ isLink = true } = {}) {
+    cy.then(() => selectRolesModal.find(MultiColumnList()).rowCount()).then((rowCount) => {
+      cy.do(
+        selectRolesModal.perform((element) => {
+          const linksCount = element.querySelectorAll(
+            'a[href^="/settings/authorization-roles/"]',
+          ).length;
+          expect(linksCount, 'Role links count in modal').to.equal(isLink ? rowCount : 0);
+        }),
+      );
+    });
+  },
+
+  // Cypress can't verify target="_blank" behavior by actually clicking it - that risks a real
+  // new tab opening in CI. Instead this asserts the link's original target is "_blank" (which
+  // by web-standard definition guarantees clicking it would leave the modal/checkbox alone),
+  // then removes that target and clicks, so the role's own detail page opens (and can be
+  // verified) in the current tab
+  clickRoleLinkInModal(roleName) {
+    const targetRow = selectRolesModal.find(
+      MultiColumnListRow({
+        innerText: matching(new RegExp(`^${roleName}\\n`)),
+        isContainer: false,
+      }),
+    );
+    const link = targetRow.find(Link(roleName));
+    // .perform() may not retry the way .click() does, so wait for the link with a regular
+    // interactor assertion first
+    cy.expect(link.exists());
+    cy.do(
+      link.perform((element) => {
+        expect(element.target).to.equal('_blank');
+        element.removeAttribute('target');
+        element.click();
+      }),
+    );
   },
 
   verifyRoleAssignmentFilterOptionInModal(option, { isChecked = false } = {}) {
@@ -1526,12 +1601,48 @@ export default {
     cy.wait(1000);
   },
 
+  closeRolesModalWithoutSaving() {
+    cy.do(selectRolesModal.find(cancelButton).click());
+    cy.expect(selectRolesModal.absent());
+  },
+
   verifyUserRoleNames(roleNames, isEditable = true) {
     roleNames.forEach((roleName) => {
       const roleItem = userRolesAccordion.find(ListItem(including(roleName)));
       if (isEditable) cy.expect(roleItem.find(userRoleDeleteIcon).exists());
       else cy.expect(roleItem.exists());
     });
+  },
+
+  verifyUserRoleIsLinkInEditForm(roleName) {
+    const roleItem = userRolesAccordion.find(ListItem(including(roleName)));
+    cy.expect(roleItem.find(Link(roleName)).exists());
+  },
+
+  verifyUserRoleIsPlainTextInEditForm(roleName) {
+    const roleItem = userRolesAccordion.find(ListItem(including(roleName)));
+    cy.expect([roleItem.exists(), roleItem.find(Link(roleName)).absent()]);
+  },
+
+  // Cypress can't verify target="_blank" behavior by actually clicking it - that risks a real
+  // new tab opening in CI. Instead this asserts the link's original target is "_blank" (which
+  // by web-standard definition guarantees clicking it would leave the edit form alone), then
+  // removes that target and clicks, so the role's own detail page opens (and can be verified)
+  // in the current tab
+  clickUserRoleLinkInEditForm(roleName) {
+    const roleItem = userRolesAccordion.find(ListItem(including(roleName)));
+    const link = roleItem.find(Link(roleName));
+    // .perform() may not retry the way .click() does, so wait for the link with a regular
+    // interactor assertion first
+    cy.expect(link.exists());
+    cy.do(
+      link.perform((element) => {
+        expect(element.target).to.equal('_blank');
+        element.removeAttribute('target');
+        element.click();
+      }),
+    );
+    cy.wait(2000);
   },
 
   verifyUserRoleNamesOrdered(roleNames, isEditable = true) {

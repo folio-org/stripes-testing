@@ -54,7 +54,10 @@ describe('Eureka', () => {
             const matchingRoles = existingRoles.filter(
               (role) => role.name === testData.systemRoleName(expectedSystemRole.moduleName),
             );
-            expect(matchingRoles.length).to.eq(1);
+            expect(
+              matchingRoles.length,
+              `Default role exists for module "${expectedSystemRole.moduleName}"`,
+            ).to.eq(1);
             expectedSystemRole.roleId = matchingRoles[0].id;
 
             cy.getCapabilitiesForRoleApi(expectedSystemRole.roleId, {
@@ -82,7 +85,10 @@ describe('Eureka', () => {
                     const systemUserRoleIds = userRolesResponse.body.userRoles.map(
                       (role) => role.roleId,
                     );
-                    expect(systemUserRoleIds).to.include(expectedSystemRole.roleId);
+                    expect(
+                      systemUserRoleIds,
+                      `Default role assigned to system user for module "${expectedSystemRole.moduleName}"`,
+                    ).to.include(expectedSystemRole.roleId);
                   });
                 },
               );

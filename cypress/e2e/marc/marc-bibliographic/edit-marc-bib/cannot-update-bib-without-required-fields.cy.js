@@ -81,7 +81,6 @@ describe('MARC', () => {
         if (field980Id) {
           cy.deleteSpecificationField(field980Id, false);
         }
-        cy.syncSpecifications(bibSpecId);
       });
 
       it(
@@ -142,6 +141,7 @@ describe('MARC', () => {
                 path: TopMenu.inventoryPath,
                 waiter: InventoryInstances.waitContentLoading,
               });
+              cy.wait(10_000);
             })
             .then(() => {
               // Step 1: Open the MARC bib record for editing

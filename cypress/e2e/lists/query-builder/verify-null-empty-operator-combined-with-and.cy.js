@@ -51,7 +51,7 @@ describe('Lists', () => {
         // Step 2: Select first field "User — Mobile phone"
         QueryModal.selectField(usersFieldValues.userMobilePhone);
         QueryModal.verifySelectedField(usersFieldValues.userMobilePhone);
-        QueryModal.verifyQueryAreaContent('(users.mobile_phone  )');
+        QueryModal.verifyQueryAreaContent('');
 
         // Step 3: Verify operator dropdown options for "User — Mobile phone" field
         QueryModal.verifyOperatorsList(STRING_OPERATORS);
@@ -78,9 +78,7 @@ describe('Lists', () => {
         // Step 8: Select second field "User — First name"
         QueryModal.selectField(usersFieldValues.firstName, 1);
         QueryModal.verifySelectedField(usersFieldValues.firstName, 1);
-        QueryModal.verifyQueryAreaContent(
-          '(users.mobile_phone is null/empty True) AND (users.first_name  )',
-        );
+        QueryModal.verifyQueryAreaContent('(users.mobile_phone is null/empty True)');
         QueryModal.verifyOperatorsList(STRING_OPERATORS, 1);
         QueryModal.testQueryDisabled();
         QueryModal.runQueryAndSaveDisabled();

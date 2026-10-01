@@ -114,7 +114,7 @@ describe('Lists', () => {
           // Step 3: Select "Vendor org — EDI vendor type" field
           QueryModal.selectField(purchaseOrderLinesFieldValues.vendorOrgEdiType);
           QueryModal.verifySelectedField(purchaseOrderLinesFieldValues.vendorOrgEdiType);
-          QueryModal.verifyQueryAreaContent('(vendor_organization.edi_vendor_edi_type  )');
+          QueryModal.verifyQueryAreaContent('');
 
           // Step 4: Verify operators available for Vendor org — EDI vendor type field
           QueryModal.verifyOperatorsList(enumOperators);
@@ -122,7 +122,7 @@ describe('Lists', () => {
           // Step 5: Select "in" operator
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.verifySelectedOperator(QUERY_OPERATIONS.IN);
-          QueryModal.verifyQueryAreaContent('(vendor_organization.edi_vendor_edi_type in ())');
+          QueryModal.verifyQueryAreaContent('(vendor_organization.edi_vendor_edi_type in [])');
 
           // Step 6: Select value from dropdown (pre-populated EDI vendor types)
           QueryModal.chooseFromValueMultiselect(ediVendorType);

@@ -249,9 +249,10 @@ describe('Bulk-edit', () => {
         BulkEditActions.selectStatisticalCodeValue(statisticalCode.fullName, 1);
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
-        // Step 6: Remove all 041 0\ $a fields
+        // Step 6: Remove 041 0\ field, verify "Subfield" column textbox
         BulkEditActions.fillInTagAndIndicatorsAndSubfield('041', '0', '\\', '');
         BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_FIELD);
+        BulkEditActions.verifySubfieldDisabled();
         BulkEditActions.verifyConfirmButtonDisabled(false);
 
         // Step 7: Find and append 041 1\ $a field

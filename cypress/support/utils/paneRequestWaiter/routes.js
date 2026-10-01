@@ -5,10 +5,19 @@
  * @param {string} pathname - Exact Okapi path without a query string.
  * @param {string} [method='GET'] - HTTP method sent by the application.
  * @param {Function} [matcher] - Optional discriminator for shared endpoints.
+ * @param {number[]} [acceptedErrorStatuses=[]] - Expected HTTP error statuses
+ * that complete this route successfully (for example, validation endpoints
+ * that use 400 to report an invalid search value).
  * @returns {Object} Pane request route.
  */
-export const route = (id, pathname, method = 'GET', matcher) => {
-  return Object.freeze({ id, pathname, method, matcher });
+export const route = (id, pathname, method = 'GET', matcher, acceptedErrorStatuses = []) => {
+  return Object.freeze({
+    id,
+    pathname,
+    method,
+    matcher,
+    acceptedErrorStatuses: Object.freeze([...acceptedErrorStatuses]),
+  });
 };
 
 export const acquisitionUnits = route('acquisitionUnits', '/acquisitions-units/units');
@@ -28,6 +37,7 @@ export const fundTypes = route('fundTypes', '/finance/fund-types');
 export const groups = route('groups', '/finance/groups');
 export const holdings = route('holdings', '/holdings-storage/holdings');
 export const invoices = route('invoices', '/invoice/invoices');
+export const isbnConversion = route('isbnConversion', '/isbn/convertTo13', 'GET', null, [400]);
 export const ledgers = route('ledgers', '/finance/ledgers');
 export const locations = route('locations', '/locations');
 export const materialTypes = route('materialTypes', '/material-types');
@@ -37,6 +47,13 @@ export const organizationTypes = route(
   '/organizations-storage/organization-types',
 );
 export const orderLines = route('orderLines', '/orders/order-lines');
+export const invalidOrderLinesQuery = route(
+  'invalidOrderLinesQuery',
+  '/orders/order-lines',
+  'GET',
+  null,
+  [400],
+);
 export const orders = route('orders', '/orders/composite-orders');
 export const prefixes = route('prefixes', '/orders/configuration/prefixes');
 export const receivingTitles = route('receivingTitles', '/orders/titles');
@@ -50,8 +67,9 @@ export const settingsEntries = route(
   'settingsEntries',
   '/settings/entries',
   'GET',
-  ({ query }) => query.query?.includes('scope="tags.tags.manage"') &&
-    query.query?.includes('key="tags_enabled"'),
+  // Releases have used both `tags.tags.manage` and `ui-tags.tags.manage`.
+  // Matching the stable suffix keeps the filter profile compatible with both.
+  ({ query }) => query.query?.includes('tags.tags.manage') && query.query?.includes('key="tags_enabled"'),
 );
 export const centralOrderingSettings = route(
   'centralOrderingSettings',

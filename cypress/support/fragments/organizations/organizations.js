@@ -1009,14 +1009,14 @@ export default {
       return response.body.organizations[0];
     }),
 
-  createOrganizationViaApi: (organization) => cy
+  createOrganizationViaApi: (organization, { returnBody = false } = {}) => cy
     .okapiRequest({
       method: 'POST',
       path: 'organizations/organizations',
       body: organization,
       isDefaultSearchParamsRequired: false,
     })
-    .then((response) => response.body.id),
+    .then((response) => (returnBody ? response.body : response.body.id)),
 
   createBankingInformationViaApi: (bankingInformation) => cy
     .okapiRequest({
@@ -1139,6 +1139,10 @@ export default {
     cy.expect(editButton.exists());
     cy.do(editButton.click());
     cy.wait(2000);
+  },
+
+  checkOrganizationStatusInEditForm: (status) => {
+    cy.expect(organizationStatus.has({ checkedOptionText: status }));
   },
 
   changeOrganizationStatus: (status) => {
@@ -1843,6 +1847,10 @@ export default {
 
   editOrganizationName: (organization) => {
     cy.do([organizationNameField.fillIn(`${organization.name}-edited`), saveAndClose.click()]);
+  },
+
+  editOrganizationCode: (code) => {
+    cy.do([organizationCodeField.fillIn(code), saveAndClose.click()]);
   },
 
   editOrganizationDescription: (organization) => {

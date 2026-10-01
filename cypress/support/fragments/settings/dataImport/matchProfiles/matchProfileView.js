@@ -3,6 +3,8 @@ import moment from 'moment';
 import { HTML, including } from '@interactors/html';
 import {
   Button,
+  DropdownMenu,
+  KeyValue,
   MultiColumnList,
   MultiColumnListHeader,
   Pane,
@@ -44,6 +46,22 @@ export default {
   verifyMatchProfileOpened: () => {
     cy.expect(Pane({ id: 'pane-results' }).exists());
     cy.expect(viewPane.exists());
+  },
+  checkSummaryFieldsConditions(fields) {
+    fields.forEach(({ label, conditions }) => {
+      if (label === 'Name') {
+        this.verifyMatchProfileTitleName(conditions.value);
+      } else {
+        cy.expect(viewPane.find(KeyValue(label)).has(conditions));
+      }
+    });
+  },
+  verifyActionsMenuOptionsDisabled(optionNames, { isDisabled = true, openMenu = true } = {}) {
+    if (openMenu) cy.do(viewPane.find(actionsButton).click());
+    const options = Array.isArray(optionNames) ? optionNames : [optionNames];
+    cy.expect(
+      options.map((option) => DropdownMenu().find(Button(option)).has({ disabled: isDisabled })),
+    );
   },
 
   verifyActionMenuAbsent: () => cy.expect(viewPane.find(actionsButton).absent()),

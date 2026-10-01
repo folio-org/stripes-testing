@@ -15,9 +15,12 @@ import {
 } from '../../../../interactors';
 import {
   DEFAULT_WAIT_TIME,
+  INVOICE_ACTION_MENU_BUTTONS,
   INVOICE_LEVEL_ADJUSTMENTS_COLUMNS,
   INVOICE_LEVEL_FUND_DISTRIBUTION_COLUMNS,
+  INVOICE_LINES_TABLE_COLUMN_HEADERS,
   INVOICE_POL_PAYMENT_STATUSES,
+  THE_LIST_CONTAINS_NO_ITEMS,
 } from '../../constants';
 import interactorsTools from '../../utils/interactorsTools';
 import InvoiceEditForm from './invoiceEditForm';
@@ -30,6 +33,7 @@ import PayInvoiceModal from './modal/payInvoiceModal';
 import SelectOrderLinesModal from './modal/selectOrderLinesModal';
 import InvoiceStates from './invoiceStates';
 import UpdatePOLinePaymentStatusModal from './modal/updatePOLinePaymentStatusModal';
+import VoucherView from './voucherView';
 import FundDetails from '../finance/funds/fundDetails';
 
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
@@ -55,6 +59,8 @@ const invoiceFundDistributionSection = invoiceDetailsPane.find(
 const invoiceLevelAdjustmentsSection = invoiceDetailsPane.find(
   Section({ id: 'invoiceAdjustments' }),
 );
+const extendedInformationAccordion = Accordion({ id: 'extendedInformation' });
+const linksAndDocumentsAccordion = Accordion({ id: 'documents' });
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -97,10 +103,27 @@ export default {
   },
   checkInvoiceLinesTableContent(records = []) {
     records.forEach((record, index) => {
+      if (record.number) {
+        cy.expect(
+          invoiceLinesSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: INVOICE_LINES_TABLE_COLUMN_HEADERS.LINE_NUMBER,
+              }),
+            )
+            .has({ content: String(record.number) }),
+        );
+      }
       if (record.poNumber) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListCell({ row: index, column: 'POL number' }))
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: INVOICE_LINES_TABLE_COLUMN_HEADERS.POL_NUMBER,
+              }),
+            )
             .has({ content: including(record.poNumber) }),
         );
       }
@@ -108,7 +131,12 @@ export default {
       if (record.description) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListCell({ row: index, column: 'Description' }))
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: INVOICE_LINES_TABLE_COLUMN_HEADERS.DESCRIPTION,
+              }),
+            )
             .has({ content: including(record.description) }),
         );
       }
@@ -116,7 +144,12 @@ export default {
       if (record.fundCode) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListCell({ row: index, column: 'Fund code' }))
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: INVOICE_LINES_TABLE_COLUMN_HEADERS.FUND_CODE,
+              }),
+            )
             .has({ content: including(record.fundCode) }),
         );
       }
@@ -124,7 +157,12 @@ export default {
       if (record.receiptStatus) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListCell({ row: index, column: 'Receipt status' }))
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: INVOICE_LINES_TABLE_COLUMN_HEADERS.RECEIPT_STATUS,
+              }),
+            )
             .has({ content: including(record.receiptStatus) }),
         );
       }
@@ -132,7 +170,12 @@ export default {
       if (record.paymentStatus) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListCell({ row: index, column: 'Payment status' }))
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: INVOICE_LINES_TABLE_COLUMN_HEADERS.PAYMENT_STATUS,
+              }),
+            )
             .has({ content: including(record.paymentStatus) }),
         );
       }
@@ -140,7 +183,12 @@ export default {
       if (record.quantity) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListCell({ row: index, column: 'Quantity' }))
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: INVOICE_LINES_TABLE_COLUMN_HEADERS.QUANTITY,
+              }),
+            )
             .has({ content: including(record.quantity) }),
         );
       }
@@ -148,7 +196,12 @@ export default {
       if (record.subTotal) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListCell({ row: index, column: 'Sub-total' }))
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: INVOICE_LINES_TABLE_COLUMN_HEADERS.SUB_TOTAL,
+              }),
+            )
             .has({ content: including(record.subTotal) }),
         );
       }
@@ -156,7 +209,9 @@ export default {
       if (record.total) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListCell({ row: index, column: 'Total' }))
+            .find(
+              MultiColumnListCell({ row: index, column: INVOICE_LINES_TABLE_COLUMN_HEADERS.TOTAL }),
+            )
             .has({ content: including(record.total) }),
         );
       }
@@ -164,15 +219,51 @@ export default {
       if (record.totalExchanged) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListCell({ row: index, column: 'Total (Exchanged)' }))
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: INVOICE_LINES_TABLE_COLUMN_HEADERS.TOTAL_EXCHANGED,
+              }),
+            )
             .has({ content: including(record.totalExchanged) }),
+        );
+      }
+
+      if (record.vendorCode) {
+        cy.expect(
+          invoiceLinesSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: INVOICE_LINES_TABLE_COLUMN_HEADERS.VENDOR_CODE,
+              }),
+            )
+            .has({ content: including(record.vendorCode) }),
         );
       }
     });
   },
+  expandExtendedInformationAccordion() {
+    cy.do(extendedInformationAccordion.clickHeader());
+    cy.expect(extendedInformationAccordion.has({ open: true }));
+  },
+  expandLinksDocumentsAccordion() {
+    cy.do(linksAndDocumentsAccordion.clickHeader());
+    cy.expect(linksAndDocumentsAccordion.has({ open: true }));
+  },
+  verifyVoucherAccordionAbsent() {
+    cy.expect(voucherInformationSection.absent());
+  },
+  viewVoucher() {
+    cy.do(voucherInformationSection.find(Button('View voucher')).click());
+    VoucherView.waitLoading();
+
+    return VoucherView;
+  },
   checkInvoiceDetails({
     title,
     invoiceInformation = [],
+    extendedInformation = [],
     invoiceLines,
     invoiceFundDistributions,
     invoiceLevelAdjustments,
@@ -203,6 +294,10 @@ export default {
               cy.wrap(normalizedText).should('include', value);
             });
         });
+    });
+
+    extendedInformation.forEach(({ key, value }) => {
+      cy.expect(extendedInformationAccordion.find(KeyValue(key)).has({ value: including(value) }));
     });
 
     vendorDetails.forEach(({ key, value }) => {
@@ -350,7 +445,13 @@ export default {
       );
     });
   },
-  checkDocumentsSection({ linkName, externalUrl, documentName, shouldExpand = true } = {}) {
+  checkDocumentsSection({
+    linkName,
+    externalUrl,
+    documentName,
+    shouldExpand = true,
+    isEmpty = false,
+  } = {}) {
     if (shouldExpand) {
       cy.do(linksAndDocumentsSection.toggle());
     }
@@ -375,6 +476,13 @@ export default {
           content: documentName,
         }),
       );
+    }
+    if (isEmpty) {
+      cy.expect([
+        linksAndDocumentsSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }),
+        linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Link name' })).absent(),
+        linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Document name' })).absent(),
+      ]);
     }
   },
   copyOrderNumber(vendorInvoiceNo) {
@@ -519,6 +627,12 @@ export default {
 
   clickCancelInActionsMenu() {
     cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), cancelButton.click()]);
+  },
+  clickPayInActionsMenu() {
+    cy.do([
+      invoiceDetailsPaneHeader.find(actionsButton).click(),
+      Button(INVOICE_ACTION_MENU_BUTTONS.PAY).click(),
+    ]);
   },
   approveAndPayInvoiceWithUpdatePOLPaymentStatus({ status, errorMessage } = {}) {
     this.clickApproveAndPayInvoice({ isApprovePayEnabled: true });

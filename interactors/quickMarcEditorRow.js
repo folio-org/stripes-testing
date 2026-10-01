@@ -13,4 +13,5 @@ export default HTML.extend('quickMarcEditorRow')
     tagValue: (el) => el.querySelector(quickMarcEditorTagInRowSelector).getAttribute('value'),
     dataRow: (el) => el.getAttribute('data-row'),
     error: (el) => (el.querySelector('[class*="validationIssueError-"]') || {}).textContent,
+    content: (el) => el.textContent || '',
   });

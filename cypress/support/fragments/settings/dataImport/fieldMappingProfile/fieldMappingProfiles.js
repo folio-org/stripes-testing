@@ -9,6 +9,7 @@ import {
   PaneContent,
   Form,
   MultiColumnList,
+  DropdownMenu,
 } from '../../../../../../interactors';
 import mappingDetails from './mappingDetails';
 import ResultsPane from '../resultsPane';
@@ -71,6 +72,7 @@ const duplicate = () => {
 export default {
   openNewMappingProfileForm,
   search,
+  duplicate,
   mappingProfileForDuplicate,
   clearSearchField: () => {
     cy.do(searchField.focus());
@@ -105,10 +107,14 @@ export default {
     cy.do([Pane({ id: 'full-screen-view' }).find(actionsButton).click()]);
     cy.expect([editButton.exists(), deleteButton.exists(), dublicateButton.exists()]);
   },
+  closeActionMenu: () => {
+    cy.do([Pane({ id: 'full-screen-view' }).find(actionsButton).click()]);
+    cy.expect(DropdownMenu().absent());
+  },
   createInvoiceMappingProfile: (mappingProfile, defaultProfile) => {
     search(defaultProfile);
     duplicate();
-    cy.wait(2000);
+    cy.wait(3000);
     NewFieldMappingProfile.fillInvoiceMappingProfile(mappingProfile);
     FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());
@@ -155,10 +161,10 @@ export default {
     cy.expect(actionsButton.exists());
   },
   selectMappingProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
-  checkMappingProfilePresented: (mappingProfileName) => {
+  checkMappingProfilePresented: (mappingProfileName, { closeView = true } = {}) => {
     search(mappingProfileName);
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
-    FieldMappingProfileView.closeViewMode(mappingProfileName);
+    if (closeView) FieldMappingProfileView.closeViewMode(mappingProfileName);
   },
   checkListOfExistingProfilesIsDisplayed: () => {
     cy.wait(2000);
@@ -174,6 +180,9 @@ export default {
   verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),
   verifySearchResult: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
+  },
+  verifyProfileAbsentFromList: (profileName) => {
+    cy.expect(resultsPane.find(MultiColumnListCell(profileName)).absent());
   },
   checkSuccessDelitionCallout: (profileName) => {
     cy.expect(
@@ -221,16 +230,16 @@ export default {
   getDefaultMappingProfile({
     incomingRecordType = 'MARC_AUTHORITY',
     existingRecordType = 'MARC_AUTHORITY',
-    mappingFields = [],
+    mappingFieldsData = [],
     id = uuid(),
     name,
     isDeleteProfile = false,
   } = {}) {
-    const mappingFieldsNames = mappingFields.map(({ name: fieldName }) => fieldName);
+    const mappingFieldsNames = mappingFieldsData.map(({ name: fieldName }) => fieldName);
     const updatedMappingFields = mappingDetails[existingRecordType].mappingFields.reduce(
       (acc, it) => {
         if (mappingFieldsNames.includes(it.name)) {
-          const field = mappingFields.find(({ name: fieldName }) => fieldName === it.name);
+          const field = mappingFieldsData.find(({ name: fieldName }) => fieldName === it.name);
           return [...acc, { ...it, ...field }];
         }
         return [...acc, it];
@@ -248,7 +257,12 @@ export default {
         existingRecordType,
         description: '',
         mappingDetails: isDeleteProfile
-          ? {}
+          ? {
+            // eslint-disable-next-line no-unused-vars
+            ...(({ marcMappingOption, mappingFields, ...rest }) => rest)(
+              mappingDetails[existingRecordType],
+            ),
+          }
           : {
             ...mappingDetails[existingRecordType],
             mappingFields: updatedMappingFields,

@@ -121,7 +121,7 @@ describe('Orders', () => {
       // Click "Actions" button, Select "Cancel" option
       OrderLineDetails.cancelOrderLine({ orderLineNumber: `${testData.order.poNumber}-1` });
       OrderLineDetails.checkOrderLineDetails({
-        purchaseOrderLineInformation: [
+        poLineInformation: [
           { key: POLINE_DETAILS_FIELDS.PAYMENT_STATUS, value: ORDER_LINE_PAYMENT_STATUS.CANCELLED },
           { key: POLINE_DETAILS_FIELDS.RECEIPT_STATUS, value: RECEIPT_STATUS_VIEW.CANCELLED },
         ],
@@ -168,7 +168,7 @@ describe('Orders', () => {
       // Click on PO line #2 on "Purchase order" pane
       OrderDetails.openPolDetails(testData.orderLines[1].titleOrPackage);
       OrderLineDetails.checkOrderLineDetails({
-        purchaseOrderLineInformation: [
+        poLineInformation: [
           {
             key: POLINE_DETAILS_FIELDS.PAYMENT_STATUS,
             value: ORDER_LINE_PAYMENT_STATUS.AWAITING_PAYMENT,

@@ -45,7 +45,7 @@ describe('Bulk-edit', () => {
         QueryModal.clickSelectFieldButton();
         QueryModal.selectField(holdingsFieldValues.instanceUuid);
         QueryModal.verifySelectedField(holdingsFieldValues.instanceUuid);
-        QueryModal.verifyQueryAreaContent('(holdings.instance_id  )');
+        QueryModal.verifyQueryAreaContent('');
         QueryModal.verifyOperatorColumn();
         QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
         QueryModal.verifyQueryAreaContent('(holdings.instance_id == )');

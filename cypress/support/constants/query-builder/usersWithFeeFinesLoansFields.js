@@ -53,6 +53,8 @@ export const USERS_WITH_FEES_FINES_LOANS_FIELDS = {
     UPDATED_AT: 'Fee/Fine account — Updated at',
     USER_UUID: 'Fee/Fine account — User UUID',
     UUID: 'Fee/Fine account — UUID',
+    OWNER_UUID: 'Fee/Fine account — Owner UUID',
+    FEE_FINE_UUID: 'Fee/Fine account — Fee/fine UUID',
   },
   LOAN: {
     ACTION: 'Loan — Action',

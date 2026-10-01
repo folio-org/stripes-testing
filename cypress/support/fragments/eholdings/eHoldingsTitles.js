@@ -100,11 +100,21 @@ export default {
       .then(({ body }) => body);
   },
 
-  getTitleByIdViaApi(packageId) {
+  getTitleByIdViaApi(titleId, { searchParams } = {}) {
     return cy.okapiRequest({
       method: 'GET',
-      path: `eholdings/titles/${packageId}`,
+      path: `eholdings/titles/${titleId}`,
       isDefaultSearchParamsRequired: false,
+      searchParams,
+    });
+  },
+
+  deleteTitleByIdViaApi(titleId, { failOnStatusCode = false } = {}) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `eholdings/titles/${titleId}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     });
   },
 

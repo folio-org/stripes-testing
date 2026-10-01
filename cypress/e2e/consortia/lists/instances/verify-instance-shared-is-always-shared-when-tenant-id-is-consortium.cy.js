@@ -10,8 +10,10 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import { Lists } from '../../../../support/fragments/lists/lists';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
+const todayDate = DateTools.getCurrentDate();
 const testData = {
   user: {},
   listName: `AT_C411845_List_${getRandomPostfix()}`,
@@ -77,7 +79,7 @@ describe('Lists', () => {
           // Step 2-3: Select "Instance — Tenant ID" field
           QueryModal.selectField(instanceFieldValues.instanceTenantId);
           QueryModal.verifySelectedField(instanceFieldValues.instanceTenantId);
-          QueryModal.verifyQueryAreaContent('(instance.tenant_id  )');
+          QueryModal.verifyQueryAreaContent('');
 
           // Step 4: Verify supported operators for "Instance — Tenant ID"
           QueryModal.verifyOperatorsList(STRING_STORES_UUID_OPERATORS);
@@ -85,8 +87,13 @@ describe('Lists', () => {
           // Step 5: Select "equals" operator, choose "consortium" value, run test query
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL);
           QueryModal.chooseValueSelect(Affiliations.Consortia);
+          QueryModal.addNewRow();
+          QueryModal.selectField(instanceFieldValues.createdDate, 1);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
+          QueryModal.pickDate(todayDate, 1);
+          cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
           QueryModal.clickTestQuery();
-          QueryModal.waitForQueryTestToFinish();
+          QueryModal.waitForQueryCompleted('@waiterForQueryCompleted');
 
           // Step 6: Verify preview of matched records
           QueryModal.verifyPreviewOfRecordsMatched();

@@ -50,6 +50,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileName);
         Logs.checkJobStatus(fileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        cy.wait(5000);
         Logs.openFileDetails(fileName);
         cy.wrap([0, 6]).each((rowNumber) => {
           [
@@ -74,7 +75,7 @@ describe('Data Import', () => {
         FileDetails.checkSrsRecordQuantityInSummaryTable('2');
         FileDetails.checkAuthorityQuantityInSummaryTable('2');
         // check No action counter in the Summary table
-        FileDetails.checkSrsRecordQuantityInSummaryTable('6', 2);
+        FileDetails.checkSrsRecordQuantityInSummaryTable('6', 3);
         FileDetails.openJsonScreen('No content');
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(error);

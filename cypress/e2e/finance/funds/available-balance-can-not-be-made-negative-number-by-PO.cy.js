@@ -12,6 +12,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Budgets from '../../../support/fragments/finance/budgets/budgets';
+import orderStates from '../../../support/fragments/orders/orderStates';
 
 describe('Finance', () => {
   describe('Funds', () => {
@@ -34,7 +35,6 @@ describe('Finance', () => {
       ...Budgets.getDefaultBudget(),
       allocated: 100,
     };
-    const errorMessage = `One or more fund distributions on this order can not be encumbered, because there is not enough money in [${defaultFund.code}].`;
     defaultFiscalYear.code = defaultFiscalYear.code.slice(0, -1) + '1';
     let user;
     let location;
@@ -104,7 +104,9 @@ describe('Finance', () => {
           );
           OrderLines.backToEditingOrder();
           Orders.openOrder();
-          Orders.checkOneOfCalloutsContainsErrorMessage(errorMessage);
+          Orders.checkOneOfCalloutsContainsErrorMessage(
+            orderStates.notEnoughMoneyInFundError(defaultFund.code),
+          );
         });
       },
     );

@@ -32,6 +32,11 @@ export const NUMBERS = {
   ARAB: { name: 'arab (٠ ١ ٢ ٣ ٤ ٥ ٦ ٧ ٨ ٩)', value: 'arab' },
 };
 
+export const CURRENCIES = {
+  EURO: { name: 'Euro (EUR)', value: 'EUR' },
+  US_DOLLAR: { name: 'US Dollar (USD)', value: 'USD' },
+};
+
 export default {
   waitLoading() {
     cy.expect(Pane('Language and localization').exists());
@@ -66,6 +71,13 @@ export default {
   changeNumberingSystem(system) {
     cy.do(numberingSystemSelect.choose(system.name));
     cy.expect(numberingSystemSelect.has({ value: system.value }));
+  },
+  changePrimaryCurrency(currency) {
+    cy.do(primaryCurrencySystemSelect.choose(currency.name));
+    cy.expect(primaryCurrencySystemSelect.has({ value: currency.value }));
+  },
+  checkPrimaryCurrency(currency) {
+    cy.expect(primaryCurrencySystemSelect.has({ value: currency.value }));
   },
   clickSaveButton() {
     cy.expect(saveButton.has({ disabled: false }));

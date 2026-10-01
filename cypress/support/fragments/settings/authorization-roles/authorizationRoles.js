@@ -102,7 +102,8 @@ const promoteUsersModal = Modal('Create user records in Keycloak');
 const confirmButton = Button('Confirm');
 const promoteUsersModalText =
   'This operation will create new records in Keycloak for the following users:';
-const noUsernameCalloutText = 'User without username cannot be created in Keycloak';
+const noUsernameCalloutText =
+  'User assignment aborted.  This operation requires all users involved to have a username.';
 const createAccessErrorText = 'Role could not be created: Access Denied';
 const clearFieldButton = Button({ icon: 'times-circle-solid' });
 const noAccessErrorText = or(
@@ -136,6 +137,7 @@ const unselectModalContentRegExp = (appNames, capabilitiesCount, setsCount) => {
 const confirmShareModalText = (roleName) => `Are you sure you want to share ${roleName} with ALL members?  Please note: Sharing a role with many capabilities or capability sets can take several minutes to complete, especially in systems with a large number of members. Avoid refreshing or closing this page during the process.`;
 const shareNameErrorText = (tenantNames) => `Role could not be shared: Name is already in use at one or more member libraries - ${tenantNames.join(', ')}.`;
 const saveNameErrorText = (tenantNames) => `Role could not be updated: Name is already in use at one or more member libraries - ${tenantNames.join(', ')}.`;
+
 const expectedCapabilityTableActions = {
   [CAPABILITY_TYPES.DATA]: [
     CAPABILITY_ACTIONS.VIEW,
@@ -154,11 +156,21 @@ const expectedCapabilityTableActions = {
   [CAPABILITY_TYPES.PROCEDURAL]: [CAPABILITY_ACTIONS.EXECUTE],
 };
 const unselectSetConfirmModal = Modal({ id: 'unselect-capability-set-confirmation-modal' });
+const unselectSetConfirmModalTitle = 'Warning';
+const unselectSetModalTextRegexp = (resource, action, capabilitiesCount) => new RegExp(
+  `By unselecting ${resource} - ${action.toLowerCase()}, ${capabilitiesCount !== null ? capabilitiesCount : '\\d+'} capabilit(ies|y) will also be unselected\\.\\s+Are you sure you'd like to proceed\\?`,
+);
+const unselectSetModalTextBottom =
+  'If checked, this message will be automatically confirmed for the rest of the session.';
+const unselectSetModalCheckbox = Checkbox('Do not display this message again.');
+const showHiddenCapabilitiesCheckbox = Checkbox('Show hidden capabilities');
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
 export const defaultRoleCrudErrorMessage =
   'Default role cannot be created, updated or deleted via roles API.';
+export const nameSlashErrorText = 'Role name cannot contain the "/" character';
+export const nameRequiredErrorText = 'Please fill this in to continue';
 
 export default {
   capabilitiesAccordion,
@@ -182,17 +194,23 @@ export default {
     cy.do(newButton.click());
     cy.expect([
       createRolePane.exists(),
+      roleNameInput.exists(),
       capabilitiesAccordion.has({ open: true }),
       capabilitySetsAccordion.exists(),
       saveButton.has({ disabled: true }),
+      cancelButton.exists(),
       selectApplicationButton.exists(),
       Spinner().absent(),
     ]);
     cy.wait(2000);
   },
 
-  fillRoleNameDescription: (roleName, roleDescription = '') => {
+  fillRoleNameDescription(roleName, roleDescription = '') {
     cy.do([roleNameInput.fillIn(roleName), roleDescriptionInput.fillIn(roleDescription)]);
+    this.verifyNameDescriptionInEditForm(roleName, roleDescription);
+  },
+
+  verifyNameDescriptionInEditForm(roleName, roleDescription = '') {
     cy.expect([
       roleNameInput.has({ value: roleName }),
       roleDescriptionInput.has({ value: roleDescription }),
@@ -429,6 +447,16 @@ export default {
       .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     cy.expect(targetCheckbox.has({ checked: isSelected }));
+  },
+
+  verifyCapabilitySetCheckboxAbsent: ({ table, resource, action, type }) => {
+    const targetTable = type && !table ? type : table;
+    cy.expect(
+      capabilitySetsAccordion
+        .find(capabilityTables[targetTable])
+        .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }))
+        .absent(),
+    );
   },
 
   clickOnCheckedDisabledCheckbox: ({ table, resource, action, type }) => {
@@ -730,6 +758,13 @@ export default {
     if (roleDescription) cy.expect(roleDescriptionInView.has({ value: roleDescription }));
   },
 
+  // Lighter-weight than verifyRoleViewPane() - just confirms we landed on this role's own
+  // detail pane, without the "last updated" time-window check (which assumes the check runs
+  // right after creating/editing the role, not after unrelated navigation earlier in a test)
+  verifyRoleDetailPaneOpened(roleName) {
+    cy.expect([Pane(roleName).exists(), roleNameInView.has({ value: roleName })]);
+  },
+
   closeRoleDetailView: (roleName) => {
     cy.do(
       PaneHeader(roleName)
@@ -866,7 +901,7 @@ export default {
   duplicateRole(roleName, capabilitiesShown = true) {
     const currentDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
     const duplicatedTitleRegExp = new RegExp(
-      `^${roleName} \\(duplicate\\) - ${currentDate.replace('/', '\\/')}, \\d{1,2}:\\d{2}:\\d{2} (A|P)M$`,
+      `^${roleName} \\(duplicate\\) - ${currentDate.replace(/\//g, '-')}, \\d{1,2}:\\d{2}:\\d{2} (A|P)M$`,
     );
     this.clickActionsButton(roleName);
     this.clickDuplicateButton();
@@ -1294,5 +1329,89 @@ export default {
   closeConfirmShareModal: () => {
     cy.do(shareToAllModal.find(cancelButton).click());
     cy.expect(shareToAllModal.absent());
+  },
+
+  checkErrorForNameField({ isError = false, errorText = nameRequiredErrorText } = {}) {
+    if (isError) cy.expect(roleNameInput.has({ error: errorText }));
+    else cy.expect(roleNameInput.has({ error: undefined }));
+  },
+
+  focusOnNameField({ isFocused = true } = {}) {
+    if (isFocused) cy.do(roleNameInput.focus());
+    else cy.do(roleNameInput.blur());
+    cy.expect(roleNameInput.has({ focused: isFocused }));
+    cy.wait(500);
+  },
+
+  toggleShowHiddenCapabilities({ show = true } = {}) {
+    if (show) cy.do(showHiddenCapabilitiesCheckbox.checkIfNotSelected());
+    else cy.do(showHiddenCapabilitiesCheckbox.uncheckIfSelected());
+    this.verifyShowHiddenCapabilitiesCheckbox({ isChecked: show, isDisabled: false });
+    cy.wait(500);
+  },
+
+  verifyShowHiddenCapabilitiesCheckbox({ isChecked = false, isDisabled = false } = {}) {
+    cy.expect(showHiddenCapabilitiesCheckbox.has({ checked: isChecked, disabled: isDisabled }));
+  },
+
+  verifyNoCapabilitiesOrSetsChecked: ({ noCheckedSets = true, noCheckedCapabs = true } = {}) => {
+    if (noCheckedSets) cy.expect(capabilitySetsAccordion.find(Checkbox({ checked: true })).absent());
+    else cy.expect(capabilitySetsAccordion.find(Checkbox({ checked: true })).exists());
+    if (noCheckedCapabs) cy.expect(capabilitiesAccordion.find(Checkbox({ checked: true })).absent());
+    else cy.expect(capabilitiesAccordion.find(Checkbox({ checked: true })).exists());
+  },
+
+  verifyUnselectSetConfirmModal(
+    { resource, action } = {},
+    capabilitiesCount = null,
+    checkboxChecked = false,
+  ) {
+    const mainMessage = unselectSetModalTextRegexp(resource, action, capabilitiesCount);
+    cy.expect([
+      unselectSetConfirmModal.has({
+        title: unselectSetConfirmModalTitle,
+        message: matching(mainMessage),
+      }),
+      unselectSetConfirmModal.find(unselectSetModalCheckbox).has({ checked: checkboxChecked }),
+      unselectSetConfirmModal.find(HTML(unselectSetModalTextBottom)).exists(),
+      unselectSetConfirmModal.find(cancelButton).exists(),
+      unselectSetConfirmModal.find(continueButton).exists(),
+    ]);
+    if (capabilitiesCount !== null) {
+      cy.expect(
+        unselectSetConfirmModal.has({
+          innerHtml: including(`<strong>${capabilitiesCount}</strong>`),
+        }),
+      );
+    }
+  },
+
+  clickContinueInUnselectSetConfirmModal: () => {
+    cy.do(unselectSetConfirmModal.find(continueButton).click());
+    cy.expect(unselectSetConfirmModal.absent());
+  },
+
+  clickCancelInUnselectSetConfirmModal: () => {
+    cy.do(unselectSetConfirmModal.find(cancelButton).click());
+    cy.expect(unselectSetConfirmModal.absent());
+  },
+
+  toggleCheckboxInUnselectSetConfirmModal: (isSelected = true) => {
+    const targetCheckbox = unselectSetConfirmModal.find(unselectSetModalCheckbox);
+    if (isSelected) cy.do(targetCheckbox.checkIfNotSelected());
+    else cy.do(targetCheckbox.uncheckIfSelected());
+    cy.wait(100);
+    cy.expect(unselectSetConfirmModal.find(unselectSetModalCheckbox).has({ checked: isSelected }));
+  },
+
+  checkUnselectSetConfirmModalShown: (isShown = true) => {
+    if (isShown) cy.expect(unselectSetConfirmModal.exists());
+    else cy.expect(unselectSetConfirmModal.absent());
+  },
+
+  goBackWithWait({ waitTime = 4000, checkNoSpinner = true } = {}) {
+    cy.go('back');
+    cy.wait(waitTime);
+    if (checkNoSpinner) cy.expect(Spinner().absent());
   },
 };

@@ -106,6 +106,7 @@ describe('Eureka', () => {
         AuthorizationRoles.clickSelectApplication();
         AuthorizationRoles.selectApplicationInModal(testData.applicationName);
         AuthorizationRoles.clickSaveInModal();
+        AuthorizationRoles.toggleShowHiddenCapabilities();
         testData.capabilitySets.forEach((set) => {
           AuthorizationRoles.selectCapabilitySetCheckbox(set);
         });

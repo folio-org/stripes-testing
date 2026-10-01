@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  DELETE_HOLDINGS_ACTIONS,
   LOCATION_NAMES,
   ORDER_STATUSES,
   POL_CREATE_INVENTORY_SETTINGS,
@@ -11,8 +12,11 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
+import DeleteHoldingsModalReceivingFullScreen from '../../../support/fragments/receiving/modals/deleteHoldingsModaReceivinglFullScreen';
+import ReceivingStates from '../../../support/fragments/receiving/receivingStates';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Orders', () => {
   describe('Receiving and Check-in', () => {
@@ -156,7 +160,11 @@ describe('Orders', () => {
         // Fill "Barcode" field with valid value, Check the checkbox next to receiving record
         ReceivingsListEditForm.fillReceivingFields({ barcode: testData.barcode });
         // Click "Receive" button
-        ReceivingsListEditForm.clickReceiveButton();
+        ReceivingsListEditForm.clickReceiveButton({ receiveSaved: false });
+        DeleteHoldingsModalReceivingFullScreen.deleteHoldingsModal({
+          action: DELETE_HOLDINGS_ACTIONS.KEEP_HOLDINGS,
+        });
+        InteractorsTools.checkCalloutMessage(ReceivingStates.receiveSavedSuccessfully);
         ReceivingDetails.checkReceivingDetails({
           expected: [],
           received: [{ barcode: testData.barcode, format: 'Physical' }],

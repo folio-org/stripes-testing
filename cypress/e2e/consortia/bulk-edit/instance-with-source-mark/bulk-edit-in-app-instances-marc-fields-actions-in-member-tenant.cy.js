@@ -257,6 +257,7 @@ describe('Bulk-edit', () => {
           BulkEditActions.addNewBulkEditFilterStringForMarcInstance(5);
           BulkEditActions.fillInTagAndIndicatorsAndSubfield('990', '\\', '\\', 'b', 6);
           BulkEditActions.selectActionForMarcInstance(BULK_EDIT_ACTIONS.REMOVE_FIELD, 6);
+          BulkEditActions.verifySubfieldDisabled(6);
           BulkEditActions.verifyConfirmButtonDisabled(false);
 
           BulkEditActions.confirmChanges();

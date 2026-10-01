@@ -1,5 +1,7 @@
 export const BATCH_REQUEST_SIZE = 25;
 export const FILTER_NETWORK_IDLE_MS = 750;
+/** Window given to an action that must not send any pane request. */
+export const NO_REQUEST_QUIET_PERIOD_MS = 2000;
 
 /** Supported request phases for `waitForPaneRequests`. */
 export const PANE_REQUEST_PHASES = Object.freeze({

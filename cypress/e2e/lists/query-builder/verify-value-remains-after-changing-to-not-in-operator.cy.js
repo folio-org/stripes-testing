@@ -58,7 +58,7 @@ describe('Lists', () => {
         // Step 3: Change operator from "equals" to "not in"
         QueryModal.selectOperator(QUERY_OPERATIONS.NOT_IN);
         QueryModal.verifyTextFieldValue(testData.randomUuid);
-        QueryModal.verifyQueryAreaContent(`(instance.id not in (${testData.randomUuid}))`);
+        QueryModal.verifyQueryAreaContent(`(instance.id not in [${testData.randomUuid}])`);
       },
     );
   });

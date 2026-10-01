@@ -17,7 +17,7 @@ import {
   Option,
   Pane,
   Popover,
-  SearchField,
+  RepeatableFieldItem,
   Select,
   TextArea,
   TextField,
@@ -28,6 +28,7 @@ import {
   FOLIO_RECORD_TYPE,
   INCOMING_RECORD_NAMES,
   INSTANCE_STATUS_TERM_NAMES,
+  INVENTORY_ITEMS,
   LOCATION_NAMES,
 } from '../../../../constants';
 import getRandomPostfix from '../../../../utils/stringTools';
@@ -153,8 +154,8 @@ const save = () => {
   cy.do(saveButton.click());
   cy.wait(1500);
 };
-const selectOrganizationByName = (organizationName) => {
-  cy.do(organizationLookUpButton.click());
+const selectOrganizationByName = (organizationName, accordion = orderInformationAccordion) => {
+  cy.do(accordion.find(organizationLookUpButton).click());
   cy.expect(organizationModal.exists());
   cy.do([
     organizationModal.find(searchField).fillIn(organizationName),
@@ -290,6 +291,15 @@ const addVendor = (profile) => {
   ]);
   cy.expect(MultiColumnListCell(profile.vendor).exists());
   cy.do(MultiColumnListCell({ content: profile.vendor }).click());
+};
+
+const fillVendorByFirstResult = (vendorName, accordion = orderInformationAccordion) => {
+  cy.do([
+    accordion.find(organizationLookUpButton).click(),
+    organizationModal.find(searchField).fillIn(vendorName),
+    organizationModal.find(searchButton).click(),
+  ]);
+  selectFromResultsList();
 };
 
 const addMaterialSupplier = (profile) => {
@@ -614,7 +624,14 @@ export default {
     }
     // Vendor information section
     if (profile.organizationName) {
-      selectOrganizationByName(profile.organizationName);
+      selectOrganizationByName(profile.organizationName, Accordion('Vendor information'));
+    }
+    if (profile.accountingCode) {
+      cy.do(
+        Accordion('Vendor information')
+          .find(TextField('Accounting code'))
+          .fillIn(`${profile.accountingCode}`),
+      );
     }
     // Extended information section
     if (profile.paymentMethod) {
@@ -677,7 +694,9 @@ export default {
     save();
   },
 
-  fillOrderMappingProfile: (profile) => {
+  fillOrderMappingProfile: (profile, options = {}) => {
+    const { useFirstVendorResult = false, skipLocation = false } = options;
+
     // Summary section
     fillSummaryInMappingProfile(profile);
     // Order information section
@@ -685,7 +704,11 @@ export default {
       purchaseOrderStatus.fillIn(`"${profile.orderStatus}"`),
       orderInformationAccordion.find(approvedCheckbox).click(),
     ]);
-    addVendor(profile);
+    if (useFirstVendorResult) {
+      fillVendorByFirstResult(profile.vendor);
+    } else {
+      addVendor(profile);
+    }
     if (profile.reEncumber) {
       cy.do(reEncumberField.fillIn(`"${profile.reEncumber}"`));
     }
@@ -752,7 +775,9 @@ export default {
       cy.do(electronicUnitPriceField.fillIn(profile.electronicUnitPrice));
     }
     addFundDistriction(profile);
-    addLocation(profile);
+    if (!skipLocation) {
+      addLocation(profile);
+    }
     addMaterialSupplier(profile);
     if (profile.createInventory) {
       cy.do(
@@ -806,6 +831,7 @@ export default {
   fillItemIdentifier: (identifier) => cy.do(TextField('Item identifier').fillIn(identifier)),
   fillAccessionNumber: (number) => cy.do(TextField('Accession number').fillIn(number)),
   fillCopyNumber: (number) => cy.do(TextField('Copy number').fillIn(number)),
+  fillEnumeration: (value) => cy.do(TextField(INVENTORY_ITEMS.ENUMERATION).fillIn(value)),
   fillVendorInvoiceNumber: (number) => cy.do(TextField('Vendor invoice number*').fillIn(number)),
   fillQuantity: (quantity) => cy.do(TextField('Quantity*').fillIn(quantity)),
   fillSubTotal: (number) => cy.do(TextField('Sub-total*').fillIn(number)),
@@ -981,6 +1007,32 @@ export default {
   fillTemporaryLoanType: (loanType) => cy.do(TextField('Temporary loan type').fillIn(loanType)),
   fillIllPolicy: (policy) => cy.do(TextField('ILL policy').fillIn(`"${policy}"`)),
   fillBatchGroup: (group) => cy.do(batchGroupField.fillIn(group)),
+  // "Batch group" lives in the "Invoice information" accordion (Section id="invoice-information",
+  // per fieldMappingProfileEditForm.js) - same "last matching button" pattern as
+  // verifyProductIdTypeDropdown uses for its own accordion's Accepted values button
+  openBatchGroupAcceptedValues: () => {
+    cy.get('#invoice-information').find('button:contains("Accepted values"):last').click();
+    cy.expect(DropdownMenu({ visible: true }).exists());
+  },
+  // "Acquisitions units" lives in the same "Invoice information" accordion - it is the 3rd
+  // "Accepted values" button rendered in that accordion
+  openAcquisitionsUnitsAcceptedValues: () => {
+    cy.get('#invoice-information').find('button:contains("Accepted values"):eq(2)').click();
+    cy.expect(DropdownMenu({ visible: true }).exists());
+  },
+  // "Accounting code" lives in the "Vendor information" accordion (Section id="vendor-information",
+  // per fieldMappingProfileEditForm.js) - it is the only "Accepted values" button rendered there
+  openAccountingCodeAcceptedValues: () => {
+    cy.get('#vendor-information').find('button:contains("Accepted values"):last').click();
+    cy.expect(DropdownMenu({ visible: true }).exists());
+  },
+  getAcceptedValuesDropdownItems: () => {
+    return cy
+      .then(() => DropdownMenu({ visible: true }).buttons())
+      .then((buttons) => {
+        return [...buttons].map((button) => button.textContent.trim()).filter(Boolean);
+      });
+  },
   fillPaymentMethod: (method) => cy.do(paymentMethodField.fillIn(method)),
   fillCurrency: (currency) => cy.do(currencyField.fillIn(currency)),
   fillInvoiceDate: (date) => cy.do(TextField('Invoice date*').fillIn(date)),
@@ -1023,15 +1075,26 @@ export default {
     ]);
   },
 
-  fillVendorName: (vendorName) => {
-    cy.do([
-      organizationLookUpButton.click(),
-      Modal('Select Organization')
-        .find(SearchField({ id: 'input-record-search' }))
-        .fillIn(vendorName),
-      Modal('Select Organization').find(searchButton).click(),
+  addNextCheckInCheckOutNote: (noteType, note, staffOnly, rowIndex) => {
+    const targetRow = loanAndAvailabilityAccordion.find(RepeatableFieldItem({ index: rowIndex }));
+
+    cy.do(Button('Add check in / check out note').click());
+    cy.do([targetRow.find(noteTypeField).fillIn(noteType), targetRow.find(noteField).fillIn(note)]);
+    cy.expect([
+      targetRow.find(noteTypeField).has({ value: noteType }),
+      targetRow.find(noteField).has({ value: note }),
     ]);
-    selectFromResultsList();
+    cy.do([
+      targetRow.find(Select(including('Staff only'))).focus(),
+      targetRow.find(Select(including('Staff only'))).choose(staffOnly),
+    ]);
+    cy.expect(
+      targetRow.find(Select(including('Staff only'))).has({ checkedOptionText: staffOnly }),
+    );
+  },
+
+  fillVendorName: (vendorName) => {
+    selectOrganizationByName(vendorName, Accordion('Vendor information'));
   },
 
   addFieldMappingsForMarc: () => {
@@ -1246,6 +1309,11 @@ export default {
             name: profile.name,
             incomingRecordType: INCOMING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
             existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+            mappingDetails: {
+              name: 'instance',
+              recordType: EXISTING_RECORD_NAMES.INSTANCE,
+              mappingFields: [],
+            },
           },
         },
         isDefaultSearchParamsRequired: false,

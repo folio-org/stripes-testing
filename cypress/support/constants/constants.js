@@ -2,6 +2,7 @@ export const APPLICATION_NAMES = {
   AGREEMENTS: 'Agreements',
   BULK_EDIT: 'Bulk edit',
   CLAIMING: 'Claiming',
+  DASHBOARD: 'Dashboard',
   DATA_EXPORT: 'Data export',
   DATA_IMPORT: 'Data import',
   EXPORT_MANAGER: 'Export manager',
@@ -150,6 +151,7 @@ export const BATCH_GROUP = {
 export const RECORD_STATUSES = {
   CREATED: 'Created',
   UPDATED: 'Updated',
+  DELETED: 'Deleted',
   NO_ACTION: 'No action',
   DASH: 'No value set-',
   BLANK: 'No value set',
@@ -998,6 +1000,13 @@ export const DEFAULT_JOB_PROFILE_NAMES = {
   CREATE_HOLDINGS_AND_SRS: 'Default - Create Holdings and SRS MARC Holdings',
 };
 
+export const DEFAULT_ACTION_PROFILE_NAMES = {
+  CREATE_INSTANCE: 'Default - Create instance',
+  CREATE_AUTHORITY: 'Default - Create MARC Authority',
+  CREATE_MARC_HOLDINGS: 'Default - Create MARC holdings',
+  DELETE_AUTHORITY: 'Default - Delete MARC Authority records',
+};
+
 export const DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES = {
   INSTANCES: 'Default instances export job profile',
   HOLDINGS: 'Default holdings export job profile',
@@ -1041,18 +1050,27 @@ export const AUTHORITY_FILE_TEXT_FIELD_NAMES = {
 
 export const EHOLDINGS_PACKAGE_HEADERS = [
   'Provider Level Token',
+  'Package Level Token',
   'Provider Name',
   'Provider Id',
-  'Package Level Token',
   'Package Name',
+  'Package Display Name',
+  'Managed Alternative Names',
+  'Custom Alternative Names',
   'Package Id',
   'Package Type',
   'Package Content Type',
+  'Package Access',
+  'Managed Description',
+  'Custom Description',
   'Package Holdings Status',
   'Package Custom Coverage',
-  'Package Show To Patrons',
+  'Hide In Publication Finder',
+  'Hide In Full Text Finder',
+  'Exclude From MARC Export',
   'Package Automatically Select',
   'Package Proxy',
+  'Package Url',
   'Package Access Status Type',
   'Package Tags',
   'Package Agreements',
@@ -1060,22 +1078,12 @@ export const EHOLDINGS_PACKAGE_HEADERS = [
 ];
 
 export const EHOLDINGS_TITLE_HEADERS = [
+  'Title Id',
   'Title Name',
   'Alternate Titles',
-  'Title Id',
+  'Title Holdings Status',
   'Publication Type',
   'Title Type',
-  'Title Holdings Status',
-  'Title Show To Patrons',
-  'Managed Coverage',
-  'Managed Embargo',
-  'Custom Coverage',
-  'Custom Embargo',
-  'Coverage Statement',
-  'Title Proxy',
-  'Url',
-  'Title Access Status Type',
-  'Title Tags',
   'Contributors',
   'Edition',
   'Publisher',
@@ -1086,11 +1094,21 @@ export const EHOLDINGS_TITLE_HEADERS = [
   'Subjects',
   'Peer Reviewed',
   'Description',
+  'Managed Coverage',
+  'Custom Coverage',
+  'Coverage Statement',
+  'Managed Embargo',
+  'Custom Embargo',
+  'Title Show To Patrons',
+  'Title Proxy',
+  'Url',
+  'Title Access Status Type',
   'Custom Value 1',
   'Custom Value 2',
   'Custom Value 3',
   'Custom Value 4',
   'Custom Value 5',
+  'Title Tags',
   'Title Agreements',
   'Title Note',
 ];
@@ -1100,19 +1118,28 @@ export const EHOLDINGS_EXPORT_FIELDS = {
     'Access Status Type',
     'Agreements',
     'Automatically Select titles',
+    'Custom alternative names',
     'Custom Coverage',
+    'Custom description',
+    'Exclude from MARC export',
+    'Hide in Full Text Finder',
+    'Hide in Publication Finder',
     'Holdings status',
+    'Managed alternative names',
+    'Managed description',
     'Notes',
+    'Package access',
     'Package Content Type',
+    'Package display name',
     'Package Id',
     'Package Level Token',
     'Package Name',
     'Package Type',
+    'Package URL',
     'Provider Id',
     'Provider Level Token',
     'Provider Name',
     'Proxy',
-    'Show To Patrons',
     'Tags',
   ],
   TITLE: [
@@ -1801,12 +1828,16 @@ export const COMMON_BUTTON_LABELS = {
   CLOSE: 'Close',
   COLLAPSE_ALL: 'Collapse all',
   CONFIRM: 'Confirm',
+  CONTINUE: 'Continue',
   CREATE: 'Create',
   DELETE: 'Delete',
   EDIT: 'Edit',
+  EXPAND_ALL: 'Expand all',
   NEXT: 'Next',
   NEW: 'New',
+  OK: 'Ok',
   PREVIOUS: 'Previous',
+  RECEIVE: 'Receive',
   REMOVE: 'Remove',
   RESET_ALL: 'Reset all',
   SAVE: 'Save',
@@ -1817,6 +1848,7 @@ export const COMMON_BUTTON_LABELS = {
   SUBMIT: 'Submit',
   YES: 'Yes',
   NO: 'No',
+  DUPLICATE: 'Duplicate',
 };
 
 export const RESULTS_PANE_NOT_FOUND_MESSAGE = 'No results found. Please check your filters.';
@@ -1836,6 +1868,8 @@ export const DATE_RANGE_FIELD_LABELS = {
 
 export const NO_VALUE = 'No value set-';
 
+export const NO_BARCODE = 'No barcode';
+
 export const FTP_PROTOCOLS = {
   SFTP: 'SFTP',
   FTP: 'FTP',
@@ -1848,6 +1882,8 @@ export const FILE_TYPES = {
 
 export const CUSTOM_FIELD_ENTITY_TYPES = {
   USER: 'user',
+  PURCHASE_ORDER: 'purchase_order',
+  PO_LINE: 'po_line',
 };
 
 export const CUSTOM_FIELD_TYPES = {
@@ -1886,4 +1922,50 @@ export const HOLDING_RECEIVING_HISTORY = {
   SOURCE: 'Source',
   USER: 'User',
   RECEIVING: 'Receiving',
+};
+
+export const INVENTORY_ITEMS = {
+  EFFECTIVE_CALL_NUMBER: 'Effective call number',
+  CALL_NUMBER: 'Call number',
+  BARCODE: 'Item barcode',
+  ACCESSION_NUMBER: 'Accession number',
+  MATERIAL_TYPE: 'Material type',
+  COPY_NUMBER: 'Copy number',
+  SHELVING_ORDER: 'Shelving order',
+  ENUMERATION: 'Enumeration',
+  CHRONOLOGY: 'Chronology',
+  VOLUME: 'Volume',
+  DISPLAY_SUMMARY: 'Display summary',
+};
+
+export const EHOLDINGS_PACKAGE_CONTENT_TYPES = {
+  ALL: 'All',
+  AGGREGATED_FULL_TEXT: 'Aggregated Full Text',
+  ABSTRACT_AND_INDEX: 'Abstract and Index',
+  E_BOOK: 'E-Book',
+  E_JOURNAL: 'E-Journal',
+  MIXED_CONTENT: 'Mixed Content',
+  ONLINE_REFERENCE: 'Online Reference',
+  PRINT: 'Print',
+  STREAMING_MEDIA: 'Streaming Media',
+  UNKNOWN: 'Unknown',
+};
+
+export const HOLDING_TABLE_CONTENT = {
+  HOLDINGS: 'Holdings:',
+  ITEM_BARCODE: 'Item: barcode',
+  STATUS: 'Status',
+  COPY_NUMBER: 'Copy number',
+  ENUMERATION: 'Enumeration',
+  CHRONOLOGY: 'Chronology',
+  EFFECTIVE_LOCATION: 'Effective location',
+};
+
+export const UUID_V4_PATTERN =
+  '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}';
+
+export const MATCH_PROFILE_QUALIFIER_TYPES = {
+  BEGINS_WITH: 'BEGINS_WITH',
+  ENDS_WITH: 'ENDS_WITH',
+  CONTAINS: 'CONTAINS',
 };

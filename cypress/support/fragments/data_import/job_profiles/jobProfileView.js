@@ -4,6 +4,7 @@ import {
   Button,
   Callout,
   DropdownMenu,
+  KeyValue,
   Link,
   Modal,
   MultiColumnList,
@@ -21,6 +22,11 @@ const actionsButton = Button('Actions');
 const tagSelect = MultiSelect({ id: 'input-tag' });
 const addTagForSelectOption = MultiSelectOption(including('Add tag for:'));
 const jobProfilesList = MultiColumnList({ id: 'job-profiles-list' });
+const deletedProfilePane = Pane('Job profile deleted');
+const deletedProfileMessage = 'Not available - this job profile has been deleted';
+const jobsUsingThisProfileAccordion = Accordion('Jobs using this profile');
+
+export const deletedCalloutMessage = (profileName) => `The job profile "${profileName}" was successfully deleted`;
 
 function waitLoading() {
   // wait for the page to be fully loaded
@@ -81,6 +87,21 @@ export default {
     cy.expect(resultsPane.exists());
     cy.expect(viewPane.exists());
   },
+  verifyDeletedProfileView: () => {
+    cy.expect([
+      deletedProfilePane.exists(),
+      deletedProfilePane.find(HTML(including(deletedProfileMessage))).exists(),
+    ]);
+  },
+  checkSummaryFieldsConditions(fields) {
+    fields.forEach(({ label, conditions }) => {
+      if (label === 'Name') {
+        this.verifyJobProfileName(conditions.value);
+      } else {
+        cy.expect(viewPane.find(KeyValue(label)).has(conditions));
+      }
+    });
+  },
   verifyAssignedTags: (tag, quantityOfTags = 1) => {
     cy.expect(MultiSelect({ selectedCount: quantityOfTags }).exists());
     cy.expect(ValueChipRoot(tag).exists());
@@ -102,12 +123,10 @@ export default {
     );
   },
   verifyCalloutMessage: (message) => {
-    cy.expect(Callout({ textContent: including(message) }).exists());
-    cy.do(
-      Callout()
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
+    const targetCallout = Callout({ textContent: including(message) });
+    cy.expect(targetCallout.exists());
+    cy.do(targetCallout.dismiss());
+    cy.expect(targetCallout.absent());
   },
   verifyJobProfileName: (profileName) => cy.expect(viewPane.find(HTML(including(profileName))).exists()),
   verifyActionMenuAbsent: () => cy.expect(viewPane.find(actionsButton).absent()),
@@ -214,24 +233,36 @@ export default {
     cy.get('[data-test-profile-link]').should('not.exist');
   },
 
-  verifyJobsUsingThisProfileSection(fileName) {
+  verifyJobsUsingThisProfileSection(fileName, isShown = true) {
     const newFileName = fileName.replace('.mrc', '');
-    cy.do(
-      Accordion('Jobs using this profile')
-        .find(MultiColumnListCell({ content: including(newFileName) }))
-        .perform((element) => {
-          const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+    const jobCell = jobsUsingThisProfileAccordion.find(
+      MultiColumnListCell({ content: including(newFileName) }),
+    );
 
-          cy.expect(
-            viewPane
-              .find(MultiColumnListRow({ rowIndexInParent: rowNumber }))
-              .find(MultiColumnListCell({ columnIndex: 0 }))
-              .find(Link({ href: including('/data-import/job-summary/') }))
-              .exists(),
-          );
-        }),
+    if (!isShown) {
+      cy.expect(jobCell.absent());
+      return;
+    }
+
+    cy.do(
+      jobCell.perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+        cy.expect(
+          viewPane
+            .find(MultiColumnListRow({ rowIndexInParent: rowNumber }))
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .find(Link({ href: including('/data-import/job-summary/') }))
+            .exists(),
+        );
+      }),
     );
   },
+
+  verifyJobsUsingThisProfileRowsCount(rowsCount) {
+    cy.expect(jobsUsingThisProfileAccordion.find(MultiColumnList()).has({ rowCount: rowsCount }));
+  },
+
   // open the new tab in the current tab
   openLogDetailsPageView(fileName) {
     const newFileName = fileName.replace('.mrc', '');

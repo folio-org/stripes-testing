@@ -328,14 +328,14 @@ describe('Invoices', () => {
       FinanceHelper.searchByName(fiscalYears.second.name);
       FiscalYears.selectFY(fiscalYears.second.name);
       FiscalYears.editFiscalYearDetails();
-      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+      FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(
         startPeriodSecond,
         endPeriodSecond,
       );
       FinanceHelper.searchByName(fiscalYears.third.name);
       FiscalYears.selectFY(fiscalYears.third.name);
       FiscalYears.editFiscalYearDetails();
-      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(startPeriodThird, endPeriodThird);
+      FiscalYears.fillTheStartAndEndDateOnCalenderStartDateField(startPeriodThird, endPeriodThird);
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
       Invoices.searchByNumber(testData.invoice.invoiceNumber);

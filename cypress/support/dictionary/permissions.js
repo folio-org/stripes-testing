@@ -72,6 +72,10 @@ export default {
   },
 
   // eHoldings
+  uieHoldingsAppView: {
+    internal: 'ui-eholdings.app.view',
+    gui: 'UI-Eholdings App',
+  },
   uieHoldingsRecordsEdit: {
     internal: 'ui-eholdings.records.edit',
     gui: 'eHoldings: Can edit providers, packages, titles detail records',
@@ -1089,6 +1093,10 @@ export default {
     internal: 'ui-finance.fund-budget.view',
     gui: 'Finance: View fund and budget',
   },
+  uiFinanceRecalculateBudgetTotals: {
+    internal: 'ui-finance.fund-budget.recalculate-totals.execute',
+    gui: 'Finance: Recalculate budget totals',
+  },
   uiFinanceUnreleaseEncumbrance: {
     internal: 'ui-finance.encumbrance.unrelease.execute',
     gui: 'Finance: Unrelease encumbrance',
@@ -1599,5 +1607,11 @@ export default {
   numbersGeneratorView: {
     internal: 'ui-service-interaction.numberGenerator.view',
     gui: 'Settings (Service-interaction): View number generator settings and use number generators within apps',
+  },
+
+  // Dashboard
+  uiDashboardManage: {
+    internal: 'ui-dashboard.dashboards.manage',
+    gui: 'Dashboard: Manage dashboard',
   },
 };

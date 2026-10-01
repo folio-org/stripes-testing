@@ -4,6 +4,7 @@ export default createInteractor('key value')
   .selector('[class^=kvRoot]')
   .locator((el) => el.querySelector('[class^=kvLabel]').textContent)
   .filters({
+    label: (el) => el.querySelector('[class^=kvLabel]').textContent,
     value: (el) => el.querySelector('[class^=kvValue]').textContent,
     floatValue: (el) => {
       const value = el.querySelector('[class^=kvValue]').textContent;

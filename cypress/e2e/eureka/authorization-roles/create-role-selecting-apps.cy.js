@@ -13,27 +13,27 @@ const testData = {
   capabilities: [
     {
       table: CAPABILITY_TYPES.DATA,
-      resource: 'Finance',
-      action: CAPABILITY_ACTIONS.MANAGE,
+      resource: 'UI-Finance Fiscal-Year',
+      action: CAPABILITY_ACTIONS.CREATE,
     },
     {
       table: CAPABILITY_TYPES.SETTINGS,
-      resource: 'Module Claims Enabled',
+      resource: 'UI-Finance Settings',
       action: CAPABILITY_ACTIONS.VIEW,
     },
     {
       table: CAPABILITY_TYPES.DATA,
-      resource: 'Licenses Files',
+      resource: 'UI-Licenses Licenses',
       action: CAPABILITY_ACTIONS.VIEW,
     },
     {
       table: CAPABILITY_TYPES.PROCEDURAL,
-      resource: 'Licenses Admin Action',
+      resource: 'UI-Licenses Licenses File',
       action: CAPABILITY_ACTIONS.EXECUTE,
     },
     {
       table: CAPABILITY_TYPES.PROCEDURAL,
-      resource: 'Invoice Item Pay',
+      resource: 'UI-Receiving',
       action: CAPABILITY_ACTIONS.EXECUTE,
     },
   ],

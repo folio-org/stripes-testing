@@ -3,6 +3,7 @@ import {
   POLINE_DETAILS_FIELDS,
   ORDER_LINE_PAYMENT_STATUS,
   RECEIPT_STATUS_VIEW,
+  ORDER_SYSTEM_CLOSING_REASONS,
 } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
@@ -106,7 +107,9 @@ describe('Orders', () => {
       OrderLineEditForm.clickSaveButton();
 
       // Warning message "Purchase order is closed - Complete" appears
-      OrderLineDetails.checkWarningMessage('Purchase order is closed - Complete');
+      OrderLineDetails.checkPurchaseOrderClosedWarning({
+        reason: ORDER_SYSTEM_CLOSING_REASONS.COMPLETE,
+      });
       // "Current encumbrance" field contains "$0.00"
       OrderLineDetails.checkFundDistibutionTableContent([
         {

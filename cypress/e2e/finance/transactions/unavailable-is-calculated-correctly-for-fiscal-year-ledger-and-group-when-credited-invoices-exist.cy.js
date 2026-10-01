@@ -302,19 +302,23 @@ describe('Finance', () => {
         FiscalYears.selectFY(defaultFiscalYear.name);
         FiscalYearDetails.openLedgerDetails(firstLedger.name);
         LedgerDetails.checkLedgerDetails({
-          financialSummary: [
-            { key: 'Credited', value: '$1.00' },
-            { key: 'Unavailable', value: '$14.00' },
-          ],
+          financialSummary: {
+            information: [
+              { key: 'Credited', value: '$1.00' },
+              { key: 'Unavailable', value: '$14.00' },
+            ],
+          },
         });
         FinanceHelp.searchByName(secondLedger.name);
         Ledgers.selectLedger(secondLedger.name);
         LedgerDetails.openGroupDetails(defaultGroup.name);
         GroupDetails.checkGroupDetails({
-          financialSummary: [
-            { key: 'Credited', value: '$5.00' },
-            { key: 'Unavailable', value: '$6.00' },
-          ],
+          financialSummary: {
+            information: [
+              { key: 'Credited', value: '$5.00' },
+              { key: 'Unavailable', value: '$6.00' },
+            ],
+          },
         });
         GroupDetails.openFundDetails(secondFund.name);
         Funds.selectBudgetDetails();

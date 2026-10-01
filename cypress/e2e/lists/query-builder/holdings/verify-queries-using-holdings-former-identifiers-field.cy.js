@@ -145,9 +145,7 @@ describe('Lists', () => {
           // Step 2: Select "Holdings — Former identifiers" field
           QueryModal.selectField(holdingsFieldValues.formerIds, 1);
           QueryModal.verifySelectedField(holdingsFieldValues.formerIds, 1);
-          QueryModal.verifyQueryAreaContent(
-            `(instance.title == ${instanceTitle}) AND (holdings.former_ids  )`,
-          );
+          QueryModal.verifyQueryAreaContent(`(instance.title == ${instanceTitle})`);
 
           // Step 3: Test with "is null/empty" operator
           QueryModal.selectOperator(QUERY_OPERATIONS.IS_NULL, 1);

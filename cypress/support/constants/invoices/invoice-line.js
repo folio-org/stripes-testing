@@ -1,10 +1,29 @@
 export const INVOICE_LINE_VIEW_FIELDS = {
+  ACCOUNT_NUMBER: 'Account number',
+  ACCOUNTING_CODE: 'Accounting code',
   DESCRIPTION: 'Description',
+  INVOICE_LINE_NUMBER: 'Invoice line number',
   PO_LINE_NUMBER: 'PO line number',
+  RELEASE_ENCUMBRANCE: 'Release encumbrance',
   STATUS: 'Status',
   SUB_TOTAL: 'Sub-total',
   TOTAL_EXCHANGED: 'Total (Exchanged)',
   QUANTITY: 'Quantity',
+};
+
+export const RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS = {
+  VENDOR_INVOICE_NUMBER: 'Vendor invoice #',
+  INVOICE_LINE_NUMBER: 'Invoice line #',
+  FISCAL_YEAR: 'Fiscal year',
+  INVOICE_DATE: 'Invoice date',
+  VENDOR_CODE: 'Vendor code',
+  SUBSCRIPTION_START: 'Subscription start',
+  SUBSCRIPTION_END: 'Subscription end',
+  SUBSCRIPTION_INFO: 'Subscription info',
+  STATUS: 'Status',
+  QUANTITY: 'Quantity',
+  AMOUNT: 'Amount',
+  COMMENT: 'Comment',
 };
 
 export const EXPORT_INVOICE_LINE_FIELDS = {
@@ -34,4 +53,8 @@ export const EXPORT_INVOICE_LINE_FIELDS = {
   VOUCHER_DATE: 'Voucher date',
   VOUCHER_NUMBER: 'Voucher number',
   VOUCHER_STATUS: 'Voucher status',
+};
+
+export const INVOICE_LINE_EDIT_FIELDS = {
+  ACCOUNT_NUMBER: 'Account number',
 };

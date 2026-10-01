@@ -171,13 +171,13 @@ describe('Orders', () => {
         { label: COMMON_BUTTON_LABELS.CANCEL, conditions: { disabled: false } },
         {
           label: COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING,
-          conditions: { disabled: false },
+          conditions: { disabled: true },
         },
         {
           label: COMMON_BUTTON_LABELS.SAVE_AND_CREATE_ANOTHER,
-          conditions: { disabled: false },
+          conditions: { disabled: true },
         },
-        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: false } },
+        { label: COMMON_BUTTON_LABELS.SAVE_AND_CLOSE, conditions: { disabled: true } },
       ]);
 
       // Step 9: Check Required fields after clicking "Save & keep editing" button

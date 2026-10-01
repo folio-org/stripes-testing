@@ -18,18 +18,18 @@ describe('Eureka', () => {
         originalCapabilities: [
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Orders Item Approve',
+            resource: 'UI-Finance',
+            action: CAPABILITY_ACTIONS.EXECUTE,
+          },
+          {
+            table: CAPABILITY_TYPES.PROCEDURAL,
+            resource: 'UI-Licenses Licenses File',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
           {
             table: CAPABILITY_TYPES.DATA,
-            resource: 'Acquisitions-Units Memberships Collection',
+            resource: 'UI-Orders Orders',
             action: CAPABILITY_ACTIONS.VIEW,
-          },
-          {
-            table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Licenses Admin Action',
-            action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
         expectedRowCounts: {

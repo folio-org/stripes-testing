@@ -23,14 +23,14 @@ describe('Eureka', () => {
     const duplicateRoleNamePart = `${originalRoleName} (duplicate)`;
     const roleCapabilities = [
       {
-        table: CAPABILITY_TYPES.DATA,
-        resource: 'Capabilities',
+        type: CAPABILITY_TYPES.DATA,
+        resource: 'UI-Tags',
         action: CAPABILITY_ACTIONS.MANAGE,
       },
       {
-        table: CAPABILITY_TYPES.DATA,
-        resource: 'Role-Capability-Sets',
-        action: CAPABILITY_ACTIONS.MANAGE,
+        type: CAPABILITY_TYPES.DATA,
+        resource: 'UI-Notes Item',
+        action: CAPABILITY_ACTIONS.DELETE,
       },
     ];
     let assignedUser;
@@ -69,7 +69,6 @@ describe('Eureka', () => {
               originalRoleId = role.id;
               cy.then(() => {
                 roleCapabilities.forEach((capability) => {
-                  capability.type = capability.table;
                   cy.getCapabilityIdViaApi(capability).then((capabId) => {
                     roleCapabIds.push(capabId);
                   });

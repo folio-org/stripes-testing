@@ -88,7 +88,7 @@ describe('Bulk-edit', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.IN);
           QueryModal.fillInValueTextfield(invalidHoldingsIds);
           QueryModal.verifyQueryAreaContent(
-            `(holdings.id in (${invalidHoldingsIds.replace(/,/g, ', ')}))`,
+            `(holdings.id in [${invalidHoldingsIds.replace(/,/g, ', ')}])`,
           );
           QueryModal.testQueryDisabled(false);
 

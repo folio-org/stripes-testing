@@ -37,7 +37,7 @@ describe('Inventory', () => {
     });
 
     afterEach('Delete test data', () => {
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
           FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
         );
@@ -158,6 +158,8 @@ describe('Inventory', () => {
           FastAddNewRecord.closeHoldingsRecordView();
 
           // verify item details
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
           InventoryInstance.openHoldings([fastAddRecord.permanentLocationValue]);
           InventoryInstance.openItemByBarcode(fastAddRecord.itemBarcode);
           FastAddNewRecord.verifyRecordCreatedDate(timeStamp);

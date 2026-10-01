@@ -2,8 +2,11 @@ export default {
   // save messages
   invoiceCreatedMessage: 'Invoice has been saved',
   invoiceLineCreatedMessage: 'Invoice line has been saved',
+  invoiceLineDeletedMessage: 'Invoice line has been deleted',
   invoiceApprovedMessage: 'Invoice has been approved successfully',
   invoiceApprovedAndPaidMessage: 'Invoice has been approved and paid successfully',
+  invoiceNotApprovedMessage: 'Invoice was not approved',
+  invoiceNotApprovedAndPaidMessage: 'Invoice was not approved/paid',
   invoicePaidMessage: 'Invoice has been paid successfully',
   invoiceCancelledMessage: 'Invoice has been cancelled successfully',
   invoiceDeletedMessage: 'Invoice has been deleted',
@@ -16,6 +19,9 @@ export default {
   cannotApprovePayFundHasNoCurrentBudget(fundCode, FYCode) {
     return `Invoice cannot be approved and paid because Fund ${fundCode} has no current budget for fiscal year ${FYCode}.`;
   },
+  cannotApproveFundHasNoCurrentBudget(fundCode, FYCode) {
+    return `Invoice cannot be approved because Fund ${fundCode} has no current budget for fiscal year ${FYCode}.`;
+  },
   cannotApproveOrPayFundDistributionNot100Percent(invoiceLineNumber) {
     return `Invoice could not be approved or paid. The fund distribution total must be distributed by 100 percent in invoice line ${invoiceLineNumber}. Please update fund distribution details for that invoice line to continue.`;
   },
@@ -25,6 +31,8 @@ export default {
   invoiceCanNotBeApprovedInactiveOrganization:
     'Vendor is inactive. Invoice cannot be approved or paid.',
   POLineFullyPaid: 'Purchase order line status is Fully Paid',
+  inactiveAccount: 'The selected account number is inactive.',
+
   // api response
   activeBudgetNotFoundMessage: 'Active budget not found by fund id and fiscal year id',
   budgetNotFoundCode: 'budgetNotFoundByFundIdAndFiscalYearId',

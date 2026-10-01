@@ -123,7 +123,7 @@ describe('Invoices', () => {
 
   it(
     'C376007 Approve and pay invoice with added adjustment amount to invoice line (not prorated, related to total as Included in) (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'C376007'] },
+    { tags: ['extendedPath', 'thunderjet', 'C376007', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
