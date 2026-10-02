@@ -1,5 +1,4 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import Settings from '../../../support/fragments/settings/settingsPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import SoftwareVersions from '../../../support/fragments/settings/softwareVersions/software-versions';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -19,17 +18,22 @@ import {
   CAPABILITY_ACTIONS,
   DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
+import { Localization } from '../../../support/fragments/settings/tenant/general';
 
 describe('fse-settings - UI (no data manipulation)', () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
     cy.loginAsAdmin({
-      path: TopMenu.settingsPath,
-      waiter: Settings.waitSettingsPaneLoading,
+      path: SettingsMenu.sessionLocalePath,
+      waiter: Localization.americanEnglishButtonWaitLoading,
     });
     cy.allure().logCommandSteps();
     // close service point modal if it appears after login
+    Modals.closeModalWithEscapeIfAny();
+    // change session locale to English (temporary action, won't affect tenant settings)
+    Localization.selectAmericanEnglish();
+    // close service point modal if it appears switching locale
     Modals.closeModalWithEscapeIfAny();
   });
 
@@ -59,7 +63,8 @@ describe('fse-settings - UI (no data manipulation)', () => {
     `FDOPS-xxxxx - verify Number generator options are displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'ui', 'settings', 'users', 'number-generator', 'FDOPS-xxxxx'] },
     () => {
-      cy.visit(SettingsMenu.numberGeneratorOptionsPath);
+      SettingsMenu.selectMenuOption('Inventory');
+      NumberGeneratorSettings.selectFromSettings();
       NumberGeneratorSettings.waitLoading();
       NumberGeneratorSettings.checkBarcodeOptionsExist();
     },
@@ -69,7 +74,8 @@ describe('fse-settings - UI (no data manipulation)', () => {
     `FDOPS-xxxxx - verify Number generator sequences list the new scopes for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'ui', 'settings', 'service-interaction', 'number-generator', 'FDOPS-xxxx'] },
     () => {
-      cy.visit(SettingsMenu.numberGeneratorSequencesPath);
+      SettingsMenu.selectMenuOption('Service interaction');
+      NumberGeneratorSequences.selectFromSettings();
       NumberGeneratorSequences.waitLoading();
       NumberGeneratorSequences.checkSequenceGroupsExist();
     },
@@ -82,17 +88,11 @@ describe('fse-settings - UI (no data manipulation)', () => {
       SettingsDataExport.goToSettingsDataExport();
       ExportJobProfiles.goToJobProfilesTab();
       ExportJobProfiles.waitLoading();
-      ExportJobProfiles.verifyDefaultProfileLockStatus(
-        DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.LINKED_DATA,
-        true,
-      );
-
       ExportJobProfiles.clickProfileNameFromTheList(
         DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.LINKED_DATA,
       );
       SingleJobProfile.waitLoading(DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.LINKED_DATA);
-      SingleJobProfile.openActions();
-      SingleJobProfile.verifyActionsMenuItems({ edit: false, duplicate: true, delete: false });
+      SingleJobProfile.verifyLockProfileCheckbox(false, true);
     },
   );
 

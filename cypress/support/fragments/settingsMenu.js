@@ -139,12 +139,13 @@ export default {
   // Export manager settings
   exportManagerPath: 'settings/export-manager',
   exportManagerJobsPath: 'settings/export-manager/jobs',
-  // Service interaction settings
-  // TODO: confirm route segment against the real ui-service-interaction app
-  numberGeneratorSequencesPath: 'settings/service-interaction/number-generator-sequences',
 
   selectOrders() {
     cy.do(NavListItem('Orders').click());
+  },
+
+  selectMenuOption(option) {
+    cy.do(NavListItem(option).click());
   },
 
   verifyConsortiumManagerOptionAbsent() {
