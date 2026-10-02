@@ -1025,14 +1025,21 @@ export default {
     cy.expect(Tooltip().has({ text: 'Version history' }));
   },
 
-  checkHighlightedFieldsInVersionView(labels = []) {
+  checkHighlightedFieldsInVersionView(labels = [], { exactMatch = false } = {}) {
     if (!labels.length) {
       cy.get('#order-version-view mark').should('not.exist');
       return;
     }
     cy.get('#order-version-view mark').then(($marks) => {
-      const marked = [...$marks].map((el) => el.textContent);
-      labels.forEach((label) => expect(marked, `"${label}" is highlighted`).to.include(label));
+      const highlightedTexts = [...$marks].map((el) => el.textContent.trim());
+
+      labels.forEach((label) => {
+        const isHighlighted = exactMatch
+          ? highlightedTexts.includes(label)
+          : highlightedTexts.some((text) => text.includes(label));
+
+        expect(isHighlighted, `"${label}" is highlighted`).to.equal(true);
+      });
     });
   },
 

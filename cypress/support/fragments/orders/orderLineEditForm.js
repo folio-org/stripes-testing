@@ -70,6 +70,7 @@ const FORM_FIELD_NAMES = {
   PRODUCT_ID_TYPE: 'details.productIds[0].productIdType',
   PRODUCT_ID_QUALIFIER: 'details.productIds[0].qualifier',
   RECEIVING_NOTE: 'details.receivingNote',
+  INTERNAL_NOTE: 'description',
   IS_ACKNOWLEDGED: 'details.isAcknowledged',
   SUBSCRIPTION_FROM: 'details.subscriptionFrom',
   SUBSCRIPTION_TO: 'details.subscriptionTo',
@@ -164,6 +165,7 @@ const edition = TextField({ name: FORM_FIELD_NAMES.EDITION });
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.TITLE_OR_PACKAGE })),
   receivingNote: itemDetailsSection.find(TextArea({ name: FORM_FIELD_NAMES.RECEIVING_NOTE })),
+  internalNote: itemDetailsSection.find(TextArea({ name: FORM_FIELD_NAMES.INTERNAL_NOTE })),
   mustAcknowledgeReceivingNote: itemDetailsSection.find(
     Checkbox({ name: FORM_FIELD_NAMES.IS_ACKNOWLEDGED }),
   ),
@@ -527,6 +529,13 @@ export default {
           ),
         );
       }
+    }
+    if (poLineDetails.eresourceMaterialType) {
+      cy.do(
+        Select({ name: FORM_FIELD_NAMES.MATERIAL_TYPE_ERESOURCE }).choose(
+          poLineDetails.eresourceMaterialType,
+        ),
+      );
     }
     if (poLineDetails.claimingActive) {
       cy.do(orderLineFields.claimingActive.click());

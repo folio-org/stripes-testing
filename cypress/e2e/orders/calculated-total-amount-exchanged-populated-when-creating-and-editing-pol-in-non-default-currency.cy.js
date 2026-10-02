@@ -26,6 +26,7 @@ describe('Orders', () => {
   const createCurrency = { code: 'UZS', label: CURRENCIES.UZS };
   const editCurrency = { code: 'UAH', label: CURRENCIES.UAH };
   const exchangeRate = '3.5';
+  const exchangeRateForUAH = '4';
   const unitPrice = '10';
   const calculatedTotalAmountLabel = 'Calculated total amount (Exchanged)';
   const testData = {};
@@ -183,15 +184,14 @@ describe('Orders', () => {
         { label: 'currency', conditions: { singleValue: editCurrency.label } },
         { label: 'useSetExchangeRate', conditions: { checked: true, readOnly: true } },
         { label: 'exchangeRate', conditions: { disabled: false, required: true } },
-        // TODO: "Calculated total amount (Exchanged)" keeps the previous exchanged value instead of the unit price - check Jira
-        // { label: 'calculatedTotalAmount', conditions: { value: '$10.00' } },
+        { label: 'calculatedTotalAmount', conditions: { value: '$35.00' } },
       ]);
 
       // Step 14: Fill in "Set exchange rate" - "Calculated total amount (Exchanged)" is <Price> * <Exchange rate>
-      OrderLines.setExchangeRate(exchangeRate, { clickCheckbox: false });
+      OrderLines.setExchangeRate(exchangeRateForUAH, { clickCheckbox: false });
       OrderLineEditForm.checkCostDetailsSection([
-        { label: 'exchangeRate', conditions: { value: exchangeRate } },
-        { label: 'calculatedTotalAmount', conditions: { value: '$35.00' } },
+        { label: 'exchangeRate', conditions: { value: exchangeRateForUAH } },
+        { label: 'calculatedTotalAmount', conditions: { value: '$40.00' } },
       ]);
 
       // Step 15: Click "Save & close"
@@ -200,7 +200,7 @@ describe('Orders', () => {
       OrderLineDetails.checkOrderLineDetails({
         costDetails: [
           { key: POLINE_DETAILS_FIELDS.CURRENCY, value: editCurrency.code },
-          { key: POLINE_DETAILS_FIELDS.EXCHANGE_RATE, value: exchangeRate },
+          { key: POLINE_DETAILS_FIELDS.EXCHANGE_RATE, value: exchangeRateForUAH },
           { key: POLINE_DETAILS_FIELDS.PHYSICAL_UNIT_PRICE, value: '10.00' },
           { key: POLINE_DETAILS_FIELDS.ESTIMATED_PRICE, value: '10.00' },
         ],

@@ -143,6 +143,7 @@ export const ORDER_VIEW_FIELD_LABELS = {
   RENEWAL_DATE: 'Renewal date',
   MANUAL_RENEWAL: 'Manual renewal',
   NOTES: 'Notes',
+  NOTE: 'Note',
 };
 
 export const ORDER_AND_ORDER_LINE_BUTTONS = {

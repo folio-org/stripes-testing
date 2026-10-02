@@ -413,14 +413,23 @@ export default {
     cy.do(orderLineDetailsSection.find(versionHistoryButton).hoverMouse());
     cy.expect(Tooltip().has({ text: 'Version history' }));
   },
-  checkHighlightedFieldsInVersionHistoryView(labels = []) {
+  checkHighlightedFieldsInVersionHistoryView(labels = [], { exactMatch = false } = {}) {
     if (!labels.length) {
       cy.get('#order-line-version-view mark').should('not.exist');
       return;
     }
     cy.get('#order-line-version-view mark').then(($marks) => {
-      const marked = [...$marks].map((el) => el.textContent);
-      labels.forEach((label) => expect(marked, `"${label}" is highlighted`).to.include(label));
+      const highlightedTexts = [...$marks].map((el) => el.textContent.trim());
+
+      labels.forEach((label) => {
+        // exactMatch: highlighted text equals the value (for short values like quantity "1")
+        // otherwise: highlighted text contains the value (e.g. holding name with call number)
+        const isHighlighted = exactMatch
+          ? highlightedTexts.includes(label)
+          : highlightedTexts.some((text) => text.includes(label));
+
+        expect(isHighlighted, `"${label}" is highlighted`).to.equal(true);
+      });
     });
   },
   checkFieldsInVersionHistoryView(fields = []) {
