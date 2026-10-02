@@ -23,6 +23,7 @@ import {
 import {
   DEFAULT_WAIT_TIME,
   EXPORT_FUND_FIELDS,
+  LEDGER_FILTERS_LABELS,
   ROLLOVER_ERRORS_CSV_HEADERS,
   ROLLOVER_RESULT_CSV_HEADERS,
 } from '../../../constants';
@@ -30,6 +31,7 @@ import FileManager from '../../../utils/fileManager';
 import InteractorsTools from '../../../utils/interactorsTools';
 import getRandomPostfix from '../../../utils/stringTools';
 import FinanceHelper from '../financeHelper';
+import FiltersPaneHelper from '../../filtersPane';
 import LedgerDetails from './ledgerDetails';
 import LedgerEditForm from './ledgerEditForm';
 
@@ -389,6 +391,14 @@ export default {
   },
   resetAll() {
     cy.do(Button('Reset all').click());
+  },
+
+  clearFilter(filterLabel) {
+    FiltersPaneHelper.clearFilter(ledgersFiltersSection, filterLabel);
+  },
+
+  clearStatusFilter() {
+    this.clearFilter(LEDGER_FILTERS_LABELS.STATUS);
   },
 
   fillInRolloverForCashBalance(fiscalYear, rolloverBudgetValue, rolloverValueAs) {
@@ -1777,8 +1787,18 @@ export default {
     cy.expect([ledgerResultsPaneSection.exists(), ledgersFiltersSection.exists()]);
   },
 
-  searchByName: (name) => {
-    cy.do([searchField.selectIndex('Name'), searchField.fillIn(name), searchButton.click()]);
+  fillSearchInput(value) {
+    cy.do(searchField.fillIn(value));
+  },
+
+  clickSearchButton() {
+    cy.do(searchButton.click());
+  },
+
+  searchByName(name) {
+    cy.do(searchField.selectIndex('Name'));
+    this.fillSearchInput(name);
+    this.clickSearchButton();
   },
 
   verifyLedgerLinkExists: (name) => {
