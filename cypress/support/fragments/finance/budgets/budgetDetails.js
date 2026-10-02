@@ -65,6 +65,12 @@ export default {
       });
     }
   },
+  checkExpenseClassesTableContent(items) {
+    FinanceDetails.checkExpenseClassesTableContent({
+      section: expenseClassSection,
+      items,
+    });
+  },
   checkBalance({ name, value }) {
     cy.expect(budgetPane.find(HTML(including(`${name} balance: ${value}`))).exists());
   },
