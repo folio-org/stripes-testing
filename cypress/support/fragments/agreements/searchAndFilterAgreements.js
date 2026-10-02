@@ -6,7 +6,7 @@ const internalContactFilterList = SelectionList({
   id: 'sl-container-agreement-internal-contacts-filter',
 });
 const agreementsFilterPane = Pane({ id: 'agreements-tab-filter-pane' });
-const acquisitionUnitsFilterAccordion = agreementsFilterPane.find(Accordion('Acquisition units'));
+const acquisitionUnitsFilterAccordion = agreementsFilterPane.find(Accordion('Acquisition unit'));
 
 export default {
   search(name) {

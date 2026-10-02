@@ -28,15 +28,7 @@ describe('fse-agreements - UI (no data manipulation)', () => {
     () => {
       SearchAgreements.verifyAgreementsFilterPane();
       Agreements.checkSwitchToLocalKbDisplayed();
-    },
-  );
-
-  it(
-    `FDOPS-6233 - verify Acquisition units filter is present in agreements and agreement lines panes for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'ui', 'agreements', 'acquisition-units', 'FDOPS-6233'] },
-    () => {
       SearchAgreements.verifyAcquisitionUnitsFilterPresent();
-
       AgreementLines.openAgreementLinesTab();
       AgreementLines.waitLoading();
       SearchAndFilterAgreementLines.verifyAcquisitionUnitsFilterPresent();

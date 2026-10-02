@@ -1,7 +1,7 @@
 import { Accordion, Button, TextField, Pane } from '../../../../interactors';
 
 const licensesFilterPane = Pane({ id: 'pane-license-filters' });
-const acquisitionUnitsFilterAccordion = licensesFilterPane.find(Accordion('Acquisition units'));
+const acquisitionUnitsFilterAccordion = licensesFilterPane.find(Accordion('Acquisition unit'));
 
 export default {
   search(name) {

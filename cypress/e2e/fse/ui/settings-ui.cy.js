@@ -60,8 +60,8 @@ describe('fse-settings - UI (no data manipulation)', () => {
   );
 
   it(
-    `FDOPS-xxxxx - verify Number generator options are displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'ui', 'settings', 'users', 'number-generator', 'FDOPS-xxxxx'] },
+    `FDOPS-6888 - verify Number generator options are displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'settings', 'users', 'number-generator', 'FDOPS-6888'] },
     () => {
       SettingsMenu.selectMenuOption('Inventory');
       NumberGeneratorSettings.selectFromSettings();
@@ -71,8 +71,8 @@ describe('fse-settings - UI (no data manipulation)', () => {
   );
 
   it(
-    `FDOPS-xxxxx - verify Number generator sequences list the new scopes for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'ui', 'settings', 'service-interaction', 'number-generator', 'FDOPS-xxxx'] },
+    `FDOPS-6889 - verify Number generator sequences list the new scopes for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'settings', 'service-interaction', 'number-generator', 'FDOPS-6889'] },
     () => {
       SettingsMenu.selectMenuOption('Service interaction');
       NumberGeneratorSequences.selectFromSettings();
@@ -82,8 +82,8 @@ describe('fse-settings - UI (no data manipulation)', () => {
   );
 
   it(
-    `FDOPS-xxxxx - verify default data export job profiles are present and locked for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'ui', 'settings', 'data-export', 'FDOPS-xxxxx'] },
+    `FDOPS-6890 - verify default data export job profiles are present and locked for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'settings', 'data-export', 'FDOPS-6890'] },
     () => {
       SettingsDataExport.goToSettingsDataExport();
       ExportJobProfiles.goToJobProfilesTab();
@@ -97,8 +97,8 @@ describe('fse-settings - UI (no data manipulation)', () => {
   );
 
   it(
-    `FDOPS-xxxx - verify tenant default display columns for Inventory search are configurable for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'ui', 'settings', 'inventory', 'FDOPS-xxxx'] },
+    `FDOPS-6891 - verify tenant default display columns for Inventory search are configurable for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'settings', 'inventory', 'FDOPS-6891'] },
     () => {
       SettingsInventory.goToSettingsInventory();
       SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.DISPLAY_SETTINGS);

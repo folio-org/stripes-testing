@@ -8,7 +8,7 @@ const POLineFilterSection = Accordion({ id: 'filter-accordion-po-lines' });
 const tagsFilterSection = Accordion({ id: 'clickable-tags-filter' });
 const agreementLinesFilterPane = Pane({ id: 'agreements-tab-filter-pane' });
 const acquisitionUnitsFilterAccordion = agreementLinesFilterPane.find(
-  Accordion('Acquisition units'),
+  Accordion('Acquisition unit'),
 );
 
 export default {
