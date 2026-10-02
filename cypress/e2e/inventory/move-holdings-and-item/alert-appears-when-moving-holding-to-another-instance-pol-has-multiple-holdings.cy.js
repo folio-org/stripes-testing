@@ -37,7 +37,7 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import ReceivingDetails from '../../../support/fragments/receiving/receivingDetails';
 
 const USER_PERMISSIONS = [
-  Permissions.inventoryAll.gui,
+  Permissions.uiInventoryViewInstances.gui,
   Permissions.uiInventoryMoveItems.gui,
   Permissions.uiInventoryHoldingsMove.gui,
   Permissions.uiOrdersView.gui,
@@ -346,11 +346,11 @@ describe('Inventory', () => {
         OrderLines.closeVersionHistory();
         OrderLines.receiveOrderLinesViaActions();
         Receiving.waitLoading();
-        Receiving.verifyTitleInSearchResults(targetTitle, true);
-        Receiving.verifyTitleInSearchResults(polTitle, false);
+        Receiving.checkTitleInReceivingList(targetTitle);
+        Receiving.checkTitleInReceivingList(polTitle, { shouldExist: false });
 
         cy.log('Step 12. Open title details - Expected has 4 records, Received has 1 record');
-        Receiving.clickTitleInSearchResults(targetTitle);
+        Receiving.selectFromResultsList(targetTitle);
         Receiving.waitLoading();
         ReceivingDetails.assertExpectedPiecesTotalCount(4);
         ReceivingDetails.assertReceivedPiecesTotalCount(1);

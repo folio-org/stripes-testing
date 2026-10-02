@@ -36,8 +36,6 @@ import deleteHoldingsModalReceivingFullScreen from './modals/deleteHoldingsModaR
 import ReceivingDetails from './receivingDetails';
 import ReceivingStates from './receivingStates';
 
-const RECEIVE = 'Receive';
-
 const receivingResultsSection = Section({ id: 'receiving-results-pane' });
 const filtersPane = Pane({ id: 'receiving-filters-pane' });
 const rootsection = PaneContent({ id: 'pane-title-details-content' });
@@ -200,8 +198,10 @@ export default {
     cy.expect(receivingResultsSection.find(MultiColumnListCell(POL)).exists());
   },
 
-  checkTitleInReceivingList: (title) => {
-    cy.expect(receivingResultsSection.find(MultiColumnListCell(title)).exists());
+  checkTitleInReceivingList: (title, { shouldExist = true } = {}) => {
+    const titleCell = receivingResultsSection.find(MultiColumnListCell(title));
+
+    cy.expect(titleCell[shouldExist ? 'exists' : 'absent']());
   },
 
   assertReceivingResults(titles = []) {
@@ -949,19 +949,5 @@ export default {
 
   clickActionsButton() {
     cy.do(Button(COMMON_BUTTON_LABELS.ACTIONS).click());
-  },
-
-  clickReceiveAction() {
-    cy.do(Button(RECEIVE).click());
-  },
-
-  verifyTitleInSearchResults(title, shouldExist = true) {
-    const titleCell = MultiColumnList().find(MultiColumnListCell(title));
-    if (shouldExist) cy.expect(titleCell.exists());
-    else cy.expect(titleCell.absent());
-  },
-
-  clickTitleInSearchResults(title) {
-    cy.do(Link(title).click());
   },
 };
