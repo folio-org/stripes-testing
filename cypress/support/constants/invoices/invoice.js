@@ -113,6 +113,7 @@ export const CURRENCIES = {
   UZS: 'Uzbekistani Som (UZS)',
   UAH: 'Ukrainian Hryvnia (UAH)',
   AMD: 'Armenian Dram (AMD)',
+  GEL: 'Georgian Lari (GEL)',
 };
 
 export const INVOICE_SEARCH_INDEX_LABELS = {
