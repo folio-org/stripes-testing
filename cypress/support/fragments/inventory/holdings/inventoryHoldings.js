@@ -32,6 +32,28 @@ export default {
         else return body;
       });
   },
+  updateInventoryHoldingRecordViaApi(holdingsRecord, ignoreErrors = false) {
+    return cy
+      .okapiRequest({
+        method: 'PUT',
+        path: `inventory/holdings/${holdingsRecord.id}`,
+        body: holdingsRecord,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: !ignoreErrors,
+      })
+      .then(({ status, body }) => {
+        if (ignoreErrors) return { status, body };
+        else return body;
+      });
+  },
+  getHoldingsRecordByIdViaApi(id) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `holdings-storage/holdings/${id}`,
+      })
+      .then(({ body }) => body);
+  },
   getHoldingsRecordsViaApi(searchParams) {
     return cy
       .okapiRequest({
