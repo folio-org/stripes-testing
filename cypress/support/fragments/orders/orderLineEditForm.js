@@ -257,6 +257,9 @@ const locationFields = {
 };
 
 const fundDistributionFields = {
+  fund: (index = 0) => fundDistributionDetailsSection
+    .find(RepeatableFieldItem({ index }))
+    .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID))),
   expenseClass: (index = 0) => fundDistributionDetailsSection
     .find(RepeatableFieldItem({ index }))
     .find(Selection(including('Expense class'))),
@@ -945,6 +948,12 @@ export default {
     });
   },
 
+  checkFundDistributionSection(fields = []) {
+    fields.forEach(({ label, index = 0, conditions }) => {
+      cy.expect(fundDistributionFields[label](index).has(conditions));
+    });
+  },
+
   checkReceivingRecordsMessage(isPresent = true) {
     const message = locationSection.find(HTML(including(FORM_LABELS.RECEIVING_RECORDS_MESSAGE)));
 
@@ -965,15 +974,6 @@ export default {
 
   clickEditInReceivingLink() {
     cy.do(locationSection.find(Link(including(FORM_LABELS.EDIT_IN_RECEIVING))).click());
-  },
-
-  checkFundDistributionFundSelected({ fund, index = 0 }) {
-    cy.expect(
-      fundDistributionDetailsSection
-        .find(RepeatableFieldItem({ index }))
-        .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID)))
-        .has({ value: including(fund) }),
-    );
   },
 
   checkLocationSelected({ location, index = 0 }) {
