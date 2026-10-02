@@ -38,7 +38,7 @@ import SelectUser from '../check-out-actions/selectUser';
 import MultiColumnListHelper from '../multiColumnList';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
-import { CUSTOM_FIELD_TYPES, SORT_DIRECTIONS } from '../../constants';
+import { CUSTOM_FIELD_TYPES, SORT_DIRECTIONS, THE_LIST_CONTAINS_NO_ITEMS } from '../../constants';
 
 const rootPane = Pane('Edit');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
@@ -148,13 +148,13 @@ const recalculateExpirationDateButton = Button({ id: 'expirationDate-modal-recal
 const userTypeChangeModal = Modal({ id: 'userType_confirmation_modal' });
 const userTypeChangeModalText =
   "Making this change will update the user's affiliations and the permissions they are granted for those affiliations when clicking Save & close. This action cannot easily be reversed, you would need to manually update the user's affiliations and permissions to reverse the resulting changes. Would you like to proceed?";
-
 let totalRows;
 const readingRoomAccessList = readingRoomAccessAccordion.find(MultiColumnList());
 const readingRoomAccessOptionValues = {
   allowed: 'ALLOWED',
   'not allowed': 'NOT_ALLOWED',
 };
+const roleSelectionFilter = selectRolesModal.find(Accordion({ id: including('Selection status') }));
 
 const getReadingRoomAccessOptionValue = (optionValue) => {
   return readingRoomAccessOptionValues[`${optionValue}`.trim().toLowerCase()] || optionValue;
@@ -298,6 +298,10 @@ export default {
   roleAssignmentFilterOptions: {
     ASSIGNED: 'Assigned',
     UNASSIGNED: 'Unassigned',
+  },
+  roleSelectionFilterOptions: {
+    ASSIGNED: 'Selected',
+    UNASSIGNED: 'Unselected',
   },
   addServicePointsViaApi,
 
@@ -1564,6 +1568,66 @@ export default {
     const targetOption = roleAssignmentFilter.find(Checkbox(option));
     cy.do(targetOption.click());
     this.verifyRoleAssignmentFilterOptionInModal(option, { isChecked });
+  },
+
+  verifyRoleSelectionFilterOptionInModal(option, { isChecked = false } = {}) {
+    const targetOption = roleSelectionFilter.find(Checkbox(option));
+    cy.expect(targetOption.has({ checked: isChecked }));
+  },
+
+  selectRoleSelectionFilterOptionInModal(option, { isChecked = true } = {}) {
+    const targetOption = roleSelectionFilter.find(Checkbox(option));
+    if (isChecked) cy.do(targetOption.checkIfNotSelected());
+    else cy.do(targetOption.uncheckIfSelected());
+    this.verifyRoleSelectionFilterOptionInModal(option, { isChecked });
+  },
+
+  toggleRoleSelectionFilterAccordion(isOpen) {
+    cy.do(roleSelectionFilter.clickHeader());
+    cy.expect(roleSelectionFilter.has({ open: isOpen }));
+  },
+
+  resetRoleSelectionFilterInModal() {
+    cy.do(roleSelectionFilter.find(Button({ icon: 'times-circle-solid' })).click());
+    Object.values(this.roleSelectionFilterOptions).forEach((option) => {
+      this.verifyRoleSelectionFilterOptionInModal(option, { isChecked: false });
+    });
+  },
+
+  clickResetAllInRolesModal() {
+    cy.do(selectRolesModal.find(resetAllButton).click());
+  },
+
+  // With no count given, just checks the "N roles found" text is in sync with the actual number
+  // of rendered rows (useful when the exact total isn't known/controlled by the test). A short
+  // wait is needed first since this reads values directly instead of using a retryable .has()
+  // assertion.
+  verifyRolesFoundCountInModal(count) {
+    if (count === undefined) {
+      cy.wait(1500);
+      cy.then(() => rolesPane.subtitle()).then((subtitleText) => {
+        const foundCount = Number(subtitleText.match(/\d+/)[0]);
+        this.checkRolesCountInModal(foundCount);
+        if (count === 0) cy.expect(selectRolesModal.find(HTML(THE_LIST_CONTAINS_NO_ITEMS)).exists());
+      });
+      return;
+    }
+
+    cy.expect(rolesPane.has({ subtitle: including(`${count} roles found`) }));
+    this.checkRolesCountInModal(count);
+    if (count === 0) cy.expect(selectRolesModal.find(HTML(THE_LIST_CONTAINS_NO_ITEMS)).exists());
+  },
+
+  verifyRoleStatusInModal(roleName, expectedStatus) {
+    const targetRow = selectRolesModal.find(
+      MultiColumnListRow({
+        innerText: matching(new RegExp(`^${roleName}\\n`)),
+        isContainer: false,
+      }),
+    );
+    cy.expect(
+      targetRow.find(MultiColumnListCell({ column: 'Status' })).has({ content: expectedStatus }),
+    );
   },
 
   selectRoleInModal(roleName, isSelected = true, { searchRole = true } = {}) {

@@ -1969,3 +1969,10 @@ export const MATCH_PROFILE_QUALIFIER_TYPES = {
   ENDS_WITH: 'ENDS_WITH',
   CONTAINS: 'CONTAINS',
 };
+
+export const MATCH_PROFILE_STATIC_VALUE_TYPES = {
+  TEXT: 'Text',
+  NUMBER: 'Number',
+  DATE: 'Date',
+  DATE_RANGE: 'Date range',
+};
