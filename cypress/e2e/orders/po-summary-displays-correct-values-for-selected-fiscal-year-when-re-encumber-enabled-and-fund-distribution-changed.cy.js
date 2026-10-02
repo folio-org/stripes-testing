@@ -46,25 +46,26 @@ describe('Orders', () => {
       fiscalYears: {
         first: {
           ...FiscalYears.getDefaultFiscalYear(),
-          name: `autotest_year_A${getRandomPostfix()}`,
-          code: `${code}${StringTools.randomTwoDigitNumber()}01`,
+          name: `autotest_year_W${getRandomPostfix()}`,
+          code: `F${code}${StringTools.randomTwoDigitNumber()}01`,
           ...DateTools.getFullFiscalYearStartAndEnd(0),
         },
         second: {
           ...FiscalYears.getDefaultFiscalYear(),
-          name: `autotest_year_B${getRandomPostfix()}`,
-          code: `${code}${StringTools.randomTwoDigitNumber()}02`,
+          name: `autotest_year_A${getRandomPostfix()}`,
+          code: `F${code}${StringTools.randomTwoDigitNumber()}02`,
           ...DateTools.getFullFiscalYearStartAndEnd(1),
         },
         third: {
           ...FiscalYears.getDefaultFiscalYear(),
-          name: `autotest_year_C${getRandomPostfix()}`,
-          code: `${code}${StringTools.randomTwoDigitNumber()}03`,
+          name: `autotest_year_T${getRandomPostfix()}`,
+          code: `F${code}${StringTools.randomTwoDigitNumber()}03`,
           ...DateTools.getFullFiscalYearStartAndEnd(2),
         },
         fourth: {
           ...FiscalYears.getDefaultFiscalYear(),
-          name: `autotest_year_D${getRandomPostfix()}`,
+          name: `autotest_year_R${getRandomPostfix()}`,
+          code: `R${code}${StringTools.randomTwoDigitNumber()}04`,
           ...DateTools.getFullFiscalYearStartAndEnd(0),
         },
       },
@@ -554,7 +555,7 @@ describe('Orders', () => {
 
         // Step 13: Check fiscal year dropdown options
         OrderDetails.checkFiscalYearDropdownOptions({
-          current: [testData.fiscalYears.fourth.code, testData.fiscalYears.third.code],
+          current: [testData.fiscalYears.third.code, testData.fiscalYears.fourth.code],
           previous: [testData.fiscalYears.second.code, testData.fiscalYears.first.code],
         });
 
@@ -570,7 +571,7 @@ describe('Orders', () => {
           ],
         });
         OrderDetails.checkFiscalYearDropdownOptions({
-          current: [testData.fiscalYears.fourth.code, testData.fiscalYears.third.code],
+          current: [testData.fiscalYears.third.code, testData.fiscalYears.fourth.code],
           previous: [testData.fiscalYears.second.code, testData.fiscalYears.first.code],
         });
 
@@ -590,6 +591,7 @@ describe('Orders', () => {
         OrderDetails.waitLoading();
         OrderDetails.openOrder({ orderNumber: testData.order1.poNumber });
         OrderDetails.waitLoading();
+        OrderDetails.selectFiscalYear(testData.fiscalYears.fourth.code);
         OrderDetails.checkOrderDetails({
           summary: [
             { key: ORDER_VIEW_FIELD_LABELS.FISCAL_YEAR, value: testData.fiscalYears.fourth.code },
@@ -602,7 +604,7 @@ describe('Orders', () => {
 
         // Step 17: Check fiscal year dropdown options
         OrderDetails.checkFiscalYearDropdownOptions({
-          current: [testData.fiscalYears.fourth.code, testData.fiscalYears.third.code],
+          current: [testData.fiscalYears.third.code, testData.fiscalYears.fourth.code],
           previous: [testData.fiscalYears.second.code, testData.fiscalYears.first.code],
         });
       },

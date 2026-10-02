@@ -11,6 +11,11 @@ export const LEDGER_STATUSES = {
   INACTIVE: 'Inactive',
 };
 
+export const LEDGER_FILTERS_LABELS = {
+  ACQ_UNIT: 'Acquisition unit',
+  STATUS: 'Status',
+};
+
 export const ROLLOVER_RESULT_CSV_HEADERS = {
   FUND_NAME: 'Name (Fund)',
   FUND_CODE: 'Code (Fund)',

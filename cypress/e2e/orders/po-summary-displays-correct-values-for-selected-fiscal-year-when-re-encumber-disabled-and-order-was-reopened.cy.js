@@ -39,19 +39,16 @@ describe('Orders', () => {
       fiscalYears: {
         first: {
           ...FiscalYears.getDefaultFiscalYear(),
-          name: `autotest_year_A${getRandomPostfix()}`,
           code: `${code}${StringTools.randomTwoDigitNumber()}01`,
           ...DateTools.getFullFiscalYearStartAndEnd(0),
         },
         second: {
           ...FiscalYears.getDefaultFiscalYear(),
-          name: `autotest_year_B${getRandomPostfix()}`,
           code: `${code}${StringTools.randomTwoDigitNumber()}02`,
           ...DateTools.getFullFiscalYearStartAndEnd(1),
         },
         third: {
           ...FiscalYears.getDefaultFiscalYear(),
-          name: `autotest_year_C${getRandomPostfix()}`,
           code: `${code}${StringTools.randomTwoDigitNumber()}03`,
           ...DateTools.getFullFiscalYearStartAndEnd(2),
         },
