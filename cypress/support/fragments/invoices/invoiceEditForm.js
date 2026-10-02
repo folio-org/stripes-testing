@@ -42,6 +42,7 @@ const clearButton = Button({ icon: 'times-circle-solid' });
 const invoiceFormFieldSet = FieldSet({ id: 'invoice-form-links' });
 const linkNameTextField = TextField('Link name*');
 const externalUrlTextField = TextField('External URL');
+const currencySelection = Selection('Currency*');
 const unsavedChangesMessage = 'There are unsaved changes';
 const infoFields = {
   fiscalYear: informationSection.find(Button({ id: 'invoice-fiscal-year' })),
@@ -111,6 +112,19 @@ export default {
   checkCurrencyCode(currencyCode) {
     cy.expect(Button({ id: 'currency' }).has({ singleValue: including(`(${currencyCode})`) }));
   },
+  checkCurrencyOptions(currencyCodes = [], { isPresent = true } = {}) {
+    cy.get('#currency').scrollIntoView({ duration: 1000 });
+    cy.do(currencySelection.open());
+    cy.expect(SelectionList().exists());
+    cy.then(() => SelectionList().optionList()).then((options) => {
+      currencyCodes.forEach((currencyCode) => {
+        const isOptionPresent = options.some((option) => option.includes(`(${currencyCode})`));
+
+        expect(isOptionPresent, `Currency option "${currencyCode}" is present`).to.equal(isPresent);
+      });
+    });
+    cy.do(currencySelection.toggle());
+  },
   checkExchangeRate(exchangeRate) {
     cy.expect(extendedInfoFields.exchangeRate.has({ value: String(exchangeRate) }));
   },
@@ -149,7 +163,7 @@ export default {
     }
     if (invoice.currency) {
       cy.get('#currency').scrollIntoView({ duration: 1000 });
-      cy.do([Selection('Currency*').open(), SelectionList().select(invoice.currency)]);
+      cy.do([currencySelection.open(), SelectionList().select(invoice.currency)]);
     }
     if (invoice.exchangeRate) {
       cy.expect(extendedInfoFields.exchangeRate.has({ disabled: false }));
