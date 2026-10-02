@@ -151,6 +151,10 @@ export default {
     });
   },
 
+  selectPieceFormat(pieceFormat) {
+    cy.do(editPieceFields[RECEIVING_PIECE_FORM_FIELD_LABELS.PIECE_FORMAT].choose(pieceFormat));
+  },
+
   checkCreateItemCheckbox() {
     const createItemCheckbox = editPieceModal.find(
       Checkbox(RECEIVING_PIECE_FORM_FIELD_LABELS.CREATE_ITEM),
