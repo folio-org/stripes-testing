@@ -6,6 +6,10 @@ const activeFromFilterSection = Accordion({ id: 'clickable-activeFrom-filter' })
 const activeToFilterSection = Accordion({ id: 'clickable-activeTo-filter' });
 const POLineFilterSection = Accordion({ id: 'filter-accordion-po-lines' });
 const tagsFilterSection = Accordion({ id: 'clickable-tags-filter' });
+const agreementLinesFilterPane = Pane({ id: 'agreements-tab-filter-pane' });
+const acquisitionUnitsFilterAccordion = agreementLinesFilterPane.find(
+  Accordion('Acquisition unit'),
+);
 
 export default {
   search(name) {
@@ -22,5 +26,9 @@ export default {
       POLineFilterSection.exists(),
       tagsFilterSection.exists(),
     ]);
+  },
+
+  verifyAcquisitionUnitsFilterPresent() {
+    cy.expect(acquisitionUnitsFilterAccordion.exists());
   },
 };

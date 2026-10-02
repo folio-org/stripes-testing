@@ -204,6 +204,16 @@ export default {
     });
   },
 
+  verifyDefaultProfileLockStatus(profileName, isLocked) {
+    const targetRow = MultiColumnListRow(including(profileName), { isContainer: false });
+
+    cy.expect(
+      targetRow
+        .find(MultiColumnListCell({ column: 'Status' }))
+        .has({ content: isLocked ? 'Locked' : '' }),
+    );
+  },
+
   waitLoading() {
     cy.expect(jobProfilesPane.exists());
     this.verifyDefaultProfiles();

@@ -965,6 +965,7 @@ export const DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES = {
   INSTANCES: 'Default instances export job profile',
   HOLDINGS: 'Default holdings export job profile',
   AUTHORITY: 'Default authority export job profile',
+  LINKED_DATA: 'Default linked data export job profile',
 };
 
 export const AUTHORIZATION_POLICY_TYPES = {

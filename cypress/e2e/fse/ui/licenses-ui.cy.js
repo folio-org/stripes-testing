@@ -1,5 +1,8 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import Licenses from '../../../support/fragments/licenses/licenses';
+import Amendments from '../../../support/fragments/licenses/amendments';
+import SearchAndFilterLicenses from '../../../support/fragments/licenses/searchAndFilterLicenses';
+import SearchAndFilterAmendments from '../../../support/fragments/licenses/searchAndFilterAmendments';
 
 describe('fse-licenses - UI (no data manipulation)', () => {
   beforeEach(() => {
@@ -17,6 +20,10 @@ describe('fse-licenses - UI (no data manipulation)', () => {
     { tags: ['sanity', 'fse', 'ui', 'licenses', 'TC195331'] },
     () => {
       Licenses.waitLoading();
+      SearchAndFilterLicenses.verifyAcquisitionUnitsFilterPresent();
+      Amendments.openAmendmentsTab();
+      Amendments.waitLoading();
+      SearchAndFilterAmendments.verifyAcquisitionUnitsFilterPresent();
     },
   );
 });

@@ -115,6 +115,7 @@ export default {
   patronBlockTemplates: 'settings/users/manual-block-templates',
   usersTransferCriteria: '/settings/users/transfer-criteria',
   customFieldsPath: 'settings/users/custom-fields',
+  numberGeneratorOptionsPath: 'settings/users/number-generator-options',
   // Data Import
   mappingProfilePath: 'settings/data-import/mapping-profiles',
   actionProfilePath: 'settings/data-import/action-profiles',
@@ -141,6 +142,10 @@ export default {
 
   selectOrders() {
     cy.do(NavListItem('Orders').click());
+  },
+
+  selectMenuOption(option) {
+    cy.do(NavListItem(option).click());
   },
 
   verifyConsortiumManagerOptionAbsent() {
