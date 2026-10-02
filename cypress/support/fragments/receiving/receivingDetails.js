@@ -146,6 +146,19 @@ export default {
       cy.get(unreceivableRowsSelector).should('have.length', unreceivableCount);
     }
   },
+  checkApiErrorResponse(
+    interception,
+    { expectedStatus, expectedErrorCode, expectedErrorMessage } = {},
+  ) {
+    expect(interception.response.statusCode).to.equal(expectedStatus);
+
+    if (expectedErrorCode) {
+      expect(interception.response.body.errors[0].code).to.equal(expectedErrorCode);
+    }
+    if (expectedErrorMessage) {
+      expect(interception.response.body.errors[0].message).to.equal(expectedErrorMessage);
+    }
+  },
   checkExpectedTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.status) {
@@ -430,9 +443,13 @@ export default {
     cy.do(expectedSection.find(Button('Actions')).click());
     cy.expect(Button(ADD_PIECE_BUTTON_LABEL).absent());
   },
-  openReceiveListEditForm() {
+  openReceiveListEditForm({ isOrderClosed = false } = {}) {
     cy.do([expectedSection.find(Button('Actions')).click(), Button('Receive').click()]);
-    ReceivingsListEditForm.waitLoading();
+
+    // For a closed order the "Order closed" modal appears before the form
+    if (!isOrderClosed) {
+      ReceivingsListEditForm.waitLoading();
+    }
 
     return ReceivingsListEditForm;
   },
