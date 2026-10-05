@@ -437,8 +437,12 @@ export default {
     this.assertResultsCount(0);
   },
 
-  assertNoResultsFound() {
-    cy.expect(ordersResults.find(HTML(RESULTS_PANE_NOT_FOUND_MESSAGE)).exists());
+  assertNoResultsFound(searchValue) {
+    const message = searchValue
+      ? `No results found for "${searchValue}". Please check your spelling and filters.`
+      : RESULTS_PANE_NOT_FOUND_MESSAGE;
+
+    cy.expect(ordersResults.find(HTML(message)).exists());
   },
 
   createOrderWithAU(order, AUName, isApproved = false) {
@@ -705,7 +709,7 @@ export default {
       Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
       Button('Organization look-up').click(),
       selectOrganizationModal.find(searchField).fillIn(invoice.vendorName),
-      searchButton.click(),
+      selectOrganizationModal.find(searchButton).click(),
     ]);
     SearchHelper.selectFromResultsList();
   },

@@ -251,6 +251,7 @@ const costDetailsFields = {
 };
 
 const locationFields = {
+  newHoldingLocation: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].locationId` })),
   quantityPhysical: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].quantityPhysical` })),
   quantityElectronic: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].quantityElectronic` })),
   holding: (index = 0) => locationSection
