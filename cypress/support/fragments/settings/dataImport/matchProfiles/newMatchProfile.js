@@ -13,6 +13,7 @@ import {
   TextArea,
   TextField,
 } from '../../../../../../interactors';
+import { FOLIO_RECORD_TYPE } from '../../../../constants';
 
 const criterionValueTypeList = SelectionList({ id: 'sl-container-criterion-value-type' });
 const criterionValueTypeButton = Button({ id: 'criterion-value-type' });
@@ -21,6 +22,12 @@ const recordSelectorDropdown = Dropdown({ id: 'record-selector-dropdown' });
 const matchProfileDetailsSection = Section({ id: 'match-profile-details' });
 const nameTextField = TextField('Name*');
 const closeButton = Button('Close');
+const incomingQualifierValueField = TextField({
+  name: 'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierValue',
+});
+const existingQualifierValueField = TextField({
+  name: 'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierValue',
+});
 
 const optionsList = {
   instanceHrid: 'Admin data: Instance HRID',
@@ -93,18 +100,41 @@ function selectIncomingRecordType(incomingRecordType) {
   cy.do(matchProfileDetailsAccordion.find(recordSelectorDropdown).choose(incomingRecordType));
 }
 
-function fillQualifierInIncomingPart(qualifierType, qualifierValue) {
-  cy.contains('Incoming MARC Bibliographic record').then((elem) => {
+// Re-fills just the qualifier value, without touching the "Use a qualifier" checkbox (unlike
+// fillQualifierInIncomingPart/fillQualifierInExistingPart, which always (re-)toggle it)
+function fillQualifierValueInIncomingPart(qualifierValue) {
+  cy.do(incomingQualifierValueField.fillIn(qualifierValue));
+  cy.wait(500); // to make sure validation happened
+}
+
+function fillQualifierValueInExistingPart(qualifierValue) {
+  cy.do(existingQualifierValueField.fillIn(qualifierValue));
+  cy.wait(500); // to make sure validation happened
+}
+
+// incomingRecordTypeLabel is a FOLIO_RECORD_TYPE value, since the "Incoming <type> record"
+// heading text changes with the selected incoming record type
+function toggleQualifierCheckboxInIncomingPart(
+  incomingRecordTypeLabel = FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+) {
+  cy.contains(`Incoming ${incomingRecordTypeLabel} record`).then((elem) => {
     elem.parent()[0].querySelectorAll('input[type="checkbox"]')[0].click();
   });
-  cy.do([
+  cy.wait(500); // to make sure validation happened
+}
+
+function fillQualifierInIncomingPart(
+  qualifierType,
+  qualifierValue,
+  incomingRecordTypeLabel = FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+) {
+  toggleQualifierCheckboxInIncomingPart(incomingRecordTypeLabel);
+  cy.do(
     Select({
       name: 'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierType',
     }).choose(qualifierType),
-    TextField({
-      name: 'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierValue',
-    }).fillIn(qualifierValue),
-  ]);
+  );
+  fillQualifierValueInIncomingPart(qualifierValue);
 }
 
 function fillQualifierInExistingComparisonPart(compareValueInComparison) {
@@ -118,18 +148,50 @@ function fillQualifierInExistingComparisonPart(compareValueInComparison) {
   );
 }
 
-function fillQualifierInExistingPart(qualifierType, qualifierValue) {
-  cy.contains('Existing MARC Bibliographic record').then((elem) => {
-    elem.parent()[0].querySelector('input[type="checkbox').click();
+// existingRecordTypeLabel is a FOLIO_RECORD_TYPE value, since the "Existing <type> record"
+// heading text changes with the selected existing record type
+function toggleQualifierCheckboxInExistingPart(
+  existingRecordTypeLabel = FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+) {
+  cy.contains(`Existing ${existingRecordTypeLabel} record`).then((elem) => {
+    elem.parent()[0].querySelector('input[type="checkbox"]').click();
   });
-  cy.do([
+  cy.wait(500); // to make sure validation happened
+}
+
+function fillQualifierInExistingPart(
+  qualifierType,
+  qualifierValue,
+  existingRecordTypeLabel = FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+) {
+  toggleQualifierCheckboxInExistingPart(existingRecordTypeLabel);
+  cy.do(
     Select({
       name: 'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierType',
     }).choose(qualifierType),
-    TextField({
-      name: 'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierValue',
-    }).fillIn(qualifierValue),
-  ]);
+  );
+  fillQualifierValueInExistingPart(qualifierValue);
+}
+
+// Toggles the "Use a qualifier" checkbox off in the Incoming record section - there's no
+// separate check/uncheck method, only fillQualifierInIncomingPart, which always checks it.
+// incomingRecordTypeLabel works the same as in toggleQualifierCheckboxInIncomingPart.
+function uncheckQualifierInIncomingPart(
+  incomingRecordTypeLabel = FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+) {
+  toggleQualifierCheckboxInIncomingPart(incomingRecordTypeLabel);
+}
+
+function verifyQualifierValueErrorInIncomingPart(hasError = true) {
+  cy.expect(
+    incomingQualifierValueField.has({ error: hasError ? 'Please enter a value' : undefined }),
+  );
+}
+
+function verifyQualifierValueErrorInExistingPart(hasError = true) {
+  cy.expect(
+    existingQualifierValueField.has({ error: hasError ? 'Please enter a value' : undefined }),
+  );
 }
 
 function fillStaticValue(staticValue, recordValue) {
@@ -204,8 +266,14 @@ export default {
   optionsList,
   fillName,
   selectExistingRecordType,
+  selectIncomingRecordType,
   fillQualifierInIncomingPart,
   fillQualifierInExistingPart,
+  uncheckQualifierInIncomingPart,
+  fillQualifierValueInIncomingPart,
+  fillQualifierValueInExistingPart,
+  verifyQualifierValueErrorInIncomingPart,
+  verifyQualifierValueErrorInExistingPart,
   selectExistingRecordField,
   fillStaticValue,
   fillOnlyComparePartOfTheValueInIncomingSection,
