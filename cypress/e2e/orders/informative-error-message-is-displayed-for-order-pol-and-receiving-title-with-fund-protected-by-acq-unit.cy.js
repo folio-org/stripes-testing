@@ -218,11 +218,12 @@ describe('Orders', () => {
 
       // Step 4: Close "Edit" POL page, click "Actions" button, select "Receive" option, click on the Title name
       OrderLineEditForm.closeBlankForm();
-      cy.wait(1000); // wait for the callout to be displayed
+      cy.wait(1000);
       InteractorsTools.closeAllVisibleCallouts();
       OrderLines.receiveOrderLineViaActions();
       Receiving.waitLoading();
       Receiving.selectFromResultsList(testData.instanceTitle);
+      cy.wait(1000);
       InteractorsTools.checkCalloutErrorMessage(OrderStates.fundsCouldNotBeLoaded);
       InteractorsTools.closeAllVisibleCallouts();
       ReceivingDetails.checkTitlePaneIsDisplayed(testData.instanceTitle);
@@ -238,6 +239,7 @@ describe('Orders', () => {
       // Step 6: Edit any field in the "Item information" accordion, click "Save & close" button
       ReceivingEditForm.fillItemDetailsFields({ edition: testData.edition });
       ReceivingEditForm.clickSaveButton();
+      cy.wait(1000);
       InteractorsTools.checkCalloutErrorMessage(OrderStates.fundsCouldNotBeLoaded);
       InteractorsTools.closeAllVisibleCallouts();
       ReceivingDetails.checkTitlePaneIsDisplayed(testData.instanceTitle);
@@ -251,6 +253,7 @@ describe('Orders', () => {
       EditPieceModal.waitLoading();
       Receiving.quickReceiveInEditPieceModal();
       InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
+      cy.wait(1000);
       InteractorsTools.checkCalloutErrorMessage(OrderStates.fundsCouldNotBeLoaded);
       InteractorsTools.closeAllVisibleCallouts();
       ReceivingDetails.checkTitlePaneIsDisplayed(testData.instanceTitle);
