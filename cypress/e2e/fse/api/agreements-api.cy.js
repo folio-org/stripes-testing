@@ -1,4 +1,4 @@
-const PER_PAGE = 100;
+const PER_PAGE = 25;
 
 const fetchAllPages = (getPage, page = 1, collected = []) => {
   return getPage(page, PER_PAGE).then((response) => {
