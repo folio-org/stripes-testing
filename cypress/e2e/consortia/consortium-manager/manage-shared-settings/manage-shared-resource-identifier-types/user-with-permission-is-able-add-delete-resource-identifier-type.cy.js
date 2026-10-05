@@ -53,7 +53,7 @@ describe('Consortia', () => {
 
         it(
           'C411322 User with "Consortium manager: Can share settings to all members" permission is able to add/delete resource identifier type shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-          { tags: ['criticalPath', 'thunderjet', 'C411322'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C411322'] },
           () => {
             const { locale } = flow.ctx();
             const rowDataToCheck = [
@@ -197,7 +197,9 @@ function getPreconditionSteps() {
         Permissions.consortiaSettingsConsortiumManagerEdit.gui,
         Permissions.crudResourceIdentifierTypes.gui,
       ])
-      .then((userProperties) => flow.set(R.USER, userProperties, () => Users.deleteViaApi(userProperties.userId)))
+      .then((userProperties) => {
+        return flow.set(R.USER, userProperties, () => Users.deleteViaApi(userProperties.userId));
+      })
       .then(() => cy.assignAffiliationToUser(Affiliations.College, flow.get(R.USER).userId))
       .then(() => {
         cy.setTenant(Affiliations.College);
