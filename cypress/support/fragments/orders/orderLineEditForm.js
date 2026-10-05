@@ -70,6 +70,7 @@ const FORM_FIELD_NAMES = {
   PRODUCT_ID_TYPE: 'details.productIds[0].productIdType',
   PRODUCT_ID_QUALIFIER: 'details.productIds[0].qualifier',
   RECEIVING_NOTE: 'details.receivingNote',
+  INTERNAL_NOTE: 'description',
   IS_ACKNOWLEDGED: 'details.isAcknowledged',
   SUBSCRIPTION_FROM: 'details.subscriptionFrom',
   SUBSCRIPTION_TO: 'details.subscriptionTo',
@@ -164,6 +165,7 @@ const edition = TextField({ name: FORM_FIELD_NAMES.EDITION });
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.TITLE_OR_PACKAGE })),
   receivingNote: itemDetailsSection.find(TextArea({ name: FORM_FIELD_NAMES.RECEIVING_NOTE })),
+  internalNote: itemDetailsSection.find(TextArea({ name: FORM_FIELD_NAMES.INTERNAL_NOTE })),
   mustAcknowledgeReceivingNote: itemDetailsSection.find(
     Checkbox({ name: FORM_FIELD_NAMES.IS_ACKNOWLEDGED }),
   ),
@@ -260,6 +262,7 @@ const fundDistributionFields = {
   fund: (index = 0) => fundDistributionDetailsSection
     .find(RepeatableFieldItem({ index }))
     .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID))),
+  fundIdButton: (index = 0) => fundDistributionDetailsSection.find(Button({ id: `fundDistribution[${index}].fundId` })),
   expenseClass: (index = 0) => fundDistributionDetailsSection
     .find(RepeatableFieldItem({ index }))
     .find(Selection(including('Expense class'))),
@@ -527,6 +530,13 @@ export default {
         );
       }
     }
+    if (poLineDetails.eresourceMaterialType) {
+      cy.do(
+        Select({ name: FORM_FIELD_NAMES.MATERIAL_TYPE_ERESOURCE }).choose(
+          poLineDetails.eresourceMaterialType,
+        ),
+      );
+    }
     if (poLineDetails.claimingActive) {
       cy.do(orderLineFields.claimingActive.click());
     }
@@ -589,6 +599,13 @@ export default {
 
   clickAddFundDistributionButton() {
     cy.do([fundDistributionDetailsSection.find(Button(FORM_LABELS.ADD_FUND_DISTRIBUTION)).click()]);
+  },
+
+  scrollToItemDetailsSection() {
+    // real wheel event scrolls the page like a user, so open dropdowns react to it
+    cy.get(`#${FORM_SECTION_IDS.FORM}`).realMouseWheel({ deltaY: -5000, scrollBehavior: false });
+    cy.get(`[id="${FORM_SECTION_IDS.ITEM_DETAILS}"]`).should('be.visible');
+    cy.wait(1000);
   },
 
   scrollToFundDistributionSection() {
