@@ -17,6 +17,7 @@ import {
   Selection,
   SelectionList,
   SelectionOption,
+  Spinner,
   TextArea,
   TextField,
   Warning,
@@ -154,6 +155,7 @@ const physicalResourceDetailsSection = orderLineEditFormRoot.find(
 const automaticExportCheckboxName = FIELD_SELECTORS.AUTOMATIC_EXPORT;
 const automaticExportInfoIconSelector = FIELD_SELECTORS.INFO_POPOVER_TRIGGER;
 const cancelButton = Button(COMMON_BUTTON_LABELS.CANCEL);
+const blankFormCloseButton = Button({ icon: 'times', ariaLabel: including('Close') });
 const saveButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_CLOSE);
 const saveAndOpenOrderButton = Button(ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_OPEN);
 const saveAndKeepEditingButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING);
@@ -813,6 +815,12 @@ export default {
   },
   assertFormClosed() {
     cy.expect(orderLineEditFormRoot.absent());
+  },
+  verifyBlankFormDisplayed() {
+    cy.expect([orderLineEditFormRoot.absent(), Spinner().exists(), blankFormCloseButton.exists()]);
+  },
+  closeBlankForm() {
+    cy.do(blankFormCloseButton.click());
   },
   clickSaveButton({ orderLineCreated = false, orderLineUpdated = true } = {}) {
     cy.expect(saveButton.has({ disabled: false }));
