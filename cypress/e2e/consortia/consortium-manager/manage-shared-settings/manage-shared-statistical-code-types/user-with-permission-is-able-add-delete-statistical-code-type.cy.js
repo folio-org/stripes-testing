@@ -9,14 +9,14 @@ import ConsortiumManagerApp, {
   settingsItems,
   SHARED_SETTING_LIBRARIES,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
-import ResourceIdentifierTypesConsortiumManager, {
-  RESOURCE_IDENTIFIER_ENTITY_TYPE,
-} from '../../../../../support/fragments/consortium-manager/inventory/instances/resourceIdentifierTypesConsortiumManager';
+import StatisticalCodeTypesConsortiumManager, {
+  STATISTICAL_CODE_ENTITY_TYPE,
+} from '../../../../../support/fragments/consortium-manager/inventory/instances-holdings-items/statisticalCodeTypesConsortiumManager';
 import ConfirmShare from '../../../../../support/fragments/consortium-manager/modal/confirm-share';
 import DeleteCancelReason from '../../../../../support/fragments/consortium-manager/modal/delete-cancel-reason';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import ResourceIdentifierTypes from '../../../../../support/fragments/settings/inventory/instances/resourceIdentifierTypes';
+import StatisticalCodeTypes from '../../../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodeTypes';
 import SettingsMenu from '../../../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
@@ -31,16 +31,16 @@ const R = {
 
 const NAME_FIELD = 'Name';
 
-const RIT_NAME_1 = getTestEntityValue('SharedResourceIdentifierType1');
-const RIT_NAME_2 = getTestEntityValue('SharedResourceIdentifierType2');
+const SCT_NAME_1 = getTestEntityValue('SharedStatisticalCodeType1');
+const SCT_NAME_2 = getTestEntityValue('SharedStatisticalCodeType2');
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
     describe('Manage shared settings', () => {
-      describe('Manage shared Resource identifier types', () => {
+      describe('Manage shared Statistical code types', () => {
         const flow = new ExecutionFlowManager();
 
-        before('Create C411322 preconditions', () => {
+        before('Create C411353 preconditions', () => {
           cy.getAdminToken();
           cy.getTenantLocaleApi().then((locale) => flow.set(R.LOCALE, locale));
 
@@ -49,19 +49,19 @@ describe('Consortia', () => {
           flow.step(steps.createAndConfigureUser).step(steps.loginAsConfiguredUser);
         });
 
-        after('Delete C411322 data', () => {
+        after('Delete C411353 data', () => {
           cy.resetTenant();
           cy.getAdminToken();
           flow.cleanup();
         });
 
         it(
-          'C411322 User with "Consortium manager: Can share settings to all members" permission is able to add/delete resource identifier type shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-          { tags: ['criticalPathECS', 'thunderjet', 'C411322'] },
+          'C411353 User with "Consortium manager: Can share settings to all members" permission is able to add/delete statistical code type shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
+          { tags: ['extendedPathECS', 'thunderjet', 'C411353'] },
           () => {
             const { locale } = flow.ctx();
             const rowDataToCheck = [
-              RIT_NAME_1,
+              SCT_NAME_1,
               INVENTORY_RECORD_SOURCE.CONSORTIUM,
               formatIntlDateTime(locale, new Date()),
               SHARED_SETTING_LIBRARIES,
@@ -76,7 +76,7 @@ describe('Consortia', () => {
 
             cy.log('<--- STEP 2 --->');
             ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
-            ResourceIdentifierTypesConsortiumManager.choose();
+            StatisticalCodeTypesConsortiumManager.choose();
             ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
             cy.log('<--- STEP 3 --->');
@@ -90,7 +90,7 @@ describe('Consortia', () => {
             });
 
             cy.log('<--- STEP 4 --->');
-            ConsortiaControlledVocabularyPaneset.fillInTextField({ name: RIT_NAME_1 });
+            ConsortiaControlledVocabularyPaneset.fillInTextField({ name: SCT_NAME_1 });
 
             cy.log('<--- STEP 5 --->');
             ConsortiaControlledVocabularyPaneset.checkShareCheckbox();
@@ -101,13 +101,13 @@ describe('Consortia', () => {
 
             cy.log('<--- STEP 6 --->');
             ConsortiaControlledVocabularyPaneset.clickSave();
-            ConfirmShare.waitLoadingConfirmShareToAll(RIT_NAME_1);
+            ConfirmShare.waitLoadingConfirmShareToAll(SCT_NAME_1);
 
             cy.log('<--- STEP 7 --->');
             ConfirmShare.clickConfirm();
-            ResourceIdentifierTypesConsortiumManager.waitLoading();
+            StatisticalCodeTypesConsortiumManager.waitLoading();
             ConsortiumManagerApp.checkMessage(
-              messages.created(RIT_NAME_1, SHARED_SETTING_LIBRARIES),
+              messages.created(SCT_NAME_1, SHARED_SETTING_LIBRARIES),
             );
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(rowDataToCheck, [
               actionIcons.edit,
@@ -115,13 +115,13 @@ describe('Consortia', () => {
             ]);
 
             cy.log('<--- STEP 8 --->');
-            ConsortiaControlledVocabularyPaneset.createViaUi(true, { name: RIT_NAME_2 });
+            ConsortiaControlledVocabularyPaneset.createViaUi(true, { name: SCT_NAME_2 });
             ConsortiaControlledVocabularyPaneset.clickSave();
-            ConfirmShare.waitLoadingConfirmShareToAll(RIT_NAME_2);
+            ConfirmShare.waitLoadingConfirmShareToAll(SCT_NAME_2);
 
             cy.log('<--- STEP 9 --->');
             ConfirmShare.clickKeepEditing();
-            ResourceIdentifierTypesConsortiumManager.waitLoading();
+            StatisticalCodeTypesConsortiumManager.waitLoading();
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive();
             ConsortiumManagerApp.verifySelectMembersButton(false);
             ConsortiaControlledVocabularyPaneset.verifyShareCheckboxState({
@@ -131,12 +131,12 @@ describe('Consortia', () => {
 
             cy.log('<--- STEP 10 --->');
             ConsortiaControlledVocabularyPaneset.clickCancel();
-            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(RIT_NAME_2);
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(SCT_NAME_2);
             ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
             ConsortiumManagerApp.verifySelectMembersButton();
 
             cy.log('<--- STEP 11 --->');
-            ConsortiaControlledVocabularyPaneset.createViaUi(true, { name: RIT_NAME_1 });
+            ConsortiaControlledVocabularyPaneset.createViaUi(true, { name: SCT_NAME_1 });
             ConsortiaControlledVocabularyPaneset.clickSave();
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive();
             ConsortiaControlledVocabularyPaneset.verifyFieldValidatorError({
@@ -153,8 +153,8 @@ describe('Consortia', () => {
             ]);
 
             cy.log('<--- STEP 13 --->');
-            ConsortiaControlledVocabularyPaneset.performAction(RIT_NAME_1, actionIcons.trash);
-            DeleteCancelReason.waitLoadingDeleteModal(RESOURCE_IDENTIFIER_ENTITY_TYPE, RIT_NAME_1);
+            ConsortiaControlledVocabularyPaneset.performAction(SCT_NAME_1, actionIcons.trash);
+            DeleteCancelReason.waitLoadingDeleteModal(STATISTICAL_CODE_ENTITY_TYPE, SCT_NAME_1);
 
             cy.log('<--- STEP 14 --->');
             DeleteCancelReason.clickCancel();
@@ -164,21 +164,21 @@ describe('Consortia', () => {
             ]);
 
             cy.log('<--- STEP 15 --->');
-            ConsortiaControlledVocabularyPaneset.performAction(RIT_NAME_1, actionIcons.trash);
-            DeleteCancelReason.waitLoadingDeleteModal(RESOURCE_IDENTIFIER_ENTITY_TYPE, RIT_NAME_1);
+            ConsortiaControlledVocabularyPaneset.performAction(SCT_NAME_1, actionIcons.trash);
+            DeleteCancelReason.waitLoadingDeleteModal(STATISTICAL_CODE_ENTITY_TYPE, SCT_NAME_1);
             DeleteCancelReason.clickDelete();
-            ResourceIdentifierTypesConsortiumManager.waitLoading();
+            StatisticalCodeTypesConsortiumManager.waitLoading();
             ConsortiumManagerApp.checkMessage(
-              messages.deleted(RESOURCE_IDENTIFIER_ENTITY_TYPE, RIT_NAME_1),
+              messages.deleted(STATISTICAL_CODE_ENTITY_TYPE, SCT_NAME_1),
             );
-            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(RIT_NAME_1);
+            ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(SCT_NAME_1);
 
             cy.log('<--- STEP 16-18 --->');
             [tenantNames.central, tenantNames.college, tenantNames.university].forEach(
               (tenant, index, arr) => {
-                cy.visit(SettingsMenu.resourceIdentifierTypes);
-                ResourceIdentifierTypes.verifyResourceIdentifierTypesAbsentInTheList({
-                  name: RIT_NAME_1,
+                cy.visit(SettingsMenu.statisticalCodeTypes);
+                StatisticalCodeTypes.verifyStatisticalCodeTypesAbsentInTheList({
+                  name: SCT_NAME_1,
                 });
                 ConsortiumManager.switchActiveAffiliation(
                   tenant,
@@ -194,35 +194,41 @@ describe('Consortia', () => {
 });
 
 function getPreconditionSteps() {
+  // Precondition 2: User created in central tenant with affiliations in College and University.
   const createAndConfigureUser = (flow) => {
-    return cy
-      .createTempUser([
-        Permissions.consortiaSettingsConsortiumManagerShare.gui,
-        Permissions.consortiaSettingsConsortiumManagerEdit.gui,
-        Permissions.crudResourceIdentifierTypes.gui,
-      ])
-      .then((userProperties) => {
-        return flow.set(R.USER, userProperties, () => Users.deleteViaApi(userProperties.userId));
-      })
-      .then(() => cy.assignAffiliationToUser(Affiliations.College, flow.get(R.USER).userId))
-      .then(() => {
-        cy.setTenant(Affiliations.College);
-        cy.assignPermissionsToExistingUser(flow.get(R.USER).userId, [
-          Permissions.crudResourceIdentifierTypes.gui,
-        ]);
-      })
-      .then(() => {
-        cy.resetTenant();
-        cy.assignAffiliationToUser(Affiliations.University, flow.get(R.USER).userId);
-      })
-      .then(() => {
-        cy.setTenant(Affiliations.University);
-        cy.assignPermissionsToExistingUser(flow.get(R.USER).userId, [
-          Permissions.crudResourceIdentifierTypes.gui,
-        ]);
-      });
+    return (
+      cy
+        .createTempUser([
+          Permissions.consortiaSettingsConsortiumManagerShare.gui,
+          Permissions.consortiaSettingsConsortiumManagerEdit.gui,
+          Permissions.uiSettingsStatisticalCodeTypesCreateEditDelete.gui,
+        ])
+        .then((userProperties) => {
+          return flow.set(R.USER, userProperties, () => Users.deleteViaApi(userProperties.userId));
+        })
+        // Precondition 3.2: Assign affiliation and permissions in member-1 (College).
+        .then(() => cy.assignAffiliationToUser(Affiliations.College, flow.get(R.USER).userId))
+        .then(() => {
+          cy.setTenant(Affiliations.College);
+          cy.assignPermissionsToExistingUser(flow.get(R.USER).userId, [
+            Permissions.uiSettingsStatisticalCodeTypesCreateEditDelete.gui,
+          ]);
+        })
+        // Precondition 3.3: Assign affiliation and permissions in member-2 (University).
+        .then(() => {
+          cy.resetTenant();
+          cy.assignAffiliationToUser(Affiliations.University, flow.get(R.USER).userId);
+        })
+        .then(() => {
+          cy.setTenant(Affiliations.University);
+          cy.assignPermissionsToExistingUser(flow.get(R.USER).userId, [
+            Permissions.uiSettingsStatisticalCodeTypesCreateEditDelete.gui,
+          ]);
+        })
+    );
   };
 
+  // Precondition 4: User is logged in central tenant.
   const loginAsConfiguredUser = (flow) => {
     cy.resetTenant();
 

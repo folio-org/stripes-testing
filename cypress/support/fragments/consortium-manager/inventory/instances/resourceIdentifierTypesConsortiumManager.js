@@ -11,6 +11,8 @@ export const typeActions = {
   trash: 'trash',
 };
 
+export const RESOURCE_IDENTIFIER_ENTITY_TYPE = 'resource identifier type';
+
 export default {
   createViaApi(type) {
     return cy.getConsortiaId().then((consortiaId) => {

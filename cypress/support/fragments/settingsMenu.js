@@ -47,6 +47,7 @@ export default {
   urlRelationshipPath: 'settings/inventory/URLrelationship',
   instanceStatusTypesPath: 'settings/inventory/instanceStatusTypes',
   modesOfIssuancePath: 'settings/inventory/modesOfIssuance',
+  statisticalCodeTypes: 'settings/inventory/statisticalCodeTypes',
   statisticalCodesPath: 'settings/inventory/StatisticalCodeSettings',
   hridHandlingPath: 'settings/inventory/hridHandling',
   loantypesPath: 'settings/inventory/loantypes',

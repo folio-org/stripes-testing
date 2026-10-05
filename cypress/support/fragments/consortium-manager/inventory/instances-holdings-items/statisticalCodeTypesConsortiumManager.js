@@ -1,9 +1,16 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader } from '../../../../../../interactors';
+import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 
+export const STATISTICAL_CODE_ENTITY_TYPE = 'statistical code type';
+
 export default {
+  waitLoading() {
+    ConsortiaControlledVocabularyPaneset.waitLoading('Statistical code types');
+  },
+
   choose() {
     ConsortiumManagerApp.chooseSecondMenuItem('Statistical code types');
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
