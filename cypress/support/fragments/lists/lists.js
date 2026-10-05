@@ -1209,12 +1209,12 @@ const UI = {
   },
 
   selectRecordTypeFilter(type) {
-    cy.do(filterPane.find(recordTypesAccordion).find(MultiSelect()).choose(type));
+    cy.do(recordTypesAccordion.find(MultiSelect()).choose(type));
     cy.wait(1000);
   },
 
   deselectRecordTypeFilter(type) {
-    cy.do(filterPane.find(recordTypesAccordion).find(MultiSelect()).remove(type));
+    cy.do(recordTypesAccordion.find(MultiSelect()).remove(type));
     cy.wait(1000);
   },
 
