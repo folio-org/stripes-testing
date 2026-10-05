@@ -47,6 +47,8 @@ const unreceivableRowsSelector = '#unreceivable [class*="mclRowFormatterContaine
 
 const boundItemsAccordion = Section({ id: 'boundItems' });
 const boundItemsList = MultiColumnList({ id: 'bound-items-list' });
+const expectedPiecesList = expectedSection.find(MultiColumnList());
+const receivedPiecesList = receivedSection.find(MultiColumnList());
 
 const ADD_PIECE_BUTTON_LABEL = 'Add piece';
 
@@ -146,6 +148,15 @@ export default {
       cy.get(unreceivableRowsSelector).should('have.length', unreceivableCount);
     }
   },
+
+  assertExpectedPiecesTotalCount(totalCount) {
+    cy.expect(expectedPiecesList.has({ totalCount }));
+  },
+
+  assertReceivedPiecesTotalCount(totalCount) {
+    cy.expect(receivedPiecesList.has({ totalCount }));
+  },
+
   checkExpectedTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.status) {
