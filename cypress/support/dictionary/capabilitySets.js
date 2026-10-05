@@ -67,6 +67,11 @@ export default {
     resource: 'UI-Inventory Settings Subject-Sources',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInventorySettingsIdentifierTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Identifier-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventorySettingsListView: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Inventory Settings List',

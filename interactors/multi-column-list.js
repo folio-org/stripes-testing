@@ -97,6 +97,7 @@ export const MultiColumnList = HTML.extend('multi column list')
     dataTestId: (el) => el.parentElement.getAttribute('data-testid'),
     columnCount: (el) => columns(el).length,
     rowCount: (el) => el.querySelectorAll('[class*=mclRow-]').length,
+    totalCount: (el) => Number(el.querySelector('[role=grid]').dataset.totalCount || 0),
     height: (el) => el.offsetHeight,
     width: (el) => el.offsetWidth,
     scrollTop: (el) => el.querySelector('div[class^=mclScrollable-]').scrollTop,

@@ -18,6 +18,7 @@ import {
   Warning,
 } from '../../../../interactors';
 import {
+  COMMON_BUTTON_LABELS,
   DEFAULT_WAIT_TIME,
   ITEM_STATUS_NAMES,
   ORDER_LINE_FILTER_LABELS,
@@ -62,6 +63,10 @@ const routingListSection = rootsection.find(Section({ id: 'routing-list' }));
 const unreceivableSection = rootsection.find(Section({ id: 'unreceivable' }));
 const addRoutingListButton = routingListSection.find(Button('Add routing list'));
 const titleLookUpButton = Button('Title look-up');
+
+const expectedAccordion = Accordion({ id: expectedPiecesAccordionId });
+const receivedAccordion = Accordion({ id: receivedPiecesAccordionId });
+
 const receivingResultsList = MultiColumnList({ id: 'receivings-list' });
 
 const POL_LOOKUP_TRIGGER = 'POL number look-up';
@@ -149,9 +154,9 @@ export default {
   },
   receivePiece: (rowNumber, enumeration, barcode) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
-    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.expect(expectedAccordion.exists());
     cy.do([
-      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      expectedAccordion.find(actionsButton).click(),
       receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       TextField({ name: `${recievingFieldName}.enumeration` }).fillIn(enumeration),
@@ -163,9 +168,9 @@ export default {
 
   receivePieceWithOnlyCopyNumber: (rowNumber, copyNumber) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
-    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.expect(expectedAccordion.exists());
     cy.do([
-      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      expectedAccordion.find(actionsButton).click(),
       receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       TextField({ name: `${recievingFieldName}.copyNumber` }).fillIn(copyNumber),
@@ -193,8 +198,10 @@ export default {
     cy.expect(receivingResultsSection.find(MultiColumnListCell(POL)).exists());
   },
 
-  checkTitleInReceivingList: (title) => {
-    cy.expect(receivingResultsSection.find(MultiColumnListCell(title)).exists());
+  checkTitleInReceivingList: (title, { shouldExist = true } = {}) => {
+    const titleCell = receivingResultsSection.find(MultiColumnListCell(title));
+
+    cy.expect(titleCell[shouldExist ? 'exists' : 'absent']());
   },
 
   assertReceivingResults(titles = []) {
@@ -230,9 +237,9 @@ export default {
   },
 
   addPiece: (displaySummary, copyNumber, enumeration, chronology) => {
-    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.expect(expectedAccordion.exists());
     cy.do([
-      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      expectedAccordion.find(actionsButton).click(),
       addPieceButton.click(),
       TextField('Display summary').fillIn(displaySummary),
       TextField('Copy number').fillIn(copyNumber),
@@ -253,9 +260,9 @@ export default {
   },
 
   addPieceProcess: (caption, enumeration) => {
-    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.expect(expectedAccordion.exists());
     cy.do([
-      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      expectedAccordion.find(actionsButton).click(),
       addPieceButton.click(),
       addPieceModal.find(TextField('Caption')).fillIn(caption),
       addPieceModal.find(TextField('Enumeration')).fillIn(enumeration),
@@ -263,15 +270,12 @@ export default {
   },
 
   addPieceInActions: () => {
-    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
-    cy.do([
-      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
-      addPieceButton.click(),
-    ]);
+    cy.expect(expectedAccordion.exists());
+    cy.do([expectedAccordion.find(actionsButton).click(), addPieceButton.click()]);
   },
 
   selectPiece: (caption) => {
-    cy.do(Accordion({ id: expectedPiecesAccordionId }).find(MultiColumnListCell(caption)).click());
+    cy.do(expectedAccordion.find(MultiColumnListCell(caption)).click());
   },
 
   selectPieceInReceived: (caption) => {
@@ -279,11 +283,7 @@ export default {
   },
 
   selectPieceByIndexInExpected: (indexNumber = 0) => {
-    cy.do(
-      Accordion({ id: expectedPiecesAccordionId })
-        .find(MultiColumnListRow({ index: indexNumber }))
-        .click(),
-    );
+    cy.do(expectedAccordion.find(MultiColumnListRow({ index: indexNumber })).click());
   },
 
   quickReceivePiece: (enumeration) => {
@@ -305,9 +305,9 @@ export default {
 
   receivePieceWithoutBarcode: (rowNumber = 0) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
-    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.expect(expectedAccordion.exists());
     cy.do([
-      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      expectedAccordion.find(actionsButton).click(),
       receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       receiveButton.click(),
@@ -317,11 +317,8 @@ export default {
 
   receivePieceWithBarcode: (rowNumber, displaySummary) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
-    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
-    cy.do([
-      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
-      receiveButton.click(),
-    ]);
+    cy.expect(expectedAccordion.exists());
+    cy.do([expectedAccordion.find(actionsButton).click(), receiveButton.click()]);
     cy.expect([
       Button('Cancel').has({ disabled: false, visible: true }),
       receiveButton.has({ disabled: true, visible: true }),
@@ -343,9 +340,9 @@ export default {
     locations = [],
   }) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
-    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.expect(expectedAccordion.exists());
     cy.do([
-      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      expectedAccordion.find(actionsButton).click(),
       receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       TextField({ name: `${recievingFieldName}.displaySummary` }).fillIn(displaySummary),
@@ -376,7 +373,7 @@ export default {
 
   checkReceived: (rowNumber, caption) => {
     cy.expect(
-      Accordion({ id: receivedPiecesAccordionId })
+      receivedAccordion
         .find(MultiColumnListRow({ index: rowNumber }))
         .find(MultiColumnListCell({ content: caption }))
         .exists(),
@@ -388,21 +385,19 @@ export default {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
     cy.expect([
-      Accordion({ id: receivedPiecesAccordionId })
+      receivedAccordion
         .find(MultiColumnListRow({ index: rowNumber }))
         .find(MultiColumnListCell({ content: barcode }))
         .exists(),
-      Accordion({ id: expectedPiecesAccordionId })
-        .find(MultiColumnListCell({ content: barcode }))
-        .absent(),
+      expectedAccordion.find(MultiColumnListCell({ content: barcode })).absent(),
     ]);
   },
 
   unreceivePiece: (rowNumber = 0) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
-    cy.expect(Accordion({ id: receivedPiecesAccordionId }).exists());
+    cy.expect(receivedAccordion.exists());
     cy.do([
-      Accordion({ id: receivedPiecesAccordionId }).find(actionsButton).click(),
+      receivedAccordion.find(actionsButton).click(),
       unreceiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       unreceiveButton.click(),
@@ -415,11 +410,7 @@ export default {
   checkUnreceivedPiece: (caption) => {
     // Need to wait, while data will be loaded before start checking
     cy.wait(2000);
-    cy.expect(
-      Accordion({ id: expectedPiecesAccordionId })
-        .find(MultiColumnListCell({ content: caption }))
-        .exists(),
-    );
+    cy.expect(expectedAccordion.find(MultiColumnListCell({ content: caption })).exists());
   },
 
   checkIsPiecesCreated: (title) => {
@@ -591,14 +582,12 @@ export default {
   },
 
   verifyDetailsOpened: () => {
-    cy.expect([rootsection.exists(), Accordion({ id: expectedPiecesAccordionId }).exists()]);
+    cy.expect([rootsection.exists(), expectedAccordion.exists()]);
   },
 
   verifyRequestIsCreated: () => {
     cy.expect(
-      Accordion({ id: expectedPiecesAccordionId })
-        .find(MultiColumnListCell({ columnIndex: 11, content: 'Yes' }))
-        .exists(),
+      expectedAccordion.find(MultiColumnListCell({ columnIndex: 11, content: 'Yes' })).exists(),
     );
   },
 
@@ -946,6 +935,7 @@ export default {
   waitForReceivingTitlesQueryCompleted() {
     cy.wait('@waiterForReceivingTitlesQueryCompleted');
   },
+  /*  */
 
   checkPurchaseOrderClosedWarning({ reason } = {}) {
     cy.expect(
@@ -955,5 +945,9 @@ export default {
         )
         .exists(),
     );
+  },
+
+  clickActionsButton() {
+    cy.do(Button(COMMON_BUTTON_LABELS.ACTIONS).click());
   },
 };
