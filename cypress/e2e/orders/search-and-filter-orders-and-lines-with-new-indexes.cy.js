@@ -673,9 +673,11 @@ describe('Orders', () => {
     });
   };
 
-  it(
+  // The test is running for 1 hour, using 10 Gb RAM causing test pipelines to fail (workers are freezing).
+  // The test is disabled until the root cause is found.
+  it.skip(
     'C1375887 Search and filter Orders and Order lines with new indexes (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C1375887'] },
+    { tags: ['extendedPathBroken', 'thunderjet', 'C1375887'] },
     () => {
       const [fundA, fundB] = flow.get(R.FUNDS);
       const [tag1, tag2, tag3, isolationTag] = flow.get(R.TAGS);
