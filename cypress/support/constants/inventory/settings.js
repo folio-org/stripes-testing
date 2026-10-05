@@ -1,7 +1,3 @@
-export const INVENTORY_SETTINGS_SECTION_LABELS = {
-  ITEM_NOTE_TYPES: 'Item note types',
-};
-
 export const INVENTORY_RECORD_SOURCE = {
   CONSORTIUM: 'consortium',
   FOLIO: 'folio',

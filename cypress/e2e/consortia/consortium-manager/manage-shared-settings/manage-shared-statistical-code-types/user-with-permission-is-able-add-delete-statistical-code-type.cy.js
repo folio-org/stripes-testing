@@ -17,7 +17,9 @@ import DeleteCancelReason from '../../../../../support/fragments/consortium-mana
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import StatisticalCodeTypes from '../../../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodeTypes';
-import SettingsMenu from '../../../../../support/fragments/settingsMenu';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
 import { ExecutionFlowManager } from '../../../../../support/utils';
@@ -172,11 +174,13 @@ describe('Consortia', () => {
               messages.deleted(STATISTICAL_CODE_ENTITY_TYPE, SCT_NAME_1),
             );
             ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(SCT_NAME_1);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+            SettingsInventory.goToSettingsInventory();
 
             cy.log('<--- STEP 16-18 --->');
             [tenantNames.central, tenantNames.college, tenantNames.university].forEach(
               (tenant, index, arr) => {
-                cy.visit(SettingsMenu.statisticalCodeTypes);
+                SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.STATISTICAL_CODE_TYPES);
                 StatisticalCodeTypes.verifyStatisticalCodeTypesAbsentInTheList({
                   name: SCT_NAME_1,
                 });

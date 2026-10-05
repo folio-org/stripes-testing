@@ -11,6 +11,7 @@ export const INVENTORY_SETTINGS_TABS = {
   INSTANCE_STATUS_TYPE: 'Instance status types',
   LOAN_TYPES: 'Loan types',
   STATISTICAL_CODES: 'Statistical codes',
+  STATISTICAL_CODE_TYPES: 'Statistical code types',
   DISPLAY_SETTINGS: 'Display settings',
   HRID_HANDLING: 'HRID handling',
   SUBJECT_SOURCES: 'Subject sources',
@@ -21,6 +22,8 @@ export const INVENTORY_SETTINGS_TABS = {
   CONTRIBUTOR_TYPES: 'Contributor types',
   HOLDINGS_TYPES: 'Holdings types',
   ALTERNATIVE_TITLE_TYPES: 'Alternative title types',
+  RESOURCE_IDENTIFIER_TYPES: 'Resource identifier types',
+  ITEM_NOTE_TYPES: 'Item note types',
 };
 
 export default {

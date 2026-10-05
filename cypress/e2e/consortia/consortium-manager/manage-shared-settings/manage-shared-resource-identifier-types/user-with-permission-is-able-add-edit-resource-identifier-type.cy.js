@@ -14,7 +14,9 @@ import ConfirmShare from '../../../../../support/fragments/consortium-manager/mo
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import ResourceIdentifierTypes from '../../../../../support/fragments/settings/inventory/instances/resourceIdentifierTypes';
-import SettingsMenu from '../../../../../support/fragments/settingsMenu';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
 import { ExecutionFlowManager } from '../../../../../support/utils';
@@ -134,14 +136,16 @@ describe('Consortia', () => {
             ]);
 
             cy.log('<--- STEP 11 --->');
-            cy.visit(SettingsMenu.resourceIdentifierTypes);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+            SettingsInventory.goToSettingsInventory();
+            SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.RESOURCE_IDENTIFIER_TYPES);
             ResourceIdentifierTypes.verifyConsortiumResourceIdentifierTypesInTheList({
               name: RIT_NAME,
             });
 
             cy.log('<--- STEP 12 --->');
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            cy.visit(SettingsMenu.resourceIdentifierTypes);
+            SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.RESOURCE_IDENTIFIER_TYPES);
             ResourceIdentifierTypes.verifyConsortiumResourceIdentifierTypesInTheList({
               name: RIT_NAME,
             });
@@ -198,14 +202,16 @@ describe('Consortia', () => {
             ConsortiaControlledVocabularyPaneset.verifyNewButtonShown(false);
 
             cy.log('<--- STEP 20 --->');
-            cy.visit(SettingsMenu.resourceIdentifierTypes);
+            TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS);
+            SettingsInventory.goToSettingsInventory();
+            SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.RESOURCE_IDENTIFIER_TYPES);
             ResourceIdentifierTypes.verifyConsortiumResourceIdentifierTypesInTheList({
               name: RIT_NAME_EDITED,
             });
 
             cy.log('<--- STEP 21 --->');
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-            cy.visit(SettingsMenu.resourceIdentifierTypes);
+            SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.RESOURCE_IDENTIFIER_TYPES);
             ResourceIdentifierTypes.verifyConsortiumResourceIdentifierTypesInTheList({
               name: RIT_NAME_EDITED,
             });
