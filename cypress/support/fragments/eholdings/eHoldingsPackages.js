@@ -302,6 +302,20 @@ export default {
     });
   },
 
+  deleteAllPackagesByNameViaAPI(packageName) {
+    this.getPackageViaApi(packageName).then(({ body }) => {
+      const foundPackages = body?.data || [];
+      foundPackages.forEach((foundPackage) => {
+        cy.okapiRequest({
+          method: 'DELETE',
+          path: `eholdings/packages/${foundPackage.id}`,
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: false,
+        });
+      });
+    });
+  },
+
   getPackageViaApi(packageName) {
     return cy.okapiRequest({
       method: 'GET',

@@ -4,6 +4,7 @@ import {
   TextField,
   Button,
   Checkbox,
+  List,
   ListItem,
   MultiSelect,
   MultiSelectOption,
@@ -33,6 +34,19 @@ export default {
   },
   selectContentType: (type) => {
     cy.do(contentTypeAccordion.find(Select()).choose(type));
+    eHoldingsPackages.waitLoading();
+  },
+  verifyContentTypeSelected: (type) => {
+    cy.expect(contentTypeAccordion.find(Select()).has({ checkedOptionText: type }));
+  },
+  toggleContentTypeAccordion: () => {
+    cy.do(contentTypeAccordion.clickHeader());
+  },
+  verifyContentTypeAccordionOpen: (isOpen = true) => {
+    cy.expect(contentTypeAccordion.has({ open: isOpen }));
+  },
+  resetContentTypeFilter: () => {
+    cy.do(contentTypeAccordion.find(Button({ icon: 'times-circle-solid' })).click());
     eHoldingsPackages.waitLoading();
   },
   bySelectionStatus: (selectionStatus) => {
@@ -101,10 +115,7 @@ export default {
   },
 
   verifyResultsCount(expectedCount) {
-    cy.expect([
-      ListItem({ className: including('list-item-'), index: expectedCount - 1 }).exists(),
-      ListItem({ className: including('list-item-'), index: expectedCount }).absent(),
-    ]);
+    cy.expect(resultSection.find(List()).has({ count: expectedCount }));
   },
 
   verifyTagPresentInFilter(tagValue, openDropdown = true) {
