@@ -538,11 +538,17 @@ export default {
       );
     }
     if (poLineDetails.claimingActive) {
-      cy.do(orderLineFields.claimingActive.click());
+      cy.get(`[name="${FORM_FIELD_NAMES.CLAIMING_ACTIVE}"]`).realClick();
     }
     if (poLineDetails.claimingInterval) {
-      cy.do(orderLineFields.claimingInterval.fillIn(poLineDetails.claimingInterval));
-      cy.do(orderLineFields.claimingInterval.has({ value: poLineDetails.claimingInterval }));
+      // Interactor fillIn can not pass negative values, so type into the field directly
+      cy.get(`[name="${FORM_FIELD_NAMES.CLAIMING_INTERVAL}"]`).type('{selectall}{backspace}', {
+        delay: 50,
+      });
+      cy.get(`[name="${FORM_FIELD_NAMES.CLAIMING_INTERVAL}"]`)
+        .type(poLineDetails.claimingInterval, { delay: 100 })
+        .blur();
+      cy.expect(orderLineFields.claimingInterval.has({ value: poLineDetails.claimingInterval }));
     }
   },
   fillOngoingOrderInformation({ renewalNote }) {
