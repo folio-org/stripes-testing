@@ -31,6 +31,7 @@ import OrderLines from './orderLines';
 const FISCAL_YEAR_OPTION_GROUPS = { CURRENT: 'Current', PREVIOUS: 'Previous' };
 
 const orderDetailsPane = Pane({ id: 'order-details' });
+const orderVersionViewDetailsPane = Pane({ id: 'order-version-view' });
 const actionsButton = Button('Actions');
 
 const orderInfoSection = orderDetailsPane.find(Section({ id: 'purchaseOrder' }));
@@ -66,7 +67,7 @@ export default {
     cy.expect(poSummarySection.find(KeyValue('Workflow status')).has({ value: orderStatus }));
   },
   checkPurchaseOrderPaneAbsent() {
-    cy.expect(orderDetailsPane.absent());
+    cy.expect([orderDetailsPane.absent(), orderVersionViewDetailsPane.absent()]);
   },
 
   checkFieldsConditions(fields = []) {
@@ -364,12 +365,14 @@ export default {
     cy.expect(headerDetail.has({ text: including(title) }));
   },
 
-  closeOrderDetails: () => {
-    cy.do(orderDetailsPane.find(iconTimes).click());
+  closeOrderDetails: ({ isVersionView = false } = {}) => {
+    cy.do((isVersionView ? orderVersionViewDetailsPane : orderDetailsPane).find(iconTimes).click());
   },
 
-  verifyAccordionExists(name) {
-    cy.expect(Accordion({ label: including(name) }).exists());
+  verifyAccordionExists(name, isExists = true) {
+    const accordion = Accordion({ label: including(name) });
+
+    cy.expect(isExists ? accordion.exists() : accordion.absent());
   },
 
   openInvoice(number) {

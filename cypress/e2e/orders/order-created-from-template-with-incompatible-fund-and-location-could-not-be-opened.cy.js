@@ -1,3 +1,4 @@
+import { including } from '../../../interactors';
 import Budgets from '../../support/fragments/finance/budgets/budgets';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
@@ -200,7 +201,9 @@ describe('Orders', () => {
 
       // Step 15: Click "Actions" on "PO lines" accordion and select "Add PO line"
       const OrderLineEditForm = OrderDetails.selectAddPOLine();
-      OrderLineEditForm.checkFundDistributionFundSelected({ fund: testData.fund.code });
+      OrderLineEditForm.checkFundDistributionSection([
+        { label: 'fund', conditions: { singleValue: including(testData.fund.code) } },
+      ]);
       OrderLineEditForm.checkLocationSelected({ location: otherLocation.name });
 
       // Step 16: Fill in Title, Acquisition method, Order format, Unit price, Quantity, Material type

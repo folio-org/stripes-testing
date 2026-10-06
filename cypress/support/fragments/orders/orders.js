@@ -22,6 +22,7 @@ import {
   SelectionOption,
   Spinner,
   TextField,
+  Tooltip,
 } from '../../../../interactors';
 import {
   COMMON_BUTTON_LABELS,
@@ -984,6 +985,39 @@ export default {
       Section({ id: 'relatedInvoices' }).absent(),
       Section({ id: 'versions-history-pane-order' }).exists(),
     ]);
+  },
+
+  checkVersionHistoryButtonTooltip() {
+    cy.do(orderDetailsPane.find(Button({ id: 'version-history-btn' })).hoverMouse());
+    cy.expect(Tooltip().has({ text: 'Version history' }));
+  },
+
+  checkHighlightedFieldsInVersionView(labels = [], { exactMatch = false } = {}) {
+    if (!labels.length) {
+      cy.get('#order-version-view mark').should('not.exist');
+      return;
+    }
+    cy.get('#order-version-view mark').then(($marks) => {
+      const highlightedTexts = [...$marks].map((el) => el.textContent.trim());
+
+      labels.forEach((label) => {
+        const isHighlighted = exactMatch
+          ? highlightedTexts.includes(label)
+          : highlightedTexts.some((text) => text.includes(label));
+
+        expect(isHighlighted, `"${label}" is highlighted`).to.equal(true);
+      });
+    });
+  },
+
+  checkFieldsInVersionHistoryView(fields = []) {
+    fields.forEach(({ key, value }) => {
+      cy.expect(
+        Section({ id: 'order-version-view' })
+          .find(KeyValue(key))
+          .has({ value: including(value) }),
+      );
+    });
   },
 
   checkVersionHistoryCard(eventDate, { changedFields, isCurrent, source }) {

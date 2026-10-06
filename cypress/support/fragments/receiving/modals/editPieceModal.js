@@ -135,6 +135,13 @@ export default {
       cy.expect(editPieceFields[label].has(conditions));
     });
   },
+  verifyItemStatus(itemStatus) {
+    cy.expect(
+      editPieceModal
+        .find(KeyValue(RECEIVING_PIECE_FORM_FIELD_LABELS.ITEM_STATUS))
+        .has({ value: itemStatus }),
+    );
+  },
 
   fillPieceDetails(fields = {}) {
     Object.entries(fields).forEach(([label, value]) => {
@@ -142,6 +149,10 @@ export default {
 
       cy.do(editPieceFields[label].fillIn(value));
     });
+  },
+
+  selectPieceFormat(pieceFormat) {
+    cy.do(editPieceFields[RECEIVING_PIECE_FORM_FIELD_LABELS.PIECE_FORMAT].choose(pieceFormat));
   },
 
   checkCreateItemCheckbox() {
