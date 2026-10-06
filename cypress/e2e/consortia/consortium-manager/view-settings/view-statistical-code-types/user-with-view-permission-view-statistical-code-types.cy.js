@@ -1,10 +1,11 @@
 import moment from 'moment';
-import { APPLICATION_NAMES } from '../../../../../support/constants';
+import { APPLICATION_NAMES, INVENTORY_RECORD_SOURCE } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   settingsItems,
+  SHARED_SETTING_LIBRARIES,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import StatisticalCodeTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances-holdings-items/statisticalCodeTypesConsortiumManager';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
@@ -20,31 +21,29 @@ describe('Consortia', () => {
       describe('View Statistical code types', () => {
         const testData = {
           centralSharedStatisticalCodeType: {
-            payload: {
-              name: getTestEntityValue('C411335_centralSharedStatisticalCodeType'),
-            },
+            name: getTestEntityValue('C411335_centralSharedStatisticalCodeType'),
           },
           centralLocalStatisticalCodeType: {
             name: getTestEntityValue('C411335_centralLocalStatisticalCodeType'),
-            source: 'local',
+            source: INVENTORY_RECORD_SOURCE.LOCAL,
           },
           collegeLocalStatisticalCodeType: {
             name: getTestEntityValue('C411335_collegeLocalStatisticalCodeType'),
-            source: 'local',
+            source: INVENTORY_RECORD_SOURCE.LOCAL,
           },
           universityLocalStatisticalCodeType: {
             name: getTestEntityValue('C411335_universityLocalStatisticalCodeType'),
-            source: 'local',
+            source: INVENTORY_RECORD_SOURCE.LOCAL,
           },
         };
 
         const constants = {
           source: {
-            consortium: 'consortium',
-            local: 'local',
+            consortium: INVENTORY_RECORD_SOURCE.CONSORTIUM,
+            local: INVENTORY_RECORD_SOURCE.LOCAL,
           },
           memberLibraries: {
-            all: 'All',
+            all: SHARED_SETTING_LIBRARIES,
           },
         };
 
@@ -117,7 +116,7 @@ describe('Consortia', () => {
             testData.centralSharedStatisticalCodeType,
           );
           StatisticalCodeTypes.deleteViaApi(testData.centralLocalStatisticalCodeType.id);
-          Users.deleteViaApi(testData.user.userId);
+          Users.deleteViaApi(testData.user?.userId);
           cy.setTenant(Affiliations.College);
           StatisticalCodeTypes.deleteViaApi(testData.collegeLocalStatisticalCodeType.id);
           cy.setTenant(Affiliations.University);
@@ -141,10 +140,10 @@ describe('Consortia', () => {
 
             // Step 3: Verify shared statistical code type is displayed
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-              testData.centralSharedStatisticalCodeType.payload.name,
+              testData.centralSharedStatisticalCodeType.name,
               constants.source.consortium,
               [
-                testData.centralSharedStatisticalCodeType.payload.name,
+                testData.centralSharedStatisticalCodeType.name,
                 constants.source.consortium,
                 `${moment().format('l')} by`,
                 constants.memberLibraries.all,
@@ -197,10 +196,10 @@ describe('Consortia', () => {
 
             // Step 10: Verify shared statistical code type is still displayed
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-              testData.centralSharedStatisticalCodeType.payload.name,
+              testData.centralSharedStatisticalCodeType.name,
               constants.source.consortium,
               [
-                testData.centralSharedStatisticalCodeType.payload.name,
+                testData.centralSharedStatisticalCodeType.name,
                 constants.source.consortium,
                 `${moment().format('l')} by`,
                 constants.memberLibraries.all,
