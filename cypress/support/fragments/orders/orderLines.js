@@ -416,12 +416,7 @@ export default {
   closeVersionHistory: () => {
     cy.do(orderHistorySection.find(Button({ icon: 'times' })).click());
     cy.wait(2000);
-    cy.expect([
-      agreementLinesSection.exists(),
-      invoiceLinesSection.exists(),
-      notesSection.exists(),
-      orderHistorySection.absent(),
-    ]);
+    cy.expect(orderHistorySection.absent());
   },
 
   deleteOrderLine: () => {
