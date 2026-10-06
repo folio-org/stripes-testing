@@ -3,9 +3,12 @@ import { REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
+import { INVENTORY_SETTINGS_TABS } from '../../../settings/inventory/settingsInventory';
 
 const id = uuid();
-const optionName = 'URL relationship';
+const optionName = INVENTORY_SETTINGS_TABS.URL_RELATIONSHIP;
+
+export const URL_RELATIONSHIP_ENTITY_TYPE = 'URL relationship term';
 
 export default {
   createViaApi(type) {

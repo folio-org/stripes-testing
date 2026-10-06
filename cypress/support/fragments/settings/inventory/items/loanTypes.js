@@ -46,7 +46,7 @@ export default {
   },
 
   verifyLoanTypesInTheList({ name, actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
     const actionsCell = MultiColumnListCell({ columnIndex: 2 });
     cy.expect([row.exists()]);
     if (actions.length === 0) {

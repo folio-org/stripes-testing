@@ -184,7 +184,8 @@ Cypress.Commands.add('initPublishCoordinatorRequest', (publication) => {
   https://s3.amazonaws.com/foliodocs/api/mod-consortia/s/sharing_settings.html
  */
 Cypress.Commands.add('initShareSettingPublication', (publication, options = {}) => {
-  const { method = REQUEST_METHOD.POST } = options;
+  const { method = REQUEST_METHOD.POST, failOnStatusCode = method !== REQUEST_METHOD.DELETE } =
+    options;
   const { url, settingId, payload } = publication;
 
   cy.getConsortiaId().then((consortiaId) => {
@@ -200,6 +201,7 @@ Cypress.Commands.add('initShareSettingPublication', (publication, options = {}) 
         url: url.startsWith('/') ? url : `/${url}`,
       },
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     }).then(({ body }) => {
       const id =
         method === REQUEST_METHOD.DELETE
@@ -216,12 +218,15 @@ Cypress.Commands.add('initShareSettingPublication', (publication, options = {}) 
   Raw API. Get publication details by ID.
   https://s3.amazonaws.com/foliodocs/api/mod-consortia/s/publications.html#operation/getPublicationDetails
  */
-Cypress.Commands.add('getPublicationDetails', (publicationId) => {
+Cypress.Commands.add('getPublicationDetails', (publicationId, options = {}) => {
+  const { failOnStatusCode = true } = options;
+
   cy.getConsortiaId().then((consortiaId) => {
     cy.okapiRequest({
       method: REQUEST_METHOD.GET,
       path: `consortia/${consortiaId}/publications/${publicationId}`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     }).then(({ body }) => {
       return {
         id: body.id,
@@ -235,12 +240,13 @@ Cypress.Commands.add('getPublicationDetails', (publicationId) => {
   Raw API. Get publication results by ID.
   https://s3.amazonaws.com/foliodocs/api/mod-consortia/s/publications.html#operation/getPublicationResults
  */
-Cypress.Commands.add('getPublicationResults', (publicationId) => {
+Cypress.Commands.add('getPublicationResults', (publicationId, { failOnStatusCode = true } = {}) => {
   cy.getConsortiaId().then((consortiaId) => {
     cy.okapiRequest({
       method: REQUEST_METHOD.GET,
       path: `consortia/${consortiaId}/publications/${publicationId}/results`,
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
     }).then(({ body }) => {
       return {
         publicationResults: body.publicationResults,
@@ -268,6 +274,8 @@ Cypress.Commands.add('sendPublishCoordinatorPublication', (publication) => {
  */
 Cypress.Commands.add('sendPublishCoordinatorShareSettingPublication', (publication, options) => {
   cy.initShareSettingPublication(publication, options).then(({ id }) => {
-    return ConsortiumUtils.getPublicationResults(id);
+    return ConsortiumUtils.getPublicationResults(id, {
+      failOnStatusCode: options?.failOnStatusCode,
+    });
   });
 });

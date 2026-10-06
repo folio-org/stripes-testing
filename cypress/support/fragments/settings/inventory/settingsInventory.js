@@ -24,6 +24,7 @@ export const INVENTORY_SETTINGS_TABS = {
   ALTERNATIVE_TITLE_TYPES: 'Alternative title types',
   RESOURCE_IDENTIFIER_TYPES: 'Resource identifier types',
   ITEM_NOTE_TYPES: 'Item note types',
+  CALL_NUMBER_TYPES: 'Call number types',
 };
 
 export default {
