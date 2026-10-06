@@ -112,12 +112,52 @@ async function getAllTestCases(api, projectId) {
   return tests;
 }
 
-async function updateTestCasesInTestRun(api, testId, testCases) {
+async function updateTestCasesInTestRun(api, testRunId, testCases, include_all = false) {
   try {
-    await api.post(`update_run/${testId}`, { 'case_ids': testCases });
-    console.log(`Test run ${testId} updated successfully.`);
+    await api.post(`update_run/${testRunId}`, { 'case_ids': testCases, 'include_all': include_all });
+    console.log(`Test run ${testRunId} updated successfully.`);
   } catch (error) {
     console.error('Error updating test run:', error);
+  }
+}
+
+async function updateTestCasesInTestRunInPlanEntry(api, testRunId, testCases, include_all = false) {
+  try {
+    await api.post(`update_run_in_plan_entry/${testRunId}`, { 'case_ids': testCases, 'include_all': include_all });
+    console.log(`Test run ${testRunId} updated successfully.`);
+  } catch (error) {
+    console.error('Error updating test run:', error);
+  }
+}
+
+async function updateTestCasesInPlanEntry(api, testPlanId, testRunId, testCases, include_all = false) {
+  try {
+    await api.post(`update_plan_entry/${testPlanId}/${testRunId}`, { 'case_ids': testCases, 'include_all': include_all });
+    console.log(`Test run ${testRunId} updated successfully.`);
+  } catch (error) {
+    console.error('Error updating test run:', error);
+  }
+}
+
+async function getRunDetails(api, runId) {
+  try {
+    const response = await api.get(`get_run/${runId}`, {
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching test run:', error);
+    return { results: [] };
+  }
+}
+
+async function getPlanDetails(api, planId) {
+  try {
+    const response = await api.get(`get_plan/${planId}`, {
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching test run:', error);
+    return { results: [] };
   }
 }
 
@@ -208,6 +248,10 @@ async function getTestCase(api, caseId) {
 module.exports = {
   getAllTestCases,
   updateTestCasesInTestRun,
+  updateTestCasesInTestRunInPlanEntry,
+  updateTestCasesInPlanEntry,
+  getRunDetails,
+  getPlanDetails,
   getTestHistory,
   getCaseHistory,
   getTestRunResults,
