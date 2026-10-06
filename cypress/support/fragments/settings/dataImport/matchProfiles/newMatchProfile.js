@@ -13,7 +13,7 @@ import {
   TextArea,
   TextField,
 } from '../../../../../../interactors';
-import { FOLIO_RECORD_TYPE } from '../../../../constants';
+import { EXISTING_RECORD_NAMES, FOLIO_RECORD_TYPE } from '../../../../constants';
 
 const criterionValueTypeList = SelectionList({ id: 'sl-container-criterion-value-type' });
 const criterionValueTypeButton = Button({ id: 'criterion-value-type' });
@@ -711,6 +711,64 @@ export default {
                     qualifierType: null,
                     qualifierValue: null,
                   },
+                },
+                matchCriterion: 'EXACTLY_MATCHES',
+              },
+            ],
+            existingRecordType,
+          },
+          addedRelations: [],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  // Static value (incoming) matched against a real MARC tag/indicators/subfield (existing) -
+  // unlike createMatchProfileWithStaticValueAndExistingMatchExpressionViaApi above, which
+  // matches against an admin-data field path (e.g. Instance HRID), not a raw MARC field
+  createMatchProfileWithStaticValueAndExistingFieldMatchExpressionViaApi: ({
+    profileName,
+    incomingStaticValue,
+    existingRecordFields,
+    existingRecordType = EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+  }) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/matchProfiles',
+        body: {
+          profile: {
+            name: profileName,
+            description: '',
+            incomingRecordType: 'STATIC_VALUE',
+            matchDetails: [
+              {
+                incomingRecordType: 'STATIC_VALUE',
+                incomingMatchExpression: {
+                  staticValueDetails: {
+                    staticValueType: 'TEXT',
+                    text: incomingStaticValue,
+                    number: '',
+                    exactDate: '',
+                    fromDate: '',
+                    toDate: '',
+                  },
+                  dataValueType: 'STATIC_VALUE',
+                },
+                existingRecordType,
+                existingMatchExpression: {
+                  fields: [
+                    { label: 'field', value: existingRecordFields.field },
+                    { label: 'indicator1', value: existingRecordFields.in1 },
+                    { label: 'indicator2', value: existingRecordFields.in2 },
+                    { label: 'recordSubfield', value: existingRecordFields.subfield },
+                  ],
+                  staticValueDetails: null,
+                  dataValueType: 'VALUE_FROM_RECORD',
                 },
                 matchCriterion: 'EXACTLY_MATCHES',
               },

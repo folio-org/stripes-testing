@@ -64,7 +64,7 @@ function linkMatchProfileForMatches(matchProfileName, forMatchesOrder = 0) {
   cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
   cy.do(matchButton.click());
   ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
-  ModalSelectProfile.selectProfile(matchProfileName);
+  ModalSelectProfile.selectProfile(matchProfileName, 'match');
   cy.expect(overviewAccordion.find(HTML(including(matchProfileName))).exists());
 }
 
@@ -426,6 +426,62 @@ export default {
             },
             {
               masterProfileId: matchProfileId,
+              masterWrapperId: null,
+              masterProfileType: 'MATCH_PROFILE',
+              detailProfileId: actionProfileId,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 0,
+              reactTo: 'MATCH',
+            },
+          ],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((responce) => {
+        return responce.body.id;
+      });
+  },
+
+  // Nested matches: matchProfileId1 -> for matches -> matchProfileId2 -> for matches -> action
+  createJobProfileWithLinkedNestedMatchAndActionProfilesViaApi: (
+    profileName,
+    matchProfileId1,
+    matchProfileId2,
+    actionProfileId,
+  ) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile: {
+            name: profileName,
+            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+          },
+          addedRelations: [
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: matchProfileId1,
+              detailWrapperId: null,
+              detailProfileType: 'MATCH_PROFILE',
+              order: 0,
+            },
+            {
+              masterProfileId: matchProfileId1,
+              masterWrapperId: null,
+              masterProfileType: 'MATCH_PROFILE',
+              detailProfileId: matchProfileId2,
+              detailWrapperId: null,
+              detailProfileType: 'MATCH_PROFILE',
+              order: 0,
+              reactTo: 'MATCH',
+            },
+            {
+              masterProfileId: matchProfileId2,
               masterWrapperId: null,
               masterProfileType: 'MATCH_PROFILE',
               detailProfileId: actionProfileId,
