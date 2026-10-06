@@ -1,9 +1,13 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader } from '../../../../../../interactors';
+import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
+import { INVENTORY_SETTINGS_TABS } from '../../../settings/inventory/settingsInventory';
 
 const id = uuid();
+
+export const LOAN_TYPE_ENTITY_TYPE = 'loan type';
 
 export const typeActions = {
   edit: 'edit',
@@ -11,6 +15,10 @@ export const typeActions = {
 };
 
 export default {
+  waitLoading() {
+    ConsortiaControlledVocabularyPaneset.waitLoading(INVENTORY_SETTINGS_TABS.LOAN_TYPES);
+  },
+
   createViaApi(type) {
     return cy.getConsortiaId().then((consortiaId) => {
       cy.okapiRequest({
