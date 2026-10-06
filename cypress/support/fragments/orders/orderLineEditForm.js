@@ -59,10 +59,12 @@ const FORM_FIELD_NAMES = {
   CLAIMING_INTERVAL: 'claimingInterval',
   BINDERY_ACTIVE: 'details.isBinderyActive',
   CREATE_INVENTORY_PHYSICAL: 'physical.createInventory',
+  CREATE_INVENTORY_ERESOURCE: 'eresource.createInventory',
   TITLE_OR_PACKAGE: 'titleOrPackage',
   PRODUCT_ID: 'details.productIds[0].productId',
   PRODUCT_ID_TYPE: 'details.productIds[0].productIdType',
   RECEIVING_NOTE: 'details.receivingNote',
+  INTERNAL_NOTE: 'description',
   IS_ACKNOWLEDGED: 'details.isAcknowledged',
   SUBSCRIPTION_FROM: 'details.subscriptionFrom',
   SUBSCRIPTION_TO: 'details.subscriptionTo',
@@ -157,6 +159,7 @@ const edition = TextField({ name: 'edition' });
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.TITLE_OR_PACKAGE })),
   receivingNote: itemDetailsSection.find(TextArea({ name: FORM_FIELD_NAMES.RECEIVING_NOTE })),
+  internalNote: itemDetailsSection.find(TextArea({ name: FORM_FIELD_NAMES.INTERNAL_NOTE })),
   mustAcknowledgeReceivingNote: itemDetailsSection.find(
     Checkbox({ name: FORM_FIELD_NAMES.IS_ACKNOWLEDGED }),
   ),
@@ -165,6 +168,8 @@ const itemDetailsFields = {
   ),
   subscriptionTo: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_TO })),
   publicationDate: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PUBLICATION_DATE })),
+  publisher: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PUBLISHER })),
+  edition: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.EDITION })),
   productId: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PRODUCT_ID })),
   productIdType: itemDetailsSection.find(Select({ name: FORM_FIELD_NAMES.PRODUCT_ID_TYPE })),
   suppressInstanceFromDiscovery: itemDetailsSection.find(
@@ -435,6 +440,15 @@ export default {
       cy.do(orderLineFields.orderFormat.choose(poLineDetails.orderFormat));
       cy.wait(1000);
     }
+    if (poLineDetails.createInventory) {
+      const createInventoryFieldName =
+        poLineDetails.orderFormat === 'Electronic resource'
+          ? FORM_FIELD_NAMES.CREATE_INVENTORY_ERESOURCE
+          : FORM_FIELD_NAMES.CREATE_INVENTORY_PHYSICAL;
+
+      cy.do(Select({ name: createInventoryFieldName }).choose(poLineDetails.createInventory));
+      cy.wait(1000);
+    }
     if (poLineDetails.receivingWorkflow) {
       cy.do(Select({ name: 'checkinItems' }).choose(poLineDetails.receivingWorkflow));
     }
@@ -444,6 +458,13 @@ export default {
       } else {
         cy.do(Select({ name: 'physical.materialType' }).choose(poLineDetails.materialType));
       }
+    }
+    if (poLineDetails.eresourceMaterialType) {
+      cy.do(
+        Select({ name: FORM_FIELD_NAMES.MATERIAL_TYPE_ERESOURCE }).choose(
+          poLineDetails.eresourceMaterialType,
+        ),
+      );
     }
     if (poLineDetails.claimingActive) {
       cy.do(orderLineFields.claimingActive.click());
@@ -497,6 +518,12 @@ export default {
   },
   clickAddFundDistributionButton() {
     cy.do(Button('Add fund distribution').click());
+  },
+  scrollToItemDetailsSection() {
+    // real wheel event scrolls the page like a user, so open dropdowns react to it
+    cy.get(`#${FORM_SECTION_IDS.FORM}`).realMouseWheel({ deltaY: -5000, scrollBehavior: false });
+    cy.get(`[id="${FORM_SECTION_IDS.ITEM_DETAILS}"]`).should('be.visible');
+    cy.wait(1000);
   },
   scrollToFundDistributionSection() {
     cy.get('[id="fundDistributionAccordion"]').scrollIntoView().should('be.visible');
