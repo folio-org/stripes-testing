@@ -10,16 +10,13 @@ let useOriginalTags = false;
 // print process.argv
 argv.forEach((val, index) => {
   console.log(`${index}: ${val}`);
-  if (val.includes('threads=')) {
+  if (val.startsWith('threads=')) {
     numberOfThreadsArg = Number(val.replace('threads=', ''));
-  }
-  if (val.includes('tags=')) {
+  } else if (val.startsWith('tags=')) {
     grepTagsArg = val.replace('tags=', '');
-  }
-  if (val.includes('env=')) {
+  } else if (val.startsWith('env=')) {
     envVarsArg = val.replace('env=', '');
-  }
-  if (val.includes('useOriginalTags') || (val.includes('runAsIs'))) {
+  } else if (val.toLowerCase() === 'useOriginalTags'.toLowerCase()) {
     console.log('useOriginalTags flag detected, passing tags as is, without splitting into chunks.');
     useOriginalTags = true;
   }
