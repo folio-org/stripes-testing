@@ -448,7 +448,7 @@ export default {
   checkDocumentsSection({
     linkName,
     externalUrl,
-    documentName,
+    documentNames = [],
     shouldExpand = true,
     isEmpty = false,
   } = {}) {
@@ -470,13 +470,13 @@ export default {
         }),
       );
     }
-    if (documentName) {
+    documentNames.forEach((name) => {
       cy.expect(
-        linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Document name' })).has({
-          content: documentName,
-        }),
+        linksAndDocumentsSection
+          .find(MultiColumnListCell({ column: 'Document name', content: name }))
+          .exists(),
       );
-    }
+    });
     if (isEmpty) {
       cy.expect([
         linksAndDocumentsSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }),
@@ -670,6 +670,7 @@ export default {
       expectedMessage,
       expectedErrorCode,
       expectedFundId,
+      expectedFundCode,
       expectedFiscalYearId,
     } = {},
   ) {
@@ -688,6 +689,13 @@ export default {
         (param) => param.key === 'fundId',
       );
       expect(fundIdParam.value).to.equal(expectedFundId);
+    }
+
+    if (expectedFundCode) {
+      const fundCodeParam = interception.response.body.errors[0].parameters.find(
+        (param) => param.key === 'fundCode',
+      );
+      expect(fundCodeParam.value).to.equal(expectedFundCode);
     }
 
     if (expectedFiscalYearId) {

@@ -32,6 +32,7 @@ const vendorInformationSection = invoiceEditFormRoot.find(
 const extendedInformationSection = invoiceEditFormRoot.find(
   Section({ id: 'invoiceForm-extendedInformation' }),
 );
+const documentsSection = invoiceEditFormRoot.find(Section({ id: 'invoiceForm-documents' }));
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 const cancelButton = Button('Cancel');
 const saveButton = Button(COMMON_BUTTON_LABELS.SAVE_AND_CLOSE);
@@ -174,6 +175,14 @@ export default {
   uploadFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
     cy.expect(HTML(including(fileName)).exists());
+  },
+  deleteDocument(documentName) {
+    const invoiceDocument = documentsSection.find(
+      HTML({ className: including('row-'), text: documentName }),
+    );
+
+    cy.do(invoiceDocument.find(deleteButton).click());
+    cy.expect(invoiceDocument.absent());
   },
   addLinkToInvoice(name, url) {
     cy.do(Button('Add link').click());
