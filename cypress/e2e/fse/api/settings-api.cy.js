@@ -22,4 +22,15 @@ describe('fse-settings', { retries: { runMode: 1 } }, () => {
       });
     },
   );
+
+  it(
+    `FDOPS-xxxxx - Verify mod-ncip configuration migrated into mod-settings for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'api', 'settings', 'ncip', 'FDOPS-xxxxx'] },
+    () => {
+      cy.getSettingsEntriesByScope('mod-ncip').then((response) => {
+        cy.expect(response.status).to.eq(200);
+        cy.expect(response.body).to.have.property('items');
+      });
+    },
+  );
 });
