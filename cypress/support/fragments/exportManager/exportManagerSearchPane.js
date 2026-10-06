@@ -480,7 +480,7 @@ export default {
         .has({ value: including(expectedValuesObject.startDate) }),
       jobDetailsPane
         .find(KeyValue('End time'))
-        .has({ value: including(expectedValuesObject.startDate) }),
+        .has({ value: including(expectedValuesObject.endDate) }),
     ]);
   },
 
