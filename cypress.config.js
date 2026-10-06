@@ -119,6 +119,7 @@ module.exports = defineConfig({
     runAsAdmin: false,
     systemRoleName: 'adminRole',
     newSettings: true,
+    sanityCheck: 'defaultAdmin',
     ...(envOverrides.env || {}),
   },
   reporterOptions: reportportalOptions,
