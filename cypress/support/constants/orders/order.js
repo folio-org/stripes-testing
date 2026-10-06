@@ -146,6 +146,16 @@ export const ORDER_VIEW_FIELD_LABELS = {
   NOTE: 'Note',
 };
 
+export const RELATED_INVOICES_TABLE_COLUMN_HEADERS = {
+  INVOICE_NUMBER: 'Invoice #',
+  FISCAL_YEAR: 'Fiscal year',
+  INVOICE_DATE: 'Invoice date',
+  VENDOR_CODE: 'Vendor code',
+  VENDOR_INVOICE_NUMBER: 'Vendor invoice #',
+  STATUS: 'Status',
+  INVOICE_AMOUNT: 'Invoice amount',
+};
+
 export const ORDER_AND_ORDER_LINE_BUTTONS = {
   ADD_POL: 'Add POL',
   SAVE_AND_OPEN: 'Save & open order',
