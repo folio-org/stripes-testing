@@ -164,7 +164,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
 
-        // Step 5: import completes; SRS and Authority both show "Updated"
+        // Step 5: import completes; SRS and Authority both show "No action"
         Logs.waitFileIsImported(editedIncomingFileName);
         Logs.checkJobStatus(editedIncomingFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(editedIncomingFileName);
@@ -176,7 +176,7 @@ describe('Data Import', () => {
         });
 
         // Step 6: searching by the shared base heading returns original record
-        // and not an updated version
+        // with no match for attempted updated record
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
         MarcAuthorities.searchBeats(originalHeadingValue);
         MarcAuthorities.checkRowsCount(1);
