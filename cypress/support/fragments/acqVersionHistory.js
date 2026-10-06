@@ -1,4 +1,4 @@
-import { Button, Card, including, Section } from '../../../interactors';
+import { Button, Card, including, PaneHeader, Section } from '../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../constants';
 
 const CURRENT_VERSION = 'Current version';
@@ -34,6 +34,14 @@ export default {
         .click(),
     ]);
     cy.wait(DEFAULT_WAIT_TIME);
+  },
+
+  verifyVersionsCount(entityType, count) {
+    cy.expect(
+      Section({ id: `versions-history-pane-${entityType}` })
+        .find(PaneHeader())
+        .has({ text: including(`${count} ${count === 1 ? 'version' : 'versions'}`) }),
+    );
   },
 
   closeVersionHistory(entityType) {
