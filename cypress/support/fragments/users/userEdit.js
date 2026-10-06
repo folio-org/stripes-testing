@@ -1831,6 +1831,30 @@ export default {
     cy.wait(1000);
   },
 
+  searchAndSelectSponsorUser(username) {
+    cy.do(selectUserModal.find(TextField({ name: 'query' })).fillIn(username));
+    cy.do(selectUserModal.find(Button('Search')).click());
+    cy.wait(1000);
+    cy.do(MultiColumnListCell({ row: 0, content: username }).click());
+    cy.wait(2000);
+  },
+
+  verifyNewProxySponsorCardExists(username) {
+    cy.expect(ProxyUser(including(username)).exists());
+  },
+
+  setAndVerifyProxySponsorCardDropdownValues(username) {
+    const card = ProxyUser(including(username));
+    cy.do(card.find(Select('Proxy can request for sponsor')).choose('No'));
+    cy.do(card.find(Select('Notifications sent to')).choose('Proxy'));
+    cy.do(card.find(Select('Relationship Status')).choose('Inactive'));
+    cy.expect([
+      card.find(Select('Proxy can request for sponsor')).has({ checkedOptionText: 'No' }),
+      card.find(Select('Notifications sent to')).has({ checkedOptionText: 'Proxy' }),
+      card.find(Select('Relationship Status')).has({ checkedOptionText: 'Inactive' }),
+    ]);
+  },
+
   verifyInvalidModal(type) {
     const modalTitle = `Invalid ${type}`;
     const pluralType = type.toLowerCase() === 'proxy' ? 'proxies' : `${type.toLowerCase()}s`;
