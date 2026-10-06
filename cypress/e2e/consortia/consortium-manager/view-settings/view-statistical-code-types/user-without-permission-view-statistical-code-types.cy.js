@@ -1,4 +1,4 @@
-import { APPLICATION_NAMES } from '../../../../../support/constants';
+import { APPLICATION_NAMES, INVENTORY_RECORD_SOURCE } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
@@ -6,6 +6,7 @@ import ConsortiaControlledVocabularyPaneset, {
 } from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   settingsItems,
+  SHARED_SETTING_LIBRARIES,
   // messages,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import StatisticalCodeTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances-holdings-items/statisticalCodeTypesConsortiumManager';
@@ -22,9 +23,7 @@ describe('Consortia', () => {
       describe('View Statistical code types', () => {
         const testData = {
           centralSharedStatisticalCodeType: {
-            payload: {
-              name: getTestEntityValue('C411337_centralSharedStatisticalCodeType'),
-            },
+            name: getTestEntityValue('C411337_centralSharedStatisticalCodeType'),
           },
           centralLocalStatisticalCodeType: {
             name: getTestEntityValue('C411337_centralLocalStatisticalCodeType'),
@@ -46,7 +45,7 @@ describe('Consortia', () => {
           cy.clearCookies({ domain: null });
           cy.resetTenant();
           cy.getAdminToken();
-          StatisticalCodeTypesConsortiumManager.createViaApi(
+          StatisticalCodeTypesConsortiumManager.createSharedViaApi(
             testData.centralSharedStatisticalCodeType,
           ).then((newStatisticalCodeType) => {
             testData.centralSharedStatisticalCodeType.id = newStatisticalCodeType.id;
@@ -92,7 +91,7 @@ describe('Consortia', () => {
           cy.resetTenant();
           cy.getAdminToken();
           StatisticalCodeTypes.deleteViaApi(testData.centralLocalStatisticalCodeType.id);
-          StatisticalCodeTypesConsortiumManager.deleteViaApi(
+          StatisticalCodeTypesConsortiumManager.deleteSharedViaApi(
             testData.centralSharedStatisticalCodeType,
           );
           Users.deleteViaApi(tempUserC411337.userId);
@@ -132,15 +131,20 @@ describe('Consortia', () => {
 
             // Step 3: Verify shared statistical code type is shown
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
-              testData.centralSharedStatisticalCodeType.payload.name,
-              'consortium',
+              testData.centralSharedStatisticalCodeType.name,
+              INVENTORY_RECORD_SOURCE.CONSORTIUM,
               '',
-              'All',
+              SHARED_SETTING_LIBRARIES,
             ]);
 
             // Step 4: Verify central local statistical code type is shown with actions
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              [testData.centralLocalStatisticalCodeType.name, 'local', '', tenantNames.central],
+              [
+                testData.centralLocalStatisticalCodeType.name,
+                INVENTORY_RECORD_SOURCE.LOCAL,
+                '',
+                tenantNames.central,
+              ],
               [actionIcons.edit, actionIcons.trash],
             );
 

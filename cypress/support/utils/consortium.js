@@ -4,7 +4,7 @@ import { PUBLISH_COORDINATOR_STATUSES } from '../constants';
 /*
   Helper function to normalize publication results by separating successful results and errors, and parsing the response body of successful results.
  */
-export const normalizePublicationResults = ({ publicationResults, totalRecords }) => {
+export const normalizePublicationResults = ({ publicationResults = [], totalRecords }) => {
   const results = [];
   const errors = [];
 
@@ -38,14 +38,17 @@ export const normalizePublicationResults = ({ publicationResults, totalRecords }
  * @param {number} [options.timeout=600000] - Maximum time to wait for a terminal publication status in milliseconds.
  * @returns {Cypress.Chainable<Object>} Normalized publication results and publication errors.
  */
-export function getPublicationResults(id, { delay = 1000, timeout = 600000 } = {}) {
+export function getPublicationResults(
+  id,
+  { delay = 1000, timeout = 600000, failOnStatusCode = true } = {},
+) {
   return recurse(
-    () => cy.getPublicationDetails(id),
+    () => cy.getPublicationDetails(id, { failOnStatusCode }),
     (publication) => Boolean(publication && publication.status !== PUBLISH_COORDINATOR_STATUSES.IN_PROGRESS),
     {
       delay,
       timeout,
       error: `Publication ${id} did not finish within ${timeout}ms`,
     },
-  ).then(() => cy.getPublicationResults(id).then(normalizePublicationResults));
+  ).then(() => cy.getPublicationResults(id, { failOnStatusCode }).then(normalizePublicationResults));
 }

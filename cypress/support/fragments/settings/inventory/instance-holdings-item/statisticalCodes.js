@@ -7,6 +7,7 @@ import {
   Button,
   including,
 } from '../../../../../../interactors';
+import { INVENTORY_RECORD_SOURCE } from '../../../../constants';
 import getRandomPostfix from '../../../../utils/stringTools';
 import InteractorsTools from '../../../../utils/interactorsTools';
 
@@ -91,7 +92,9 @@ export default {
 
   verifyListOfStatisticalCodesIsIdenticalToListInInstance(statusesFromInstance) {
     getListOfStatisticalCodesNames().then((codesFromList) => {
-      const result = codesFromList.every((element2) => statusesFromInstance.some((element1) => element1.includes(element2)));
+      const result = codesFromList.every((element2) => {
+        return statusesFromInstance.some((element1) => element1.includes(element2));
+      });
       expect(result).to.equal(true);
     });
   },
@@ -131,5 +134,24 @@ export default {
 
   checkDeleteNotification(code) {
     InteractorsTools.checkCalloutMessage(deleteNotificationText(code));
+  },
+
+  verifyConsortiumStatisticalCodeInTheList({
+    code,
+    source = INVENTORY_RECORD_SOURCE.CONSORTIUM,
+    actions = [],
+  }) {
+    const row = MultiColumnListRow({ content: including(code), isContainer: false });
+    cy.expect([
+      row.exists(),
+      row.find(MultiColumnListCell({ columnIndex: 3, innerText: including(source) })).exists(),
+    ]);
+    if (actions.length === 0) {
+      cy.expect(row.find(MultiColumnListCell({ columnIndex: 5 })).has({ content: '' }));
+    }
+  },
+
+  verifyStatisticalCodesAbsentInTheList({ code }) {
+    cy.expect(MultiColumnListRow({ content: including(code), isContainer: false }).absent());
   },
 };

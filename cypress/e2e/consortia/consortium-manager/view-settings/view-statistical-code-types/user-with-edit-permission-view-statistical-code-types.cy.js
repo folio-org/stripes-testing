@@ -1,10 +1,11 @@
 import moment from 'moment';
-import { APPLICATION_NAMES } from '../../../../../support/constants';
+import { APPLICATION_NAMES, INVENTORY_RECORD_SOURCE } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp, {
   settingsItems,
+  SHARED_SETTING_LIBRARIES,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import StatisticalCodeTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances-holdings-items/statisticalCodeTypesConsortiumManager';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
@@ -20,38 +21,36 @@ describe('Consortia', () => {
       describe('View Statistical code types', () => {
         const testData = {
           centralSharedStatisticalCodeType: {
-            payload: {
-              name: getTestEntityValue('C411336_centralSharedStatisticalCodeType'),
-            },
+            name: getTestEntityValue('C411336_centralSharedStatisticalCodeType'),
           },
           centralLocalStatisticalCodeType: {
             name: getTestEntityValue('C411336_centralLocalStatisticalCodeType'),
-            source: 'local',
+            source: INVENTORY_RECORD_SOURCE.LOCAL,
           },
           collegeLocalStatisticalCodeType: {
             name: getTestEntityValue('C411336_collegeLocalStatisticalCodeType'),
-            source: 'local',
+            source: INVENTORY_RECORD_SOURCE.LOCAL,
           },
           universityLocalStatisticalCodeType: {
             name: getTestEntityValue('C411336_universityLocalStatisticalCodeType'),
-            source: 'local',
+            source: INVENTORY_RECORD_SOURCE.LOCAL,
           },
         };
 
         const constants = {
           source: {
-            consortium: 'consortium',
-            local: 'local',
+            consortium: INVENTORY_RECORD_SOURCE.CONSORTIUM,
+            local: INVENTORY_RECORD_SOURCE.LOCAL,
           },
           memberLibraries: {
-            all: 'All',
+            all: SHARED_SETTING_LIBRARIES,
           },
         };
 
         before('Create test data', () => {
           cy.getAdminToken()
             .then(() => {
-              StatisticalCodeTypesConsortiumManager.createViaApi(
+              StatisticalCodeTypesConsortiumManager.createSharedViaApi(
                 testData.centralSharedStatisticalCodeType,
               ).then((newStatisticalCodeType) => {
                 testData.centralSharedStatisticalCodeType = newStatisticalCodeType;
@@ -113,13 +112,13 @@ describe('Consortia', () => {
         after('Delete test data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          StatisticalCodeTypesConsortiumManager.deleteViaApi(
+          StatisticalCodeTypesConsortiumManager.deleteSharedViaApi(
             testData.centralSharedStatisticalCodeType,
           );
           StatisticalCodeTypes.deleteViaApi(testData.centralLocalStatisticalCodeType.id);
           cy.setTenant(Affiliations.College);
           StatisticalCodeTypes.deleteViaApi(testData.collegeLocalStatisticalCodeType.id);
-          Users.deleteViaApi(testData.user.userId);
+          Users.deleteViaApi(testData.user?.userId);
           cy.setTenant(Affiliations.University);
           StatisticalCodeTypes.deleteViaApi(testData.universityLocalStatisticalCodeType.id);
         });
@@ -153,10 +152,10 @@ describe('Consortia', () => {
 
             // Step 6: Verify shared statistical code type is displayed (no Actions)
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-              testData.centralSharedStatisticalCodeType.payload.name,
+              testData.centralSharedStatisticalCodeType.name,
               constants.source.consortium,
               [
-                testData.centralSharedStatisticalCodeType.payload.name,
+                testData.centralSharedStatisticalCodeType.name,
                 constants.source.consortium,
                 `${moment().format('l')} by`,
                 constants.memberLibraries.all,
@@ -206,10 +205,10 @@ describe('Consortia', () => {
 
             // Step 13: Verify shared statistical code type is still displayed
             ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
-              testData.centralSharedStatisticalCodeType.payload.name,
+              testData.centralSharedStatisticalCodeType.name,
               constants.source.consortium,
               [
-                testData.centralSharedStatisticalCodeType.payload.name,
+                testData.centralSharedStatisticalCodeType.name,
                 constants.source.consortium,
                 `${moment().format('l')} by`,
                 constants.memberLibraries.all,
