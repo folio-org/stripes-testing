@@ -60,7 +60,7 @@ describe('Consortia', () => {
 
         it(
           'C411587 User with "Consortium manager: Can share settings to all members" permission is able to add/delete loan type shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-          { tags: ['extendedPathECS', 'thunderjet', 'C411587'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C411587'] },
           () => {
             const { locale } = flow.ctx();
             const rowDataToCheck = [

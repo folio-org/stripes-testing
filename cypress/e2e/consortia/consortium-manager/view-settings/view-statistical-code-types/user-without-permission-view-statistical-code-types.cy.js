@@ -46,7 +46,7 @@ describe('Consortia', () => {
           cy.clearCookies({ domain: null });
           cy.resetTenant();
           cy.getAdminToken();
-          StatisticalCodeTypesConsortiumManager.createViaApi(
+          StatisticalCodeTypesConsortiumManager.createSharedViaApi(
             testData.centralSharedStatisticalCodeType,
           ).then((newStatisticalCodeType) => {
             testData.centralSharedStatisticalCodeType.id = newStatisticalCodeType.id;
@@ -92,7 +92,7 @@ describe('Consortia', () => {
           cy.resetTenant();
           cy.getAdminToken();
           StatisticalCodeTypes.deleteViaApi(testData.centralLocalStatisticalCodeType.id);
-          StatisticalCodeTypesConsortiumManager.deleteViaApi(
+          StatisticalCodeTypesConsortiumManager.deleteSharedViaApi(
             testData.centralSharedStatisticalCodeType,
           );
           Users.deleteViaApi(tempUserC411337.userId);

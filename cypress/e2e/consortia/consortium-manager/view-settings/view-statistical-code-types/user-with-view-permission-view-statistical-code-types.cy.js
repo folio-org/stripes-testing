@@ -51,7 +51,7 @@ describe('Consortia', () => {
         before('Create test data', () => {
           cy.getAdminToken()
             .then(() => {
-              StatisticalCodeTypesConsortiumManager.createViaApi(
+              StatisticalCodeTypesConsortiumManager.createSharedViaApi(
                 testData.centralSharedStatisticalCodeType,
               ).then((newStatisticalCodeType) => {
                 testData.centralSharedStatisticalCodeType = newStatisticalCodeType;
@@ -113,7 +113,7 @@ describe('Consortia', () => {
         after('Delete test data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          StatisticalCodeTypesConsortiumManager.deleteViaApi(
+          StatisticalCodeTypesConsortiumManager.deleteSharedViaApi(
             testData.centralSharedStatisticalCodeType,
           );
           StatisticalCodeTypes.deleteViaApi(testData.centralLocalStatisticalCodeType.id);

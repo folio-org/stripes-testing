@@ -60,7 +60,7 @@ describe('Consortia', () => {
 
         it(
           'C411374 User with "Consortium manager: Can share settings to all members" permission is able to add/delete URL relationship shared to all affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
-          { tags: ['extendedPathECS', 'thunderjet', 'C411374'] },
+          { tags: ['criticalPathECS', 'thunderjet', 'C411374'] },
           () => {
             const { locale } = flow.ctx();
             const rowDataToCheck = [
