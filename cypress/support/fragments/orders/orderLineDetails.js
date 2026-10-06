@@ -1,11 +1,13 @@
-import { including } from '@interactors/html';
+import { and, including } from '@interactors/html';
 import {
+  Badge,
   Button,
   Checkbox,
   InfoRow,
   KeyValue,
   Link,
   MetaSection,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
   PaneHeader,
@@ -14,8 +16,17 @@ import {
   Warning,
   MultiColumnListHeader,
   HTML,
+  MultiSelect,
+  MultiSelectMenu,
+  MultiSelectOption,
+  Pane,
+  ValueChipRoot,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../constants';
+import {
+  DEFAULT_WAIT_TIME,
+  ORDER_LINE_FORM_LABELS,
+  RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS,
+} from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import ExportDetails from '../exportManager/exportDetails';
 import TransactionDetails from '../finance/transactions/transactionDetails';
@@ -57,6 +68,10 @@ const relatedInvoiceLinesSection = orderLineDetailsSection.find(
   Section({ id: 'relatedInvoiceLines' }),
 );
 const customFieldsAccordion = orderLineDetailsSection.find(Section({ id: 'customFieldsPOLine' }));
+const tagsButton = orderLineDetailsSection.find(Button({ id: 'clickable-show-tags' }));
+const tagsPane = Pane('Tags');
+const tagsMultiSelect = tagsPane.find(MultiSelect({ id: 'input-tag' }));
+const addTagOption = (tagName) => MultiSelectMenu().find(MultiSelectOption(and(including('Add tag for:'), including(tagName))));
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -688,46 +703,96 @@ export default {
   },
 
   checkRelatedInvoiceLinesTableContent(records = []) {
+    cy.expect(
+      relatedInvoiceLinesSection
+        .find(MultiColumnList())
+        .has({ columns: Object.values(RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS) }),
+    );
+
     records.forEach((record, index) => {
       if (record.vendorInvoiceNo) {
-        this.checkRelatedInvoiceLineColumnItem(index, 'Vendor invoice #', record.vendorInvoiceNo);
+        this.checkRelatedInvoiceLineColumnItem(
+          index,
+          RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.VENDOR_INVOICE_NUMBER,
+          record.vendorInvoiceNo,
+        );
       }
       if (record.invoiceLineNumber) {
-        this.checkRelatedInvoiceLineColumnItem(index, 'Invoice line #', record.invoiceLineNumber);
+        this.checkRelatedInvoiceLineColumnItem(
+          index,
+          RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.INVOICE_LINE_NUMBER,
+          record.invoiceLineNumber,
+        );
       }
       if (record.fiscalYear) {
-        this.checkRelatedInvoiceLineColumnItem(index, 'Fiscal year', record.fiscalYear);
+        this.checkRelatedInvoiceLineColumnItem(
+          index,
+          RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.FISCAL_YEAR,
+          record.fiscalYear,
+        );
       }
       if (record.invoiceDate) {
-        this.checkRelatedInvoiceLineColumnItem(index, 'Invoice date', record.invoiceDate);
+        this.checkRelatedInvoiceLineColumnItem(
+          index,
+          RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.INVOICE_DATE,
+          record.invoiceDate,
+        );
       }
       if (record.vendorCode) {
-        this.checkRelatedInvoiceLineColumnItem(index, 'Vendor code', record.vendorCode);
+        this.checkRelatedInvoiceLineColumnItem(
+          index,
+          RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.VENDOR_CODE,
+          record.vendorCode,
+        );
       }
       if (record.subscriptionStart) {
         this.checkRelatedInvoiceLineColumnItem(
           index,
-          'Subscription start',
+          RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.SUBSCRIPTION_START,
           record.subscriptionStart,
         );
       }
       if (record.subscriptionEnd) {
-        this.checkRelatedInvoiceLineColumnItem(index, 'Subscription end', record.subscriptionEnd);
+        this.checkRelatedInvoiceLineColumnItem(
+          index,
+          RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.SUBSCRIPTION_END,
+          record.subscriptionEnd,
+        );
       }
       if (record.subscriptionInfo) {
-        this.checkRelatedInvoiceLineColumnItem(index, 'Subscription info', record.subscriptionInfo);
+        this.checkRelatedInvoiceLineColumnItem(
+          index,
+          RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.SUBSCRIPTION_INFO,
+          record.subscriptionInfo,
+        );
       }
       if (record.status) {
-        this.checkRelatedInvoiceLineColumnItem(index, 'Status', record.status);
+        this.checkRelatedInvoiceLineColumnItem(
+          index,
+          RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.STATUS,
+          record.status,
+        );
       }
       if (record.quantity) {
-        this.checkRelatedInvoiceLineColumnItem(index, 'Quantity', record.quantity);
+        this.checkRelatedInvoiceLineColumnItem(
+          index,
+          RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.QUANTITY,
+          record.quantity,
+        );
       }
       if (record.amount) {
-        this.checkRelatedInvoiceLineColumnItem(index, 'Amount', record.amount);
+        this.checkRelatedInvoiceLineColumnItem(
+          index,
+          RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.AMOUNT,
+          record.amount,
+        );
       }
       if (record.comment) {
-        this.checkRelatedInvoiceLineColumnItem(index, 'Comment', record.comment);
+        this.checkRelatedInvoiceLineColumnItem(
+          index,
+          RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.COMMENT,
+          record.comment,
+        );
       }
     });
   },
@@ -747,5 +812,99 @@ export default {
           .has({ value: including(customFieldValue) }),
       );
     }
+  },
+
+  // --- Multi-year prepayment / Payment terms (view mode) ---
+  assertMultiYearPrepaymentChecked() {
+    cy.expect(
+      ongoingOrderSection
+        .find(Checkbox({ labelText: ORDER_LINE_FORM_LABELS.MULTI_YEAR_PREPAYMENT }))
+        .has({ checked: true, disabled: true }),
+    );
+  },
+  assertMultiYearPrepaymentUnchecked() {
+    cy.expect(
+      ongoingOrderSection
+        .find(Checkbox({ labelText: ORDER_LINE_FORM_LABELS.MULTI_YEAR_PREPAYMENT }))
+        .has({ checked: false, disabled: true }),
+    );
+  },
+  assertMultiYearPrepaymentAbsent() {
+    cy.expect(
+      ongoingOrderSection
+        .find(
+          Checkbox({
+            disabled: true,
+            labelText: ORDER_LINE_FORM_LABELS.MULTI_YEAR_PREPAYMENT,
+          }),
+        )
+        .absent(),
+    );
+  },
+  assertFundDistributionAccordionBlank() {
+    cy.expect(fundDistributionsSection.has({ text: including('The list contains no items') }));
+  },
+  assertPaymentTermsSectionAbsent() {
+    cy.expect(orderLineDetailsSection.find(Section({ id: 'paymentTerms' })).absent());
+  },
+
+  openTagsPane() {
+    cy.do(tagsButton.click());
+    cy.expect(tagsPane.exists());
+  },
+
+  closeTagsPane() {
+    cy.do(
+      tagsPane
+        .find(PaneHeader())
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.expect(tagsPane.absent());
+  },
+
+  verifyTagsCount(count) {
+    cy.expect(tagsButton.find(Badge()).has({ value: String(count) }));
+  },
+
+  verifyTagsPaneElements(count = 0, tags = []) {
+    cy.expect([
+      tagsPane.has({ subtitle: count === 1 ? '1 Tag' : `${count} Tags` }),
+      tagsMultiSelect.has({ selectedCount: count }),
+      ...tags.map((tag) => tagsMultiSelect.find(ValueChipRoot(tag)).exists()),
+    ]);
+
+    if (count === 0) {
+      cy.expect(tagsMultiSelect.has({ placeholder: 'Enter a tag.' }));
+    }
+  },
+
+  fillInTagName(tagName) {
+    cy.do([tagsMultiSelect.open(), tagsMultiSelect.filter(tagName)]);
+    cy.wait(500);
+    cy.do(tagsMultiSelect.open());
+  },
+
+  verifyAddTagOptionDisplayed(tagName) {
+    cy.expect([tagsMultiSelect.has({ filterValue: tagName }), addTagOption(tagName).exists()]);
+  },
+
+  clickAddTagOption(tagName) {
+    cy.do(addTagOption(tagName).click());
+  },
+
+  selectExistingTag(tagName) {
+    cy.do([
+      tagsMultiSelect.open(),
+      MultiSelectMenu().find(MultiSelectOption(tagName)).clickSegment(),
+    ]);
+  },
+
+  verifyTagOptionSelected(tagName) {
+    cy.expect(MultiSelectMenu().find(MultiSelectOption(tagName)).has({ selected: true }));
+  },
+
+  closeTagsDropdown() {
+    cy.do(tagsMultiSelect.close());
   },
 };

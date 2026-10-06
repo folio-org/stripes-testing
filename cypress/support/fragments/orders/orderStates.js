@@ -45,6 +45,8 @@ export default {
     return `Order can NOT be Opened because expense class ${expenseClass} is inactive.`;
   },
   selectedAccountNumberIsInactive: 'The selected account number is inactive.',
+  fundsCouldNotBeLoaded:
+    'One or more funds could not be loaded. The fund(s) may have been deleted or you may not have permission to view the associated fund(s).',
   orderHasAssociatedRequests:
     'Order could not be saved because there are associated requests. Please delete the requests before proceeding.',
   budgetNotFoundForFiscalYearCancel(fundCodes, fiscalYearCode) {
