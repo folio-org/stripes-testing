@@ -120,10 +120,27 @@ export default {
         .has({ singleValue: including(holdingName) }),
     );
   },
+  selectHolding(holdingName) {
+    cy.do(editPieceModal.find(Selection({ name: 'holdingId' })).choose(including(holdingName)));
+  },
+  verifySelectedLocation(locationName) {
+    cy.expect(
+      editPieceModal
+        .find(TextField({ name: 'locationId' }))
+        .has({ value: including(locationName) }),
+    );
+  },
   checkFieldsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(editPieceFields[label].has(conditions));
     });
+  },
+  verifyItemStatus(itemStatus) {
+    cy.expect(
+      editPieceModal
+        .find(KeyValue(RECEIVING_PIECE_FORM_FIELD_LABELS.ITEM_STATUS))
+        .has({ value: itemStatus }),
+    );
   },
 
   fillPieceDetails(fields = {}) {
@@ -132,6 +149,10 @@ export default {
 
       cy.do(editPieceFields[label].fillIn(value));
     });
+  },
+
+  selectPieceFormat(pieceFormat) {
+    cy.do(editPieceFields[RECEIVING_PIECE_FORM_FIELD_LABELS.PIECE_FORMAT].choose(pieceFormat));
   },
 
   checkCreateItemCheckbox() {
@@ -175,10 +196,10 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(editPieceModal.absent());
   },
-  clickDeleteButton({ isLastPiece = true } = {}) {
+  clickDeleteButton({ isLastPiece = true, hasItem = true } = {}) {
     cy.do(deleteButton.click());
     DeletePieceModal.waitLoading();
-    DeletePieceModal.verifyModalView(isLastPiece);
+    DeletePieceModal.verifyModalView(isLastPiece, { hasItem });
     return DeletePieceModal;
   },
   clickQuickReceiveButton({ peiceReceived = true } = {}) {

@@ -4,6 +4,7 @@ import {
   TextField,
   Button,
   Checkbox,
+  List,
   ListItem,
   MultiSelect,
   MultiSelectOption,
@@ -35,10 +36,32 @@ export default {
     cy.do(contentTypeAccordion.find(Select()).choose(type));
     eHoldingsPackages.waitLoading();
   },
+  verifyContentTypeSelected: (type) => {
+    cy.expect(contentTypeAccordion.find(Select()).has({ checkedOptionText: type }));
+  },
+  toggleContentTypeAccordion: () => {
+    cy.do(contentTypeAccordion.clickHeader());
+  },
+  verifyContentTypeAccordionOpen: (isOpen = true) => {
+    cy.expect(contentTypeAccordion.has({ open: isOpen }));
+  },
+  resetContentTypeFilter: () => {
+    cy.do(contentTypeAccordion.find(Button({ icon: 'times-circle-solid' })).click());
+    eHoldingsPackages.waitLoading();
+  },
   bySelectionStatus: (selectionStatus) => {
     cy.do(selectionStatusAccordion.clickHeader());
     cy.do(selectionStatusAccordion.find(RadioButton(selectionStatus)).click());
     eHoldingsPackages.waitLoading();
+  },
+  // Opens the accordion, checks the given options, then closes it again so a following
+  // bySelectionStatus() call (which always toggles the header open) still works as expected
+  verifySelectionStatusOptions: (options) => {
+    cy.do(selectionStatusAccordion.clickHeader());
+    options.forEach((option) => {
+      cy.expect(selectionStatusAccordion.find(RadioButton(option)).exists());
+    });
+    cy.do(selectionStatusAccordion.clickHeader());
   },
   byName(name = '*') {
     cy.do(TextField({ id: 'eholdings-search' }).fillIn(name));
@@ -92,10 +115,7 @@ export default {
   },
 
   verifyResultsCount(expectedCount) {
-    cy.expect([
-      ListItem({ className: including('list-item-'), index: expectedCount - 1 }).exists(),
-      ListItem({ className: including('list-item-'), index: expectedCount }).absent(),
-    ]);
+    cy.expect(resultSection.find(List()).has({ count: expectedCount }));
   },
 
   verifyTagPresentInFilter(tagValue, openDropdown = true) {

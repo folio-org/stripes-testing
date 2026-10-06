@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, Link } from '@interactors/html';
 import { v4 as uuidv4 } from 'uuid';
 import {
   Accordion,
@@ -38,7 +38,7 @@ import SelectUser from '../check-out-actions/selectUser';
 import MultiColumnListHelper from '../multiColumnList';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
-import { CUSTOM_FIELD_TYPES, SORT_DIRECTIONS } from '../../constants';
+import { CUSTOM_FIELD_TYPES, SORT_DIRECTIONS, THE_LIST_CONTAINS_NO_ITEMS } from '../../constants';
 
 const rootPane = Pane('Edit');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
@@ -148,13 +148,13 @@ const recalculateExpirationDateButton = Button({ id: 'expirationDate-modal-recal
 const userTypeChangeModal = Modal({ id: 'userType_confirmation_modal' });
 const userTypeChangeModalText =
   "Making this change will update the user's affiliations and the permissions they are granted for those affiliations when clicking Save & close. This action cannot easily be reversed, you would need to manually update the user's affiliations and permissions to reverse the resulting changes. Would you like to proceed?";
-
 let totalRows;
 const readingRoomAccessList = readingRoomAccessAccordion.find(MultiColumnList());
 const readingRoomAccessOptionValues = {
   allowed: 'ALLOWED',
   'not allowed': 'NOT_ALLOWED',
 };
+const roleSelectionFilter = selectRolesModal.find(Accordion({ id: including('Selection status') }));
 
 const getReadingRoomAccessOptionValue = (optionValue) => {
   return readingRoomAccessOptionValues[`${optionValue}`.trim().toLowerCase()] || optionValue;
@@ -299,15 +299,23 @@ export default {
     ASSIGNED: 'Assigned',
     UNASSIGNED: 'Unassigned',
   },
+  roleSelectionFilterOptions: {
+    ASSIGNED: 'Selected',
+    UNASSIGNED: 'Unselected',
+  },
   addServicePointsViaApi,
+
+  waitLoading() {
+    cy.expect(rootPane.exists());
+    cy.wait(3000);
+  },
 
   openEdit() {
     cy.expect(userDetailsPane.find(actionsButton).exists());
     cy.do(userDetailsPane.find(actionsButton).click());
     cy.expect(DropdownMenu().find(editButton).exists());
     cy.do(editButton.click());
-    cy.expect(rootPane.exists());
-    cy.wait(3000);
+    this.waitLoading();
   },
 
   changeMiddleName(midName) {
@@ -956,6 +964,10 @@ export default {
     });
   },
 
+  verifyNoAddressesFound() {
+    cy.expect(HTML(including('No addresses found')).exists());
+  },
+
   addAddress(type = 'Home') {
     cy.expect(Button('Add address').exists());
     cy.do(Button('Add address').click());
@@ -1419,6 +1431,25 @@ export default {
     }
   },
 
+  // Idempotent - only expands if currently collapsed. Useful after navigating away and back
+  // (e.g. via cy.go('back')), where accordion state may or may not have survived
+  ensureUserRolesAccordionExpanded(isEditable = true) {
+    cy.do(userRolesAccordion.expand());
+    cy.expect(userRolesAccordion.has({ open: true }));
+    if (isEditable) {
+      cy.expect([
+        addRolesButton.exists(),
+        unassignAllRolesButton.has({ disabled: or(true, false) }),
+      ]);
+    } else {
+      cy.expect([
+        addRolesButton.absent(),
+        unassignAllRolesButton.absent(),
+        userRoleDeleteIcon.absent(),
+      ]);
+    }
+  },
+
   verifyUserRolesAccordionEmpty() {
     cy.wait(2000);
     cy.expect([
@@ -1474,14 +1505,58 @@ export default {
     if (isShown) cy.expect(targetRow.exists());
     else cy.expect(targetRow.absent());
     if ([true, false].includes(isChecked)) {
-      const expectedStatusText = isChecked
-        ? this.roleAssignmentFilterOptions.ASSIGNED
-        : this.roleAssignmentFilterOptions.UNASSIGNED;
-      cy.expect([
-        targetRow.find(Checkbox()).has({ checked: isChecked }),
-        targetRow.find(MultiColumnListCell(expectedStatusText)).exists(),
-      ]);
+      cy.expect(targetRow.find(Checkbox()).has({ checked: isChecked }));
     }
+  },
+
+  verifyRoleIsLinkInModal(roleName) {
+    const targetRow = selectRolesModal.find(
+      MultiColumnListRow({
+        innerText: matching(new RegExp(`^${roleName}\\n`)),
+        isContainer: false,
+      }),
+    );
+    cy.expect(targetRow.find(Link(roleName)).exists());
+  },
+
+  // Blanket check across every row currently listed in the modal (not just a sampled role),
+  // comparing the row count against the number of role-detail links actually rendered
+  verifyAllRolesLinkStatusInModal({ isLink = true } = {}) {
+    cy.then(() => selectRolesModal.find(MultiColumnList()).rowCount()).then((rowCount) => {
+      cy.do(
+        selectRolesModal.perform((element) => {
+          const linksCount = element.querySelectorAll(
+            'a[href^="/settings/authorization-roles/"]',
+          ).length;
+          expect(linksCount, 'Role links count in modal').to.equal(isLink ? rowCount : 0);
+        }),
+      );
+    });
+  },
+
+  // Cypress can't verify target="_blank" behavior by actually clicking it - that risks a real
+  // new tab opening in CI. Instead this asserts the link's original target is "_blank" (which
+  // by web-standard definition guarantees clicking it would leave the modal/checkbox alone),
+  // then removes that target and clicks, so the role's own detail page opens (and can be
+  // verified) in the current tab
+  clickRoleLinkInModal(roleName) {
+    const targetRow = selectRolesModal.find(
+      MultiColumnListRow({
+        innerText: matching(new RegExp(`^${roleName}\\n`)),
+        isContainer: false,
+      }),
+    );
+    const link = targetRow.find(Link(roleName));
+    // .perform() may not retry the way .click() does, so wait for the link with a regular
+    // interactor assertion first
+    cy.expect(link.exists());
+    cy.do(
+      link.perform((element) => {
+        expect(element.target).to.equal('_blank');
+        element.removeAttribute('target');
+        element.click();
+      }),
+    );
   },
 
   verifyRoleAssignmentFilterOptionInModal(option, { isChecked = false } = {}) {
@@ -1493,6 +1568,66 @@ export default {
     const targetOption = roleAssignmentFilter.find(Checkbox(option));
     cy.do(targetOption.click());
     this.verifyRoleAssignmentFilterOptionInModal(option, { isChecked });
+  },
+
+  verifyRoleSelectionFilterOptionInModal(option, { isChecked = false } = {}) {
+    const targetOption = roleSelectionFilter.find(Checkbox(option));
+    cy.expect(targetOption.has({ checked: isChecked }));
+  },
+
+  selectRoleSelectionFilterOptionInModal(option, { isChecked = true } = {}) {
+    const targetOption = roleSelectionFilter.find(Checkbox(option));
+    if (isChecked) cy.do(targetOption.checkIfNotSelected());
+    else cy.do(targetOption.uncheckIfSelected());
+    this.verifyRoleSelectionFilterOptionInModal(option, { isChecked });
+  },
+
+  toggleRoleSelectionFilterAccordion(isOpen) {
+    cy.do(roleSelectionFilter.clickHeader());
+    cy.expect(roleSelectionFilter.has({ open: isOpen }));
+  },
+
+  resetRoleSelectionFilterInModal() {
+    cy.do(roleSelectionFilter.find(Button({ icon: 'times-circle-solid' })).click());
+    Object.values(this.roleSelectionFilterOptions).forEach((option) => {
+      this.verifyRoleSelectionFilterOptionInModal(option, { isChecked: false });
+    });
+  },
+
+  clickResetAllInRolesModal() {
+    cy.do(selectRolesModal.find(resetAllButton).click());
+  },
+
+  // With no count given, just checks the "N roles found" text is in sync with the actual number
+  // of rendered rows (useful when the exact total isn't known/controlled by the test). A short
+  // wait is needed first since this reads values directly instead of using a retryable .has()
+  // assertion.
+  verifyRolesFoundCountInModal(count) {
+    if (count === undefined) {
+      cy.wait(1500);
+      cy.then(() => rolesPane.subtitle()).then((subtitleText) => {
+        const foundCount = Number(subtitleText.match(/\d+/)[0]);
+        this.checkRolesCountInModal(foundCount);
+        if (count === 0) cy.expect(selectRolesModal.find(HTML(THE_LIST_CONTAINS_NO_ITEMS)).exists());
+      });
+      return;
+    }
+
+    cy.expect(rolesPane.has({ subtitle: including(`${count} roles found`) }));
+    this.checkRolesCountInModal(count);
+    if (count === 0) cy.expect(selectRolesModal.find(HTML(THE_LIST_CONTAINS_NO_ITEMS)).exists());
+  },
+
+  verifyRoleStatusInModal(roleName, expectedStatus) {
+    const targetRow = selectRolesModal.find(
+      MultiColumnListRow({
+        innerText: matching(new RegExp(`^${roleName}\\n`)),
+        isContainer: false,
+      }),
+    );
+    cy.expect(
+      targetRow.find(MultiColumnListCell({ column: 'Status' })).has({ content: expectedStatus }),
+    );
   },
 
   selectRoleInModal(roleName, isSelected = true, { searchRole = true } = {}) {
@@ -1530,12 +1665,48 @@ export default {
     cy.wait(1000);
   },
 
+  closeRolesModalWithoutSaving() {
+    cy.do(selectRolesModal.find(cancelButton).click());
+    cy.expect(selectRolesModal.absent());
+  },
+
   verifyUserRoleNames(roleNames, isEditable = true) {
     roleNames.forEach((roleName) => {
       const roleItem = userRolesAccordion.find(ListItem(including(roleName)));
       if (isEditable) cy.expect(roleItem.find(userRoleDeleteIcon).exists());
       else cy.expect(roleItem.exists());
     });
+  },
+
+  verifyUserRoleIsLinkInEditForm(roleName) {
+    const roleItem = userRolesAccordion.find(ListItem(including(roleName)));
+    cy.expect(roleItem.find(Link(roleName)).exists());
+  },
+
+  verifyUserRoleIsPlainTextInEditForm(roleName) {
+    const roleItem = userRolesAccordion.find(ListItem(including(roleName)));
+    cy.expect([roleItem.exists(), roleItem.find(Link(roleName)).absent()]);
+  },
+
+  // Cypress can't verify target="_blank" behavior by actually clicking it - that risks a real
+  // new tab opening in CI. Instead this asserts the link's original target is "_blank" (which
+  // by web-standard definition guarantees clicking it would leave the edit form alone), then
+  // removes that target and clicks, so the role's own detail page opens (and can be verified)
+  // in the current tab
+  clickUserRoleLinkInEditForm(roleName) {
+    const roleItem = userRolesAccordion.find(ListItem(including(roleName)));
+    const link = roleItem.find(Link(roleName));
+    // .perform() may not retry the way .click() does, so wait for the link with a regular
+    // interactor assertion first
+    cy.expect(link.exists());
+    cy.do(
+      link.perform((element) => {
+        expect(element.target).to.equal('_blank');
+        element.removeAttribute('target');
+        element.click();
+      }),
+    );
+    cy.wait(2000);
   },
 
   verifyUserRoleNamesOrdered(roleNames, isEditable = true) {
@@ -1971,7 +2142,7 @@ export default {
         disabled: fulfillmentPreferenceDisabled,
       }),
       defaultDeliveryAddress &&
-      defaultDeliveryAddressField.checkedOptionText(defaultDeliveryAddress),
+        defaultDeliveryAddressField.checkedOptionText(defaultDeliveryAddress),
       defaultDeliveryAddressField.has({ disabled: defaultDeliveryAddressDisabled }),
     ]);
 

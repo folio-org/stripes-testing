@@ -47,6 +47,8 @@ const unreceivableRowsSelector = '#unreceivable [class*="mclRowFormatterContaine
 
 const boundItemsAccordion = Section({ id: 'boundItems' });
 const boundItemsList = MultiColumnList({ id: 'bound-items-list' });
+const expectedPiecesList = expectedSection.find(MultiColumnList());
+const receivedPiecesList = receivedSection.find(MultiColumnList());
 
 const ADD_PIECE_BUTTON_LABEL = 'Add piece';
 
@@ -146,6 +148,28 @@ export default {
       cy.get(unreceivableRowsSelector).should('have.length', unreceivableCount);
     }
   },
+  checkApiErrorResponse(
+    interception,
+    { expectedStatus, expectedErrorCode, expectedErrorMessage } = {},
+  ) {
+    expect(interception.response.statusCode).to.equal(expectedStatus);
+
+    if (expectedErrorCode) {
+      expect(interception.response.body.errors[0].code).to.equal(expectedErrorCode);
+    }
+    if (expectedErrorMessage) {
+      expect(interception.response.body.errors[0].message).to.equal(expectedErrorMessage);
+    }
+  },
+
+  assertExpectedPiecesTotalCount(totalCount) {
+    cy.expect(expectedPiecesList.has({ totalCount }));
+  },
+
+  assertReceivedPiecesTotalCount(totalCount) {
+    cy.expect(receivedPiecesList.has({ totalCount }));
+  },
+
   checkExpectedTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.status) {
@@ -397,6 +421,21 @@ export default {
 
     return EditPieceModal;
   },
+  openEditPieceModalByFormat(pieceFormat) {
+    cy.do(
+      expectedSection
+        .find(
+          MultiColumnListCell({
+            column: EXPECTED_TABLE_COLUMN_HEADERS.PIECE_FORMAT,
+            content: pieceFormat,
+          }),
+        )
+        .click(),
+    );
+    EditPieceModal.waitLoading();
+
+    return EditPieceModal;
+  },
   openReceivingEditForm() {
     cy.do([buttons.Actions.click(), buttons.Edit.click()]);
     ReceivingEditForm.waitLoading();
@@ -415,9 +454,13 @@ export default {
     cy.do(expectedSection.find(Button('Actions')).click());
     cy.expect(Button(ADD_PIECE_BUTTON_LABEL).absent());
   },
-  openReceiveListEditForm() {
+  openReceiveListEditForm({ isOrderClosed = false } = {}) {
     cy.do([expectedSection.find(Button('Actions')).click(), Button('Receive').click()]);
-    ReceivingsListEditForm.waitLoading();
+
+    // For a closed order the "Order closed" modal appears before the form
+    if (!isOrderClosed) {
+      ReceivingsListEditForm.waitLoading();
+    }
 
     return ReceivingsListEditForm;
   },

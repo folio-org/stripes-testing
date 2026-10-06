@@ -1,4 +1,5 @@
 export const ENCUMBRANCE_STATUSES = {
+  PENDING: 'Pending',
   RELEASED: 'Released',
   UNRELEASED: 'Unreleased',
 };

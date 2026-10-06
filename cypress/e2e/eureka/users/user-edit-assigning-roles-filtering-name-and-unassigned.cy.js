@@ -128,10 +128,11 @@ describe('Eureka', () => {
 
         // Step 4: Click on "Select All" checkbox in the right part of the modal
         UserEdit.selectAllRolesInRolesModal({ isChecked: null });
-        // Expected: All "Acquisition" roles disappeared (as they are all assigned)
+        // Expected: All "Acquisition" roles stay shown - the "Unassigned" filter reflects only
+        // saved state, and nothing has been saved yet, so checking them doesn't remove them
         // The counter on the bottom of the modal shows number of selected roles
         testData.setOneRoleNames.forEach((roleName) => {
-          UserEdit.verifyRoleInModal(roleName, { isShown: false });
+          UserEdit.verifyRoleInModal(roleName, { isShown: true, isChecked: true });
         });
         UserEdit.checkRolesSelectedCounterInModal(testData.setOneRoleNames.length);
 
@@ -200,10 +201,11 @@ describe('Eureka', () => {
 
         // Step 11: Click on "Select All" checkbox in the right part of the modal
         UserEdit.selectAllRolesInRolesModal({ isChecked: null });
-        // Expected: All "Circulation" roles are selected and disappear
+        // Expected: All "Circulation" roles are selected but stay shown - not saved yet, so the
+        // "Unassigned" filter still lists them
         // The number of selected roles equals all selected "Circulation" (including role from precondition)
         testData.setTwoRoleNames.slice(1).forEach((roleName) => {
-          UserEdit.verifyRoleInModal(roleName, { isShown: false });
+          UserEdit.verifyRoleInModal(roleName, { isShown: true, isChecked: true });
         });
         UserEdit.checkRolesSelectedCounterInModal(testData.setTwoRoleNames.length);
 
@@ -273,10 +275,11 @@ describe('Eureka', () => {
 
         // Step 18: Click on "Select All" checkbox in the right part of the modal
         UserEdit.selectAllRolesInRolesModal({ isChecked: null });
-        // Expected: All "Circulation" roles are selected and disappear
+        // Expected: All "Circulation" roles are selected but stay shown - not saved yet, so the
+        // "Unassigned" filter still lists them
         // The number of selected roles equals all selected "Circulation" (including role from precondition) + 1 (additional) from precondition
         testData.setTwoRoleNames.slice(1).forEach((roleName) => {
-          UserEdit.verifyRoleInModal(roleName, { isShown: false });
+          UserEdit.verifyRoleInModal(roleName, { isShown: true, isChecked: true });
         });
         UserEdit.checkRolesSelectedCounterInModal(testData.setTwoRoleNames.length + 1);
 

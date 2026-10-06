@@ -11,6 +11,7 @@ const rootModal = Modal('Select instance');
 const searchField = SearchField('Search field index');
 const searchButton = Button('Search');
 const heldbyAccordionName = 'Held by';
+const resultsList = MultiColumnList({ id: 'list-plugin-find-records' });
 
 export default {
   waitLoading() {
@@ -52,12 +53,11 @@ export default {
     cy.do(rootModal.find(Button({ id: 'accordion-toggle-button-shared' })).exists());
   },
   verifyInstanceExistsInList(instanceTitle) {
-    cy.expect(
-      rootModal
-        .find(MultiColumnList({ id: 'list-plugin-find-records' }))
-        .find(MultiColumnListCell(instanceTitle))
-        .exists(),
-    );
+    cy.expect(rootModal.find(resultsList).find(MultiColumnListCell(instanceTitle)).exists());
+  },
+
+  verifyInstanceSearchResultsEmpty() {
+    cy.expect(resultsList.has({ rowCount: 0 }));
   },
 
   close() {

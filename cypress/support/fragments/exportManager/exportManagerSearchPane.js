@@ -88,16 +88,19 @@ export default {
   exportJobRecursively({ jobId, timeout = 900000 }) {
     cy.recurse(
       () => {
-        return cy.contains('[class^=mclRow-]', jobId);
+        // Re-check right after a reload (in the same iteration) instead of waiting out the
+        // full "delay" below - otherwise a job that finishes just after reload still sits idle
+        // until the next iteration's delay elapses, even though its fresh status is already
+        // visible on the page
+        return cy.contains('[class^=mclRow-]', jobId).then(($el) => {
+          if ($el[0].textContent.includes('In progress')) {
+            cy.reload();
+            return cy.contains('[class^=mclRow-]', jobId);
+          }
+          return cy.wrap($el);
+        });
       },
-      ($el) => {
-        const isInProgress = $el[0].textContent.includes('In progress');
-
-        if (isInProgress) {
-          cy.reload();
-        }
-        return !isInProgress;
-      },
+      ($el) => !$el[0].textContent.includes('In progress'),
       {
         delay: 30000,
         limit: timeout / 30000, // max number of iterations
@@ -273,8 +276,16 @@ export default {
     FiltersPaneHelper.filterByCheckboxes(searchPane, filterLabel, checkboxLabels);
   },
 
+  filterBySelection(filterLabel, checkboxLabels) {
+    FiltersPaneHelper.filterBySelection(searchPane, filterLabel, checkboxLabels);
+  },
+
   filterByIntegrationTypes(types) {
     this.filterByCheckboxes(EXPORT_MANAGER_JOBS_FILTER_LABELS.INTEGRATION_TYPE, types);
+  },
+
+  filterByExportMethod(exportMethod) {
+    this.filterBySelection(EXPORT_MANAGER_JOBS_FILTER_LABELS.EXPORT_METHOD, exportMethod);
   },
 
   checkFilterOption({ filterName, resetAll = false }) {
@@ -326,8 +337,8 @@ export default {
     cy.expect(jobsDetailsPane.find(HTML('No results found. Please check your filters.')).exists());
   },
 
-  verifyThirdPaneExportJobExist() {
-    cy.wait(10000);
+  verifyThirdPaneExportJobExist({ waitMs = 10_000 } = {}) {
+    cy.wait(waitMs);
     cy.expect(PaneHeader('Export job ').exists());
   },
 

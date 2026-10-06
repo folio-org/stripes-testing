@@ -1,11 +1,12 @@
 import uuid from 'uuid';
-import { INVENTORY_SETTINGS_SECTION_LABELS, REQUEST_METHOD } from '../../../../constants';
+import { REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp, {
   messages,
   SHARED_SETTING_LIBRARIES,
 } from '../../consortiumManagerApp';
 import deleteCancelReason from '../../modal/delete-cancel-reason';
+import { INVENTORY_SETTINGS_TABS } from '../../../settings/inventory/settingsInventory';
 
 const id = uuid();
 
@@ -50,7 +51,7 @@ export default {
   },
 
   choose() {
-    ConsortiumManagerApp.chooseSecondMenuItem(INVENTORY_SETTINGS_SECTION_LABELS.ITEM_NOTE_TYPES);
+    ConsortiumManagerApp.chooseSecondMenuItem(INVENTORY_SETTINGS_TABS.ITEM_NOTE_TYPES);
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });
@@ -61,9 +62,7 @@ export default {
   },
 
   assertSettingIsDisplayed() {
-    ConsortiumManagerApp.verifySelectedSettingIsDisplayed(
-      INVENTORY_SETTINGS_SECTION_LABELS.ITEM_NOTE_TYPES,
-    );
+    ConsortiumManagerApp.verifySelectedSettingIsDisplayed(INVENTORY_SETTINGS_TABS.ITEM_NOTE_TYPES);
   },
 
   assertCreatedCalloutMessage(typeName, members = SHARED_SETTING_LIBRARIES) {

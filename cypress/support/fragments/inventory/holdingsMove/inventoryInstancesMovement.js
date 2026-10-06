@@ -15,8 +15,8 @@ import InteractorsTools from '../../../utils/interactorsTools';
 import ItemRecordView from '../item/itemRecordView';
 
 const confirmMoveButton = Modal('Confirm move').find(Button('Continue'));
-const instancePaneFrom = Section({ id: 'movement-from-instance-details' });
-const instancePaneTo = Section({ id: 'movement-to-instance-details' });
+export const inventoryInstancesMovementPaneFrom = Section({ id: 'movement-from-instance-details' });
+export const inventoryInstancesMovementPaneTo = Section({ id: 'movement-to-instance-details' });
 
 export default {
   waitLoading(currentinstanceHrId, instanceHrIdNew) {
@@ -32,23 +32,27 @@ export default {
     ]);
     cy.expect(HTML({ id: 'inventory-module-display' }).exists());
   },
-  moveFromMultiple(holdingName, moveToTitle) {
+  clickConfirmMoveButton() {
+    cy.do(confirmMoveButton.click());
+  },
+  moveFromMultiple(holdingName, moveToTitle, { confirm = true } = {}) {
     cy.do([
       Accordion({ label: including(`Holdings: ${holdingName}`) })
         .find(Button('Move to'))
         .click(),
       DropdownMenu().find(Button(moveToTitle)).click(),
-      confirmMoveButton.click(),
     ]);
+
+    if (confirm) cy.do(confirmMoveButton.click());
   },
   closeInLeftForm() {
-    cy.do(instancePaneFrom.find(Button({ icon: 'times' })).click());
+    cy.do(inventoryInstancesMovementPaneFrom.find(Button({ icon: 'times' })).click());
   },
   closeInRightForm() {
-    cy.do(instancePaneTo.find(Button({ icon: 'times' })).click());
+    cy.do(inventoryInstancesMovementPaneTo.find(Button({ icon: 'times' })).click());
   },
   openDestinationHolding(holdingName) {
-    const targetAccordion = instancePaneTo.find(
+    const targetAccordion = inventoryInstancesMovementPaneTo.find(
       Accordion({ label: including(`Holdings: ${holdingName}`) }),
     );
 
@@ -57,7 +61,7 @@ export default {
     cy.expect(targetAccordion.has({ open: true }));
   },
   openItemInDestinationHolding(holdingName, barcode) {
-    const targetAccordion = instancePaneTo.find(
+    const targetAccordion = inventoryInstancesMovementPaneTo.find(
       Accordion({ label: including(`Holdings: ${holdingName}`) }),
     );
 
@@ -74,7 +78,9 @@ export default {
     const holdingsAccordion = Accordion({ label: including(`Holdings: ${holdingName}`) });
     const targetAccordion =
       typeof instancePaneIndex === 'number'
-        ? [instancePaneFrom, instancePaneTo][instancePaneIndex].find(holdingsAccordion)
+        ? [inventoryInstancesMovementPaneFrom, inventoryInstancesMovementPaneTo][
+          instancePaneIndex
+        ].find(holdingsAccordion)
         : holdingsAccordion;
     cy.expect(targetAccordion.find(Badge()).has({ text: itemCount }));
   },
@@ -101,5 +107,14 @@ export default {
     );
     if (isExist) cy.expect(targetAccordion.exists());
     else cy.expect(targetAccordion.absent());
+  },
+
+  verifyConfirmMovePopupDisplayed() {
+    cy.expect(Modal('Confirm move').exists());
+    cy.expect(
+      Modal('Confirm move')
+        .find(HTML(including('This holdings is linked to a purchase order line')))
+        .exists(),
+    );
   },
 };

@@ -5,6 +5,7 @@ export default HTML.extend('TableRow')
   .filters({
     index: (el) => [...el.parentElement.children].indexOf(el),
     innerText: (el) => el.innerText.replaceAll('\t', '  ').trim(),
+    innerTextRaw: (el) => el.innerText,
   });
 
 export const TableCell = HTML.extend('table cell')

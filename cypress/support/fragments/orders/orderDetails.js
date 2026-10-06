@@ -2,6 +2,7 @@ import {
   Accordion,
   Button,
   Checkbox,
+  DropdownMenu,
   including,
   KeyValue,
   Link,
@@ -31,6 +32,7 @@ import OrderLines from './orderLines';
 const FISCAL_YEAR_OPTION_GROUPS = { CURRENT: 'Current', PREVIOUS: 'Previous' };
 
 const orderDetailsPane = Pane({ id: 'order-details' });
+const orderVersionViewDetailsPane = Pane({ id: 'order-version-view' });
 const actionsButton = Button('Actions');
 
 const orderInfoSection = orderDetailsPane.find(Section({ id: 'purchaseOrder' }));
@@ -66,7 +68,7 @@ export default {
     cy.expect(poSummarySection.find(KeyValue('Workflow status')).has({ value: orderStatus }));
   },
   checkPurchaseOrderPaneAbsent() {
-    cy.expect(orderDetailsPane.absent());
+    cy.expect([orderDetailsPane.absent(), orderVersionViewDetailsPane.absent()]);
   },
 
   checkFieldsConditions(fields = []) {
@@ -131,6 +133,11 @@ export default {
         .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
         .click(),
     );
+  },
+  checkActionsMenuContent(actions = [], { shouldExist = true } = {}) {
+    actions.forEach((action) => {
+      cy.expect(shouldExist ? Button(action).exists() : Button(action).absent());
+    });
   },
   copyOrderNumber(poNumber) {
     cy.do(
@@ -288,12 +295,14 @@ export default {
       MultiColumnListRow({ content: including(identifier), isContainer: false }),
     );
 
-    columns.forEach(({ columnName, value = identifier }) => {
-      cy.expect(
-        targetRow
-          .find(MultiColumnListCell({ column: columnName }))
-          .has({ content: including(value) }),
-      );
+    columns.forEach(({ columnName, value = identifier, absent = false }) => {
+      const targetCell = targetRow.find(MultiColumnListCell({ column: columnName }));
+
+      if (absent) {
+        cy.expect(targetCell.absent());
+      } else {
+        cy.expect(targetCell.has({ content: value === '' ? '' : including(value) }));
+      }
     });
   },
 
@@ -347,6 +356,27 @@ export default {
 
     return OrderLineEditForm;
   },
+  expandPoLinesActionsDropdown() {
+    const poLinesActionsButton = polListingAccordion.find(actionsButton);
+
+    cy.then(() => poLinesActionsButton.ariaExpanded()).then((expanded) => {
+      if (expanded !== 'true') {
+        cy.do(poLinesActionsButton.click());
+      }
+    });
+    cy.expect(DropdownMenu().exists());
+  },
+  checkPoLinesActionsMenuContent(columnNames = []) {
+    cy.expect(DropdownMenu().find(Button('Add PO line')).exists());
+    columnNames.forEach((columnName) => {
+      cy.expect(DropdownMenu().find(Checkbox(columnName)).exists());
+    });
+  },
+  togglePoLinesColumns(columnNames = []) {
+    columnNames.forEach((columnName) => {
+      cy.do(DropdownMenu().find(Checkbox(columnName)).click());
+    });
+  },
   verifyPOLCount(ordersCount) {
     if (ordersCount === 0) {
       cy.expect(polListingAccordion.find(MultiColumnList()).absent());
@@ -359,12 +389,14 @@ export default {
     cy.expect(headerDetail.has({ text: including(title) }));
   },
 
-  closeOrderDetails: () => {
-    cy.do(orderDetailsPane.find(iconTimes).click());
+  closeOrderDetails: ({ isVersionView = false } = {}) => {
+    cy.do((isVersionView ? orderVersionViewDetailsPane : orderDetailsPane).find(iconTimes).click());
   },
 
-  verifyAccordionExists(name) {
-    cy.expect(Accordion({ label: including(name) }).exists());
+  verifyAccordionExists(name, isExists = true) {
+    const accordion = Accordion({ label: including(name) });
+
+    cy.expect(isExists ? accordion.exists() : accordion.absent());
   },
 
   openInvoice(number) {

@@ -5,6 +5,7 @@ import {
   Callout,
   Dropdown,
   DropdownMenu,
+  Modal,
   Pane,
   Section,
   Select,
@@ -12,6 +13,7 @@ import {
   TextArea,
   TextField,
 } from '../../../../../../interactors';
+import { EXISTING_RECORD_NAMES, FOLIO_RECORD_TYPE } from '../../../../constants';
 
 const criterionValueTypeList = SelectionList({ id: 'sl-container-criterion-value-type' });
 const criterionValueTypeButton = Button({ id: 'criterion-value-type' });
@@ -20,6 +22,12 @@ const recordSelectorDropdown = Dropdown({ id: 'record-selector-dropdown' });
 const matchProfileDetailsSection = Section({ id: 'match-profile-details' });
 const nameTextField = TextField('Name*');
 const closeButton = Button('Close');
+const incomingQualifierValueField = TextField({
+  name: 'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierValue',
+});
+const existingQualifierValueField = TextField({
+  name: 'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierValue',
+});
 
 const optionsList = {
   instanceHrid: 'Admin data: Instance HRID',
@@ -92,18 +100,41 @@ function selectIncomingRecordType(incomingRecordType) {
   cy.do(matchProfileDetailsAccordion.find(recordSelectorDropdown).choose(incomingRecordType));
 }
 
-function fillQualifierInIncomingPart(qualifierType, qualifierValue) {
-  cy.contains('Incoming MARC Bibliographic record').then((elem) => {
+// Re-fills just the qualifier value, without touching the "Use a qualifier" checkbox (unlike
+// fillQualifierInIncomingPart/fillQualifierInExistingPart, which always (re-)toggle it)
+function fillQualifierValueInIncomingPart(qualifierValue) {
+  cy.do(incomingQualifierValueField.fillIn(qualifierValue));
+  cy.wait(500); // to make sure validation happened
+}
+
+function fillQualifierValueInExistingPart(qualifierValue) {
+  cy.do(existingQualifierValueField.fillIn(qualifierValue));
+  cy.wait(500); // to make sure validation happened
+}
+
+// incomingRecordTypeLabel is a FOLIO_RECORD_TYPE value, since the "Incoming <type> record"
+// heading text changes with the selected incoming record type
+function toggleQualifierCheckboxInIncomingPart(
+  incomingRecordTypeLabel = FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+) {
+  cy.contains(`Incoming ${incomingRecordTypeLabel} record`).then((elem) => {
     elem.parent()[0].querySelectorAll('input[type="checkbox"]')[0].click();
   });
-  cy.do([
+  cy.wait(500); // to make sure validation happened
+}
+
+function fillQualifierInIncomingPart(
+  qualifierType,
+  qualifierValue,
+  incomingRecordTypeLabel = FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+) {
+  toggleQualifierCheckboxInIncomingPart(incomingRecordTypeLabel);
+  cy.do(
     Select({
       name: 'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierType',
     }).choose(qualifierType),
-    TextField({
-      name: 'profile.matchDetails[0].incomingMatchExpression.qualifier.qualifierValue',
-    }).fillIn(qualifierValue),
-  ]);
+  );
+  fillQualifierValueInIncomingPart(qualifierValue);
 }
 
 function fillQualifierInExistingComparisonPart(compareValueInComparison) {
@@ -117,18 +148,50 @@ function fillQualifierInExistingComparisonPart(compareValueInComparison) {
   );
 }
 
-function fillQualifierInExistingPart(qualifierType, qualifierValue) {
-  cy.contains('Existing MARC Bibliographic record').then((elem) => {
-    elem.parent()[0].querySelector('input[type="checkbox').click();
+// existingRecordTypeLabel is a FOLIO_RECORD_TYPE value, since the "Existing <type> record"
+// heading text changes with the selected existing record type
+function toggleQualifierCheckboxInExistingPart(
+  existingRecordTypeLabel = FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+) {
+  cy.contains(`Existing ${existingRecordTypeLabel} record`).then((elem) => {
+    elem.parent()[0].querySelector('input[type="checkbox"]').click();
   });
-  cy.do([
+  cy.wait(500); // to make sure validation happened
+}
+
+function fillQualifierInExistingPart(
+  qualifierType,
+  qualifierValue,
+  existingRecordTypeLabel = FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+) {
+  toggleQualifierCheckboxInExistingPart(existingRecordTypeLabel);
+  cy.do(
     Select({
       name: 'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierType',
     }).choose(qualifierType),
-    TextField({
-      name: 'profile.matchDetails[0].existingMatchExpression.qualifier.qualifierValue',
-    }).fillIn(qualifierValue),
-  ]);
+  );
+  fillQualifierValueInExistingPart(qualifierValue);
+}
+
+// Toggles the "Use a qualifier" checkbox off in the Incoming record section - there's no
+// separate check/uncheck method, only fillQualifierInIncomingPart, which always checks it.
+// incomingRecordTypeLabel works the same as in toggleQualifierCheckboxInIncomingPart.
+function uncheckQualifierInIncomingPart(
+  incomingRecordTypeLabel = FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+) {
+  toggleQualifierCheckboxInIncomingPart(incomingRecordTypeLabel);
+}
+
+function verifyQualifierValueErrorInIncomingPart(hasError = true) {
+  cy.expect(
+    incomingQualifierValueField.has({ error: hasError ? 'Please enter a value' : undefined }),
+  );
+}
+
+function verifyQualifierValueErrorInExistingPart(hasError = true) {
+  cy.expect(
+    existingQualifierValueField.has({ error: hasError ? 'Please enter a value' : undefined }),
+  );
 }
 
 function fillStaticValue(staticValue, recordValue) {
@@ -203,8 +266,14 @@ export default {
   optionsList,
   fillName,
   selectExistingRecordType,
+  selectIncomingRecordType,
   fillQualifierInIncomingPart,
   fillQualifierInExistingPart,
+  uncheckQualifierInIncomingPart,
+  fillQualifierValueInIncomingPart,
+  fillQualifierValueInExistingPart,
+  verifyQualifierValueErrorInIncomingPart,
+  verifyQualifierValueErrorInExistingPart,
   selectExistingRecordField,
   fillStaticValue,
   fillOnlyComparePartOfTheValueInIncomingSection,
@@ -215,6 +284,16 @@ export default {
 
   saveAndClose: () => cy.do(Button('Save as profile & Close').click()),
   close: () => cy.do(closeButton.click()),
+  closeWithoutSaving: () => {
+    cy.do(closeButton.click());
+    cy.expect(
+      Modal('Are you sure?')
+        .find(Button('Close without saving'))
+        .has({ visible: true, disabled: false }),
+    );
+    cy.do(Modal('Are you sure?').find(Button('Close without saving')).click());
+    cy.expect(Pane('New match profile').absent());
+  },
   fillMatchProfileForm: ({
     profileName,
     incomingRecordFields,
@@ -404,6 +483,13 @@ export default {
     incomingRecordFields,
     existingRecordFields,
     recordType,
+    // Optional qualifier object (e.g. { comparisonPart: 'ALPHANUMERICS_ONLY' } or
+    // { qualifierType: 'CONTAINS', qualifierValue: '...' }), applied to both sides by default.
+    // Pass incomingQualifier/existingQualifier instead when the two sides differ (e.g. one side
+    // needs {} while the other needs a real qualifier)
+    qualifier,
+    incomingQualifier = qualifier,
+    existingQualifier = qualifier,
   }) => {
     return cy
       .okapiRequest({
@@ -427,6 +513,7 @@ export default {
                   ],
                   staticValueDetails: null,
                   dataValueType: 'VALUE_FROM_RECORD',
+                  ...(incomingQualifier ? { qualifier: incomingQualifier } : {}),
                 },
                 existingRecordType: recordType,
                 existingMatchExpression: {
@@ -438,6 +525,7 @@ export default {
                   ],
                   staticValueDetails: null,
                   dataValueType: 'VALUE_FROM_RECORD',
+                  ...(existingQualifier ? { qualifier: existingQualifier } : {}),
                 },
               },
             ],
@@ -623,6 +711,64 @@ export default {
                     qualifierType: null,
                     qualifierValue: null,
                   },
+                },
+                matchCriterion: 'EXACTLY_MATCHES',
+              },
+            ],
+            existingRecordType,
+          },
+          addedRelations: [],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  // Static value (incoming) matched against a real MARC tag/indicators/subfield (existing) -
+  // unlike createMatchProfileWithStaticValueAndExistingMatchExpressionViaApi above, which
+  // matches against an admin-data field path (e.g. Instance HRID), not a raw MARC field
+  createMatchProfileWithStaticValueAndExistingFieldMatchExpressionViaApi: ({
+    profileName,
+    incomingStaticValue,
+    existingRecordFields,
+    existingRecordType = EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+  }) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/matchProfiles',
+        body: {
+          profile: {
+            name: profileName,
+            description: '',
+            incomingRecordType: 'STATIC_VALUE',
+            matchDetails: [
+              {
+                incomingRecordType: 'STATIC_VALUE',
+                incomingMatchExpression: {
+                  staticValueDetails: {
+                    staticValueType: 'TEXT',
+                    text: incomingStaticValue,
+                    number: '',
+                    exactDate: '',
+                    fromDate: '',
+                    toDate: '',
+                  },
+                  dataValueType: 'STATIC_VALUE',
+                },
+                existingRecordType,
+                existingMatchExpression: {
+                  fields: [
+                    { label: 'field', value: existingRecordFields.field },
+                    { label: 'indicator1', value: existingRecordFields.in1 },
+                    { label: 'indicator2', value: existingRecordFields.in2 },
+                    { label: 'recordSubfield', value: existingRecordFields.subfield },
+                  ],
+                  staticValueDetails: null,
+                  dataValueType: 'VALUE_FROM_RECORD',
                 },
                 matchCriterion: 'EXACTLY_MATCHES',
               },

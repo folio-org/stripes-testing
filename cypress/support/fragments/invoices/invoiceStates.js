@@ -5,6 +5,8 @@ export default {
   invoiceLineDeletedMessage: 'Invoice line has been deleted',
   invoiceApprovedMessage: 'Invoice has been approved successfully',
   invoiceApprovedAndPaidMessage: 'Invoice has been approved and paid successfully',
+  invoiceNotApprovedMessage: 'Invoice was not approved',
+  invoiceNotApprovedAndPaidMessage: 'Invoice was not approved/paid',
   invoicePaidMessage: 'Invoice has been paid successfully',
   invoiceCancelledMessage: 'Invoice has been cancelled successfully',
   invoiceDeletedMessage: 'Invoice has been deleted',
@@ -20,6 +22,12 @@ export default {
   cannotApproveFundHasNoCurrentBudget(fundCode, FYCode) {
     return `Invoice cannot be approved because Fund ${fundCode} has no current budget for fiscal year ${FYCode}.`;
   },
+  allowableEncumbranceExceeded(fundCode) {
+    return `Fund distribution amount exceeds the allowable encumbrance amount in the ${fundCode} fund.`;
+  },
+  allowableExpenditureExceeded(fundCode) {
+    return `Fund distribution amount exceeds the allowable expenditure amount in the ${fundCode} fund.`;
+  },
   cannotApproveOrPayFundDistributionNot100Percent(invoiceLineNumber) {
     return `Invoice could not be approved or paid. The fund distribution total must be distributed by 100 percent in invoice line ${invoiceLineNumber}. Please update fund distribution details for that invoice line to continue.`;
   },
@@ -31,9 +39,15 @@ export default {
   POLineFullyPaid: 'Purchase order line status is Fully Paid',
   inactiveAccount: 'The selected account number is inactive.',
 
-  // api response
+  // API errorMessages
   activeBudgetNotFoundMessage: 'Active budget not found by fund id and fiscal year id',
+  encumbranceRestrictionMessage: 'Encumbrance restriction does not allow this operation',
+  expenditureRestrictionMessage: 'Expenditure restriction does not allow this operation',
+
+  // API errorCodes
   budgetNotFoundCode: 'budgetNotFoundByFundIdAndFiscalYearId',
+  budgetRestrictedEncumbranceCode: 'budgetRestrictedEncumbranceError',
+  budgetRestrictedExpendituresCode: 'budgetRestrictedExpendituresError',
 
   saveLineErrorBudgetNotFoundByFundId:
     'Invoice line cannot be saved because invoice is not assigned to a Fiscal year.',

@@ -487,6 +487,10 @@ export default {
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(linkIconButton).exists());
   },
 
+  clickActionsButton() {
+    cy.do(actionsButton.click());
+  },
+
   goToEditMARCBiblRecord: () => {
     cy.do(actionsButton.click());
     cy.expect(actionsButton.has({ ariaExpanded: 'true' }));
@@ -1071,6 +1075,17 @@ export default {
     cy.do(moveItemsButton.click());
   },
 
+  verifyItemCheckboxesInHolding(holdingName, itemsCount = 1) {
+    for (let index = 0; index < itemsCount; index++) {
+      cy.expect(
+        Accordion({ label: including(`Holdings: ${holdingName}`) })
+          .find(MultiColumnListRow({ index }))
+          .find(Checkbox())
+          .exists(),
+      );
+    }
+  },
+
   moveHoldingsToAnotherInstance: (newInstanceHrId) => {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
@@ -1408,8 +1423,10 @@ export default {
     cy.wait(6000);
   },
 
-  openAccordion: (name) => {
-    cy.do(Accordion(name).clickHeader());
+  openAccordion: (name, { pane = instanceDetailsSection } = {}) => {
+    const accordionInt = pane.find(Accordion(name));
+
+    cy.do([accordionInt.perform((el) => el.scrollIntoView()), accordionInt.expand()]);
   },
 
   verifyHoldingLocation(content) {
@@ -2144,5 +2161,56 @@ export default {
       body.succeedingTitles = [];
       cy.updateInstance(body);
     });
+  },
+
+  verifyAcquisitionAccordionOrderLineLink(
+    value,
+    { pane = instanceDetailsSection, shouldExist = true } = {},
+  ) {
+    const link = pane.find(acquisitionAccordion).find(Link(including(value)));
+
+    cy.expect(link[shouldExist ? 'exists' : 'absent']());
+  },
+
+  clickAcquisitionOrderLineLink(value, { pane = instanceDetailsSection } = {}) {
+    cy.do(
+      pane
+        .find(acquisitionAccordion)
+        .find(Link(including(value)))
+        .click(),
+    );
+  },
+
+  clickMoveHoldingsToAnotherInstanceButton() {
+    cy.do(moveHoldingsToAnotherInstanceButton.click());
+  },
+
+  clickVersionHistoryIcon() {
+    cy.do(
+      PaneHeader()
+        .find(Button({ icon: 'clock' }))
+        .click(),
+    );
+  },
+
+  closeVersionHistoryModal() {
+    cy.do(
+      Modal('Version history')
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
+  verifyOrderLineTitleInDetails(expectedTitle) {
+    cy.expect(KeyValue('Title').has({ value: expectedTitle }));
+  },
+
+  verifyVersionHistoryPaneExists() {
+    cy.expect(Modal('Version history').exists());
+    cy.expect(
+      Modal('Version history')
+        .find(HTML(including('Instance ID')))
+        .exists(),
+    );
   },
 };

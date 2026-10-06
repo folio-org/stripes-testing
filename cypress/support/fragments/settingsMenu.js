@@ -1,4 +1,5 @@
 import { NavListItem } from '../../../interactors';
+import { APPLICATION_NAMES } from '../constants';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -46,10 +47,12 @@ export default {
   urlRelationshipPath: 'settings/inventory/URLrelationship',
   instanceStatusTypesPath: 'settings/inventory/instanceStatusTypes',
   modesOfIssuancePath: 'settings/inventory/modesOfIssuance',
+  statisticalCodeTypes: 'settings/inventory/statisticalCodeTypes',
   statisticalCodesPath: 'settings/inventory/StatisticalCodeSettings',
   hridHandlingPath: 'settings/inventory/hridHandling',
   loantypesPath: 'settings/inventory/loantypes',
   alternativeTitleTypes: 'settings/inventory/alternativeTitleTypes',
+  resourceIdentifierTypes: 'settings/inventory/identifierTypes',
   natureOfContent: 'settings/inventory/natureOfContentTerms',
   instanceNoteTypes: 'settings/inventory/instanceNoteTypes',
   holdingsNoteTypesPath: 'settings/inventory/holdingsNoteTypes',
@@ -139,6 +142,10 @@ export default {
 
   selectOrders() {
     cy.do(NavListItem('Orders').click());
+  },
+
+  selectUsers() {
+    cy.do(NavListItem(APPLICATION_NAMES.USERS).click());
   },
 
   selectRoles() {

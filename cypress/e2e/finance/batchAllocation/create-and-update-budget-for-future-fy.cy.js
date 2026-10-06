@@ -8,6 +8,7 @@ import Funds from '../../../support/fragments/finance/funds/funds';
 import BatchEditBudget from '../../../support/fragments/finance/ledgers/batchEditBudget';
 import LedgerDetails from '../../../support/fragments/finance/ledgers/ledgerDetails';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import States from '../../../support/fragments/finance/states';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
@@ -131,7 +132,7 @@ describe('Finance', () => {
         cy.wait(1000);
         BatchEditBudget.assertTotalAllocatedAfter(funds[0].name, '20.00');
         BatchEditBudget.clickSaveAndCloseButton();
-        InteractorsTools.checkCalloutMessage('Allocations have been updated successfully.');
+        InteractorsTools.checkCalloutMessage(States.allocationsUpdatedSuccessfully);
         LedgerDetails.openFundDetails(funds[0].name);
         FundDetails.checkFundDetails({
           plannedBudgets: [{ name: `${funds[0].code}-${fiscalYear2.code}`, allocated: '$20.00' }],

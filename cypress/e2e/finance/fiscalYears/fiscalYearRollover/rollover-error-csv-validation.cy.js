@@ -3,6 +3,9 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ORDER_STATUSES,
   POL_CREATE_INVENTORY_SETTINGS,
+  ROLLOVER_ERROR_MESSAGES,
+  ROLLOVER_ERROR_TYPES,
+  ROLLOVER_FAILED_ACTIONS,
 } from '../../../../support/constants';
 import permissions from '../../../../support/dictionary/permissions';
 import Budgets from '../../../../support/fragments/finance/budgets/budgets';
@@ -151,9 +154,9 @@ describe('Finance', () => {
       { tags: ['criticalPath', 'thunderjet', 'C399078'] },
       () => {
         const fieldsToCheck = {
-          errorType: 'Order',
-          failedAction: 'Create encumbrance',
-          errorMessage: 'Insufficient funds',
+          errorType: ROLLOVER_ERROR_TYPES.ORDER,
+          failedAction: ROLLOVER_FAILED_ACTIONS.CREATE_ENCUMBRANCE,
+          errorMessage: ROLLOVER_ERROR_MESSAGES.INSUFFICIENT_FUNDS,
           amount: '10',
           fundId: fundA.id,
           fundCode: fundA.code,

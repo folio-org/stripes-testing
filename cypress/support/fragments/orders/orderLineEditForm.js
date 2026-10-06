@@ -6,8 +6,11 @@ import {
   Checkbox,
   HTML,
   KeyValue,
+  Label,
+  Link,
   Popover,
   RepeatableField,
+  RepeatableFieldAddButton,
   RepeatableFieldItem,
   Section,
   Select,
@@ -57,13 +60,18 @@ const FORM_FIELD_NAMES = {
   USER_LIMIT: 'eresource.userLimit',
   EXCHANGE_RATE: 'cost.exchangeRate',
   CLAIMING_ACTIVE: 'claimingActive',
+  SUPPRESS_INSTANCE_FROM_DISCOVERY: 'suppressInstanceFromDiscovery',
   CLAIMING_INTERVAL: 'claimingInterval',
   BINDERY_ACTIVE: 'details.isBinderyActive',
   CREATE_INVENTORY_PHYSICAL: 'physical.createInventory',
+  CREATE_INVENTORY_ERESOURCE: 'eresource.createInventory',
   TITLE_OR_PACKAGE: 'titleOrPackage',
   PRODUCT_ID: 'details.productIds[0].productId',
   PRODUCT_ID_TYPE: 'details.productIds[0].productIdType',
+  PRODUCT_ID_QUALIFIER: 'details.productIds[0].qualifier',
   RECEIVING_NOTE: 'details.receivingNote',
+  INTERNAL_NOTE: 'description',
+  IS_ACKNOWLEDGED: 'details.isAcknowledged',
   SUBSCRIPTION_FROM: 'details.subscriptionFrom',
   SUBSCRIPTION_TO: 'details.subscriptionTo',
   RENEWAL_NOTE: 'renewalNote',
@@ -94,8 +102,12 @@ const FORM_LABELS = {
   AUTO_EXPORT_INFO_MESSAGE:
     'This is a Manual PO so all POLs are excluded from automated export workflows',
   REMOVE_FISCAL_YEAR: 'Remove fiscal year',
+  EDIT_IN_RECEIVING: 'Edit in receiving',
+  SELECT_HOLDINGS: 'Select holdings',
   SHOW_HIDDEN_FIELDS: 'Show hidden fields',
   ADD_PRODUCT_ID: 'Add product ID and product ID type',
+  RECEIVING_RECORDS_MESSAGE:
+    'This order has receiving records. These quantities can only be edited by working with the records in the receiving app.',
 };
 const FIELD_SELECTORS = {
   LOCATION_ID: 'field-locations',
@@ -153,12 +165,23 @@ const edition = TextField({ name: FORM_FIELD_NAMES.EDITION });
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.TITLE_OR_PACKAGE })),
   receivingNote: itemDetailsSection.find(TextArea({ name: FORM_FIELD_NAMES.RECEIVING_NOTE })),
+  internalNote: itemDetailsSection.find(TextArea({ name: FORM_FIELD_NAMES.INTERNAL_NOTE })),
+  mustAcknowledgeReceivingNote: itemDetailsSection.find(
+    Checkbox({ name: FORM_FIELD_NAMES.IS_ACKNOWLEDGED }),
+  ),
   subscriptionFrom: itemDetailsSection.find(
     TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_FROM }),
   ),
   subscriptionTo: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.SUBSCRIPTION_TO })),
+  publicationDate: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PUBLICATION_DATE })),
+  publisher: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PUBLISHER })),
+  edition: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.EDITION })),
   productId: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PRODUCT_ID })),
   productIdType: itemDetailsSection.find(Select({ name: FORM_FIELD_NAMES.PRODUCT_ID_TYPE })),
+  qualifier: itemDetailsSection.find(TextField({ name: FORM_FIELD_NAMES.PRODUCT_ID_QUALIFIER })),
+  suppressInstanceFromDiscovery: itemDetailsSection.find(
+    Checkbox({ name: FORM_FIELD_NAMES.SUPPRESS_INSTANCE_FROM_DISCOVERY }),
+  ),
 };
 
 export const orderLineFields = {
@@ -184,8 +207,21 @@ export const physicalResourceDetailsFields = {
   ),
 };
 
+export const eResourcesDetailsFields = {
+  createInventory: Select({ name: FORM_FIELD_NAMES.CREATE_INVENTORY_ERESOURCE }),
+};
+
 export const vendorDetailsFields = {
   accountNumber: vendorDetailsSection.find(Select({ name: FORM_FIELD_NAMES.VENDOR_ACCOUNT })),
+};
+
+const vendorReferenceNumberFields = {
+  refNumber: (index = 0) => vendorDetailsSection.find(
+    TextField({ name: `vendorDetail.referenceNumbers[${index}].refNumber` }),
+  ),
+  refNumberType: (index = 0) => vendorDetailsSection.find(
+    Select({ name: `vendorDetail.referenceNumbers[${index}].refNumberType` }),
+  ),
 };
 
 const ongoingInformationFields = {
@@ -203,6 +239,8 @@ const costDetailsFields = {
   quantityElectronic: costDetailsSection.find(
     TextField({ name: FORM_FIELD_NAMES.QUANTITY_ELECTRONIC }),
   ),
+  currency: costDetailsSection.find(Button({ id: 'currency' })),
+  currentExchangeRate: costDetailsSection.find(KeyValue('Current exchange rate')),
   useSetExchangeRate: costDetailsSection.find(
     Checkbox({ id: FORM_FIELD_NAMES.USE_SET_EXCHANGE_RATE }),
   ),
@@ -212,7 +250,19 @@ const costDetailsFields = {
   ),
 };
 
+const locationFields = {
+  quantityPhysical: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].quantityPhysical` })),
+  quantityElectronic: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].quantityElectronic` })),
+  holding: (index = 0) => locationSection
+    .find(RepeatableFieldItem({ index }))
+    .find(Selection(including(FORM_LABELS.SELECT_HOLDINGS))),
+};
+
 const fundDistributionFields = {
+  fund: (index = 0) => fundDistributionDetailsSection
+    .find(RepeatableFieldItem({ index }))
+    .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID))),
+  fundIdButton: (index = 0) => fundDistributionDetailsSection.find(Button({ id: `fundDistribution[${index}].fundId` })),
   expenseClass: (index = 0) => fundDistributionDetailsSection
     .find(RepeatableFieldItem({ index }))
     .find(Selection(including('Expense class'))),
@@ -224,6 +274,9 @@ const buttons = {
   [ORDER_AND_ORDER_LINE_BUTTONS.SAVE_AND_OPEN]: saveAndOpenOrderButton,
   [COMMON_BUTTON_LABELS.SAVE_AND_KEEP_EDITING]: saveAndKeepEditingButton,
   [COMMON_BUTTON_LABELS.SAVE_AND_CREATE_ANOTHER]: saveAndCreateAnotherButton,
+  [ORDER_AND_ORDER_LINE_BUTTONS.SHOW_HIDDEN_FIELDS]: Button(
+    including(ORDER_AND_ORDER_LINE_BUTTONS.SHOW_HIDDEN_FIELDS),
+  ),
 };
 const requiredFields = [
   { fieldName: POLINE_DETAILS_FIELDS.ORDER_FORMAT, field: orderLineFields.orderFormat },
@@ -267,11 +320,44 @@ export default {
   checkCostDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: costDetailsFields });
   },
+  checkCostDetailsFieldsAbsent(labels = []) {
+    labels.forEach((label) => {
+      cy.expect(costDetailsSection.find(HTML(including(label))).absent());
+    });
+  },
   checkPhysicalResourceDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: physicalResourceDetailsFields });
   },
+  checkEResourcesDetailsSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: eResourcesDetailsFields });
+  },
   clickBinderyActiveCheckbox() {
     cy.do(orderLineFields.binderyActive.click());
+  },
+  clickSuppressInstanceFromDiscoveryCheckbox() {
+    cy.do(itemDetailsFields.suppressInstanceFromDiscovery.click());
+  },
+  clickMustAcknowledgeReceivingNoteCheckbox() {
+    cy.do(itemDetailsFields.mustAcknowledgeReceivingNote.click());
+  },
+  verifySuppressInstanceFromDiscoveryInfoPopover() {
+    cy.do(itemDetailsSection.find(Button({ icon: 'info' })).click());
+    cy.expect(
+      Popover().has({
+        content: including(
+          'When true this will suppress any instance record that is created when this order is Opened. If the order line is linked to an existing instance using the Title Lookup or it is matched to an existing instance by product identifier. This flag will not suppress the existing instance.',
+        ),
+      }),
+    );
+  },
+  verifyReceivingWorkflowInfoPopover(message) {
+    cy.do(
+      orderLineDetailsSection
+        .find(Label(including(POLINE_DETAILS_FIELDS.RECEIVING_WORKFLOW)))
+        .find(Button({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover().has({ content: including(message) }));
   },
   setUserLimit(limit) {
     cy.get(FIELD_SELECTORS.USER_LIMIT).clear().type(limit);
@@ -361,10 +447,41 @@ export default {
     SelectInstanceModal.searchByName(instanceTitle);
     SelectInstanceModal.selectInstance(instanceTitle);
   },
-  addProductId({ productId, productIdType }) {
+  clickAddProductIdButton() {
     cy.do(itemDetailsSection.find(Button(FORM_LABELS.ADD_PRODUCT_ID)).click());
-    cy.do(itemDetailsFields.productId.fillIn(productId));
-    cy.do(itemDetailsFields.productIdType.choose(productIdType));
+  },
+  fillProductId({
+    productId,
+    productIdType,
+    index = 0,
+    clickAddButton = false,
+    checkProductIdType = true,
+  }) {
+    if (clickAddButton) {
+      this.clickAddProductIdButton();
+    }
+    if (productId) {
+      cy.do(
+        itemDetailsSection
+          .find(TextField({ name: `details.productIds[${index}].productId` }))
+          .fillIn(productId),
+      );
+    }
+    if (productIdType) {
+      cy.get(
+        `#${FORM_SECTION_IDS.ITEM_DETAILS} select[name="details.productIds[${index}].productIdType"]`,
+      )
+        .select(productIdType)
+        .blur();
+
+      if (checkProductIdType) {
+        cy.expect(
+          itemDetailsSection
+            .find(Select({ name: `details.productIds[${index}].productIdType` }))
+            .has({ checkedOptionText: productIdType }),
+        );
+      }
+    }
   },
   fillItemDetails(itemDetails) {
     Object.entries(itemDetails).forEach(([key, value]) => {
@@ -382,6 +499,15 @@ export default {
     }
     if (poLineDetails.orderFormat) {
       cy.do(orderLineFields.orderFormat.choose(poLineDetails.orderFormat));
+      cy.wait(1000);
+    }
+    if (poLineDetails.createInventory) {
+      const createInventoryFieldName =
+        poLineDetails.orderFormat === ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE
+          ? FORM_FIELD_NAMES.CREATE_INVENTORY_ERESOURCE
+          : FORM_FIELD_NAMES.CREATE_INVENTORY_PHYSICAL;
+
+      cy.do(Select({ name: createInventoryFieldName }).choose(poLineDetails.createInventory));
       cy.wait(1000);
     }
     if (poLineDetails.receivingWorkflow) {
@@ -404,6 +530,13 @@ export default {
         );
       }
     }
+    if (poLineDetails.eresourceMaterialType) {
+      cy.do(
+        Select({ name: FORM_FIELD_NAMES.MATERIAL_TYPE_ERESOURCE }).choose(
+          poLineDetails.eresourceMaterialType,
+        ),
+      );
+    }
     if (poLineDetails.claimingActive) {
       cy.do(orderLineFields.claimingActive.click());
     }
@@ -421,11 +554,22 @@ export default {
     if (vendorDetails.accountNumber) {
       cy.do(vendorDetailsFields.accountNumber.choose(including(vendorDetails.accountNumber)));
     }
+    if (vendorDetails.referenceNumbers) {
+      vendorDetails.referenceNumbers.forEach(({ refNumber, refNumberType }, index) => {
+        cy.do([
+          vendorDetailsSection.find(RepeatableFieldAddButton()).click(),
+          vendorReferenceNumberFields.refNumber(index).fillIn(refNumber),
+          vendorReferenceNumberFields.refNumberType(index).choose(refNumberType),
+        ]);
+      });
+    }
   },
   fillCostDetails(costDetails) {
     Object.entries(costDetails).forEach(([key, value]) => {
-      if (costDetailsFields[key]) {
-        cy.do(costDetailsFields[key].fillIn(String(value)));
+      const field = costDetailsFields[key];
+
+      if (field) {
+        cy.do(value === true ? field.click() : field.fillIn(String(value)));
       }
     });
   },
@@ -455,6 +599,13 @@ export default {
 
   clickAddFundDistributionButton() {
     cy.do([fundDistributionDetailsSection.find(Button(FORM_LABELS.ADD_FUND_DISTRIBUTION)).click()]);
+  },
+
+  scrollToItemDetailsSection() {
+    // real wheel event scrolls the page like a user, so open dropdowns react to it
+    cy.get(`#${FORM_SECTION_IDS.FORM}`).realMouseWheel({ deltaY: -5000, scrollBehavior: false });
+    cy.get(`[id="${FORM_SECTION_IDS.ITEM_DETAILS}"]`).should('be.visible');
+    cy.wait(1000);
   },
 
   scrollToFundDistributionSection() {
@@ -557,12 +708,18 @@ export default {
     cy.wait(1000);
   },
 
-  checkLocationDropdownOptions(expectedLocations) {
+  checkLocationDropdownOptions(expectedLocations, { exactMatch = true } = {}) {
     cy.then(() => SelectionList().optionList()).then((actualOptions) => {
-      expect(actualOptions.sort()).to.deep.equal(
-        expectedLocations.sort(),
-        `Expected locations: ${JSON.stringify(expectedLocations)}, but got: ${JSON.stringify(actualOptions)}`,
-      );
+      if (exactMatch) {
+        expect(actualOptions.sort()).to.deep.equal(
+          expectedLocations.sort(),
+          `Expected locations: ${JSON.stringify(expectedLocations)}, but got: ${JSON.stringify(actualOptions)}`,
+        );
+      } else {
+        expectedLocations.forEach((location) => {
+          expect(actualOptions, `Expected location "${location}"`).to.include(location);
+        });
+      }
     });
   },
 
@@ -667,6 +824,12 @@ export default {
     }
     // wait for changes to be applied
     cy.wait(2000);
+  },
+
+  clickSaveAndCloseButton() {
+    cy.expect(saveButton.has({ disabled: false }));
+    // Real click fires native mouse events which trigger re-validation of the previously focused field
+    cy.contains('button', COMMON_BUTTON_LABELS.SAVE_AND_CLOSE).realClick();
   },
 
   cancelWithUnsavedChanges({ keepEditing = false, waitMs } = {}) {
@@ -796,13 +959,38 @@ export default {
     );
   },
 
-  checkFundDistributionFundSelected({ fund, index = 0 }) {
-    cy.expect(
-      fundDistributionDetailsSection
-        .find(RepeatableFieldItem({ index }))
-        .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID)))
-        .has({ value: including(fund) }),
-    );
+  checkLocationsSection(fields = []) {
+    fields.forEach(({ label, index = 0, conditions }) => {
+      cy.expect(locationFields[label](index).has(conditions));
+    });
+  },
+
+  checkFundDistributionSection(fields = []) {
+    fields.forEach(({ label, index = 0, conditions }) => {
+      cy.expect(fundDistributionFields[label](index).has(conditions));
+    });
+  },
+
+  checkReceivingRecordsMessage(isPresent = true) {
+    const message = locationSection.find(HTML(including(FORM_LABELS.RECEIVING_RECORDS_MESSAGE)));
+
+    cy.expect(isPresent ? message.exists() : message.absent());
+  },
+
+  checkLocationIsNonEditable({ locationName, index = 0 } = {}) {
+    const locationItem = locationSection.find(RepeatableFieldItem({ index }));
+
+    cy.expect([
+      locationItem
+        .find(KeyValue(FORM_LABELS.SELECT_HOLDINGS))
+        .has({ value: including(locationName) }),
+      locationItem.find(Selection(including(FORM_LABELS.SELECT_HOLDINGS))).absent(),
+      locationItem.find(Button({ icon: 'trash' })).has({ disabled: true }),
+    ]);
+  },
+
+  clickEditInReceivingLink() {
+    cy.do(locationSection.find(Link(including(FORM_LABELS.EDIT_IN_RECEIVING))).click());
   },
 
   checkLocationSelected({ location, index = 0 }) {
@@ -810,12 +998,30 @@ export default {
       locationSection
         .find(RepeatableFieldItem({ index }))
         .find(Selection(including(FORM_LABELS.FILTER_NAME_CODE)))
-        .has({ value: including(location) }),
+        .has({ singleValue: location ? including(location) : '' }),
       locationSection
         .find(RepeatableFieldItem({ index }))
         .find(Button({ icon: 'trash' }))
         .exists(),
     ]);
+  },
+
+  checkLocationsSectionIsEmpty() {
+    cy.expect(locationSection.find(RepeatableFieldItem()).absent());
+  },
+
+  expandHoldingsDropdown(index = 0) {
+    cy.do(locationSection.find(Button({ id: `field-locations[${index}].holdingId` })).click());
+    cy.wait(1000);
+  },
+
+  clearLocationSelection(index = 0) {
+    cy.do(
+      locationSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'times-circle-solid' }))
+        .click(),
+    );
   },
 
   checkFundRestrictionErrorToastPresent() {
@@ -832,5 +1038,9 @@ export default {
 
   checkAccountNumberIsBlank() {
     cy.expect(vendorDetailsFields.accountNumber.has({ checkedOptionText: ' ' }));
+  },
+
+  selectBlankReceiptStatus() {
+    cy.do(orderLineFields.receiptStatus.choose(''));
   },
 };

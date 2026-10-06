@@ -35,6 +35,8 @@ export default {
   notEnoughMoneyInFundError(fundCode) {
     return `One or more fund distributions on this order can not be encumbered, because there is not enough money in [${fundCode}].`;
   },
+  notEnoughMoneyInFundsErrorPrefix:
+    'One or more fund distributions on this order can not be encumbered, because there is not enough money in [',
   encumbranceNotUpdated:
     'The encumbrances were correctly created during the rollover or have already been updated.',
   noCurrentBudgetForFund(fundCode, fiscalYearCode) {
@@ -48,6 +50,8 @@ export default {
     return `Order can NOT be Opened because expense class ${expenseClass} is inactive.`;
   },
   selectedAccountNumberIsInactive: 'The selected account number is inactive.',
+  orderHasAssociatedRequests:
+    'Order could not be saved because there are associated requests. Please delete the requests before proceeding.',
   budgetNotFoundForFiscalYearCancel(fundCodes, fiscalYearCode) {
     return new RegExp(
       `^To cancel the order, the related fund\\(s\\) ${fundsListPattern(fundCodes)} must have an active budget for fiscal year ${escapeRegExp(fiscalYearCode)}\\.$`,
@@ -94,6 +98,7 @@ export default {
   budgetNotFoundForFiscalYear: 'budgetNotFoundForFiscalYear',
   budgetExpenseClassNotFound: 'budgetExpenseClassNotFound',
   inactiveExpenseClass: 'inactiveExpenseClass',
+  thereAreRequestsOnItem: 'thereAreRequestsOnItem',
 
   // API errorMessages
   fundCannotBePaidDueToRestricrions: 'Fund cannot be paid due to restrictions',
@@ -104,4 +109,5 @@ export default {
     'Could not find an active budget for a fund with the current fiscal year of another fund in the fund distribution',
   budgetExpenseClassNotFoundAPIMessage: 'Budget expense class not found',
   expenseClassIsInactiveAPIMessage: 'Expense class is Inactive',
+  thereAreRequestsOnItemAPIMessage: 'There are requests on item',
 };

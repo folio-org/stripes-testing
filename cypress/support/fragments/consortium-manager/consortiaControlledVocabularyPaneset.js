@@ -231,7 +231,9 @@ export default {
   },
 
   clearTextField(placeholder) {
-    cy.do(TextField({ placeholder }).clear());
+    const field = TextField({ placeholder });
+
+    cy.do([field.focus(), field.fillIn('')]);
     cy.expect(TextField({ placeholder }).has({ value: '' }));
   },
 

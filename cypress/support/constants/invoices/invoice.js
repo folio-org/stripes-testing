@@ -59,6 +59,8 @@ export const INVOICE_FILTERS_LABELS = {
 
 export const INVOICE_VIEW_FIELDS = {
   ACQUISITION_UNITS: 'Acquisition units',
+  APPROVED_BY: 'Approved by',
+  APPROVED_DATE: 'Approved date',
   BATCH_GROUP: 'Batch group',
   CANCELLATION_NOTE: 'Cancellation note',
   CALCULATED_TOTAL_AMOUNT: 'Calculated total amount',
@@ -68,6 +70,7 @@ export const INVOICE_VIEW_FIELDS = {
   FISCAL_YEAR: 'Fiscal year',
   INVOICE_DATE: 'Invoice date',
   INVOICE_STATUS: 'Status',
+  PAYMENT_DATE: 'Payment date',
   PAYMENT_METHOD: 'Payment method',
   SUB_TOTAL: 'Sub-total',
   TOTAL_ADJUSTMENTS: 'Total adjustments',
@@ -109,6 +112,8 @@ export const CURRENCIES = {
   USD: 'US Dollar (USD)',
   UZS: 'Uzbekistani Som (UZS)',
   UAH: 'Ukrainian Hryvnia (UAH)',
+  AMD: 'Armenian Dram (AMD)',
+  GEL: 'Georgian Lari (GEL)',
 };
 
 export const INVOICE_SEARCH_INDEX_LABELS = {
@@ -198,4 +203,11 @@ export const INVOICE_LINES_TABLE_COLUMN_HEADERS = {
   TOTAL: 'Total',
   TOTAL_EXCHANGED: 'Total (Exchanged)',
   VENDOR_CODE: 'Vendor code',
+};
+
+export const VOUCHER_LINES_TABLE_COLUMN_HEADERS = {
+  LINE_NUMBER: 'Line number',
+  FUND_CODE: 'Fund code',
+  EXTERNAL_ACCOUNT_NUMBER: 'External account number',
+  AMOUNT: 'Amount',
 };

@@ -11,6 +11,12 @@ export const LOANS_FIELDS = {
     NAME: 'Loan policy — Name',
     UUID: 'Loan policy — UUID',
   },
+  PATRON_GROUP_AT_CHECKOUT: {
+    NAME: 'Patron group at checkout — Name',
+  },
+  PATRON_GROUP: {
+    NAME: 'Patron group — Name',
+  },
   ITEM: {
     BARCODE: 'Item — Barcode',
   },
