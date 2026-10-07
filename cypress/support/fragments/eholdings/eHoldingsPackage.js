@@ -64,6 +64,7 @@ const keepEditingButton = Modal().find(Button('Keep editing'));
 const continueWithoutSavingButton = Modal().find(Button('Continue without saving'));
 const closeIconButton = Button({ icon: 'times' });
 const accessStatusTypeDropdown = Select({ id: 'eholdings-access-type-id' });
+const nameFieldInEditForm = TextField({ name: 'name' });
 
 export default {
   waitLoading: (specialPackage) => {
@@ -206,6 +207,8 @@ export default {
     cy.do(PaneHeader().find(actionsButton).click());
     cy.expect(editButton.exists());
     cy.do(editButton.click());
+    cy.expect(nameFieldInEditForm.exists());
+    cy.expect(Spinner().absent());
   },
   getProxyValue: () => cy.then(() => KeyValue('Proxy').value()),
   proxy() {
@@ -382,5 +385,15 @@ export default {
   selectAccessStatusType: (accessStatusTypeName) => {
     cy.do(accessStatusTypeDropdown.choose(accessStatusTypeName));
     cy.expect(accessStatusTypeDropdown.has({ checkedOptionText: accessStatusTypeName }));
+  },
+
+  verifyPackageSaveCallout() {
+    cy.expect(
+      HTML(
+        including(
+          'Package saved. Note: A proxy or token update may take a few minutes and may require refreshing page.',
+        ),
+      ).exists(),
+    );
   },
 };
