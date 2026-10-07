@@ -8,12 +8,12 @@ import {
   TextField,
   including,
 } from '../../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../../constants';
+import { DEFAULT_WAIT_TIME, ORGANIZATION_INTEGRATION_FIELD_LABELS } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import IntegrationStates from './integrationStates';
 
 const integrationViewForm = Section({ id: 'integration-form' });
-
+const ftpSection = Section({ id: 'ftp' });
 const schedulingSection = Section({ id: 'scheduling' });
 
 const saveButton = Button('Save & close');
@@ -102,5 +102,13 @@ export default {
 
   verifySchedulePeriodValue(expectedValue) {
     cy.expect(schedulingFields.schedulePeriod.has({ value: expectedValue }));
+  },
+
+  fillServerAddress(address) {
+    cy.do(
+      ftpSection
+        .find(TextField(including(ORGANIZATION_INTEGRATION_FIELD_LABELS.SERVER_ADDRESS)))
+        .fillIn(address),
+    );
   },
 };
