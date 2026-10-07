@@ -222,7 +222,7 @@ describe('Lists', () => {
             QUERY_OPERATIONS.NOT_IN,
             'input',
             'test',
-            'pol.id not in test',
+            'pol.id not in [test]',
             'list-column-pol.id',
           );
         },

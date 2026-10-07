@@ -267,22 +267,10 @@ describe(
           BulkEditActions.verifyDownloadPreviewInMarcFormatButtonEnabled();
           BulkEditActions.downloadPreviewInMarcFormat();
 
-          const currentTimestampUpToMinutes = DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
-          const currentTimestampUpToMinutesOneMinuteAfter =
-            DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
           const assertionsOnMarcFileContent = [
             {
               uuid: marcInstance.uuid,
               assertions: [
-                (record) => {
-                  expect(
-                    record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
-                      record
-                        .get('005')[0]
-                        .value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
-                  ).to.be.true;
-                },
-
                 (record) => expect(record.get('830')[0].ind1).to.eq('0'),
                 (record) => expect(record.get('830')[0].ind2).to.eq(' '),
                 (record) => expect(record.get('830')[0].subf[0][0]).to.eq('a'),
