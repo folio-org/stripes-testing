@@ -91,7 +91,7 @@ describe('Users', () => {
         description: testData.groupDescription,
         expirationDateOffset: testData.expirationDateOffsetData.integerValue,
         date: testData.currentDate,
-        userName: `${testData.user.lastName}, ${testData.user.firstName}`,
+        userName: `${user.lastName}, ${user.firstName}`,
         actions: ['edit', 'trash'],
       });
     });
