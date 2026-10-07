@@ -181,11 +181,15 @@ export default {
   },
 
   fillRoleNameDescription: (roleName, roleDescription = '') => {
+    cy.do(roleNameInput.focus());
+    cy.expect(roleNameInput.has({ focused: true }));
     cy.do([roleNameInput.fillIn(roleName), roleDescriptionInput.fillIn(roleDescription)]);
     cy.expect([
       roleNameInput.has({ value: roleName }),
       roleDescriptionInput.has({ value: roleDescription }),
     ]);
+    cy.do(roleNameInput.blur());
+    cy.expect(roleNameInput.has({ focused: false }));
   },
 
   clickSelectApplication: () => {
