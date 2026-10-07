@@ -9,6 +9,9 @@ export default HTML.extend('icon')
     info: (el) => {
       return el.querySelector('[class*="icon-info"]') !== null;
     },
+    eyeClosed: (el) => {
+      return el.querySelector('[class*="icon-eye-closed"]') !== null;
+    },
     shared: (el) => {
       return Array.from(el.classList).some((className) => className.startsWith('sharedIcon'));
     },
