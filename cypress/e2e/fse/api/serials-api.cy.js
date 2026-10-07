@@ -15,4 +15,18 @@ describe('fse-serials', { retries: { runMode: 1 } }, () => {
       });
     },
   );
+
+  it(
+    `FDOPS-6965 - Serials model rulesets endpoint answers for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'api', 'serials', 'FDOPS-6965'] },
+    () => {
+      cy.getSerialsRulesets().then((response) => {
+        cy.expect(response.status).to.eq(200);
+
+        const rulesets = response.body.results ?? response.body;
+
+        cy.expect(Array.isArray(rulesets)).to.eq(true);
+      });
+    },
+  );
 });

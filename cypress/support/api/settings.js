@@ -33,3 +33,12 @@ Cypress.Commands.add('getSettingsEntriesByScope', (scope) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getNcipConfigCheck', () => {
+  return cy.okapiRequest({
+    method: 'GET',
+    path: 'ncipconfigcheck',
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
+  });
+});
