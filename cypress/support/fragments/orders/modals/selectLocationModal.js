@@ -3,10 +3,12 @@ import {
   Checkbox,
   including,
   Modal,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
   MultiSelect,
   TextField,
+  SearchField,
 } from '../../../../../interactors';
 import { COMMON_BUTTON_LABELS, DEFAULT_WAIT_TIME } from '../../../constants';
 
@@ -28,6 +30,49 @@ export default {
   verifyModalView() {
     cy.expect(selectLocationModal.exists());
   },
+
+  checkLocationsList(locationNames = [], { exactMatch = false } = {}) {
+    if (exactMatch) {
+      cy.expect(
+        selectLocationModal.find(MultiColumnList()).has({ rowCount: locationNames.length }),
+      );
+    }
+    locationNames.forEach((locationName) => {
+      cy.expect(
+        selectLocationModal
+          .find(MultiColumnListCell({ content: locationName, columnIndex: 0 }))
+          .exists(),
+      );
+    });
+  },
+
+  clearSearchField() {
+    cy.do(
+      selectLocationModal
+        .find(SearchField({ id: 'input-record-search' }))
+        .find(TextField())
+        .perform(($el) => {
+          cy.wrap($el).get('input#input-record-search').clear();
+        }),
+    );
+  },
+
+  searchLocation(locationSearchValue) {
+    cy.do([searchInput.fillIn(locationSearchValue), searchButton.click()]);
+
+    cy.expect(resetAllButton.has({ disabled: !locationSearchValue }));
+    cy.expect(
+      selectLocationModal
+        .find(
+          MultiColumnListRow({
+            indexRow: 'row-0',
+            content: including(locationSearchValue),
+          }),
+        )
+        .exists(),
+    );
+  },
+
   selectLocation(locationSearchValue, { multiselect = false } = {}) {
     this.searchLocation(locationSearchValue);
 
@@ -47,21 +92,6 @@ export default {
           .click(),
       );
     }
-  },
-  searchLocation(locationSearchValue) {
-    cy.do([searchInput.fillIn(locationSearchValue), searchButton.click()]);
-
-    cy.expect(resetAllButton.has({ disabled: !locationSearchValue }));
-    cy.expect(
-      selectLocationModal
-        .find(
-          MultiColumnListRow({
-            indexRow: 'row-0',
-            content: including(locationSearchValue),
-          }),
-        )
-        .exists(),
-    );
   },
   selectLocationByHierarchy({ institution, campus, library, location }) {
     cy.do(institutionMultiSelect.choose(including(institution)));

@@ -163,6 +163,8 @@ export const POLINE_DETAILS_FIELDS = {
   RECEIPT_STATUS: 'Receipt status',
   RECEIVING_WORKFLOW: 'Receiving workflow',
   BINDERY_ACTIVE: 'Bindery active',
+  CLAIMING_ACTIVE: 'Claiming active',
+  CLAIMING_INTERVAL: 'Claiming interval',
   PAYMENT_STATUS: 'Payment status',
   ACCOUNT_NUMBER: 'Account number',
   HOLDING_NAME: 'Holding',
