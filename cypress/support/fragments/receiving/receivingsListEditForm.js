@@ -159,6 +159,21 @@ export default {
       );
     }
   },
+  // Pieces on the receiving form are not sorted, so the row is found by its selected holding
+  getRowIndexByHolding(holdingName) {
+    return cy
+      .then(() => receinigsListTable
+        .find(MultiColumnListRow({ isContainer: true, content: including(holdingName) }))
+        .rowIndexInParent())
+      .then((rowIndex) => Number(rowIndex.replace('row-', '')));
+  },
+  selectHolding({ holdingName, rowIndex = 0 }) {
+    cy.do(
+      receivingsListEditForm
+        .find(Selection({ name: `receivedItems[${rowIndex}].holdingId` }))
+        .choose(including(holdingName)),
+    );
+  },
   clickCreateNewHoldingsButton({ rowIndex = 0 } = {}) {
     cy.do(
       receinigsListTable
