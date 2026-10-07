@@ -55,9 +55,9 @@ describe('Lists', () => {
         Lists.verifyCheckboxUnchecked('System');
         Lists.verifyCheckboxUnchecked('User generated');
 
-        // Verify "Created by", "Updated by", "Record types" accordions are expanded
-        Lists.verifyAccordionExpandedInFilter('Created by');
-        Lists.verifyAccordionExpandedInFilter('Updated by');
+        // Verify "Created by", "Updated by", "Record types" accordions are collapsed
+        Lists.verifyAccordionCollapsedInFilter('Created by');
+        Lists.verifyAccordionCollapsedInFilter('Updated by');
         Lists.verifyAccordionExpandedInFilter('Record types');
 
         // Step 2: Hover on the left hand arrow displays text "Collapse Search & filter pane"
