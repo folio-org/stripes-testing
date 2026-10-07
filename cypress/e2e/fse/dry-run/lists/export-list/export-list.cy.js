@@ -36,8 +36,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411809 Export list: Not canned lists (corsair)',
-      { tags: ['dryRun', 'corsair', 'C411809'] },
+      'C411809 Export list: Not canned lists (athena)',
+      { tags: ['dryRun', 'athena', 'C411809'] },
       () => {
         cy.visit(TopMenu.listsPath);
         Lists.openNewListPane();
@@ -61,8 +61,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411811 Export list: Inactive lists (corsair)',
-      { tags: ['dryRun', 'corsair', 'C411811'] },
+      'C411811 Export list: Inactive lists (athena)',
+      { tags: ['dryRun', 'athena', 'C411811'] },
       () => {
         cy.visit(TopMenu.listsPath);
         Lists.openNewListPane();
@@ -79,8 +79,8 @@ describe('Lists', () => {
     );
 
     it(
-      'C411812 Export list: Refresh is in progress (corsair)',
-      { tags: ['dryRun', 'corsair', 'C411812'] },
+      'C411812 Export list: Refresh is in progress (athena)',
+      { tags: ['dryRun', 'athena', 'C411812'] },
       () => {
         cy.visit(TopMenu.listsPath);
         Lists.openNewListPane();

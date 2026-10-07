@@ -93,7 +93,7 @@ describe('Data Export', () => {
       );
     });
 
-    it('C9287 Export CQL query (firebird)', { tags: ['dryRun', 'firebird', 'C9287'] }, () => {
+    it('C9287 Export CQL query (athena)', { tags: ['dryRun', 'athena', 'C9287'] }, () => {
       InventorySearchAndFilter.byLanguage('Ukrainian');
       InventorySearchAndFilter.searchByParameter(
         'Keyword (title, contributor, identifier, HRID, UUID)',

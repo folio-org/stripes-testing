@@ -111,8 +111,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C359225 Verify the in-app bulk edit temporary loan type (firebird)',
-      { tags: ['dryRun', 'firebird', 'C359225'] },
+      'C359225 Verify the in-app bulk edit temporary loan type (athena)',
+      { tags: ['dryRun', 'athena', 'C359225'] },
       () => {
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();

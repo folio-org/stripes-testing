@@ -20,8 +20,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C380470 Verify that Default Data export profiles are present (firebird)',
-    { tags: ['dryRun', 'firebird', 'C380470'] },
+    'C380470 Verify that Default Data export profiles are present (athena)',
+    { tags: ['dryRun', 'athena', 'C380470'] },
     () => {
       ExportJobProfiles.goToJobProfilesTab();
       ExportJobProfiles.verifyDefaultProfiles();

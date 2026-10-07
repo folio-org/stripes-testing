@@ -21,8 +21,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C10982 "Settings" > "Data export" > "Field mapping profiles" page (firebird)',
-      { tags: ['dryRun', 'firebird', 'C10982'] },
+      'C10982 "Settings" > "Data export" > "Field mapping profiles" page (athena)',
+      { tags: ['dryRun', 'athena', 'C10982'] },
       () => {
         ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
         ExportFieldMappingProfiles.verifyDefaultProfiles();

@@ -7,8 +7,8 @@ describe('Lists', () => {
   describe('Permissions', () => {
     const { user, memberTenant } = parseSanityParameters();
     const listData = {
-      name: `C418649-${getTestEntityValue('list')}`,
-      description: `C418649-${getTestEntityValue('desc')}`,
+      name: getTestEntityValue('C418649_list'),
+      description: `C418649-${getTestEntityValue('C418649_desc')}`,
       recordType: 'Users',
       fqlQuery: '',
       isActive: true,
@@ -20,20 +20,19 @@ describe('Lists', () => {
       cy.allure().logCommandSteps(false);
       cy.getUserToken(user.username, user.password);
       cy.allure().logCommandSteps();
-      cy.wrap(true)
-        .then(() => {
-          Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
-            Lists.createQueryViaApi(query).then((createdQuery) => {
-              listData.queryId = createdQuery.queryId;
-              listData.fqlQuery = createdQuery.fqlQuery;
-              listData.fields = fields;
+      cy.wrap(true).then(() => {
+        Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
+          Lists.createQueryViaApi(query).then((createdQuery) => {
+            listData.queryId = createdQuery.queryId;
+            listData.fqlQuery = createdQuery.fqlQuery;
+            listData.fields = fields;
 
-              Lists.createViaApi(listData).then((body) => {
-                listData.id = body.id;
-              });
+            Lists.createViaApi(listData).then((body) => {
+              listData.id = body.id;
             });
           });
         });
+      });
     });
 
     after('Delete test data', () => {
@@ -44,8 +43,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C418649 Lists (Delete): Can create, edit, refresh, and delete lists (corsair)',
-      { tags: ['dryRun', 'corsair', 'C418649'] },
+      'C418649 Lists (Delete): Can create, edit, refresh, and delete lists (athena)',
+      { tags: ['dryRun', 'athena', 'C418649'] },
       () => {
         cy.allure().logCommandSteps(false);
         cy.login(user.username, user.password, {

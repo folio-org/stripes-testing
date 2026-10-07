@@ -38,4 +38,19 @@ export default {
     if (isShown) cy.expect(AppList().find(Link(appName)).exists());
     else cy.expect(AppList().find(Link(appName)).absent());
   },
+  navigateToAppAdaptive(appName, subSection) {
+    cy.wait(2000);
+    cy.then(() => {
+      cy.get('body').then(($body) => {
+        if (
+          $body.find(`[class^="navItem-"][aria-hidden="false"] [aria-label="${appName}"]`).length >
+          0
+        ) {
+          this.navigateToApp(appName, subSection);
+        } else {
+          this.openAppFromDropdown(appName, subSection);
+        }
+      });
+    });
+  },
 };

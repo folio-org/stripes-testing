@@ -76,8 +76,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C196757 Export selected records (MARC) (firebird)',
-      { tags: ['dryRun', 'firebird', 'C196757'] },
+      'C196757 Export selected records (MARC) (athena)',
+      { tags: ['dryRun', 'athena', 'C196757'] },
       () => {
         cy.allure().logCommandSteps(false);
         cy.login(user.username, user.password);

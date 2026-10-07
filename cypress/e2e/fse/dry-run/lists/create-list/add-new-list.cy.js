@@ -23,8 +23,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411705 Verify that created new list is visible on the "Lists" landing page (corsair)',
-      { tags: ['dryRun', 'corsair', 'C411705'] },
+      'C411705 Verify that created new list is visible on the "Lists" landing page (athena)',
+      { tags: ['dryRun', 'athena', 'C411705'] },
       () => {
         cy.allure().logCommandSteps(false);
         cy.login(user.username, user.password, {

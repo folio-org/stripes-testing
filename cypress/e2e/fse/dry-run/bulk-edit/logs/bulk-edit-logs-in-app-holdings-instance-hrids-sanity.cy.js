@@ -153,8 +153,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C375298 Verify generated Logs files for Holdings In app -- valid and invalid records (firebird)',
-        { tags: ['dryRun', 'firebird', 'C375298'] },
+        'C375298 Verify generated Logs files for Holdings In app -- valid and invalid records (athena)',
+        { tags: ['dryRun', 'athena', 'C375298'] },
         () => {
           BulkEditSearchPane.checkHoldingsRadio();
           cy.intercept('POST', '/bulk-operations/*/start').as('holdingBulkOperations');

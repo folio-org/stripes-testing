@@ -37,8 +37,8 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C375150 Verify that user can save new Service point (firebird)',
-    { tags: ['dryRun', 'firebird', 'C375150'] },
+    'C375150 Verify that user can save new Service point (athena)',
+    { tags: ['dryRun', 'athena', 'C375150'] },
     () => {
       ServicePoints.createNewServicePoint(newServicePoint);
       ServicePoints.servicePointExists(newServicePoint.name);

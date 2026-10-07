@@ -26,8 +26,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C423614 Duplicate lists - Canned reports without modified data (corsair)',
-      { tags: ['dryRun', 'corsair', 'C423614'] },
+      'C423614 Duplicate lists - Canned reports without modified data (athena)',
+      { tags: ['dryRun', 'athena', 'C423614'] },
       () => {
         cy.allure().logCommandSteps(false);
         cy.login(user.username, user.password, {
@@ -42,7 +42,11 @@ describe('Lists', () => {
             listName = content[0].name;
             duplicateListData.status = content[0].isActive ? 'Active' : 'Inactive';
             duplicateListData.visibility = content[0].isPrivate ? 'Local' : 'Shared';
-            duplicateListData.recordType = content[0].entityTypeName;
+            Lists.getAllEntityTypesViaApi().then(({ body: { entityTypes } }) => {
+              duplicateListData.recordType = entityTypes.find(
+                (entityType) => entityType.id === content[0].entityTypeId,
+              ).label;
+            });
           })
           .then(() => {
             Lists.verifyListIsPresent(listName);
