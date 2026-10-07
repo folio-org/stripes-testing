@@ -79,6 +79,9 @@ const editPieceFields = {
   [RECEIVING_PIECE_FORM_FIELD_LABELS.ACCESSION_NUMBER]: editPieceModal.find(
     TextField({ name: 'accessionNumber' }),
   ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.SEQUENCE]: editPieceModal.find(
+    TextField({ name: 'sequenceNumber' }),
+  ),
 };
 
 const displayOnHoldingCheckbox =
@@ -151,6 +154,10 @@ export default {
     });
   },
 
+  blurField(label) {
+    cy.do(editPieceFields[label].blur());
+  },
+
   selectPieceFormat(pieceFormat) {
     cy.do(editPieceFields[RECEIVING_PIECE_FORM_FIELD_LABELS.PIECE_FORMAT].choose(pieceFormat));
   },
@@ -214,6 +221,12 @@ export default {
   },
   clickExpectButton(isSuccess = true) {
     cy.do(expectButton.click());
+    if (isSuccess) {
+      InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
+    }
+  },
+  clickMarkLateButton(isSuccess = true) {
+    cy.do(markLateButton.click());
     if (isSuccess) {
       InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
     }

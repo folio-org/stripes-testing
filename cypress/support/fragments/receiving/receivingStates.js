@@ -6,6 +6,15 @@ export default {
   pieceSavedSuccessfully: 'The piece was successfully saved',
   exportJobStartedSuccessfully: 'Export has been started successfully',
   expectSavedSuccessfully: 'Pieces expect successful',
+  pieceSequenceChanged(from, to) {
+    return `The sequence of the piece was successfully changed from ${from} to ${to}`;
+  },
+
+  // field validation messages
+  requiredFieldError: 'Required!',
+  sequenceNumberOutOfRange(maxSequenceNumber) {
+    return `Please enter a number between 1 and ${maxSequenceNumber}.`;
+  },
 
   // errors
   lastSynchronizedPieceNotDeleted:
