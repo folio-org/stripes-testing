@@ -79,6 +79,10 @@ describe('Settings: Tenant', () => {
     { tags: ['extendedPath', 'firebird', 'C365628'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: [testData.institution] });
+      // Force increased limit for UI to load all campuses; must be registered before the panes request them
+      cy.intercept('GET', /\/location-units\/campuses\?.*limit=\d+/, (req) => {
+        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+      });
       // Select "Institutions" option on the "Location setup" subsection
       TenantPane.selectTenant(TENANTS.INSTITUTIONS);
       Institutions.checkNoActionButtons();
@@ -103,9 +107,6 @@ describe('Settings: Tenant', () => {
       TenantPane.selectTenant(TENANTS.LIBRARIES);
 
       cy.intercept('GET', /\/location-units\/institutions\?.*limit=\d+/, (req) => {
-        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
-      });
-      cy.intercept('GET', /\/location-units\/campuses\?.*limit=\d+/, (req) => {
         req.url = req.url.replace(/limit=\d+/, 'limit=1000');
       });
 

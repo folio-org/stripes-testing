@@ -234,7 +234,7 @@ describe('Data Export', () => {
                     holdingsHrids.push(marcHoldings[0].hrid);
 
                     cy.getRecordDataInEditorViaApi(marcHoldingId).then((marcData) => {
-                      marcData.relatedRecordVersion = 2;
+                      marcData.relatedRecordVersion = 1;
                       marcData.fields.push({
                         tag: '856',
                         content: [

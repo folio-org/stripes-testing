@@ -109,13 +109,13 @@ describe('Settings: Tenant', () => {
     { tags: ['extendedPath', 'firebird', 'C397997', 'eurekaPhase1'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
+      // Force increased limit for UI to load all campuses; must be registered before the panes request them
+      cy.intercept('GET', /\/location-units\/campuses\?.*limit=\d+/, (req) => {
+        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+      });
       cy.visit(SettingsMenu.tenantLocationsPath);
       // #1 Select **"Institution AB"** from Preconditions #1 in "Institution" dropdown on "Campuses" pane
       TenantPane.selectTenant(TENANTS.CAMPUSES);
-
-      cy.intercept('GET', /\/location-units\/institutions\?.*limit=\d+/, (req) => {
-        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
-      });
 
       Campuses.checkEmptyTableContent();
       Campuses.selectOption('Institution', testData.institutions[0]);
@@ -124,13 +124,6 @@ describe('Settings: Tenant', () => {
 
       // #2 Select "Libraries" option on the "Tenant" pane
       TenantPane.selectTenant(TENANTS.LIBRARIES);
-
-      cy.intercept('GET', /\/location-units\/institutions\?.*limit=\d+/, (req) => {
-        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
-      });
-      cy.intercept('GET', /\/location-units\/campuses\?.*limit=\d+/, (req) => {
-        req.url = req.url.replace(/limit=\d+/, 'limit=1000');
-      });
 
       // #3 Select **"Institution AB"** from Preconditions #1 in "Institution" dropdown on "Libraries" pane
       Libraries.selectOption('Institution', testData.institutions[0]);
