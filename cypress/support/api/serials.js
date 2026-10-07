@@ -8,3 +8,11 @@ Cypress.Commands.add('getserialsByStatus', () => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getSerialsRulesets', () => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'serials-management/rulesets',
+    isDefaultSearchParamsRequired: false,
+  });
+});

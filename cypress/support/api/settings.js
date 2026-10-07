@@ -22,3 +22,23 @@ Cypress.Commands.add('getTenantSettings', () => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getSettingsEntriesByScope', (scope) => {
+  return cy.okapiRequest({
+    method: 'GET',
+    path: 'settings/entries',
+    searchParams: {
+      query: `(scope==${scope})`,
+    },
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getNcipConfigCheck', () => {
+  return cy.okapiRequest({
+    method: 'GET',
+    path: 'ncipconfigcheck',
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
+  });
+});

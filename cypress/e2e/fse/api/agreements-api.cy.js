@@ -55,4 +55,47 @@ describe('fse-agreements', { retries: { runMode: 1 } }, () => {
       });
     },
   );
+
+  it(
+    `FDOPS-6963 - ERM identifier endpoints are readable for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'api', 'erm-identifiers', 'FDOPS-6963'] },
+    () => {
+      cy.getErmIdentifiers().then((response) => {
+        cy.expect(response.status).to.eq(200);
+
+        const identifiers = response.body.results ?? response.body;
+
+        if (!identifiers.length) {
+          cy.log('No ERM identifiers found — skipping item lookup check');
+          return;
+        }
+
+        cy.getErmIdentifierById(identifiers[0].id).then((itemResponse) => {
+          cy.expect(itemResponse.status).to.eq(200);
+        });
+      });
+    },
+  );
+
+  it(
+    `FDOPS-6964 - Entitlement log entries carry package IDs and resource URLs for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'api', 'entitlements', 'FDOPS-6964'] },
+    () => {
+      cy.getEntitlements().then((response) => {
+        cy.expect(response.status).to.eq(200);
+
+        const entitlements = response.body.results ?? response.body;
+
+        if (!entitlements.length) {
+          cy.log('No entitlement log entries found — skipping field checks');
+          return;
+        }
+
+        entitlements.forEach((entitlement) => {
+          cy.expect(entitlement).to.have.property('packageId');
+          cy.expect(entitlement).to.have.property('resourceURL');
+        });
+      });
+    },
+  );
 });

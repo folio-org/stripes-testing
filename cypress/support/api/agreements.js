@@ -21,3 +21,27 @@ Cypress.Commands.add('getAgreementFileRaw', (id) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+Cypress.Commands.add('getErmIdentifiers', () => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'erm/identifiers',
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getErmIdentifierById', (id) => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: `erm/identifiers/${id}`,
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
+Cypress.Commands.add('getEntitlements', () => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'erm/entitlements',
+    isDefaultSearchParamsRequired: false,
+  });
+});
