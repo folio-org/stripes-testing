@@ -1,3 +1,4 @@
+import { Record } from 'marcjs';
 import {
   APPLICATION_NAMES,
   DEFAULT_JOB_PROFILE_NAMES,
@@ -6,7 +7,6 @@ import {
   MATCH_PROFILE_QUALIFIER_TYPES,
   RECORD_STATUSES,
 } from '../../../support/constants';
-import { Record } from 'marcjs';
 import CapabilitySets from '../../../support/dictionary/capabilitySets';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -179,7 +179,7 @@ describe('Data Import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
 
-        // Step 5: import completes; SRS and Authority both show "Updated"
+        // Step 5: import completes; SRS and Authority both show "No action"
         Logs.waitFileIsImported(editedIncomingFileName);
         Logs.checkJobStatus(editedIncomingFileName, JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(editedIncomingFileName);
