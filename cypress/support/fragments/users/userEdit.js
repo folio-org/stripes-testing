@@ -294,12 +294,25 @@ const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) 
   isDefaultSearchParamsRequired: false,
 });
 
+const updateServicePointsViaApi = (recordId, servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
+  method: 'PUT',
+  path: `service-points-users/${recordId}`,
+  body: {
+    id: recordId || uuidv4(),
+    userId,
+    servicePointsIds: servicePointIds,
+    defaultServicePointId: defaultServicePointId || servicePointIds[0],
+  },
+  isDefaultSearchParamsRequired: false,
+});
+
 export default {
   roleAssignmentFilterOptions: {
     ASSIGNED: 'Assigned',
     UNASSIGNED: 'Unassigned',
   },
   addServicePointsViaApi,
+  updateServicePointsViaApi,
 
   openEdit() {
     cy.expect(userDetailsPane.find(actionsButton).exists());
@@ -492,6 +505,14 @@ export default {
     if (setExpirationDateIfModalExists) {
       clickSetExpirationDateIfModalExists();
     }
+  },
+
+  selectFirstAvailablePatronGroup() {
+    cy.get('#adduser_group').find('option').then((options) => {
+      const texts = [...options].map(opt => opt.text);
+      this.changePatronGroup(texts[1]); // Select the first available option (index 1)
+      clickSetExpirationDateIfModalExists();
+    });
   },
 
   searchForPermission(permission) {

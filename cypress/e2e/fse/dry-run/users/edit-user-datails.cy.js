@@ -55,11 +55,11 @@ describe('Users', () => {
     Users.deleteViaApi(testData.testUser.userId);
   });
 
-  it('C427 Edit user details (volaris)', { tags: ['dryRun', 'volaris', 'C427'] }, () => {
+  it('C427 Edit user details (vega)', { tags: ['dryRun', 'vega', 'C427'] }, () => {
     UsersSearchPane.searchByUsername(testData.testUser.username);
     UserEdit.openEdit();
-    UserEdit.editUserDetails(testData.editUser);
     UserEdit.selectFirstAvailablePatronGroup();
+    UserEdit.editUserDetails(testData.editUser);
     Modals.confirmModalIfAny();
     UserEdit.saveAndClose();
     UsersCard.openExtendedInformationAccordion();

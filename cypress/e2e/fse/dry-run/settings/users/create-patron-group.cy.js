@@ -27,6 +27,11 @@ describe('Users', () => {
 
     before('Create user and login', () => {
       cy.setTenant(memberTenant.id);
+      cy.getUserToken(user.username, user.password, { log: false });
+      cy.getUserDetailsByUsername(user.username).then((userDetails) => {
+        user.lastName = userDetails.personal.lastName;
+        user.firstName = userDetails.personal.firstName;
+      });
       cy.login(user.username, user.password, {
         path: SettingsMenu.usersPath,
         waiter: () => cy.wait(10000),
@@ -40,7 +45,7 @@ describe('Users', () => {
       });
     });
 
-    it('C514932 Create patron group (volaris)', { tags: ['dryRun', 'volaris', 'C514932'] }, () => {
+    it('C514932 Create patron group (vega)', { tags: ['dryRun', 'vega', 'C514932'] }, () => {
       SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
       PatronGroups.waitLoading();
       PatronGroups.verifyPatronGroupsPane();
@@ -86,7 +91,7 @@ describe('Users', () => {
         description: testData.groupDescription,
         expirationDateOffset: testData.expirationDateOffsetData.integerValue,
         date: testData.currentDate,
-        userName: `${testData.user.lastName}, ${testData.user.firstName}`,
+        userName: `${user.lastName}, ${user.firstName}`,
         actions: ['edit', 'trash'],
       });
     });

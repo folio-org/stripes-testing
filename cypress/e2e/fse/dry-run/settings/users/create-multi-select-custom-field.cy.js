@@ -29,8 +29,8 @@ describe('Settings (Users) - Custom Fields',
     });
 
     it(
-      'C15698 Create a multi-select custom field (volaris)',
-      { tags: ['dryRun', 'volaris', 'C15698'] },
+      'C15698 Create a multi-select custom field (vega)',
+      { tags: ['dryRun', 'vega', 'C15698'] },
       () => {
         CustomFields.waitLoading();
 

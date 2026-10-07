@@ -19,7 +19,7 @@ describe('Users', () => {
       ServicePoints.getOrCreateCircDesk1ServicePointViaApi().then((servicePoint) => {
         servicePointId = servicePoint.id;
       });
-      cy.createTempUser([Permissions.uiSettingsCanChangeLoacalPassword.gui]).then(
+      cy.createTempUser([Permissions.uiSettingsCanChangeLocalPassword.gui]).then(
         (userProperties) => {
           userData = userProperties;
           UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
@@ -35,8 +35,8 @@ describe('Users', () => {
   });
 
   it(
-    'C511 User is able to change password locally (volaris)',
-    { tags: ['dryRun', 'volaris', 'C511'] },
+    'C511 User is able to change password locally (vega)',
+    { tags: ['dryRun', 'vega', 'C511'] },
     () => {
       cy.waitForAuthRefresh(() => {
         ChangePassword.openChangePasswordViaUserProfile();
