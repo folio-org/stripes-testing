@@ -79,8 +79,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C466300 Bulk edit Instance fields - add administrative note (firebird)',
-      { tags: ['dryRun', 'firebird', 'C466300'] },
+      'C466300 Bulk edit Instance fields - add administrative note (athena)',
+      { tags: ['dryRun', 'athena', 'C466300'] },
       () => {
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Instance', 'Instance UUIDs');
         BulkEditSearchPane.uploadFile(instanceUUIDsFileName);

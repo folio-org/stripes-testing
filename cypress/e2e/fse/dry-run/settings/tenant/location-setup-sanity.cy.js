@@ -81,8 +81,8 @@ describe('Settings: Tenant', () => {
   });
 
   it(
-    'C365628 Settings (tenant): View locations (firebird) (TaaS)',
-    { tags: ['dryRun', 'firebird', 'C365628'] },
+    'C365628 Settings (tenant): View locations (athena) (TaaS)',
+    { tags: ['dryRun', 'athena', 'C365628'] },
     () => {
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password);
@@ -92,6 +92,10 @@ describe('Settings: Tenant', () => {
       TenantPane.goToTenantTab();
 
       cy.intercept('/location-units/institutions*', { locinsts: [testData.institution] });
+      // Force increased limit for UI to load all campuses and libraries
+      cy.intercept('GET', /location-units\/(campuses|libraries)\?.*limit=\d+/, (req) => {
+        req.url = req.url.replace(/limit=\d+/, 'limit=2000');
+      });
       // Select "Institutions" option on the "Location setup" subsection
       TenantPane.selectTenant(TENANTS.INSTITUTIONS);
       // Institutions.checkNoActionButtons(); don't verify because the user with "adminRole" role can have permissions to manage institutions

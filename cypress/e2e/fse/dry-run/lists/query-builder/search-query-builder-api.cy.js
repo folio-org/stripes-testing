@@ -45,14 +45,14 @@ describe('Lists', () => {
 
     describe('Holdings', () => {
       before('Create test user', () => {
-        Lists.getEntityTypeIdByNameViaApi('Holdings')
-          .then((typeId) => {
-            recordTypeId = typeId;
-          });
+        Lists.getEntityTypeIdByNameViaApi('Holdings').then((typeId) => {
+          recordTypeId = typeId;
+        });
       });
 
-      it('C446063 Search holdings in the Query Builder using "Holdings suppress from discovery" field (corsair)',
-        { tags: ['dryRun', 'corsair', 'C446063'] },
+      it(
+        'C446063 Search holdings in the Query Builder using "Holdings suppress from discovery" field (athena)',
+        { tags: ['dryRun', 'athena', 'C446063'] },
         () => {
           const fqlQuery = { 'holdings.discovery_suppress': { $eq: 'true' } };
 
@@ -63,20 +63,20 @@ describe('Lists', () => {
               });
             });
           });
-        });
+        },
+      );
     });
 
     describe('Instances', () => {
       before('Create test user', () => {
-        Lists.getEntityTypeIdByNameViaApi('Instances')
-          .then((typeId) => {
-            recordTypeId = typeId;
-          });
+        Lists.getEntityTypeIdByNameViaApi('Instances').then((typeId) => {
+          recordTypeId = typeId;
+        });
       });
 
       it(
-        'C446020 Search instances in the Query Builder using "Instance — Suppress from discovery" field (corsair)',
-        { tags: ['dryRun', 'corsair', 'C446020'] },
+        'C446020 Search instances in the Query Builder using "Instance — Suppress from discovery" field (athena)',
+        { tags: ['dryRun', 'athena', 'C446020'] },
         () => {
           const fqlQuery = { 'instance.discovery_suppress': { $eq: 'true' } };
 

@@ -132,8 +132,8 @@ describe('Data Export', () => {
   });
 
   it(
-    'C446023 Verify export MARC Instance with edited SRS (firebird)',
-    { tags: ['dryRun', 'firebird', 'C446023'] },
+    'C446023 Verify export MARC Instance with edited SRS (athena)',
+    { tags: ['dryRun', 'athena', 'C446023'] },
     () => {
       // Step 1-2: Upload the .csv file
       ExportFileHelper.uploadFile(marcInstanceUUIDFileName);
@@ -197,7 +197,7 @@ describe('Data Export', () => {
       });
 
       // Step 5: Go to "Inventory" app
-      TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.INVENTORY);
+      TopMenuNavigation.navigateToAppAdaptive(APPLICATION_NAMES.INVENTORY);
       cy.wait(5000);
       InventorySearchAndFilter.waitLoading();
 
@@ -222,7 +222,7 @@ describe('Data Export', () => {
       QuickMarcEditor.checkAfterSaveAndClose();
 
       // Step 10: Go to "Data export" app
-      TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
+      TopMenuNavigation.navigateToAppAdaptive(APPLICATION_NAMES.DATA_EXPORT);
 
       // Step 11: Trigger the data export by submitting .csv file with UUID of inventory instance from Preconditions
       ExportFileHelper.uploadFile(marcInstanceUUIDFileName);

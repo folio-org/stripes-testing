@@ -63,3 +63,19 @@ Cypress.Commands.add('getCirculationSettingsByName', (name) => {
       return body;
     });
 });
+
+Cypress.Commands.add('getConfigByName', (module = 'SETTINGS', config) => {
+  return cy
+    .okapiRequest({
+      method: 'GET',
+      path: 'configurations/entries',
+      searchParams: {
+        query: `(module==${module} and configName==${config})`,
+      },
+      failOnStatusCode: true,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then(({ body }) => {
+      return body;
+    });
+});

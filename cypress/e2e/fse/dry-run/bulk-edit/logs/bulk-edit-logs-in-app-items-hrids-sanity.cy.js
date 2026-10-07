@@ -122,8 +122,8 @@ describe('Bulk-edit', () => {
       });
 
       it(
-        'C375281 Verify generated Logs files for Items In app -- valid and invalid records (firebird)',
-        { tags: ['dryRun', 'firebird', 'C375281'] },
+        'C375281 Verify generated Logs files for Items In app -- valid and invalid records (athena)',
+        { tags: ['dryRun', 'athena', 'C375281'] },
         () => {
           BulkEditSearchPane.checkItemsRadio();
           cy.intercept('POST', '/bulk-operations/*/start').as('itemBulkOperations');

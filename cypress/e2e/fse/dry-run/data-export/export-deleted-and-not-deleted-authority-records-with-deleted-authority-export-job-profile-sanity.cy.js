@@ -95,8 +95,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C446014 Export not deleted and deleted Authority records with "Deleted authority export job profile" (firebird)',
-      { tags: ['dryRun', 'firebird', 'C446014'] },
+      'C446014 Export not deleted and deleted Authority records with "Deleted authority export job profile" (athena)',
+      { tags: ['dryRun', 'athena', 'C446014'] },
       () => {
         cy.allure().logCommandSteps(false);
         cy.login(user.username, user.password);

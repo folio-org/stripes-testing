@@ -29,8 +29,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C360556 Populating preview of matched records in case no matches (firebird)',
-      { tags: ['dryRun', 'firebird', 'C360556'] },
+      'C360556 Populating preview of matched records in case no matches (athena)',
+      { tags: ['dryRun', 'athena', 'C360556'] },
       () => {
         cy.allure().logCommandSteps(false);
         cy.login(user.username, user.password, {

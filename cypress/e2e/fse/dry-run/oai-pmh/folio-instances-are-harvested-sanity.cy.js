@@ -80,8 +80,8 @@ describe('OAI-PMH', () => {
     });
 
     it(
-      'C375972 GetRecords: FOLIO instances are harvested (marc21) (firebird)',
-      { tags: ['dryRun', 'firebird', 'C375972', 'nonParallel'] },
+      'C375972 GetRecords: FOLIO instances are harvested (marc21) (athena)',
+      { tags: ['dryRun', 'athena', 'C375972', 'nonParallel'] },
       () => {
         // Send OAI-PMH GetRecord request and verify response contains the FOLIO instance
         OaiPmh.getRecordRequest(folioInstanceId).then((response) => {

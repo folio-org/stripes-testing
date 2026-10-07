@@ -25,8 +25,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C446066 Verify the "Run query" button, when the query returns 0 - items (firebird)',
-      { tags: ['dryRun', 'firebird', 'C446066'] },
+      'C446066 Verify the "Run query" button, when the query returns 0 - items (athena)',
+      { tags: ['dryRun', 'athena', 'C446066'] },
       () => {
         BulkEditSearchPane.openQuerySearch();
         BulkEditSearchPane.checkItemsRadio();

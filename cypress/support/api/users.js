@@ -533,3 +533,9 @@ Cypress.Commands.add('createStagingUserApi', (record) => {
     })
     .then(({ body }) => body);
 });
+
+Cypress.Commands.add('getUserDetailsByUsername', (username) => {
+  return cy.getUsers({ limit: 1, query: `"username"=="${username}"` }).then((users) => {
+    return users[0];
+  });
+});

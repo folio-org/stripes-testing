@@ -21,8 +21,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C368015 Verify that displays a table in the main logs page (firebird)',
-      { tags: ['dryRun', 'firebird', 'C368015'] },
+      'C368015 Verify that displays a table in the main logs page (athena)',
+      { tags: ['dryRun', 'athena', 'C368015'] },
       () => {
         const tomorrowDate = DateTools.getFormattedDate(
           { date: DateTools.getTomorrowDay() },
