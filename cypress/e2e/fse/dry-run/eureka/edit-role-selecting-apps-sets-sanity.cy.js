@@ -12,7 +12,7 @@ describe('Eureka', () => {
       const testData = {
         roleName: `Auto Role C430262 ${getRandomPostfix()}`,
         roleDescription: `Description ${getRandomPostfix()}`,
-        originalApplications: ['app-platform-minimal', 'app-platform-complete'],
+        originalApplications: ['app-platform-minimal', 'app-licenses'],
         newApplication: 'app-acquisitions',
         originalCapabilitySets: [
           {
@@ -56,7 +56,7 @@ describe('Eureka', () => {
           },
           {
             table: CAPABILITY_TYPES.PROCEDURAL,
-            resource: 'Data-Export Export',
+            resource: 'Licenses Admin Action',
             action: CAPABILITY_ACTIONS.EXECUTE,
           },
         ],
@@ -119,7 +119,11 @@ describe('Eureka', () => {
         capabIds: [],
       };
 
-      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${testData.originalApplications[1]}-.{1,}or.{1,}${testData.newApplication}-.{1,}\\)`;
+      // Lookaheads (order-independent) instead of a fixed first-then-second sequence, since the
+      // API call may list the two applications in either order. Also avoids matching literal
+      // "==", "(", ")" - the real request URL sends these percent-encoded (e.g. "%3D%3D",
+      // "%28", "%29"), not as literal characters
+      const regExpBase = `\\?limit=\\d{1,}.*(?=.*${testData.originalApplications[1]}-)(?=.*${testData.newApplication}-)`;
       const capabilitiesCallRegExp = new RegExp(`\\/capabilities${regExpBase}`);
       const capabilitySetsCallRegExp = new RegExp(`\\/capability-sets${regExpBase}`);
 
@@ -190,7 +194,7 @@ describe('Eureka', () => {
           cy.intercept('GET', capabilitiesCallRegExp).as('capabilities');
           cy.intercept('GET', capabilitySetsCallRegExp).as('capabilitySets');
           cy.wait(1000);
-          AuthorizationRoles.clickSaveInModal();
+          AuthorizationRoles.clickSaveInModal({ confirmUnselect: true });
           cy.wait('@capabilities').its('response.statusCode').should('eq', 200);
           cy.wait('@capabilitySets').its('response.statusCode').should('eq', 200);
           cy.wait(2000);

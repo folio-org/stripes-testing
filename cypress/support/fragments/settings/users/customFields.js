@@ -465,6 +465,10 @@ export default {
     return cy.updateCustomFieldsViaApi(customFields, entityType);
   },
 
+  setCustomFieldsViaApi(customFields, entityType = CUSTOM_FIELD_ENTITY_TYPES.USER) {
+    return cy.setCustomFieldsViaApi(customFields, entityType);
+  },
+
   deleteCustomFieldsViaApi({ ids, entityType = CUSTOM_FIELD_ENTITY_TYPES.USER }) {
     return cy.deleteCustomFieldsViaApi({ ids, entityType });
   },

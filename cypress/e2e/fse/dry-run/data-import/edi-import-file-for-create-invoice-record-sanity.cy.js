@@ -42,7 +42,7 @@ describe('Data Import', () => {
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
-      organizationName: VENDOR_NAMES.MOSAIC,
+      organizationName: VENDOR_NAMES.GOBI,
       paymentMethod: PAYMENT_METHOD.CASH,
     };
     const actionProfile = {

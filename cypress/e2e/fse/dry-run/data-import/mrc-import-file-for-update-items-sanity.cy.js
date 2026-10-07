@@ -465,6 +465,7 @@ describe('Data Import', () => {
         testData.collectionOfMappingAndActionProfiles.forEach((profile) => {
           SettingsActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
           SettingsActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+          cy.wait(3000);
         });
 
         // create Match profile

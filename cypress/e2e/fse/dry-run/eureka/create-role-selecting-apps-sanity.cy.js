@@ -25,12 +25,12 @@ describe(
           testData = {
             roleName: `Auto Role C430260 ${getRandomPostfix()}`,
             roleDescription: `Description C430260 ${getRandomPostfix()}`,
-            firstApplicationName: 'app-platform-minimal',
+            firstApplicationName: 'app-licenses',
             secondApplicationName: 'app-acquisitions',
             capabilities: [
               {
                 table: CAPABILITY_TYPES.DATA,
-                resource: 'Policies',
+                resource: 'Finance',
                 action: CAPABILITY_ACTIONS.MANAGE,
               },
               {
@@ -40,12 +40,12 @@ describe(
               },
               {
                 table: CAPABILITY_TYPES.DATA,
-                resource: 'UI-Receiving',
+                resource: 'Licenses Files',
                 action: CAPABILITY_ACTIONS.VIEW,
               },
               {
                 table: CAPABILITY_TYPES.PROCEDURAL,
-                resource: 'Login Password',
+                resource: 'Licenses Admin Action',
                 action: CAPABILITY_ACTIONS.EXECUTE,
               },
               {
@@ -63,8 +63,12 @@ describe(
             },
           };
 
+          // Lookaheads (order-independent) instead of a fixed first-then-second sequence, since
+          // the API call may list the two applications in either order. Also avoids matching
+          // literal "==", "(", ")" - the real request URL sends these percent-encoded
+          // (e.g. "%3D%3D", "%28", "%29"), not as literal characters
           capabilityCallRegExp = new RegExp(
-            `\\/capabilities\\?limit=\\d{1,}&query=applicationId==\\(${testData.firstApplicationName}-.{1,}or.{1,}${testData.secondApplicationName}-.{1,}\\)`,
+            `\\/capabilities\\?limit=\\d{1,}.*(?=.*${testData.firstApplicationName}-)(?=.*${testData.secondApplicationName}-)`,
           );
 
           cy.setTenant(memberTenant.id);

@@ -87,10 +87,10 @@ describe('Inventory', () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
         cy.wait(1000);
         InventorySearchAndFilter.selectSearchResultItem();
+        cy.wait(1000);
         InventoryInstance.startOverlaySourceBibRecord();
         ReImportModal.verifyModalWithOneTargetProfile();
         ReImportModal.verifySelectTheProfileToBeUsedToOverlayTheCurrentDataField(profileForImport);
-        ReImportModal.selectExternalTarget('OCLC WorldCat');
         ReImportModal.selectTheProfileToBeUsedToOverlayTheCurrentData(profileForImport);
         ReImportModal.fillEnterTheTargetIdentifier(targetIdentifier);
         ReImportModal.import();
