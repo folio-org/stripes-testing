@@ -60,9 +60,9 @@ const SKIP_DEFECT_KEYS = [];
 // target run, not already linked to a defect there, defect not excluded, etc.) - it does not
 // widen which tests get touched, only what status is written for them.
 const OVERRIDE_STATUS = false;
-// Status name to use when OVERRIDE_STATUS is true - must be a key of the `status` dictionary
-// (e.g. 'Retest', 'Failed'). An invalid value disables the override and logs a warning.
-const STATUS_FOR_OVERRIDE = '';
+// Status name to use when OVERRIDE_STATUS is true - must be a value from the `status` dictionary
+// (e.g. status.Retest, status.Failed, 5, 4). An invalid value disables the override and logs a warning.
+const STATUS_FOR_OVERRIDE = null;
 // ==================================================
 
 const API_USER = process.env.TESTRAIL_API_USER;
@@ -99,16 +99,19 @@ const overrideStatusId = (() => {
   if (!OVERRIDE_STATUS) {
     return null;
   }
-  const id = status[STATUS_FOR_OVERRIDE];
-  if (!id) {
+  const id = STATUS_FOR_OVERRIDE;
+  const key = Object.entries(status).find((entry) => entry[1] === id)?.[0];
+  if (!key) {
     console.error(
-      `OVERRIDE_STATUS is true but STATUS_FOR_OVERRIDE ('${STATUS_FOR_OVERRIDE}') is not a valid status name. ` +
-        `Valid values: ${Object.keys(status).join(', ')}. Ignoring the override - posting each test's source run status instead.`,
+      `OVERRIDE_STATUS is true but STATUS_FOR_OVERRIDE ('${id}') is not a valid status id. ` +
+        `Valid ids: ${Object.entries(status)
+          .map((entry) => `${entry[0]}: ${entry[1]}`)
+          .join(', ')}. Ignoring the override - posting each test's source run status instead.`,
     );
     return null;
   }
   console.log(
-    `OVERRIDE_STATUS is enabled: every posted result will use status '${STATUS_FOR_OVERRIDE}' (id ${id}) instead of the source run's status.`,
+    `OVERRIDE_STATUS is enabled: every posted result will use status '${key}' (id ${id}) instead of the source run's status.`,
   );
   return id;
 })();

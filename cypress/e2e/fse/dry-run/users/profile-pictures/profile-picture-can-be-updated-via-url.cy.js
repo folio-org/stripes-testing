@@ -22,12 +22,12 @@ describe('Users', () => {
     before('Create test data and login', () => {
       cy.setTenant(memberTenant.id);
       cy.getUserToken(user.username, user.password, { log: false });
-      cy.getConfigurationsEntry().then((respBody) => {
-        if (respBody.enabled === false) {
-          respBody.enabled = true;
-          cy.updateConfigurationsEntry(respBody.id, respBody);
-        }
-      });
+      // cy.getConfigurationsEntry().then((respBody) => {
+      //   if (respBody.enabled === false) {
+      //     respBody.enabled = true;
+      //     cy.updateConfigurationsEntry(respBody.id, respBody);
+      //   }
+      // });
 
       // create user B
       cy.createTempUser().then((userProperties) => {
@@ -47,8 +47,8 @@ describe('Users', () => {
     });
 
     it(
-      'C442797 Verify that profile picture can be updated via URL (volaris)',
-      { tags: ['dryRun', 'volaris', 'C442797'] },
+      'C442797 Verify that profile picture can be updated via URL (vega)',
+      { tags: ['dryRun', 'vega', 'C442797'] },
       () => {
         UsersSearchPane.searchByUsername(testData.userB.username);
         UsersCard.waitLoading();
