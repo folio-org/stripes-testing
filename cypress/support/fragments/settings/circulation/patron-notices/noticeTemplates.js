@@ -67,7 +67,7 @@ export default {
       });
   },
   deleteViaApi(templateId) {
-    cy.okapiRequest({
+    return cy.okapiRequest({
       method: 'DELETE',
       path: `templates/${templateId}`,
       searchParams: {
