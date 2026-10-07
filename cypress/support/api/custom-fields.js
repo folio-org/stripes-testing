@@ -29,6 +29,36 @@ Cypress.Commands.add('getCustomFieldsViaApi', (entityType = CUSTOM_FIELD_ENTITY_
   });
 });
 
+// Replaces the ENTIRE customFields list with exactly what's passed - no merge/concat with the
+// existing list (unlike updateCustomFieldsViaApi, which appends `customFields` to whatever
+// getCustomFieldsViaApi currently returns). Use this when the caller already has the full,
+// modified list and wants to PUT it verbatim (e.g. toggling `required` on all existing fields).
+Cypress.Commands.add(
+  'setCustomFieldsViaApi',
+  (customFields, entityType = CUSTOM_FIELD_ENTITY_TYPES.USER) => {
+    let moduleVersionPromise;
+
+    if (entityType === CUSTOM_FIELD_ENTITY_TYPES.USER) {
+      moduleVersionPromise = cy.getModUsersVersion();
+    } else if (
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PURCHASE_ORDER ||
+      entityType === CUSTOM_FIELD_ENTITY_TYPES.PO_LINE
+    ) {
+      moduleVersionPromise = cy.getModOrdersStorageVersion();
+    }
+
+    return moduleVersionPromise.then((modVersion) => {
+      return cy.okapiRequest({
+        path: 'custom-fields',
+        method: 'PUT',
+        body: { customFields, entityType },
+        isDefaultSearchParamsRequired: false,
+        additionalHeaders: { 'x-okapi-module-id': modVersion },
+      });
+    });
+  },
+);
+
 Cypress.Commands.add(
   'updateCustomFieldsViaApi',
   (customFields, entityType = CUSTOM_FIELD_ENTITY_TYPES.USER) => {

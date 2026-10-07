@@ -57,7 +57,7 @@ describe('Data Import', () => {
           name: `C380474 Test Physical resource open order with instance, holdings, item ${getRandomPostfix()}`,
           orderStatus: ORDER_STATUSES.OPEN,
           approved: true,
-          vendor: VENDOR_NAMES.MOSAIC,
+          vendor: VENDOR_NAMES.GOBI,
           title: '245$a',
           acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
           orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
@@ -243,7 +243,7 @@ describe('Data Import', () => {
           const polNumber = initialNumber;
           orderNumber = polNumber.replace(/-\d+$/, '');
 
-          OrderLines.checkCreatedInventoryInPhysicalRecourceDetails('Instance, Holding, Item');
+          OrderLines.checkCreatedInventoryInPhysicalRecourceDetails('Instance, holdings, item');
           OrderLines.openLinkedInstance();
           InstanceRecordView.verifyInstanceIsOpened(instanceTitle);
           InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {

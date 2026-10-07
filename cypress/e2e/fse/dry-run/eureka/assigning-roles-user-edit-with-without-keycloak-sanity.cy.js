@@ -9,6 +9,7 @@ import Modals from '../../../../support/fragments/modals';
 import UsersSearchResultsPane from '../../../../support/fragments/users/usersSearchResultsPane';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
 import { parseSanityParameters } from '../../../../support/utils/users';
+import { including } from '../../../../../interactors';
 
 describe('Eureka', () => {
   describe('Users', () => {
@@ -18,7 +19,7 @@ describe('Eureka', () => {
     const testData = {
       roleName: `AT_C584520_UserRole_${randomPostfix}`,
       promotePath: '/users-keycloak/auth-users',
-      errorCalloutText: 'Something went wrong. Please try again later.',
+      errorCalloutText: including('User without username cannot be created in Keycloak'),
       patronGroupName: `AT_C584520_UserGroup_${getRandomLetters(7)}`,
     };
     const userBodies = [];

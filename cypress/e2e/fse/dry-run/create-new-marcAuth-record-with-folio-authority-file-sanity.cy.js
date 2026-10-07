@@ -14,13 +14,13 @@ describe('MARC', () => {
       const testData = {
         sourceName: 'LC Name Authority file (LCNAF)',
         searchOption: 'Keyword',
-        marcValue: `C813610 Create a new MARC authority record with FOLIO authority file autotest ${getRandomPostfix()}`,
+        marcValue: `C423536 Create a new MARC authority record with FOLIO authority file autotest ${getRandomPostfix()}`,
         tag001: '001',
         tag010: '010',
         tag100: '100',
         tag010Value: 'n00776432',
         tag001Value: 'n4332123',
-        headerText: /Create a new .*MARC authority record/,
+        headerText: /New .*MARC authority record/,
         AUTHORIZED: 'Authorized',
       };
 
@@ -56,8 +56,8 @@ describe('MARC', () => {
       });
 
       it(
-        'C813610 Create a new MARC authority record with "FOLIO" authority file selected (spitfire)',
-        { tags: ['dryRun', 'spitfire', 'C813610'] },
+        'C423536 Create a new MARC authority record with "FOLIO" authority file selected (spitfire)',
+        { tags: ['dryRun', 'spitfire', 'C423536'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);

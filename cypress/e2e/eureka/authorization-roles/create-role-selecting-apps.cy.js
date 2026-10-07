@@ -47,7 +47,7 @@ const testData = {
 };
 
 const capabilityCallRegExp = new RegExp(
-  `\\/capabilities\\?limit=\\d{1,}&query=applicationId==\\(${testData.firstApplicationName}-.{1,}or.{1,}${testData.secondApplicationName}-.{1,}\\)`,
+  `\\/capabilities\\?limit=\\d{1,}.*(?=.*${testData.firstApplicationName}-)(?=.*${testData.secondApplicationName}-)`,
 );
 
 const capabSetsToAssign = [

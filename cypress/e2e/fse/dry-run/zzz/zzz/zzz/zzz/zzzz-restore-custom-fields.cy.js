@@ -2,18 +2,9 @@ import CustomFields from '../../../../../../../support/fragments/settings/users/
 
 describe('Restore user custom fields from the back-up', () => {
   const BACKUP_FILE_PATH = 'cypress/fixtures/backup/custom-fields-backup.json';
-  let usersModuleId;
 
-  before('Get admin token and module id', () => {
+  before('Get admin token', () => {
     cy.getAdminToken();
-    cy.getApplicationsForTenantApi(Cypress.env('OKAPI_TENANT'), false).then(({ body }) => {
-      const moduleIds = [];
-      body.applicationDescriptors.forEach((app) => {
-        moduleIds.push(...app.modules.map((module) => module.id));
-        moduleIds.push(...app.uiModules.map((module) => module.id));
-      });
-      usersModuleId = moduleIds.find((id) => /^mod-users-\d/.test(id));
-    });
   });
 
   it('C00003 Restore custom fields', { tags: ['dryRun', 'C00003'] }, () => {
@@ -33,9 +24,8 @@ describe('Restore user custom fields from the back-up', () => {
           return;
         }
 
-        const updatedBody = { customFields };
         cy.log('Restoring user custom fields...');
-        CustomFields.updateCustomFieldsViaApi(updatedBody, usersModuleId, true).then((response) => {
+        CustomFields.setCustomFieldsViaApi(customFields).then((response) => {
           if (response.status === 204) {
             cy.log('- All custom fields restored');
           } else {

@@ -27,16 +27,18 @@ Cypress.Commands.add('bulkDeleteUsersViaApi', (searchParams) => {
   });
 });
 
-Cypress.Commands.add('getAdminUserDetails', (options = {}) => {
-  const { force = false } = options;
+Cypress.Commands.add('getUserDetailsByUsername', (username) => {
+  return cy.getUsers({ limit: 1, query: `"username"=="${username}"` }).then((users) => {
+    return users[0];
+  });
+});
 
-  if (force || !Cypress.env('adminUserDetails')) {
-    return cy
-      .getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` })
-      .then((users) => {
-        Cypress.env('adminUserDetails', users[0]);
-        return users[0];
-      });
+Cypress.Commands.add('getAdminUserDetails', () => {
+  if (!Cypress.env('adminUserDetails')) {
+    return cy.getUserDetailsByUsername(Cypress.env('diku_login')).then((user) => {
+      Cypress.env('adminUserDetails', user);
+      return user;
+    });
   } else {
     return Cypress.env('adminUserDetails');
   }
@@ -532,10 +534,4 @@ Cypress.Commands.add('createStagingUserApi', (record) => {
       isDefaultSearchParamsRequired: false,
     })
     .then(({ body }) => body);
-});
-
-Cypress.Commands.add('getUserDetailsByUsername', (username) => {
-  return cy.getUsers({ limit: 1, query: `"username"=="${username}"` }).then((users) => {
-    return users[0];
-  });
 });
