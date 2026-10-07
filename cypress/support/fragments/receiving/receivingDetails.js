@@ -20,6 +20,7 @@ import {
   RECEIVING_BOUND_ITEMS_COLUMN_LABELS,
   THE_LIST_CONTAINS_NO_ITEMS,
   UNRECEIVABLE_TABLE_COLUMN_HEADERS,
+  RECEIVING_TITLE_ACCORDION_NAMES,
 } from '../../constants';
 import { ItemRecordView } from '../inventory';
 import InventoryInstance from '../inventory/inventoryInstance';
@@ -47,6 +48,23 @@ const unreceivableRowsSelector = '#unreceivable [class*="mclRowFormatterContaine
 
 const boundItemsAccordion = Section({ id: 'boundItems' });
 const boundItemsList = MultiColumnList({ id: 'bound-items-list' });
+
+const piecesAccordions = {
+  [RECEIVING_TITLE_ACCORDION_NAMES.EXPECTED]: {
+    section: expectedSection,
+    showColumnsMenuSection: Section({ id: 'expected-pieces-columns-menu-section' }),
+  },
+  [RECEIVING_TITLE_ACCORDION_NAMES.RECEIVED]: {
+    section: receivedSection,
+    showColumnsMenuSection: Section({ id: 'received-pieces-columns-menu-section' }),
+  },
+  [RECEIVING_TITLE_ACCORDION_NAMES.UNRECEIVABLE]: {
+    section: unreceivableSection,
+    showColumnsMenuSection: Section({
+      id: 'column-manager-unreceivable-pieces-list-columns-menu-section',
+    }),
+  },
+};
 
 const ADD_PIECE_BUTTON_LABEL = 'Add piece';
 
@@ -161,6 +179,43 @@ export default {
   },
   checkExpectedTableContent(records = []) {
     records.forEach((record, index) => {
+      if (record.sequence) {
+        cy.expect(
+          expectedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: EXPECTED_TABLE_COLUMN_HEADERS.SEQUENCE,
+              }),
+            )
+            .has({ content: including(record.sequence) }),
+        );
+      }
+      if (record.holdingsLocation) {
+        cy.expect(
+          expectedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: EXPECTED_TABLE_COLUMN_HEADERS.HOLDINGS_LOCATION,
+              }),
+            )
+            .has({ content: including(record.holdingsLocation) }),
+        );
+      }
+      if (record.displayToPublic !== undefined) {
+        cy.expect(
+          expectedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: EXPECTED_TABLE_COLUMN_HEADERS.DISPLAY_TO_PUBLIC,
+              }),
+            )
+            .find(Checkbox({ disabled: true }))
+            .has({ checked: record.displayToPublic, disabled: true }),
+        );
+      }
       if (record.status) {
         cy.expect(
           expectedSection
@@ -214,6 +269,18 @@ export default {
   },
   checkReceivedTableContent(records = []) {
     records.forEach((record, index) => {
+      if (record.sequence) {
+        cy.expect(
+          receivedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: RECEIVED_TABLE_COLUMN_HEADERS.SEQUENCE,
+              }),
+            )
+            .has({ content: including(record.sequence) }),
+        );
+      }
       if (record.barcode) {
         cy.expect(
           receivedSection
@@ -346,6 +413,43 @@ export default {
   },
   checkUnreceivableTableContent(records = []) {
     records.forEach((record, index) => {
+      if (record.sequence) {
+        cy.expect(
+          unreceivableSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: UNRECEIVABLE_TABLE_COLUMN_HEADERS.SEQUENCE,
+              }),
+            )
+            .has({ content: including(record.sequence) }),
+        );
+      }
+      if (record.holdingsLocation) {
+        cy.expect(
+          unreceivableSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: UNRECEIVABLE_TABLE_COLUMN_HEADERS.HOLDINGS_LOCATION,
+              }),
+            )
+            .has({ content: including(record.holdingsLocation) }),
+        );
+      }
+      if (record.displayToPublic !== undefined) {
+        cy.expect(
+          unreceivableSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: UNRECEIVABLE_TABLE_COLUMN_HEADERS.DISPLAY_TO_PUBLIC,
+              }),
+            )
+            .find(Checkbox({ disabled: true }))
+            .has({ checked: record.displayToPublic, disabled: true }),
+        );
+      }
       if (record.barcode) {
         cy.expect(
           unreceivableSection
@@ -563,6 +667,31 @@ export default {
       receivedSection.find(Button(COMMON_BUTTON_LABELS.ACTIONS)).click(),
       DropdownMenu().find(Button(optionLabel)).click(),
     ]);
+  },
+
+  setAccordionColumnsVisibility({ accordion, columns = [], checked }) {
+    const { section, showColumnsMenuSection } = piecesAccordions[accordion];
+    const actionsButton = section.find(Button(COMMON_BUTTON_LABELS.ACTIONS));
+
+    cy.do(actionsButton.click());
+    columns.forEach((column) => {
+      const checkbox = showColumnsMenuSection.find(Checkbox(column));
+
+      cy.expect(checkbox.has({ checked: !checked }));
+      cy.do(checkbox.click());
+      cy.expect(checkbox.has({ checked }));
+    });
+    cy.do(actionsButton.click());
+  },
+
+  checkAccordionColumnsDisplayed({ accordion, columns = [], displayed = true }) {
+    const piecesList = piecesAccordions[accordion].section.find(MultiColumnList());
+
+    columns.forEach((column) => {
+      cy.expect(
+        piecesList.has({ columns: displayed ? including(column) : not(including(column)) }),
+      );
+    });
   },
 
   clickNextPageButtonInBoundItemsAccordion() {
