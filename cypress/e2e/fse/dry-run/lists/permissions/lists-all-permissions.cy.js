@@ -20,20 +20,19 @@ describe('Lists', () => {
       cy.allure().logCommandSteps(false);
       cy.getUserToken(user.username, user.password);
       cy.allure().logCommandSteps();
-      cy.wrap(true)
-        .then(() => {
-          Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
-            Lists.createQueryViaApi(query).then((createdQuery) => {
-              listData.queryId = createdQuery.queryId;
-              listData.fqlQuery = createdQuery.fqlQuery;
-              listData.fields = fields;
+      cy.wrap(true).then(() => {
+        Lists.buildQueryOnActiveUsers().then(({ query, fields }) => {
+          Lists.createQueryViaApi(query).then((createdQuery) => {
+            listData.queryId = createdQuery.queryId;
+            listData.fqlQuery = createdQuery.fqlQuery;
+            listData.fields = fields;
 
-              Lists.createViaApi(listData).then((body) => {
-                listData.id = body.id;
-              });
+            Lists.createViaApi(listData).then((body) => {
+              listData.id = body.id;
             });
           });
         });
+      });
     });
 
     after('Delete test data', () => {
@@ -44,8 +43,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411694 C411693 Lists (Admin): All permissions (corsair)',
-      { tags: ['dryRun', 'corsair', 'C411694', 'C411693'] },
+      'C411694 C411693 Lists (Admin): All permissions (athena)',
+      { tags: ['dryRun', 'athena', 'C411694', 'C411693'] },
       () => {
         cy.allure().logCommandSteps(false);
         cy.login(user.username, user.password, {

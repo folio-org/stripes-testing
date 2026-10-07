@@ -38,27 +38,21 @@ describe('Data Export', () => {
       });
     });
 
-    it(
-      'C10984 New mapping profile form (firebird)',
-      { tags: ['dryRun', 'firebird', 'C10984'] },
-      () => {
-        ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
-        ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, [
-          'Item',
-        ]);
-        ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
-        ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
-        ModalSelectTransformations.clickNthCheckbox();
-        ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', 'a');
+    it('C10984 New mapping profile form (athena)', { tags: ['dryRun', 'athena', 'C10984'] }, () => {
+      ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+      ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Item']);
+      ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
+      ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
+      ModalSelectTransformations.clickNthCheckbox();
+      ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', 'a');
 
-        ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
-        InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
+      ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
+      InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
 
-        ExportFieldMappingProfiles.saveMappingProfile();
-        InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
-        ExportFieldMappingProfiles.searchFieldMappingProfile(fieldMappingProfileName);
-        ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
-      },
-    );
+      ExportFieldMappingProfiles.saveMappingProfile();
+      InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
+      ExportFieldMappingProfiles.searchFieldMappingProfile(fieldMappingProfileName);
+      ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
+    });
   });
 });

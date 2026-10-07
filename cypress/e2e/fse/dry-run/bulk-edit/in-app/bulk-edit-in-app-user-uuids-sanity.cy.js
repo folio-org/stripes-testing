@@ -40,8 +40,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C359214 Verify expiration date updates in In-app approach (firebird)',
-      { tags: ['dryRun', 'firebird', 'C359214'] },
+      'C359214 Verify expiration date updates in In-app approach (athena)',
+      { tags: ['dryRun', 'athena', 'C359214'] },
       () => {
         const todayDate = new Date();
         BulkEditSearchPane.verifyDragNDropRecordTypeIdentifierArea('Users', 'User UUIDs');

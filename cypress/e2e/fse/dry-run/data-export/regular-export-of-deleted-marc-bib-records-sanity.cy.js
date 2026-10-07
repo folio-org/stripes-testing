@@ -120,8 +120,8 @@ describe(
       });
 
       it(
-        'C494361 Regular export of deleted MARC bib records (firebird)',
-        { tags: ['dryRun', 'firebird', 'C494361'] },
+        'C494361 Regular export of deleted MARC bib records (athena)',
+        { tags: ['dryRun', 'athena', 'C494361'] },
         () => {
           cy.allure().logCommandSteps(false);
           cy.login(user.username, user.password);

@@ -24,8 +24,8 @@ describe('Lists', () => {
     });
 
     it(
-      'C411704 Create new lists: Private list (corsair)',
-      { tags: ['dryRun', 'corsair', 'C411704'] },
+      'C411704 Create new lists: Private list (athena)',
+      { tags: ['dryRun', 'athena', 'C411704'] },
       () => {
         listData.status = 'Active';
         listData.visibility = 'Private';

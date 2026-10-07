@@ -96,8 +96,8 @@ describe('Data Export', () => {
     });
 
     it(
-      'C423567 Export of imported MARC Authority record (firebird)',
-      { tags: ['dryRun', 'firebird', 'C423567'] },
+      'C423567 Export of imported MARC Authority record (athena)',
+      { tags: ['dryRun', 'athena', 'C423567'] },
       () => {
         ExportFileHelper.uploadFile(marcAuthorityUUIDFileName);
         ExportFileHelper.exportWithDefaultJobProfile(
