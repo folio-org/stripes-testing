@@ -64,7 +64,7 @@ export const RECEIVING_PIECE_FORM_ACTIONS_LABELS = {
   MARK_LATE: 'Mark late',
   QUICK_RECEIVE: 'Quick receive',
   SAVE_AND_CLOSE: 'Save & close',
-  SAVE_AND_CREATE: 'Save & create another',
+  SAVE_AND_CREATE: 'Save and create another',
   SEND_CLAIM: 'Send claim',
   UNRECEIVE: 'Unreceive',
   UNRECEIVABLE: 'Unreceivable',
@@ -98,4 +98,11 @@ export const UNRECEIVABLE_LIST_COLUMN_HEADERS = {
   COMMENT: 'Comment',
   SELECT_LOCATION: 'Select location',
   CALL_NUMBER: 'Call number',
+};
+
+export const RECEIVING_PIECE_STATUS_LOG_COLUMN_HEADERS = {
+  DATE: 'Date',
+  INTERVAL: 'Interval',
+  STATUS_CHANGE: 'Status change',
+  UPDATED_BY: 'Updated by',
 };

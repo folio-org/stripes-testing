@@ -1,9 +1,20 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
-import { MultiColumnListHeader } from '../../../../../../interactors';
+import { MultiColumnListHeader, Select } from '../../../../../../interactors';
+import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 
+export const STATISTICAL_CODE_ENTITY_TYPE = 'statistical code';
+
 export default {
+  waitLoading() {
+    ConsortiaControlledVocabularyPaneset.waitLoading();
+  },
+
+  selectStatisticalCodeType(typeName) {
+    cy.do(Select().choose(typeName));
+  },
+
   choose() {
     ConsortiumManagerApp.chooseSecondMenuItem('Statistical codes');
     [

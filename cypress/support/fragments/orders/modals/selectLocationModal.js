@@ -3,6 +3,7 @@ import {
   Checkbox,
   including,
   Modal,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
   MultiSelect,
@@ -29,6 +30,21 @@ export default {
 
   verifyModalView() {
     cy.expect(selectLocationModal.exists());
+  },
+
+  checkLocationsList(locationNames = [], { exactMatch = false } = {}) {
+    if (exactMatch) {
+      cy.expect(
+        selectLocationModal.find(MultiColumnList()).has({ rowCount: locationNames.length }),
+      );
+    }
+    locationNames.forEach((locationName) => {
+      cy.expect(
+        selectLocationModal
+          .find(MultiColumnListCell({ content: locationName, columnIndex: 0 }))
+          .exists(),
+      );
+    });
   },
 
   clearSearchField() {

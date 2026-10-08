@@ -42,3 +42,26 @@ export const ORGANIZATION_INTEGRATION_CONFIG = {
   DEFAULT_FTP_PORT: 22,
   DEFAULT_FTP_SERVER_ADDRESS: 'sftp://ftp.ci.folio.org',
 };
+
+export const ORGANIZATION_INTEGRATION_FIELD_LABELS = {
+  DATE: 'Date',
+  DESCRIPTION: 'Description',
+  EDI_FTP: 'EDI FTP',
+  FILE_FORMAT: 'File format',
+  FTP_CONNECTION_MODE: 'FTP connection mode',
+  FTP_MODE: 'FTP mode',
+  FTP_PORT: 'FTP port',
+  INTEGRATION_NAME: 'Integration name',
+  INTEGRATION_TYPE: 'Integration type',
+  LIBRARY_EDI_CODE: 'Library EDI code',
+  ORDER_DIRECTORY: 'Order directory',
+  PASSWORD: 'Password',
+  SCHEDULE_EDI: 'Schedule EDI',
+  SCHEDULE_FREQUENCY: 'Schedule frequency',
+  SCHEDULE_PERIOD: 'Schedule period',
+  SERVER_ADDRESS: 'Server address',
+  TIME: 'Time',
+  TRANSMISSION_METHOD: 'Transmission method',
+  USERNAME: 'Username',
+  VENDOR_EDI_CODE: 'Vendor EDI code',
+};

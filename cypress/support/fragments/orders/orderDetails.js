@@ -1,5 +1,7 @@
 import {
   Accordion,
+  and,
+  Badge,
   Button,
   Checkbox,
   DropdownMenu,
@@ -14,8 +16,16 @@ import {
   PaneHeader,
   Section,
   Select,
+  MultiSelect,
+  MultiSelectMenu,
+  MultiSelectOption,
+  ValueChipRoot,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME, ORDER_VIEW_FIELD_LABELS } from '../../constants';
+import {
+  DEFAULT_WAIT_TIME,
+  ORDER_VIEW_FIELD_LABELS,
+  RELATED_INVOICES_TABLE_COLUMN_HEADERS,
+} from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import ExportDetails from '../exportManager/exportDetails';
 import InventoryInstance from '../inventory/inventoryInstance';
@@ -47,6 +57,10 @@ const relatedInvoicesSection = orderDetailsPane.find(Section({ id: 'relatedInvoi
 const headerDetail = orderDetailsPane.find(PaneHeader({ id: 'paneHeaderorder-details' }));
 
 const iconTimes = Button({ icon: 'times' });
+const tagsButton = orderDetailsPane.find(Button({ id: 'clickable-show-tags' }));
+const tagsPane = Pane('Tags');
+const tagsMultiSelect = tagsPane.find(MultiSelect({ id: 'input-tag' }));
+const addTagOption = (tagName) => MultiSelectMenu().find(MultiSelectOption(and(including('Add tag for:'), including(tagName))));
 
 const invoicesList = MultiColumnList({ id: 'orderInvoices' });
 
@@ -315,27 +329,61 @@ export default {
   },
 
   checkRelatedInvoicesTableContent(records = []) {
+    cy.expect(
+      relatedInvoicesSection
+        .find(MultiColumnList())
+        .has({ columns: Object.values(RELATED_INVOICES_TABLE_COLUMN_HEADERS) }),
+    );
+
     records.forEach((record, index) => {
       if (record.invoiceNumber) {
-        this.checkRelatedInvoiceColumnItem(index, 'Invoice #', record.invoiceNumber);
+        this.checkRelatedInvoiceColumnItem(
+          index,
+          RELATED_INVOICES_TABLE_COLUMN_HEADERS.INVOICE_NUMBER,
+          record.invoiceNumber,
+        );
       }
       if (record.fiscalYear) {
-        this.checkRelatedInvoiceColumnItem(index, 'Fiscal year', record.fiscalYear);
+        this.checkRelatedInvoiceColumnItem(
+          index,
+          RELATED_INVOICES_TABLE_COLUMN_HEADERS.FISCAL_YEAR,
+          record.fiscalYear,
+        );
       }
       if (record.invoiceDate) {
-        this.checkRelatedInvoiceColumnItem(index, 'Invoice date', record.invoiceDate);
+        this.checkRelatedInvoiceColumnItem(
+          index,
+          RELATED_INVOICES_TABLE_COLUMN_HEADERS.INVOICE_DATE,
+          record.invoiceDate,
+        );
       }
       if (record.vendorCode) {
-        this.checkRelatedInvoiceColumnItem(index, 'Vendor code', record.vendorCode);
+        this.checkRelatedInvoiceColumnItem(
+          index,
+          RELATED_INVOICES_TABLE_COLUMN_HEADERS.VENDOR_CODE,
+          record.vendorCode,
+        );
       }
       if (record.vendorInvoiceNumber) {
-        this.checkRelatedInvoiceColumnItem(index, 'Vendor invoice #', record.vendorInvoiceNumber);
+        this.checkRelatedInvoiceColumnItem(
+          index,
+          RELATED_INVOICES_TABLE_COLUMN_HEADERS.VENDOR_INVOICE_NUMBER,
+          record.vendorInvoiceNumber,
+        );
       }
       if (record.status) {
-        this.checkRelatedInvoiceColumnItem(index, 'Status', record.status);
+        this.checkRelatedInvoiceColumnItem(
+          index,
+          RELATED_INVOICES_TABLE_COLUMN_HEADERS.STATUS,
+          record.status,
+        );
       }
       if (record.invoiceAmount) {
-        this.checkRelatedInvoiceColumnItem(index, 'Invoice amount', record.invoiceAmount);
+        this.checkRelatedInvoiceColumnItem(
+          index,
+          RELATED_INVOICES_TABLE_COLUMN_HEADERS.INVOICE_AMOUNT,
+          record.invoiceAmount,
+        );
       }
     });
   },
@@ -467,5 +515,65 @@ export default {
       expect(groups[FISCAL_YEAR_OPTION_GROUPS.CURRENT] || []).to.deep.equal(current);
       expect(groups[FISCAL_YEAR_OPTION_GROUPS.PREVIOUS] || []).to.deep.equal(previous);
     });
+  },
+
+  openTagsPane() {
+    cy.do(tagsButton.click());
+    cy.expect(tagsPane.exists());
+  },
+
+  closeTagsPane() {
+    cy.do(
+      tagsPane
+        .find(PaneHeader())
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.expect(tagsPane.absent());
+  },
+
+  verifyTagsCount(count) {
+    cy.expect(tagsButton.find(Badge()).has({ value: String(count) }));
+  },
+
+  verifyTagsPaneElements(count = 0, tags = []) {
+    cy.expect([
+      tagsPane.has({ subtitle: count === 1 ? '1 Tag' : `${count} Tags` }),
+      tagsMultiSelect.has({ selectedCount: count }),
+      ...tags.map((tag) => tagsMultiSelect.find(ValueChipRoot(tag)).exists()),
+    ]);
+
+    if (count === 0) {
+      cy.expect(tagsMultiSelect.has({ placeholder: 'Enter a tag.' }));
+    }
+  },
+
+  fillInTagName(tagName) {
+    cy.do([tagsMultiSelect.open(), tagsMultiSelect.filter(tagName)]);
+    cy.wait(500);
+    cy.do(tagsMultiSelect.open());
+  },
+
+  verifyAddTagOptionDisplayed(tagName) {
+    cy.expect([tagsMultiSelect.has({ filterValue: tagName }), addTagOption(tagName).exists()]);
+  },
+
+  clickAddTagOption(tagName) {
+    cy.do(addTagOption(tagName).click());
+  },
+
+  selectExistingTag(tagName) {
+    cy.do([
+      tagsMultiSelect.open(),
+      MultiSelectMenu().find(MultiSelectOption(tagName)).clickSegment(),
+    ]);
+  },
+
+  verifyTagOptionSelected(tagName) {
+    cy.expect(MultiSelectMenu().find(MultiSelectOption(tagName)).has({ selected: true }));
+  },
+
+  closeTagsDropdown() {
+    cy.do(tagsMultiSelect.close());
   },
 };

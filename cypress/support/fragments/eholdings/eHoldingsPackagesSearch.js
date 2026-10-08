@@ -11,11 +11,14 @@ import {
   including,
   Section,
   Select,
+  HTML,
+  or,
 } from '../../../../interactors';
 import eHoldingsPackages from './eHoldingsPackages';
 
 const contentTypeAccordion = Accordion({ id: 'filter-packages-type' });
 const selectionStatusAccordion = Accordion({ id: 'filter-packages-selected' });
+const packageAccessAccordion = Accordion('Package access');
 const tagsAccordion = Accordion({ id: 'accordionTagFilter' });
 const byTagCheckbox = Checkbox('Search by tags only');
 const accessStatusTypesAccordion = Accordion('Access status types');
@@ -32,8 +35,9 @@ export default {
     cy.do(contentTypeAccordion.clickHeader());
     cy.expect(contentTypeAccordion.find(Select()).has({ optionsText: options }));
   },
-  selectContentType: (type) => {
+  selectContentType(type) {
     cy.do(contentTypeAccordion.find(Select()).choose(type));
+    this.verifyContentTypeSelected(type);
     eHoldingsPackages.waitLoading();
   },
   verifyContentTypeSelected: (type) => {
@@ -62,6 +66,43 @@ export default {
       cy.expect(selectionStatusAccordion.find(RadioButton(option)).exists());
     });
     cy.do(selectionStatusAccordion.clickHeader());
+  },
+  resetSelectionStatusFilter: () => {
+    cy.do(selectionStatusAccordion.find(Button({ icon: 'times-circle-solid' })).click());
+    eHoldingsPackages.waitLoading();
+  },
+  verifySelectionStatusSelected: (status) => {
+    cy.expect(selectionStatusAccordion.find(RadioButton(status)).has({ checked: true }));
+  },
+  toggleSelectionStatusAccordion: () => {
+    cy.do(selectionStatusAccordion.clickHeader());
+  },
+  verifySelectionStatusAccordionOpen: (isOpen = true) => {
+    cy.expect(selectionStatusAccordion.has({ open: isOpen }));
+  },
+  byPackageAccess: (access) => {
+    cy.do(packageAccessAccordion.clickHeader());
+    cy.do(packageAccessAccordion.find(RadioButton(access)).click());
+    eHoldingsPackages.waitLoading();
+  },
+  verifyPackageAccessOptions: (options) => {
+    cy.do(packageAccessAccordion.clickHeader());
+    options.forEach((option) => {
+      cy.expect(packageAccessAccordion.find(RadioButton(option)).exists());
+    });
+  },
+  resetPackageAccessFilter: () => {
+    cy.do(packageAccessAccordion.find(Button({ icon: 'times-circle-solid' })).click());
+    eHoldingsPackages.waitLoading();
+  },
+  verifyPackageAccessSelected: (access) => {
+    cy.expect(packageAccessAccordion.find(RadioButton(access)).has({ checked: true }));
+  },
+  togglePackageAccessAccordion: () => {
+    cy.do(packageAccessAccordion.clickHeader());
+  },
+  verifyPackageAccessAccordionOpen: (isOpen = true) => {
+    cy.expect(packageAccessAccordion.has({ open: isOpen }));
   },
   byName(name = '*') {
     cy.do(TextField({ id: 'eholdings-search' }).fillIn(name));
@@ -103,11 +144,16 @@ export default {
   },
 
   checkResultsListShown: (isShown = true) => {
-    const result = resultSection.find(
-      ListItem({ className: including('list-item-'), index: 0 }).find(Button()),
-    );
-    if (isShown) cy.expect(result.exists());
-    else cy.expect(result.absent());
+    const result = resultSection.find(ListItem({ className: including('list-item-'), index: 0 }));
+    if (isShown) cy.expect(result.find(Button()).exists());
+    else {
+      cy.expect([
+        result.absent(),
+        resultSection
+          .find(HTML(or('No packages found.', 'Enter a query to show search results.')))
+          .exists(),
+      ]);
+    }
   },
 
   selectAccessStatusType(accessStatusType) {

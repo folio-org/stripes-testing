@@ -88,13 +88,26 @@ export default {
     cy.expect(urlRelationshipPane.exists());
   },
 
+  verifyUrlRelationshipAbsentInTheList({ name }) {
+    cy.expect(
+      MultiColumnListRow({
+        innerText: matching(new RegExp(`^${name}\n`)),
+        isContainer: false,
+      }).absent(),
+    );
+  },
+
   verifyUrlRelationshipShown({ name, source, actions = [] }) {
     const row = MultiColumnListRow({
       innerText: matching(new RegExp(`^${name}\n`)),
       isContainer: false,
     });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
-    if (source) cy.expect(row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists());
+
+    if (source) {
+      cy.expect(row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists());
+    }
+
     cy.expect(row.exists());
     if (actions.length > 0) {
       Object.values(reasonsActions).forEach((action) => {
