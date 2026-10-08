@@ -104,7 +104,6 @@ describe('Orders', () => {
         '100',
         testData.location.name,
       );
-      OrderLines.setElectronicQuantity('3');
       OrderLines.setElectronicQuantity('1');
       OrderLines.save();
       OrderLines.verifyExpenseClassRequiredFieldWarningMessage();
