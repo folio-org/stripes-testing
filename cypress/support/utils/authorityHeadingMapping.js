@@ -20,7 +20,10 @@ export const getExtendedMappingState = () => cy
     if (Cypress.env('authorityExtendedMappingState') === undefined) {
       return cy.getAuthorityExtendedMappingState();
     }
-    return Cypress.env('authorityExtendedMappingState');
+    cy.log(
+      `Authority extended mapping is: ${Cypress.env('authorityExtendedMappingState') ? 'ON' : 'OFF'}`,
+    );
+    return cy.wrap(Cypress.env('authorityExtendedMappingState'));
   })
   .then((state) => state === true);
 

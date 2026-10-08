@@ -2076,8 +2076,12 @@ export default {
   },
 
   setElectronicQuantity(quantity) {
-    cy.do([quantityElectronicField.clear(), quantityElectronicField.fillIn(quantity)]);
-    cy.expect(quantityElectronicField.has({ value: quantity }));
+    cy.wait(1500);
+    cy.then(() => quantityElectronicField.value()).then((value) => {
+      if (value.length && value !== '0') cy.do([quantityElectronicField.clear(), quantityElectronicField.fillIn(quantity)]);
+      else cy.do(quantityElectronicField.fillIn(quantity));
+      cy.expect(quantityElectronicField.has({ value: quantity }));
+    });
   },
   openCreateHoldingForLocation() {
     cy.do([addLocationButton.click(), createNewLocationButton.click()]);

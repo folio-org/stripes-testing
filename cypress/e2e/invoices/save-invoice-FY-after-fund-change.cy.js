@@ -321,7 +321,7 @@ describe('Invoices', () => {
       );
       const periodStartForThirdFY = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
       const periodEndForThirdFY = DateTools.getFormattedDate(
-        { date: new Date(date.getFullYear() + 0, 4, 31) },
+        { date: new Date(date.getFullYear() + 1, 4, 31) },
         'MM/DD/YYYY',
       );
 

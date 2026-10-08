@@ -71,6 +71,9 @@ describe('MARC', () => {
         'C423569 Create a new shared MARC authority record with "FOLIO" authority file selected at Central tenant (consortia) (spitfire)',
         { tags: ['criticalPathECS', 'spitfire', 'C423569'] },
         () => {
+          cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+            req.url = req.url.replace(/limit=\d+/, 'limit=200');
+          });
           // Step 1: Click Actions > + New
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);

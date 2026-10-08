@@ -21,6 +21,7 @@ import {
   INVOICE_STATUSES,
 } from '../../support/constants';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import DateTools from '../../support/utils/dateTools';
 
 describe('Orders', () => {
   const testData = {
@@ -278,11 +279,12 @@ describe('Orders', () => {
       OrderDetails.checkOrderDetails({
         summary: [{ key: 'Total expended', value: '$1.00' }],
       });
+      const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
       OrderDetails.checkRelatedInvoicesTableContent([
         {
           vendorInvoiceNo: testData.invoice.vendorInvoiceNo,
           fiscalYear: testData.fiscalYear.code,
-          invoiceDate: new Date(testData.invoice.invoiceDate).toLocaleDateString('en-US'),
+          invoiceDate: today,
           vendorCode: testData.organization.code,
           vendorInvoiceNumber: testData.invoice.vendorInvoiceNo,
           status: testData.invoice.status,
@@ -297,7 +299,7 @@ describe('Orders', () => {
         {
           vendorInvoiceNo: testData.invoice.vendorInvoiceNo,
           fiscalYear: testData.fiscalYear.code,
-          invoiceDate: new Date(testData.invoice.invoiceDate).toLocaleDateString('en-US'),
+          invoiceDate: today,
           vendorCode: testData.organization.code,
           vendorInvoiceNumber: testData.invoice.vendorInvoiceNo,
           status: testData.invoice.status,

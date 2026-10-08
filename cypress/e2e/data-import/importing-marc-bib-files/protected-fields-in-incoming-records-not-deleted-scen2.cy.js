@@ -112,6 +112,7 @@ describe('Data Import', () => {
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
         MarcFieldProtection.create(protectedFieldData);
         MarcFieldProtection.verifyFieldProtectionIsCreated('NcD');
+        cy.wait(2000);
 
         SettingsInventory.goToSettingsInventory();
         SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.TARGET_PROFILES);

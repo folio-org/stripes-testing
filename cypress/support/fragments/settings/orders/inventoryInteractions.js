@@ -1,10 +1,12 @@
 import OrderStorageSettings from '../../orders/orderStorageSettings';
+import Configs from '../configs';
 
 const INSTANCE_MATCHING_SETTING_KEY = 'disableInstanceMatching';
 const INVENTORY_INTERACTIONS_DEFAULTS_SETTING_KEY = 'createInventory';
 const INSTANCE_STATUS_SETTING_KEY = 'inventory-instanceStatusCode';
 const INSTANCE_TYPE_SETTING_KEY = 'inventory-instanceTypeCode';
 const LOAN_TYPE_SETTING_KEY = 'inventory-loanTypeName';
+const ORDERS_CONFIG_MODULE = 'ORDERS';
 
 export default {
   /* Instance matching */
@@ -27,25 +29,31 @@ export default {
 
   /* Instance status */
   getInstanceStatusSettings() {
-    return OrderStorageSettings.getSettingsViaApi({ key: INSTANCE_STATUS_SETTING_KEY });
+    return Configs.getConfigViaApi({
+      query: `(module==${ORDERS_CONFIG_MODULE} and configName==${INSTANCE_STATUS_SETTING_KEY})`,
+    });
   },
   setInstanceStatusSetting(setting) {
-    return OrderStorageSettings.updateSettingViaApi(setting);
+    return Configs.updateConfigViaApi(setting);
   },
 
   /* Instance type */
   getInstanceTypeSettings() {
-    return OrderStorageSettings.getSettingsViaApi({ key: INSTANCE_TYPE_SETTING_KEY });
+    return Configs.getConfigViaApi({
+      query: `(module==${ORDERS_CONFIG_MODULE} and configName==${INSTANCE_TYPE_SETTING_KEY})`,
+    });
   },
   setInstanceTypeSetting(setting) {
-    return OrderStorageSettings.updateSettingViaApi(setting);
+    return Configs.updateConfigViaApi(setting);
   },
 
   /* Loan type */
   getLoanTypeSettings() {
-    return OrderStorageSettings.getSettingsViaApi({ key: LOAN_TYPE_SETTING_KEY });
+    return Configs.getConfigViaApi({
+      query: `(module==${ORDERS_CONFIG_MODULE} and configName==${LOAN_TYPE_SETTING_KEY})`,
+    });
   },
   setLoanTypeSetting(setting) {
-    return OrderStorageSettings.updateSettingViaApi(setting);
+    return Configs.updateConfigViaApi(setting);
   },
 };

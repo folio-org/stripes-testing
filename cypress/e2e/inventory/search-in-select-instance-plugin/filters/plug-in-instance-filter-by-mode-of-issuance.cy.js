@@ -163,16 +163,18 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifySearchResult(instanceTitles[0]);
           InventorySearchAndFilter.verifySearchResult(instanceTitles[1]);
 
+          cy.intercept('GET', /\/search\/(instances|call-numbers)(\/facets)?\?.*/).as('getData1');
           SelectInstanceModal.selectMultiSelectFilterOption(
             modeOfIssuanceAccordionName,
             customModesOfIssuance[0].name,
           );
+          cy.wait('@getData1');
           InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
             modeOfIssuanceAccordionName,
             customModesOfIssuance[0].name,
             false,
           );
-          SelectInstanceModal.selectMultiSelectFilterOption(
+          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
             modeOfIssuanceAccordionName,
             customModesOfIssuance[1].name,
           );

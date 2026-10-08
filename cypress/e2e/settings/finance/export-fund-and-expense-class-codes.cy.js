@@ -8,8 +8,17 @@ import SettingsFinance from '../../../support/fragments/settings/finance/setting
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import dateTools from '../../../support/utils/dateTools';
+import FileManager from '../../../support/utils/fileManager';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+
+// Matches everything in the exported file's name except the minutes segment of its timestamp -
+// the export completes slightly after the test captures "now" on its own side, so an exact
+// client-side timestamp can land on the wrong minute
+const buildFundExportFileMask = (fiscalYearCode) => {
+  const timestamp = dateTools.getCurrentDateTimeForFundsExpenseClasses();
+  return `fund-codes-export-${fiscalYearCode}-${timestamp.replace(/_\d{2}$/, '_*')}.csv`;
+};
 
 describe('Finance', () => {
   describe('Settings Finance', () => {
@@ -170,9 +179,8 @@ describe('Finance', () => {
         SettingsFinance.clickExportButton();
         InteractorsTools.checkCalloutMessage('Combined code list was successfully exported.');
 
-        const timestamp = dateTools.getCurrentDateTimeForFundsExpenseClasses();
-        const fileName1 = `fund-codes-export-${testData.fiscalYears[0].code}-${timestamp}.csv`;
-        SettingsFinance.checkExportedFundAndExpenseClassFile(fileName1, [
+        const fileName1Mask = buildFundExportFileMask(testData.fiscalYears[0].code);
+        SettingsFinance.checkExportedFundAndExpenseClassFile(fileName1Mask, [
           [
             testData.funds[0].code,
             JSON.stringify([
@@ -185,21 +193,20 @@ describe('Finance', () => {
             JSON.stringify([`${testData.funds[1].code}:${testData.expenseClasses[0].code}`]),
           ],
         ]);
-        Ledgers.deleteDownloadedFile(fileName1);
+        FileManager.deleteFileFromDownloadsByMask(fileName1Mask);
         SettingsFinance.selectFiscalYear(testData.fiscalYears[1].code);
         SettingsFinance.checkButtonState('Export', false);
         SettingsFinance.clickExportButton();
         InteractorsTools.checkCalloutMessage('Combined code list was successfully exported.');
 
-        const timestamp2 = dateTools.getCurrentDateTimeForFundsExpenseClasses();
-        const fileName2 = `fund-codes-export-${testData.fiscalYears[1].code}-${timestamp2}.csv`;
-        SettingsFinance.checkExportedFundAndExpenseClassFile(fileName2, [
+        const fileName2Mask = buildFundExportFileMask(testData.fiscalYears[1].code);
+        SettingsFinance.checkExportedFundAndExpenseClassFile(fileName2Mask, [
           [
             testData.funds[2].code,
             JSON.stringify([`${testData.funds[2].code}:${testData.expenseClasses[0].code}`]),
           ],
         ]);
-        Ledgers.deleteDownloadedFile(fileName2);
+        FileManager.deleteFileFromDownloadsByMask(fileName2Mask);
       },
     );
   });

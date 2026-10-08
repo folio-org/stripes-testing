@@ -207,7 +207,7 @@ describe('Orders', () => {
       InvoiceLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.funds.first.name,
-          amount: '$0.00',
+          amount: `$${testData.amount}.00`,
           initialEncumbrance: '-',
           currentEncumbrance: '-',
         },
