@@ -20,7 +20,7 @@ describe('Data Import', () => {
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     const instanceTitle = 'Mistapim in Cambodia [microform]. Photos. by the author.';
     const error =
-      'A new Instance was not created because the incoming record already contains a 999ff$s or 999ff$i field';
+      'A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field';
     const nameMarcFileForCreate = `C359012 autotestFile${getRandomPostfix()}.mrc`;
 
     before('Create test user and login', () => {
@@ -56,6 +56,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForCreate);
         Logs.checkJobStatus(nameMarcFileForCreate, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        cy.wait(5000); // import logs may not load for all records if opened fast
         Logs.openFileDetails(nameMarcFileForCreate);
         // check that "SRS MARC" and "Instance" were created for record, that not contains 999 ff field
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');

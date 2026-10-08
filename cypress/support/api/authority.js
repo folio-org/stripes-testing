@@ -222,6 +222,12 @@ Cypress.Commands.add('getSrsRecordsByAuthorityId', (instanceId) => {
 Cypress.Commands.add('getAuthorityExtendedMappingState', () => {
   const cacheKey = 'authorityExtendedMappingState';
 
+  // An explicit override (e.g. set in cypress.config.js) must win over whatever the real
+  // backend setting is - never let the runtime/API lookup below overwrite it
+  if (Cypress.env(cacheKey) !== undefined) {
+    return cy.wrap(Cypress.env(cacheKey));
+  }
+
   return cy.task('getRuntimeCache', cacheKey).then((cachedState) => {
     // `getRuntimeCache` returns null only when the key was never set, so a cached
     // `false` is still a hit

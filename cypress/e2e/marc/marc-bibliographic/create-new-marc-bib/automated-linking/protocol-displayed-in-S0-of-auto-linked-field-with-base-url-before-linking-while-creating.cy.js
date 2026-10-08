@@ -202,7 +202,7 @@ describe('MARC', () => {
           for (let i = 0; i < 5; i++) {
             MarcAuthority.deleteViaAPI(createdRecordIDs[i]);
           }
-          InventoryInstance.deleteInstanceViaApi(createdRecordIDs[5]);
+          InventoryInstance.deleteInstanceViaApi(createdRecordIDs[5], true);
           // TO DO: remove `failOnStatusCode = false` after MODELINKS-210 is done
           for (let i = 0; i < 2; i++) {
             cy.deleteAuthoritySourceFileViaAPI(createdAuthSources[i], true);

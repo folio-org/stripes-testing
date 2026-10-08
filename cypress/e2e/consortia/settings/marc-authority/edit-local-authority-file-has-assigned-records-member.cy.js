@@ -101,6 +101,9 @@ describe('MARC', () => {
           'C436909 Edit all fields of Local "Authority file" which has assigned "MARC authority" records at Central tenant only, from Member tenant (consortia) (spitfire)',
           { tags: ['criticalPathECS', 'spitfire', 'nonParallel', 'C436909'] },
           () => {
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
             // Step 1: Go to Manage authority files in Member tenant
             cy.resetTenant();
             cy.waitForAuthRefresh(() => {

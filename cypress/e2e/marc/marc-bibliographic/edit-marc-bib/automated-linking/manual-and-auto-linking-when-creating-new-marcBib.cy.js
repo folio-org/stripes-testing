@@ -126,7 +126,7 @@ describe('MARC', () => {
           cy.getAdminToken();
           Users.deleteViaApi(userData.userId);
           for (let i = 0; i < 8; i++) {
-            MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
+            MarcAuthority.deleteViaAPI(createdAuthorityIDs[i], true);
           }
           InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[8]);
         });
