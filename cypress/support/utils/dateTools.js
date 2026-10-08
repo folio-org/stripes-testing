@@ -420,7 +420,7 @@ export default {
       date.getDate(),
     )}`;
   },
-  // Formats date as MM/DD/YYYY without zeros - used in settings
+  /** Formats date as MM/DD/YYYY without zeros - used in settings */
   getFormattedDateWithSlashes({ date }) {
     return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
   },

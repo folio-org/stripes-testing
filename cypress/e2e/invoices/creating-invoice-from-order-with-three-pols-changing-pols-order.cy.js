@@ -13,6 +13,7 @@ import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesL
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import DateTools from '../../support/utils/dateTools';
 
 describe('Invoices', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -151,11 +152,13 @@ describe('Invoices', () => {
 
       InvoiceLineDetails.openPOLineFromInvoiceLine();
       OrderLineDetails.waitLoading();
+
+      const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
       OrderLineDetails.checkRelatedInvoiceLinesTableContent([
         {
           vendorInvoiceNo: testData.invoice.invoiceNumber,
           invoiceLineNumber: '1',
-          invoiceDate: new Date(testData.invoice.invoiceDate).toLocaleDateString('en-US'),
+          invoiceDate: today,
           vendorCode: testData.organization.code,
           status: testData.invoice.status,
           quantity: testData.orderLines[0].quantity,

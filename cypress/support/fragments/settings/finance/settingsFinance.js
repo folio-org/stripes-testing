@@ -11,6 +11,7 @@ import {
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import DateTools from '../../../utils/dateTools';
+import FileManager from '../../../utils/fileManager';
 import { REQUEST_METHOD } from '../../../constants';
 
 const saveButton = Button('Save');
@@ -230,23 +231,30 @@ export default {
       .replace(/^\uFEFF/, ''));
   },
 
-  checkExportedFundAndExpenseClassFile(fileName, expectedRows) {
+  // `fileNameMask` matches everything except the exported file's timestamp (e.g.
+  // "fund-codes-export-<fiscalYearCode>-*.csv") - the export completes slightly after the test
+  // captures "now" on its own side, so an exact pre-built timestamp can land on the wrong minute
+  checkExportedFundAndExpenseClassFile(fileNameMask, expectedRows) {
     cy.wait(6000);
-    cy.readFile(`cypress/downloads/${fileName}`).then((content) => {
-      const lines = content.trim().split(/\r?\n/);
+    FileManager.findDownloadedFilesByMask(fileNameMask).then((fileNames) => {
+      expect(fileNames, `Exactly one file matching "${fileNameMask}"`).to.have.length(1);
 
-      const header = this.parseCsvLine(lines[0]);
-      cy.wait(2000);
-      expect(header).to.deep.equal(['Fund code', 'Fund and active expense class codes']);
+      cy.readFile(fileNames[0]).then((content) => {
+        const lines = content.trim().split(/\r?\n/);
 
-      const fileRows = lines
-        .slice(1)
-        .map((line) => this.parseCsvLine(line))
-        .sort((a, b) => a[0].localeCompare(b[0]));
+        const header = this.parseCsvLine(lines[0]);
+        cy.wait(2000);
+        expect(header).to.deep.equal(['Fund code', 'Fund and active expense class codes']);
 
-      const sortedExpectedRows = [...expectedRows].sort((a, b) => a[0].localeCompare(b[0]));
-      cy.wait(2000);
-      expect(fileRows).to.deep.equal(sortedExpectedRows);
+        const fileRows = lines
+          .slice(1)
+          .map((line) => this.parseCsvLine(line))
+          .sort((a, b) => a[0].localeCompare(b[0]));
+
+        const sortedExpectedRows = [...expectedRows].sort((a, b) => a[0].localeCompare(b[0]));
+        cy.wait(2000);
+        expect(fileRows).to.deep.equal(sortedExpectedRows);
+      });
     });
   },
 

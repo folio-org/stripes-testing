@@ -56,6 +56,7 @@ describe('Orders', () => {
                     });
                     InventoryInstance.createInstanceViaApi().then((instanceData) => {
                       testData.instanceId = instanceData.instanceData.instanceId;
+                      testData.instanceTitle = instanceData.instanceData.instanceTitle;
 
                       testData.orderLine = {
                         ...BasicOrderLine.getDefaultOrderLine(),
@@ -178,10 +179,7 @@ describe('Orders', () => {
         Receiving.verifyDetailsOpened();
         Receiving.verifyRequestIsCreated();
         Receiving.receivePiece(0, testData.enumeration, testData.itemBarcode);
-        Receiving.verifyOpenedRequestsModal(
-          testData.orderLine.titleOrPackage,
-          testData.itemBarcode,
-        );
+        Receiving.verifyOpenedRequestsModal(testData.instanceTitle, testData.itemBarcode);
         Receiving.closeOpenedRequestModal();
         Receiving.checkReceivedPiece(0, testData.enumeration, testData.itemBarcode);
       },
