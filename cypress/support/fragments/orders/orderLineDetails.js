@@ -32,6 +32,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 import ExportDetails from '../exportManager/exportDetails';
 import TransactionDetails from '../finance/transactions/transactionDetails';
 import InventoryInstance from '../inventory/inventoryInstance';
+import MCLHelper from '../multiColumnList';
 import CancelConfirmationModal from './modals/cancelConfirmationModal';
 import SelectInstanceModal from './modals/selectInstanceModal';
 import OrderLineEditForm from './orderLineEditForm';
@@ -69,6 +70,8 @@ const addRoutingListButton = Button('Add routing list');
 const relatedInvoiceLinesSection = orderLineDetailsSection.find(
   Section({ id: 'relatedInvoiceLines' }),
 );
+const compareDateStrings = (left, right) => new Date(left) - new Date(right);
+const relatedInvoiceLinesList = relatedInvoiceLinesSection.find(MultiColumnList());
 const customFieldsAccordion = orderLineDetailsSection.find(Section({ id: 'customFieldsPOLine' }));
 const tagsButton = orderLineDetailsSection.find(Button({ id: 'clickable-show-tags' }));
 const tagsPane = Pane('Tags');
@@ -730,6 +733,52 @@ export default {
       .then((response) => {
         return response.body.id;
       });
+  },
+
+  assertRelatedInvoiceLinesRowCount(rowCount) {
+    MCLHelper.assertRowCount(relatedInvoiceLinesList, rowCount);
+  },
+
+  assertRelatedInvoiceLineSubscriptionDates({
+    vendorInvoiceNo,
+    subscriptionStart,
+    subscriptionEnd,
+  }) {
+    const invoiceLineRow = relatedInvoiceLinesSection.find(
+      MultiColumnListRow({ content: including(vendorInvoiceNo), isContainer: true }),
+    );
+
+    cy.expect([
+      invoiceLineRow
+        .find(
+          MultiColumnListCell({
+            column: RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.SUBSCRIPTION_START,
+          }),
+        )
+        .has({ content: including(subscriptionStart) }),
+      invoiceLineRow
+        .find(
+          MultiColumnListCell({
+            column: RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.SUBSCRIPTION_END,
+          }),
+        )
+        .has({ content: including(subscriptionEnd) }),
+    ]);
+  },
+
+  assertRelatedInvoiceLinesSortDirection(columnName, direction) {
+    MCLHelper.assertColumnSortDirection(relatedInvoiceLinesList, columnName, direction);
+  },
+
+  assertRelatedInvoiceLinesSorted(columnName, direction) {
+    MCLHelper.assertColumnValuesSorted(relatedInvoiceLinesList, columnName, {
+      direction,
+      comparator: compareDateStrings,
+    });
+  },
+
+  sortRelatedInvoiceLinesBy(columnName) {
+    MCLHelper.sortListBy(relatedInvoiceLinesList, columnName);
   },
 
   checkRelatedInvoiceLineColumnItem(rowIndex, columnName, value) {
