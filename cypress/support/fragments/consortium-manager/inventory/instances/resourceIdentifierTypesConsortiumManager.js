@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
+import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
 const id = uuid();
 
@@ -9,6 +10,8 @@ export const typeActions = {
   edit: 'edit',
   trash: 'trash',
 };
+
+export const RESOURCE_IDENTIFIER_ENTITY_TYPE = 'resource identifier type';
 
 export default {
   createViaApi(type) {
@@ -40,6 +43,10 @@ export default {
         body: type,
       });
     });
+  },
+
+  waitLoading() {
+    ConsortiaControlledVocabularyPaneset.waitLoading('Resource identifier types');
   },
 
   choose() {

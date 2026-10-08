@@ -1,7 +1,11 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader } from '../../../../../../interactors';
+import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
+import { INVENTORY_SETTINGS_TABS } from '../../../settings/inventory/settingsInventory';
+
+export const CALL_NUMBER_TYPE_ENTITY_TYPE = 'call number type';
 
 export const typeActions = {
   edit: 'edit',
@@ -9,8 +13,12 @@ export const typeActions = {
 };
 
 const Actions = {
+  waitLoading() {
+    ConsortiaControlledVocabularyPaneset.waitLoading(INVENTORY_SETTINGS_TABS.CALL_NUMBER_TYPES);
+  },
+
   choose() {
-    ConsortiumManagerApp.chooseSecondMenuItem('Call number types');
+    ConsortiumManagerApp.chooseSecondMenuItem(INVENTORY_SETTINGS_TABS.CALL_NUMBER_TYPES);
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });

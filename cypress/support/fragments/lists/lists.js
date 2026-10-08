@@ -36,7 +36,6 @@ import { formatNumber } from '../../utils/numberTools';
 import { poll } from '../../utils/polling';
 import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import { embeddedTableHeadersMap, extractValuesForTableType } from '../bulk-edit/query-modal';
-import SelectUser from '../users/modal/selectUser';
 
 const listInformationAccording = Accordion('List information');
 const queryAccordion = Accordion({ id: 'results-viewer-accordion' });
@@ -66,6 +65,8 @@ const statusAccordion = filterPane.find(Accordion('Status'));
 const visibilityAccordion = filterPane.find(Accordion('Visibility'));
 const recordTypesAccordion = filterPane.find(Accordion('Record types'));
 const sourceAccordion = filterPane.find(Accordion('Source'));
+const createdByAccordion = filterPane.find(Accordion('Created by'));
+const updatedByAccordion = filterPane.find(Accordion('Updated by'));
 const resetAllButton = filterPane.find(Button('Reset all'));
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = filterPane.find(Button('Search'));
@@ -1199,27 +1200,27 @@ const UI = {
   },
 
   openRecordTypeFilter() {
-    cy.do(filterPane.find(MultiSelect()).open());
+    cy.do(recordTypesAccordion.find(MultiSelect()).open());
     cy.wait(1000);
   },
 
   searchRecordTypeFilterInDropdown(type) {
-    cy.do(filterPane.find(MultiSelect()).filter(type));
+    cy.do(recordTypesAccordion.find(MultiSelect()).filter(type));
     cy.wait(1000);
   },
 
   selectRecordTypeFilter(type) {
-    cy.do(filterPane.find(recordTypesAccordion).find(MultiSelect()).choose(type));
+    cy.do(recordTypesAccordion.find(MultiSelect()).choose(type));
     cy.wait(1000);
   },
 
   deselectRecordTypeFilter(type) {
-    cy.do(filterPane.find(recordTypesAccordion).find(MultiSelect()).remove(type));
+    cy.do(recordTypesAccordion.find(MultiSelect()).remove(type));
     cy.wait(1000);
   },
 
   verifyRecordTypeSelectedinFilter(type) {
-    cy.expect(filterPane.find(MultiSelect()).has({ selected: type }));
+    cy.expect(recordTypesAccordion.find(MultiSelect()).has({ selected: type }));
   },
 
   verifyRecordTypeFilterDropdownContainsOptions(options) {
@@ -1437,13 +1438,19 @@ const UI = {
   },
 
   selectCreatedByFilter(userName) {
-    cy.do(Button({ id: 'created-by-filter-button' }).click());
-    SelectUser.findAndSelectUserInNameColumn(userName);
+    cy.do(Button({ id: 'accordion-toggle-button-created-by-filter' }).click());
+    cy.do(createdByAccordion.find(MultiSelect()).filter(userName));
+    cy.wait(1000);
+    cy.do(createdByAccordion.find(MultiSelect()).choose(including(userName)));
+    cy.wait(1000);
   },
 
   selectUpdatedByFilter(userName) {
-    cy.do(Button({ id: 'updated-by-filter-button' }).click());
-    SelectUser.findAndSelectUserInNameColumn(userName);
+    cy.do(Button({ id: 'accordion-toggle-button-updated-by-filter' }).click());
+    cy.do(updatedByAccordion.find(MultiSelect()).filter(userName));
+    cy.wait(1000);
+    cy.do(updatedByAccordion.find(MultiSelect()).choose(including(userName)));
+    cy.wait(1000);
   },
 
   selectList(listName) {

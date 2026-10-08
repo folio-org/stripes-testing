@@ -2,15 +2,21 @@ import {
   Button,
   Checkbox,
   HTML,
+  KeyValue,
   MultiColumnList,
   MultiColumnListRow,
   Pane,
   Section,
+  Selection,
   TextArea,
   TextField,
   including,
 } from '../../../../interactors';
-import { DEFAULT_WAIT_TIME, RECEIVE_LIST_COLUMN_HEADERS } from '../../constants';
+import {
+  DEFAULT_WAIT_TIME,
+  RECEIVE_LIST_COLUMN_HEADERS,
+  RECEIVING_PIECE_FORM_FIELD_LABELS,
+} from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import SelectLocationModal from '../orders/modals/selectLocationModal';
 import ReceivingStates from './receivingStates';
@@ -37,8 +43,20 @@ export default {
       cy.expect(buttons[label].has(conditions));
     });
   },
-  verifyFormView({ polNumber, titleName } = {}) {
+  verifyFormView({ polNumber, titleName, orderLineLocations, rowCount } = {}) {
     cy.expect(Pane({ title: `${polNumber} - ${titleName}` }).exists());
+
+    if (orderLineLocations) {
+      cy.expect(
+        receivingsListEditForm
+          .find(KeyValue(RECEIVING_PIECE_FORM_FIELD_LABELS.ORDER_LINE_LOCATIONS))
+          .has({ value: including(orderLineLocations) }),
+      );
+    }
+
+    if (rowCount) {
+      cy.expect(receivingsListEditForm.find(MultiColumnList()).has({ rowCount }));
+    }
     cy.expect(Checkbox({ ariaLabel: SELECT_ALL_PIECES_CHECKBOX }).has({ checked: false }));
 
     Object.values(RECEIVE_LIST_COLUMN_HEADERS).forEach((content) => {
@@ -66,7 +84,13 @@ export default {
         .has({ value: strictMode ? fieldValue : including(fieldValue) }),
     );
   },
-  checkReceivingItemDetails({ copyNumber, barcode, receivedLocation, rowIndex } = {}) {
+  checkReceivingItemDetails({
+    copyNumber,
+    barcode,
+    receivedLocation,
+    holdingLocation,
+    rowIndex = 0,
+  } = {}) {
     if (copyNumber) {
       this.checkReceivingItemFieldValue({
         fieldName: 'copyNumber',
@@ -84,6 +108,13 @@ export default {
         rowIndex,
         strictMode: false,
       });
+    }
+    if (holdingLocation) {
+      cy.expect(
+        receivingsListEditForm
+          .find(Selection({ name: `receivedItems[${rowIndex}].holdingId` }))
+          .has({ value: including(holdingLocation) }),
+      );
     }
   },
   fillReceivingFields({
@@ -127,6 +158,21 @@ export default {
           .has({ checked }),
       );
     }
+  },
+  // Pieces on the receiving form are not sorted, so the row is found by its selected holding
+  getRowIndexByHolding(holdingName) {
+    return cy
+      .then(() => receinigsListTable
+        .find(MultiColumnListRow({ isContainer: true, content: including(holdingName) }))
+        .rowIndexInParent())
+      .then((rowIndex) => Number(rowIndex.replace('row-', '')));
+  },
+  selectHolding({ holdingName, rowIndex = 0 }) {
+    cy.do(
+      receivingsListEditForm
+        .find(Selection({ name: `receivedItems[${rowIndex}].holdingId` }))
+        .choose(including(holdingName)),
+    );
   },
   clickCreateNewHoldingsButton({ rowIndex = 0 } = {}) {
     cy.do(

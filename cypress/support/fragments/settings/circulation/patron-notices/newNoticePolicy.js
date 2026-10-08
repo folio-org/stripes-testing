@@ -10,6 +10,10 @@ import {
   TextInput,
   Heading,
   PaneSet,
+  Pane,
+  DropdownMenu,
+  HTML,
+  including,
   KeyValue,
   TextField,
   Form,
@@ -28,9 +32,27 @@ const sections = {
 
 const noticePolicyForm = Form({ testId: 'form' });
 const saveButton = noticePolicyForm.find(Button('Save & close'));
+const newButton = Button({ id: 'clickable-create-entry' });
 const activeCheckbox = Checkbox({ id: 'notice_policy_active' });
 const keyName = 'Patron notice policy name';
 const keyDescription = 'Description';
+const noticeSections = {
+  loan: {
+    id: 'editLoanNotices',
+    label: 'Loan notices - sent to borrower',
+    noticeId: 'loan',
+  },
+  feeFine: {
+    id: 'editFeeFineNotices',
+    label: 'Fee/fine notices',
+    noticeId: 'feeFine',
+  },
+  request: {
+    id: 'editRequestNotices',
+    label: 'Request notices - sent to requester',
+    noticeId: 'request',
+  },
+};
 
 export const actionsButtons = {
   edit: Button({ id: 'dropdown-clickable-edit-item' }),
@@ -56,6 +78,14 @@ export default {
     return cy.expect(Heading('Patron notice policies').exists());
   },
 
+  verifyPoliciesListPane() {
+    cy.expect(Heading('Patron notice policies').exists());
+  },
+
+  verifyNewButtonLabel() {
+    cy.expect([newButton.exists(), newButton.has({ text: 'New', visible: true })]);
+  },
+
   openToSide(patronNoticePolicy) {
     cy.do(Link(patronNoticePolicy.name).click());
   },
@@ -69,7 +99,111 @@ export default {
   },
 
   startAdding() {
-    return cy.do(Button({ id: 'clickable-create-entry' }).click());
+    return cy.do(newButton.click());
+  },
+
+  verifyNewPolicyForm() {
+    cy.expect([
+      Heading('New patron notice policy').exists(),
+      nameField.exists(),
+      descriptionField.exists(),
+      activeCheckbox.exists(),
+    ]);
+    Object.values(noticeSections).forEach(({ id, label }) => {
+      cy.expect(Section({ id }).has({ label: including(label) }));
+    });
+  },
+
+  expandNoticeSection(sectionName) {
+    const { id } = noticeSections[sectionName];
+    const section = Section({ id });
+
+    cy.expect(section.exists());
+    cy.do(
+      section.perform((element) => {
+        const content = element.querySelector('[class^=content-wrap]');
+        if (!content.className.includes('expanded')) {
+          element.querySelector('[class^=defaultCollapseButton-]').click();
+        }
+      }),
+    );
+    cy.expect(section.has({ expanded: true }));
+  },
+
+  addEmptyNotice(sectionName, index = 0) {
+    const { id } = noticeSections[sectionName];
+    const section = Section({ id });
+
+    cy.expect(section.find(addNoticeButton).exists());
+    cy.do(section.find(addNoticeButton).click());
+    this.verifyNoticeRowHasNoSelection(sectionName, index);
+  },
+
+  noticeFields(sectionName, index = 0) {
+    const { noticeId } = noticeSections[sectionName];
+    return {
+      template: Select({ name: `${noticeId}Notices[${index}].templateId` }),
+      format: Select({ name: `${noticeId}Notices[${index}].format` }),
+      trigger: Select({ name: `${noticeId}Notices[${index}].sendOptions.sendWhen` }),
+    };
+  },
+
+  verifyNoticeRowHasNoSelection(sectionName, index = 0) {
+    const fields = this.noticeFields(sectionName, index);
+    cy.expect([
+      fields.template.has({ value: '' }),
+      fields.format.has({ value: '' }),
+      fields.trigger.has({ value: '' }),
+    ]);
+  },
+
+  verifyNoticeFormatOptions(sectionName, index = 0) {
+    const formatField = this.noticeFields(sectionName, index).format;
+    cy.do(formatField.click());
+    cy.expect(formatField.has({ optionsText: ['Email', 'Text message'] }));
+  },
+
+  openPolicy(policyName) {
+    cy.expect(NavListItem(policyName).exists());
+    cy.do(NavListItem(policyName).click());
+    cy.expect(Pane(policyName).exists());
+  },
+
+  verifyPolicyNoticeDetails(policyName, templateName, format) {
+    const policyPane = Pane(policyName);
+    cy.expect([
+      policyPane.exists(),
+      policyPane.find(HTML({ text: including(templateName) })).exists(),
+      policyPane.find(HTML({ text: including(format) })).exists(),
+    ]);
+  },
+
+  openPolicyForEditing(policyName, templateName) {
+    const policyPane = Pane(policyName);
+    const editButton = DropdownMenu().find(actionsButtons.edit);
+    const noticeFields = this.noticeFields('loan');
+
+    cy.do(policyPane.find(actionsButton).click());
+    cy.expect(DropdownMenu().exists());
+    cy.expect(editButton.exists());
+    cy.do(editButton.click());
+    cy.expect([
+      nameField.has({ value: policyName }),
+      noticeFields.template.has({ selectedOptionLabel: templateName }),
+      noticeFields.format.has({ selectedOptionLabel: 'Email' }),
+    ]);
+  },
+
+  selectNoticeFormat(sectionName, format, index = 0) {
+    const formatField = this.noticeFields(sectionName, index).format;
+    cy.do(formatField.choose(format));
+    cy.expect(formatField.has({ selectedOptionLabel: format }));
+  },
+
+  saveAndClosePolicy() {
+    cy.expect(saveButton.has({ disabled: false }));
+    cy.do(saveButton.click());
+    cy.expect(noticePolicyForm.absent());
   },
 
   addNotice(patronNoticePolicy, index = 0) {

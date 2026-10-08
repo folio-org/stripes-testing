@@ -66,7 +66,9 @@ const R = {
   USER: 'user',
 };
 
-describe('Orders', () => {
+// The test is running for 1 hour, using 10 Gb RAM causing test pipelines to fail (workers are freezing).
+// The test is disabled until the root cause is found.
+describe.skip('Orders', () => {
   const flow = new ExecutionFlowManager();
   // PO numbers accept only alphanumeric characters and are limited to 22 characters.
   // getRandomPostfix() may contain a decimal point, so keep a short numeric suffix for all data.
@@ -96,59 +98,59 @@ describe('Orders', () => {
       poLineEstimatedPrice: index === 0 ? 2 : 1,
     },
     fundDistribution:
-        index === 0
-          ? [
-            {
-              fundId: flow.get(R.FUNDS)[0].id,
-              code: flow.get(R.FUNDS)[0].code,
-              expenseClassId: flow.get(R.EXPENSE_CLASSES)[0].id,
-              value: 100,
-            },
-          ]
-          : [
-            {
-              fundId: flow.get(R.FUNDS)[0].id,
-              code: flow.get(R.FUNDS)[0].code,
-              expenseClassId: flow.get(R.EXPENSE_CLASSES)[1].id,
-              value: 50,
-            },
-            {
-              fundId: flow.get(R.FUNDS)[1].id,
-              code: flow.get(R.FUNDS)[1].code,
-              value: 50,
-            },
-          ],
+      index === 0
+        ? [
+          {
+            fundId: flow.get(R.FUNDS)[0].id,
+            code: flow.get(R.FUNDS)[0].code,
+            expenseClassId: flow.get(R.EXPENSE_CLASSES)[0].id,
+            value: 100,
+          },
+        ]
+        : [
+          {
+            fundId: flow.get(R.FUNDS)[0].id,
+            code: flow.get(R.FUNDS)[0].code,
+            expenseClassId: flow.get(R.EXPENSE_CLASSES)[1].id,
+            value: 50,
+          },
+          {
+            fundId: flow.get(R.FUNDS)[1].id,
+            code: flow.get(R.FUNDS)[1].code,
+            value: 50,
+          },
+        ],
     tags: {
       tagList:
-          index === 0
-            ? [flow.get(R.TAGS)[2].label, flow.get(R.TAGS)[3].label]
-            : [flow.get(R.TAGS)[3].label],
+        index === 0
+          ? [flow.get(R.TAGS)[2].label, flow.get(R.TAGS)[3].label]
+          : [flow.get(R.TAGS)[3].label],
     },
     donor: index === 0 ? 'Test donor' : undefined,
     publisher: index === 0 ? 'Jane, Smith' : undefined,
     requester: index === 0 ? 'Meg Ryan' : undefined,
     selector: index === 0 ? 'Steve Irwin' : undefined,
     contributors:
-        index === 0
-          ? [
-            {
-              contributor: 'Harry Jay',
-              contributorNameTypeId: flow.get(R.CONTRIBUTOR_NAME_TYPE).id,
-            },
-          ]
-          : [],
+      index === 0
+        ? [
+          {
+            contributor: 'Harry Jay',
+            contributorNameTypeId: flow.get(R.CONTRIBUTOR_NAME_TYPE).id,
+          },
+        ]
+        : [],
     vendorDetail: {
       vendorAccount: index === 0 ? '123-58' : '',
       referenceNumbers:
-          index === 0
-            ? [
-              {
-                refNumber: '205885-CA',
-                refNumberType: 'Vendor order reference number',
-                vendorDetailsSource: 'OrderLine',
-              },
-            ]
-            : [],
+        index === 0
+          ? [
+            {
+              refNumber: '205885-CA',
+              refNumberType: 'Vendor order reference number',
+              vendorDetailsSource: 'OrderLine',
+            },
+          ]
+          : [],
     },
     locations: flow
       .get(R.LOCATIONS)
@@ -254,12 +256,12 @@ describe('Orders', () => {
             fiscalYearId: currentFlow.get(R.FISCAL_YEAR).id,
             fundId: fund.id,
             statusExpenseClasses:
-                index === 0
-                  ? currentFlow.get(R.EXPENSE_CLASSES).map(({ id }) => ({
-                    status: 'Active',
-                    expenseClassId: id,
-                  }))
-                  : [],
+              index === 0
+                ? currentFlow.get(R.EXPENSE_CLASSES).map(({ id }) => ({
+                  status: 'Active',
+                  expenseClassId: id,
+                }))
+                : [],
           }).then((budget) => budgets.push(budget)))
           .then(() => currentFlow.set(R.BUDGETS, budgets, () => budgets.forEach(({ id }) => Budgets.deleteViaApi(id, false))));
       })
@@ -274,20 +276,20 @@ describe('Orders', () => {
             orderType: index === 0 ? 'Ongoing' : 'One-Time',
             tags: {
               tagList:
-                  index === 0
-                    ? [
-                      ...currentFlow
-                        .get(R.TAGS)
-                        .slice(0, 2)
-                        .map(({ label }) => label),
-                      currentFlow.get(R.TAGS)[3].label,
-                    ]
-                    : [currentFlow.get(R.TAGS)[3].label],
+                index === 0
+                  ? [
+                    ...currentFlow
+                      .get(R.TAGS)
+                      .slice(0, 2)
+                      .map(({ label }) => label),
+                    currentFlow.get(R.TAGS)[3].label,
+                  ]
+                  : [currentFlow.get(R.TAGS)[3].label],
             },
             ongoing:
-                index === 0
-                  ? { isSubscription: true, reviewPeriod: 200, manualRenewal: false }
-                  : undefined,
+              index === 0
+                ? { isSubscription: true, reviewPeriod: 200, manualRenewal: false }
+                : undefined,
           }).then((order) => orders.push(order)))
           .then(() => currentFlow.set(R.ORDERS, orders, () => orders.forEach(({ id }) => Orders.deleteOrderViaApi(id, false))));
       })
@@ -673,9 +675,11 @@ describe('Orders', () => {
     });
   };
 
-  it(
+  // The test is running for 1 hour, using 10 Gb RAM causing test pipelines to fail (workers are freezing).
+  // The test is disabled until the root cause is found.
+  it.skip(
     'C1375887 Search and filter Orders and Order lines with new indexes (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C1375887'] },
+    { tags: ['extendedPathBroken', 'thunderjet', 'C1375887Broken'] },
     () => {
       const [fundA, fundB] = flow.get(R.FUNDS);
       const [tag1, tag2, tag3, isolationTag] = flow.get(R.TAGS);

@@ -6,9 +6,10 @@ import {
   Pane,
   including,
 } from '../../../../../../interactors';
-import { INVENTORY_SETTINGS_SECTION_LABELS, REQUEST_METHOD } from '../../../../constants';
+import { REQUEST_METHOD } from '../../../../constants';
+import { INVENTORY_SETTINGS_TABS } from '../settingsInventory';
 
-const settingsPane = Pane(INVENTORY_SETTINGS_SECTION_LABELS.ITEM_NOTE_TYPES);
+const settingsPane = Pane(INVENTORY_SETTINGS_TABS.ITEM_NOTE_TYPES);
 
 export const reasonsActions = {
   edit: 'edit',

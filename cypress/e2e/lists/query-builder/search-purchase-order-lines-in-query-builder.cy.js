@@ -100,7 +100,7 @@ describe('Lists', () => {
         operator: QUERY_OPERATIONS.NOT_IN,
         filedType: 'input',
         value: 'test',
-        query: 'pol.id not in test',
+        query: 'pol.id not in [test]',
       },
     ];
 
