@@ -58,6 +58,10 @@ export default {
   checkClaimExpiryDateHasNoError() {
     cy.expect(claimExpiryDateField.has({ error: false }));
   },
+  fillInternalNote(note) {
+    cy.do(internalNoteField.fillIn(note));
+    cy.expect(internalNoteField.has({ value: note }));
+  },
   fillExternalNote(note) {
     cy.do(externalNoteField.fillIn(note));
     cy.expect(externalNoteField.has({ value: note }));

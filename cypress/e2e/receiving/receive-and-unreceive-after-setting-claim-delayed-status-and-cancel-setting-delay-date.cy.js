@@ -303,6 +303,7 @@ describe('Receiving', () => {
       OrderLineDetails.openInventoryItem();
       InventoryInstance.waitLoading();
       InventoryInstance.verifyHoldingsAccordionsCount(1);
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.location.name, 1);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.location.name,
         records: [{ status: ITEM_STATUS_NAMES.ON_ORDER }],
