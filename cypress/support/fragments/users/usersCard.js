@@ -1014,6 +1014,16 @@ export default {
     ]);
   },
 
+  verifyProxySponsorUpdatedRelationship(username) {
+    const proxyUser = ProxyUser(including(username));
+    cy.expect([
+      proxyUser.exists(),
+      proxyUser.find(KeyValue('Relationship Status')).has({ value: 'Inactive' }),
+      proxyUser.find(KeyValue('Proxy can request for sponsor')).has({ value: 'No' }),
+      proxyUser.find(KeyValue('Notifications sent to')).has({ value: 'Proxy' }),
+    ]);
+  },
+
   verifyProxyNameDisplayed(lastName) {
     cy.expect(HTML(including(lastName)).exists());
   },
