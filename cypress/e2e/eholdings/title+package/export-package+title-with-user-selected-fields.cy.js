@@ -54,10 +54,10 @@ describe('eHoldings', () => {
     before('Creating user, logging in', () => {
       cy.getAdminToken();
 
-      // EHoldingsPackages.setPackageCustomDisplayNameViaAPI(
-      //   testData.packageName,
-      //   '',
-      // );
+      EHoldingsPackages.setPackageCustomDisplayNameViaAPI(
+        testData.packageName,
+        '',
+      );
       cy.createTempUser([
         Permissions.moduleeHoldingsEnabled.gui,
         Permissions.uiAgreementsSearchAndView.gui,
