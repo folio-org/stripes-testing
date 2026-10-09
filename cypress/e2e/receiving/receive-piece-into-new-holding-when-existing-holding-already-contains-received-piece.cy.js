@@ -190,10 +190,12 @@ describe('Receiving', () => {
       ReceivingDetails.openInstanceDetails();
       InventoryInstance.waitLoading();
       InventoryInstance.verifyHoldingsAccordionsCount(2);
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.location1.name, 1);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.location1.name,
         records: [{ status: ITEM_STATUS_NAMES.IN_PROCESS }],
       });
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.location2.name, 1);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.location2.name,
         records: [{ status: ITEM_STATUS_NAMES.IN_PROCESS }],
