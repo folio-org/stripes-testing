@@ -349,6 +349,7 @@ describe('Receiving', () => {
       InventoryInstance.waitLoading();
       InventoryInstance.verifyHoldingsAccordionsCount(2);
       InstanceRecordView.verifyItemsListIsEmpty(location1.name);
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(location2.name, 1);
       InventoryInstance.checkHoldingsTableContent({
         name: location2.name,
         records: [{ status: ITEM_STATUS_NAMES.ON_ORDER }],
