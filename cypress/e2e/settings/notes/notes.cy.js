@@ -11,10 +11,15 @@ describe('Notes', () => {
   const editedNoteType = `C1205 edited Note ${randomFourDigitNumber()}`;
   const generalNote = 'General note';
   const getCalloutMessage = (note) => `The note type ${note} was successfully deleted`;
+  let isGeneralNoteAssigned;
 
   before('Creating data', () => {
     cy.createTempUser([Permissions.uiNotesSettingsEdit.gui]).then((userProperties) => {
       user = userProperties;
+      NoteTypes.getNoteTypeAssignmentStatus(generalNote).then((isAssigned) => {
+        isGeneralNoteAssigned = isAssigned;
+      });
+
       cy.login(user.username, user.password, {
         path: TopMenu.notesPath,
         waiter: NoteTypes.waitLoading,
@@ -33,7 +38,8 @@ describe('Notes', () => {
     () => {
       NoteTypes.checkNewNoteButtonEnabled();
       NoteTypes.checkNoteTypeIsDisplayed(generalNote);
-      NoteTypes.checkDeleteIconNotDisplayed(generalNote);
+      if (isGeneralNoteAssigned) NoteTypes.checkDeleteIconNotDisplayed(generalNote);
+      else NoteTypes.checkEditAndDeleteIcons(generalNote);
       NoteTypes.addNoteType();
       NoteTypes.fillInNoteType(noteType);
       NoteTypes.saveNoteType(noteType);

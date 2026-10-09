@@ -16,13 +16,12 @@ describe('Inventory', () => {
     describe('Consortia', () => {
       const testData = {
         OCLCAuthentication: '100481406/PAOLF',
-        oclcNumberForImport: '1234568',
+        oclcNumberForImport: '1158372966',
         oclcNumberForOverlay: '1234566',
         jobProfileName: 'Inventory Single Record - Default Update Instance',
         fileName: 'No file name',
         instanceTitle: 'New ideas in chess / by Larry Evans.',
-        localInstanceTitle:
-          'Local instance • Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.  • P. Simone • 1933',
+        localInstanceTitle: 'Local instance • Harry Potter and the goblet of fire / J.K. Rowling.',
         updatedInstanceTitle:
           'Local instance • New ideas in chess / by Larry Evans.  • Pitman • 1958',
       };
@@ -75,6 +74,7 @@ describe('Inventory', () => {
         { tags: ['criticalPathECS', 'promin', 'C418586'] },
         () => {
           InventoryInstances.waitContentLoading();
+          cy.setTenant(Affiliations.College); // API call in method below needs to be done in target tenant
           InventoryInstances.importWithOclc(testData.oclcNumberForImport);
           InventoryInstance.verifyInstanceTitle(testData.localInstanceTitle);
           InventoryInstance.startOverlaySourceBibRecord();

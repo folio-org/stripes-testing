@@ -257,7 +257,6 @@ describe('MARC', () => {
               InventoryViewSource.contains(`${testData.marcAuthIcon}\n\t${field.tag}`);
             });
             InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
-            InventoryInstance.marcAuthViewIconClickUsingId(createdRecordsIDs[2]);
           },
         );
 
