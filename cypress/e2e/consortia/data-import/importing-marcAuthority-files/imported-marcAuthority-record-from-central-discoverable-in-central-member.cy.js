@@ -30,6 +30,7 @@ describe('Data Import', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405119 ');
         cy.createTempUser([
           Permissions.moduleDataImportEnabled.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -72,6 +73,7 @@ describe('Data Import', () => {
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(marcFile.fileName);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          cy.wait(3000);
           Logs.openFileDetails(marcFile.fileName);
           Logs.getCreatedItemsID().then((link) => {
             createdAuthorityID = link.split('/')[5];
