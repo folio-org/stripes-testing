@@ -72,7 +72,7 @@ function linkMatchProfileForSubMatches(matchProfileName, forMatchesOrder = 0) {
   cy.get('[id*="type-selector-dropdown-ROOT-MATCH"]').eq(forMatchesOrder).click();
   cy.do(matchButton.click());
   ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
-  ModalSelectProfile.selectProfile(matchProfileName);
+  ModalSelectProfile.selectProfile(matchProfileName, 'match');
   cy.expect(overviewAccordion.find(HTML(including(matchProfileName))).exists());
 }
 

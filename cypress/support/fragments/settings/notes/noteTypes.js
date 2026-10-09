@@ -66,6 +66,13 @@ export default {
       .then((response) => response.body.noteTypes);
   },
 
+  getNoteTypeAssignmentStatus(noteTypeName) {
+    return this.getNoteTypesViaApi().then((noteTypes) => {
+      const noteType = noteTypes.find((nt) => nt.name === noteTypeName);
+      return noteType ? noteType.usage.isAssigned : null;
+    });
+  },
+
   verifyNoteTypeIsNotAssigned(noteTypeId) {
     return cy
       .okapiRequest({
