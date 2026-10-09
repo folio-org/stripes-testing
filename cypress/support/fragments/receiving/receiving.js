@@ -41,7 +41,6 @@ const filtersPane = Pane({ id: 'receiving-filters-pane' });
 const rootsection = PaneContent({ id: 'pane-title-details-content' });
 const actionsButton = Button('Actions');
 const receivingSuccessful = 'Receiving successful';
-const unreceivingSuccessful = 'Unreceiving successful';
 const expectedPiecesAccordionId = 'expected';
 const receivedPiecesAccordionId = 'received';
 const receiveButton = Button('Receive');
@@ -404,7 +403,7 @@ export default {
     ]);
     // Need to wait, while data will be loaded
     cy.wait(1000);
-    InteractorsTools.checkCalloutMessage(unreceivingSuccessful);
+    InteractorsTools.checkCalloutMessage(ReceivingStates.pieceUnreceivedSuccessfully);
   },
 
   checkUnreceivedPiece: (caption) => {
@@ -528,7 +527,7 @@ export default {
   unreceiveInEditPieceModal() {
     this.openDropDownInEditPieceModal();
     cy.do(Button('Unreceive').click());
-    InteractorsTools.checkCalloutMessage('Unreceiving successful');
+    InteractorsTools.checkCalloutMessage(ReceivingStates.pieceUnreceivedSuccessfully);
   },
 
   receiveFromExpectedSectionWithClosePOL: () => {

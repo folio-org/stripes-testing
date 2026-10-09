@@ -35,3 +35,10 @@ export const FUND_DETAILS_FIELDS = {
   EXTERNAL_ACCOUNT_NO: 'External account',
   DESCRIPTION: 'Description',
 };
+
+export const FUND_SEARCH_INDEXES = {
+  NAME: 'name',
+  CODE: 'code',
+  EXTERNAL_ACCOUNT_NO: 'externalAccountNo',
+  DESCRIPTION: 'description',
+};

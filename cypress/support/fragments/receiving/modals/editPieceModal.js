@@ -1,7 +1,11 @@
 import {
+  Accordion,
   Button,
   Checkbox,
   KeyValue,
+  MetaSection,
+  MultiColumnList,
+  MultiColumnListCell,
   Pane,
   Select,
   Selection,
@@ -14,10 +18,13 @@ import {
 import {
   RECEIVING_PIECE_FORM_ACTIONS_LABELS,
   RECEIVING_PIECE_FORM_FIELD_LABELS,
+  RECEIVING_PIECE_STATUS_LOG_COLUMN_HEADERS,
 } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import ReceivingStates from '../receivingStates';
 import SelectLocationModal from '../../orders/modals/selectLocationModal';
+import DelayClaimModal from './delayClaimModal';
+import SendClaimModal from './sendClaimModal';
 import DeletePieceModal from './deletePieceModal';
 
 const editPieceModal = Pane({ id: 'pane-title-form' });
@@ -37,6 +44,7 @@ const saveAndCloseButton = editPieceModal.find(Button('Save & close'));
 const actionsDropdownButton = Button({ dataTestID: 'dropdown-trigger-button' });
 const unreceiveButton = Button('Unreceive');
 const expectButton = Button(RECEIVING_PIECE_FORM_ACTIONS_LABELS.EXPECT);
+const statusLogList = editPieceModal.find(MultiColumnList({ id: 'piece-status-change-log' }));
 
 const editPieceFields = {
   [RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_SUMMARY]: editPieceModal.find(
@@ -79,6 +87,8 @@ const editPieceFields = {
   [RECEIVING_PIECE_FORM_FIELD_LABELS.ACCESSION_NUMBER]: editPieceModal.find(
     TextField({ name: 'accessionNumber' }),
   ),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.ITEM_STATUS]: editPieceModal.find(KeyValue('Item status')),
+  [RECEIVING_PIECE_FORM_FIELD_LABELS.REQUEST]: editPieceModal.find(KeyValue('Request')),
   [RECEIVING_PIECE_FORM_FIELD_LABELS.SEQUENCE]: editPieceModal.find(
     TextField({ name: 'sequenceNumber' }),
   ),
@@ -179,11 +189,11 @@ export default {
     cy.do(displayToPublicCheckbox.click());
   },
 
-  verifyCheckboxPresent(checkBoxName, shouldExist = true) {
+  verifyCheckboxPresent(checkBoxName, shouldExist = true, disabled = false) {
     if (shouldExist) {
-      cy.expect(Checkbox(checkBoxName).exists());
+      cy.expect(Checkbox(checkBoxName, { disabled }).exists());
     } else {
-      cy.expect(Checkbox(checkBoxName).absent());
+      cy.expect(Checkbox(checkBoxName, { disabled }).absent());
     }
   },
 
@@ -237,6 +247,24 @@ export default {
       InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
     }
   },
+  clickSendClaimButton() {
+    cy.do(sendClaimButton.click());
+    SendClaimModal.waitLoading();
+
+    return SendClaimModal;
+  },
+  clickDelayClaimButton() {
+    cy.do(delayClaimButton.click());
+    DelayClaimModal.waitLoading();
+
+    return DelayClaimModal;
+  },
+  clickUnreceiveButton(isSuccess = true) {
+    cy.do(unreceiveButton.click());
+    if (isSuccess) {
+      InteractorsTools.checkCalloutMessage(ReceivingStates.pieceUnreceivedSuccessfully);
+    }
+  },
   clickSaveAndCloseButton({ pieceSaved = true } = {}) {
     cy.do(saveAndCloseButton.click());
     if (pieceSaved) {
@@ -253,18 +281,77 @@ export default {
     cy.do(actionsDropdownButton.click());
   },
   verifyActionsMenuOptionsStates(options = []) {
+    const {
+      DELAY_CLAIM,
+      DELETE,
+      MARK_LATE,
+      QUICK_RECEIVE,
+      SAVE_AND_CREATE,
+      SEND_CLAIM,
+      UNRECEIVABLE,
+      UNRECEIVE,
+    } = RECEIVING_PIECE_FORM_ACTIONS_LABELS;
     const optionButtonsMap = {
-      'Save and create another': saveAndCreateAnotherButton,
-      'Quick receive': quickReceiveButton,
-      'Mark late': markLateButton,
-      'Send claim': sendClaimButton,
-      'Delay claim': delayClaimButton,
-      Unreceivable: unreceivableButton,
-      Delete: deleteButton,
+      [SAVE_AND_CREATE]: saveAndCreateAnotherButton,
+      [QUICK_RECEIVE]: quickReceiveButton,
+      [MARK_LATE]: markLateButton,
+      [SEND_CLAIM]: sendClaimButton,
+      [DELAY_CLAIM]: delayClaimButton,
+      [UNRECEIVABLE]: unreceivableButton,
+      [UNRECEIVE]: unreceiveButton,
+      [DELETE]: deleteButton,
     };
 
     options.forEach(({ option, disabled }) => {
       cy.expect(optionButtonsMap[option].has({ disabled }));
+    });
+  },
+  checkAccordionsConditions(accordions = []) {
+    accordions.forEach(({ label, conditions }) => {
+      cy.expect(editPieceModal.find(Accordion(label)).has(conditions));
+    });
+  },
+  verifyMetadataAccordionState(isOpen = false) {
+    cy.expect(editPieceModal.find(MetaSection()).has({ open: isOpen }));
+  },
+  expandAccordion(label) {
+    cy.do(editPieceModal.find(Accordion(label)).clickHeader());
+    cy.expect(editPieceModal.find(Accordion(label)).has({ open: true }));
+  },
+  checkStatusLogContent(records = []) {
+    const { DATE, INTERVAL, STATUS_CHANGE, UPDATED_BY } = RECEIVING_PIECE_STATUS_LOG_COLUMN_HEADERS;
+
+    cy.expect(statusLogList.has({ rowCount: records.length }));
+
+    records.forEach((record, row) => {
+      if (record.status) {
+        cy.expect(
+          statusLogList
+            .find(MultiColumnListCell({ row, column: STATUS_CHANGE }))
+            .has({ content: record.status }),
+        );
+      }
+      if (record.date) {
+        cy.expect(
+          statusLogList
+            .find(MultiColumnListCell({ row, column: DATE }))
+            .has({ content: record.date }),
+        );
+      }
+      if (record.interval) {
+        cy.expect(
+          statusLogList
+            .find(MultiColumnListCell({ row, column: INTERVAL }))
+            .has({ content: record.interval }),
+        );
+      }
+      if (record.updatedBy) {
+        cy.expect(
+          statusLogList
+            .find(MultiColumnListCell({ row, column: UPDATED_BY }))
+            .has({ content: including(record.updatedBy) }),
+        );
+      }
     });
   },
   verifyUnreceiveOptionState({ disabled = true } = {}) {
