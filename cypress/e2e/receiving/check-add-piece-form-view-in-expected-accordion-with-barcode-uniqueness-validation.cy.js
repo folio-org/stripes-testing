@@ -319,6 +319,7 @@ describe('Receiving', () => {
       // Steps 11-12: Open the instance, the holding contains items of both pieces
       OrderLineDetails.openInventoryItem();
       InventoryInstance.waitLoading();
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.location.name, 2);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.location.name,
         records: [

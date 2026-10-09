@@ -28,6 +28,7 @@ import {
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import ExportDetails from '../exportManager/exportDetails';
+import MCLHelper from '../multiColumnList';
 import InventoryInstance from '../inventory/inventoryInstance';
 import Receivings from '../receiving/receiving';
 import CloseConfirmationModal from './modals/closeConfirmationModal';
@@ -54,6 +55,8 @@ const customFieldsAccordion = Section({ id: 'customFieldsPO' });
 
 const exportDetailsSection = orderDetailsPane.find(Section({ id: 'exportDetails' }));
 const relatedInvoicesSection = orderDetailsPane.find(Section({ id: 'relatedInvoices' }));
+const compareDateStrings = (left, right) => new Date(left) - new Date(right);
+const relatedInvoicesList = relatedInvoicesSection.find(MultiColumnList());
 const headerDetail = orderDetailsPane.find(PaneHeader({ id: 'paneHeaderorder-details' }));
 
 const iconTimes = Button({ icon: 'times' });
@@ -318,6 +321,21 @@ export default {
         cy.expect(targetCell.has({ content: value === '' ? '' : including(value) }));
       }
     });
+  },
+
+  assertRelatedInvoicesSortDirection(columnName, direction) {
+    MCLHelper.assertColumnSortDirection(relatedInvoicesList, columnName, direction);
+  },
+
+  assertRelatedInvoicesSorted(columnName, direction) {
+    MCLHelper.assertColumnValuesSorted(relatedInvoicesList, columnName, {
+      direction,
+      comparator: compareDateStrings,
+    });
+  },
+
+  sortRelatedInvoicesBy(columnName) {
+    MCLHelper.sortListBy(relatedInvoicesList, columnName);
   },
 
   checkRelatedInvoiceColumnItem(rowIndex, columnName, value) {
