@@ -126,12 +126,21 @@ export default {
       }
     });
   },
-  verifySelectedHolding(holdingName) {
-    cy.expect(
-      editPieceModal
-        .find(Selection({ name: 'holdingId' }))
-        .has({ singleValue: including(holdingName) }),
-    );
+  // Holding of a piece which can not be edited (e.g. unreceivable) is displayed as a value
+  verifySelectedHolding(holdingName, { isEditable = true } = {}) {
+    if (isEditable) {
+      cy.expect(
+        editPieceModal
+          .find(Selection({ name: 'holdingId' }))
+          .has({ singleValue: including(holdingName) }),
+      );
+    } else {
+      cy.expect(
+        editPieceModal
+          .find(KeyValue(RECEIVING_PIECE_FORM_FIELD_LABELS.SELECT_HOLDINGS))
+          .has({ value: including(holdingName) }),
+      );
+    }
   },
   selectHolding(holdingName) {
     cy.do(editPieceModal.find(Selection({ name: 'holdingId' })).choose(including(holdingName)));
@@ -284,6 +293,7 @@ export default {
     const {
       DELAY_CLAIM,
       DELETE,
+      EXPECT,
       MARK_LATE,
       QUICK_RECEIVE,
       SAVE_AND_CREATE,
@@ -299,11 +309,16 @@ export default {
       [DELAY_CLAIM]: delayClaimButton,
       [UNRECEIVABLE]: unreceivableButton,
       [UNRECEIVE]: unreceiveButton,
+      [EXPECT]: expectButton,
       [DELETE]: deleteButton,
     };
 
-    options.forEach(({ option, disabled }) => {
-      cy.expect(optionButtonsMap[option].has({ disabled }));
+    options.forEach(({ option, disabled, absent = false }) => {
+      if (absent) {
+        cy.expect(optionButtonsMap[option].absent());
+      } else {
+        cy.expect(optionButtonsMap[option].has({ disabled }));
+      }
     });
   },
   checkAccordionsConditions(accordions = []) {
