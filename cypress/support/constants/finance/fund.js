@@ -42,3 +42,5 @@ export const FUND_SEARCH_INDEXES = {
   EXTERNAL_ACCOUNT_NO: 'externalAccountNo',
   DESCRIPTION: 'description',
 };
+
+export const RESTRICT_USE_BY_LOCATION_LABEL = 'Restrict use by location';

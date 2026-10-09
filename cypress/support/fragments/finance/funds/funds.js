@@ -1595,7 +1595,7 @@ export default {
   },
 
   selectActionInUnassignAllLocationsModal: (action) => {
-    const button = action === 'cancel' ? cancelButton : submitButton;
+    const button = action?.toLocaleLowerCase() === 'cancel' ? cancelButton : submitButton;
     cy.do(unassignAllLocationsModal.find(button).click());
     cy.wait(2000);
   },

@@ -12,3 +12,4 @@ export * from './orders';
 export * from './organizations';
 export * from './query-builder';
 export * from './receiving';
+export * from './tenant';
