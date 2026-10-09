@@ -100,15 +100,7 @@ describe('Orders', () => {
   };
 
   const assertSubscriptionDatesInRelatedInvoiceLines = () => {
-    getRecordsInDescendingOrder().forEach(
-      ({ vendorInvoiceNo, subscriptionStart, subscriptionEnd }) => {
-        OrderLineDetails.assertRelatedInvoiceLineSubscriptionDates({
-          vendorInvoiceNo,
-          subscriptionStart,
-          subscriptionEnd,
-        });
-      },
-    );
+    OrderLineDetails.checkRelatedInvoiceLinesTableContent(getRecordsInDescendingOrder());
   };
 
   const createInvoiceWithSubscription = (f, key, dateOffsetDays) => {
@@ -294,7 +286,7 @@ describe('Orders', () => {
 
   it(
     'C813671 Sorting of related invoices with the populated Subscription start and Subscription end dates in the PO and POL details panes (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C813671'] },
+    { tags: ['extendedPath', 'thunderjet', 'C813671', 'nonParallel'] },
     () => {
       cy.log('<--- STEP 1 --->');
       OrderDetails.assertRelatedInvoicesSortDirection(

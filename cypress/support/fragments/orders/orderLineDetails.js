@@ -739,33 +739,6 @@ export default {
     MCLHelper.assertRowCount(relatedInvoiceLinesList, rowCount);
   },
 
-  assertRelatedInvoiceLineSubscriptionDates({
-    vendorInvoiceNo,
-    subscriptionStart,
-    subscriptionEnd,
-  }) {
-    const invoiceLineRow = relatedInvoiceLinesSection.find(
-      MultiColumnListRow({ content: including(vendorInvoiceNo), isContainer: true }),
-    );
-
-    cy.expect([
-      invoiceLineRow
-        .find(
-          MultiColumnListCell({
-            column: RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.SUBSCRIPTION_START,
-          }),
-        )
-        .has({ content: including(subscriptionStart) }),
-      invoiceLineRow
-        .find(
-          MultiColumnListCell({
-            column: RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS.SUBSCRIPTION_END,
-          }),
-        )
-        .has({ content: including(subscriptionEnd) }),
-    ]);
-  },
-
   assertRelatedInvoiceLinesSortDirection(columnName, direction) {
     MCLHelper.assertColumnSortDirection(relatedInvoiceLinesList, columnName, direction);
   },
