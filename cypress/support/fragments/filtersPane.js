@@ -350,12 +350,13 @@ export default {
    * @param {string[]} [selectOptions=[]] - Option labels to select.
    * @param {object} [options={}]
    * @param {boolean} [options.expandAccordion=true] - Whether to expand the accordion first.
+   * @param {boolean} [options.filterByLabel=false] - Whether to filter each option by label before select.
    *
    * @example
    * FiltersPane.filterByMultiSelectOptions(ordersFiltersPane, 'fundCode', ['FUND-A', 'FUND-B']);
    */
   filterByMultiSelectOptions(filtersPane, filterLabel, selectOptions = [], options = {}) {
-    const { expandAccordion = true } = options;
+    const { expandAccordion = true, filterByLabel = false } = options;
 
     if (expandAccordion) {
       this.expandFilterAccordion(filtersPane, filterLabel);
@@ -372,7 +373,15 @@ export default {
       }),
     );
     cy.do(filterMultiSelect.perform((el) => el.scrollIntoView({ block: 'center' })));
-    cy.do(filterMultiSelect.choose(selectOptions));
+
+    if (filterByLabel) {
+      cy.wrap(selectOptions).each((selectOption) => {
+        cy.do(filterMultiSelect.filter(selectOption));
+        cy.do(filterMultiSelect.choose(selectOption));
+      });
+    } else {
+      cy.do(filterMultiSelect.choose(selectOptions));
+    }
   },
 
   /**

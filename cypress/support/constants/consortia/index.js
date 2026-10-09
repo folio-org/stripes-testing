@@ -11,3 +11,6 @@ export const PUBLISH_COORDINATOR_SHARE_DETAILS_KEYS = {
   DELETE: 'pcId',
   UPDATE: 'updateSettingsPCId',
 };
+
+export const PRIMARY_LABEL = 'Primary';
+export const AFFILIATION_LABEL = 'Affiliation';

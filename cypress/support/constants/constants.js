@@ -1976,3 +1976,23 @@ export const MATCH_PROFILE_STATIC_VALUE_TYPES = {
   DATE: 'Date',
   DATE_RANGE: 'Date range',
 };
+
+export const ARIA_LABELS = {
+  SELECT_ALL: 'Select all',
+};
+
+export const GENERIC_FIELDS_LABELS = {
+  ADDRESS: 'Address',
+  CODE: 'Code',
+  CURRENCY: 'Currency',
+  NAME: 'Name',
+  DESCRIPTION: 'Description',
+  NOTE: 'Note',
+  PREFIX: 'Prefix',
+  STATUS: 'Status',
+  SUFFIX: 'Suffix',
+  TAGS: 'Tags',
+  TITLE: 'Title',
+  TYPE: 'Type',
+  VALUE: 'Value',
+};
