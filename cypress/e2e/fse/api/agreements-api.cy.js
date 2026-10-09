@@ -58,7 +58,7 @@ describe('fse-agreements', { retries: { runMode: 1 } }, () => {
 
   it(
     `FDOPS-6963 - ERM identifier endpoints are readable for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'api', 'erm-identifiers', 'FDOPS-6963'] },
+    { tags: ['fse', 'api', 'erm-identifiers', 'sanity', 'FDOPS-6963'] },
     () => {
       cy.getErmIdentifiers().then((response) => {
         cy.expect(response.status).to.eq(200);
@@ -79,7 +79,7 @@ describe('fse-agreements', { retries: { runMode: 1 } }, () => {
 
   it(
     `FDOPS-6964 - Entitlement log entries carry package IDs and resource URLs for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'api', 'entitlements', 'FDOPS-6964'] },
+    { tags: ['fse', 'api', 'entitlements', 'sanity', 'FDOPS-6964'] },
     () => {
       cy.getEntitlements().then((response) => {
         cy.expect(response.status).to.eq(200);
