@@ -162,7 +162,7 @@ describe('Orders', () => {
 
     it(
       'C594361 Filter purchase orders and lines by "Fund code" and by "Donor" filter in member tenant (thunderjet)',
-      { tags: ['extendedPathECS', 'thunderjet', 'C594361'] },
+      { tags: ['extendedPathECS', 'thunderjet', 'C594361', 'LOC'] },
       () => {
         const {
           fundA,
