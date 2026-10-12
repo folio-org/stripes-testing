@@ -270,6 +270,24 @@ export default {
       cy.expect(MultiColumnListRow({ rowIndexInParent: `row-${i}` }).exists());
     }
   },
+  verifyOpenLoansTabSelected: () => {
+    cy.expect(ButtonGroup().has({ selectedTab: 'Open loans' }));
+  },
+  verifyQuantityOpenLoans: (count) => {
+    const label = count === 1 ? `${count} record found` : `${count} records found`;
+    return cy.expect(
+      Pane(including('Loans -'))
+        .find(HTML(including(label)))
+        .exists(),
+    );
+  },
+  verifyNoItemsInLoansPage: () => {
+    return cy.expect(
+      Pane(including('Loans -'))
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
+  },
   verifyQuantityOpenAndClaimedReturnedLoans: (numberOfOpenLoans, numberOfClaimedReturnedLoans) => {
     return cy.expect(
       Pane(including('Loans -'))

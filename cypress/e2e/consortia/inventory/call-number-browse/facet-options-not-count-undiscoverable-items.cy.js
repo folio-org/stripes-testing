@@ -50,8 +50,8 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
   let folioInstancesMember = null;
   let currentLocation = null;
   const testData = {
-    servicePoint: ServicePoints.getDefaultServicePoint(),
     defaultLocation: {},
+    createdServicePoint: {},
   };
 
   const callNumberBrowseOptionMember = 'Library of Congress classification';
@@ -83,8 +83,19 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
       [memberTenant.affiliation, centralTenant.affiliation].forEach((tenant) => {
         cy.withinTenant(tenant, () => {
           ServicePoints.getViaApi({ query: 'name=Circ Desk' }).then((servicePoints) => {
-            testData.defaultLocation[tenant] = Location.getDefaultLocation(servicePoints[0].id);
-            Location.createViaApi(testData.defaultLocation[tenant]);
+            const servicePointId = servicePoints.length
+              ? cy.wrap(servicePoints[0].id)
+              : ServicePoints.createViaApi(ServicePoints.getDefaultServicePoint()).then(
+                (response) => {
+                  testData.createdServicePoint[tenant] = response.body.id;
+                  return response.body.id;
+                },
+              );
+
+            servicePointId.then((id) => {
+              testData.defaultLocation[tenant] = Location.getDefaultLocation(id);
+              Location.createViaApi(testData.defaultLocation[tenant]);
+            });
           });
           InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C656327');
         });
@@ -167,6 +178,18 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
     [memberTenant.affiliation, centralTenant.affiliation].forEach((tenant) => {
       cy.withinTenant(tenant, () => {
         InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C656327');
+        if (testData.defaultLocation[tenant]) {
+          const { id, institutionId, campusId, libraryId } = testData.defaultLocation[tenant];
+          Location.deleteInstitutionCampusLibraryLocationViaApi(
+            institutionId,
+            campusId,
+            libraryId,
+            id,
+          );
+        }
+        if (testData.createdServicePoint[tenant]) {
+          ServicePoints.deleteViaApi(testData.createdServicePoint[tenant]);
+        }
       });
     });
     callNumberTypesSettings.forEach((setting) => {

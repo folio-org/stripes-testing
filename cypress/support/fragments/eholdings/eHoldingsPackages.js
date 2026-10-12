@@ -49,8 +49,6 @@ const getdefaultPackage = () => {
 };
 
 const generatePackageBodyForUpdate = (updatedPackageData) => {
-  updatedPackageData.attributes.allowKbToAddTitles =
-    updatedPackageData.attributes.isSelected && !updatedPackageData.attributes.isCustom;
   return {
     data: {
       id: updatedPackageData.id,
@@ -59,13 +57,16 @@ const generatePackageBodyForUpdate = (updatedPackageData) => {
         name: updatedPackageData.attributes.name,
         customDisplayName: updatedPackageData.attributes.customDisplayName,
         isSelected: updatedPackageData.attributes.isSelected,
-        allowKbToAddTitles: updatedPackageData.attributes.allowKbToAddTitles,
+        allowKbToAddTitles:
+          updatedPackageData.attributes.isSelected && !updatedPackageData.attributes.isCustom,
         contentType: updatedPackageData.attributes.contentType,
         customCoverage: updatedPackageData.attributes.customCoverage,
         customAltNames: updatedPackageData.attributes.customAltNames,
         visibility: updatedPackageData.attributes.visibility,
         isCustom: updatedPackageData.attributes.isCustom,
-        proxy: updatedPackageData.attributes.proxy,
+        proxy: updatedPackageData.attributes.isSelected
+          ? updatedPackageData.attributes.proxy
+          : null,
         packageToken: updatedPackageData.attributes.packageToken,
         isFullPackage: true,
       },
@@ -426,27 +427,14 @@ export default {
     });
   },
 
-  unassignPackageViaAPI(packageName, { isHidden = false } = {}) {
+  unassignPackageViaAPI(packageName) {
     this.getPackageViaApi(packageName).then((searchResponse) => {
-      this.getPackageDataViaApi(searchResponse.body.data[0].id).then(({ body: { data } }) => {
+      const targetPackage = searchResponse.body.data.filter(
+        (pkg) => pkg.attributes.name === packageName,
+      )[0];
+      this.getPackageDataViaApi(targetPackage.id).then(({ body: { data } }) => {
         data.attributes.isSelected = false;
-        data.attributes.visibility = [
-          {
-            category: 'PF',
-            reason: '',
-            hidden: isHidden,
-          },
-          {
-            category: 'FTF',
-            reason: '',
-            hidden: isHidden,
-          },
-          {
-            category: 'MARC',
-            reason: '',
-            hidden: isHidden,
-          },
-        ];
+        data.attributes.visibility = null;
         data.attributes.customCoverage = {
           beginCoverage: '',
           endCoverage: '',
@@ -558,7 +546,10 @@ export default {
 
   setPackageCustomDisplayNameViaAPI(packageName, customDisplayName) {
     this.getPackageViaApi(packageName).then((searchResponse) => {
-      this.getPackageDataViaApi(searchResponse.body.data[0].id).then(({ body: { data } }) => {
+      const targetPackage = searchResponse.body.data.filter(
+        (pkg) => pkg.attributes.name === packageName,
+      )[0];
+      this.getPackageDataViaApi(targetPackage.id).then(({ body: { data } }) => {
         data.attributes.customDisplayName = customDisplayName;
         this.updatePackageViaApi(data);
       });

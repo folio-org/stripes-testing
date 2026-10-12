@@ -144,6 +144,11 @@ export default {
     resource: 'UI-Users Loans',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiUsersLoansRenew: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Users Loans-Renew',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
   uiUsersFeeFinesView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Users Feesfines',
