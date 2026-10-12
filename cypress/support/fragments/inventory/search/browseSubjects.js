@@ -17,6 +17,7 @@ import {
   Select,
   TextArea,
   TextInput,
+  ValueChipRoot,
 } from '../../../../../interactors';
 import { escapeRegex } from '../../../utils/stringTools';
 import InventorySearchAndFilter from '../inventorySearchAndFilter';
@@ -446,6 +447,12 @@ export default {
         .click(),
     );
     cy.wait(4000);
+  },
+
+  verifySubjectTypeSelected(subjectType) {
+    cy.expect(
+      MultiSelect({ id: 'subjectType-multiselect' }).find(ValueChipRoot(subjectType)).exists(),
+    );
   },
 
   openInstance: (subject) => {

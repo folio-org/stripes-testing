@@ -308,6 +308,10 @@ export default {
     }
   },
 
+  verifySaveAndCloseButtonDisabled: (disabled = true) => {
+    cy.expect(saveAndCloseButton.has({ disabled }));
+  },
+
   verifyRootAddButtonDisplayed: (shouldDisplay = true) => {
     if (shouldDisplay) cy.expect(rootAddButton.exists());
     else cy.expect(rootAddButton.absent());

@@ -141,6 +141,7 @@ const thesaurusAccordion = Accordion('Thesaurus');
 const sharedTextInDetailView = 'Shared • ';
 const localTextInDetailView = 'Local • ';
 export const defaultLDR = '00000nz\\\\a2200000o\\\\4500';
+export const valid008ValuesString = '260930\\a|adznnaa|a\\\\\\\\\\\\\\\\\\\\||\\a||\\\\\\\\|d';
 export const valid008FieldValues = {
   'Cat Rules': 'c',
   'Geo Subd': 'n',
@@ -1602,7 +1603,7 @@ export default {
   // Checks OUR OWN headings keep the given relative order, ignoring other rows interspersed among
   // them - safer than asserting the whole list is sorted on an environment with lots of real data.
   verifyRecordsInRelativeOrder(expectedOrderedHeadings, columnIndex = 2) {
-    expectedOrderedHeadings.forEach(heading => {
+    expectedOrderedHeadings.forEach((heading) => {
       this.verifyRecordFound(including(heading));
     });
     this.getResultsListByColumn(columnIndex).then((cells) => {
