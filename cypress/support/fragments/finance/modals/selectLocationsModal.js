@@ -72,25 +72,21 @@ export default {
       affiliationName
         ? affiliationSelection.has({ value: including(affiliationName) })
         : affiliationSelection.absent(),
-
       searchField.has({ value: '' }),
       searchButton.has({ disabled: true }),
-
       ...[...MULTI_SELECT_FILTERS, LOCATION_ASSIGNMENT_STATUS].map((filterLabel) => {
         return filtersPane.find(Accordion(filterLabel)).has({ open: true });
       }),
-
       selectLocationsModal
         .find(PaneHeader({ title: LOCATIONS }))
         .has({ subtitle: including(TOTAL_RECORDS_SUFFIX) }),
       selectLocationsModal.find(Button(COMMON_BUTTON_LABELS.ACTIONS)).has({ disabled: false }),
-      this.assertSelectedRecordsCount(0),
       selectLocationsModal.find(Button(COMMON_BUTTON_LABELS.SAVE)).has({ disabled: false }),
       selectLocationsModal.find(Button(COMMON_BUTTON_LABELS.PREVIOUS)).absent(),
       selectLocationsModal.find(Button(COMMON_BUTTON_LABELS.NEXT)).absent(),
-
       closeButton.has({ disabled: false }),
     ]);
+    this.assertSelectedRecordsCount(0);
 
     FiltersPane.assertResetAllButtonState(filtersPane, { disabled: true });
     MULTI_SELECT_FILTERS.forEach((filterLabel) => {
