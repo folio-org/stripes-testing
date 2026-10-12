@@ -33,7 +33,9 @@ const R = {
   USER: 'user',
 };
 
-describe('Agreements', () => {
+// The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
+// #freeze pipeline deadlock
+describe.skip('Agreements', () => {
   describe('Agreements with eHoldings', () => {
     const flow = new ExecutionFlowManager();
     const postfix = getRandomPostfix();
@@ -261,9 +263,11 @@ describe('Agreements', () => {
       });
     };
 
-    it(
+    // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
+    // #freeze pipeline deadlock
+    it.skip(
       'C1347109 Populate resourceName when adding an eHoldings resource to an Agreement (thunderjet)',
-      { tags: ['extendedPath', 'thunderjet', 'C1347109', 'nonParallel'] },
+      { tags: ['extendedPathBroken', 'thunderjet', 'C1347109Broken', 'nonParallelBroken'] },
       () => {
         const { notCustomPkg, notCustomTitle, eHoldingPackage, eHoldingTitle } = flow.ctx();
 
