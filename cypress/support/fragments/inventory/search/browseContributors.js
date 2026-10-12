@@ -277,6 +277,12 @@ export default {
     else cy.expect(targetCell.absent());
   },
 
+  checkValuePresentInSpecificRow(value, { rowIndex = 5, isPresent = true } = {}) {
+    const targetRow = MultiColumnListRow(including(value), { isContainer: false, index: rowIndex });
+    if (isPresent) cy.expect(targetRow.exists());
+    else cy.expect(targetRow.absent());
+  },
+
   checkAuthorityIconAndValueDisplayedForMultipleRows(rowCount, value) {
     for (let i = 0; i < rowCount; i++) {
       cy.expect([
