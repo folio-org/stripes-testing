@@ -68,6 +68,7 @@ const R = {
 
 // The test is running for 1 hour, using 10 Gb RAM causing test pipelines to fail (workers are freezing).
 // The test is disabled until the root cause is found.
+// #freeze pipeline deadlock
 describe.skip('Orders', () => {
   const flow = new ExecutionFlowManager();
   // PO numbers accept only alphanumeric characters and are limited to 22 characters.
@@ -677,6 +678,7 @@ describe.skip('Orders', () => {
 
   // The test is running for 1 hour, using 10 Gb RAM causing test pipelines to fail (workers are freezing).
   // The test is disabled until the root cause is found.
+  // #freeze pipeline deadlock
   it.skip(
     'C1375887 Search and filter Orders and Order lines with new indexes (thunderjet)',
     { tags: ['extendedPathBroken', 'thunderjet', 'C1375887Broken'] },
