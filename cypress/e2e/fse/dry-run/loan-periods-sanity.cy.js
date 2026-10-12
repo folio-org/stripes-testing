@@ -87,6 +87,10 @@ describe('Circulation log', () => {
       cy.getUserDetailsByUsername(user.username).then((userDetails) => {
         user.id = userDetails.id;
         user.barcode = userDetails.barcode;
+      }).then(() => {
+        if (!user.barcode) {
+          cy.log(`User ${user.username} does not have a barcode!!!`);
+        }
       });
       cy.getAllMaterialTypes({ limit: 3 })
         .then((mt) => {

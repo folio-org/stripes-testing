@@ -2712,6 +2712,18 @@ export default {
     cy.expect(donorsInformationSection.find(MultiColumnListCell({ content: donor })).absent());
   },
 
+  changeLocation(locationName, quantity) {
+    cy.do([
+      locationSection.find(trashButton).click(),
+      addLocationButton.click(),
+      Button('Location look-up').click(),
+      selectLocationsModal.find(SearchField({ id: 'input-record-search' })).fillIn(locationName),
+      Button('Search').click(),
+      Modal('Select locations').find(MultiColumnListCell(locationName)).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+    ]);
+  },
+
   changeExpenseClassInPOLWithoutSave(indexOfPreviousExpenseClass, expenseClass) {
     cy.do([
       Button({ id: `fundDistribution[${indexOfPreviousExpenseClass}].expenseClassId` }).click(),

@@ -47,7 +47,7 @@ describe('Settings (Users) - Custom Fields',
         CustomFields.fillMultiSelectCustomFieldOnly(multiSelectData);
         CustomFields.clickAddOptionButton();
         CustomFields.fillOptionInRow(2, testData.option3);
-        CustomFields.clickSaveAndClose();
+        CustomFields.saveAndClose();
         CustomFields.verifyCustomFieldExists(testData.fieldLabel);
       },
     );
