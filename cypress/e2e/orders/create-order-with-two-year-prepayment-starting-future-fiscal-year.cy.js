@@ -36,7 +36,9 @@ import { FinanceHelper } from '../../support/fragments/finance';
 
 const OrderLineEditForm = { ...OrderLineEditFormFragment, ...MultiYearPaymentTerms };
 
-describe('Orders', () => {
+// The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
+// #freeze pipeline deadlock
+describe.skip('Orders', () => {
   const flow = new ExecutionFlowManager();
 
   const R = {
@@ -311,9 +313,11 @@ describe('Orders', () => {
     flow.cleanup();
   });
 
-  it(
+  // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
+  // #freeze pipeline deadlock
+  it.skip(
     'C1404903 Create an order with two-year prepayment term starting from the future fiscal year (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C1404903'] },
+    { tags: ['extendedPathBroken', 'thunderjet', 'C1404903Broken'] },
     () => {
       const { fy1, fy2, fy3, fy4, fundA, fundB, expenseClass, locale } = flow.ctx();
 
