@@ -1,4 +1,5 @@
 import {
+  Accordion,
   Button,
   HTML,
   MultiColumnListCell,
@@ -27,6 +28,10 @@ const donorsList = MultiColumnList({ id: 'fund.donorOrganizationIds' });
 
 const cancelButton = fundEditForm.find(Button('Cancel'));
 const saveAndCloseButton = Button('Save & close');
+
+const locationsSectionSelector = '#locations';
+const removeLocationButtonSelector = 'button[aria-label*="Remove location"]';
+const locationsSection = fundEditForm.find(Section({ id: 'locations' }));
 
 const fundSections = {
   'Fund information': fundInfoSection,
@@ -246,5 +251,54 @@ export default {
     ]);
     cy.wait(2000);
     cy.do([Button('Cancel').click(), Button('Close without saving').click()]);
+  },
+  assertAddLocationButtonEnabled() {
+    cy.expect(locationsSection.find(Button({ id: 'fund-locations' })).has({ disabled: false }));
+  },
+  assertUnassignAllLocationsButtonAbsent() {
+    cy.expect(locationsSection.find(Button('Unassign all locations')).absent());
+  },
+  assertLocationsRequiredWarningAbsent() {
+    cy.expect(locationsSection.find(HTML(including('Locations must be assigned'))).absent());
+  },
+  assertLocationsCount(count) {
+    cy.get(`${locationsSectionSelector} ul[class^=list-] > li`).should('have.length', count);
+  },
+  // groups: [{ tenantName, locationNames }] rendered as tenant sub-accordions in alphabetical order
+  assertLocationsGroupedByTenant(groups) {
+    const expectedTenantNames = groups
+      .map(({ tenantName }) => tenantName)
+      .sort((left, right) => left.localeCompare(right));
+
+    cy.get(`${locationsSectionSelector} [class^=accordion] [class^=labelArea]`).should(
+      ($labels) => {
+        expect([...$labels].map((label) => label.textContent.trim())).to.deep.equal(
+          expectedTenantNames,
+        );
+      },
+    );
+    cy.expect(
+      groups.flatMap(({ tenantName, locationNames }) => {
+        return locationNames.map((locationName) => {
+          return locationsSection
+            .find(Accordion(tenantName))
+            .find(HTML(including(locationName)))
+            .exists();
+        });
+      }),
+    );
+  },
+  assertLocationRemovable(locationName, removable) {
+    cy.get(locationsSectionSelector)
+      .contains('li', locationName)
+      .find(removeLocationButtonSelector)
+      .should(removable ? 'exist' : 'not.exist');
+  },
+  removeLocation(locationName) {
+    cy.get(locationsSectionSelector)
+      .contains('li', locationName)
+      .find(removeLocationButtonSelector)
+      .click();
+    cy.get(locationsSectionSelector).contains('li', locationName).should('not.exist');
   },
 };
