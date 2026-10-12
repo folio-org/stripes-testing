@@ -1,11 +1,11 @@
 import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../../support/constants';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import BasicOrderLine from '../../../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../../support/fragments/orders/orderLines';
 import Orders from '../../../../support/fragments/orders/orders';
 import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
 import Organizations from '../../../../support/fragments/organizations/organizations';
-import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import TopMenu from '../../../../support/fragments/topMenu';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -43,7 +43,7 @@ describe('orders: create', () => {
     cy.setTenant(memberTenant.id);
     cy.getUserToken(user.username, user.password, { log: false });
 
-    Locations.getLocations({ limit: 2 }).then((res) => {
+    InventoryInstances.getLocations({ limit: 2 }).then((res) => {
       testData.locations = res;
 
       Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {

@@ -136,7 +136,7 @@ describe('Invoices', () => {
       InteractorsTools.checkCalloutErrorMessage(
         'Invoice line cannot be saved because invoice is not assigned to a Fiscal year.',
       );
-      InvoiceLineEditForm.clickCancelButton('Close without saving');
+      InvoiceLineEditForm.cancelWithUnsavedChanges('Close without saving');
       InvoiceView.checkInvoiceDetails({
         invoiceLines: [],
       });

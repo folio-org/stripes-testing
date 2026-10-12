@@ -11,7 +11,7 @@ import Receiving from '../../../../support/fragments/receiving/receiving';
 import ReceivingDetails from '../../../../support/fragments/receiving/receivingDetails';
 import ReceivingEditForm from '../../../../support/fragments/receiving/receivingEditForm';
 import AcquisitionUnits from '../../../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
-import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../../support/fragments/topMenu';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -78,7 +78,7 @@ describe('Receiving', () => {
                 AcquisitionUnits.assignUserViaApi(userData.id, secondAcquisitionUnit.id);
               });
 
-              Locations.getLocations({ limit: 1 }).then((locations) => {
+              InventoryInstances.getLocations({ limit: 1 }).then((locations) => {
                 location = locations[0];
 
                 Organizations.createOrganizationViaApi(organization).then((orgResponse) => {

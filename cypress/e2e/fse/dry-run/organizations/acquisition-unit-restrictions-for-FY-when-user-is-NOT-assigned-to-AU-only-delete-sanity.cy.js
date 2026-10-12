@@ -62,7 +62,7 @@ describe('Acquisition Units', () => {
     'C375080 Acquisition unit restrictions for "Fiscal year" records (only Delete option is active) when user is NOT assigned to acquisition unit (thunderjet)',
     { tags: ['dryRun', 'thunderjet', 'C375080'] },
     () => {
-      FiscalYears.selectFisacalYear(defaultFiscalYear.name);
+      FiscalYears.selectFiscalYear(defaultFiscalYear.name);
       FiscalYearDetails.checkFiscalYearDetails({
         information: [{ key: 'Acquisition units', value: defaultAcquisitionUnit.name }],
       });

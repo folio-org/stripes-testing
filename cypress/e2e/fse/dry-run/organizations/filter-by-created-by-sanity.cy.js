@@ -1,6 +1,7 @@
 import { Permissions } from '../../../../support/dictionary';
 import { NewOrganization, Organizations } from '../../../../support/fragments/organizations';
 import newOrganization from '../../../../support/fragments/organizations/newOrganization';
+import OrganizationsSearchAndFilter from '../../../../support/fragments/organizations/organizationsSearchAndFilter';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -68,11 +69,11 @@ describe('Organizations', () => {
     { tags: ['dryRun', 'thunderjet', 'C466127'] },
     () => {
       Organizations.resetFiltersIfActive();
-      Organizations.selectCreatedByFiler(testData.users[0].username);
+      OrganizationsSearchAndFilter.filterByCreator(testData.users[0].username);
       Organizations.selectOrganization(testData.organizations.org1.name);
       Organizations.checkOrganizationInfo(testData.organizations.org1);
       Organizations.resetFilters();
-      Organizations.selectCreatedByFiler(user.username);
+      OrganizationsSearchAndFilter.filterByCreator(user.username);
       Organizations.selectOrganization(testData.organizations.org2.name);
       Organizations.checkOrganizationInfo(testData.organizations.org2);
     },
