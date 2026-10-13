@@ -475,18 +475,24 @@ export default {
       }
     });
   },
-  checkLocationsSection({ locations = [], byValue = false } = {}) {
+  checkLocationsSection({ locations = [], byValue = false, checkByIndex = true } = {}) {
     locations.forEach((locationInformation, index) => {
       // With byValue, find the row by its first value (e.g. holding/location name) instead of its position
       const row = byValue ? InfoRow(including(locationInformation[0].value)) : InfoRow({ index });
 
       locationInformation.forEach(({ key, value }) => {
-        cy.expect(
-          locationDetailsSection
-            .find(row)
-            .find(KeyValue(key))
-            .has({ value: including(value) }),
-        );
+        if (checkByIndex) {
+          cy.expect(
+            locationDetailsSection
+              .find(row)
+              .find(KeyValue(key))
+              .has({ value: including(value) }),
+          );
+        } else {
+          cy.expect(
+            locationDetailsSection.find(KeyValue(key, { value: including(value) })).exists(),
+          );
+        }
       });
     });
   },
