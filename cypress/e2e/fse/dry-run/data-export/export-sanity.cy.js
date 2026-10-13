@@ -43,7 +43,7 @@ describe('Data Export', () => {
           cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
             loanTypeId = loanTypes[0].id;
           });
-          cy.getDefaultMaterialType().then((materialType) => {
+          cy.getMaterialTypes({ limit: 1 }).then((materialType) => {
             materialTypeId = materialType.id;
           });
         })
