@@ -74,6 +74,14 @@ describe('Eureka', () => {
           );
         }
 
+        // For debug purposes in case of a long list of duplicates:
+        // if (capabilityDuplicatesInfo.length > 0 || capabilitySetDuplicatesInfo.length > 0) {
+        //   cy.writeFile('cypress/fixtures/C829890_duplicates.json', {
+        //     capabilityDuplicates: capabilityDuplicatesInfo,
+        //     capabilitySetDuplicates: capabilitySetDuplicatesInfo,
+        //   });
+        // }
+
         cy.then(() => {
           cy.expect(
             capabilityPermissionDuplicates.length + capabilitySetPermissionDuplicates.length,

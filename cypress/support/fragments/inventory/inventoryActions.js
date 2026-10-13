@@ -75,6 +75,7 @@ export default {
       if (importProfiles.filter((profile) => profile.enabled === true).length > 1) {
         cy.do(importTypeSelect.choose('OCLC WorldCat'));
       }
+      cy.wait(3000);
       cy.expect(OCLWorldCatIdentifierTextField.exists());
       this.fillImportFields(specialOCLCWorldCatidentifier);
 

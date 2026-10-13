@@ -38,7 +38,9 @@ describe('MARC', () => {
       InventoryInstance.getId().then((id) => {
         instanceId = id;
       });
-      InventorySteps.addMarcHoldingRecord();
+      cy.getLocations({ limit: 1 }).then((loc) => {
+        InventorySteps.addMarcHoldingRecord(loc.code);
+      });
     });
 
     after('Cleanup', () => {

@@ -12,10 +12,13 @@ const optimisticLockingLinkIcon = optimisticLockingBanner.find(
 );
 
 export default {
-  addMarcHoldingRecord: () => {
+  addMarcHoldingRecord: (locationCode) => {
     InventoryInstance.goToMarcHoldingRecordAdding();
     QuickMarcEditor.waitLoading();
-    QuickMarcEditor.updateExistingField('852', QuickMarcEditor.getExistingLocation());
+    QuickMarcEditor.updateExistingField(
+      '852',
+      locationCode ? `$b ${locationCode}` : QuickMarcEditor.getExistingLocation(),
+    );
     cy.intercept('POST', '/records-editor/records').as('getStatus');
     QuickMarcEditor.pressSaveAndClose();
     cy.wait('@getStatus', { timeout: 5_000 }).its('response.statusCode').should('eq', 201);

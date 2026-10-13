@@ -484,7 +484,9 @@ export default {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
-        cy.getDefaultMaterialType();
+        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          Cypress.env('materialType', res);
+        });
         cy.getLocations({ limit: 1, query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` });
         cy.getHoldingTypes({ limit: 1 });
         InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
@@ -529,7 +531,7 @@ export default {
                 numberOfMissingPieces: '3',
                 status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-                materialType: { id: Cypress.env('materialTypes')[0].id },
+                materialType: { id: Cypress.env('materialType').id },
                 itemLevelCallNumber: itemCallNumber,
                 accessionNumber,
               },
@@ -539,7 +541,7 @@ export default {
                 numberOfMissingPieces: '3',
                 status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-                materialType: { id: Cypress.env('materialTypes')[0].id },
+                materialType: { id: Cypress.env('materialType').id },
                 itemLevelCallNumber: itemCallNumber,
                 accessionNumber,
               },
@@ -873,7 +875,7 @@ export default {
           types.loanTypeId = loanTypes[0].id;
         });
         cy.getDefaultMaterialType().then((mt) => {
-          types.materialTypeId = mt.id;
+          types.materialTypeId = mt?.id;
         });
       })
       .then(() => {
@@ -1234,10 +1236,7 @@ export default {
     });
   },
 
-  importWithOclc: (
-    oclc,
-    profile = 'Inventory Single Record - Default Create Instance (Default)',
-  ) => {
+  importWithOclc(oclc, profile = 'Inventory Single Record - Default Create Instance (Default)') {
     cy.do(actionsButton.click());
     cy.wait(1500);
     cy.do(Button({ id: 'dropdown-clickable-import-record' }).click());
@@ -1252,6 +1251,14 @@ export default {
       cy.wait(1500);
       cy.do(singleRecordImportModal.find(Button('Import')).click());
       cy.wait(1500);
+    });
+  },
+
+  selectSingleRecordImportExternalTargetIfMany(externalTargetOption) {
+    return cy.getSingleImportProfilesViaAPI().then((importProfiles) => {
+      if (importProfiles.filter((importProfile) => importProfile.enabled === true).length > 1) {
+        cy.do(importTypeSelect.choose(externalTargetOption));
+      }
     });
   },
 

@@ -89,15 +89,21 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectSearchResultItem();
         cy.wait(1000);
         InventoryInstance.startOverlaySourceBibRecord();
-        ReImportModal.verifyModalWithOneTargetProfile();
-        ReImportModal.verifySelectTheProfileToBeUsedToOverlayTheCurrentDataField(profileForImport);
-        ReImportModal.selectTheProfileToBeUsedToOverlayTheCurrentData(profileForImport);
-        ReImportModal.fillEnterTheTargetIdentifier(targetIdentifier);
-        ReImportModal.import();
-        // need to wait because after the import the data in the instance is displayed for a long time
-        cy.wait(7000);
-        InteractorsTools.checkCalloutMessage(successCalloutMessage);
-        InstanceRecordView.verifyInstanceIsOpened(instanceTitle);
+        InventoryInstances.selectSingleRecordImportExternalTargetIfMany(targetProfile.name).then(
+          () => {
+            ReImportModal.verifyModalWithOneTargetProfile();
+            ReImportModal.verifySelectTheProfileToBeUsedToOverlayTheCurrentDataField(
+              profileForImport,
+            );
+            ReImportModal.selectTheProfileToBeUsedToOverlayTheCurrentData(profileForImport);
+            ReImportModal.fillEnterTheTargetIdentifier(targetIdentifier);
+            ReImportModal.import();
+            // need to wait because after the import the data in the instance is displayed for a long time
+            cy.wait(7000);
+            InteractorsTools.checkCalloutMessage(successCalloutMessage);
+            InstanceRecordView.verifyInstanceIsOpened(instanceTitle);
+          },
+        );
       },
     );
   });

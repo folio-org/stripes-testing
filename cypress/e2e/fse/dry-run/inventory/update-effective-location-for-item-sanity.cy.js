@@ -29,7 +29,7 @@ describe('Inventory', () => {
           cy.getLoanTypes({ limit: 1 }).then((res) => {
             itemData.loanTypeId = res[0].id;
           });
-          cy.getDefaultMaterialType().then((res) => {
+          cy.getMaterialTypes({ limit: 1 }).then((res) => {
             itemData.materialTypeId = res.id;
           });
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
