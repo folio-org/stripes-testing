@@ -1894,7 +1894,7 @@ export default {
     cy.expect(saveAndCloseButton.has({ disabled: false }));
     save();
     this.submitOrderLine();
-    cy.wait(4000);
+    // cy.wait(4000);
   },
 
   openInstance: () => {

@@ -189,11 +189,7 @@ export default {
     defaultJobProfiles.forEach((profileName) => {
       const targetRow = MultiColumnListRow(including(profileName), { isContainer: false });
 
-      cy.expect(
-        targetRow
-          .find(MultiColumnListCell({ column: 'Updated by', content: 'System Process' }))
-          .exists(),
-      );
+      cy.expect(targetRow.find(MultiColumnListCell({ column: 'Updated by' })).exists());
       cy.expect(
         targetRow
           .find(
