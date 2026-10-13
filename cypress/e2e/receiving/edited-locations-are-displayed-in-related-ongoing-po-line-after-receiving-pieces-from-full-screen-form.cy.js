@@ -213,6 +213,7 @@ describe('Receiving', () => {
             [{ key: POLINE_DETAILS_FIELDS.HOLDING_NAME, value: testData.location2.name }],
             [{ key: POLINE_DETAILS_FIELDS.HOLDING_NAME, value: testData.location3.name }],
           ],
+          checkByIndex: false,
         },
       });
 

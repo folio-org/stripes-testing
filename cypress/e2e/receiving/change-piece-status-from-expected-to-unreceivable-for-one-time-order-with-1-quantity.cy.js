@@ -153,7 +153,7 @@ describe('Receiving', () => {
       EditPieceModal.openActionsMenu();
       EditPieceModal.clickUnreceivableButton();
       ReceivingDetails.verifyExpectedRecordsCount(0);
-      ReceivingDetails.verifyUnreceivableRecordsCount(0);
+      ReceivingDetails.verifyUnreceivableRecordsCount(1);
       ReceivingDetails.checkUnreceivableTableContent([{ comment }]);
 
       // Step 5: Click on the piece record and check the comment

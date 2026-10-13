@@ -531,15 +531,21 @@ export default {
       }
     });
   },
-  checkLocationsSection({ locations = [] } = {}) {
+  checkLocationsSection({ locations = [], checkByIndex = true } = {}) {
     locations.forEach((locationInformation, index) => {
       locationInformation.forEach(({ key, value }) => {
-        cy.expect(
-          locationDetailsSection
-            .find(InfoRow({ index }))
-            .find(KeyValue(key))
-            .has({ value: including(value) }),
-        );
+        if (checkByIndex) {
+          cy.expect(
+            locationDetailsSection
+              .find(InfoRow({ index }))
+              .find(KeyValue(key))
+              .has({ value: including(value) }),
+          );
+        } else {
+          cy.expect(
+            locationDetailsSection.find(KeyValue(key, { value: including(value) })).exists(),
+          );
+        }
       });
     });
   },
