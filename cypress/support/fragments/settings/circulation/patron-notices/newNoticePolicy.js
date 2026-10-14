@@ -12,7 +12,6 @@ import {
   PaneSet,
   Pane,
   DropdownMenu,
-  HTML,
   including,
   KeyValue,
   TextField,
@@ -80,10 +79,6 @@ export default {
 
   verifyPoliciesListPane() {
     cy.expect(Heading('Patron notice policies').exists());
-  },
-
-  verifyNewButtonLabel() {
-    cy.expect([newButton.exists(), newButton.has({ text: 'New', visible: true })]);
   },
 
   openToSide(patronNoticePolicy) {
@@ -157,25 +152,10 @@ export default {
     ]);
   },
 
-  verifyNoticeFormatOptions(sectionName, index = 0) {
-    const formatField = this.noticeFields(sectionName, index).format;
-    cy.do(formatField.click());
-    cy.expect(formatField.has({ optionsText: ['Email', 'Text message'] }));
-  },
-
   openPolicy(policyName) {
     cy.expect(NavListItem(policyName).exists());
     cy.do(NavListItem(policyName).click());
     cy.expect(Pane(policyName).exists());
-  },
-
-  verifyPolicyNoticeDetails(policyName, templateName, format) {
-    const policyPane = Pane(policyName);
-    cy.expect([
-      policyPane.exists(),
-      policyPane.find(HTML({ text: including(templateName) })).exists(),
-      policyPane.find(HTML({ text: including(format) })).exists(),
-    ]);
   },
 
   openPolicyForEditing(policyName, templateName) {
@@ -192,12 +172,6 @@ export default {
       noticeFields.template.has({ selectedOptionLabel: templateName }),
       noticeFields.format.has({ selectedOptionLabel: 'Email' }),
     ]);
-  },
-
-  selectNoticeFormat(sectionName, format, index = 0) {
-    const formatField = this.noticeFields(sectionName, index).format;
-    cy.do(formatField.choose(format));
-    cy.expect(formatField.has({ selectedOptionLabel: format }));
   },
 
   saveAndClosePolicy() {
