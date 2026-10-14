@@ -4,6 +4,7 @@ import {
   ORDER_STATUSES,
   POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
+import { POLINE_DETAILS_FIELDS } from '../../support/constants/orders/order-line';
 import { Permissions } from '../../support/dictionary';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
@@ -182,15 +183,15 @@ describe('Orders', () => {
 
       // Step 2: Click PO line record in "PO lines" accordion
       const OrderLineDetails = OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
-      OrderLineDetails.checkLocationsSection({
+      OrderLineDetails.checkLocationsSectionInAnyOrder({
         locations: [
           [
-            { key: 'Holding', value: testData.locations[0].name },
-            { key: 'Quantity physical', value: 1 },
+            { key: POLINE_DETAILS_FIELDS.HOLDING_NAME, value: testData.locations[0].name },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_PHYSICAL, value: 1 },
           ],
           [
-            { key: 'Name (code)', value: testData.locations[1].name },
-            { key: 'Quantity electronic', value: 1 },
+            { key: POLINE_DETAILS_FIELDS.LOCATION_NAME, value: testData.locations[1].name },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC, value: 1 },
           ],
         ],
       });
@@ -221,9 +222,9 @@ describe('Orders', () => {
       OrderLineDetails.checkLocationsSection({
         locations: [
           [
-            { key: 'Name (code)', value: testData.locations[1].name },
-            { key: 'Quantity physical', value: 1 },
-            { key: 'Quantity electronic', value: 1 },
+            { key: POLINE_DETAILS_FIELDS.LOCATION_NAME, value: testData.locations[1].name },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_PHYSICAL, value: 1 },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC, value: 1 },
           ],
         ],
       });

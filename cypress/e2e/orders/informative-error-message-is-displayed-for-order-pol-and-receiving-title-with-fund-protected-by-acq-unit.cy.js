@@ -214,11 +214,13 @@ describe('Orders', () => {
       // Step 3: Click "Actions" button, select "Edit" option
       OrderLines.editPOLInOrder();
       InteractorsTools.checkCalloutErrorMessage(OrderStates.fundsCouldNotBeLoaded);
+      InteractorsTools.closeAllVisibleCallouts();
       OrderLineEditForm.verifyBlankFormDisplayed();
 
       // Step 4: Close "Edit" POL page, click "Actions" button, select "Receive" option, click on the Title name
       OrderLineEditForm.closeBlankForm();
       cy.wait(1000);
+      InteractorsTools.checkCalloutErrorMessage(OrderStates.fundsCouldNotBeLoaded);
       InteractorsTools.closeAllVisibleCallouts();
       OrderLines.receiveOrderLineViaActions();
       Receiving.waitLoading();
@@ -251,6 +253,8 @@ describe('Orders', () => {
       // Step 7: Click on the piece record in the "Expected" accordion, select "Quick receive" option
       ReceivingDetails.openEditPieceModal();
       EditPieceModal.waitLoading();
+      InteractorsTools.checkCalloutErrorMessage(OrderStates.fundsCouldNotBeLoaded);
+      InteractorsTools.closeAllVisibleCallouts();
       Receiving.quickReceiveInEditPieceModal();
       InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
       cy.wait(1000);
