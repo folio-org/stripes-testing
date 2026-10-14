@@ -8,11 +8,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
+import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     describe('Case-insensitive checks', () => {
+      const randomPostfix = getRandomPostfix();
       const testData = {
         keywordOption: searchItemsOptions[0],
         barcodeOption: searchItemsOptions[1],
@@ -20,11 +21,11 @@ describe('Inventory', () => {
         instances: [
           {
             title: "C466081 Instance 1, Item's barcode lower case",
-            barcode: 'CSC001',
+            barcode: `CSC001${randomPostfix}`,
           },
           {
             title: "C466081 Instance 2, Item's barcode number UPPER case",
-            barcode: 'csc0011',
+            barcode: `CSC0011${randomPostfix}`,
           },
         ],
         searchValues: ['CSC001*', 'csc001*'],

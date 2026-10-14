@@ -19,6 +19,8 @@ describe('eHoldings', () => {
 
     before('Create user and login', () => {
       cy.getAdminToken();
+
+      EHoldingsPackages.setPackageCustomDisplayNameViaAPI(testData.packageName, '');
       // need to have at least 1 access status type to have related checkbox in UI
       AccessStatusTypes.getAccessStatusTypesForDefaultKbViaApi().then((types) => {
         if (!types.length) {
