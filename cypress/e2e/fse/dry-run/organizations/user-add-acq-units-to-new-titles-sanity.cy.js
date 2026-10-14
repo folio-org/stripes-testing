@@ -84,7 +84,7 @@ describe('Receiving', () => {
                 Organizations.createOrganizationViaApi(organization).then((orgResponse) => {
                   organization.id = orgResponse;
 
-                  cy.getDefaultMaterialType().then((materialType) => {
+                  cy.getMaterialTypes({ limit: 1 }).then((materialType) => {
                     cy.getAcquisitionMethodsApi({
                       query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
                     }).then((acquisitionMethodResponse) => {

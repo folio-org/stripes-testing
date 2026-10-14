@@ -49,7 +49,7 @@ describe('Bulk-edit', () => {
             loanTypeId = loanTypes[0].id;
             loanTypeName = loanTypes[0].name;
           });
-          cy.getDefaultMaterialType().then((materialType) => {
+          cy.getMaterialTypes({ limit: 1 }).then((materialType) => {
             materialTypeId = materialType.id;
           });
         })
