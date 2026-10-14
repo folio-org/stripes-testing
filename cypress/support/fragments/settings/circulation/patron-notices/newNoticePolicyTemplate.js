@@ -1,30 +1,29 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import getRandomPostfix from '../../../../utils/stringTools';
 import {
   Accordion,
   Button,
-  TextField,
-  TextArea,
-  KeyValue,
   Checkbox,
-  Link,
-  Heading,
-  Select,
-  Pane,
-  Modal,
-  PaneContent,
-  NavListItem,
-  RichEditor,
-  IconButton,
-  Label,
-  Popover,
-  including,
-  MetaSection,
   Form,
+  Heading,
+  IconButton,
+  including,
+  KeyValue,
+  Label,
+  Link,
+  MetaSection,
+  Modal,
+  NavListItem,
+  Pane,
+  PaneContent,
+  Popover,
+  RichEditor2,
+  Select,
+  TextArea,
+  TextField,
 } from '../../../../../../interactors';
-import richTextEditor from '../../../../../../interactors/rich-text-editor';
-import { NOTICE_CATEGORIES } from './noticePolicies';
+import getRandomPostfix from '../../../../utils/stringTools';
 import { actionsButtons } from './newNoticePolicy';
+import { NOTICE_CATEGORIES } from './noticePolicies';
 
 const titles = {
   addToken: 'Add token',
@@ -51,7 +50,7 @@ const nameField = TextField({ id: 'input-patron-notice-name' });
 const subjectField = TextField({ id: 'input-patron-notice-subject' });
 const subjectInfoButton = Label(including('Subject')).find(IconButton({ icon: 'info' }));
 const descriptionField = TextArea({ id: 'input-patron-notice-description' });
-const bodyField = richTextEditor();
+const bodyField = RichEditor2();
 const bodyInfoButton = Label(including('Body')).find(IconButton({ icon: 'info' }));
 const previewModal = Modal({ id: 'preview-modal' });
 const addTokenModal = Modal({ header: titles.addToken });
@@ -517,7 +516,7 @@ export default {
   },
 
   clearBody() {
-    cy.do(RichEditor().fillIn(''));
+    cy.do(RichEditor2().fillIn(''));
   },
 
   saveAndClose() {
