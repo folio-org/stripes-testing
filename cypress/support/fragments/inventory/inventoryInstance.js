@@ -995,7 +995,7 @@ export default {
         .find(Checkbox())
         .click(),
     );
-    cy.wait(500);
+    cy.wait(1000);
     cy.do(
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
         .find(Button('Move to'))
