@@ -1,7 +1,6 @@
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   APPLICATION_NAMES,
-  LOCATION_NAMES,
   ORDER_STATUSES,
   POL_CREATE_INVENTORY_SETTINGS,
 } from '../../../support/constants';
@@ -34,51 +33,49 @@ describe('Orders', () => {
         });
 
         cy.setTenant(Affiliations.College);
-        cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
-          (locationResp) => {
-            Organizations.createOrganizationViaApi(testData.organization).then(() => {
-              cy.getBookMaterialType().then((mtypeResp) => {
-                cy.getAcquisitionMethodsApi({
-                  query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-                }).then((auResp) => {
-                  testData.order = NewOrder.getDefaultOngoingOrder({
-                    vendorId: testData.organization.id,
-                  });
-                  const orderLine = {
-                    ...BasicOrderLine.defaultOrderLine,
-                    titleOrPackage: testData.sharedInstance.instanceTitle,
-                    instanceId: testData.sharedInstance.instanceId,
-                    cost: {
-                      listUnitPrice: 10.0,
-                      currency: 'USD',
-                      discountType: 'percentage',
-                      quantityPhysical: 1,
-                      poLineEstimatedPrice: 10.0,
-                    },
-                    acquisitionMethod: auResp.body.acquisitionMethods[0].id,
-                    locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
-                    physical: {
-                      createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
-                      materialType: mtypeResp.id,
-                      volumes: [],
-                    },
-                  };
+        cy.getLocations({ limit: 1 }).then((locationResp) => {
+          Organizations.createOrganizationViaApi(testData.organization).then(() => {
+            cy.getBookMaterialType().then((mtypeResp) => {
+              cy.getAcquisitionMethodsApi({
+                query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+              }).then((auResp) => {
+                testData.order = NewOrder.getDefaultOngoingOrder({
+                  vendorId: testData.organization.id,
+                });
+                const orderLine = {
+                  ...BasicOrderLine.defaultOrderLine,
+                  titleOrPackage: testData.sharedInstance.instanceTitle,
+                  instanceId: testData.sharedInstance.instanceId,
+                  cost: {
+                    listUnitPrice: 10.0,
+                    currency: 'USD',
+                    discountType: 'percentage',
+                    quantityPhysical: 1,
+                    poLineEstimatedPrice: 10.0,
+                  },
+                  acquisitionMethod: auResp.body.acquisitionMethods[0].id,
+                  locations: [{ locationId: locationResp.id, quantity: 1, quantityPhysical: 1 }],
+                  physical: {
+                    createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
+                    materialType: mtypeResp.id,
+                    volumes: [],
+                  },
+                };
 
-                  Orders.createOrderViaApi(testData.order).then((orderResponse) => {
-                    testData.order = orderResponse;
-                    orderLine.purchaseOrderId = orderResponse.id;
+                Orders.createOrderViaApi(testData.order).then((orderResponse) => {
+                  testData.order = orderResponse;
+                  orderLine.purchaseOrderId = orderResponse.id;
 
-                    OrderLines.createOrderLineViaApi(orderLine);
-                    Orders.updateOrderViaApi({
-                      ...orderResponse,
-                      workflowStatus: ORDER_STATUSES.OPEN,
-                    });
+                  OrderLines.createOrderLineViaApi(orderLine);
+                  Orders.updateOrderViaApi({
+                    ...orderResponse,
+                    workflowStatus: ORDER_STATUSES.OPEN,
                   });
                 });
               });
             });
-          },
-        );
+          });
+        });
       });
       cy.resetTenant();
 
@@ -106,7 +103,7 @@ describe('Orders', () => {
 
     after('Delete user, data', () => {
       cy.resetTenant();
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Users.deleteViaApi(testData.userProperties.userId);
       InventoryInstance.deleteInstanceViaApi(testData.sharedInstance.instanceId);
       cy.setTenant(Affiliations.College);
