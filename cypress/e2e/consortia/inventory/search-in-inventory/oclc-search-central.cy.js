@@ -85,14 +85,14 @@ describe('Inventory', () => {
       before('Create user, data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411625');
+        InventoryInstances.deleteFullInstancesByTitleViaApi('C411625_');
 
         cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
           .then((userProperties) => {
             user = userProperties;
 
             cy.setTenant(Affiliations.College);
-            InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C411625');
+            InventoryInstances.deleteFullInstancesByTitleViaApi('C411625_');
           })
           .then(() => {
             cy.resetTenant();

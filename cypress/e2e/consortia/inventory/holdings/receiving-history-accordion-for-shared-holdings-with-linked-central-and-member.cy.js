@@ -300,7 +300,7 @@ describe('Inventory', () => {
 
       it(
         'C491283 Check Receiving history accordion for shared Holdings with linked central and member tenants (consortia) (promin)',
-        { tags: ['extendedPathECS', 'promin', 'C491283'] },
+        { tags: ['extendedPathECS', 'promin', 'C491283', 'LOC'] },
         () => {
           const todayDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
 

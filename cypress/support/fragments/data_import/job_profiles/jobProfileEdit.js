@@ -95,6 +95,48 @@ export default {
         expect(numberOfProfiles).to.equal(profileNames.length);
       });
   },
+
+  verifyLinkedProfilesForMatches(arrayOfProfileNames, numberOfProfiles) {
+    if (numberOfProfiles === 0) {
+      cy.get('[id*="branch-ROOT-MATCH-editable"]').should('not.exist');
+      return;
+    }
+    const profileNames = [];
+
+    cy.get('[id*="branch-ROOT-MATCH-editable"]')
+      .each(($element) => {
+        cy.wrap($element)
+          .invoke('text')
+          .then((name) => {
+            profileNames.push(name);
+          });
+      })
+      .then(() => {
+        for (let i = 0; i < profileNames.length; i++) {
+          expect(profileNames[i]).to.include(arrayOfProfileNames[i]);
+        }
+        expect(numberOfProfiles).to.equal(profileNames.length);
+      });
+  },
+
+  verifyLinkedProfilesForNonMatches(arrayOfProfileNames, numberOfProfiles) {
+    const profileNames = [];
+
+    cy.get('[id*="branch-ROOT-NON_MATCH-editable"]')
+      .each(($element) => {
+        cy.wrap($element)
+          .invoke('text')
+          .then((name) => {
+            profileNames.push(name);
+          });
+      })
+      .then(() => {
+        for (let i = 0; i < profileNames.length; i++) {
+          expect(profileNames[i]).to.include(arrayOfProfileNames[i]);
+        }
+        expect(numberOfProfiles).to.equal(profileNames.length);
+      });
+  },
   verifyCalloutMessage: () => {
     InteractorsTools.checkCalloutMessage(
       matching(new RegExp(Notifications.jobProfileCreatedSuccessfully)),

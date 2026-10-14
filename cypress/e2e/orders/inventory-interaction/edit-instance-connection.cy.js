@@ -1,4 +1,5 @@
 import {
+  CHANGE_INSTANCE_HOLDINGS_OPERATIONS,
   ORDER_STATUSES,
   POLINE_DETAILS_FIELDS,
   POL_CREATE_INVENTORY_SETTINGS,
@@ -125,7 +126,9 @@ describe('Orders', () => {
         SelectInstanceModal.selectInstance({ shouldConfirm: true });
 
         // Choose "Move" option from dropdown and click "Submit" button
-        ChangeInstanceModal.selectHoldingOperation({ operation: 'Move' });
+        ChangeInstanceModal.selectHoldingOperation({
+          operation: CHANGE_INSTANCE_HOLDINGS_OPERATIONS.MOVE,
+        });
         OrderLineDetails.checkOrderLineDetails({
           itemDetails: [{ key: 'Title', value: testData.folioInstances[0].instanceTitle }],
           linkedInstances: [{ title: testData.folioInstances[0].instanceTitle }],

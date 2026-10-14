@@ -100,6 +100,10 @@ describe('MARC', () => {
           'C436904 Edit all fields of Local "Authority file" which has assigned "MARC authority" records at Central tenant only, from Central tenant (consortia) (promin)',
           { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C436904'] },
           () => {
+            // force increased limit for the UI to load all source files
+            cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+              req.url = req.url.replace(/limit=\d+/, 'limit=200');
+            });
             // Step 1: Go to Manage authority files in Central
             cy.resetTenant();
             cy.login(user.username, user.password);

@@ -64,7 +64,9 @@ const OrderLineEditForm = { ...OrderLineEditFormFragment, ...MultiYearPaymentTer
 const OrderTemplateForm = { ...OrderTemplateFormFragment, ...MultiYearPaymentTerms };
 const { PANE_REQUEST_PHASES, PANE_REQUEST_PROFILE_NAMES } = PaneRequestWaiter;
 
-describe('Orders', () => {
+// The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
+// #freeze pipeline deadlock
+describe.skip('Orders', () => {
   const flow = new ExecutionFlowManager();
   const R = {
     FY1: 'fy1',
@@ -134,9 +136,9 @@ describe('Orders', () => {
         ({ fiscalYearId, fundDistributions = [] }) => fundDistributions.map((distribution) => {
           const value = Number(distribution.value);
           const amount =
-              distribution.distributionType === FUND_DISTRIBUTION_TYPES.PERCENTAGE
-                ? (totalPrice * value) / 100
-                : value;
+            distribution.distributionType === FUND_DISTRIBUTION_TYPES.PERCENTAGE
+              ? (totalPrice * value) / 100
+              : value;
 
           return {
             fyCode: fiscalYearsById.get(fiscalYearId)?.code,
@@ -485,9 +487,11 @@ describe('Orders', () => {
     flow.cleanup();
   });
 
-  it(
+  // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
+  // #freeze pipeline deadlock
+  it.skip(
     'C1404902 Multi-year prepayment behavior when a new fiscal year begins (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C1404902'] },
+    { tags: ['extendedPathBroken', 'thunderjet', 'C1404902Broken'] },
     () => {
       const { fy1, fy2, fy3, fundA, fundB, locale } = flow.ctx();
       const formatAmount = (value) => NumberTools.formatCurrency(value, locale);

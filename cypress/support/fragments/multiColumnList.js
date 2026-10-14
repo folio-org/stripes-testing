@@ -142,7 +142,7 @@ const waitFirstRowChanged = (listInteractor) => {
  * @property {(listInteractor: ListInteractor, rowCount: number) => void} assertRowCount
  * @property {(listInteractor: ListInteractor, columns: string[]) => void} assertColumns
  * @property {(listInteractor: ListInteractor, column: string) => void} sortListBy
- * @property {(column: string, sortDirection?: string) => void} assertColumnSortDirection
+ * @property {(listInteractor: ListInteractor, column: string, sortDirection?: string) => void} assertColumnSortDirection
  * @property {(listInteractor: ListInteractor, column: string, isSortable?: boolean) => void} assertColumnSortable
  * @property {(listInteractor: ListInteractor, column: string, options?: {normalizeValue?: Function}) => Cypress.Chainable<string[]>} getColumnValues
  * @property {(listInteractor: ListInteractor, column: string, options?: {direction?: string, normalizeValue?: Function, getSortableValue?: Function, comparator?: Function, filterValues?: Function }) => Cypress.Chainable<void> } assertColumnValuesSorted
@@ -199,8 +199,8 @@ const api = {
    * @example
    * import { TRANSACTION_LIST_COLUMNS, SORT_DIRECTIONS } from '../constants';
    *
-   * api.assertColumnSortDirection(TRANSACTION_LIST_COLUMNS.TRANSACTION_DATE);
-   * api.assertColumnSortDirection(TRANSACTION_LIST_COLUMNS.TRANSACTION_DATE, SORT_DIRECTIONS.ASCENDING);
+   * api.assertColumnSortDirection(listInteractor, TRANSACTION_LIST_COLUMNS.TRANSACTION_DATE);
+   * api.assertColumnSortDirection(listInteractor, TRANSACTION_LIST_COLUMNS.TRANSACTION_DATE, SORT_DIRECTIONS.ASCENDING);
    */
   assertColumnSortDirection(listInteractor, column, sortDirection = SORT_DIRECTIONS.DESCENDING) {
     scrollHeaderIntoView(listInteractor, column);

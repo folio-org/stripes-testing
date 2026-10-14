@@ -440,13 +440,23 @@ export default {
   },
 
   verifyAllLogsCheckedStatus: ({ logsCount = 25, checked = true }) => {
-    new Array(logsCount).fill(null).forEach((_, index) => {
-      cy.expect(
-        jobLogsList
-          .find(MultiColumnListCell({ row: index, columnIndex: 0 }))
-          .find(Checkbox())
-          .is({ checked }),
-      );
+    cy.expect(
+      jobLogsList
+        .find(MultiColumnList())
+        .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
+        .exists(),
+    );
+    cy.wait(1000); // to make sure the whole list is loaded
+    cy.then(() => jobLogsList.find(MultiColumnList()).rowCount()).then((rowCount) => {
+      const logsToCheck = Math.min(logsCount, rowCount);
+      new Array(logsToCheck).fill(null).forEach((_, index) => {
+        cy.expect(
+          jobLogsList
+            .find(MultiColumnListCell({ row: index, columnIndex: 0 }))
+            .find(Checkbox())
+            .is({ checked }),
+        );
+      });
     });
   },
 

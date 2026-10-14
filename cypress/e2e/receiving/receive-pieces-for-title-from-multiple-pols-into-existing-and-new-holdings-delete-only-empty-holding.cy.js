@@ -241,14 +241,17 @@ describe('Receiving', () => {
       ReceivingDetails.openInstanceDetails();
       InventoryInstance.waitLoading();
       InventoryInstance.verifyHoldingsAccordionsCount(3);
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.location2.name, 2);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.location2.name,
         records: [{ status: ITEM_STATUS_NAMES.ON_ORDER }, { status: ITEM_STATUS_NAMES.IN_PROCESS }],
       });
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.location3.name, 1);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.location3.name,
         records: [{ status: ITEM_STATUS_NAMES.ON_ORDER }],
       });
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.location4.name, 1);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.location4.name,
         records: [{ status: ITEM_STATUS_NAMES.IN_PROCESS }],
@@ -288,14 +291,17 @@ describe('Receiving', () => {
       ReceivingDetails.openInstanceDetails();
       InventoryInstance.waitLoading();
       InventoryInstance.verifyHoldingsAccordionsCount(3);
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.location2.name, 1);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.location2.name,
         records: [{ status: ITEM_STATUS_NAMES.IN_PROCESS }],
       });
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.location3.name, 1);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.location3.name,
         records: [{ status: ITEM_STATUS_NAMES.ON_ORDER }],
       });
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.location4.name, 2);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.location4.name,
         records: [

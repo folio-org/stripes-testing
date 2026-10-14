@@ -221,6 +221,7 @@ describe('Receiving', () => {
 
       // Step 6: Click on the link under "Title" field in "Item details" accordion
       OrderLineDetails.openInventoryItem();
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.newLocation.name, 1);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.newLocation.name,
         records: [{ status: ITEM_STATUS_NAMES.IN_PROCESS }],
@@ -282,6 +283,7 @@ describe('Receiving', () => {
 
       // Step 13: Click on the link under "Title" field in "Item details" accordion
       OrderLineDetails.openInventoryItem();
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.newLocation.name, 1);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.newLocation.name,
         records: [{ status: ITEM_STATUS_NAMES.IN_PROCESS }],

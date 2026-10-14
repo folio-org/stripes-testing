@@ -33,9 +33,8 @@ describe('Inventory', () => {
       };
       const testData = {
         OCLCAuthentication: '100481406/PAOLF',
-        oclcNumber: '1234568',
-        updatedInstanceTitle:
-          'Rincões dos frutos de ouro (tipos e cenarios do sul baiano) [por] Saboia Ribeiro.',
+        oclcNumber: '1158372966',
+        updatedInstanceTitle: 'Harry Potter and the goblet of fire / J.K. Rowling.',
       };
 
       before('Create test data', () => {
@@ -102,8 +101,10 @@ describe('Inventory', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
           InventoryInstance.startOverlaySourceBibRecord();
+          cy.setTenant(Affiliations.College); // API call in method below needs to be done in target tenant
           InventoryInstance.overlayWithOclc(testData.oclcNumber);
           InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
           Logs.openViewAllLogs();
@@ -122,6 +123,9 @@ describe('Inventory', () => {
             FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
           });
           FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
+          InventoryInstance.checkInstanceTitle(testData.updatedInstanceTitle);
         },
       );
     });
