@@ -499,6 +499,24 @@ export default {
   checkItemDetailsSection(itemDetails = []) {
     this.checkSectionData({ details: itemDetails, section: itemDetailsSection });
   },
+  checkProductIdentifiers(productIds = []) {
+    productIds.forEach(({ productId, qualifier }, index) => {
+      if (productId) {
+        cy.expect(
+          itemDetailsSection
+            .find(MultiColumnListCell({ row: index, column: 'Product ID' }))
+            .has({ content: productId }),
+        );
+      }
+      if (qualifier !== undefined) {
+        cy.expect(
+          itemDetailsSection
+            .find(MultiColumnListCell({ row: index, column: 'Qualifier' }))
+            .has({ content: qualifier }),
+        );
+      }
+    });
+  },
   checkPoLineInformationSection(poLineInformation = []) {
     this.checkSectionData({ details: poLineInformation, section: purchaseOrderLineSection });
   },
@@ -542,6 +560,9 @@ export default {
         );
       });
     });
+  },
+  verifyLocationPresentInSection(locationName) {
+    cy.expect(locationDetailsSection.find(HTML(including(locationName))).exists());
   },
   verifyLocationAbsentInSection(locationName) {
     cy.expect(locationDetailsSection.find(HTML(including(locationName))).absent());
