@@ -117,7 +117,7 @@ describe('orders: create', () => {
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
       OrderLines.changeLocation(testData.locations[1].name, '1');
-      OrderLines.saveOrderLine();
+      OrderLines.saveOrderLine({ isWaiterNeeded: false });
       InteractorsTools.checkCalloutMessage(
         `The purchase order line ${testData.orderNumber}-1 was successfully updated`,
       );

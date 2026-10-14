@@ -1889,12 +1889,14 @@ export default {
     cy.do(Select({ name: 'paymentStatus' }).choose(paymantStatus));
   },
 
-  saveOrderLine() {
+  saveOrderLine({ isWaiterNeeded = true } = {}) {
     cy.wait(4000);
     cy.expect(saveAndCloseButton.has({ disabled: false }));
     save();
     this.submitOrderLine();
-    // cy.wait(4000);
+    if (isWaiterNeeded) {
+      cy.wait(4000);
+    }
   },
 
   openInstance: () => {
