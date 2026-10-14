@@ -5,16 +5,16 @@ import {
   Checkbox,
   Heading,
   KeyValue,
+  matching,
   MetaSection,
   Modal,
   NavListItem,
   Pane,
   PaneContent,
   PaneSet,
+  RichEditor2,
   TextArea,
-  matching,
 } from '../../../../interactors';
-import richTextEditor from '../../../../interactors/rich-text-editor';
 import InteractorsTools from '../../utils/interactorsTools';
 
 const rootPane = Pane({ id: 'staff-slip-pane' });
@@ -159,15 +159,15 @@ export default {
     cy.wait(1000);
   },
   fillTemplateContent(content) {
-    cy.do(richTextEditor().fillIn(content));
+    cy.do(RichEditor2().fillIn(content));
   },
   editDescription(description) {
     cy.do(staffClipsDescription.fillIn(description));
     cy.expect(staffClipsDescription.has({ textContent: including(description) }));
   },
   editTemplateContent(content) {
-    cy.do(richTextEditor().fillIn(content));
-    cy.expect(richTextEditor().has({ value: including(content) }));
+    cy.do(RichEditor2().fillIn(content));
+    cy.expect(RichEditor2().has({ value: including(content) }));
   },
   previewStaffClips: () => {
     cy.do(rootPane.find(Button('Preview')).click());
@@ -257,6 +257,6 @@ export default {
     cy.expect(KeyValue(verifyKey, { value: verifyValue }).exists());
   },
   verifyTemplateContent(token) {
-    cy.expect(richTextEditor().has({ value: `{{${token}}}` }));
+    cy.expect(richTextEditor2().has({ value: `{{${token}}}` }));
   },
 };

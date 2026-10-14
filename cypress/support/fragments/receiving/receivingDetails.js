@@ -251,6 +251,39 @@ export default {
             .has({ content: including(record.copyNumber) }),
         );
       }
+      if (record.displaySummary) {
+        cy.expect(
+          expectedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: EXPECTED_TABLE_COLUMN_HEADERS.DISPLAY_SUMMARY,
+              }),
+            )
+            .has({ content: including(record.displaySummary) }),
+        );
+      }
+      if (record.enumeration) {
+        cy.expect(
+          expectedSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: EXPECTED_TABLE_COLUMN_HEADERS.ENUMERATION,
+              }),
+            )
+            .has({ content: including(record.enumeration) }),
+        );
+      }
+      if (record.chronology) {
+        cy.expect(
+          expectedSection
+            .find(
+              MultiColumnListCell({ row: index, column: EXPECTED_TABLE_COLUMN_HEADERS.CHRONOLOGY }),
+            )
+            .has({ content: including(record.chronology) }),
+        );
+      }
       if (record.comment) {
         cy.expect(
           expectedSection
@@ -495,6 +528,30 @@ export default {
               }),
             )
             .has({ content: including(record.copyNumber) }),
+        );
+      }
+      if (record.enumeration) {
+        cy.expect(
+          unreceivableSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: UNRECEIVABLE_TABLE_COLUMN_HEADERS.ENUMERATION,
+              }),
+            )
+            .has({ content: including(record.enumeration) }),
+        );
+      }
+      if (record.chronology) {
+        cy.expect(
+          unreceivableSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: UNRECEIVABLE_TABLE_COLUMN_HEADERS.CHRONOLOGY,
+              }),
+            )
+            .has({ content: including(record.chronology) }),
         );
       }
       if (record.comment) {

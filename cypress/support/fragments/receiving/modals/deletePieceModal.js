@@ -57,6 +57,9 @@ export default {
   clickDeletePieceButton({ pieceDeleted = true } = {}) {
     this.clickDeleteButton({ button: deletePieceButton, pieceDeleted });
   },
+  clickDeleteOnlyHoldingsButton({ pieceDeleted = true } = {}) {
+    this.clickDeleteButton({ button: deleteOnlyHoldingsButton, pieceDeleted });
+  },
   clickConfirmButton({ pieceDeleted = true } = {}) {
     cy.expect(confirmButton.has({ disabled: false }));
     cy.do(confirmButton.click());

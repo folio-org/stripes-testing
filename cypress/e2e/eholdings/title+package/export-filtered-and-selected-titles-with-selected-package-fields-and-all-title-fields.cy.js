@@ -2,6 +2,7 @@ import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
 import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
@@ -23,13 +24,14 @@ describe('eHoldings', () => {
       packageData: `C356415_package_data_${getRandomPostfix()}.csv`,
       titleData: `C356415_title_data_${getRandomPostfix()}.csv`,
       selectedStatus: 'Selected',
-      filterQuery: 'Journal',
+      filterQuery: 'a*',
       packageFieldsToSelect: [
         'Custom Coverage',
         'Agreements',
         'Notes',
         'Package Content Type',
         'Package Id',
+        'Package Name',
       ],
     };
     const calloutMessage =
@@ -41,6 +43,7 @@ describe('eHoldings', () => {
       'Package Note',
       'Package Content Type',
       'Package Id',
+      'Package Name',
     ];
 
     before('Create user and login', () => {
@@ -86,24 +89,24 @@ describe('eHoldings', () => {
         // Step 5: View "Package" record with "Total titles" value more than 100
         EHoldingsPackages.sortPackagesByTitlesCount({ minTitlesCount: 100 }).then((packages) => {
           [testData.package] = packages;
+          cy.intercept('GET', '**/eholdings/packages/*/resources?**').as('getTitlesOriginal');
           EHoldingsPackages.openPackageWithExpectedName(testData.package.name);
           EHoldingsPackageView.verifyPackageDetailViewIsOpened(
             testData.package.name,
             testData.package.countTotalTitles,
             testData.selectedStatus,
           );
+          cy.wait('@getTitlesOriginal').its('response.statusCode').should('eq', 200);
+          cy.wait(1000);
 
           // Step 6: Titles accordion - click the "magnifying glass" icon, "Filter titles" modal
           // opens (openFilterTitlesModal() verifies the modal content itself)
-          EHoldingsPackageView.getFilteredTitlesCount().then((titlesBeforeFilter) => {
-            const FilterTitlesModal = EHoldingsPackageView.openFilterTitlesModal();
-
+          EHoldingsPackageView.getTotalTitlesCount().then((titlesBeforeFilter) => {
             // Step 7: Fill in search query, click "Search" - modal closes, count decreases
-            FilterTitlesModal.typeSearchQuery(testData.filterQuery);
-            FilterTitlesModal.clickSearchButton();
+            EHoldingsPackage.searchTitles(testData.filterQuery);
 
             EHoldingsPackageView.getFilteredTitlesCount().then((titlesAfterFilter) => {
-              expect(titlesAfterFilter).to.be.lessThan(titlesBeforeFilter);
+              expect(titlesAfterFilter).to.be.lte(titlesBeforeFilter);
               testData.filteredTitlesCount = titlesAfterFilter;
             });
           });

@@ -82,6 +82,7 @@ export {
   RepeatableFieldItem,
 } from './repeatablefield';
 export { default as RichEditor } from './rich-text-editor';
+export { default as RichEditor2 } from './rich-text-editor2';
 export { default as SearchField } from './search-field';
 export { default as Section } from './section';
 export { default as Select } from './select';

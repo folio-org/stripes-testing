@@ -1,7 +1,6 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   APPLICATION_NAMES,
-  BATCH_GROUP,
   FOLIO_RECORD_TYPE,
   INVOICE_STATUSES,
   JOB_STATUS_NAMES,
@@ -45,7 +44,7 @@ describe('Data Import', () => {
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
-      batchGroup: BATCH_GROUP.FOLIO,
+      batchGroup: null,
       organizationName: VENDOR_NAMES.GOBI,
       paymentMethod: PAYMENT_METHOD.CASH,
     };
@@ -67,6 +66,10 @@ describe('Data Import', () => {
         Permissions.uiOrganizationsView.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        cy.getBatchGroups({ query: 'name<>"AT_*" and name<>"*auto*"' }).then((batchGroup) => {
+          mappingProfile.batchGroup = `"${batchGroup.name}"`;
+        });
 
         cy.login(user.username, user.password, {
           path: SettingsMenu.mappingProfilePath,
