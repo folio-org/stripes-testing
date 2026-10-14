@@ -100,8 +100,8 @@ describe('Bulk-edit', () => {
     });
 
     it(
-      'C692113 Verify preventing bulk edit of MARC Instances with more than one active underlying SRS record (athena)',
-      { tags: ['extendedPath', 'athena', 'C692113'] },
+      'C1464080 Verify preventing bulk edit of MARC Instances with more than one active underlying SRS record (athena)',
+      { tags: ['extendedPath', 'athena', 'C1464080'] },
       () => {
         // Step 1: Select instances and build query
         BulkEditSearchPane.openQuerySearch();

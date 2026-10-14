@@ -956,7 +956,7 @@ export default {
 
     // Generate three time points: one minute before, current, one minute after
     const timePoints = [];
-    for (let i = -1; i <= 1; i++) {
+    for (let i = -1; i <= 2; i++) {
       const timePoint = new Date(currentDate.getTime() + i * 60 * 1000);
       timePoints.push(DateTools.getFormattedEndDateWithTimUTC(timePoint, true));
     }
