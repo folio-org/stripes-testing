@@ -94,6 +94,8 @@ describe('Data Import', () => {
           collectionOfMatchProfiles[1].matchProfile.profileName,
         );
 
+        MatchProfileView.verifyMatchProfileOpened();
+        cy.wait(2000);
         MatchProfiles.createMatchProfileWithStaticValue(collectionOfMatchProfiles[2].matchProfile);
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[2].matchProfile.profileName,

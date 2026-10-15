@@ -172,6 +172,9 @@ describe('Data Import', () => {
           InstanceRecordEdit.saveAndClose();
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.verifyInstanceStatusTerm(INSTANCE_STATUS_TERM_NAMES.CATALOGED);
+          InstanceRecordView.waitLoading();
+          InstanceRecordView.verifyInstanceRecordViewOpened();
+          InventorySearchAndFilter.closeInstanceDetailPane();
 
           TopMenuNavigation.navigateToApp(
             APPLICATION_NAMES.SETTINGS,
@@ -222,6 +225,7 @@ describe('Data Import', () => {
             RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.instance,
           );
+          cy.wait(3000);
           FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
           InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
           InstanceRecordView.verifyResourceIdentifier(

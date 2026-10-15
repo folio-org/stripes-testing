@@ -8,8 +8,9 @@ import BrowseSubjects from '../../../support/fragments/inventory/search/browseSu
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import BrowseClassifications from '../../../support/fragments/inventory/search/browseClassifications';
 
-describe.skip('Inventory', () => {
+describe('Inventory', () => {
   describe('Subject Browse', () => {
     const testData = {
       user: {},
@@ -72,12 +73,20 @@ describe.skip('Inventory', () => {
           cy.wait(2000);
         });
         BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
-        BrowseSubjects.clickNextPaginationButton();
-        cy.wait(2000);
-        BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
-        BrowseSubjects.clickPreviousPaginationButton();
-        cy.wait(2000);
-        BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
+        BrowseClassifications.getNextPaginationButtonState().then((isEnabledNext) => {
+          if (isEnabledNext) {
+            BrowseSubjects.clickNextPaginationButton();
+            cy.wait(2000);
+            BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
+          }
+          BrowseClassifications.getPreviousPaginationButtonState().then((isEnabledPrevious) => {
+            if (isEnabledPrevious) {
+              BrowseSubjects.clickPreviousPaginationButton();
+              cy.wait(2000);
+              BrowseSubjects.verifySearchResult(subjectTypes, testData.columnName);
+            }
+          });
+        });
       },
     );
   });

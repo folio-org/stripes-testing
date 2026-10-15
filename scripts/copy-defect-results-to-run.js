@@ -27,8 +27,8 @@ const {
 require('dotenv').config();
 
 // ==================== CONFIG ====================
-const SOURCE_RUN_ID = 3703;
-const TARGET_RUN_ID = 3695;
+const SOURCE_RUN_ID = 3801;
+const TARGET_RUN_ID = 3811;
 const TEAMS = [
   team.Spitfire,
   team.Folijet,
@@ -60,9 +60,15 @@ const SKIP_DEFECT_KEYS = [];
 // target run, not already linked to a defect there, defect not excluded, etc.) - it does not
 // widen which tests get touched, only what status is written for them.
 const OVERRIDE_STATUS = false;
-// Status name to use when OVERRIDE_STATUS is true - must be a key of the `status` dictionary
-// (e.g. 'Retest', 'Failed'). An invalid value disables the override and logs a warning.
-const STATUS_FOR_OVERRIDE = '';
+// Status name to use when OVERRIDE_STATUS is true - must be a value from the `status` dictionary
+// (e.g. status.Retest, status.Failed, 5, 4). An invalid value disables the override and logs a warning.
+const STATUS_FOR_OVERRIDE = null;
+// When true, also copies "Passed" results from the source run to the target run. Source tests
+// whose current status is Passed are posted as Passed on the matching target test, as long as
+// the target test is not already Passed (those are skipped - nothing to update). This path
+// bypasses defect-checking entirely: a Passed source result carries no defects.
+// Default false to preserve the original defect-only behavior.
+const COPY_PASSED = false;
 // ==================================================
 
 const API_USER = process.env.TESTRAIL_API_USER;
@@ -99,16 +105,19 @@ const overrideStatusId = (() => {
   if (!OVERRIDE_STATUS) {
     return null;
   }
-  const id = status[STATUS_FOR_OVERRIDE];
-  if (!id) {
+  const id = STATUS_FOR_OVERRIDE;
+  const key = Object.entries(status).find((entry) => entry[1] === id)?.[0];
+  if (!key) {
     console.error(
-      `OVERRIDE_STATUS is true but STATUS_FOR_OVERRIDE ('${STATUS_FOR_OVERRIDE}') is not a valid status name. ` +
-        `Valid values: ${Object.keys(status).join(', ')}. Ignoring the override - posting each test's source run status instead.`,
+      `OVERRIDE_STATUS is true but STATUS_FOR_OVERRIDE ('${id}') is not a valid status id. ` +
+        `Valid ids: ${Object.entries(status)
+          .map((entry) => `${entry[0]}: ${entry[1]}`)
+          .join(', ')}. Ignoring the override - posting each test's source run status instead.`,
     );
     return null;
   }
   console.log(
-    `OVERRIDE_STATUS is enabled: every posted result will use status '${STATUS_FOR_OVERRIDE}' (id ${id}) instead of the source run's status.`,
+    `OVERRIDE_STATUS is enabled: every posted result will use status '${key}' (id ${id}) instead of the source run's status.`,
   );
   return id;
 })();
@@ -202,9 +211,11 @@ async function buildResultsToPost() {
   const targetTestByCaseId = new Map(targetTests.map((test) => [test.case_id, test]));
 
   const resultsToPost = [];
+  const passedResultsToPost = [];
   const skippedNoDefect = [];
   const skippedNoTargetCase = [];
   const skippedTargetPassed = [];
+  const skippedPassedAlreadyPassed = [];
   const skippedTargetHasDefect = [];
   const skippedDefectKeyExcluded = [];
 
@@ -212,10 +223,22 @@ async function buildResultsToPost() {
   // corresponding, not-yet-Passed test in the target run.
   const candidates = [];
   teamTests.forEach((test) => {
-    const { case_id: caseId } = test;
+    const { case_id: caseId, status_id: sourceStatusId } = test;
     const targetTest = targetTestByCaseId.get(caseId);
     if (!targetTest) {
       skippedNoTargetCase.push(caseId);
+    } else if (COPY_PASSED && sourceStatusId === status.Passed) {
+      // Source test is currently Passed - copy it if the target isn't already Passed.
+      if (targetTest.status_id === status.Passed) {
+        skippedPassedAlreadyPassed.push(caseId);
+      } else {
+        passedResultsToPost.push({
+          caseId,
+          test_id: targetTest.id,
+          status_id: status.Passed,
+          comment: `Passed result copied from run #${SOURCE_RUN_ID} (case C${caseId}).`,
+        });
+      }
     } else if (targetTest.status_id === status.Passed) {
       skippedTargetPassed.push(caseId);
     } else {
@@ -294,9 +317,11 @@ async function buildResultsToPost() {
 
   return {
     resultsToPost,
+    passedResultsToPost,
     skippedNoDefect,
     skippedNoTargetCase,
     skippedTargetPassed,
+    skippedPassedAlreadyPassed,
     skippedTargetHasDefect,
     skippedDefectKeyExcluded,
     teamTestsCount: teamTests.length,
@@ -306,9 +331,11 @@ async function buildResultsToPost() {
 async function run() {
   const {
     resultsToPost,
+    passedResultsToPost,
     skippedNoDefect,
     skippedNoTargetCase,
     skippedTargetPassed,
+    skippedPassedAlreadyPassed,
     skippedTargetHasDefect,
     skippedDefectKeyExcluded,
     teamTestsCount,
@@ -316,9 +343,15 @@ async function run() {
 
   const checkedCount =
     resultsToPost.length + skippedNoDefect.length + skippedDefectKeyExcluded.length;
+  const allResultsToPost = [...resultsToPost, ...passedResultsToPost];
 
   console.log('\n=== Summary ===');
   console.log(`Tests checked (source run, selected teams): ${teamTestsCount}`);
+  if (COPY_PASSED) {
+    console.log(
+      `  -> Passed in source, to be copied: ${passedResultsToPost.length} (skipped ${skippedPassedAlreadyPassed.length} already Passed in target)`,
+    );
+  }
   console.log(
     `  -> skipped, already Passed in run #${TARGET_RUN_ID}: ${skippedTargetPassed.length}`,
   );
@@ -328,7 +361,7 @@ async function run() {
   console.log(
     `  -> skipped, case not found in run #${TARGET_RUN_ID}: ${skippedNoTargetCase.length}`,
   );
-  console.log(`  -> history checked: ${checkedCount}`);
+  console.log(`  -> history checked (defect copy): ${checkedCount}`);
   console.log(
     `    -> defect found in last ${HISTORY_DEPTH} results, to be posted: ${resultsToPost.length}`,
   );
@@ -343,7 +376,7 @@ async function run() {
     );
   }
 
-  if (resultsToPost.length === 0) {
+  if (allResultsToPost.length === 0) {
     console.log('\nNothing to post. Exiting.');
     return;
   }
@@ -356,6 +389,12 @@ async function run() {
       `  C${caseId}: status=${statusNameById[status_id] || status_id}, defects=${defects}`,
     );
   });
+  if (COPY_PASSED && passedResultsToPost.length > 0) {
+    console.log(`  + ${passedResultsToPost.length} Passed result(s):`);
+    passedResultsToPost.forEach(({ caseId }) => {
+      console.log(`  C${caseId}: status=Passed`);
+    });
+  }
 
   if (ADVISORY_MODE) {
     console.log('\n[ADVISORY MODE] Nothing was written to TestRail.');
@@ -369,13 +408,13 @@ async function run() {
   }
 
   const blockSize = 500;
-  for (let i = 0; i < resultsToPost.length; i += blockSize) {
-    const block = resultsToPost
+  for (let i = 0; i < allResultsToPost.length; i += blockSize) {
+    const block = allResultsToPost
       .slice(i, i + blockSize)
       .map(({ test_id, status_id, defects, comment }) => ({
         test_id,
         status_id,
-        defects,
+        ...(defects !== undefined && { defects }),
         comment,
       }));
     console.log(

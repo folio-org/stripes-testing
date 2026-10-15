@@ -44,6 +44,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -704,12 +705,14 @@ describe('Data Import', () => {
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[2].matchProfile.profileName,
         );
-        cy.wait(1000);
+        MatchProfileView.verifyMatchProfileOpened();
+        cy.wait(2000);
         MatchProfiles.createMatchProfileWithStaticValue(collectionOfMatchProfiles[1].matchProfile);
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[1].matchProfile.profileName,
         );
-        cy.wait(1000);
+        MatchProfileView.verifyMatchProfileOpened();
+        cy.wait(2000);
         MatchProfiles.createMatchProfile(collectionOfMatchProfiles[0].matchProfile);
         MatchProfiles.checkMatchProfilePresented(
           collectionOfMatchProfiles[0].matchProfile.profileName,

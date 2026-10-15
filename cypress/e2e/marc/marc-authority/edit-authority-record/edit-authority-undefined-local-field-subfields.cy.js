@@ -143,7 +143,7 @@ describe('MARC', () => {
 
       it(
         'C514945 Edit MARC authority record with undefined Indicators / Subfield codes in Standard and Local fields when "Undefined" rules are enabled (promin)',
-        { tags: ['extendedPath', 'promin', 'C514945'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C514945'] },
         () => {
           // Step 1: Search for the authority record, open detail view and click edit
           MarcAuthorities.searchBy('Keyword', testData.authorityHeading);

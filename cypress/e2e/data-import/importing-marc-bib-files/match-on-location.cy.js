@@ -287,36 +287,40 @@ describe('Data Import', () => {
               );
             });
           });
+        });
+        cy.then(() => {
           SettingsJobProfiles.createJobProfileViaApi(testData.jobProfileForCreate).then(
             (bodyWithjobProfile) => {
               testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
             },
           );
+        })
+          .then(() => {
+            // upload a marc file for creating of the new instance, holding and item
+            DataImport.uploadFileViaApi(
+              'marcFileForC17027.mrc',
+              marcFileForCreate,
+              testData.jobProfileForCreate.profile.name,
+            ).then((response) => {
+              response.forEach((hrids) => instanceHrids.push(hrids.instance.hrid));
+              response.forEach((ids) => {
+                instanceIds.push(ids.instance.id);
+                holdingsIds.push(ids.holding.id);
+                itemIds.push(ids.item.id);
+              });
+            });
+          })
+          .then(() => {
+            cy.createTempUser([
+              Permissions.moduleDataImportEnabled.gui,
+              Permissions.settingsDataImportEnabled.gui,
+              Permissions.inventoryAll.gui,
+            ]).then((userProperties) => {
+              userId = userProperties.userId;
 
-          // upload a marc file for creating of the new instance, holding and item
-          DataImport.uploadFileViaApi(
-            'marcFileForC17027.mrc',
-            marcFileForCreate,
-            testData.jobProfileForCreate.profile.name,
-          ).then((response) => {
-            response.forEach((hrids) => instanceHrids.push(hrids.instance.hrid));
-            response.forEach((ids) => {
-              instanceIds.push(ids.instance.id);
-              holdingsIds.push(ids.holding.id);
-              itemIds.push(ids.item.id);
+              cy.login(userProperties.username, userProperties.password);
             });
           });
-        });
-
-        cy.createTempUser([
-          Permissions.moduleDataImportEnabled.gui,
-          Permissions.settingsDataImportEnabled.gui,
-          Permissions.inventoryAll.gui,
-        ]).then((userProperties) => {
-          userId = userProperties.userId;
-
-          cy.login(userProperties.username, userProperties.password);
-        });
       });
 
       afterEach('delete test data', () => {

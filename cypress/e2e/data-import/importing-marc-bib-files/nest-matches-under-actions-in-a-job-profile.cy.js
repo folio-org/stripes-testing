@@ -39,6 +39,7 @@ import Users from '../../../support/fragments/users/users';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -248,6 +249,8 @@ describe('Data Import', () => {
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
         MatchProfiles.createMatchProfile(instanceMatchProfile);
         MatchProfiles.checkMatchProfilePresented(instanceMatchProfile.profileName);
+        MatchProfileView.verifyMatchProfileOpened();
+        cy.wait(3000);
         MatchProfiles.createMatchProfileWithStaticValue(holdingsMatchProfile);
         MatchProfiles.checkMatchProfilePresented(holdingsMatchProfile.profileName);
 
