@@ -56,6 +56,7 @@ export default HTML.extend('select')
       ]),
     ),
     hasInfoButton: (el) => !!el.querySelector('[data-test-info-popover-trigger="true"]'),
+    selectedOptionLabel: (el) => el.querySelector('select').selectedOptions?.[0]?.textContent,
   })
   .actions({
     choose,
