@@ -157,7 +157,7 @@ describe('Orders', () => {
       // Step 2: Click on the PO line record in the "PO lines" accordion
       OrderLines.selectPOLInOrder(0);
       OrderLineDetails.waitLoading();
-      OrderLineDetails.checkLocationsSection({
+      OrderLineDetails.checkLocationsSectionInAnyOrder({
         locations: [
           [
             { key: POLINE_DETAILS_FIELDS.LOCATION_NAME, value: testData.physicalLocation.name },

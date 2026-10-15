@@ -482,7 +482,7 @@ export default {
     profileName,
     incomingRecordFields,
     existingRecordFields,
-    recordType,
+    recordType = EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     // Optional qualifier object (e.g. { comparisonPart: 'ALPHANUMERICS_ONLY' } or
     // { qualifierType: 'CONTAINS', qualifierValue: '...' }), applied to both sides by default.
     // Pass incomingQualifier/existingQualifier instead when the two sides differ (e.g. one side

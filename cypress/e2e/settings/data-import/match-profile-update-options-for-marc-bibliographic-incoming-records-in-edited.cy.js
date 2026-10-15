@@ -1,4 +1,4 @@
-import { APPLICATION_NAMES } from '../../../support/constants';
+import { APPLICATION_NAMES, EXISTING_RECORD_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEditForm';
@@ -30,6 +30,7 @@ describe('Data Import', () => {
         in2: 'f',
         subfield: 's',
       },
+      recordType: EXISTING_RECORD_NAMES.MARC_AUTHORITY,
     };
 
     before('Create test data and login', () => {

@@ -186,6 +186,7 @@ describe('Invoices', () => {
         'None',
         'Allocation',
       );
+      cy.wait(5_000); // wait for ledger rollover to complete before proceeding to next ledger
       FinanceHelp.searchByName(secondLedger.name);
       Ledgers.selectLedger(secondLedger.name);
       Ledgers.rollover();
@@ -194,7 +195,7 @@ describe('Invoices', () => {
         'None',
         'Allocation',
       );
-
+      cy.wait(5_000); // wait for ledger rollover to complete before proceeding to next ledger
       cy.visit(TopMenu.fiscalYearPath);
       FinanceHelp.searchByName(firstFiscalYear.name);
       FiscalYears.selectFY(firstFiscalYear.name);

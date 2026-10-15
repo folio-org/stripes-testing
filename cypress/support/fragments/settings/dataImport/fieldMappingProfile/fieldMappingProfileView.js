@@ -315,7 +315,7 @@ export default {
   verifyPaymentStatus: (value) => cy.expect(KeyValue('Payment status').has({ value })),
   verifyMappingProfileTitleName: (profileName) => cy.get('#full-screen-view-content h2').should('have.text', profileName),
   verifyCannotDeleteModalOpened: () => cy.expect(cannotDeleteModal.exists()),
-  verifyEnabledIndicatorSetToTrueViaApi: (profileId) => {
+  verifyEnabledIndicatorSetToTrueViaApi: (profileId, batchGroupString = '"FOLIO"') => {
     cy.okapiRequest({
       path: `data-import-profiles/mappingProfiles/${profileId}`,
       searchParams: {
@@ -327,7 +327,7 @@ export default {
         name: 'batchGroupId',
         path: 'invoice.batchGroupId',
         subfields: [],
-        value: '"FOLIO"',
+        value: batchGroupString,
       };
 
       const existingValues = {
