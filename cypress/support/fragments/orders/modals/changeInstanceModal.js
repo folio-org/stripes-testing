@@ -42,9 +42,8 @@ export default {
     cy.expect(submitButton.has({ disabled: false }));
     cy.do(submitButton.click());
 
-    cy.expect(changeInstanceModal.absent());
-
     if (updated) {
+      cy.expect(changeInstanceModal.absent());
       InteractorsTools.checkCalloutMessage(OrderStates.orderInstanceConnectionUpdatedSuccessfully);
     }
   },

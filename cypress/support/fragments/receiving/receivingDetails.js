@@ -45,6 +45,7 @@ const routingListAccordionButton = Button({ id: 'accordion-toggle-button-routing
 const expectedRowsSelector = '#expected [class*="mclRowFormatterContainer"]';
 const receivedRowsSelector = '#received [class*="mclRowFormatterContainer"]';
 const unreceivableRowsSelector = '#unreceivable [class*="mclRowFormatterContainer"]';
+const receivedPiecesList = receivedSection.find(MultiColumnList());
 
 const boundItemsAccordion = Section({ id: 'boundItems' });
 const boundItemsList = MultiColumnList({ id: 'bound-items-list' });
@@ -765,5 +766,9 @@ export default {
       .click();
 
     ItemRecordView.waitLoading();
+  },
+
+  assertReceivedPiecesTotalCount(totalCount) {
+    cy.expect(receivedPiecesList.has({ totalCount }));
   },
 };
