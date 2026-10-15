@@ -67,6 +67,9 @@ describe('Finance', () => {
               FinanceHelp.searchByName(firstFund.name);
               Funds.selectFund(firstFund.name);
               Funds.addTransferFrom(secondFund.name);
+              Funds.waitForFundDetailsLoading();
+              Funds.verifyFundType('No value set-');
+              cy.wait(5000);
             });
           });
         });
@@ -77,6 +80,7 @@ describe('Finance', () => {
         permissions.uiFinanceViewGroups.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.fundPath,
           waiter: Funds.waitLoading,

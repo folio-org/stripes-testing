@@ -148,7 +148,7 @@ describe('Orders', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
-    Invoices.deleteInvoiceViaApi(testData.invoice.id);
+    Invoices.deleteInvoiceViaApi(testData.invoice.id, { failOnStatusCode: false });
     Orders.deleteOrderViaApi(testData.order.id, false);
     Organizations.deleteOrganizationViaApi(testData.organization.id);
   });

@@ -322,7 +322,7 @@ describe('Invoices', () => {
       );
       const periodStartForThirdFY = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
       const periodEndForThirdFY = DateTools.getFormattedDate(
-        { date: new Date(date.getFullYear() + 0, 4, 31) },
+        { date: fiscalYears.third.periodEnd },
         'MM/DD/YYYY',
       );
 
@@ -338,7 +338,7 @@ describe('Invoices', () => {
         true,
         true,
       );
-
+      cy.wait(5000);
       FinanceHelper.selectFiscalYearsNavigation();
       FinanceHelper.searchByName(fiscalYears.second.name);
       FiscalYears.selectFY(fiscalYears.second.name);
