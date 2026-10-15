@@ -2159,6 +2159,24 @@ export default {
     });
   },
 
+  verifyAcquisitionAccordionOrderLineLink(
+    value,
+    { pane = instanceDetailsSection, shouldExist = true } = {},
+  ) {
+    const link = pane.find(acquisitionAccordion).find(Link(including(value)));
+
+    cy.expect(link[shouldExist ? 'exists' : 'absent']());
+  },
+
+  clickAcquisitionOrderLineLink(value, { pane = instanceDetailsSection } = {}) {
+    cy.do(
+      pane
+        .find(acquisitionAccordion)
+        .find(Link(including(value)))
+        .click(),
+    );
+  },
+
   clearDefaultFilter(accordionName) {
     cy.do(
       Button({
