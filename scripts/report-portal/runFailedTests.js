@@ -193,7 +193,9 @@ async function main() {
 
       fs.writeFileSync('failedTestsWorkers.json', JSON.stringify(workersData, null, 2));
       console.log(`✓ Generated failedTestsWorkers.json with ${workerCommands.length} workers`);
-      console.log(`✓ Tests per worker: ${Math.ceil(uniqTestPaths.length / workerCommands.length)}\n`);
+      console.log(
+        `✓ Tests per worker: ${Math.ceil(uniqTestPaths.length / workerCommands.length)}\n`,
+      );
 
       // Count flaky tests (tests marked as "To Investigate")
       fs.writeFileSync('flaky-recheck-count.txt', String(itemsToInvestigate.length));
@@ -217,7 +219,7 @@ async function main() {
     // Clean up temp file
     try {
       fs.unlinkSync(tempFile);
-    } catch (err) {
+    } catch {
       // Ignore cleanup errors
     }
 

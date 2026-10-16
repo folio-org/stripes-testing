@@ -245,7 +245,7 @@ async function resetMarcValidationRules() {
       'Default - Create SRS MARC Authority',
     );
     if (!filesUploadedStatus) process.exit(1);
-  } catch (error) {
+  } catch {
     process.exit(1);
   }
 

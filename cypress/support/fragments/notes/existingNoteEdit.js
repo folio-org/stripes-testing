@@ -2,7 +2,6 @@ import { RichEditor, TextField, Button, Select } from '../../../../interactors';
 
 export default class ExistingNoteEdit {
   static #rootCss = 'section[id=notes-form]';
-  static #nameCss = `${this.#rootCss} input[name=title]`;
   static #detailsCss = `${this.#rootCss} div[class*=editor]>p`;
 
   static #noteTypeSelect = Select('Note type');
