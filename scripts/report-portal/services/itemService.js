@@ -14,12 +14,12 @@ const getItemsV2 = async ({ params } = {}) => {
   return { data };
 };
 
-const getItemsToInvestigate = async ({ launchName, team }) => {
-  const latestLaunch = await getLatestLaunch({ name: launchName });
+const getItemsToInvestigate = async ({ launchName, team, launchId }) => {
+  const resolvedLaunchId = launchId || (await getLatestLaunch({ name: launchName })).id;
 
   const params = {
     sort: 'startTime,asc',
-    launchId: latestLaunch.id,
+    launchId: resolvedLaunchId,
     providerType: LAUNCH_PROVIDER_TYPE,
     'page.size': LIMIT,
     ...(team && { 'filter.cnt.name': team }),
