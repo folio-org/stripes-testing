@@ -6,7 +6,7 @@ describe('Eureka', () => {
     const passwordInput = TextInput('Password *');
     const loginButton = Button({ name: 'login' });
 
-    beforeEach(() => {
+    before(() => {
       cy.logoutViaApi();
       cy.clearCookies({ domain: null });
     });
