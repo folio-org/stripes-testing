@@ -97,7 +97,7 @@ describe('Inventory', () => {
 
       it(
         'C655274 Edit "Cards to display per page on Version history" on "Settings >> Inventory >> Version history" page (spitfire)',
-        { tags: ['criticalPath', 'spitfire', 'C655274'] },
+        { tags: ['criticalPath', 'spitfire', 'nonParallel', 'C655274'] },
         () => {
           cy.waitForAuthRefresh(() => {
             cy.login(testData.userProperties.username, testData.userProperties.password, {

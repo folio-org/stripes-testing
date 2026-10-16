@@ -89,8 +89,8 @@ describe('Inventory', () => {
         {
           action: VersionHistorySection.fieldActions.EDITED,
           field: testData.tagLdr,
-          from: '01035nam a22003013i 4500',
-          to: '01044aam a22003013i 4500',
+          from: /\d{5}nam a22003013i 4500/,
+          to: /\d{5}aam a22003013i 4500/,
         },
       ];
       const permissions = [

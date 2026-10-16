@@ -110,7 +110,7 @@ describe('Inventory', () => {
 
       it(
         'C407737 Verify that all fields (except "LDR") can be moved and saved when editing "MARC bibliographic" record and check "Version history" (spitfire)',
-        { tags: ['Extended', 'spitfire', 'C407737'] },
+        { tags: ['extendedPath', 'spitfire', 'C407737'] },
         () => {
           InventoryInstance.clickVersionHistoryButton();
 

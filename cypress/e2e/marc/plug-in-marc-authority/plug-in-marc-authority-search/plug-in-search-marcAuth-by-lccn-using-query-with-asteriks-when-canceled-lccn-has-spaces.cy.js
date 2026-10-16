@@ -17,7 +17,7 @@ describe('MARC', () => {
         AUTHORIZED: 'Authorized',
       };
 
-      const searchQueries = ['sh  766440123*', '*440123384', '*440123638*'];
+      const searchQueries = ['sh  766440123*', '*440123384', '*44012338*'];
 
       const searchResults = [
         'C440123 Test LCCN subfield z record 1 (two leading spaces, one trailing space, two internal spaces)',
@@ -61,6 +61,8 @@ describe('MARC', () => {
         ]).then((createdUserProperties) => {
           testData.userProperties = createdUserProperties;
 
+          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440123 ');
+
           cy.getUserToken(testData.userProperties.username, testData.userProperties.password);
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -99,6 +101,8 @@ describe('MARC', () => {
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon('700');
+          MarcAuthorities.verifyBrowseTabIsOpened();
+          MarcAuthorities.waitResultsLoading();
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySearchOptions();
 

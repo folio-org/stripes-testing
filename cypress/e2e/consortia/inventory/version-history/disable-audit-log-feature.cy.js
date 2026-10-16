@@ -78,7 +78,7 @@ describe('Inventory', () => {
       after('Clean up test data', () => {
         cy.getAdminToken();
         cy.withinTenant(memberTenant.affiliation, () => {
-          cy.enableVersionHistoryFeature(false);
+          cy.enableVersionHistoryFeature(true);
           InventoryInstance.deleteInstanceViaApi(testData.localInstanceId);
         });
         cy.withinTenant(centralTenant.affiliation, () => {
