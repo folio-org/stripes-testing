@@ -66,7 +66,7 @@ const { PANE_REQUEST_PHASES, PANE_REQUEST_PROFILE_NAMES } = PaneRequestWaiter;
 
 // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
 // #freeze pipeline deadlock
-describe.skip('Orders', () => {
+describe('Orders', () => {
   const flow = new ExecutionFlowManager();
   const R = {
     FY1: 'fy1',
@@ -136,9 +136,9 @@ describe.skip('Orders', () => {
         ({ fiscalYearId, fundDistributions = [] }) => fundDistributions.map((distribution) => {
           const value = Number(distribution.value);
           const amount =
-            distribution.distributionType === FUND_DISTRIBUTION_TYPES.PERCENTAGE
-              ? (totalPrice * value) / 100
-              : value;
+              distribution.distributionType === FUND_DISTRIBUTION_TYPES.PERCENTAGE
+                ? (totalPrice * value) / 100
+                : value;
 
           return {
             fyCode: fiscalYearsById.get(fiscalYearId)?.code,
@@ -489,7 +489,7 @@ describe.skip('Orders', () => {
 
   // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
   // #freeze pipeline deadlock
-  it.skip(
+  it(
     'C1404902 Multi-year prepayment behavior when a new fiscal year begins (thunderjet)',
     { tags: ['extendedPathBroken', 'thunderjet', 'C1404902Broken'] },
     () => {

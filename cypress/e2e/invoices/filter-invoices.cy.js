@@ -42,7 +42,7 @@ const R = {
 // For some reason the test is causing pipeline worker to freeze, so skipping it for now. It works fine locally.
 // Need to investigate why it is happening and fix it.
 // #freeze pipeline deadlock
-describe.skip('Invoices', () => {
+describe('Invoices', () => {
   const flow = new ExecutionFlowManager();
 
   const postfix = getRandomPostfix();
@@ -194,7 +194,7 @@ describe.skip('Invoices', () => {
   // For some reason the test is causing pipeline worker to freeze, so skipping it for now. It works fine locally.
   // Need to investigate why it is happening and fix it.
   // #freeze pipeline deadlock
-  it.skip(
+  it(
     'C6724 Test the invoice filters (thunderjet)',
     { tags: ['criticalPathBroken', 'thunderjet', 'C6724Broken'] },
     () => {

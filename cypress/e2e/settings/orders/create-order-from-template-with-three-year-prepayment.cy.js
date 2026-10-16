@@ -175,7 +175,7 @@ const triggerFundDistributionValidation = (form) => {
 
 // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
 // #freeze pipeline deadlock
-describe.skip('Settings | Orders', () => {
+describe('Settings | Orders', () => {
   const flow = new ExecutionFlowManager();
 
   const R = {
@@ -396,7 +396,7 @@ describe.skip('Settings | Orders', () => {
 
   // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
   // #freeze pipeline deadlock
-  it.skip(
+  it(
     'C1395029 Create an order from the template with three-year prepayment term (thunderjet)',
     { tags: ['criticalPathBroken', 'thunderjet', 'C1395029Broken'] },
     () => {

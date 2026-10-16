@@ -261,7 +261,7 @@ const fundDistribution = (
 
 // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
 // #freeze pipeline deadlock
-describe.skip('Lists', () => {
+describe('Lists', () => {
   describe('Query Builder', () => {
     const flow = new ExecutionFlowManager();
     const orderTitles = [1, 2, 3, 4].map(
@@ -392,16 +392,16 @@ describe.skip('Lists', () => {
               ...Budgets.getDefaultBudget(),
               allocated: 1000,
               budgetStatus:
-                fiscalYearIndex === 0 ? BUDGET_STATUSES.ACTIVE : BUDGET_STATUSES.PLANNED,
+                    fiscalYearIndex === 0 ? BUDGET_STATUSES.ACTIVE : BUDGET_STATUSES.PLANNED,
               fiscalYearId: fiscalYear.id,
               fundId: fund.id,
               statusExpenseClasses:
-                fundIndex === 0
-                  ? [expenseClass1, expenseClass2].map(({ id }) => ({
-                    expenseClassId: id,
-                    status: EXPENSE_CLASS_STATUSES.ACTIVE,
-                  }))
-                  : [],
+                    fundIndex === 0
+                      ? [expenseClass1, expenseClass2].map(({ id }) => ({
+                        expenseClassId: id,
+                        status: EXPENSE_CLASS_STATUSES.ACTIVE,
+                      }))
+                      : [],
             }).then((budget) => budgets.push(budget))))
             .then(() => currentFlow.set(R.BUDGETS, budgets, (entities) => entities.forEach(({ id }) => Budgets.deleteViaApi(id, false))));
         })
@@ -774,7 +774,7 @@ describe.skip('Lists', () => {
 
     // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
     // #freeze pipeline deadlock
-    it.skip(
+    it(
       'C1404906 Multi-year prepayment data is queryable in Lists app across all PO Line entity types (thunderjet)',
       { tags: ['criticalPathBroken', 'thunderjet', 'nonParallel', 'C1404906Broken'] },
       () => {

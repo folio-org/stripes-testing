@@ -38,7 +38,7 @@ const R = {
 
 // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
 // #freeze pipeline deadlock
-describe.skip('Orders', () => {
+describe('Orders', () => {
   const flow = new ExecutionFlowManager();
   const postfix = getRandomPostfix();
   const identifiers = {
@@ -296,7 +296,7 @@ describe.skip('Orders', () => {
 
   // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
   // #freeze pipeline deadlock
-  it.skip(
+  it(
     'C1385305 Search PO lines by product IDs with new indexes (thunderjet)',
     { tags: ['extendedPathBroken', 'thunderjet', 'C1385305Broken'] },
     () => {

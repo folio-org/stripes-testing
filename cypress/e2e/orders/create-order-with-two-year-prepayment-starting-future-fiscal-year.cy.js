@@ -38,7 +38,7 @@ const OrderLineEditForm = { ...OrderLineEditFormFragment, ...MultiYearPaymentTer
 
 // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
 // #freeze pipeline deadlock
-describe.skip('Orders', () => {
+describe('Orders', () => {
   const flow = new ExecutionFlowManager();
 
   const R = {
@@ -315,7 +315,7 @@ describe.skip('Orders', () => {
 
   // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
   // #freeze pipeline deadlock
-  it.skip(
+  it(
     'C1404903 Create an order with two-year prepayment term starting from the future fiscal year (thunderjet)',
     { tags: ['extendedPathBroken', 'thunderjet', 'C1404903Broken'] },
     () => {

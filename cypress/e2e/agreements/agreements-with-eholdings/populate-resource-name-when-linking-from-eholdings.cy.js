@@ -35,7 +35,7 @@ const R = {
 
 // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
 // #freeze pipeline deadlock
-describe.skip('Agreements', () => {
+describe('Agreements', () => {
   describe('Agreements with eHoldings', () => {
     const flow = new ExecutionFlowManager();
     const postfix = getRandomPostfix();
@@ -265,7 +265,7 @@ describe.skip('Agreements', () => {
 
     // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
     // #freeze pipeline deadlock
-    it.skip(
+    it(
       'C1347109 Populate resourceName when adding an eHoldings resource to an Agreement (thunderjet)',
       { tags: ['extendedPathBroken', 'thunderjet', 'C1347109Broken', 'nonParallelBroken'] },
       () => {
