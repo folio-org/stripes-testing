@@ -12,7 +12,18 @@ describe('fse-specification-storage', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195707 - Get a collection of specifications for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['ramsons', 'fse', 'api', 'sanity', 'specification-storage', 'loc', 'TC195707'] },
+    {
+      tags: [
+        'ramsons',
+        'fse',
+        'api',
+        'sanity',
+        'tenant-settings',
+        'specification-storage',
+        'loc',
+        'TC195707',
+      ],
+    },
     () => {
       cy.checkSpecificationStorageApi().then((response) => {
         cy.expect(response.status).to.eq(200);
@@ -24,7 +35,17 @@ describe('fse-specification-storage', { retries: { runMode: 1 } }, () => {
 
   it(
     `FDOPS-6487 - MARC undefined validation rules default to disabled for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'api', 'sanity', 'specification-storage', 'trillium', 'FDOPS-6487'] },
+    {
+      tags: [
+        'fse',
+        'api',
+        'sanity',
+        'specification-storage',
+        'tenant-settings',
+        'trillium',
+        'FDOPS-6487',
+      ],
+    },
     () => {
       const verifyUndefinedRulesDisabled = (spec) => {
         cy.getSpecificationRules(spec.id).then(({ body }) => {

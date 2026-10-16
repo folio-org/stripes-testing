@@ -162,6 +162,7 @@ describe('fse-capabilities', { retries: { runMode: 1 } }, () => {
           'sanity',
           'api',
           'capabilities',
+          'tenant-settings',
           'trillium',
           app,
           `${Cypress.env('OKAPI_TENANT')}`,

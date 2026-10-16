@@ -7,9 +7,8 @@ describe('fse-settings', { retries: { runMode: 1 } }, () => {
   });
 
   it(
-    `TC195383 - Verify settings for permission inspector, gobi integration and tenant application ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}
-    )}`,
-    { tags: ['sanity', 'fse', 'api', 'settings', 'loc', 'TC195383'] },
+    `TC195383 - Verify settings for permission inspector, gobi integration and tenant application ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['sanity', 'fse', 'api', 'settings', 'gobi-settings', 'loc', 'TC195383'] },
     () => {
       cy.getPermissions().then((response) => {
         cy.expect(response.status).to.eq(200);
@@ -25,7 +24,7 @@ describe('fse-settings', { retries: { runMode: 1 } }, () => {
 
   it(
     `FDOPS-6962 - Verify mod-ncip configuration migrated into mod-settings for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'api', 'settings', 'ncip', 'sanity', 'FDOPS-6962'] },
+    { tags: ['fse', 'api', 'settings', 'tenant-settings', 'ncip', 'sanity', 'FDOPS-6962'] },
     () => {
       cy.getNcipConfigCheck().then((checkResponse) => {
         const isNoNcipAgencySettings =
