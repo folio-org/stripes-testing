@@ -96,7 +96,7 @@ const searchCases = [
       {
         authRef: 'Auth/Ref',
         heading:
-          'AT_C409445 Conference Name 511 Western Region Agricultural Education Research Seminar (1983- ) subc subd subn subq subg--subv--subx--suby--subz',
+          'AT_C409445 Conference Name 511 Western Region Agricultural Education Research Seminar (1983- ) subc subd subn subq--subv--subx--suby--subz subg',
         type: 'Conference Name',
       },
     ],

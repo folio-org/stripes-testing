@@ -109,30 +109,39 @@ describe('MARC', () => {
         MarcAuthorities.searchBeats(searchQuery);
         MarcAuthorities.checkResultList(
           corporateConferenceResults.map((heading) => including(heading)),
+          { rawMatch: true },
         );
         MarcAuthorities.checkRowsCount(corporateConferenceResults.length);
 
         // Step 4: Filter by "Conference Name"
         MarcAuthorities.chooseTypeOfHeading(conferenceNameTypeName);
-        MarcAuthorities.checkResultList(conferenceOnlyResults.map((heading) => including(heading)));
+        MarcAuthorities.checkResultList(
+          conferenceOnlyResults.map((heading) => including(heading)),
+          { rawMatch: true },
+        );
         MarcAuthorities.checkRowsCount(conferenceOnlyResults.length);
 
         // Step 5: Reset filter
         MarcAuthorities.resetTypeOfHeading();
         MarcAuthorities.checkResultList(
           corporateConferenceResults.map((heading) => including(heading)),
+          { rawMatch: true },
         );
         MarcAuthorities.checkRowsCount(corporateConferenceResults.length);
 
         // Step 6: Filter by "Corporate Name"
         MarcAuthorities.chooseTypeOfHeading(corporateNameTypeName);
-        MarcAuthorities.checkResultList(corporateOnlyResults.map((heading) => including(heading)));
+        MarcAuthorities.checkResultList(
+          corporateOnlyResults.map((heading) => including(heading)),
+          { rawMatch: true },
+        );
         MarcAuthorities.checkRowsCount(corporateOnlyResults.length);
 
         // Step 7: Reset filter
         MarcAuthorities.resetTypeOfHeading();
         MarcAuthorities.checkResultList(
           corporateConferenceResults.map((heading) => including(heading)),
+          { rawMatch: true },
         );
         MarcAuthorities.checkRowsCount(corporateConferenceResults.length);
 
@@ -140,43 +149,58 @@ describe('MARC', () => {
         MarcAuthorities.selectSearchOptionInDropdown(nameTitleOptionName);
         MarcAuthoritiesSearch.verifySelectedSearchOption(nameTitleOptionName);
         MarcAuthorities.searchBeats(searchQuery);
-        MarcAuthorities.checkResultList(nameTitleResults.map((heading) => including(heading)));
+        MarcAuthorities.checkResultList(
+          nameTitleResults.map((heading) => including(heading)),
+          { rawMatch: true },
+        );
         MarcAuthorities.checkRowsCount(nameTitleResults.length);
 
         // Step 10: Filter by "Personal Name"
         MarcAuthorities.chooseTypeOfHeading(personalNameTypeName);
         MarcAuthorities.checkResultList(
           nameTitlePersonalResults.map((heading) => including(heading)),
+          { rawMatch: true },
         );
         MarcAuthorities.checkRowsCount(nameTitlePersonalResults.length);
 
         // Step 11: Reset filter
         MarcAuthorities.resetTypeOfHeading();
-        MarcAuthorities.checkResultList(nameTitleResults.map((heading) => including(heading)));
+        MarcAuthorities.checkResultList(
+          nameTitleResults.map((heading) => including(heading)),
+          { rawMatch: true },
+        );
         MarcAuthorities.checkRowsCount(nameTitleResults.length);
 
         // Step 12: Filter by "Corporate Name"
         MarcAuthorities.chooseTypeOfHeading(corporateNameTypeName);
         MarcAuthorities.checkResultList(
           nameTitleCorporateResults.map((heading) => including(heading)),
+          { rawMatch: true },
         );
         MarcAuthorities.checkRowsCount(nameTitleCorporateResults.length);
 
         // Step 13: Reset filter
         MarcAuthorities.resetTypeOfHeading();
-        MarcAuthorities.checkResultList(nameTitleResults.map((heading) => including(heading)));
+        MarcAuthorities.checkResultList(
+          nameTitleResults.map((heading) => including(heading)),
+          { rawMatch: true },
+        );
         MarcAuthorities.checkRowsCount(nameTitleResults.length);
 
         // Step 14: Filter by "Conference Name"
         MarcAuthorities.chooseTypeOfHeading(conferenceNameTypeName);
         MarcAuthorities.checkResultList(
           nameTitleConferenceResults.map((heading) => including(heading)),
+          { rawMatch: true },
         );
         MarcAuthorities.checkRowsCount(nameTitleConferenceResults.length);
 
         // Step 15: Reset filter
         MarcAuthorities.resetTypeOfHeading();
-        MarcAuthorities.checkResultList(nameTitleResults.map((heading) => including(heading)));
+        MarcAuthorities.checkResultList(
+          nameTitleResults.map((heading) => including(heading)),
+          { rawMatch: true },
+        );
         MarcAuthorities.checkRowsCount(nameTitleResults.length);
       },
     );

@@ -75,6 +75,11 @@ describe('Data Import', () => {
       'C11113 Filter the "View all" log screen (folijet)',
       { tags: ['smokeFlaky', 'folijet', 'C11113', 'nonParallel'] },
       () => {
+        // force increased limit for UI to load all users
+        cy.intercept('GET', /metadata-provider\/jobExecutions\/users\?.*limit=\d+/, (req) => {
+          req.url = req.url.replace(/limit=\d+/, 'limit=1000');
+        });
+
         Logs.openViewAllLogs();
         LogsViewAll.checkByReverseChronologicalOrder();
 

@@ -30,6 +30,8 @@ describe('Inventory', () => {
 
       before('Create user, test data', () => {
         cy.getAdminToken();
+        InventoryInstances.deleteFullInstancesByTitleViaApi('C476754_');
+
         cy.getStatisticalCodes({ limit: 200 }).then((codes) => {
           codes.forEach((code) => {
             if (code.name.includes('C476754')) {
@@ -135,11 +137,14 @@ describe('Inventory', () => {
               getRecordsCount([0]),
             );
             InventoryInstances.checkSearchResultCount(`^${getRecordsCount([0])} record`);
+            InventorySearchAndFilter.verifyNumberOfSearchResults(getRecordsCount([0]));
             InventoryInstances.selectInstance();
             InventoryInstance.waitInventoryLoading();
             InventoryInstance.openHoldingView();
             HoldingsRecordView.checkStatisticalCode(statisticalCodes[0].name);
+            cy.intercept('/search/instances*').as('getInstances1a');
             HoldingsRecordView.close();
+            cy.wait('@getInstances1a');
             InventoryInstance.waitInventoryLoading();
             InventorySearchAndFilter.toggleAccordionByName(testData.statisticalCodeAccordionName);
 
@@ -158,13 +163,17 @@ describe('Inventory', () => {
             );
             cy.wait('@getInstances2', { timeout: 10_000 }).then(() => {
               InventoryInstances.checkSearchResultCount(`^${getRecordsCount([0, 1])} record`);
+              InventorySearchAndFilter.verifyNumberOfSearchResults(getRecordsCount([0, 1]));
+              cy.wait(3000);
               InventoryInstances.selectInstance(2);
               InventoryInstance.waitInventoryLoading();
               InventoryInstance.openHoldingView();
               HoldingsRecordView.checkStatisticalCode(
                 or(statisticalCodes[0].name, statisticalCodes[1].name),
               );
+              cy.intercept('/search/instances*').as('getInstances2a');
               HoldingsRecordView.close();
+              cy.wait('@getInstances2a');
               InventoryInstance.waitInventoryLoading();
               InventorySearchAndFilter.toggleAccordionByName(testData.statisticalCodeAccordionName);
 
@@ -217,11 +226,14 @@ describe('Inventory', () => {
                     getRecordsCount([2]),
                   );
                   InventoryInstances.checkSearchResultCount(`^${getRecordsCount([2])} record`);
+                  InventorySearchAndFilter.verifyNumberOfSearchResults(getRecordsCount([2]));
                   InventoryInstances.selectInstance();
                   InventoryInstance.waitInventoryLoading();
                   InventoryInstance.openHoldingView();
                   HoldingsRecordView.checkStatisticalCode(statisticalCodes[2].name);
+                  cy.intercept('/search/instances*').as('getInstances4a');
                   HoldingsRecordView.close();
+                  cy.wait('@getInstances4a');
                   InventoryInstance.waitInventoryLoading();
                   InventorySearchAndFilter.toggleAccordionByName(
                     testData.statisticalCodeAccordionName,

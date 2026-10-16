@@ -1168,7 +1168,13 @@ export default {
     cy.wait(1000);
   },
 
-  checkResultList(records) {
+  checkResultList(records, { rawMatch = false } = {}) {
+    if (rawMatch) {
+      records.forEach((record) => {
+        cy.expect(MultiColumnListCell(record).exists());
+      });
+      return;
+    }
     getExtendedMappingState().then((isExtended) => {
       records.forEach((record) => {
         cy.expect(
