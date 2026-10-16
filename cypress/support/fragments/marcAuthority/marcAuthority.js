@@ -369,6 +369,14 @@ export default {
     cy.expect(HTML('This field is protected.').exists());
   },
 
+  checkInfoButtonAbsentForField: (tag, rowIndex) => {
+    if (rowIndex) {
+      cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(infoButton).absent());
+    } else {
+      cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(infoButton).absent());
+    }
+  },
+
   checkAddNew001Tag: (rowIndex, content) => {
     // need to wait until all data loaded
     cy.wait(2000);
