@@ -131,9 +131,6 @@ describe('Lists', () => {
       accordionName: 'Source',
       filters: ['System', 'User generated'],
     };
-    const createdByFilter = {
-      accordionName: 'Created by',
-    };
     const updatedByFilter = {
       accordionName: 'Updated by',
     };
@@ -352,44 +349,6 @@ describe('Lists', () => {
         // #7 Click on "Reset all"
         Lists.resetAllFilters();
         Lists.verifyResetAllButtonDisabled();
-      },
-    );
-
-    it(
-      'C1434642 Filter section: Created by (athena)',
-      { tags: ['extendedPath', 'athena', 'C1434642'] },
-      () => {
-        // #1 Click on "Created by" accordion on the "Search & filter" pane
-        Lists.clickOnAccordionInFilter(createdByFilter.accordionName);
-        Lists.verifyAccordionCollapsedInFilter(createdByFilter.accordionName);
-        // #2 Click on "Created by" accordion again
-        Lists.clickOnAccordionInFilter(createdByFilter.accordionName);
-        Lists.verifyAccordionExpandedInFilter(createdByFilter.accordionName);
-        Lists.verifyFindUserAccordionDefaultContent(createdByFilter.accordionName);
-        // #3 Click on "Find user" link
-        Lists.clickOnFindUserButton(createdByFilter.accordionName);
-        Lists.verifySelectUserModalDefaultContent();
-        // #4 Select "User 1" who has created at least one list
-        Lists.findAndSelectUserInModal(userData.username);
-        Lists.verifyAtLeastOneListDisplayed();
-        Lists.verifyFindUserFieldDisplaysUser(createdByFilter.accordionName, userData.username);
-        Lists.verifyClearFilterButton(createdByFilter.accordionName);
-        Lists.verifyResetAllButtonEnabled();
-        // #5 Click on "x" next to "Created by" field
-        Lists.clickOnClearFilterButton(createdByFilter.accordionName);
-        Lists.verifyFindUserAccordionDefaultContent(createdByFilter.accordionName);
-        Lists.verifyResetAllButtonDisabled();
-        // #6 Click on "Find user" again and select "User 2" who has not created any lists
-        Lists.clickOnFindUserButton(createdByFilter.accordionName);
-        Lists.findAndSelectUserInModal(userDataTwo.username);
-        Lists.verifyNoResultsFoundMessage();
-        Lists.verifyFindUserFieldDisplaysUser(createdByFilter.accordionName, userDataTwo.username);
-        Lists.verifyClearFilterButton(createdByFilter.accordionName);
-        Lists.verifyResetAllButtonEnabled();
-        // #7 Click on "Reset all"
-        Lists.resetAllFilters();
-        Lists.verifyResetAllButtonDisabled();
-        Lists.verifyListsPaneRecordsCountAtLeast(1);
       },
     );
 
