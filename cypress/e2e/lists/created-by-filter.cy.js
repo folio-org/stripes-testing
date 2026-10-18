@@ -115,6 +115,7 @@ describe('Lists', () => {
         Lists.verifyUserChipDisplayed(createdByFilter.accordionName, userTwo.username);
         Lists.verifyResetAllButtonEnabled();
         Lists.verifyListsArePresent([userOneList.name, userTwoList.name]);
+        Lists.verifyListsPaneRecordsCount(2);
         // #4 Click on "x" button next to User 1 name
         Lists.removeUserFromFilter(createdByFilter.accordionName, userOne.username);
         Lists.verifyUserChipAbsent(createdByFilter.accordionName, userOne.username);
@@ -123,6 +124,7 @@ describe('Lists', () => {
         Lists.verifyResetAllButtonEnabled();
         Lists.verifyListsArePresent([userTwoList.name]);
         Lists.verifyListsAreNotPresent([userOneList.name]);
+        Lists.verifyListsPaneRecordsCount(1);
         // #5 Click on "x" button next to "Created by" accordion
         Lists.clickOnClearFilterButton(createdByFilter.accordionName);
         Lists.verifyClearFilterButtonAbsent(createdByFilter.accordionName);
@@ -136,6 +138,7 @@ describe('Lists', () => {
         Lists.verifyResetAllButtonEnabled();
         Lists.verifyListsArePresent([userOneList.name]);
         Lists.verifyListsAreNotPresent([userTwoList.name]);
+        Lists.verifyListsPaneRecordsCount(1);
         // #7 Check "Private" under "Visibility" accordion
         Lists.clickOnCheckbox('Private');
         Lists.verifyClearFilterButton(visibilityFilter.accordionName);

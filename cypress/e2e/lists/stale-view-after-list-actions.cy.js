@@ -128,11 +128,11 @@ describe('Lists', () => {
       { tags: ['extendedPath', 'athena', 'C1559263'] },
       () => {
         // #1 Check the "Search & filter" pane
-        cy.contains('Visibility').should('be.visible');
-        cy.contains('Source').should('be.visible');
-        cy.contains('Created by').should('be.visible');
-        cy.contains('Updated by').should('be.visible');
-        cy.contains('Record types').should('be.visible');
+        Lists.verifyAccordionExpandedInFilter('Visibility');
+        Lists.verifyAccordionExpandedInFilter('Source');
+        Lists.verifyAccordionCollapsedInFilter('Created by');
+        Lists.verifyAccordionCollapsedInFilter('Updated by');
+        Lists.verifyAccordionExpandedInFilter('Record types');
         Lists.verifyStatusAccordionDefaultContent();
 
         // #2 Search "<prefix>"
@@ -290,6 +290,8 @@ describe('Lists', () => {
         Lists.verifyClearFilterButton('Updated by');
         Lists.verifyListsPaneRecordsCount(0);
         Lists.verifyNoResultsFoundForSearchTerm(searchTerm);
+        Lists.verifySearchFieldValue(searchTerm);
+        Lists.verifyCheckboxChecked('Active');
 
         // #18 Select User A under "Updated by"
         Lists.openUserFilterDropdown('Updated by');
@@ -307,7 +309,7 @@ describe('Lists', () => {
 
         // #19 Clear "Updated by", clear the search box, check "System" under Source
         Lists.clickOnClearFilterButton('Updated by');
-        cy.get('#input-record-search').clear();
+        Lists.fillInSearchField('');
         Lists.pressEnterInSearchField();
         Lists.clickOnCheckbox('System');
         Lists.verifyListIsPresent(cannedSystemList);

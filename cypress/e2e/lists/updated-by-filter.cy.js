@@ -108,6 +108,7 @@ describe('Lists', () => {
         Lists.verifyResetAllButtonEnabled();
         Lists.verifyListsArePresent([userOneList.name]);
         Lists.verifyListsAreNotPresent([userTwoList.name]);
+        Lists.verifyListsPaneRecordsCount(1);
         // #4 Click on "x" button next to User 1 name
         Lists.removeUserFromFilter(updatedByFilter.accordionName, userOne.username);
         Lists.verifyClearFilterButtonAbsent(updatedByFilter.accordionName);
@@ -125,6 +126,7 @@ describe('Lists', () => {
         Lists.verifyUserChipDisplayed(updatedByFilter.accordionName, userTwo.username);
         Lists.verifyResetAllButtonEnabled();
         Lists.verifyListsArePresent([userOneList.name, userTwoList.name]);
+        Lists.verifyListsPaneRecordsCount(2);
         // #6 Click on "x" button next to "Updated by" accordion
         Lists.clickOnClearFilterButton(updatedByFilter.accordionName);
         Lists.verifyClearFilterButtonAbsent(updatedByFilter.accordionName);
