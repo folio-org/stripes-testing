@@ -210,6 +210,18 @@ Cypress.Commands.add(
   },
 );
 
+Cypress.Commands.add('createAuthorizationRolesBatchApi', (roles, ignoreErrors = false) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'roles/batch',
+    isDefaultSearchParamsRequired: false,
+    body: { roles },
+    failOnStatusCode: !ignoreErrors,
+  }).then((response) => {
+    return response;
+  });
+});
+
 Cypress.Commands.add('updateAuthorizationRoleApi', (roleId, requestBody) => {
   cy.okapiRequest({
     method: 'PUT',

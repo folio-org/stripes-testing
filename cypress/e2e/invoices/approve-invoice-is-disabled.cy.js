@@ -19,12 +19,6 @@ describe('Invoices', () => {
     user: {},
   };
 
-  const setApprovePayValue = (isApprovePayEnabled) => {
-    cy.getAdminToken().then(() => {
-      Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
-    });
-  };
-
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
       const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi();
@@ -47,6 +41,7 @@ describe('Invoices', () => {
   });
 
   beforeEach(() => {
+    cy.getAdminToken();
     testData.order = NewOrder.getDefaultOrder({ vendorId: organization.id });
     testData.orderLine = BasicOrderLine.getDefaultOrderLine({
       listUnitPrice: 98,
@@ -63,14 +58,10 @@ describe('Invoices', () => {
         testData.invoice = invoice;
       });
     });
-
-    cy.login(testData.user.username, testData.user.password, {
-      path: TopMenu.invoicesPath,
-      waiter: Invoices.waitLoading,
-    });
   });
 
   afterEach(() => {
+    cy.logout();
     cy.getAdminToken();
     Invoices.deleteInvoiceViaApi(testData.invoice.id);
     Orders.deleteOrderViaApi(testData.order.id);
@@ -95,7 +86,12 @@ describe('Invoices', () => {
     },
   ].forEach(({ description, isApprovePayEnabled }) => {
     it(description, { tags: ['criticalPath', 'thunderjet', 'C397321', 'nonParallel'] }, () => {
-      setApprovePayValue(isApprovePayEnabled);
+      Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
+
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.invoicesPath,
+        waiter: Invoices.waitLoading,
+      });
 
       // Click on "Vendor invoice number" link
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
@@ -116,7 +112,7 @@ describe('Invoices', () => {
       const SelectOrderLinesModal = InvoiceView.openSelectOrderLineModal();
 
       // Search for the POL, Select it by checking checkbox in "Order lines" pane, Click "Save" button
-      SelectOrderLinesModal.selectOrderLine(testData.order.poNumber);
+      SelectOrderLinesModal.selectOrderLine(`${testData.order.poNumber}-1`);
 
       // * Warning banner is displayed at top of invoice "Invoice can not be approved."
       InvoiceView.checkInvoiceCanNotBeApprovedWarning(

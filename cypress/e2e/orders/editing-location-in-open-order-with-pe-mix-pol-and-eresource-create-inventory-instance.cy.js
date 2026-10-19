@@ -5,6 +5,7 @@ import {
   ORDER_STATUSES,
   POL_CREATE_INVENTORY_SETTINGS,
 } from '../../support/constants';
+import { POLINE_DETAILS_FIELDS } from '../../support/constants/orders/order-line';
 import { Permissions } from '../../support/dictionary';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -144,12 +145,12 @@ describe('Orders', () => {
       OrderLineDetails.checkLocationsSection({
         locations: [
           [
-            { key: 'Holding', value: testData.locations[0].name },
-            { key: 'Quantity physical', value: 1 },
+            { key: POLINE_DETAILS_FIELDS.HOLDING_NAME, value: testData.locations[0].name },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_PHYSICAL, value: 1 },
           ],
           [
-            { key: 'Name (code)', value: testData.locations[1].name },
-            { key: 'Quantity electronic', value: 1 },
+            { key: POLINE_DETAILS_FIELDS.LOCATION_NAME, value: testData.locations[1].name },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC, value: 1 },
           ],
         ],
       });
@@ -173,9 +174,9 @@ describe('Orders', () => {
       OrderLineDetails.checkLocationsSection({
         locations: [
           [
-            { key: 'Name (code)', value: testData.locations[1].name },
-            { key: 'Quantity physical', value: 1 },
-            { key: 'Quantity electronic', value: 1 },
+            { key: POLINE_DETAILS_FIELDS.LOCATION_NAME, value: testData.locations[1].name },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_PHYSICAL, value: 1 },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC, value: 1 },
           ],
         ],
       });
@@ -209,12 +210,12 @@ describe('Orders', () => {
       OrderLineDetails.checkLocationsSection({
         locations: [
           [
-            { key: 'Holding', value: testData.locations[1].name },
-            { key: 'Quantity physical', value: 1 },
+            { key: POLINE_DETAILS_FIELDS.HOLDING_NAME, value: testData.locations[1].name },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_PHYSICAL, value: 1 },
           ],
           [
-            { key: 'Name (code)', value: testData.locations[1].name },
-            { key: 'Quantity electronic', value: 1 },
+            { key: POLINE_DETAILS_FIELDS.LOCATION_NAME, value: testData.locations[1].name },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC, value: 1 },
           ],
         ],
       });
@@ -237,16 +238,16 @@ describe('Orders', () => {
       // Add "1" physical quantity to newly created line
       OrderLineEditForm.fillLocationDetails([{}, { quantityPhysical: '1' }]);
       OrderLineEditForm.clickSaveButton();
-      OrderLineDetails.checkLocationsSection({
+      OrderLineDetails.checkLocationsSectionInAnyOrder({
         locations: [
           [
-            { key: 'Name (code)', value: testData.locations[1].name },
-            { key: 'Quantity electronic', value: 1 },
+            { key: POLINE_DETAILS_FIELDS.LOCATION_NAME, value: testData.locations[1].name },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC, value: 1 },
           ],
           [
             // Holding is not created for newly added location until the order is reopened
-            { key: 'Name (code)', value: testData.locations[2].name },
-            { key: 'Quantity physical', value: 1 },
+            { key: POLINE_DETAILS_FIELDS.LOCATION_NAME, value: testData.locations[2].name },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_PHYSICAL, value: 1 },
           ],
         ],
       });
@@ -281,12 +282,12 @@ describe('Orders', () => {
       OrderLineDetails.checkLocationsSection({
         locations: [
           [
-            { key: 'Name (code)', value: testData.locations[1].name },
-            { key: 'Quantity electronic', value: 1 },
+            { key: POLINE_DETAILS_FIELDS.LOCATION_NAME, value: testData.locations[1].name },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC, value: 1 },
           ],
           [
-            { key: 'Holding', value: testData.locations[2].name },
-            { key: 'Quantity physical', value: 1 },
+            { key: POLINE_DETAILS_FIELDS.HOLDING_NAME, value: testData.locations[2].name },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_PHYSICAL, value: 1 },
           ],
         ],
       });

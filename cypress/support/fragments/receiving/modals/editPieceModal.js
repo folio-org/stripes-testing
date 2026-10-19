@@ -127,18 +127,16 @@ export default {
     });
   },
   // Holding of a piece which can not be edited (e.g. unreceivable) is displayed as a value
+  // holdingName accepts a plain string or a pre-built interactor filter (e.g. or(including(...), including(...)))
   verifySelectedHolding(holdingName, { isEditable = true } = {}) {
+    const filter = typeof holdingName === 'string' ? including(holdingName) : holdingName;
     if (isEditable) {
-      cy.expect(
-        editPieceModal
-          .find(Selection({ name: 'holdingId' }))
-          .has({ singleValue: including(holdingName) }),
-      );
+      cy.expect(editPieceModal.find(Selection({ name: 'holdingId' })).has({ singleValue: filter }));
     } else {
       cy.expect(
         editPieceModal
           .find(KeyValue(RECEIVING_PIECE_FORM_FIELD_LABELS.SELECT_HOLDINGS))
-          .has({ value: including(holdingName) }),
+          .has({ value: filter }),
       );
     }
   },

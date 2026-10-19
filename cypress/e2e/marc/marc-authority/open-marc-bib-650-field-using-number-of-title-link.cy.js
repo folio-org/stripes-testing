@@ -15,11 +15,11 @@ describe('MARC', () => {
   describe('MARC Authority', () => {
     const testData = {
       tag: '650',
-      marcValue: 'Speaking Oratory debating',
+      marcValue: 'C375271 Speaking Oratory debating',
       rowIndex: 15,
       searchOption: 'Keyword',
       instanceTitle:
-        'Abraham Lincoln, by Lillian Hertz. Prize essay in Alexander Hamilton junior high school P.S. 186, June 24, 1927.',
+        'C375271 Abraham Lincoln, by Lillian Hertz. Prize essay in Alexander Hamilton junior high school P.S. 186, June 24, 1927.',
     };
 
     const marcFiles = [

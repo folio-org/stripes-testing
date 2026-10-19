@@ -243,7 +243,18 @@ describe('Lists', () => {
             QueryModal.fillInMarcTag('245');
             QueryModal.selectOperator(QUERY_OPERATIONS.CONTAINS);
             QueryModal.fillInMarcValueTextfield(title245);
-            QueryModal.verifyQueryAreaContent(`(${marc245Column} contains ${title245})`);
+            // Add "Instance — Created date" filter so the query stays performant on
+            // environments with a large number of instances
+            QueryModal.addNewRow();
+            QueryModal.verifyBooleanColumn(1);
+            QueryModal.selectField(instanceFieldValues.createdDate, 1);
+            QueryModal.verifySelectedField(instanceFieldValues.createdDate, 1);
+            QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN_OR_EQUAL_TO, 1);
+            QueryModal.pickDate(testData.currentDate, 1);
+            QueryModal.verifyTextFieldValue(testData.currentDate, 1);
+            QueryModal.verifyQueryAreaContent(
+              `(${marc245Column} contains ${title245}) AND (instance.created_at >= ${testData.currentDate})`,
+            );
             QueryModal.clickTestQuery();
             QueryModal.waitForQueryTestToFinish();
             QueryModal.verifyNumberOfMatchedRecords(2);
@@ -275,7 +286,6 @@ describe('Lists', () => {
             );
 
             // Step 11: Add "Instance — Affiliation name" equals Central tenant → only the shared instance
-            QueryModal.addNewRow();
             QueryModal.verifyBooleanColumn(1);
             QueryModal.selectField(instanceFieldValues.affiliationName, 1);
             QueryModal.verifySelectedField(instanceFieldValues.affiliationName, 1);

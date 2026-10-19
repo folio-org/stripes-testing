@@ -11,6 +11,7 @@ Parse arguments from the user's request:
 - `--launchName`: Name of the Report Portal launch (default: `runNightlyCypressEurekaTests`)
 - `--team`: Team name (e.g., Volaris, Firebird). Optional - if not specified, all teams are considered
 - `--headed`: Run Cypress in headed mode (boolean flag, default: false)
+- `--launchId`: Report Portal launch ID to use. Optional - if not specified, the latest launch matching `--launchName` is used
 
 ## Execution
 
@@ -24,6 +25,7 @@ Examples:
 - Default (nightly tests): `node scripts/report-portal/runFailedTests.js`
 - With team: `node scripts/report-portal/runFailedTests.js --launchName runNightlyCypressEurekaTests --team Volaris`
 - Headed mode: `node scripts/report-portal/runFailedTests.js --launchName folioQualityGates --team Firebird --headed`
+- Specific launch: `node scripts/report-portal/runFailedTests.js --launchName runNightlyCypressEurekaTests --team Vega --launchId 12345`
 
 ## Required Environment Variables
 
@@ -148,6 +150,7 @@ This approach ensures:
 Launch: runNightlyCypressEurekaTests
 Team: Volaris
 Headed: false
+Launch ID: 12345  ← shown only when --launchId is provided
 
 Fetching failed tests from Report Portal...
 ✓ Found 222 failed test(s) to investigate

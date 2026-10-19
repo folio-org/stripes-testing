@@ -26,7 +26,7 @@ describe('Data Import', () => {
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+      recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const recordItems = ['INSTANCE', 'HOLDINGS', 'ITEM', 'MARC_BIBLIOGRAPHIC', 'MARC_AUTHORITY'];
 

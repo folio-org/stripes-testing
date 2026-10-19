@@ -1,7 +1,6 @@
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   APPLICATION_NAMES,
-  BATCH_GROUP,
   FOLIO_RECORD_TYPE,
   PAYMENT_METHOD,
 } from '../../../support/constants';
@@ -51,7 +50,7 @@ describe('Data Import', () => {
         name: `AT_C434076_MappingProfile_${postfix}`,
         incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
         typeValue: FOLIO_RECORD_TYPE.INVOICE,
-        batchGroup: BATCH_GROUP.FOLIO,
+        batchGroup: null,
         paymentMethod: PAYMENT_METHOD.CASH,
       },
       actionProfile: {
@@ -71,6 +70,10 @@ describe('Data Import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
+      cy.getBatchGroups({ query: 'name<>"AT_*" and name<>"*auto*"' }).then((batchGroup) => {
+        testData.mappingProfile.batchGroup = `"${batchGroup.name}"`;
+      });
+
       [testData.invoiceNumber1, testData.invoiceNumber2].forEach((invoiceNumber) => {
         Invoices.getInvoiceViaApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then(
           ({ invoices }) => {

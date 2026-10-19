@@ -1,3 +1,4 @@
+import { including } from '../../../../interactors';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
@@ -22,7 +23,7 @@ describe('eHoldings', () => {
       fileName: `C356420autoTestFile${getRandomPostfix()}.csv`,
       fileMask: '*_package.csv',
       notSelectedStatus: 'Not selected',
-      filterQuery: 'Specific',
+      filterQuery: 'algae',
       titleFieldsToSelect: ['Title name', 'Contributors', 'Publication Type'],
     };
 
@@ -57,11 +58,15 @@ describe('eHoldings', () => {
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.verifyPackageInResults(testData.packageName);
+        cy.intercept('eholdings/packages/**/resources?**').as('getTitlesOriginally');
         EHoldingsPackages.openPackage();
         EHoldingsPackageView.waitLoading();
+        cy.wait('@getTitlesOriginally');
+        cy.wait(3000);
         EHoldingsPackage.searchTitles(testData.filterQuery);
 
         EHoldingsPackageView.verifyNumberOfTitlesLessThan(10000);
+        EHoldingsPackage.verifyTitleFound(including(testData.filterQuery));
 
         EHoldingsPackageView.openExportModal();
 

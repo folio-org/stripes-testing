@@ -92,7 +92,7 @@ async function runCypressTests(testPaths, options = {}) {
 
 /**
  * Parse command line arguments
- * Supports: --launchName value --team value --headed --threads value
+ * Supports: --launchName value --team value --headed --threads value --launchId value
  */
 function parseArgs() {
   const args = {
@@ -166,15 +166,20 @@ function distributeTestsToWorkers(testPaths, numberOfWorkers) {
  */
 async function main() {
   try {
-    const { launchName, team, headed, threads } = parseArgs();
+    const { launchName, team, headed, threads, launchId } = parseArgs();
 
     console.log(`Launch: ${launchName}`);
     console.log(`Team: ${team}`);
     console.log(`Headed: ${headed}`);
     console.log(`Threads: ${threads}`);
+    if (launchId) console.log(`Launch ID: ${launchId}`);
 
     console.log('\nFetching failed tests from Report Portal...');
-    const { itemsToInvestigate, uniqTestPaths } = await getItemsToInvestigate({ launchName, team });
+    const { itemsToInvestigate, uniqTestPaths } = await getItemsToInvestigate({
+      launchName,
+      team,
+      launchId,
+    });
     console.log(`✓ Found ${itemsToInvestigate.length} failed test(s) to investigate\n`);
 
     console.log(`Test files to rerun: ${uniqTestPaths.length} spec file(s)\n`);
@@ -193,7 +198,9 @@ async function main() {
 
       fs.writeFileSync('failedTestsWorkers.json', JSON.stringify(workersData, null, 2));
       console.log(`✓ Generated failedTestsWorkers.json with ${workerCommands.length} workers`);
-      console.log(`✓ Tests per worker: ${Math.ceil(uniqTestPaths.length / workerCommands.length)}\n`);
+      console.log(
+        `✓ Tests per worker: ${Math.ceil(uniqTestPaths.length / workerCommands.length)}\n`,
+      );
 
       // Count flaky tests (tests marked as "To Investigate")
       fs.writeFileSync('flaky-recheck-count.txt', String(itemsToInvestigate.length));
@@ -221,7 +228,11 @@ async function main() {
       // Ignore cleanup errors
     }
 
-    const { itemsToInvestigate: failedItems } = await getItemsToInvestigate({ launchName, team });
+    const { itemsToInvestigate: failedItems } = await getItemsToInvestigate({
+      launchName,
+      team,
+      launchId,
+    });
 
     // Display total marked tests
     const totalMarked = itemsToInvestigate.length - failedItems.length;

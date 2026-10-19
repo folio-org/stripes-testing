@@ -99,31 +99,31 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
-      cy.loginAsAdmin({
-        path: SettingsMenu.mappingProfilePath,
-        waiter: FieldMappingProfiles.waitLoading,
-      });
-      // create mapping profile
-      FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
-
-      // create action profile
-      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-      SettingsActionProfiles.create(actionProfile, mappingProfile.name);
-      SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
-
-      // create job profile
-      SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
-      JobProfiles.createJobProfile(jobProfile);
-      NewJobProfile.linkActionProfile(actionProfile);
-      NewJobProfile.saveAndClose();
-      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        cy.loginAsAdmin({
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
+        // create mapping profile
+        FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
+        FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+
+        // create action profile
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
+        SettingsActionProfiles.create(actionProfile, mappingProfile.name);
+        SettingsActionProfiles.checkActionProfilePresented(actionProfile.name);
+
+        // create job profile
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
+        JobProfiles.createJobProfile(jobProfile);
+        NewJobProfile.linkActionProfile(actionProfile);
+        NewJobProfile.saveAndClose();
+        JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,
@@ -153,7 +153,7 @@ describe('Data Import', () => {
         Logs.waitFileIsImported(marcFileName);
         Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(marcFileName);
-        FileDetails.checkOrderQuantityInSummaryTable('6', 2);
+        FileDetails.checkOrderQuantityInSummaryTable('6', 3);
         FileDetails.verifyRecordColumnHasStandardSequentialNumberingForRecords();
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.NO_ACTION,

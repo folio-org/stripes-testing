@@ -517,13 +517,14 @@ export default {
     );
   },
 
-  verifyInstanceIsMarkedAsStaffSuppressed() {
-    cy.expect(
-      rootSection
-        .find(adminDataAccordion)
-        .find(HTML(including('Staff suppressed')))
-        .exists(),
-    );
+  verifyInstanceIsMarkedAsStaffSuppressed(isDisplayed = true) {
+    const element = rootSection.find(adminDataAccordion).find(HTML(including('Staff suppressed')));
+
+    if (isDisplayed) {
+      cy.expect(element.exists());
+    } else {
+      cy.expect(element.absent());
+    }
   },
 
   verifyInstanceIsMarkedAsSuppressedFromDiscovery(isDisplayed = true) {
