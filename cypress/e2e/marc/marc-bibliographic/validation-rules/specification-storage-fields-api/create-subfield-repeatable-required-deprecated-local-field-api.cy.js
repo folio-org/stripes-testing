@@ -63,7 +63,7 @@ describe('MARC Bibliographic Validation Rules - Create Subfield (repeatable, req
 
   it(
     'C499707 Create Subfield code of Local field (repeatable, required, deprecated) for MARC bib spec (API) (promin)',
-    { tags: ['C499707', 'extendedPath', 'promin'] },
+    { tags: ['C499707', 'extendedPath', 'promin', 'nonParallel'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

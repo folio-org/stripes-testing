@@ -171,7 +171,7 @@ describe('Inventory', () => {
             customModesOfIssuance[0].name,
             false,
           );
-          SelectInstanceModal.selectMultiSelectFilterOption(
+          InventorySearchAndFilter.verifyMultiSelectFilterOptionSelected(
             modeOfIssuanceAccordionName,
             customModesOfIssuance[1].name,
           );

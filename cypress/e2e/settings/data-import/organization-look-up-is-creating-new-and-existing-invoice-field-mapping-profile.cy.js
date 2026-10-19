@@ -50,10 +50,10 @@ describe('Data Import', () => {
         NewFieldMappingProfile.fillSummaryDescription(mappingProfile.description);
         NewFieldMappingProfile.fillBatchGroup(mappingProfile.batchGroup);
         NewFieldMappingProfile.fillPaymentMethod(mappingProfile.paymentMethod);
-        NewFieldMappingProfile.selectOrganizationByName(mappingProfile.organization);
+        NewFieldMappingProfile.fillVendorName(mappingProfile.organization);
         NewFieldMappingProfile.save();
         FieldMappingProfileView.edit();
-        NewFieldMappingProfile.selectOrganizationByName(mappingProfile.organizationForChanging);
+        NewFieldMappingProfile.fillVendorName(mappingProfile.organizationForChanging);
         FieldMappingProfileEdit.save();
         FieldMappingProfileView.checkCalloutMessage(calloutMessage);
         FieldMappingProfileView.verifyMappingProfileOpened();
