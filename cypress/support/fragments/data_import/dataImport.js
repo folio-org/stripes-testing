@@ -346,13 +346,15 @@ export default {
   // `indicators` for a control field (e.g. tag '001').
   //  - addFields: [{ tag, indicators, content }] - appended to every record
   //  - removeTags: ['670', '953'] - every field with one of these tags is removed
+  //  - removeFields: [{ tag, occurrence = 0 }] - removes just the Nth (0-based) existing field
+  //    with that tag, unlike removeTags which removes every occurrence
   //  - editFields: [{ tag, content, indicators, occurrence = 0 }] - replaces the content (and, if
   //    given, the indicators) of the Nth (0-based) existing field with that tag; indicators are
   //    left as-is when not provided
   editMarcFieldsInAllRecords(
     inputFileName,
     outputFileName,
-    { addFields = [], removeTags = [], editFields = [] } = {},
+    { addFields = [], removeTags = [], removeFields = [], editFields = [] } = {},
   ) {
     return FileManager.readFile(`cypress/fixtures/${inputFileName}`).then((fileContent) => {
       const readable = new Readable();
@@ -365,6 +367,15 @@ export default {
       return new Promise((resolve, reject) => {
         reader.on('data', (record) => {
           record.fields = record.fields.filter((field) => !removeTags.includes(field[0]));
+
+          removeFields.forEach(({ tag, occurrence = 0 }) => {
+            const matchingIndexes = record.fields
+              .map((field, index) => (field[0] === tag ? index : -1))
+              .filter((index) => index !== -1);
+            const targetIndex = matchingIndexes[occurrence];
+            if (targetIndex === undefined) return;
+            record.fields.splice(targetIndex, 1);
+          });
 
           editFields.forEach(({ tag, content, indicators, occurrence = 0 }) => {
             const matchingIndexes = record.fields
