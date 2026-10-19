@@ -148,6 +148,7 @@ describe('Invoices', () => {
           'None',
           'Allocation',
         );
+        cy.wait(5_000); // Need to wait the rollover process to complete before proceeding with the test
       });
     });
 
@@ -243,7 +244,7 @@ describe('Invoices', () => {
         'None',
         'Allocation',
       );
-
+      cy.wait(5_000); // Need to wait the rollover process to complete before proceeding with the test
       cy.visit(TopMenu.fiscalYearPath);
       FinanceHelp.searchByName(secondFiscalYear.name);
       FiscalYears.selectFY(secondFiscalYear.name);

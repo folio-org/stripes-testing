@@ -138,7 +138,12 @@ describe('MARC', () => {
           ).to.equal(0);
         });
 
-        MarcAuthority.getRecordsViaAPI(true).then((body) => {
+        MarcAuthority.getRecordsViaAPI(
+          true,
+          false,
+          null,
+          `id==${createdRecordIDs[1]} or id==${createdRecordIDs[2]}`,
+        ).then((body) => {
           expect(
             body.authorities.filter((record) => record.id === createdRecordIDs[1]).length,
           ).to.equal(1);
@@ -147,7 +152,12 @@ describe('MARC', () => {
           ).to.equal(1);
         });
 
-        MarcAuthority.getRecordsViaAPI(true, true).then((body) => {
+        MarcAuthority.getRecordsViaAPI(
+          true,
+          true,
+          null,
+          `id==${createdRecordIDs[1]} or id==${createdRecordIDs[2]}`,
+        ).then((body) => {
           body.authorities
             .filter((rec, index) => index < 10)
             .forEach((record) => {
@@ -165,7 +175,12 @@ describe('MARC', () => {
           ).to.equal(1);
         });
 
-        MarcAuthority.getRecordsViaAPI(true, true, 'text/plain').then((body) => {
+        MarcAuthority.getRecordsViaAPI(
+          true,
+          true,
+          'text/plain',
+          `id==${createdRecordIDs[1]} or id==${createdRecordIDs[2]}`,
+        ).then((body) => {
           const records = body.split('\n');
           expect(records.filter((record) => record === createdRecordIDs[1]).length).to.equal(1);
           expect(records.filter((record) => record === createdRecordIDs[2]).length).to.equal(1);

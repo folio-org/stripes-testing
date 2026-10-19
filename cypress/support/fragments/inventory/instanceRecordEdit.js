@@ -198,6 +198,10 @@ export default {
     );
   },
 
+  fillIdentifierValue(value, lineIndex = 0) {
+    cy.do(TextField({ name: `identifiers[${lineIndex}].value` }).fillIn(value));
+  },
+
   addIdentifier: (identifier, value, identifierLine = 0) => {
     cy.expect(identifierAccordion.exists());
     cy.do(Button('Add identifier').click());

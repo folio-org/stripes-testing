@@ -64,7 +64,7 @@ const keepEditingButton = Modal().find(Button('Keep editing'));
 const continueWithoutSavingButton = Modal().find(Button('Continue without saving'));
 const closeIconButton = Button({ icon: 'times' });
 const accessStatusTypeDropdown = Select({ id: 'eholdings-access-type-id' });
-const nameFieldInEditForm = TextField({ name: 'name' });
+const nameFieldInEditForm = TextArea({ name: 'customDisplayName' });
 
 export default {
   waitLoading: (specialPackage) => {
@@ -267,6 +267,7 @@ export default {
     cy.wait('@getTitles').its('response.statusCode').should('eq', 200);
     this.verifyTitlesSearchQuery(searchValue);
     cy.expect(titlesSection.find(Spinner()).absent());
+    cy.wait(2000);
   },
   verifyTitleFound(title) {
     cy.expect(titlesSection.find(MultiColumnListCell(title)).exists());

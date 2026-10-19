@@ -7,8 +7,15 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import { generateTextFieldCustomFieldData } from '../../../support/utils/customFields';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
-const testData = {};
+const testData = {
+  customField: generateTextFieldCustomFieldData({
+    testNumber: 'C422215',
+    data: { name: `AT_C422215_CustomField_${getRandomPostfix()}` },
+  }),
+};
 const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
 
 describe('Users', () => {
@@ -35,6 +42,9 @@ describe('Users', () => {
         Permissions.uiUsersEdituserservicepoints.gui,
         Permissions.uiUserEdit.gui,
       ]);
+      cy.createCustomFieldsViaApi([testData.customField]).then(([createdField]) => {
+        testData.customField = createdField;
+      });
     });
     cy.resetTenant();
     cy.createTempUser([], '', 'staff').then((userProperties) => {
@@ -52,6 +62,9 @@ describe('Users', () => {
     cy.setTenant(Affiliations.College);
     cy.wait(5000);
     ServicePoints.deleteViaApi(servicePoint.id);
+    if (testData.customField?.id) {
+      cy.deleteCustomFieldsViaApi({ ids: [testData.customField.id] });
+    }
   });
 
   it(

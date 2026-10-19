@@ -28,6 +28,7 @@ import {
   ORDER_LINE_FORM_LABELS,
   RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS,
 } from '../../constants';
+import { POLINE_DETAILS_FIELDS } from '../../constants/orders/order-line';
 import InteractorsTools from '../../utils/interactorsTools';
 import ExportDetails from '../exportManager/exportDetails';
 import TransactionDetails from '../finance/transactions/transactionDetails';
@@ -499,6 +500,24 @@ export default {
   checkItemDetailsSection(itemDetails = []) {
     this.checkSectionData({ details: itemDetails, section: itemDetailsSection });
   },
+  checkProductIdentifiers(productIds = []) {
+    productIds.forEach(({ productId, qualifier }, index) => {
+      if (productId) {
+        cy.expect(
+          itemDetailsSection
+            .find(MultiColumnListCell({ row: index, column: 'Product ID' }))
+            .has({ content: productId }),
+        );
+      }
+      if (qualifier !== undefined) {
+        cy.expect(
+          itemDetailsSection
+            .find(MultiColumnListCell({ row: index, column: 'Qualifier' }))
+            .has({ content: qualifier }),
+        );
+      }
+    });
+  },
   checkPoLineInformationSection(poLineInformation = []) {
     this.checkSectionData({ details: poLineInformation, section: purchaseOrderLineSection });
   },
@@ -531,17 +550,38 @@ export default {
       }
     });
   },
-  checkLocationsSection({ locations = [] } = {}) {
+  checkLocationsSection({ locations = [], checkByIndex = true } = {}) {
     locations.forEach((locationInformation, index) => {
       locationInformation.forEach(({ key, value }) => {
-        cy.expect(
-          locationDetailsSection
-            .find(InfoRow({ index }))
-            .find(KeyValue(key))
-            .has({ value: including(value) }),
-        );
+        if (checkByIndex) {
+          cy.expect(
+            locationDetailsSection
+              .find(InfoRow({ index }))
+              .find(KeyValue(key))
+              .has({ value: including(value) }),
+          );
+        } else {
+          cy.expect(
+            locationDetailsSection.find(KeyValue(key, { value: including(value) })).exists(),
+          );
+        }
       });
     });
+  },
+  checkLocationsSectionInAnyOrder({ locations = [] } = {}) {
+    const anchorKeys = [POLINE_DETAILS_FIELDS.HOLDING_NAME, POLINE_DETAILS_FIELDS.LOCATION_NAME];
+
+    locations.forEach((locationInformation) => {
+      const anchorEntry = locationInformation.find(({ key }) => anchorKeys.includes(key));
+      const row = locationDetailsSection.find(InfoRow(including(anchorEntry.value)));
+
+      locationInformation.forEach(({ key, value }) => {
+        cy.expect(row.find(KeyValue(key)).has({ value: including(String(value)) }));
+      });
+    });
+  },
+  verifyLocationPresentInSection(locationName) {
+    cy.expect(locationDetailsSection.find(HTML(including(locationName))).exists());
   },
   verifyLocationAbsentInSection(locationName) {
     cy.expect(locationDetailsSection.find(HTML(including(locationName))).absent());

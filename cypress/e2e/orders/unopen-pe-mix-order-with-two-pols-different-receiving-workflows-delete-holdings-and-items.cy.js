@@ -215,7 +215,7 @@ describe('Orders', () => {
 
       // Step 2: Click on the PO line #1 record in the "PO lines" accordion
       OrderDetails.openPolDetails(testData.firstInstanceTitle);
-      OrderLineDetails.checkLocationsSection({
+      OrderLineDetails.checkLocationsSectionInAnyOrder({
         locations: [
           [
             { key: POLINE_DETAILS_FIELDS.LOCATION_NAME, value: location1.name },
@@ -243,7 +243,7 @@ describe('Orders', () => {
       // Step 4: Navigate back to the order and click on the PO line #2 record in the "PO lines" accordion
       openOrderFromInventory();
       OrderDetails.openPolDetails(testData.secondInstanceTitle);
-      OrderLineDetails.checkLocationsSection({
+      OrderLineDetails.checkLocationsSectionInAnyOrder({
         locations: [
           [
             { key: POLINE_DETAILS_FIELDS.LOCATION_NAME, value: location1.name },

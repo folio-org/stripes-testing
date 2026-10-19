@@ -1,5 +1,4 @@
-import { Button, Checkbox, Link, Modal, Section, TextArea } from '../../../../../interactors';
-import RichTextEditor from '../../../../../interactors/rich-text-editor';
+import { Button, Checkbox, Link, Modal, RichEditor2, Section, TextArea } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const routingListConfigurationSection = Section({ id: 'routing-list-configuration-template-pane' });
@@ -53,7 +52,7 @@ export default {
   fillInfoSectionFields(descripription, body) {
     cy.wait(2000);
     cy.do(TextArea({ name: 'description' }).fillIn(descripription));
-    cy.do(RichTextEditor().fillIn(body));
+    cy.do(RichEditor2().fillIn(body));
   },
 
   addLinkInBody: () => {

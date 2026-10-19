@@ -482,7 +482,7 @@ export default {
     profileName,
     incomingRecordFields,
     existingRecordFields,
-    recordType,
+    recordType = EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
     // Optional qualifier object (e.g. { comparisonPart: 'ALPHANUMERICS_ONLY' } or
     // { qualifierType: 'CONTAINS', qualifierValue: '...' }), applied to both sides by default.
     // Pass incomingQualifier/existingQualifier instead when the two sides differ (e.g. one side
@@ -613,6 +613,11 @@ export default {
     existingRecordType,
     recordType,
     identifierTypeId = '439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
+    // Optional qualifier object (e.g. { comparisonPart: 'NUMERICS_ONLY' }), applied to both
+    // sides by default. Pass incomingQualifier/existingQualifier instead when the two sides differ
+    qualifier,
+    incomingQualifier = qualifier,
+    existingQualifier = qualifier,
   }) => {
     return cy
       .okapiRequest({
@@ -647,6 +652,7 @@ export default {
                   ],
                   staticValueDetails: null,
                   dataValueType: 'VALUE_FROM_RECORD',
+                  ...(incomingQualifier ? { qualifier: incomingQualifier } : {}),
                 },
                 existingRecordType,
                 existingMatchExpression: {
@@ -658,6 +664,7 @@ export default {
                     { label: 'identifierTypeId', value: identifierTypeId },
                   ],
                   dataValueType: 'VALUE_FROM_RECORD',
+                  ...(existingQualifier ? { qualifier: existingQualifier } : {}),
                 },
                 matchCriterion: 'EXACTLY_MATCHES',
               },
