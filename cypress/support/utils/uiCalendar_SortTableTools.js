@@ -92,11 +92,12 @@ export default {
             break;
           case 'assignments':
             rowsCopy.sort((firstRow, secondRow) => {
-              if (firstRow.assignments.length === 0) {
-                return multiplier * -1;
-              }
-              if (secondRow.assignments.length === 0) {
-                return multiplier * 1;
+              // Calendars without assignments ("None") come first; two of them are equal, so the
+              // stable sort keeps the order from the previous sort, as the UI does
+              const firstRowUnassigned = firstRow.assignments.length === 0;
+              const secondRowUnassigned = secondRow.assignments.length === 0;
+              if (firstRowUnassigned || secondRowUnassigned) {
+                return multiplier * (Number(secondRowUnassigned) - Number(firstRowUnassigned));
               }
 
               const firstRowAssignmentsString = getCalendarAssignmentsString(firstRow);

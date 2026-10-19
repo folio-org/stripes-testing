@@ -72,11 +72,12 @@ export default {
           .choose('assigned or not assigned to service points'),
       ]);
     },
-    purgeCalendarsMoreThanThreeMonthsOld({ calendarName, hasServicePoint }) {
+    // period: an option of "Purge calendars that ended...", e.g. 'more than 3 months ago'
+    purgeCalendarsEndedMoreThan({ period = 'more than 3 months ago', calendarName, hasServicePoint }) {
       cy.do([
         Modal('Purge old calendars')
           .find(Select({ label: including('Purge calendars that ended...') }))
-          .choose('more than 3 months ago'),
+          .choose(period),
       ]);
 
       if (hasServicePoint) {
