@@ -76,7 +76,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(
             testData.resourceTypeAccordionName,
           );
-          cy.intercept('/search/instances*').as('getInstances1');
+          cy.intercept('/search/instances?*').as('getInstances1');
           InventorySearchAndFilter.selectMultiSelectFilterOption(
             testData.resourceTypeAccordionName,
             instanceTypes[0].name,
@@ -98,7 +98,7 @@ describe('Inventory', () => {
             InventoryInstance.waitInventoryLoading();
             InstanceRecordView.verifyResourceType(instanceTypes[0].name);
 
-            cy.intercept('/search/instances*').as('getInstances2');
+            cy.intercept('/search/instances?*').as('getInstances2');
             InventorySearchAndFilter.selectMultiSelectFilterOption(
               testData.resourceTypeAccordionName,
               instanceTypes[1].name,
@@ -121,7 +121,7 @@ describe('Inventory', () => {
                 or(instanceTypes[0].name, instanceTypes[1].name),
               );
 
-              cy.intercept('/search/instances*').as('getInstances3');
+              cy.intercept('/search/instances?*').as('getInstances3');
               InventorySearchAndFilter.selectMultiSelectFilterOption(
                 testData.resourceTypeAccordionName,
                 instanceTypes[0].name,
@@ -150,11 +150,11 @@ describe('Inventory', () => {
                 InventorySearchAndFilter.clearFilter(testData.resourceTypeAccordionName);
                 InventorySearchAndFilter.verifyResultPaneEmpty();
 
-                cy.intercept('/search/instances*').as('getInstancesQuery');
+                cy.intercept('/search/instances?*').as('getInstancesQuery');
                 InventoryInstances.searchByTitle(testData.instancesTitlePrefix);
                 cy.wait('@getInstancesQuery', { timeout: 10_000 });
 
-                cy.intercept('/search/instances*').as('getInstances4');
+                cy.intercept('/search/instances?*').as('getInstances4');
                 InventorySearchAndFilter.selectMultiSelectFilterOption(
                   testData.resourceTypeAccordionName,
                   instanceTypes[5].name,
@@ -182,7 +182,7 @@ describe('Inventory', () => {
                     true,
                     1,
                   );
-                  cy.intercept('/search/instances*').as('getInstances5');
+                  cy.intercept('/search/instances?*').as('getInstances5');
                   InventorySearchAndFilter.selectMultiSelectFilterOption(
                     testData.resourceTypeAccordionName,
                     instanceTypes[3].name,

@@ -103,6 +103,7 @@ describe('eHoldings', () => {
               path: `${TopMenu.eholdingsPath}/packages/${specialPackage.id}`,
               waiter: () => EHoldingsPackage.waitLoading(specialPackage.name),
             });
+            EHoldingsPackage.checkTitleRowsShown();
             cy.wait(1000);
             EHoldingsPackage.removeFromHoldings();
             cy.wait(1000);
@@ -234,7 +235,7 @@ describe('eHoldings', () => {
           EHoldingsPackagesSearch.byName('Gale Academic OneFile');
           EHoldingsPackages.openPackage();
           EHoldingsPackage.editProxyActions();
-          EHoldingsPackage.changeToken(token);
+          EHoldingsPackage.fillToken(token);
           EHoldingsPackage.saveAndClose();
           // wait until the token to be changed
           cy.wait(10000);

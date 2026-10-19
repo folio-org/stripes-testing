@@ -1,15 +1,11 @@
 import Permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import {
-  APPLICATION_NAMES,
-  CALL_NUMBER_TYPE_NAMES,
-  BROWSE_CALL_NUMBER_OPTIONS,
-} from '../../../support/constants';
+import { CALL_NUMBER_TYPE_NAMES, BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
@@ -72,7 +68,7 @@ describe('Inventory', () => {
     });
 
     after('Clean up', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Users.deleteViaApi(testData.user.userId);
       InventoryInstances.deleteFullInstancesByTitleViaApi(instanceTitle);
     });
@@ -81,15 +77,15 @@ describe('Inventory', () => {
       'C478256 Verify "fullCallNumber" generation when all "Call number" fields are filled in "Holdings" record and "Enumeration" fields are filled in "Item" record (promin)',
       { tags: ['criticalPath', 'promin', 'C478256'] },
       () => {
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.user.username, testData.user.password);
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
-          InventoryInstances.waitContentLoading();
-          cy.reload();
-          InventoryInstances.waitContentLoading();
-        }, 20_000);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+
         InventoryInstances.searchByTitle(instanceData.id);
         InventoryInstances.selectInstanceById(instanceData.id);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
 
         // Open Holdings detail view
         InventoryInstance.openHoldingView();
@@ -110,6 +106,8 @@ describe('Inventory', () => {
         HoldingsRecordView.close();
         // Back to Instance detail view
         InventoryInstance.verifyInstanceTitle(instanceTitle);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         // Add Item to Holdings
         InventoryInstance.addItem();
         ItemRecordNew.waitLoading(instanceTitle);
@@ -122,6 +120,8 @@ describe('Inventory', () => {
           chronology: itemEnumerationData.chronology,
         });
         ItemRecordNew.saveAndClose({ itemSaved: true });
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         // Switch to Browse
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOptionFromCallNumbersGroup(
@@ -144,6 +144,8 @@ describe('Inventory', () => {
           `itemFullCallNumbers="${callNumberQueryValue}"`,
         );
         InventoryInstances.selectInstanceById(instanceData.id);
+        InventoryInstance.waitLoading();
+        InventoryInstance.waitInstanceRecordViewOpened();
         // Open item detail view and verify effective call number
         InventoryInstance.openHoldings('');
         InventoryInstance.openItemByBarcode('No barcode');

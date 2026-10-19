@@ -62,7 +62,9 @@ const generatePackageBodyForUpdate = (updatedPackageData) => {
         contentType: updatedPackageData.attributes.contentType,
         customCoverage: updatedPackageData.attributes.customCoverage,
         customAltNames: updatedPackageData.attributes.customAltNames,
-        visibility: updatedPackageData.attributes.visibility,
+        visibility: updatedPackageData.attributes.isSelected
+          ? updatedPackageData.attributes.visibility
+          : null,
         isCustom: updatedPackageData.attributes.isCustom,
         proxy: updatedPackageData.attributes.isSelected
           ? updatedPackageData.attributes.proxy
