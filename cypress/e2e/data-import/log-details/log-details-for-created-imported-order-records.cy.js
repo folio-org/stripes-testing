@@ -16,7 +16,6 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
 import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import SettingsDataImport, {
@@ -148,6 +147,8 @@ describe('Data Import', () => {
         Logs.openFileDetails(marcFileName);
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
         FileDetails.verifyRecordColumnHasStandardSequentialNumberingForRecords();
+
+        cy.getAdminToken(false);
         [0, 1, 2, 3, 4, 5, 6].forEach((rowNumber) => {
           FileDetails.verifyTitleHasLinkToJsonFile(rowNumber);
           FileDetails.verifyStatusHasLinkToOrder(rowNumber);
@@ -156,24 +157,11 @@ describe('Data Import', () => {
             FileDetails.columnNameInResultList.order,
             rowNumber,
           );
-          FileDetails.openOrder(RECORD_STATUSES.CREATED, rowNumber);
-          OrderLines.waitLoading();
-          OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-            const orderNumber = initialNumber.replace(/-\d+$/, '');
 
-            cy.getAdminToken(false)
-              .then(() => {
-                Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then(
-                  (orderId) => {
-                    Orders.deleteOrderViaApi(orderId[0].id);
-                  },
-                );
-              })
-              .then(() => {
-                TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-                FileDetails.close();
-                Logs.openFileDetails(marcFileName);
-              });
+          // Cleanup only - not a TestRail-required step. The hotlink's existence/target is
+          // already verified above; reading the order id out of its href
+          FileDetails.getOrderAndOrderLineIds(rowNumber).then(({ orderId }) => {
+            Orders.deleteOrderViaApi(orderId);
           });
         });
       },

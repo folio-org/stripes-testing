@@ -125,6 +125,7 @@ describe('Data Import', () => {
           .then(() => {
             // Create profiles in Member 1 (University) tenant
             cy.setTenant(Affiliations.University);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405526');
 
             // Create Match profile
             NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile)

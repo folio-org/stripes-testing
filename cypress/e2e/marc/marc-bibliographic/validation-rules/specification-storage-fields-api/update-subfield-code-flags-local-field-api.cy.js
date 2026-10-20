@@ -114,7 +114,7 @@ describe('MARC Bibliographic Validation Rules - Update Subfield Code Boolean Fla
 
   it(
     'C511228 Update Subfield Code of Local field "required", "repeatable", "deprecated" flags for MARC bib spec (API) (promin)',
-    { tags: ['extendedPath', 'C511228', 'promin'] },
+    { tags: ['extendedPath', 'C511228', 'promin', 'nonParallel'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

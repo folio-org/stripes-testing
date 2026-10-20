@@ -284,13 +284,13 @@ describe('MARC', () => {
             MarcAuthority.deleteViaAPI(id, true);
           });
           linkableFields.forEach((tag) => {
-            QuickMarcEditor.setRulesForField(tag, false);
+            QuickMarcEditor.setRulesForField(tag, true);
           });
         });
 
         it(
           'C389479 All three messages shown for multiple fields each when auto-linking fields when deriving "MARC Bib" record (promin) (TaaS)',
-          { tags: ['extendedPath', 'promin', 'C389479'] },
+          { tags: ['extendedPath', 'promin', 'nonParallel', 'C389479'] },
           () => {
             // Step 1: Find and open detail view of record from precondition
             InventoryInstances.searchByTitle(createdInstanceId);

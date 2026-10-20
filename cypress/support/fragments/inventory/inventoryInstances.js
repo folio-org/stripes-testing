@@ -647,9 +647,9 @@ export default {
         if (Object.keys(searchParams).length) {
           cy.bulkDeleteItemsViaApi(searchParams);
         } else {
-          cy.wrap(instance.items).each((item) => cy.deleteItemViaApi(item.id));
+          instance.items?.forEach((item) => cy.deleteItemViaApi(item.id));
         }
-        cy.wrap(instance.holdings).each((holding) => cy.deleteHoldingRecordViaApi(holding.id, { skipWait: true }));
+        instance.holdings?.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id, { skipWait: true }));
         InventoryInstance.deleteInstanceViaApi(instance.id);
       },
     );

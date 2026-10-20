@@ -167,7 +167,7 @@ describe('Consortia', () => {
 
         it(
           'C514894 Edit MARC bib validation rule on Central tenant and check that Member tenant is not affected (API) (promin)',
-          { tags: ['criticalPathECS', 'C514894', 'promin'] },
+          { tags: ['criticalPathECS', 'C514894', 'promin', 'nonParallel'] },
           () => {
             // Step 1: Update field 100 on Central tenant (only URL and required for standard fields)
             cy.resetTenant();

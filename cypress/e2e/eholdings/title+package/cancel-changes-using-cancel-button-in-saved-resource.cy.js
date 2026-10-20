@@ -38,6 +38,8 @@ describe('eHoldings', () => {
       { tags: ['extendedPath', 'promin', 'C423466'] },
       () => {
         EHoldingsTitle.searchTitle(testData.existingTitle);
+        EHoldingsTitlesSearch.bySelectionStatus(FILTER_STATUSES.SELECTED);
+        cy.wait(2000);
         EHoldingsTitles.openTitle(0);
         EHoldingsTitle.waitPackagesLoading();
         EHoldingsTitle.filterPackages(FILTER_STATUSES.SELECTED);

@@ -101,9 +101,9 @@ describe('MARC', () => {
       });
 
       after('Delete users, data', () => {
-        cy.resetTenant();
+        cy.resetTenant(false);
         cy.getAdminToken();
-        MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[1], true);
         InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
         Users.deleteViaApi(users.userProperties.userId);
       });
@@ -159,6 +159,8 @@ describe('MARC', () => {
           InventorySearchAndFilter.switchToBrowseTab();
           InventorySearchAndFilter.verifyKeywordsAsDefault();
           BrowseContributors.select();
+          cy.resetTenant();
+          cy.getToken(users.userProperties.username, users.userProperties.password);
           cy.setTenant(Affiliations.College);
           BrowseContributors.waitForContributorToAppear(
             linkingTagAndValues.authorityHeading,
