@@ -424,6 +424,8 @@ describe('Inventory', () => {
             InventoryInstances.waitContentLoading();
             InventorySearchAndFilter.selectBrowseCallNumbers();
           });
+          cy.resetTenant();
+          cy.getToken(testData.userProperties.username, testData.userProperties.password);
           cy.setTenant(Affiliations.College);
           InventorySearchAndFilter.clearDefaultFilter(Dropdowns.HELDBY);
           allVisibleCNs.forEach((callNumber) => {

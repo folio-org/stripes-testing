@@ -192,9 +192,11 @@ describe('Inventory', () => {
             }).then((params) => {
               memberData.acquisitionMethodId = params.body.acquisitionMethods[0].id;
             });
-            Organizations.getOrganizationViaApi({ limit: 1 }).then((organization) => {
-              memberData.vendorId = organization.id;
-            });
+            Organizations.getOrganizationViaApi({ limit: 1, query: 'isVendor=true' }).then(
+              (organization) => {
+                memberData.vendorId = organization.id;
+              },
+            );
           })
           .then(() => {
             // create holding on member tenant
@@ -236,9 +238,11 @@ describe('Inventory', () => {
             }).then((params) => {
               centralData.acquisitionMethodId = params.body.acquisitionMethods[0].id;
             });
-            Organizations.getOrganizationViaApi({ limit: 1 }).then((organization) => {
-              centralData.vendorId = organization.id;
-            });
+            Organizations.getOrganizationViaApi({ limit: 1, query: 'isVendor=true' }).then(
+              (organization) => {
+                centralData.vendorId = organization.id;
+              },
+            );
           })
           .then(() => {
             // create order with order line on central tenant
