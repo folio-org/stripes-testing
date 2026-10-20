@@ -314,188 +314,189 @@ describe('MARC', () => {
 
         const users = {};
 
-        before('Create user, set linking rules, import test data', () => {
-          cy.getAdminToken();
-
-          // Set Central tenant subfield linking rules
-          centralAuthoritySubfields.forEach((tag) => {
-            QuickMarcEditor.setAuthoritySubfieldsViaApi(tag.ruleId, tag.ruleSubfields);
-          });
-
-          cy.createTempUser([
-            Permissions.inventoryAll.gui,
-            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-            Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-            Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-          ])
-            .then((userProperties) => {
-              users.userProperties = userProperties;
-
-              if (Cypress.env('eureka')) {
-                cy.assignCapabilitiesToExistingUser(
-                  users.userProperties.userId,
-                  [],
-                  [
-                    CapabilitySets.uiInventoryInstanceView,
-                    CapabilitySets.uiQuickMarcQuickMarcEditor,
-                    CapabilitySets.uiQuickMarcQuickMarcAuthorityRecordsLinkUnlink,
-                    CapabilitySets.uiMarcAuthoritiesAuthorityRecordView,
-                  ],
-                );
-              }
-            })
-            .then(() => {
-              cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
-              cy.setTenant(Affiliations.College);
-
-              if (Cypress.env('eureka')) {
-                cy.assignCapabilitiesToExistingUser(
-                  users.userProperties.userId,
-                  [],
-                  [
-                    CapabilitySets.uiInventoryInstanceView,
-                    CapabilitySets.uiQuickMarcQuickMarcEditor,
-                    CapabilitySets.uiQuickMarcQuickMarcAuthorityRecordsLinkUnlink,
-                    CapabilitySets.uiMarcAuthoritiesAuthorityRecordView,
-                  ],
-                );
-              } else {
-                cy.assignPermissionsToExistingUser(users.userProperties.userId, [
-                  Permissions.inventoryAll.gui,
-                  Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-                  Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-                  Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-                ]);
-              }
-
-              // Set Member tenant subfield linking rules
-              memberAuthoritySubfields.forEach((tag) => {
-                QuickMarcEditor.setAuthoritySubfieldsViaApi(tag.ruleId, tag.ruleSubfields);
-              });
-            })
-            .then(() => {
-              cy.resetTenant();
-              cy.getAdminToken();
-
-              // Import MARC bib and authority files on Central tenant
-              marcFiles.forEach((marcFile) => {
-                DataImport.uploadFileViaApi(
-                  marcFile.marc,
-                  marcFile.fileName,
-                  marcFile.jobProfileToRun,
-                ).then((response) => {
-                  response.forEach((record) => {
-                    createdRecordIDs.push(record[marcFile.propertyName].id);
-                  });
-                });
-              });
-
-              cy.waitForAuthRefresh(() => {
-                cy.login(users.userProperties.username, users.userProperties.password, {
-                  path: TopMenu.inventoryPath,
-                  waiter: InventoryInstances.waitContentLoading,
-                });
-                cy.reload();
-                InventoryInstances.waitContentLoading();
-              }, 20_000);
-
-              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-              InventoryInstances.waitContentLoading();
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-            });
-        });
-
         after('Delete user, reset linking rules, delete test data', () => {
           cy.resetTenant();
-          cy.getAdminToken();
+          cy.getAdminToken(false);
 
-          // Reset Central tenant subfield linking rules to defaults
+          // Reset Central and Member tenant subfield linking rules to defaults first
           QuickMarcEditor.setAuthoritySubfieldsDefault();
-
-          Users.deleteViaApi(users.userProperties.userId);
-          InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-          createdRecordIDs.slice(1).forEach((id) => MarcAuthority.deleteViaAPI(id));
-
-          // Reset Member tenant subfield linking rules to defaults
           cy.setTenant(Affiliations.College);
           QuickMarcEditor.setAuthoritySubfieldsDefault();
+          cy.resetTenant();
+
+          if (users.userProperties) {
+            Users.deleteViaApi(users.userProperties.userId);
+          }
+          if (createdRecordIDs[0]) {
+            InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
+          }
+          createdRecordIDs.slice(1).forEach((id) => MarcAuthority.deleteViaAPI(id));
         });
 
         it(
           'C770440 Link "Subjects" (6XX) fields of shared MARC bib from Member tenant when Central and Member tenants have different linkable subfields configured (promin)',
-          { tags: ['extendedPathECS', 'promin', 'C770440'] },
+          { tags: ['extendedPathECS', 'promin', 'C770440', 'nonParallel'] },
           () => {
-            InventorySearchAndFilter.clearDefaultHeldbyFilter();
-            InventoryInstances.searchByTitle(createdRecordIDs[0]);
-            InventoryInstances.selectInstance();
-            // Step 1: Edit MARC bibliographic record
-            InventoryInstance.editMarcBibliographicRecord();
+            // Preconditions: user, linking rules on Central and Member, test data, login
+            cy.getAdminToken();
 
-            // Steps 2-15: Link each 6XX field to corresponding MARC authority
-            bib6XXAfterLinkingToAuth1XX.forEach((field) => {
-              InventoryInstance.verifyAndClickLinkIcon(field.tagValue);
-              MarcAuthorities.checkSearchOption(field.browseSearchOption);
-              MarcAuthorities.checkSearchInput(field.browseValue);
-              MarcAuthorities.switchToSearch();
-              InventoryInstance.verifySelectMarcAuthorityModal();
-              InventoryInstance.searchResults(field.searchValue);
-              InventoryInstance.clickLinkButton();
-              QuickMarcEditor.verifyAfterLinkingAuthority(field.tagValue);
-              QuickMarcEditor.verifyTagFieldAfterLinking(
-                field.rowIndex,
-                field.tagValue,
-                field.secondBox,
-                field.thirdBox,
-                field.fourthBox,
-                field.fifthBox,
-                field.sixthBox,
-                field.seventhBox,
-              );
+            // Set Central tenant subfield linking rules
+            centralAuthoritySubfields.forEach((tag) => {
+              QuickMarcEditor.setAuthoritySubfieldsViaApi(tag.ruleId, tag.ruleSubfields);
             });
 
-            // Step 16: Click "Save & keep editing"
-            QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutUpdatedRecord);
+            cy.createTempUser([
+              Permissions.inventoryAll.gui,
+              Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+              Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+              Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+            ])
+              .then((userProperties) => {
+                users.userProperties = userProperties;
 
-            // Verify all 6XX fields remain linked after save
-            bib6XXAfterLinkingToAuth1XX.forEach((field) => {
-              QuickMarcEditor.verifyTagFieldAfterLinking(
-                field.rowIndex,
-                field.tagValue,
-                field.secondBox,
-                field.thirdBox,
-                field.fourthBox,
-                field.fifthBox,
-                field.sixthBox,
-                field.seventhBox,
-              );
+                if (Cypress.env('eureka')) {
+                  cy.assignCapabilitiesToExistingUser(
+                    users.userProperties.userId,
+                    [],
+                    [
+                      CapabilitySets.uiInventoryInstanceView,
+                      CapabilitySets.uiQuickMarcQuickMarcEditor,
+                      CapabilitySets.uiQuickMarcQuickMarcAuthorityRecordsLinkUnlink,
+                      CapabilitySets.uiMarcAuthoritiesAuthorityRecordView,
+                    ],
+                  );
+                }
+              })
+              .then(() => {
+                cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
+                cy.setTenant(Affiliations.College);
+
+                if (Cypress.env('eureka')) {
+                  cy.assignCapabilitiesToExistingUser(
+                    users.userProperties.userId,
+                    [],
+                    [
+                      CapabilitySets.uiInventoryInstanceView,
+                      CapabilitySets.uiQuickMarcQuickMarcEditor,
+                      CapabilitySets.uiQuickMarcQuickMarcAuthorityRecordsLinkUnlink,
+                      CapabilitySets.uiMarcAuthoritiesAuthorityRecordView,
+                    ],
+                  );
+                } else {
+                  cy.assignPermissionsToExistingUser(users.userProperties.userId, [
+                    Permissions.inventoryAll.gui,
+                    Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+                    Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+                    Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+                  ]);
+                }
+
+                // Set Member tenant subfield linking rules
+                memberAuthoritySubfields.forEach((tag) => {
+                  QuickMarcEditor.setAuthoritySubfieldsViaApi(tag.ruleId, tag.ruleSubfields);
+                });
+              })
+              .then(() => {
+                cy.resetTenant();
+                cy.getAdminToken();
+
+                // Import MARC bib and authority files on Central tenant
+                marcFiles.forEach((marcFile) => {
+                  DataImport.uploadFileViaApi(
+                    marcFile.marc,
+                    marcFile.fileName,
+                    marcFile.jobProfileToRun,
+                  ).then((response) => {
+                    response.forEach((record) => {
+                      createdRecordIDs.push(record[marcFile.propertyName].id);
+                    });
+                  });
+                });
+
+                cy.login(users.userProperties.username, users.userProperties.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+
+                ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+                InventoryInstances.waitContentLoading();
+                ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+              });
+
+            // Run steps only after preconditions resolved (createdRecordIDs is filled asynchronously)
+            cy.then(() => {
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+              InventoryInstances.searchByTitle(createdRecordIDs[0]);
+              InventoryInstances.selectInstance();
+              // Step 1: Edit MARC bibliographic record
+              InventoryInstance.editMarcBibliographicRecord();
+
+              // Steps 2-15: Link each 6XX field to corresponding MARC authority
+              bib6XXAfterLinkingToAuth1XX.forEach((field) => {
+                InventoryInstance.verifyAndClickLinkIcon(field.tagValue);
+                MarcAuthorities.checkSearchOption(field.browseSearchOption);
+                MarcAuthorities.checkSearchInput(field.browseValue);
+                MarcAuthorities.switchToSearch();
+                InventoryInstance.verifySelectMarcAuthorityModal();
+                InventoryInstance.searchResults(field.searchValue);
+                InventoryInstance.clickLinkButton();
+                QuickMarcEditor.verifyAfterLinkingAuthority(field.tagValue);
+                QuickMarcEditor.verifyTagFieldAfterLinking(
+                  field.rowIndex,
+                  field.tagValue,
+                  field.secondBox,
+                  field.thirdBox,
+                  field.fourthBox,
+                  field.fifthBox,
+                  field.sixthBox,
+                  field.seventhBox,
+                );
+              });
+
+              // Step 16: Click "Save & keep editing"
+              QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutUpdatedRecord);
+
+              // Verify all 6XX fields remain linked after save
+              bib6XXAfterLinkingToAuth1XX.forEach((field) => {
+                QuickMarcEditor.verifyTagFieldAfterLinking(
+                  field.rowIndex,
+                  field.tagValue,
+                  field.secondBox,
+                  field.thirdBox,
+                  field.fourthBox,
+                  field.fifthBox,
+                  field.sixthBox,
+                  field.seventhBox,
+                );
+              });
+
+              // Step 17: Switch active affiliation to Central tenant
+              ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+              InventoryInstances.waitContentLoading();
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+
+              // Step 18: Find linked MARC bibliographic record on Central tenant
+              InventoryInstances.searchByTitle(createdRecordIDs[0]);
+              InventoryInstances.selectInstance();
+
+              // Step 19: Edit MARC bibliographic record on Central tenant
+              // Verify all linked fields retain same controlled/not controlled subfields
+              InventoryInstance.editMarcBibliographicRecord();
+              bib6XXAfterLinkingToAuth1XX.forEach((field) => {
+                QuickMarcEditor.verifyTagFieldAfterLinking(
+                  field.rowIndex,
+                  field.tagValue,
+                  field.secondBox,
+                  field.thirdBox,
+                  field.fourthBox,
+                  field.fifthBox,
+                  field.sixthBox,
+                  field.seventhBox,
+                );
+              });
+
+              QuickMarcEditor.closeEditorPane();
             });
-
-            // Step 17: Switch active affiliation to Central tenant
-            ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
-            InventoryInstances.waitContentLoading();
-            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-
-            // Step 18: Find linked MARC bibliographic record on Central tenant
-            InventoryInstances.searchByTitle(createdRecordIDs[0]);
-            InventoryInstances.selectInstance();
-
-            // Step 19: Edit MARC bibliographic record on Central tenant
-            // Verify all linked fields retain same controlled/not controlled subfields
-            InventoryInstance.editMarcBibliographicRecord();
-            bib6XXAfterLinkingToAuth1XX.forEach((field) => {
-              QuickMarcEditor.verifyTagFieldAfterLinking(
-                field.rowIndex,
-                field.tagValue,
-                field.secondBox,
-                field.thirdBox,
-                field.fourthBox,
-                field.fifthBox,
-                field.sixthBox,
-                field.seventhBox,
-              );
-            });
-
-            QuickMarcEditor.closeEditorPane();
           },
         );
       });

@@ -148,7 +148,7 @@ describe('Inventory', () => {
               cy.setTenant(Affiliations.College);
               cy.getLocations({
                 limit: 1,
-                query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
+                query: '(name<>"AT_*" and name<>"*auto*")',
               }).then((res) => {
                 location = res;
               });
@@ -202,7 +202,7 @@ describe('Inventory', () => {
 
         after('Delete user, data', () => {
           cy.resetTenant();
-          cy.getAdminToken();
+          cy.getAdminToken(false);
           cy.setTenant(Affiliations.College);
           InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
 
