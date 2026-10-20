@@ -1,15 +1,26 @@
 import {
   Button,
   including,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiColumnListCell,
+  Pane,
 } from '../../../../../../interactors';
 
 export const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
 };
+
+const rootPane = Pane('Holdings note types');
+
 export default {
+  waitLoading() {
+    ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
+
   createViaApi: (body) => {
     return cy
       .okapiRequest({

@@ -2,7 +2,9 @@ import {
   Button,
   Modal,
   MultiColumnList,
+  MultiColumnListCell,
   MultiColumnListHeader,
+  MultiColumnListRow,
   Select,
   including,
   matching,
@@ -63,6 +65,22 @@ export default {
     columns.forEach((column) => {
       cy.do(changeInstanceModal.find(MultiColumnList()).scrollHeaderIntoView(column));
       cy.expect(changeInstanceModal.find(MultiColumnListHeader(column)).exists());
+    });
+  },
+  checkItemsTableIsEmpty() {
+    cy.expect(changeInstanceModal.has({ message: including('The list contains no items') }));
+  },
+  checkItemsTableContent(items = []) {
+    items.forEach(({ barcode, columns = {} }) => {
+      const targetRow = changeInstanceModal.find(
+        MultiColumnListRow({ content: including(barcode), isContainer: false }),
+      );
+
+      Object.entries(columns).forEach(([column, value]) => {
+        cy.expect(
+          targetRow.find(MultiColumnListCell({ column })).has({ content: including(value) }),
+        );
+      });
     });
   },
   selectHoldingOperation({ operation, shouldConfirm = true }) {

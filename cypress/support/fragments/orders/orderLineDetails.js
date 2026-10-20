@@ -550,7 +550,7 @@ export default {
       }
     });
   },
-  checkLocationsSection({ locations = [], checkByIndex = true } = {}) {
+  checkLocationsSection({ locations = [], checkByIndex = true, isExactCount = false } = {}) {
     locations.forEach((locationInformation, index) => {
       locationInformation.forEach(({ key, value }) => {
         if (checkByIndex) {
@@ -567,8 +567,12 @@ export default {
         }
       });
     });
+
+    if (isExactCount) {
+      cy.expect(locationDetailsSection.find(InfoRow({ index: locations.length })).absent());
+    }
   },
-  checkLocationsSectionInAnyOrder({ locations = [] } = {}) {
+  checkLocationsSectionInAnyOrder({ locations = [], isExactCount = false } = {}) {
     const anchorKeys = [POLINE_DETAILS_FIELDS.HOLDING_NAME, POLINE_DETAILS_FIELDS.LOCATION_NAME];
 
     locations.forEach((locationInformation) => {
@@ -579,6 +583,10 @@ export default {
         cy.expect(row.find(KeyValue(key)).has({ value: including(String(value)) }));
       });
     });
+
+    if (isExactCount) {
+      cy.expect(locationDetailsSection.find(InfoRow({ index: locations.length })).absent());
+    }
   },
   verifyLocationPresentInSection(locationName) {
     cy.expect(locationDetailsSection.find(HTML(including(locationName))).exists());

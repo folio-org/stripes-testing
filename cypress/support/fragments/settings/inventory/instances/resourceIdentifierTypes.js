@@ -1,11 +1,16 @@
 import {
   Button,
   including,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiColumnListCell,
   NavListItem,
   Pane,
 } from '../../../../../../interactors';
+
+const sectionName = 'Resource identifier types';
+const rootPane = Pane(sectionName);
+const actionsCell = MultiColumnListCell({ columnIndex: 3 });
 
 export const reasonsActions = {
   edit: 'edit',
@@ -32,7 +37,6 @@ export default {
   }),
   verifyConsortiumResourceIdentifierTypesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name), isContainer: false });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
@@ -53,7 +57,6 @@ export default {
 
   verifyLocalResourceIdentifierTypesInTheList({ name, source = 'local', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name), isContainer: false });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
@@ -80,16 +83,23 @@ export default {
   clickTrashButtonForResourceIdentifierTypes(name) {
     cy.do([
       MultiColumnListRow({ content: including(name) })
-        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .find(actionsCell)
         .find(Button({ icon: 'trash' }))
         .click(),
       Button('Delete').click(),
     ]);
   },
+  waitLoading() {
+    ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
+
+  verifyNewButtonActive() {
+    cy.expect(rootPane.find(Button('New')).has({ disabled: false }));
+  },
+
   choose() {
-    cy.do([
-      NavListItem('Resource identifier types').click(),
-      Pane('Resource identifier types').exists(),
-    ]);
+    cy.do([NavListItem(sectionName).click(), rootPane.exists()]);
   },
 };
