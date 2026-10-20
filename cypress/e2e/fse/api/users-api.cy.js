@@ -8,7 +8,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195518 - check users-keycloak API for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['eureka-sanity', 'fse', 'api', 'users', 'loc', 'TC195518'] },
+    { tags: ['sanity', 'fse', 'api', 'users', 'loc', 'TC195518'] },
     () => {
       cy.getKeycloakUsersInfo().then((response) => {
         cy.expect(response.status).to.eq(200);
@@ -21,7 +21,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195517 - get user capabilities for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['eureka-sanity', 'fse', 'api', 'users', 'capabilities', 'loc', 'TC195517'] },
+    { tags: ['sanity', 'fse', 'api', 'users', 'capabilities', 'loc', 'TC195517'] },
     () => {
       cy.getKeycloakUsersInfo().then((response) => {
         cy.getCapabilitiesForUserApi(response.body.user.id).then((capabilitiesResponse) => {
@@ -34,7 +34,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195521 - get user policies for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['eureka-sanity', 'fse', 'api', 'users', 'policies', 'loc', 'TC195521'] },
+    { tags: ['sanity', 'fse', 'api', 'users', 'policies', 'loc', 'TC195521'] },
     () => {
       cy.getKeycloakUsersInfo().then((response) => {
         cy.getAuthorizationPoliciesForEntityApi('user', response.body.user.id).then(
@@ -49,7 +49,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC195522 - get user migrations for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['eureka-sanity', 'fse', 'api', 'users', 'migrations', 'loc', 'TC195522'] },
+    { tags: ['sanity', 'fse', 'api', 'users', 'migrations', 'loc', 'TC195522'] },
     () => {
       cy.getUserMigrations().then((migrationsResponse) => {
         cy.expect(migrationsResponse.status).to.eq(200);
@@ -60,7 +60,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
 
   it(
     `FDOPS-6189 - check GET user/settings suppressEdit for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['sanity', 'fse', 'api', 'mod-users', 'FDOPS-6189'] },
+    { tags: ['sanity', 'fse', 'api', 'users', 'FDOPS-6189'] },
     () => {
       cy.getUserSettings('key=="suppressEdit"').then((response) => {
         cy.expect(response.status).to.eq(200);
@@ -70,7 +70,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
 
   it(
     `FDOPS-6190 - check GET user/settings returns records for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['sanity', 'fse', 'api', 'mod-users', 'FDOPS-6190'] },
+    { tags: ['sanity', 'fse', 'api', 'users', 'FDOPS-6190'] },
     () => {
       cy.getUserSettings().then((response) => {
         cy.expect(response.status).to.eq(200);
@@ -81,7 +81,7 @@ describe('fse-users - eureka', { retries: { runMode: 1 } }, () => {
 
   it(
     `FDOPS-6191 - check GET user/settings by mod-users scope for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['sanity', 'fse', 'api', 'mod-users', 'FDOPS-6191'] },
+    { tags: ['sanity', 'fse', 'api', 'users', 'FDOPS-6191'] },
     () => {
       cy.getUserSettings('scope=="mod-users"').then((response) => {
         cy.expect(response.status).to.eq(200);

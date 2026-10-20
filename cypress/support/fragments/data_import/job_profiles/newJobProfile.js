@@ -448,6 +448,62 @@ export default {
       });
   },
 
+  // Nested matches: matchProfileId1 -> for matches -> matchProfileId2 -> for matches -> action
+  createJobProfileWithLinkedNestedMatchAndActionProfilesViaApi: (
+    profileName,
+    matchProfileId1,
+    matchProfileId2,
+    actionProfileId,
+  ) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile: {
+            name: profileName,
+            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+          },
+          addedRelations: [
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: matchProfileId1,
+              detailWrapperId: null,
+              detailProfileType: 'MATCH_PROFILE',
+              order: 0,
+            },
+            {
+              masterProfileId: matchProfileId1,
+              masterWrapperId: null,
+              masterProfileType: 'MATCH_PROFILE',
+              detailProfileId: matchProfileId2,
+              detailWrapperId: null,
+              detailProfileType: 'MATCH_PROFILE',
+              order: 0,
+              reactTo: 'MATCH',
+            },
+            {
+              masterProfileId: matchProfileId2,
+              masterWrapperId: null,
+              masterProfileType: 'MATCH_PROFILE',
+              detailProfileId: actionProfileId,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 0,
+              reactTo: 'MATCH',
+            },
+          ],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((responce) => {
+        return responce.body.id;
+      });
+  },
+
   createJobProfileWithLinkedMatchAndActionProfileAndNonMatchActionProfileViaApi: (
     profileName,
     matchProfileId,

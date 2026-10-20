@@ -16,7 +16,9 @@ describe('fse-applications', { retries: { runMode: 1 } }, () => {
 
   it(
     `FDOPS-6485 - Trillium applications remain entitled to the tenant for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'api', 'sanity', 'applications', 'trillium', 'FDOPS-6485'] },
+    {
+      tags: ['fse', 'api', 'sanity', 'applications', 'tenant-settings', 'trillium', 'FDOPS-6485'],
+    },
     () => {
       cy.getApplicationsForTenantApi(Cypress.env('OKAPI_TENANT')).then((appIds) => {
         TRILLIUM_ENTITLED_APPS.forEach((appName) => {

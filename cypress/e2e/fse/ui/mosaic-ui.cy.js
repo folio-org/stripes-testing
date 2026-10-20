@@ -17,7 +17,7 @@ describe('fse-mosaic - UI (no data manipulation)', () => {
 
   it(
     `FDOPS-6314 - Verify Mosaic integration Configuration options default order template for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['sanity', 'fse', 'ui', 'mosaic', 'FDOPS-6314'] },
+    { tags: ['sanity', 'fse', 'ui', 'mosaic-settings', 'FDOPS-6314'] },
     () => {
       MosaicSettings.waitLoading();
       MosaicSettings.verifyDefaultOrderTemplateSelected('Mosaic eBooks Default');
