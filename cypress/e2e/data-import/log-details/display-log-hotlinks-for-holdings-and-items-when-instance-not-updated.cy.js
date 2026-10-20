@@ -1,13 +1,10 @@
 import {
-  ACTION_NAMES_IN_ACTION_PROFILE,
   APPLICATION_NAMES,
   EXISTING_RECORD_NAMES,
-  FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
   LOAN_TYPE_NAMES,
-  LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
@@ -18,7 +15,7 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import {
   ActionProfiles as SettingsActionProfiles,
@@ -26,148 +23,374 @@ import {
   JobProfiles as SettingsJobProfiles,
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
-import FieldMappingProfileView from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfileView';
-import FieldMappingProfiles from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/settings/dataImport/fieldMappingProfile/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewActionProfile from '../../../support/fragments/settings/dataImport/actionProfiles/newActionProfile';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
-import SettingsDataImport, {
-  SETTINGS_TABS,
-} from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
+// Minimal POST helper - the shared ViaApi helpers each cover only part of what this test needs
+// (e.g. no helper sets Item permanent location or Holdings temporary location), so profiles are
+// built directly against the exact mappingFields the backend expects.
+const createMappingProfileViaApi = (name, existingRecordType, mappingFields) => cy
+  .okapiRequest({
+    method: 'POST',
+    path: 'data-import-profiles/mappingProfiles',
+    body: {
+      profile: {
+        name,
+        incomingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+        existingRecordType,
+        mappingDetails: {
+          name: existingRecordType.toLowerCase(),
+          recordType: existingRecordType,
+          mappingFields,
+        },
+      },
+      addedRelations: [],
+      deletedRelations: [],
+    },
+    isDefaultSearchParamsRequired: false,
+  })
+  .then((response) => response.body);
+
 describe('Data Import', () => {
   describe('Log details', () => {
-    let user;
-    let instanceHrid;
-    const filePathForUpload = 'oneMarcBib.mrc';
-    const marcFileNameForCreate = `C350382 marcFileForCreate${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C350382 editedMarcFile${getRandomPostfix()}.mrc`;
-    const marcFileNameForUpdate = `C350382 marcFileForUpdate${getRandomPostfix()}.mrc`;
+    const randomPostfix = getRandomPostfix();
+    const title = `AT_C350382_MarcBibInstance_${randomPostfix}`;
+    const marcFileName = `AT_C350382_CreateFile_${randomPostfix}.mrc`;
+    const editedMarcFileName = `AT_C350382_EditedFile_${randomPostfix}.mrc`;
 
-    // field mapping profiles for Job profile 1 (Create Simple Instance, Holdings, Item)
-    const instanceMappingProfileForCreate = {
-      name: `C350382 Create simple instance.${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      catalogedDate: '###TODAY###',
-      instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
-    };
-    const holdingsMappingProfileForCreate = {
-      name: `C350382 Create simple holdings.${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-      permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
-      permanentLocationUI: LOCATION_NAMES.MAIN_LIBRARY_UI,
-    };
-    const itemMappingProfileForCreate = {
-      name: `C350382 Create simple item.${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.ITEM,
-      materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
-      permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-      status: ITEM_STATUS_NAMES.AVAILABLE,
-      permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
-    };
+    const instanceMappingProfileName = `AT_C350382 FMP Create simple instance ${randomPostfix}`;
+    const holdingsMappingProfileForCreateName = `AT_C350382 FMP Create simple holdings ${randomPostfix}`;
+    const itemMappingProfileForCreateName = `AT_C350382 FMP Create simple item ${randomPostfix}`;
+    const holdingsMappingProfileForUpdateName = `AT_C350382 FMP Update simple holdings ${randomPostfix}`;
+    const itemMappingProfileForUpdateName = `AT_C350382 FMP Update simple item ${randomPostfix}`;
 
-    // field mapping profiles for Job profile 2 (Update Simple Holdings, Item)
-    const holdingsMappingProfileForUpdate = {
-      name: `C350382 Update simple holdings.${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-      temporaryLocation: `"${LOCATION_NAMES.ANNEX}"`,
-      temporaryLocationUI: LOCATION_NAMES.ANNEX_UI,
-    };
-    const itemMappingProfileForUpdate = {
-      name: `C350382 Update simple item.${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.ITEM,
-      permanentLoanType: LOAN_TYPE_NAMES.COURSE_RESERVES,
-    };
-
-    // action profiles, one per mapping profile above
-    const instanceActionProfileForCreate = {
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      name: `C350382 Create Instance.${getRandomPostfix()}`,
+    const instanceActionProfile = {
+      name: `AT_C350382 AP Create Instance ${randomPostfix}`,
+      action: 'CREATE',
+      folioRecordType: EXISTING_RECORD_NAMES.INSTANCE,
     };
     const holdingsActionProfileForCreate = {
-      typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-      name: `C350382 Create Holdings.${getRandomPostfix()}`,
+      name: `AT_C350382 AP Create Holdings ${randomPostfix}`,
+      action: 'CREATE',
+      folioRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
     };
     const itemActionProfileForCreate = {
-      typeValue: FOLIO_RECORD_TYPE.ITEM,
-      name: `C350382 Create Item.${getRandomPostfix()}`,
+      name: `AT_C350382 AP Create Item ${randomPostfix}`,
+      action: 'CREATE',
+      folioRecordType: EXISTING_RECORD_NAMES.ITEM,
     };
     const holdingsActionProfileForUpdate = {
-      typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-      name: `C350382 Update Holdings.${getRandomPostfix()}`,
-      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
+      name: `AT_C350382 AP Update Holdings ${randomPostfix}`,
+      action: 'UPDATE',
+      folioRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
     };
     const itemActionProfileForUpdate = {
-      typeValue: FOLIO_RECORD_TYPE.ITEM,
-      name: `C350382 Update Item.${getRandomPostfix()}`,
-      action: ACTION_NAMES_IN_ACTION_PROFILE.UPDATE,
+      name: `AT_C350382 AP Update Item ${randomPostfix}`,
+      action: 'UPDATE',
+      folioRecordType: EXISTING_RECORD_NAMES.ITEM,
     };
 
-    // match profiles: Instance anchor (no action of its own) with two sibling submatches
-    const instanceMatchProfile = {
-      profileName: `C350382 Instance match by HRID.${getRandomPostfix()}`,
-      incomingRecordFields: { field: '001' },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
-      instanceOption: NewMatchProfile.optionsList.instanceHrid,
-    };
-    const holdingsMatchProfile = {
-      profileName: `C350382 Holdings submatch by permanent location.${getRandomPostfix()}`,
-      incomingStaticValue: LOCATION_NAMES.MAIN_LIBRARY,
-      incomingStaticRecordValue: 'Text',
-      matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
-      existingRecordOption: NewMatchProfile.optionsList.holdingsPermLoc,
-    };
-    const itemMatchProfile = {
-      profileName: `C350382 Item submatch by permanent location.${getRandomPostfix()}`,
-      incomingStaticValue: LOCATION_NAMES.MAIN_LIBRARY,
-      incomingStaticRecordValue: 'Text',
-      matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORD_NAMES.ITEM,
-      existingRecordOption: NewMatchProfile.optionsList.itemPermLoc,
-    };
+    const instanceMatchProfileName = `AT_C350382 MP Instance match by HRID ${randomPostfix}`;
+    const holdingsMatchProfileName = `AT_C350382 MP Holdings submatch by permanent location ${randomPostfix}`;
+    const itemMatchProfileName = `AT_C350382 MP Item submatch by permanent location ${randomPostfix}`;
 
-    const jobProfileForCreate = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: `C350382 Create Simple Instance, Holdings, Item.${getRandomPostfix()}`,
-    };
-    const jobProfileForUpdate = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: `C350382 Update Simple Holdings, Item.${getRandomPostfix()}`,
-    };
+    const jobProfileForCreateName = `AT_C350382 JP Create Simple Instance, Holdings, Item ${randomPostfix}`;
+    const jobProfileForUpdateName = `AT_C350382 JP Update Simple Holdings, Item ${randomPostfix}`;
 
-    before('Create test user and login', () => {
+    const testData = { user: {} };
+
+    before('Create test data', () => {
+      cy.getAdminToken().then(() => {
+        InventoryInstances.deleteFullInstancesByTitleViaApi('C350382_');
+
+        // Two distinct, non-test active locations: one for the Permanent location used by the
+        // Create profiles (and the static-value submatches), one for the Temporary location set
+        // by the Update holdings profile. getLocations resolves to locations[0] but also caches
+        // every location it fetched (up to `limit`) on Cypress.env('locations').
+        cy.getLocations({
+          limit: 2,
+          query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
+        }).then((permanentLocation) => {
+          testData.temporaryLocation = Cypress.env('locations')[1];
+          testData.permanentLocationName = `${permanentLocation.name} (${permanentLocation.code})`;
+
+          // Field mapping profiles -> Action profiles (Create Instance, Holdings, Item)
+          createMappingProfileViaApi(instanceMappingProfileName, EXISTING_RECORD_NAMES.INSTANCE, [
+            {
+              name: 'catalogedDate',
+              enabled: true,
+              path: 'instance.catalogedDate',
+              value: '###TODAY###',
+              subfields: [],
+            },
+            {
+              name: 'statusId',
+              enabled: true,
+              path: 'instance.statusId',
+              value: `"${INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED}"`,
+              subfields: [],
+              acceptedValues: {},
+            },
+          ])
+            .then((body) => NewActionProfile.createActionProfileViaApi(instanceActionProfile, body.id))
+            .then((response) => {
+              testData.instanceActionProfileId = response.body.id;
+            });
+
+          createMappingProfileViaApi(
+            holdingsMappingProfileForCreateName,
+            EXISTING_RECORD_NAMES.HOLDINGS,
+            [
+              {
+                name: 'permanentLocationId',
+                enabled: true,
+                path: 'holdings.permanentLocationId',
+                value: `"${testData.permanentLocationName}"`,
+                subfields: [],
+                acceptedValues: {},
+              },
+            ],
+          )
+            .then((body) => NewActionProfile.createActionProfileViaApi(holdingsActionProfileForCreate, body.id))
+            .then((response) => {
+              testData.holdingsActionProfileForCreateId = response.body.id;
+            });
+
+          createMappingProfileViaApi(itemMappingProfileForCreateName, EXISTING_RECORD_NAMES.ITEM, [
+            {
+              name: 'materialType.id',
+              enabled: true,
+              path: 'item.materialType.id',
+              value: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
+              subfields: [],
+              acceptedValues: {},
+            },
+            {
+              name: 'permanentLoanType.id',
+              enabled: true,
+              path: 'item.permanentLoanType.id',
+              value: `"${LOAN_TYPE_NAMES.CAN_CIRCULATE}"`,
+              subfields: [],
+              acceptedValues: {},
+            },
+            {
+              name: 'status.name',
+              enabled: true,
+              path: 'item.status.name',
+              value: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+              subfields: [],
+            },
+            {
+              name: 'permanentLocation.id',
+              enabled: true,
+              path: 'item.permanentLocation.id',
+              value: `"${testData.permanentLocationName}"`,
+              subfields: [],
+              acceptedValues: {},
+            },
+          ])
+            .then((body) => NewActionProfile.createActionProfileViaApi(itemActionProfileForCreate, body.id))
+            .then((response) => {
+              testData.itemActionProfileForCreateId = response.body.id;
+            });
+
+          // Field mapping profiles -> Action profiles (Update Holdings, Item)
+          createMappingProfileViaApi(
+            holdingsMappingProfileForUpdateName,
+            EXISTING_RECORD_NAMES.HOLDINGS,
+            [
+              {
+                name: 'temporaryLocationId',
+                enabled: true,
+                path: 'holdings.temporaryLocationId',
+                value: `"${testData.temporaryLocation.name} (${testData.temporaryLocation.code})"`,
+                subfields: [],
+                acceptedValues: {},
+              },
+            ],
+          )
+            .then((body) => NewActionProfile.createActionProfileViaApi(holdingsActionProfileForUpdate, body.id))
+            .then((response) => {
+              testData.holdingsActionProfileForUpdateId = response.body.id;
+            });
+
+          createMappingProfileViaApi(itemMappingProfileForUpdateName, EXISTING_RECORD_NAMES.ITEM, [
+            {
+              name: 'permanentLoanType.id',
+              enabled: true,
+              path: 'item.permanentLoanType.id',
+              value: `"${LOAN_TYPE_NAMES.COURSE_RESERVES}"`,
+              subfields: [],
+              acceptedValues: {},
+            },
+          ])
+            .then((body) => NewActionProfile.createActionProfileViaApi(itemActionProfileForUpdate, body.id))
+            .then((response) => {
+              testData.itemActionProfileForUpdateId = response.body.id;
+            });
+
+          // Match profiles: Instance by HRID (001), Holdings/Item submatches by static-value
+          // permanent location
+          NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi({
+            profileName: instanceMatchProfileName,
+            incomingRecordFields: { field: '001' },
+            existingRecordType: EXISTING_RECORD_NAMES.INSTANCE,
+            existingMatchExpressionValue: 'instance.hrid',
+            recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+          }).then(({ body }) => {
+            testData.instanceMatchProfileId = body.id;
+          });
+
+          NewMatchProfile.createMatchProfileWithStaticValueAndExistingMatchExpressionViaApi({
+            profileName: holdingsMatchProfileName,
+            incomingStaticValue: testData.permanentLocationName,
+            existingRecordType: EXISTING_RECORD_NAMES.HOLDINGS,
+            existingRecordOption: 'holdingsrecord.permanentLocationId',
+          }).then(({ body }) => {
+            testData.holdingsMatchProfileId = body.id;
+          });
+
+          NewMatchProfile.createMatchProfileWithStaticValueAndExistingMatchExpressionViaApi({
+            profileName: itemMatchProfileName,
+            incomingStaticValue: testData.permanentLocationName,
+            existingRecordType: EXISTING_RECORD_NAMES.ITEM,
+            existingRecordOption: 'item.permanentLocationId',
+          }).then(({ body }) => {
+            testData.itemMatchProfileId = body.id;
+          });
+
+          // Job profile 1: 3 linked Create actions, no match
+          cy.then(() => {
+            NewJobProfile.createJobProfileWithLinkedThreeActionProfilesViaApi(
+              { name: jobProfileForCreateName },
+              testData.instanceActionProfileId,
+              testData.holdingsActionProfileForCreateId,
+              testData.itemActionProfileForCreateId,
+            ).then((id) => {
+              testData.jobProfileForCreateId = id;
+            });
+          });
+
+          // Job profile 2: Instance match is an anchor only (no action of its own - the Instance
+          // is never updated), with two sibling submatches (Holdings, Item) each leading to its
+          // own Update action.
+          cy.then(() => cy
+            .okapiRequest({
+              method: 'POST',
+              path: 'data-import-profiles/jobProfiles',
+              body: {
+                profile: { name: jobProfileForUpdateName, dataType: 'MARC' },
+                addedRelations: [
+                  {
+                    masterProfileId: null,
+                    masterWrapperId: null,
+                    masterProfileType: 'JOB_PROFILE',
+                    detailProfileId: testData.instanceMatchProfileId,
+                    detailWrapperId: null,
+                    detailProfileType: 'MATCH_PROFILE',
+                    order: 0,
+                  },
+                  {
+                    masterProfileId: testData.instanceMatchProfileId,
+                    masterWrapperId: null,
+                    masterProfileType: 'MATCH_PROFILE',
+                    detailProfileId: testData.holdingsMatchProfileId,
+                    detailWrapperId: null,
+                    detailProfileType: 'MATCH_PROFILE',
+                    order: 0,
+                    reactTo: 'MATCH',
+                  },
+                  {
+                    masterProfileId: testData.holdingsMatchProfileId,
+                    masterWrapperId: null,
+                    masterProfileType: 'MATCH_PROFILE',
+                    detailProfileId: testData.holdingsActionProfileForUpdateId,
+                    detailWrapperId: null,
+                    detailProfileType: 'ACTION_PROFILE',
+                    order: 0,
+                    reactTo: 'MATCH',
+                  },
+                  {
+                    masterProfileId: testData.instanceMatchProfileId,
+                    masterWrapperId: null,
+                    masterProfileType: 'MATCH_PROFILE',
+                    detailProfileId: testData.itemMatchProfileId,
+                    detailWrapperId: null,
+                    detailProfileType: 'MATCH_PROFILE',
+                    order: 1,
+                    reactTo: 'MATCH',
+                  },
+                  {
+                    masterProfileId: testData.itemMatchProfileId,
+                    masterWrapperId: null,
+                    masterProfileType: 'MATCH_PROFILE',
+                    detailProfileId: testData.itemActionProfileForUpdateId,
+                    detailWrapperId: null,
+                    detailProfileType: 'ACTION_PROFILE',
+                    order: 0,
+                    reactTo: 'MATCH',
+                  },
+                ],
+                deletedRelations: [],
+              },
+              isDefaultSearchParamsRequired: false,
+            })
+            .then(({ body }) => {
+              testData.jobProfileForUpdateId = body.id;
+            }));
+
+          // Build the incoming MARC bib file, import it (Job profile 1) to create the
+          // Instance/Holdings/Item, then edit 001/003 for the second import (Step 16)
+          cy.then(() => {
+            DataImport.createMarcFile({
+              fileName: marcFileName,
+              recordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+              fields: [{ tag: '245', indicators: ['0', '0'], content: `$a ${title}` }],
+            });
+          });
+
+          cy.then(() => {
+            DataImport.uploadFileViaApi(marcFileName, marcFileName, jobProfileForCreateName).then(
+              (response) => {
+                // The import response's instance.id is always a real UUID, but its hrid is not
+                // always populated - fetch the instance by id to get a reliable hrid.
+                cy.getInstanceById(response[0].instance.id).then((instance) => {
+                  DataImport.editMarcFieldsInAllRecords(marcFileName, editedMarcFileName, {
+                    removeTags: ['001', '003'],
+                    addFields: [{ tag: '001', content: instance.hrid }],
+                  });
+                });
+              },
+            );
+          });
+        });
+      });
+
       cy.createTempUser([
-        Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
-        user = userProperties;
-
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+        testData.user = userProperties;
       });
     });
 
     after('Delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${marcFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getAdminToken(false).then(() => {
-        Users.deleteViaApi(user.userId);
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
-        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(instanceMatchProfile.profileName);
-        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(holdingsMatchProfile.profileName);
-        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(itemMatchProfile.profileName);
+        Users.deleteViaApi(testData.user.userId);
+        SettingsJobProfiles.deleteJobProfileViaApi(testData.jobProfileForCreateId);
+        SettingsJobProfiles.deleteJobProfileViaApi(testData.jobProfileForUpdateId);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(instanceMatchProfileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(holdingsMatchProfileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(itemMatchProfileName);
         [
-          instanceActionProfileForCreate,
+          instanceActionProfile,
           holdingsActionProfileForCreate,
           itemActionProfileForCreate,
           holdingsActionProfileForUpdate,
@@ -176,21 +399,15 @@ describe('Data Import', () => {
           SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.name);
         });
         [
-          instanceMappingProfileForCreate,
-          holdingsMappingProfileForCreate,
-          itemMappingProfileForCreate,
-          holdingsMappingProfileForUpdate,
-          itemMappingProfileForUpdate,
-        ].forEach((profile) => {
-          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(profile.name);
+          instanceMappingProfileName,
+          holdingsMappingProfileForCreateName,
+          itemMappingProfileForCreateName,
+          holdingsMappingProfileForUpdateName,
+          itemMappingProfileForUpdateName,
+        ].forEach((name) => {
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(name);
         });
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-          (instance) => {
-            cy.deleteItemViaApi(instance.items[0].id);
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+        InventoryInstances.deleteFullInstancesByTitleViaApi(title);
       });
     });
 
@@ -198,160 +415,26 @@ describe('Data Import', () => {
       'C350382 Display log hotlinks for Inventory Holdings and Items when the Instance is not Updated (promin)',
       { tags: ['extendedPath', 'promin', 'C350382'] },
       () => {
-        // Steps 2-4: create field mapping profiles for Job profile 1 (instance, holdings, item)
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillInstanceMappingProfile(instanceMappingProfileForCreate);
-        FieldMappingProfileView.closeViewMode(instanceMappingProfileForCreate.name);
-        FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileForCreate.name);
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
 
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfileForCreate);
-        NewFieldMappingProfile.fillPermanentLocation(
-          holdingsMappingProfileForCreate.permanentLocation,
-        );
-        NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(holdingsMappingProfileForCreate.name);
-        FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileForCreate.name);
-
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfileForCreate);
-        NewFieldMappingProfile.fillMaterialType(itemMappingProfileForCreate.materialType);
-        NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfileForCreate.permanentLoanType);
-        NewFieldMappingProfile.fillStatus(`"${itemMappingProfileForCreate.status}"`);
-        NewFieldMappingProfile.fillPermanentLocation(itemMappingProfileForCreate.permanentLocation);
-        NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(itemMappingProfileForCreate.name);
-        FieldMappingProfiles.checkMappingProfilePresented(itemMappingProfileForCreate.name);
-
-        // Steps 5-6: create field mapping profiles for Job profile 2 (update holdings, item)
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfileForUpdate);
-        NewFieldMappingProfile.fillTemporaryLocation(
-          holdingsMappingProfileForUpdate.temporaryLocation,
-        );
-        NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(holdingsMappingProfileForUpdate.name);
-        FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileForUpdate.name);
-
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfileForUpdate);
-        NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfileForUpdate.permanentLoanType);
-        NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(itemMappingProfileForUpdate.name);
-        FieldMappingProfiles.checkMappingProfilePresented(itemMappingProfileForUpdate.name);
-
-        // Step 7: create action profiles, one per mapping profile above
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.ACTION_PROFILES);
-        SettingsActionProfiles.create(
-          instanceActionProfileForCreate,
-          instanceMappingProfileForCreate.name,
-        );
-        SettingsActionProfiles.checkActionProfilePresented(instanceActionProfileForCreate.name);
-        SettingsActionProfiles.create(
-          holdingsActionProfileForCreate,
-          holdingsMappingProfileForCreate.name,
-        );
-        SettingsActionProfiles.checkActionProfilePresented(holdingsActionProfileForCreate.name);
-        SettingsActionProfiles.create(itemActionProfileForCreate, itemMappingProfileForCreate.name);
-        SettingsActionProfiles.checkActionProfilePresented(itemActionProfileForCreate.name);
-        SettingsActionProfiles.create(
-          holdingsActionProfileForUpdate,
-          holdingsMappingProfileForUpdate.name,
-        );
-        SettingsActionProfiles.checkActionProfilePresented(holdingsActionProfileForUpdate.name);
-        SettingsActionProfiles.create(itemActionProfileForUpdate, itemMappingProfileForUpdate.name);
-        SettingsActionProfiles.checkActionProfilePresented(itemActionProfileForUpdate.name);
-
-        // Steps 8-10: create match profiles (Instance by HRID, Holdings/Item submatches by permanent location)
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILES);
-        MatchProfiles.createMatchProfile(instanceMatchProfile);
-        MatchProfiles.checkMatchProfilePresented(instanceMatchProfile.profileName);
-        MatchProfiles.createMatchProfileWithStaticValue(holdingsMatchProfile);
-        MatchProfiles.checkMatchProfilePresented(holdingsMatchProfile.profileName);
-        MatchProfiles.createMatchProfileWithStaticValue(itemMatchProfile);
-        MatchProfiles.checkMatchProfilePresented(itemMatchProfile.profileName);
-
-        // Step 11: Job profile 1 - Create Simple Instance, Holdings, Item (no match profile)
-        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.JOB_PROFILES);
-        JobProfiles.createJobProfile(jobProfileForCreate);
-        NewJobProfile.linkActionProfile(instanceActionProfileForCreate);
-        NewJobProfile.linkActionProfile(holdingsActionProfileForCreate);
-        NewJobProfile.linkActionProfile(itemActionProfileForCreate);
-        NewJobProfile.saveAndClose();
-        JobProfiles.checkJobProfilePresented(jobProfileForCreate.profileName);
-
-        // Step 12: Job profile 2 - Update Simple Holdings, Item.
-        // The Instance match is only an anchor: it has no action of its own, so the Instance
-        // itself is never updated, while the two sibling submatches (Holdings, Item) each
-        // have their own Update action.
-        JobProfiles.createJobProfile(jobProfileForUpdate);
-        NewJobProfile.linkMatchProfile(instanceMatchProfile.profileName);
-        NewJobProfile.linkMatchProfileForMatches(holdingsMatchProfile.profileName);
-        NewJobProfile.linkActionProfileForMatches(holdingsActionProfileForUpdate.name);
-        NewJobProfile.linkMatchProfileForMatches(itemMatchProfile.profileName, 2);
-        NewJobProfile.linkActionProfileForMatches(itemActionProfileForUpdate.name, 2);
-        NewJobProfile.saveAndClose();
-        JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
-
-        // Steps 13-14: upload the MARC file and run Job profile 1
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(filePathForUpload, marcFileNameForCreate);
+        // Step 17: upload the edited MARC file
+        DataImport.uploadFile(editedMarcFileName);
         JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfileForCreate.profileName);
+
+        // Step 18: select the "Update Simple Holdings, Item" job profile and run the import
+        JobProfiles.search(jobProfileForUpdateName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(marcFileNameForCreate);
-        Logs.checkJobStatus(marcFileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
-
-        // Step 15: Instance, Holdings, Item columns show "Created" hotlinks that open the
-        // appropriate Inventory record
-        Logs.openFileDetails(marcFileNameForCreate);
-        [
-          FileDetails.columnNameInResultList.instance,
-          FileDetails.columnNameInResultList.holdings,
-          FileDetails.columnNameInResultList.item,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
-        });
-        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
-        InventoryInstance.getAssignedHRID().then((hrid) => {
-          instanceHrid = hrid;
-        });
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
-        HoldingsRecordView.waitLoading();
-        HoldingsRecordView.checkPermanentLocation(
-          holdingsMappingProfileForCreate.permanentLocationUI,
-        );
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
-        ItemRecordView.verifyPermanentLoanType(itemMappingProfileForCreate.permanentLoanType);
-        ItemRecordView.closeDetailView();
-
-        // Step 16: edit the MARC file - remove existing 001/003, add 001 = Instance HRID
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        FileDetails.close();
-        cy.then(() => {
-          DataImport.editMarcFieldsInAllRecords(marcFileNameForCreate, editedMarcFileName, {
-            removeTags: ['001', '003'],
-            addFields: [{ tag: '001', content: instanceHrid }],
-          });
-        });
-
-        // Steps 17-18: upload the edited MARC file and run Job profile 2
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(editedMarcFileName, marcFileNameForUpdate);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfileForUpdate.profileName);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(marcFileNameForUpdate);
-        Logs.checkJobStatus(marcFileNameForUpdate, JOB_STATUS_NAMES.COMPLETED);
+        Logs.waitFileIsImported(editedMarcFileName);
+        Logs.checkJobStatus(editedMarcFileName, JOB_STATUS_NAMES.COMPLETED);
 
         // Step 19: Holdings and Item columns show "Updated" hotlinks with the new values;
-        // Instance is matched but not updated (no action was linked to its match)
-        Logs.openFileDetails(marcFileNameForUpdate);
+        // Instance is matched but not updated
+        Logs.openFileDetails(editedMarcFileName);
         FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.NO_ACTION,
+          RECORD_STATUSES.DASH,
           FileDetails.columnNameInResultList.instance,
         );
         FileDetails.checkStatusInColumn(
@@ -364,12 +447,10 @@ describe('Data Import', () => {
         );
         FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED);
         HoldingsRecordView.waitLoading();
-        HoldingsRecordView.checkTemporaryLocation(
-          holdingsMappingProfileForUpdate.temporaryLocationUI,
-        );
+        HoldingsRecordView.checkTemporaryLocation(testData.temporaryLocation.name);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         FileDetails.openItemInInventory(RECORD_STATUSES.UPDATED);
-        ItemRecordView.verifyPermanentLoanType(itemMappingProfileForUpdate.permanentLoanType);
+        ItemRecordView.verifyPermanentLoanType(LOAN_TYPE_NAMES.COURSE_RESERVES);
       },
     );
   });
