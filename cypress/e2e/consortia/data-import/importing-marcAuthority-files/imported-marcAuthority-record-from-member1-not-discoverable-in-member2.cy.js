@@ -43,6 +43,7 @@ describe('Data Import', () => {
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
             ]);
             cy.setTenant(Affiliations.University);
+            MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C405522');
             cy.wait(10_000);
             cy.assignPermissionsToExistingUser(users.userProperties.userId, [
               Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,

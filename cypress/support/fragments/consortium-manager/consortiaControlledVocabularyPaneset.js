@@ -1,6 +1,8 @@
 import {
   Button,
   Checkbox,
+  EditableListRow,
+  IconButton,
   Modal,
   MultiColumnList,
   MultiColumnListCell,
@@ -55,9 +57,32 @@ export default {
     ]);
   },
 
+  verifyNewRowInEditMode({ name, isShared = false, withCode = false } = {}) {
+    const newRow = EditableListRow({ index: 0 });
+
+    this.verifyEditModeIsActive();
+    cy.expect([
+      TextField({ placeholder: 'name' }).has({ disabled: false }),
+      newRow.find(MultiColumnListCell({ column: 'Source' })).has({ content: 'local' }),
+      newRow.find(MultiColumnListCell({ column: 'Last updated' })).has({ content: including('-') }),
+    ]);
+    if (withCode) cy.expect(TextField({ placeholder: 'code' }).has({ disabled: false }));
+    if (name) cy.expect(TextField({ placeholder: 'name' }).has({ value: name }));
+    this.verifyShareCheckboxState({ isEnabled: true, isChecked: isShared });
+  },
+
   fillInTextField(textInput) {
     const [placeholder, value] = Object.entries(textInput)[0];
     cy.do(TextField({ placeholder }).fillIn(value));
+  },
+
+  verifyFilledInTextField(textInput) {
+    const [placeholder, value] = Object.entries(textInput)[0];
+    const textField = TextField({ placeholder });
+    cy.expect([
+      textField.has({ value }),
+      textField.find(IconButton({ icon: 'times-circle-solid' })).exists(),
+    ]);
   },
 
   checkShareCheckbox() {
@@ -128,6 +153,17 @@ export default {
           }
         });
       }
+    });
+  },
+
+  verifyLastUpdatedInTheList(recordName, texts) {
+    const row = MultiColumnListRow({ content: including(recordName), isContainer: true });
+    texts.forEach((text) => {
+      cy.expect(
+        row
+          .find(MultiColumnListCell({ column: 'Last updated', innerText: including(text) }))
+          .exists(),
+      );
     });
   },
 

@@ -82,6 +82,36 @@ export default {
     resource: 'UI-Data-Import Settings',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiUsersSettingsPermsetsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Permsets',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiUsersSettingsPermsetsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Permsets',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiUsersSettingsDepartmentsCreateEditViewEdit: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Departments Create-Edit-View',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
+  uiUsersSettingsDepartmentsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Departments',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiUsersSettingsUsergroupsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Usergroups',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiUsersSettingsUsergroupsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Usergroups',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
   moduleListsManage: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'Module Lists',
@@ -138,6 +168,11 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Users',
     action: CAPABILITY_ACTIONS.CREATE,
+  },
+  uiUsersPermsEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Users Perms',
+    action: CAPABILITY_ACTIONS.EDIT,
   },
   uiUsersLoansView: {
     type: CAPABILITY_TYPES.DATA,
