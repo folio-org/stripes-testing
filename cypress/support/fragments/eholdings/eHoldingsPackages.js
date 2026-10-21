@@ -276,6 +276,18 @@ export default {
     });
   },
 
+  getPackagesViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'eholdings/packages',
+        contentTypeHeader: 'application/vnd.api+json',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
+
   getPackageDataViaApi(packageId) {
     return cy.okapiRequest({
       method: 'GET',
