@@ -488,11 +488,17 @@ describe('Settings | Orders', () => {
       OrderTemplateForm.verifyStartingFiscalYearInfoPopover();
 
       trace('Step 8. Select the current FY in the dropdown');
-      OrderTemplateForm.selectStartingFiscalYear(fy2.code);
+      OrderTemplateForm.selectStartingFiscalYear(fy2.code, { trace });
       // Expected: 2 cards (FY #2, FY #3); Prepayment term = 2; trash only on FY #3 card; Add FY active
-      OrderTemplateForm.assertFiscalYearCards([fy2.code, fy3.code]);
+      trace('Step 8: verify current fiscal year card');
+      OrderTemplateForm.assertFiscalYearCards([fy2.code]);
+      trace('Step 8: verify first future fiscal year card');
+      OrderTemplateForm.assertFiscalYearCards([fy3.code]);
+      trace('Step 8: verify prepayment term is 2');
       OrderTemplateForm.assertPrepaymentTermValue(2);
+      trace('Step 8: verify only the future fiscal year card is removable');
       OrderTemplateForm.assertOnlyFiscalYearCardRemovable([fy2.code, fy3.code], fy3.code);
+      trace('Step 8: verify Add fiscal year is enabled');
       OrderTemplateForm.assertAddFiscalYearButtonEnabled();
 
       trace('Step 9. Click "Add fiscal year" button');
