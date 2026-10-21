@@ -19,6 +19,11 @@ import { ExecutionFlowManager } from '../../../support/utils';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import AgreementsDisplaySettings from '../../../support/fragments/settings/agreements/displaySettings';
 
+const trace = (message) => {
+  trace('cy.task');
+  return cy.task('log', `[C1347109] ${message}`);
+};
+
 const R = {
   AGREEMENT_1: 'agreement1',
   AGREEMENT_2: 'agreement2',
@@ -48,12 +53,14 @@ describe('Agreements', () => {
     const isolatingTagName = `AT_C1347109_ISOLATING_TAG_${postfix}`.toLocaleLowerCase();
 
     const addIsolationTagToAgreementLine = (agreementLineId) => {
+      trace('cy.okapiRequest');
       cy.okapiRequest({
         path: `erm/entitlements/${agreementLineId}`,
         isDefaultSearchParamsRequired: false,
       }).then(({ body }) => {
         const tags = body.tags || [];
 
+        trace('cy.okapiRequest');
         cy.okapiRequest({
           method: 'PUT',
           path: `erm/entitlements/${agreementLineId}`,
@@ -69,19 +76,35 @@ describe('Agreements', () => {
     };
 
     before('Create C1347109 preconditions', () => {
+      trace('SETUP: start');
+
+      trace('cy.getAdminToken');
       cy.getAdminToken();
+      trace('cy.clearAllLocalStorage');
       cy.clearAllLocalStorage();
 
       flow
         .step(() => {
+          trace('SETUP: step 1');
+
+          trace('AgreementsDisplaySettings.setAgreementsHideResourceSettingsViaApi');
           AgreementsDisplaySettings.setAgreementsHideResourceSettingsViaApi(false);
         })
         .step((currentFlow) => {
+          trace('SETUP: step 2');
+
+          trace('cy.createTagApi');
           return cy.createTagApi({ label: isolatingTagName }).then((id) => {
-            return currentFlow.set(R.TAG, { id, label: isolatingTagName }, () => cy.deleteTagApi(id, true));
+            return currentFlow.set(R.TAG, { id, label: isolatingTagName }, () => {
+              trace('cy.deleteTagApi');
+              return cy.deleteTagApi(id, true);
+            });
           });
         })
         .step((currentFlow) => {
+          trace('SETUP: step 3');
+
+          trace('Agreements.getLocalKBPackages');
           return Agreements.getLocalKBPackages(
             new URLSearchParams([
               ['match', 'name'],
@@ -97,25 +120,40 @@ describe('Agreements', () => {
           });
         })
         .step((currentFlow) => {
+          trace('SETUP: step 4');
+
+          trace('Agreements.createViaApi');
           return Agreements.createViaApi({
             ...Agreements.defaultAgreement,
             name: agreement1Name,
             tags: [{ value: isolatingTagName }],
-          }).then((agreement) => currentFlow.set(R.AGREEMENT_1, agreement, () => Agreements.deleteViaApi(agreement.id)));
+          }).then((agreement) => currentFlow.set(R.AGREEMENT_1, agreement, () => {
+            trace('Agreements.deleteViaApi');
+            return Agreements.deleteViaApi(agreement.id);
+          }));
         })
         .step((currentFlow) => {
+          trace('SETUP: step 5');
+
+          trace('Agreements.createViaApi');
           return Agreements.createViaApi({
             ...Agreements.defaultAgreement,
             name: agreement2Name,
             tags: [{ value: isolatingTagName }],
-          }).then((agreement) => currentFlow.set(R.AGREEMENT_2, agreement, () => Agreements.deleteViaApi(agreement.id)));
+          }).then((agreement) => currentFlow.set(R.AGREEMENT_2, agreement, () => {
+            trace('Agreements.deleteViaApi');
+            return Agreements.deleteViaApi(agreement.id);
+          }));
         })
         .step((currentFlow) => {
+          trace('SETUP: step 6');
+
           const lines = [];
 
           return cy
             .wrap([null, null, ...currentFlow.get(R.LOCAL_KB_PACKAGES)])
             .each((res, index) => {
+              trace('AgreementLines.createViaApi');
               return AgreementLines.createViaApi({
                 description: `AT_C1347109_Agreement_1_Line_${index + 1}_${postfix}`,
                 owner: flow.get(R.AGREEMENT_1).id,
@@ -131,12 +169,14 @@ describe('Agreements', () => {
                 ...(res ? {} : { type: 'detached' }),
               }).then((line) => {
                 lines.push(line);
+                trace('addIsolationTagToAgreementLine');
                 addIsolationTagToAgreementLine(line.id);
               });
             })
             .then(() => {
               currentFlow.set(R.AGREEMENT_1_LINES, lines, () => {
                 lines.forEach((line) => {
+                  trace('AgreementLines.deleteViaApi');
                   AgreementLines.deleteViaApi({
                     agreementLineId: line.id,
                     agreementId: flow.get(R.AGREEMENT_1).id,
@@ -146,74 +186,124 @@ describe('Agreements', () => {
             });
         })
         .step((currentFlow) => {
+          trace('SETUP: step 7');
+
+          trace('EHoldingsPackages.getNotCustomSelectedPackageIdViaApi');
           return EHoldingsPackages.getNotCustomSelectedPackageIdViaApi().then(({ id }) => {
+            trace('EHoldingsPackages.getPackageByIdViaApi');
             return EHoldingsPackages.getPackageByIdViaApi(id, {
               searchParams: { include: 'resources' },
             }).then(({ body }) => currentFlow.set(R.NOT_CUSTOM_PACKAGE, body));
           });
         })
         .step((currentFlow) => {
+          trace('SETUP: step 8');
+
+          trace('EHoldingsTitles.getSelectedNotCustomTitleViaApi');
           return EHoldingsTitles.getSelectedNotCustomTitleViaApi('test').then(({ id }) => {
+            trace('EHoldingsTitles.getTitleByIdViaApi');
             return EHoldingsTitles.getTitleByIdViaApi(id, {
               searchParams: { include: 'resources' },
             }).then(({ body }) => currentFlow.set(R.NOT_CUSTOM_TITLE, body));
           });
         })
         .step((currentFlow) => {
+          trace('SETUP: step 9');
+
+          trace('EHoldingsPackages.createPackageViaAPI');
           return EHoldingsPackages.createPackageViaAPI({
             data: {
               type: 'packages',
               attributes: { name: packageName, contentType: 'E-Book' },
             },
           })
-            .then(({ data }) => EHoldingsPackages.getPackageByIdViaApi(data.id, {
-              searchParams: { include: 'resources' },
-            }))
-            .then(({ body }) => currentFlow.set(R.E_HOLDING_PACKAGE, body, () => EHoldingsPackages.deletePackageViaAPI(packageName)));
+            .then(({ data }) => {
+              trace('EHoldingsPackages.getPackageByIdViaApi');
+              return EHoldingsPackages.getPackageByIdViaApi(data.id, {
+                searchParams: { include: 'resources' },
+              });
+            })
+            .then(({ body }) => currentFlow.set(R.E_HOLDING_PACKAGE, body, () => {
+              trace('EHoldingsPackages.deletePackageViaAPI');
+              return EHoldingsPackages.deletePackageViaAPI(packageName);
+            }));
         })
         .step((currentFlow) => {
+          trace('SETUP: step 10');
+
+          trace('EHoldingsTitles.createEHoldingTitleVIaApi');
           return EHoldingsTitles.createEHoldingTitleVIaApi({
             packageId: currentFlow.get(R.E_HOLDING_PACKAGE).data.id,
             titleName,
           })
-            .then((title) => EHoldingsTitles.getTitleByIdViaApi(title.id, {
-              searchParams: { include: 'resources' },
-            }))
-            .then(({ body }) => currentFlow.set(R.E_HOLDING_TITLE, body, () => EHoldingsTitles.deleteTitleByIdViaApi(body.data.id)));
+            .then((title) => {
+              trace('EHoldingsTitles.getTitleByIdViaApi');
+              return EHoldingsTitles.getTitleByIdViaApi(title.id, {
+                searchParams: { include: 'resources' },
+              });
+            })
+            .then(({ body }) => currentFlow.set(R.E_HOLDING_TITLE, body, () => {
+              trace('EHoldingsTitles.deleteTitleByIdViaApi');
+              return EHoldingsTitles.deleteTitleByIdViaApi(body.data.id);
+            }));
         })
         .step((currentFlow) => {
+          trace('SETUP: step 11');
+
+          trace('cy.createTempUser');
           return cy
             .createTempUser([
               Permissions.uiAgreementsAgreementsEdit.gui,
               Permissions.uieHoldingsAppView.gui,
             ])
-            .then((user) => currentFlow.set(R.USER, user, () => Users.deleteViaApi(user.userId)));
+            .then((user) => currentFlow.set(R.USER, user, () => {
+              trace('Users.deleteViaApi');
+              return Users.deleteViaApi(user.userId);
+            }));
         })
         .step((currentFlow) => {
+          trace('SETUP: step 12');
+
+          trace('cy.login');
           return cy.login(currentFlow.get(R.USER).username, currentFlow.get(R.USER).password, {
             path: TopMenu.eholdingsPath,
             waiter: EHoldingsSearch.waitLoading,
           });
         });
+
+      trace('SETUP: complete');
     });
 
     after('Delete C1347109 data', () => {
+      trace('CLEANUP: start');
+
+      trace('cy.getAdminToken');
       cy.getAdminToken();
       (flow.get(R.CREATED_AGREEMENTS) || []).forEach(({ id: agreementId }) => {
+        trace('AgreementLines.getViaApi');
         AgreementLines.getViaApi({ filters: `owner==${agreementId}` })
           .then((data) => {
             data.forEach(({ id: agreementLineId }) => {
+              trace('AgreementLines.deleteViaApi');
               AgreementLines.deleteViaApi({ agreementId, agreementLineId });
             });
           })
-          .then(() => Agreements.deleteViaApi(agreementId));
+          .then(() => {
+            trace('Agreements.deleteViaApi');
+            return Agreements.deleteViaApi(agreementId);
+          });
       });
+      trace('flow.cleanup');
       flow.cleanup();
+
+      trace('CLEANUP: complete');
     });
 
     const verifyResourceNameInAgreementPayload = (alias, resourceName) => {
+      trace('cy.wait');
       cy.wait(alias).then(({ request }) => {
         const item = request.body.items.find(({ resourceName: name }) => name === resourceName);
+        trace('expect: verify assertion');
         expect(item, `${resourceName} is included in the Agreement payload`).to.not.equal(
           undefined,
         );
@@ -241,6 +331,7 @@ describe('Agreements', () => {
     };
 
     const verifyAgreementLinesSort = (alias, direction) => {
+      trace('cy.wait');
       cy.wait(alias).then(({ request, response }) => {
         const requestUrl = new URL(request.url);
         const actualSort = requestUrl.searchParams
@@ -254,11 +345,14 @@ describe('Agreements', () => {
         const sortDirection = direction === 'ascending' ? 'ASC' : 'DESC';
         const expectedSort = sortFields.map((field) => `${field};${sortDirection}`);
 
+        trace('expect: verify assertion');
         expect(actualSort, `${direction} sort parameters`).to.deep.equal(expectedSort);
 
         const agreementLines = response.body.results;
 
+        trace('AgreementLines.verifyResultsHeaderSort');
         AgreementLines.verifyResultsHeaderSort(direction);
+        trace('AgreementLines.verifyAgreementLinesOrder');
         AgreementLines.verifyAgreementLinesOrder(agreementLines.map(getAgreementLineDisplayValue));
       });
     };
@@ -269,6 +363,8 @@ describe('Agreements', () => {
       'C1347109 Populate resourceName when adding an eHoldings resource to an Agreement (thunderjet)',
       { tags: ['extendedPathBroken', 'thunderjet', 'C1347109Broken', 'nonParallelBroken'] },
       () => {
+        trace('TEST: start');
+
         const { notCustomPkg, notCustomTitle, eHoldingPackage, eHoldingTitle } = flow.ctx();
 
         const configs = [
@@ -294,39 +390,57 @@ describe('Agreements', () => {
         configs.forEach((config, index) => {
           const iteration = index + 1;
 
-          cy.log(`<--- STEP 1 (${iteration}): Open the custom eHoldings package --->`);
+          trace(`<--- STEP 1 (${iteration}): Open the custom eHoldings package --->`);
+          trace('EHoldingsSearch.switchToPackages');
           EHoldingsSearch.switchToPackages();
+          trace('EHoldingsPackagesSearch.byName');
           EHoldingsPackagesSearch.byName(config.package);
+          trace('EHoldingsPackages.openPackageWithExpectedName');
           EHoldingsPackages.openPackageWithExpectedName(config.package);
+          trace('EHoldingsPackageView.waitLoading');
           EHoldingsPackageView.waitLoading();
 
-          cy.log(
+          trace(
             `<--- STEP 2 (${iteration}): Add the package to an existing Agreement via modal --->`,
           );
+          trace('cy.intercept: register request alias');
           cy.intercept('PUT', '**/erm/sas/**').as(`addPackageToAgreement${iteration}`);
 
+          trace('EHoldingsPackageView.addExistingAgreement');
           EHoldingsPackageView.addExistingAgreement();
+          trace('EHoldingsPackageView.searchForExistingAgreement');
           EHoldingsPackageView.searchForExistingAgreement(agreement2Name);
+          trace('EHoldingsPackageView.clickOnFoundAgreementInModal');
           EHoldingsPackageView.clickOnFoundAgreementInModal(agreement2Name);
+          trace('verifyResourceNameInAgreementPayload');
           verifyResourceNameInAgreementPayload(
             `@addPackageToAgreement${iteration}`,
             config.package,
           );
+          trace('EHoldingsPackageView.assertAgreementLinesList');
           EHoldingsPackageView.assertAgreementLinesList([{ name: agreement2Name }]);
 
+          trace('cy.get');
           cy.get(`@addPackageToAgreement${iteration}`).then((interception) => {
             const items = interception.response?.body?.items || [];
+            trace('cy.wrap: store entitlement alias');
             cy.wrap(items[0]?.id).as(`packageEntitlementId${iteration}`);
           });
 
-          cy.log(`<--- STEP 3 (${iteration}): Create a new Agreement from the package page --->`);
+          trace(`<--- STEP 3 (${iteration}): Create a new Agreement from the package page --->`);
+          trace('cy.intercept: register request alias');
           cy.intercept('POST', '**/erm/sas').as(`createAgreementFromPackage${iteration}`);
 
           const step3AgreementName = `${inAppCreatedAgreementPrefix}_Package_(${iteration})_${postfix}`;
+          trace('EHoldingsPackageView.createNewAgreement');
           EHoldingsPackageView.createNewAgreement();
+          trace('NewAgreement.waitLoading');
           NewAgreement.waitLoading();
+          trace('NewAgreement.fill');
           NewAgreement.fill({ ...NewAgreement.defaultAgreement, name: step3AgreementName });
+          trace('NewAgreement.save');
           NewAgreement.save();
+          trace('cy.wait');
           cy.wait(`@createAgreementFromPackage${iteration}`).then(({ request, response }) => {
             const requestItemIndex = request.body.items.findIndex(({ resourceName }) => {
               return resourceName === config.package;
@@ -334,59 +448,87 @@ describe('Agreements', () => {
             const requestItem = request.body.items[requestItemIndex];
             const responseItem = response.body.items[requestItemIndex];
 
+            trace('expect: verify assertion');
             expect(
               requestItem,
               `${config.package} is included in the creation payload`,
             ).to.not.equal(undefined);
+            trace('expect: verify assertion');
             expect(responseItem?.id, 'created package entitlement ID').to.not.equal(undefined);
             const existing = flow.get(R.CREATED_AGREEMENTS) || [];
             flow.set(R.CREATED_AGREEMENTS, [...existing, response.body]);
+            trace('addIsolationTagToAgreementLine');
             addIsolationTagToAgreementLine(responseItem.id);
           });
+          trace('AgreementViewDetails.waitLoading');
           AgreementViewDetails.waitLoading();
+          trace('AgreementViewDetails.verifyAgreementLinesCount');
           AgreementViewDetails.verifyAgreementLinesCount(1);
 
-          cy.log(
+          trace(
             `<--- STEP 4 (${iteration}): Open the custom eHoldings title and its package resource --->`,
           );
+          trace('cy.visit');
           cy.visit(TopMenu.eholdingsPath);
+          trace('EHoldingsSearch.waitLoading');
           EHoldingsSearch.waitLoading();
+          trace('EHoldingsSearch.switchToTitles');
           EHoldingsSearch.switchToTitles();
+          trace('EHoldingsTitlesSearch.byTitle');
           EHoldingsTitlesSearch.byTitle(config.title);
+          trace('EHoldingsTitlesSearch.openTitle');
           EHoldingsTitlesSearch.openTitle(config.title);
+          trace('EHoldingsTitle.waitLoading');
           EHoldingsTitle.waitLoading(config.title);
+          trace('EHoldingsTitle.openResource');
           EHoldingsTitle.openResource();
 
-          cy.log(
+          trace(
             `<--- STEP 5 (${iteration}): Add the title resource to the existing Agreement --->`,
           );
+          trace('cy.intercept: register request alias');
           cy.intercept('PUT', '**/erm/sas/**').as(`addTitleToAgreement${iteration}`);
+          trace('EHoldingsResourceView.openSelectAgreementModal');
           const SelectAgreementModal = EHoldingsResourceView.openSelectAgreementModal();
+          trace('SelectAgreementModal.searchByName');
           SelectAgreementModal.searchByName(agreement2Name);
+          trace('SelectAgreementModal.checkTableContent');
           SelectAgreementModal.checkTableContent({ records: [{ name: agreement2Name }] });
+          trace('SelectAgreementModal.selectAgreement');
           SelectAgreementModal.selectAgreement();
 
+          trace('verifyResourceNameInAgreementPayload');
           verifyResourceNameInAgreementPayload(`@addTitleToAgreement${iteration}`, config.title);
+          trace('cy.get');
           cy.get(`@addTitleToAgreement${iteration}`).then((interception) => {
             const items = interception.response?.body?.items || [];
+            trace('cy.get');
             cy.get(`@packageEntitlementId${iteration}`).then((pkgId) => {
               const titleItem = items.find(({ id }) => id !== pkgId);
+              trace('cy.wrap: store entitlement alias');
               cy.wrap(titleItem?.id).as(`titleEntitlementId${iteration}`);
             });
           });
 
+          trace('EHoldingsResourceView.assertAgreementLinesList');
           EHoldingsResourceView.assertAgreementLinesList([{ name: agreement2Name }]);
 
-          cy.log(
+          trace(
             `<--- STEP 6 (${iteration}): Create a new Agreement from the title resource page --->`,
           );
+          trace('cy.intercept: register request alias');
           cy.intercept('POST', '**/erm/sas').as(`createAgreementFromTitle${iteration}`);
 
           const step6AgreementName = `${inAppCreatedAgreementPrefix}_Title_(${iteration})_${postfix}`;
+          trace('EHoldingsResourceView.createNewAgreement');
           EHoldingsResourceView.createNewAgreement();
+          trace('NewAgreement.waitLoading');
           NewAgreement.waitLoading();
+          trace('NewAgreement.fill');
           NewAgreement.fill({ ...NewAgreement.defaultAgreement, name: step6AgreementName });
+          trace('NewAgreement.save');
           NewAgreement.save();
+          trace('cy.wait');
           cy.wait(`@createAgreementFromTitle${iteration}`).then(({ request, response }) => {
             const requestItemIndex = request.body.items.findIndex(({ resourceName }) => {
               return resourceName === config.title;
@@ -394,52 +536,70 @@ describe('Agreements', () => {
             const requestItem = request.body.items[requestItemIndex];
             const responseItem = response.body.items[requestItemIndex];
 
+            trace('expect: verify assertion');
             expect(requestItem, `${config.title} is included in the creation payload`).to.not.equal(
               undefined,
             );
+            trace('expect: verify assertion');
             expect(responseItem?.id, 'created title entitlement ID').to.not.equal(undefined);
             const existing = flow.get(R.CREATED_AGREEMENTS) || [];
             flow.set(R.CREATED_AGREEMENTS, [...existing, response.body]);
+            trace('addIsolationTagToAgreementLine');
             addIsolationTagToAgreementLine(responseItem.id);
           });
+          trace('AgreementViewDetails.waitLoading');
           AgreementViewDetails.waitLoading();
+          trace('AgreementViewDetails.verifyAgreementLinesCount');
           AgreementViewDetails.verifyAgreementLinesCount(1);
 
           if (index !== configs.length - 1) {
+            trace('cy.visit');
             cy.visit(TopMenu.eholdingsPath);
+            trace('EHoldingsSearch.waitLoading');
             EHoldingsSearch.waitLoading();
           }
         });
 
-        cy.log(
+        trace(
           '<--- STEPS 8: Navigate to Agreement and verify agreement lines exist by resource name --->',
         );
+        trace('AgreementViewDetails.openAgreementLineFilter');
         AgreementViewDetails.openAgreementLineFilter();
+        trace('AgreementLines.waitLoading');
         AgreementLines.waitLoading();
+        trace('SearchAndFilterAgreementLines.filterByAgreement');
         SearchAndFilterAgreementLines.filterByAgreement(agreement2Name);
 
         agreementLinesNames.forEach((resourceName) => {
+          trace('AgreementLines.checkAgreementLineFound');
           AgreementLines.checkAgreementLineFound(resourceName);
         });
 
-        cy.log('<--- STEP 9 --->');
+        trace('<--- STEP 9 --->');
+        trace('cy.then');
         cy.then(() => {
           const createdAgreementLineNames = configs.flatMap(({ package: pkg, title }) => [
             pkg,
             title,
           ]);
 
+          trace('cy.intercept: register request alias');
           cy.intercept('GET', '/erm/entitlements*').as('agreementLinesByAgreement');
 
           flow.get(R.CREATED_AGREEMENTS).forEach(({ id: agreementId }, index) => {
+            trace('SearchAndFilterAgreementLines.clearAllFilters');
             SearchAndFilterAgreementLines.clearAllFilters();
+            trace('SearchAndFilterAgreementLines.filterByAgreement');
             SearchAndFilterAgreementLines.filterByAgreement(agreement2Name);
 
+            trace('AgreementLines.getViaApi');
             AgreementLines.getViaApi({ filters: `owner==${agreementId}` }).then(
               (agreementLines) => {
+                trace('expect: verify assertion');
                 expect(agreementLines[0].resourceName).to.eq(createdAgreementLineNames[index]);
 
                 agreementLines.forEach(({ resourceName }) => {
+                  trace('AgreementLines.checkAgreementLineFound');
                   AgreementLines.checkAgreementLineFound(resourceName);
                 });
               },
@@ -447,8 +607,10 @@ describe('Agreements', () => {
           });
         });
 
-        cy.log('<--- STEP 10-11: Reset all filters and search one by one --->');
+        trace('<--- STEP 10-11: Reset all filters and search one by one --->');
+        trace('SearchAndFilterAgreementLines.clearAllFilters');
         SearchAndFilterAgreementLines.clearAllFilters();
+        trace('SearchAndFilterAgreementLines.filterByTags');
         SearchAndFilterAgreementLines.filterByTags([isolatingTagName]);
 
         [
@@ -465,21 +627,31 @@ describe('Agreements', () => {
             eHoldingTitle.data.attributes.name,
           ],
         ].forEach(([search, expected]) => {
+          trace('SearchAndFilterAgreementLines.search');
           SearchAndFilterAgreementLines.search(search);
+          trace('AgreementLines.checkAgreementLineFound');
           AgreementLines.checkAgreementLineFound(expected);
+          trace('AgreementLines.selectRecord');
           AgreementLines.selectRecord(expected);
+          trace('AgreementLineInformation.assertResourceName');
           AgreementLineInformation.assertResourceName(expected);
         });
+        trace('SearchAndFilterAgreementLines.clearAllFilters');
         SearchAndFilterAgreementLines.clearAllFilters();
+        trace('SearchAndFilterAgreementLines.filterByTags');
         SearchAndFilterAgreementLines.filterByTags([isolatingTagName]);
+        trace('cy.wait');
         cy.wait(4000);
 
-        cy.log('<--- STEP 12: Set resourceName to null for both Agreement lines --->');
+        trace('<--- STEP 12: Set resourceName to null for both Agreement lines --->');
+        trace('cy.get');
         cy.get('@packageEntitlementId1').then((id) => {
+          trace('cy.okapiRequest');
           cy.okapiRequest({
             path: `erm/entitlements/${id}`,
             isDefaultSearchParamsRequired: false,
           }).then(({ body }) => {
+            trace('cy.okapiRequest');
             cy.okapiRequest({
               method: 'PUT',
               path: `erm/entitlements/${id}`,
@@ -493,11 +665,14 @@ describe('Agreements', () => {
           });
         });
 
+        trace('cy.get');
         cy.get('@titleEntitlementId1').then((id) => {
+          trace('cy.okapiRequest');
           cy.okapiRequest({
             path: `erm/entitlements/${id}`,
             isDefaultSearchParamsRequired: false,
           }).then(({ body }) => {
+            trace('cy.okapiRequest');
             cy.okapiRequest({
               method: 'PUT',
               path: `erm/entitlements/${id}`,
@@ -511,22 +686,31 @@ describe('Agreements', () => {
           });
         });
 
-        cy.log('<--- STEP 13: Verify Name/Reference sort column via GET request URL --->');
+        trace('<--- STEP 13: Verify Name/Reference sort column via GET request URL --->');
+        trace('cy.intercept: register request alias');
         cy.intercept('GET', '**/erm/entitlements*').as('getEntitlements');
 
+        trace('SearchAndFilterAgreementLines.search');
         SearchAndFilterAgreementLines.search('%');
 
+        trace('verifyAgreementLinesSort');
         verifyAgreementLinesSort('@getEntitlements', 'ascending');
 
-        cy.log('<--- STEP 14: Click Name/Reference header — sort descending --->');
+        trace('<--- STEP 14: Click Name/Reference header — sort descending --->');
+        trace('AgreementLines.clickResultsHeaderId');
         AgreementLines.clickResultsHeaderId();
 
+        trace('verifyAgreementLinesSort');
         verifyAgreementLinesSort('@getEntitlements', 'descending');
 
-        cy.log('<--- STEP 15: Click Name/Reference header again — sort ascending --->');
+        trace('<--- STEP 15: Click Name/Reference header again — sort ascending --->');
+        trace('AgreementLines.clickResultsHeaderId');
         AgreementLines.clickResultsHeaderId();
 
+        trace('verifyAgreementLinesSort');
         verifyAgreementLinesSort('@getEntitlements', 'ascending');
+
+        trace('TEST: complete');
       },
     );
   });
