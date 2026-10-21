@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
@@ -21,6 +20,7 @@ import SettingsInventory, {
 import SettingsPane from '../../../../../support/fragments/settings/settingsPane';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
+import DateTools from '../../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
@@ -30,6 +30,7 @@ describe('Consortia', () => {
         let user;
         let testData;
         const systemUserName = 'System';
+        const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
 
         before('Create test data', () => {
           const postfix = getRandomPostfix();
@@ -155,7 +156,7 @@ describe('Consortia', () => {
                 testData.contributorTypeName,
                 testData.contributorTypeCode,
                 'consortium',
-                moment().format('l'),
+                todayDate,
                 SHARED_SETTING_LIBRARIES,
               ],
               [actionIcons.edit, actionIcons.trash],
@@ -173,7 +174,7 @@ describe('Consortia', () => {
               name: testData.contributorTypeName,
               code: testData.contributorTypeCode,
               source: 'consortium',
-              lastUpdated: [moment().format('l'), systemUserName],
+              lastUpdated: [todayDate, systemUserName],
             });
 
             // Step 13: Switch to member tenant and verify
@@ -185,7 +186,7 @@ describe('Consortia', () => {
               name: testData.contributorTypeName,
               code: testData.contributorTypeCode,
               source: 'consortium',
-              lastUpdated: [moment().format('l'), systemUserName],
+              lastUpdated: [todayDate, systemUserName],
             });
 
             // Step 14: Switch back to central tenant and click "Edit" for the shared contributor type
@@ -198,11 +199,11 @@ describe('Consortia', () => {
               actionIcons.edit,
             );
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive(false);
-            ContributorTypesConsortiumManager.verifyEditRowInList({
+            ConsortiaControlledVocabularyPaneset.verifyEditRowInList({
               name: testData.contributorTypeName,
               code: testData.contributorTypeCode,
               source: 'consortium',
-              lastUpdated: [moment().format('l'), systemUserName],
+              lastUpdated: [todayDate, systemUserName],
             });
             ConsortiaControlledVocabularyPaneset.verifyShareCheckboxState({
               isEnabled: false,
@@ -234,7 +235,7 @@ describe('Consortia', () => {
                 testData.editedContributorTypeName,
                 testData.editedContributorTypeCode,
                 'consortium',
-                moment().format('l'),
+                todayDate,
                 SHARED_SETTING_LIBRARIES,
               ],
               [actionIcons.edit, actionIcons.trash],
@@ -272,7 +273,7 @@ describe('Consortia', () => {
               name: testData.editedContributorTypeName,
               code: testData.editedContributorTypeCode,
               source: 'consortium',
-              lastUpdated: [moment().format('l'), systemUserName],
+              lastUpdated: [todayDate, systemUserName],
             });
 
             // Step 22: Switch to member tenant and verify updated values
@@ -284,7 +285,7 @@ describe('Consortia', () => {
               name: testData.editedContributorTypeName,
               code: testData.editedContributorTypeCode,
               source: 'consortium',
-              lastUpdated: [moment().format('l'), systemUserName],
+              lastUpdated: [todayDate, systemUserName],
             });
           },
         );
