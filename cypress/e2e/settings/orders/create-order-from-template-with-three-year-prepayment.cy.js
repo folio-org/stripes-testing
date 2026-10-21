@@ -554,6 +554,8 @@ describe('Settings | Orders', () => {
       OrderTemplateForm.assertPolOngoingOrderSectionPresent();
       trace('OrderTemplateForm.assertPaymentTermsSectionPresent [site 74]');
       OrderTemplateForm.assertPaymentTermsSectionPresent();
+      trace('Step 2: expand ongoing information before checking its checkbox');
+      OrderTemplateForm.expandAccordion(ORDER_TEMPLATE_FORM_ACCORDION_LABELS.POL_ONGOING_INFO);
       trace('OrderTemplateForm.assertMultiYearPrepaymentUnchecked [site 75]');
       OrderTemplateForm.assertMultiYearPrepaymentUnchecked();
       trace('OrderTemplateForm.assertPaymentTermsCollapsed [site 76]');

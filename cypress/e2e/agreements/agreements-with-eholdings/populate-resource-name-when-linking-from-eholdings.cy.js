@@ -20,7 +20,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import AgreementsDisplaySettings from '../../../support/fragments/settings/agreements/displaySettings';
 
 const trace = (message) => {
-  trace('cy.task');
   return cy.task('log', `[C1347109] ${message}`);
 };
 

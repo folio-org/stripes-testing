@@ -204,40 +204,34 @@ describe('Orders', () => {
           })),
         };
         trace('Operation: Organizations.createOrganizationViaApi (line 191)');
-        return Organizations.createOrganizationViaApi(organization).then((id) => currentFlow.set(R.ORGANIZATION, { ...organization, id }, () => {
+        Organizations.createOrganizationViaApi(organization).then((id) => currentFlow.set(R.ORGANIZATION, { ...organization, id }, () => {
           trace('Operation: Organizations.deleteOrganizationViaApi (line 191)');
           return Organizations.deleteOrganizationViaApi(id);
         }));
       })
       .step((currentFlow) => {
         trace('SETUP step 3: cy.getLocations');
-        return cy
-          .getLocations({ limit: 3 })
-          .then(() => currentFlow.set(R.LOCATIONS, Cypress.env('locations')));
+        cy.getLocations({ limit: 3 }).then(() => currentFlow.set(R.LOCATIONS, Cypress.env('locations')));
       })
       .step((currentFlow) => {
         trace('SETUP step 4: cy.getDefaultMaterialType');
-        return cy
-          .getDefaultMaterialType()
-          .then((materialType) => currentFlow.set(R.MATERIAL_TYPE, materialType));
+        cy.getDefaultMaterialType().then((materialType) => currentFlow.set(R.MATERIAL_TYPE, materialType));
       })
       .step((currentFlow) => {
         trace('SETUP step 5: cy.getAcquisitionMethodsApi');
-        return cy
-          .getAcquisitionMethodsApi({ query: 'value="Other"' })
-          .then(({ body }) => currentFlow.set(R.ACQUISITION_METHOD, body.acquisitionMethods[0]));
+        cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then(({ body }) => currentFlow.set(R.ACQUISITION_METHOD, body.acquisitionMethods[0]));
       })
       .step((currentFlow) => {
         trace('SETUP step 6: BrowseContributors.getContributorNameTypes');
-        return BrowseContributors.getContributorNameTypes().then(([nameType]) => currentFlow.set(R.CONTRIBUTOR_NAME_TYPE, nameType));
+        BrowseContributors.getContributorNameTypes().then(([nameType]) => currentFlow.set(R.CONTRIBUTOR_NAME_TYPE, nameType));
       })
       .step((currentFlow) => {
         trace('SETUP step 7: InventoryInstance.createInstanceViaApi');
-        return InventoryInstance.createInstanceViaApi({
+        InventoryInstance.createInstanceViaApi({
           instanceTitle: receivingTitles[1],
         }).then(({ instanceData }) => currentFlow.set(R.PACKAGE_INSTANCE, instanceData, () => {
           trace('Operation: InventoryInstance.deleteInstanceViaApi (line 205)');
-          return InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
+          InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
         }));
       })
       .step((currentFlow) => {
@@ -246,33 +240,32 @@ describe('Orders', () => {
         const tags = [];
 
         trace('Operation: cy.wrap (line 209)');
-        return cy
-          .wrap([1, 2, 3, 'isolation'])
+        cy.wrap([1, 2, 3, 'isolation'])
           .each((number) => {
             const label = `AT_C1375887_Tag_${number}_${postfix}`;
             trace('Operation: cy.createTagApi (line 213)');
-            return cy.createTagApi({ label }).then((id) => tags.push({ id, label }));
+            cy.createTagApi({ label }).then((id) => tags.push({ id, label }));
           })
           .then(() => currentFlow.set(R.TAGS, tags, () => tags.forEach(({ id }) => {
             trace('Operation: cy.deleteTagApi (line 215)');
-            return cy.deleteTagApi(id, true);
+            cy.deleteTagApi(id, true);
           })));
       })
       .step((currentFlow) => {
         trace('SETUP step 9: FiscalYears.createViaApi');
-        return FiscalYears.createViaApi(FiscalYears.getDefaultFiscalYear()).then((fiscalYear) => currentFlow.set(R.FISCAL_YEAR, fiscalYear, () => {
+        FiscalYears.createViaApi(FiscalYears.getDefaultFiscalYear()).then((fiscalYear) => currentFlow.set(R.FISCAL_YEAR, fiscalYear, () => {
           trace('Operation: FiscalYears.deleteFiscalYearViaApi (line 217)');
-          return FiscalYears.deleteFiscalYearViaApi(fiscalYear.id, false);
+          FiscalYears.deleteFiscalYearViaApi(fiscalYear.id, false);
         }));
       })
       .step((currentFlow) => {
         trace('SETUP step 10: Ledgers.createViaApi');
-        return Ledgers.createViaApi({
+        Ledgers.createViaApi({
           ...Ledgers.getDefaultLedger(),
           fiscalYearOneId: currentFlow.get(R.FISCAL_YEAR).id,
         }).then((ledger) => currentFlow.set(R.LEDGER, ledger, () => {
           trace('Operation: Ledgers.deleteLedgerViaApi (line 221)');
-          return Ledgers.deleteLedgerViaApi(ledger.id, false);
+          Ledgers.deleteLedgerViaApi(ledger.id, false);
         }));
       })
       .step((currentFlow) => {
@@ -284,15 +277,14 @@ describe('Orders', () => {
         ];
 
         trace('Operation: cy.wrap (line 228)');
-        return cy
-          .wrap(expenseClasses)
+        cy.wrap(expenseClasses)
           .each((expenseClass) => {
             trace('Operation: ExpenseClasses.createExpenseClassViaApi (line 230)');
-            return ExpenseClasses.createExpenseClassViaApi(expenseClass);
+            ExpenseClasses.createExpenseClassViaApi(expenseClass);
           })
           .then(() => currentFlow.set(R.EXPENSE_CLASSES, expenseClasses, () => expenseClasses.forEach(({ id }) => {
             trace('Operation: ExpenseClasses.deleteExpenseClassViaApi (line 231)');
-            return ExpenseClasses.deleteExpenseClassViaApi(id, { failOnStatusCode: false });
+            ExpenseClasses.deleteExpenseClassViaApi(id, { failOnStatusCode: false });
           })));
       })
       .step((currentFlow) => {
@@ -301,12 +293,11 @@ describe('Orders', () => {
         const funds = [];
 
         trace('Operation: cy.wrap (line 236)');
-        return cy
-          .wrap(['A', 'B'])
+        cy.wrap(['A', 'B'])
           .each((suffix) => {
             const defaultFund = Funds.getDefaultFund();
             trace('Operation: Funds.createViaApi (line 240)');
-            return Funds.createViaApi({
+            Funds.createViaApi({
               ...defaultFund,
               ledgerId: currentFlow.get(R.LEDGER).id,
               name: `AT_C1375887_Fund_${suffix}_${postfix}`,
@@ -315,7 +306,7 @@ describe('Orders', () => {
           })
           .then(() => currentFlow.set(R.FUNDS, funds, () => funds.forEach(({ id }) => {
             trace('Operation: Funds.deleteFundViaApi (line 247)');
-            return Funds.deleteFundViaApi(id, false);
+            Funds.deleteFundViaApi(id, false);
           })));
       })
       .step((currentFlow) => {
@@ -324,11 +315,10 @@ describe('Orders', () => {
         const budgets = [];
 
         trace('Operation: cy.wrap (line 252)');
-        return cy
-          .wrap(currentFlow.get(R.FUNDS))
+        cy.wrap(currentFlow.get(R.FUNDS))
           .each((fund, index) => {
             trace('Operation: Budgets.createViaApi (line 254)');
-            return Budgets.createViaApi({
+            Budgets.createViaApi({
               ...Budgets.getDefaultBudget(),
               allocated: 500,
               fiscalYearId: currentFlow.get(R.FISCAL_YEAR).id,
@@ -344,7 +334,7 @@ describe('Orders', () => {
           })
           .then(() => currentFlow.set(R.BUDGETS, budgets, () => budgets.forEach(({ id }) => {
             trace('Operation: Budgets.deleteViaApi (line 267)');
-            return Budgets.deleteViaApi(id, false);
+            Budgets.deleteViaApi(id, false);
           })));
       })
       .step((currentFlow) => {
@@ -352,11 +342,10 @@ describe('Orders', () => {
 
         const orders = [];
         trace('Operation: cy.wrap (line 271)');
-        return cy
-          .wrap([0, 1])
+        cy.wrap([0, 1])
           .each((index) => {
             trace('Operation: Orders.createOrderViaApi (line 273)');
-            return Orders.createOrderViaApi({
+            Orders.createOrderViaApi({
               ...NewOrder.getDefaultOrder({ vendorId: currentFlow.get(R.ORGANIZATION).id }),
               id: uuid(),
               poNumber: poNumbers[index],
@@ -381,7 +370,7 @@ describe('Orders', () => {
           })
           .then(() => currentFlow.set(R.ORDERS, orders, () => orders.forEach(({ id }) => {
             trace('Operation: Orders.deleteOrderViaApi (line 295)');
-            return Orders.deleteOrderViaApi(id, false);
+            Orders.deleteOrderViaApi(id, false);
           })));
       })
       .step((currentFlow) => {
@@ -389,17 +378,16 @@ describe('Orders', () => {
 
         const lines = [];
         trace('Operation: cy.wrap (line 299)');
-        return cy
-          .wrap(currentFlow.get(R.ORDERS))
+        cy.wrap(currentFlow.get(R.ORDERS))
           .each((order, index) => {
             trace('Operation: createLine (line 301)');
-            return createLine(order, index).then((line) => lines.push(line));
+            createLine(order, index).then((line) => lines.push(line));
           })
           .then(() => currentFlow.set(R.LINES, lines));
       })
       .step((currentFlow) => {
         trace('SETUP step 16: OrderLines.addPackageTitleViaApi');
-        return OrderLines.addPackageTitleViaApi({
+        OrderLines.addPackageTitleViaApi({
           title: receivingTitles[1],
           poLineId: currentFlow.get(R.LINES)[1].id,
           instanceId: currentFlow.get(R.PACKAGE_INSTANCE).instanceId,
@@ -407,11 +395,11 @@ describe('Orders', () => {
       })
       .step((currentFlow) => {
         trace('SETUP step 17: open orders');
-        return cy.wrap(currentFlow.get(R.ORDERS)).each((order) => {
+        cy.wrap(currentFlow.get(R.ORDERS)).each((order) => {
           trace('Operation: Orders.updateOrderViaApi (line 311)');
-          return Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' }).then(({ body }) => {
+          Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' }).then(({ body }) => {
             trace('Operation: Object.assign (line 311)');
-            return Object.assign(order, body);
+            Object.assign(order, body);
           });
         });
       })
@@ -421,59 +409,55 @@ describe('Orders', () => {
         const packageLine = currentFlow.get(R.LINES)[1];
 
         trace('Operation: OrderLines.getOrderLineViaApi (line 315)');
-        return OrderLines.getOrderLineViaApi({ query: `id==${packageLine.id}` }).then(
-          ([openedLine]) => {
-            trace('Operation: Receiving.addPieceViaApi (line 316)');
-            return Receiving.addPieceViaApi(
-              {
-                poLineId: openedLine.id,
-                poLineNumber: openedLine.poLineNumber,
-                format: openedLine.orderFormat,
-                holdingId: openedLine.locations[0].holdingId,
-              },
-              { locationId: openedLine.locations[0].locationId },
-            );
-          },
-        );
+        OrderLines.getOrderLineViaApi({ query: `id==${packageLine.id}` }).then(([openedLine]) => {
+          trace('Operation: Receiving.addPieceViaApi (line 316)');
+          Receiving.addPieceViaApi(
+            {
+              poLineId: openedLine.id,
+              poLineNumber: openedLine.poLineNumber,
+              format: openedLine.orderFormat,
+              holdingId: openedLine.locations[0].holdingId,
+            },
+            { locationId: openedLine.locations[0].locationId },
+          );
+        });
       })
       .step((currentFlow) => {
         trace('SETUP step 19: Receiving.getPiecesViaApi');
-        return Receiving.getPiecesViaApi(currentFlow.get(R.LINES)[1].id).then((pieces) => {
+        Receiving.getPiecesViaApi(currentFlow.get(R.LINES)[1].id).then((pieces) => {
           trace('Assertion: received piece count');
           expect(pieces).to.have.length(1);
         });
       })
       .step((currentFlow) => {
         trace('SETUP step 20: Invoices.createInvoiceViaApi');
-        return Invoices.createInvoiceViaApi({
+        Invoices.createInvoiceViaApi({
           vendorId: currentFlow.get(R.ORGANIZATION).id,
           accountingCode: currentFlow.get(R.ORGANIZATION).erpCode,
           fiscalYearId: currentFlow.get(R.FISCAL_YEAR).id,
           tags: [currentFlow.get(R.TAGS)[3].label],
         }).then((invoice) => currentFlow.set(R.INVOICE, invoice, () => {
           trace('Operation: Invoices.deleteInvoiceViaApi (line 335)');
-          return Invoices.deleteInvoiceViaApi(invoice.id, { failOnStatusCode: false });
+          Invoices.deleteInvoiceViaApi(invoice.id, { failOnStatusCode: false });
         }));
       })
       .step((currentFlow) => {
         trace('SETUP step 21: cy.createTempUser');
-        return cy
-          .createTempUser([
-            Permissions.uiOrdersView.gui,
-            Permissions.uiReceivingView.gui,
-            Permissions.uiClaimingView.gui,
-            Permissions.viewEditCreateInvoiceInvoiceLine.gui,
-            Permissions.uiFinanceViewFundAndBudget.gui,
-            Permissions.uiTagsPermissionAll.gui,
-          ])
-          .then((user) => currentFlow.set(R.USER, user, () => {
-            trace('Operation: Users.deleteViaApi (line 345)');
-            return Users.deleteViaApi(user.userId);
-          }));
+        cy.createTempUser([
+          Permissions.uiOrdersView.gui,
+          Permissions.uiReceivingView.gui,
+          Permissions.uiClaimingView.gui,
+          Permissions.viewEditCreateInvoiceInvoiceLine.gui,
+          Permissions.uiFinanceViewFundAndBudget.gui,
+          Permissions.uiTagsPermissionAll.gui,
+        ]).then((user) => currentFlow.set(R.USER, user, () => {
+          trace('Operation: Users.deleteViaApi (line 345)');
+          Users.deleteViaApi(user.userId);
+        }));
       })
       .step((currentFlow) => {
         trace('SETUP step 22: cy.login');
-        return cy.login(currentFlow.get(R.USER).username, currentFlow.get(R.USER).password, {
+        cy.login(currentFlow.get(R.USER).username, currentFlow.get(R.USER).password, {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
         });

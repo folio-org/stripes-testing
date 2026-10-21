@@ -21,7 +21,6 @@ import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import { OrderLinesLimit } from '../../support/fragments/settings/orders';
 
 const trace = (message) => {
-  trace('cy.task');
   return cy.task('log', `[C1385305] ${message}`);
 };
 

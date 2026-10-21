@@ -918,7 +918,8 @@ describe('Lists', () => {
           trace('cy.login [site 94]');
           return cy.login(currentFlow.get(R.USER).username, currentFlow.get(R.USER).password, {
             path: TopMenu.listsPath,
-            waiter: Lists.waitLoading,
+            trace,
+            waiter: () => Lists.waitLoading({ trace }),
           });
         });
 
