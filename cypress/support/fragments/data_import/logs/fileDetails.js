@@ -11,6 +11,7 @@ import {
   Pane,
 } from '../../../../../interactors';
 import LogsViewAll from './logsViewAll';
+import OrderLines from '../../orders/orderLines';
 import arrays from '../../../utils/arrays';
 
 const invoiceNumberFromEdifactFile = '94999';
@@ -568,6 +569,24 @@ export default {
         .exists(),
     );
   },
+
+  // Reads the PO line id straight out of a row's order link href (e.g.
+  // ".../orders/lines/view/<id>") without clicking it, regardless of the link's status text
+  // ("Created" or "Updated"), then resolves the parent order id via API. Used for things like
+  // cleanup instead of navigating into the Orders app, which is far less stable than a DOM read
+  getOrderAndOrderLineIds: (rowNumber) => cy
+    .then(() => resultsList
+      .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+      .find(MultiColumnListCell({ columnIndex: 7 }))
+      .find(Link({ href: including('/orders/lines/view') }))
+      .href())
+    .then((href) => {
+      const orderLineId = href.split('/').pop();
+      return OrderLines.getOrderLineByIdViaApi(orderLineId).then((poLine) => ({
+        orderLineId,
+        orderId: poLine.purchaseOrderId,
+      }));
+    }),
 
   verifyTitleHasLinkToJsonFile: (rowNumber) => {
     cy.expect(

@@ -92,9 +92,7 @@ describe('MARC', () => {
           QuickMarcEditor.closeAllCallouts();
 
           QuickMarcEditor.updateExistingTagName(testData.tag040NewValue, testData.tag040);
-          QuickMarcEditor.pressSaveAndClose();
-          cy.wait(1500);
-          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.pressSaveAndCloseButton();
           QuickMarcEditor.verifyConfirmModal();
         },
       );

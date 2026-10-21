@@ -60,6 +60,9 @@ const selectAppResetAllButton = selectApplicationModal.find(Button({ id: 'clicka
 const saveButtonInModal = selectApplicationModal.find(
   Button({ dataTestID: 'submit-applications-modal' }),
 );
+const appSelectionStatusAccordion = selectApplicationModal.find(
+  Accordion('Application selection status'),
+);
 const cancelButtonInModal = selectApplicationModal.find(Button('Cancel'));
 const capabilitiesAccordion = Accordion('Capabilities');
 const capabilitySetsAccordion = Accordion('Capability sets');
@@ -166,6 +169,7 @@ const unselectSetModalCheckbox = Checkbox('Do not display this message again.');
 const showHiddenCapabilitiesCheckbox = Checkbox('Show hidden capabilities');
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
+export const selectAppAssignmentOptions = { ASSIGNED: 'Assigned', UNASSIGNED: 'Unassigned' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
 export const defaultRoleCrudErrorMessage =
   'Default role cannot be created, updated or deleted via roles API.';
@@ -1222,11 +1226,41 @@ export default {
     cy.expect(targetCheckbox.has({ checked: isChecked }));
   },
 
-  clearFilterInSelectAppModal: () => {
+  clearFilterInSelectAppModal() {
     cy.do(selectApplicationModal.find(clearFieldButton).click());
-    Object.values(selectAppFilterOptions).forEach((option) => {
-      cy.expect(selectApplicationModal.find(Checkbox(option)).has({ checked: false }));
+    cy.expect(selectApplicationModal.find(clearFieldButton).absent());
+    this.verifyFiltersResetInSelectAppModal({
+      checkSelectionFilter: true,
+      checkAssignmentFilter: false,
     });
+  },
+
+  toggleAppSelectionStatusAccordion: (isOpen = true) => {
+    cy.do(appSelectionStatusAccordion.clickHeader());
+    cy.expect(appSelectionStatusAccordion.has({ open: isOpen }));
+  },
+
+  checkApplicationStatusInModal: (appName, status) => {
+    const targetRow = selectApplicationModal.find(
+      MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), { isContainer: false }),
+    );
+    cy.expect(targetRow.find(MultiColumnListCell(status, { column: 'Status' })).exists());
+  },
+
+  verifyFiltersResetInSelectAppModal: ({
+    checkSelectionFilter = true,
+    checkAssignmentFilter = true,
+  } = {}) => {
+    if (checkSelectionFilter) {
+      Object.values(selectAppFilterOptions).forEach((option) => {
+        cy.expect(selectApplicationModal.find(Checkbox(option)).has({ checked: false }));
+      });
+    }
+    if (checkAssignmentFilter) {
+      Object.values(selectAppAssignmentOptions).forEach((option) => {
+        cy.expect(selectApplicationModal.find(Checkbox(option)).has({ checked: false }));
+      });
+    }
   },
 
   checkClearFilterButtonInSelectAppModal: (isShown = true) => {

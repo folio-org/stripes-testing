@@ -14,6 +14,7 @@ import BrowseCallNumber from '../../../../support/fragments/inventory/search/bro
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -74,7 +75,7 @@ describe('Inventory', () => {
             cy.setTenant(Affiliations.College);
             cy.getLocations({
               limit: 1,
-              query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
+              query: '(name<>"AT_*" and name<>"*auto*")',
             }).then((res) => {
               testData.holdings.location = res;
             });
@@ -130,11 +131,10 @@ describe('Inventory', () => {
           })
           .then(() => {
             cy.setTenant(Affiliations.University);
-            cy.getLocations({
-              limit: 1,
-              query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
-            }).then((res) => {
-              testData.holdings.locationUniversity = res;
+            // Ownership target must be listed in the cross-tenant location picker (search index),
+            // which does not contain the member tenant's default DCB location
+            Locations.getOrCreateTenantLocationViaApi(Affiliations.University).then((location) => {
+              testData.holdings.locationUniversity = location;
             });
           })
           .then(() => {

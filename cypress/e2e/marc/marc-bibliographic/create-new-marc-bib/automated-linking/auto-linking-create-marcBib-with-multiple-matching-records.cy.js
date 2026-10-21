@@ -94,12 +94,12 @@ describe('MARC', () => {
           if (createdInstanceId) {
             InventoryInstance.deleteInstanceViaApi(createdInstanceId);
           }
-          QuickMarcEditor.setRulesForField(linkableField, false);
+          QuickMarcEditor.setRulesForField(linkableField, true);
         });
 
         it(
           'C422152 Auto-linking fields when multiple "MARC Authority" records match "$0" but cannot be linked when creating new "MARC Bib" record (promin)',
-          { tags: ['criticalPath', 'promin', 'C422152'] },
+          { tags: ['criticalPath', 'promin', 'nonParallel', 'C422152'] },
           () => {
             // Step 1: Click on "Actions" button in second pane → Select "+ New MARC bibliographic record" option
             InventoryInstances.createNewMarcBibRecord();

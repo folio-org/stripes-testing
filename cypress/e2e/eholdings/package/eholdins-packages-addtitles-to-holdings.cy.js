@@ -46,6 +46,7 @@ describe('eHoldings', () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.openPackage();
         EHoldingsPackage.waitLoading(testData.packageName);
+        EHoldingsPackage.checkTitleRowsShown();
         EHoldingsPackage.addToHoldings();
         EHoldingsPackage.verifyHoldingStatus();
         EHoldingsPackage.filterTitles();

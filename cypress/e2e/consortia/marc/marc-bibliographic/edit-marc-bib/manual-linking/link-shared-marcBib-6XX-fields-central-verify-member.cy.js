@@ -394,7 +394,7 @@ describe('MARC', () => {
 
         it(
           'C770439 ECS | Link 6XX "MARC Bib" fields with "MARC Authority" records on Central tenant, verify linked fields remain in Member tenant (promin)',
-          { tags: ['extendedPathECS', 'promin', 'C770439'] },
+          { tags: ['extendedPathECS', 'promin', 'C770439', 'nonParallel'] },
           () => {
             // Step 1: Open MARC bib record from Inventory on Central tenant
             InventoryInstances.searchByTitle(createdRecordIDs[0]);

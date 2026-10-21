@@ -70,7 +70,6 @@ describe('eHoldings', () => {
       }
     });
 
-    // Will FAIL until https://folio-org.atlassian.net/browse/UIEH-1564 is fixed
     it(
       'C692 Create a custom package (promin)',
       { tags: ['criticalPath', 'promin', 'C692'] },
@@ -84,9 +83,7 @@ describe('eHoldings', () => {
         EHoldingsNewCustomPackage.waitLoading();
         EHoldingsNewCustomPackage.verifyNewCustomPackageFormFields();
 
-        // Step 3: Hover/click the info icon next to "Package display name" and verify tooltip
-        // Not yet implemented in the app - see https://folio-org.atlassian.net/browse/UIEH-1535
-        // EHoldingsNewCustomPackage.verifyPackageDisplayNameInfoPopover();
+        EHoldingsNewCustomPackage.verifyPackageDisplayNameInfoPopover();
 
         // Step 4: Hover/click the info icon next to "Custom alternate names" and verify tooltip
         EHoldingsNewCustomPackage.verifyCustomAlternateNamesInfoPopover();
@@ -141,11 +138,15 @@ describe('eHoldings', () => {
           // Steps 15-16: Search created package by name and by alternate name
           EHoldingsPackages.verifyPackageExistsViaAPI(testData.customPackageName, true, 60);
           EHoldingsPackagesSearch.byName(testData.customPackageName);
-          EHoldingsPackages.verifyPackageInResults(testData.customPackageName);
+          EHoldingsPackages.verifyPackageInResults(
+            `${testData.customPackageName} (${testData.packageDisplayName})`,
+          );
           EHoldingsPackagesSearch.byName(testData.nonexistentPackageName);
           EHoldingsPackages.checkNoResultsFound(testData.nonexistentPackageName);
           EHoldingsPackagesSearch.byName(testData.customPackageAlternateName);
-          EHoldingsPackages.verifyPackageInResults(testData.customPackageName);
+          EHoldingsPackages.verifyPackageInResults(
+            `${testData.customPackageName} (${testData.packageDisplayName})`,
+          );
         });
       },
     );

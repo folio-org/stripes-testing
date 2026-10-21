@@ -7,6 +7,7 @@ import Users from '../../../support/fragments/users/users';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 
 describe('Inventory', () => {
   const randomPostfix = getRandomPostfix();
@@ -47,6 +48,8 @@ describe('Inventory', () => {
           );
         })
         .then(() => {
+          Z3950TargetProfiles.changeOclcWorldCatValueViaApi();
+
           InventoryInstances.createFolioInstanceViaApi({
             instance: {
               instanceTypeId,
@@ -60,8 +63,6 @@ describe('Inventory', () => {
             },
           }).then((instanceData) => {
             instanceId = instanceData.instanceId;
-
-            cy.toggleLocSingleImportProfileViaAPI();
 
             cy.login(user.username, user.password, {
               path: TopMenu.inventoryPath,

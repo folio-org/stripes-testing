@@ -30,7 +30,7 @@ describe('MARC', () => {
           cy.setTenant(Affiliations.College);
           cy.getLocations({
             limit: 1,
-            query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
+            query: '(name<>"AT_*" and name<>"*auto*")',
           }).then((loc) => {
             location = loc;
 

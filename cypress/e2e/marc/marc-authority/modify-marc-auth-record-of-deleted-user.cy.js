@@ -147,6 +147,8 @@ describe('MARC', () => {
         QuickMarcEditor.pressSaveAndCloseButton();
         QuickMarcEditor.checkCallout(testData.calloutMessage);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.valueAfterUpdateC358995);
+
+        cy.wait(2000);
         cy.login(user.userBProperties.username, user.userBProperties.password, {
           path: TopMenu.usersPath,
           waiter: UsersSearchPane.waitLoading,

@@ -11,6 +11,7 @@ import { INSTANCE_SOURCE_NAMES, ITEM_STATUS_NAMES } from '../../../../../support
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import InventoryHoldings from '../../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryItems from '../../../../../support/fragments/inventory/item/inventoryItems';
+import Locations from '../../../../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -77,11 +78,13 @@ describe('Inventory', () => {
                 Permissions.uiInventoryViewInstances.gui,
               ]);
               InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C423638');
-              cy.getLocations({
-                limit: 3,
-                query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
-              }).then(() => {
-                locations[Affiliations.College].push(...Cypress.env('locations'));
+              // Member tenants have only the default DCB location - use 3 shared AT_ locations instead
+              [1, 2, 3].forEach((index) => {
+                Locations.getOrCreateTenantLocationViaApi(Affiliations.College, index).then(
+                  (location) => {
+                    locations[Affiliations.College].push(location);
+                  },
+                );
               });
               cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
                 loanTypeIds[Affiliations.College] = loanTypes[0].id;
@@ -95,11 +98,12 @@ describe('Inventory', () => {
                 Permissions.uiInventoryViewInstances.gui,
               ]);
               InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C423638');
-              cy.getLocations({
-                limit: 3,
-                query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
-              }).then(() => {
-                locations[Affiliations.University].push(...Cypress.env('locations'));
+              [1, 2, 3].forEach((index) => {
+                Locations.getOrCreateTenantLocationViaApi(Affiliations.University, index).then(
+                  (location) => {
+                    locations[Affiliations.University].push(location);
+                  },
+                );
               });
               cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
                 loanTypeIds[Affiliations.University] = loanTypes[0].id;

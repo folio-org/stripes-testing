@@ -9,6 +9,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
@@ -44,12 +45,10 @@ describe('Inventory', () => {
             cy.getHoldingTypes({ limit: 1 }).then((res) => {
               testData.holdingTypeId = res[0].id;
             });
-            cy.getLocations({
-              limit: 1,
-              query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
-            }).then((locations) => {
-              testData.locationName = locations.name;
-              testData.locationId = locations.id;
+            // The default DCB location has the same id in every tenant, so the UI shows it as a Central one
+            Locations.getOrCreateTenantLocationViaApi(Affiliations.University).then((location) => {
+              testData.locationName = location.name;
+              testData.locationId = location.id;
             });
             cy.getLoanTypes({ limit: 1 }).then((res) => {
               testData.loanTypeId = res[0].id;

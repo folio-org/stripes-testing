@@ -217,6 +217,9 @@ describe('MARC', () => {
 
         after('Deleting created user and data', () => {
           cy.getAdminToken();
+          autoLinkingDisabledFields.forEach((tag) => {
+            QuickMarcEditor.setRulesForField(tag, true);
+          });
           InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
           createdRecordsIDs.forEach((id, index) => {
             if (index) MarcAuthority.deleteViaAPI(id, true);
