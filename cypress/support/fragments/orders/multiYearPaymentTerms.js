@@ -91,7 +91,7 @@ const assertSelectedDistributionType = (row, selectedType) => {
       Object.values(DISTRIBUTION_TYPES).forEach((type) => {
         const button = typeButtons.find((candidate) => candidate.textContent.trim() === type);
 
-        expect(button, `${type} distribution type button`).to.not.equal(undefined);
+        expect(button !== undefined, `${type} distribution type button exists`).to.equal(true);
         if (type === selectedType) {
           expect(button.className, `${type} distribution type is selected`).to.include(
             DISTRIBUTION_TYPE_BUTTON_STATE,
@@ -529,7 +529,9 @@ const multiYearPaymentTerms = {
           const lastItem = items.at(-1);
           const removeButton = lastItem?.querySelector(FIELD_SELECTORS.REMOVE_FISCAL_YEAR_BUTTON);
 
-          expect(removeButton, 'last fiscal-year card remove button').to.not.equal(null);
+          expect(removeButton !== null, 'last fiscal-year card remove button exists').to.equal(
+            true,
+          );
           removeButton.click();
         }),
     );
