@@ -1,6 +1,13 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
-import { MultiColumnListHeader, Spinner } from '../../../../../../interactors';
+import {
+  including,
+  MultiColumnListCell,
+  MultiColumnListHeader,
+  MultiColumnListRow,
+  Spinner,
+  TextField,
+} from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
@@ -69,6 +76,24 @@ export default {
         failOnStatusCode: false,
       });
       cy.resetTenant();
+    });
+  },
+
+  verifyEditRowInList({ name, code, source, lastUpdated = [] }) {
+    // in edit mode the name is an input value, so it is only present in the row's innerHTML
+    const row = MultiColumnListRow({ innerHTML: including(name), isContainer: false });
+    const sourceCell = row.find(MultiColumnListCell({ column: 'Source' }));
+    const lastUpdatedCell = row.find(MultiColumnListCell({ column: 'Last updated' }));
+
+    cy.expect([
+      row.find(TextField({ placeholder: 'name' })).has({ value: name }),
+      row.find(TextField({ placeholder: 'code' })).has({ value: code }),
+      sourceCell.has({ content: source }),
+      sourceCell.find(TextField()).absent(),
+      lastUpdatedCell.find(TextField()).absent(),
+    ]);
+    lastUpdated.forEach((text) => {
+      cy.expect(lastUpdatedCell.has({ content: including(text) }));
     });
   },
 
