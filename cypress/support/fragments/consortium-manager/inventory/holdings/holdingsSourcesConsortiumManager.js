@@ -1,6 +1,12 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
-import { MultiColumnListHeader } from '../../../../../../interactors';
+import {
+  including,
+  MultiColumnListCell,
+  MultiColumnListHeader,
+  MultiColumnListRow,
+  TextField,
+} from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 
 const id = uuid();
@@ -39,6 +45,22 @@ export default {
         path: `consortia/${consortiaId}/sharing/settings/${type.settingId}`,
         body: type,
       });
+    });
+  },
+
+  verifyEditRowInList({ name, source, lastUpdated = [] }) {
+    const row = MultiColumnListRow({ innerHTML: including(name), isContainer: false });
+    const sourceCell = row.find(MultiColumnListCell({ column: 'Source' }));
+    const lastUpdatedCell = row.find(MultiColumnListCell({ column: 'Last updated' }));
+
+    cy.expect([
+      row.find(TextField({ placeholder: 'name' })).has({ value: name }),
+      sourceCell.has({ content: source }),
+      sourceCell.find(TextField()).absent(),
+      lastUpdatedCell.find(TextField()).absent(),
+    ]);
+    lastUpdated.forEach((text) => {
+      cy.expect(lastUpdatedCell.has({ content: including(text) }));
     });
   },
 

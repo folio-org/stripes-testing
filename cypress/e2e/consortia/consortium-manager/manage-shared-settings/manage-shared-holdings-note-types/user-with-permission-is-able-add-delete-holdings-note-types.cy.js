@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
@@ -23,6 +22,7 @@ import SettingsInventory, {
 import SettingsPane from '../../../../../support/fragments/settings/settingsPane';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
+import DateTools from '../../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
@@ -34,6 +34,7 @@ describe('Consortia', () => {
         let sharedNoteTypeRow;
         const deleteModalSettingName = 'holdings note type';
         const systemUserName = 'System';
+        const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
 
         before('Create test data', () => {
           testData = {
@@ -43,7 +44,7 @@ describe('Consortia', () => {
           sharedNoteTypeRow = [
             testData.sharedNoteTypeName,
             'consortium',
-            moment().format('l'),
+            todayDate,
             SHARED_SETTING_LIBRARIES,
           ];
 

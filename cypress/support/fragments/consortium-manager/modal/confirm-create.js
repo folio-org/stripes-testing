@@ -1,12 +1,12 @@
 import { including } from '@interactors/html';
-import { Button, Modal } from '../../../../../interactors';
+import { Button, ListItem, Modal } from '../../../../../interactors';
 
 const confirmCreateToAllModal = Modal({ id: 'create-controlled-vocab-entry-confirmation' });
 const keepEditingButton = confirmCreateToAllModal.find(Button('Keep editing'));
 const confirmButton = confirmCreateToAllModal.find(Button('Confirm'));
 
 export default {
-  waitLoadingConfirmCreate(name) {
+  waitLoadingConfirmCreate(name, members = []) {
     cy.expect([
       confirmCreateToAllModal.has({
         header: 'Confirm member libraries',
@@ -15,6 +15,15 @@ export default {
       keepEditingButton.is({ disabled: false }),
       confirmButton.is({ disabled: false }),
     ]);
+    if (members.length) this.verifyMemberLibrariesList(members);
+  },
+
+  verifyMemberLibrariesList(members) {
+    const sortedMembers = [...members].sort((a, b) => a.localeCompare(b));
+    sortedMembers.forEach((member, index) => {
+      cy.expect(confirmCreateToAllModal.find(ListItem({ index, text: member })).exists());
+    });
+    cy.expect(confirmCreateToAllModal.find(ListItem({ index: sortedMembers.length })).absent());
   },
 
   clickConfirm() {

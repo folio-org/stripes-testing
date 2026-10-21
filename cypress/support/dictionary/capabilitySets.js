@@ -62,6 +62,21 @@ export default {
     resource: 'UI-Inventory Settings Holdings-Sources',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInventorySettingsClassificationTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Classification-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsInstanceNoteTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Instance-Note-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsModesOfIssuanceView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Modes-Of-Issuance',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventorySettingsSubjectSourcesView: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Inventory Settings Subject-Sources',

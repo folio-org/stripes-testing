@@ -1,6 +1,13 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
-import { MultiColumnListHeader } from '../../../../../../interactors';
+import {
+  and,
+  including,
+  MultiColumnListCell,
+  MultiColumnListHeader,
+  MultiColumnListRow,
+  TextField,
+} from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
@@ -72,6 +79,26 @@ export default {
         cy.resetTenant();
       },
     );
+  },
+
+  verifyEditRowInList({ name, source, lastUpdated = [] }) {
+    // local records share the name across tenants, so target the only row that has the name input
+    const row = MultiColumnListRow({
+      innerHTML: and(including(name), including('placeholder="name"')),
+      isContainer: false,
+    });
+    const sourceCell = row.find(MultiColumnListCell({ column: 'Source' }));
+    const lastUpdatedCell = row.find(MultiColumnListCell({ column: 'Last updated' }));
+
+    cy.expect([
+      row.find(TextField({ placeholder: 'name' })).has({ value: name }),
+      sourceCell.has({ content: source }),
+      sourceCell.find(TextField()).absent(),
+      lastUpdatedCell.find(TextField()).absent(),
+    ]);
+    lastUpdated.forEach((text) => {
+      cy.expect(lastUpdatedCell.has({ content: including(text) }));
+    });
   },
 
   waitLoading() {
