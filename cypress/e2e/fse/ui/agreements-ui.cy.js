@@ -27,7 +27,8 @@ describe('fse-agreements - UI (no data manipulation)', () => {
     () => {
       SearchAgreements.verifyAgreementsFilterPane();
       Agreements.checkSwitchToLocalKbDisplayed();
-      SearchAgreements.verifyAcquisitionUnitsFilterPresent();
+      // commented since this option is set to false for production tenants as for now
+      // SearchAgreements.verifyAcquisitionUnitsFilterPresent();
       AgreementLines.openAgreementLinesTab();
       AgreementLines.waitLoading();
       // commented since this option is set to false for production tenants as for now
