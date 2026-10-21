@@ -73,15 +73,7 @@ describe('fse-settings - UI (no data manipulation)', () => {
   it(
     `FDOPS-6889 - verify Number generator sequences list the new scopes for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     {
-      tags: [
-        'fse',
-        'ui',
-        'settings',
-        'service-interaction',
-        'number-generator',
-        'sanity',
-        'FDOPS-6889',
-      ],
+      tags: ['fse', 'ui', 'settings', 'service-interaction', 'number-generator', 'FDOPS-6889'],
     },
     () => {
       SettingsMenu.selectMenuOption('Service interaction');

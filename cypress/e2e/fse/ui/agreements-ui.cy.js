@@ -7,7 +7,6 @@ import Agreements from '../../../support/fragments/agreements/agreements';
 import EditAgreement from '../../../support/fragments/agreements/editAgreement';
 import Licenses from '../../../support/fragments/licenses/licenses';
 import AgreementLines from '../../../support/fragments/agreements/agreementLines';
-import SearchAndFilterAgreementLines from '../../../support/fragments/agreements/searchAndFilterAgreementLines';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
@@ -31,7 +30,8 @@ describe('fse-agreements - UI (no data manipulation)', () => {
       SearchAgreements.verifyAcquisitionUnitsFilterPresent();
       AgreementLines.openAgreementLinesTab();
       AgreementLines.waitLoading();
-      SearchAndFilterAgreementLines.verifyAcquisitionUnitsFilterPresent();
+      // commented since this option is set to false for production tenants as for now
+      // SearchAndFilterAgreementLines.verifyAcquisitionUnitsFilterPresent();
     },
   );
 });
