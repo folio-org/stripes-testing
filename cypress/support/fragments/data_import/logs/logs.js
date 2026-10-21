@@ -60,17 +60,12 @@ export default {
   checkJobStatus: (fileName, status) => {
     const newFileName = fileName.replace(/\.mrc$/i, '');
 
-    cy.do(
-      MultiColumnListCell({ content: including(newFileName) }).perform((element) => {
-        const rowNumber = element.parentElement.getAttribute('data-row-inner');
-
-        cy.expect(
-          MultiColumnList({ id: 'job-logs-list' })
-            .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
-            .find(MultiColumnListCell({ content: status }))
-            .exists(),
-        );
-      }),
+    // Find the row and check its status in one lookup: new jobs from parallel specs shift row numbers
+    cy.expect(
+      MultiColumnList({ id: 'job-logs-list' })
+        .find(MultiColumnListRow({ content: including(newFileName), isContainer: false }))
+        .find(MultiColumnListCell({ content: status }))
+        .exists(),
     );
   },
   checkJobStatusByUser: (fileName, username, status) => {
