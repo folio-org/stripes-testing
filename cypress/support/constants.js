@@ -438,7 +438,7 @@ export const ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES = {
 
 export const REMOTE_STORAGE_PROVIDER_NAMES = {
   Dematic_EMS: 'Dematic EMS (API)',
-  DDEMATIC_STAGING_DIRECTOR: 'Dematic StagingDirector (TCP/IP)',
+  DEMATIC_TCP_IP: 'Dematic (TCP/IP)',
   CAIA_SOFT: 'CaiaSoft',
 };
 

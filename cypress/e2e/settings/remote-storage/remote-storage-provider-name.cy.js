@@ -37,7 +37,7 @@ describe('remote-storage-configuration', () => {
       Configurations.openCreateConfigurationForm();
 
       // #5 Click on the "Provider name" dropdown from the "General information" accordion to expand it
-      // Ddropdown expands and consists of the options:"Dematic EMS (API)", "Dematic StagingDirector (TCP/IP)", "CaiaSoft"
+      // Dropdown expands and consists of the options:"Dematic EMS (API)", "Dematic (TCP/IP)", "CaiaSoft"
       Configurations.checkProviderNameDropdownValues();
 
       // #6 Select "Dematic EMS (API)" option
@@ -55,9 +55,9 @@ describe('remote-storage-configuration', () => {
 
       // #10 Select recently added Configuration by clicking on the row with its name
       // #11 Select "Actions"=> Select "Edit" element
-      Configurations.opentEditConfigurationForm(name);
+      Configurations.openEditConfigurationForm(name);
       // #12 Click on the "Provider name" dropdown from the "General information" accordion to expand it
-      // Ddropdown expands and consists of the options:"Dematic EMS (API)", "Dematic StagingDirector (TCP/IP)", "CaiaSoft"
+      // Dropdown expands and consists of the options:"Dematic EMS (API)", "Dematic (TCP/IP)", "CaiaSoft"
       Configurations.checkProviderNameDropdownValues();
 
       // delete created configuration

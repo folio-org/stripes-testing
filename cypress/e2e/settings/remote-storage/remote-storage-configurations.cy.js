@@ -8,7 +8,7 @@ let user;
 
 const dematicEMS = Configurations.configurations.DematicEMS;
 const caiaSoft = Configurations.configurations.CaiaSoft;
-const dematicStagingDirector = Configurations.configurations.DematicStagingDirector;
+const dematicTCPIP = Configurations.configurations.DematicTCP_IP;
 
 describe('remote-storage-configuration', () => {
   before('create test data', () => {
@@ -40,10 +40,10 @@ describe('remote-storage-configuration', () => {
       Configurations.verifyEditedConfiguration(name, { provider: caiaSoft.title });
       Configurations.verifyDataSynchronizationSettingsAccordion(false);
 
-      Configurations.editConfiguration(name, { provider: dematicStagingDirector.title });
+      Configurations.editConfiguration(name, { provider: dematicTCPIP.title });
       Configurations.closeWithSaving();
       Configurations.verifyEditedConfiguration(name, {
-        provider: `${dematicStagingDirector.title}`,
+        provider: `${dematicTCPIP.title}`,
       });
       Configurations.verifyDataSynchronizationSettingsAccordion(true);
 
@@ -58,8 +58,8 @@ describe('remote-storage-configuration', () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
       Configurations.verifyProviderDataSynchronizationSettings();
-      dematicStagingDirector.create(name);
-      Configurations.verifyCreatedConfiguration(name, dematicStagingDirector);
+      dematicTCPIP.create(name);
+      Configurations.verifyCreatedConfiguration(name, dematicTCPIP);
 
       Configurations.deleteRemoteStorage(name);
     },
