@@ -53,13 +53,25 @@ export default {
     SettingsPane.selectSettingsTab(settingsOption);
     this.waitLoading();
   },
-  verifyConsortiumHoldingsSourcesInTheList({ name, source = 'consortium', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
+  verifyConsortiumHoldingsSourcesInTheList({
+    name,
+    source = 'consortium',
+    lastUpdated = [],
+    actions = [],
+  }) {
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
+    const actionsCell = MultiColumnListCell({ column: 'Actions' });
     cy.expect([
       row.exists(),
-      row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
+      row.find(MultiColumnListCell({ column: 'Source', content: source })).exists(),
     ]);
+    lastUpdated.forEach((text) => {
+      cy.expect(
+        row
+          .find(MultiColumnListCell({ column: 'Last updated', content: including(text) }))
+          .exists(),
+      );
+    });
     if (actions.length === 0) {
       cy.expect(row.find(actionsCell).has({ content: '' }));
     } else {

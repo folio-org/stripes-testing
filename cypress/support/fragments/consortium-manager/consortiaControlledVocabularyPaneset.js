@@ -71,6 +71,28 @@ export default {
     this.verifyShareCheckboxState({ isEnabled: true, isChecked: isShared });
   },
 
+  verifyEditRowInList({ name, code, source, lastUpdated = [] }) {
+    // only the row in edit mode has the name input; this also handles local records
+    // that share one name across tenants
+    const row = MultiColumnListRow({
+      innerHTML: and(including(name), including('placeholder="name"')),
+      isContainer: false,
+    });
+    const sourceCell = row.find(MultiColumnListCell({ column: 'Source' }));
+    const lastUpdatedCell = row.find(MultiColumnListCell({ column: 'Last updated' }));
+
+    cy.expect([
+      row.find(TextField({ placeholder: 'name' })).has({ value: name }),
+      sourceCell.has({ content: source }),
+      sourceCell.find(TextField()).absent(),
+      lastUpdatedCell.find(TextField()).absent(),
+    ]);
+    if (code) cy.expect(row.find(TextField({ placeholder: 'code' })).has({ value: code }));
+    lastUpdated.forEach((text) => {
+      cy.expect(lastUpdatedCell.has({ content: including(text) }));
+    });
+  },
+
   fillInTextField(textInput) {
     const [placeholder, value] = Object.entries(textInput)[0];
     cy.do(TextField({ placeholder }).fillIn(value));

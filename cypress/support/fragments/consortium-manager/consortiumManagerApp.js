@@ -95,21 +95,21 @@ export default {
   },
 
   verifyPaneIncludesSettings(settingsList) {
-    cy.get('#settings-nav-pane-content a').then(($elements) => {
-      const availableSettings = [];
-      cy.wrap($elements).each(($el) => {
-        availableSettings.push($el.text());
-      });
-      if (settingsList) {
+    if (settingsList) {
+      cy.get('#settings-nav-pane-content a').then(($elements) => {
+        const availableSettings = [...$elements].map((el) => el.textContent);
         settingsList.forEach((setting) => {
           cy.wrap(availableSettings).should('include', setting);
         });
-        // cy.wrap(availableSettings).should('deep.equal', settingsList);
-      } else {
-        // if there is no settingsList then we check the alphabetical order
-        cy.wrap(availableSettings).should('deep.equal', availableSettings.sort());
-      }
-    });
+      });
+    } else {
+      // if there is no settingsList then we check the alphabetical order within each section
+      cy.get('#settings-nav-pane-content [data-test-nav-list-section]').each(($section) => {
+        const sectionSettings = [...$section.find('a')].map((el) => el.textContent);
+        const sortedSettings = [...sectionSettings].sort((a, b) => a.localeCompare(b));
+        cy.wrap(sectionSettings).should('deep.equal', sortedSettings);
+      });
+    }
   },
 
   verifySelectedSettingIsDisplayed(settingName) {
