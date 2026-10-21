@@ -2,8 +2,8 @@ import { Button, Dropdown, Heading, including, TextInput, HTML } from '../../../
 
 describe('Eureka', () => {
   describe('Login', () => {
-    const usernameInput = TextInput('Username');
-    const passwordInput = TextInput('Password');
+    const usernameInput = TextInput({ id: 'username' });
+    const passwordInput = TextInput({ id: 'password' });
     const loginButton = Button({ name: 'login' });
     const welcomeMessage = Heading(including('Welcome, the Future'));
     const appButton = HTML({ className: including('navRoot-') }).find(
