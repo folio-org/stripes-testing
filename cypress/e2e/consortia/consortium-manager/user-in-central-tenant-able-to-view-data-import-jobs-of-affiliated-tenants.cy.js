@@ -166,7 +166,7 @@ describe('Consortia', () => {
         DataImportLogsConsortiumManager.verifyColumnIsNotSorted(
           DATA_IMPORT_LOGS_COLUMNS.ENDED_RUNNING,
         );
-        DataImportLogsConsortiumManager.verifyListSortedBy(
+        DataImportLogsConsortiumManager.verifyColumnSortDirection(
           DATA_IMPORT_LOGS_COLUMNS.STATUS,
           SORT_DIRECTIONS.ASCENDING,
         );
@@ -181,7 +181,7 @@ describe('Consortia', () => {
         DataImportLogsConsortiumManager.verifyLogWithFileNameDisplayed(
           testData.logs[otherMemberTenant.descriptor].fileName,
         );
-        DataImportLogsConsortiumManager.verifyListSortedBy(
+        DataImportLogsConsortiumManager.verifyColumnSortDirection(
           DATA_IMPORT_LOGS_COLUMNS.STATUS,
           SORT_DIRECTIONS.ASCENDING,
         );

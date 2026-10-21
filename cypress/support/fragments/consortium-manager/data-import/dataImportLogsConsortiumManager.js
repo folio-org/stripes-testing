@@ -9,7 +9,7 @@ import {
   including,
   or,
 } from '../../../../../interactors';
-import { COMMON_BUTTON_LABELS, JOB_STATUS_NAMES, SORT_DIRECTIONS } from '../../../constants';
+import { COMMON_BUTTON_LABELS, SORT_DIRECTIONS } from '../../../constants';
 import MultiColumnListHelper from '../../multiColumnList';
 
 const dataImportPane = Pane('Data import');
@@ -27,16 +27,7 @@ export const DATA_IMPORT_LOGS_COLUMNS = {
   ID: 'ID',
 };
 
-// "Status" column is sorted on the backend by job status code, not by displayed label
-const STATUS_SORT_CODES = {
-  [JOB_STATUS_NAMES.STOPPED_BY_USER]: 'CANCELLED',
-  [JOB_STATUS_NAMES.COMPLETED]: 'COMMITTED',
-  [JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS]: 'ERROR',
-  [JOB_STATUS_NAMES.FAILED]: 'ERROR',
-};
-
 const getSortableValueByColumn = {
-  [DATA_IMPORT_LOGS_COLUMNS.STATUS]: (value) => STATUS_SORT_CODES[value],
   [DATA_IMPORT_LOGS_COLUMNS.ENDED_RUNNING]: (value) => new Date(value).getTime(),
   [DATA_IMPORT_LOGS_COLUMNS.ID]: (value) => Number(value),
 };
