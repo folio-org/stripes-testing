@@ -162,6 +162,19 @@ export default {
     });
   },
 
+  verifyJobRowHasNoLinkInList(jobId) {
+    cy.expect(exportJobsList.find(MultiColumnListCell(jobId)).exists());
+    cy.then(() => exportJobsList.find(MultiColumnListCell(jobId)).row()).then((rowIndex) => {
+      cy.expect(
+        exportJobsList
+          .find(MultiColumnListRow({ index: rowIndex }))
+          .find(MultiColumnListCell({ column: 'Job ID' }))
+          .find(Link.selector('a')())
+          .absent(),
+      );
+    });
+  },
+
   getElementByTextAndVerify(content, amount, index) {
     const matchingElements = [];
     cy.get('div[class*=mclRow-]')
