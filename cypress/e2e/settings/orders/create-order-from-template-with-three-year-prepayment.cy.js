@@ -38,6 +38,9 @@ import { RECEIVING_WORKFLOWS } from '../../../support/fragments/orders/basicOrde
 const OrderLineEditForm = { ...OrderLineEditFormFragment, ...MultiYearPaymentTerms };
 const OrderTemplateForm = { ...OrderTemplateFormFragment, ...MultiYearPaymentTerms };
 
+// Use the Node task so progress is visible in the Jenkins console.
+const trace = (message) => cy.task('log', `[C1395029] ${message}`);
+
 const fillPolRequiredFields = ({ form, title, acquisitionMethod }) => {
   form.fillItemDetailsTitle({ instanceTitle: title });
   form.fillPoLineDetails({
@@ -173,8 +176,7 @@ const triggerFundDistributionValidation = (form) => {
   cy.wait('@validateFundDistributions');
 };
 
-// The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
-// #freeze pipeline deadlock
+// Temporarily enabled to diagnose the pipeline freeze using terminal progress markers.
 describe('Settings | Orders', () => {
   const flow = new ExecutionFlowManager();
 
@@ -221,6 +223,7 @@ describe('Settings | Orders', () => {
   });
 
   const createFundStep = (resourceKey) => (f) => {
+    trace(`SETUP: create ${resourceKey}`);
     const { ledger } = f.ctx();
 
     return Funds.createViaApi({
@@ -234,6 +237,7 @@ describe('Settings | Orders', () => {
   };
 
   const createExpenseClassStep = (resourceKey, name) => (f) => {
+    trace(`SETUP: create ${resourceKey}`);
     return ExpenseClasses.createExpenseClassViaApi({
       ...ExpenseClasses.getDefaultExpenseClass(),
       name,
@@ -251,38 +255,46 @@ describe('Settings | Orders', () => {
   };
 
   before(() => {
+    trace('SETUP: authenticate admin');
     cy.getAdminToken();
+    trace('SETUP: clear local storage');
     cy.clearLocalStorage();
 
+    trace('SETUP: get tenant locale');
     cy.getTenantLocaleApi().then((locale) => flow.set(R.LOCALE, locale));
 
     flow
       // Precondition 1: Previous fiscal year (FY #1) with the shared alphabetical part
       .step((f) => {
+        trace('SETUP: create previous fiscal year');
         return FiscalYears.createViaApi(buildFiscalYear(-1)).then((fy1) => {
           f.set(R.FY1, fy1, () => FiscalYears.deleteFiscalYearViaApi(fy1.id, false));
         });
       })
       // Precondition 1: Current fiscal year (FY #2) whose period includes the current date
       .step((f) => {
+        trace('SETUP: create current fiscal year');
         return FiscalYears.createViaApi(buildFiscalYear(0)).then((fy2) => {
           f.set(R.FY2, fy2, () => FiscalYears.deleteFiscalYearViaApi(fy2.id, false));
         });
       })
       // Precondition 1: First future fiscal year (FY #3)
       .step((f) => {
+        trace('SETUP: create first future fiscal year');
         return FiscalYears.createViaApi(buildFiscalYear(1)).then((fy3) => {
           f.set(R.FY3, fy3, () => FiscalYears.deleteFiscalYearViaApi(fy3.id, false));
         });
       })
       // Precondition 1: Second future fiscal year (FY #4)
       .step((f) => {
+        trace('SETUP: create second future fiscal year');
         return FiscalYears.createViaApi(buildFiscalYear(2)).then((fy4) => {
           f.set(R.FY4, fy4, () => FiscalYears.deleteFiscalYearViaApi(fy4.id, false));
         });
       })
       // Precondition 2: Active Ledger related to the created Fiscal year #1
       .step((f) => {
+        trace('SETUP: create ledger');
         const { fy1 } = f.ctx();
         return Ledgers.createViaApi({
           ...Ledgers.getDefaultLedger(),
@@ -302,6 +314,7 @@ describe('Settings | Orders', () => {
       .step(createExpenseClassStep(R.EXPENSE_CLASS_2, testData.expenseClass2Name))
       // Precondition 3: Fund A current budget ($1000) with both expense classes activated
       .step((f) => {
+        trace('SETUP: create fund A budget and activate expense classes');
         const { fundA, fy2, expenseClass1, expenseClass2 } = f.ctx();
         return Budgets.createViaApi({
           ...Budgets.getDefaultBudget(),
@@ -323,6 +336,7 @@ describe('Settings | Orders', () => {
       })
       // Precondition 3: Fund B current budget ($1000)
       .step((f) => {
+        trace('SETUP: create fund B budget');
         const { fundB, fy2 } = f.ctx();
         return Budgets.createViaApi({
           ...Budgets.getDefaultBudget(),
@@ -336,6 +350,7 @@ describe('Settings | Orders', () => {
       })
       // Supporting data: Organization (vendor) used by the order templates
       .step((f) => {
+        trace('SETUP: create vendor organization');
         return NewOrganization.createViaApi(NewOrganization.getDefaultOrganization()).then(
           (org) => {
             f.set(R.ORG, org, () => Organizations.deleteOrganizationViaApi(org.id));
@@ -344,12 +359,15 @@ describe('Settings | Orders', () => {
       })
       // Supporting data: Acquisition method used when filling the PO lines
       .step((f) => {
+        trace('SETUP: create acquisition method');
         return cy
           .createAcquisitionMethodApi({ value: testData.acqMethodName })
           .then(({ body }) => f.set(R.ACQ_METHOD, body, () => cy.deleteAcquisitionMethodApi(body.id)));
       })
       .step((f) => {
+        trace('SETUP: create inventory instances');
         cy.wrap([testData.polTitle1, testData.polTitle2]).each((title) => {
+          trace(`SETUP: create inventory instance ${title}`);
           cy.getInstanceTypes({ limit: 1 })
             .then((instanceTypes) => {
               return InventoryInstances.createFolioInstanceViaApi({
@@ -366,6 +384,7 @@ describe('Settings | Orders', () => {
       //   data - UI-Orders Orders - edit, create
       //   settings - UI-Orders Settings Order-Templates - create
       .step((f) => {
+        trace('SETUP: create test user');
         return cy
           .createTempUser([
             Permissions.uiOrdersCreate.gui,
@@ -378,28 +397,33 @@ describe('Settings | Orders', () => {
       })
       // Precondition 5: A user is in "Settings" -> "Orders" -> "Order templates"
       .step((f) => {
+        trace('SETUP: log in as test user');
         const { user } = f.ctx();
 
         cy.login(user.username, user.password, {
           path: TopMenu.settingsOrdersPath,
           waiter: Orders.waitSettingsPageLoading,
         });
+        trace('SETUP: open order templates');
         SettingOrdersNavigationMenu.selectOrderTemplates();
         OrderTemplates.waitLoading();
       });
+    trace('SETUP: complete');
   });
 
   after(() => {
+    trace('CLEANUP: authenticate admin');
     cy.getAdminToken();
+    trace('CLEANUP: delete registered resources');
     flow.cleanup();
+    trace('CLEANUP: complete');
   });
 
-  // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
-  // #freeze pipeline deadlock
   it(
     'C1395029 Create an order from the template with three-year prepayment term (thunderjet)',
     { tags: ['criticalPathBroken', 'thunderjet', 'C1395029Broken'] },
     () => {
+      trace('TEST: start');
       const { fy1, fy2, fy3, fy4, fundA, fundB, org, acqMethod, expenseClass1, locale } =
         flow.ctx();
       const fiscalYearCodes = [fy2.code, fy3.code, fy4.code];
@@ -410,14 +434,14 @@ describe('Settings | Orders', () => {
         'validateFundDistributions',
       );
 
-      cy.log('Step 1. Click "New" button on the "Order templates" pane');
+      trace('Step 1. Click "New" button on the "Order templates" pane');
       OrderTemplates.clickNewOrderTemplateButton();
       OrderTemplateForm.waitLoading();
       // Expected: "POL Ongoing order information" and "Payment terms" accordions are NOT displayed
       OrderTemplateForm.assertPolOngoingOrderSectionAbsent();
       OrderTemplateForm.assertPaymentTermsSectionAbsent();
 
-      cy.log('Step 2. Select "Ongoing" option in the "Order type" field');
+      trace('Step 2. Select "Ongoing" option in the "Order type" field');
       OrderTemplateForm.fillPoInfoSectionFields({
         organizationName: org.name,
         orderType: ORDER_TYPES.ONGOING,
@@ -429,18 +453,18 @@ describe('Settings | Orders', () => {
       OrderTemplateForm.assertMultiYearPrepaymentUnchecked();
       OrderTemplateForm.assertPaymentTermsCollapsed();
 
-      cy.log('Step 3. Click on the (i) icon next to the "Multi-year prepayment" checkbox');
+      trace('Step 3. Click on the (i) icon next to the "Multi-year prepayment" checkbox');
       OrderTemplateForm.expandAccordion(ORDER_TEMPLATE_FORM_ACCORDION_LABELS.POL_ONGOING_INFO);
       OrderTemplateForm.clickMultiYearPrepaymentInfoIcon();
       OrderTemplateForm.verifyMultiYearPrepaymentInfoPopover();
       OrderTemplateForm.clickMultiYearPrepaymentInfoIcon();
 
-      cy.log('Step 4. Click on the (i) icon next to the "Payment terms" accordion');
+      trace('Step 4. Click on the (i) icon next to the "Payment terms" accordion');
       OrderTemplateForm.clickPaymentTermsInfoIcon();
       OrderTemplateForm.verifyPaymentTermsInfoPopover();
       OrderTemplateForm.clickPaymentTermsInfoIcon();
 
-      cy.log('Step 5. Check "Multi-year prepayment" checkbox');
+      trace('Step 5. Check "Multi-year prepayment" checkbox');
       OrderTemplateForm.toggleMultiYearPrepayment();
 
       // Expected: checkbox checked; Payment terms active/expanded with blank Total price,
@@ -450,7 +474,7 @@ describe('Settings | Orders', () => {
       OrderTemplateForm.assertPrepaymentTermsRemainingAmount(formatAmount(0));
       OrderTemplateForm.assertPaymentTermsState();
 
-      cy.log('Step 6. Expand "Starting fiscal year" dropdown in the "Payment terms" accordion');
+      trace('Step 6. Expand "Starting fiscal year" dropdown in the "Payment terms" accordion');
       OrderTemplateForm.toggleStartingFiscalYearDropdown();
       // Expected: only current and future fiscal years are displayed; previous FY is NOT displayed
       OrderTemplateForm.assertFiscalYearOptionPresent(fy2.code);
@@ -459,11 +483,11 @@ describe('Settings | Orders', () => {
       OrderTemplateForm.assertFiscalYearOptionAbsent(fy1.code);
       OrderTemplateForm.toggleStartingFiscalYearDropdown();
 
-      cy.log('Step 7. Click (i) icon next to the "Starting fiscal year" dropdown');
+      trace('Step 7. Click (i) icon next to the "Starting fiscal year" dropdown');
       OrderTemplateForm.clickStartingFiscalYearInfoIcon();
       OrderTemplateForm.verifyStartingFiscalYearInfoPopover();
 
-      cy.log('Step 8. Select the current FY in the dropdown');
+      trace('Step 8. Select the current FY in the dropdown');
       OrderTemplateForm.selectStartingFiscalYear(fy2.code);
       // Expected: 2 cards (FY #2, FY #3); Prepayment term = 2; trash only on FY #3 card; Add FY active
       OrderTemplateForm.assertFiscalYearCards([fy2.code, fy3.code]);
@@ -471,7 +495,7 @@ describe('Settings | Orders', () => {
       OrderTemplateForm.assertOnlyFiscalYearCardRemovable([fy2.code, fy3.code], fy3.code);
       OrderTemplateForm.assertAddFiscalYearButtonEnabled();
 
-      cy.log('Step 9. Click "Add fiscal year" button');
+      trace('Step 9. Click "Add fiscal year" button');
       OrderTemplateForm.clickAddFiscalYearButton();
       // Expected: 3 cards (FY #2, FY #3, FY #4); Prepayment term = 3; trash only on FY #4 card; Add FY inactive
       OrderTemplateForm.assertFiscalYearCards([fy2.code, fy3.code, fy4.code]);
@@ -479,14 +503,12 @@ describe('Settings | Orders', () => {
       OrderTemplateForm.assertOnlyFiscalYearCardRemovable(fiscalYearCodes, fy4.code);
       OrderTemplateForm.assertAddFiscalYearButtonDisabled();
 
-      cy.log(
-        'Step 10. Click "Add fund distribution" button in the Fiscal year 1 card (current FY)',
-      );
+      trace('Step 10. Click "Add fund distribution" button in the Fiscal year 1 card (current FY)');
       OrderTemplateForm.addFundDistributionInFYCard(fy2.code);
       // Expected: not-required Fund ID / Value / Type (currency default) / Amount / Trash fields appear
       OrderTemplateForm.assertEmptyFundDistributionRow({ fyCode: fy2.code });
 
-      cy.log('Step 11. Select Fund A in the "Fund ID" dropdown');
+      trace('Step 11. Select Fund A in the "Fund ID" dropdown');
       OrderTemplateForm.selectFundInPaymentTermsCard({
         fyCode: fy2.code,
         fundName: fundA.name,
@@ -510,12 +532,12 @@ describe('Settings | Orders', () => {
       );
       OrderTemplateForm.assertExpenseClassFieldPresentInFYCard(fy2.code);
 
-      cy.log('Step 12. Click trash icon next to the Fund row in the Fiscal year 1 card');
+      trace('Step 12. Click trash icon next to the Fund row in the Fiscal year 1 card');
       OrderTemplateForm.removeFundDistributionInFYCard({ fyCode: fy2.code });
       // Expected: fund distribution removed; only active "Add fund distribution" button remains
       OrderTemplateForm.assertFundDistributionAbsentInFYCard(fy2.code);
 
-      cy.log(
+      trace(
         'Step 13. Add fund distribution in the Fiscal year 3 card; Select Fund A; Select % toggle',
       );
       OrderTemplateForm.addFundDistributionInFYCard(fy4.code);
@@ -542,7 +564,7 @@ describe('Settings | Orders', () => {
       );
       OrderTemplateForm.assertDistributionTypePercentInFYCard({ fyCode: fy4.code });
 
-      cy.log('Step 14. Add fund distribution in the Fiscal year 2 card; Select Fund B');
+      trace('Step 14. Add fund distribution in the Fiscal year 2 card; Select Fund B');
       OrderTemplateForm.addFundDistributionInFYCard(fy3.code);
       OrderTemplateForm.selectFundInPaymentTermsCard({
         fyCode: fy3.code,
@@ -565,7 +587,7 @@ describe('Settings | Orders', () => {
         { required: false },
       );
 
-      cy.log(
+      trace(
         'Step 15. Fill in the "Name" field; Select USD in the "Currency" dropdown; Click "Save"',
       );
       cy.intercept('POST', '**/orders/order-templates').as('template1Created');
@@ -582,7 +604,7 @@ describe('Settings | Orders', () => {
       });
       OrderTemplates.waitLoading();
 
-      cy.log('Step 16. Click on the just created order template; Click "Expand all" link');
+      trace('Step 16. Click on the just created order template; Click "Expand all" link');
       OrderTemplates.selectTemplate(testData.template1Name);
       OrderTemplates.expandAll();
       // Expected: Ongoing accordion shows checked Multi-year prepayment; Payment terms shows data for
@@ -592,7 +614,7 @@ describe('Settings | Orders', () => {
       OrderTemplates.assertPaymentTermsCardContainsFund(fy4.code, fundA.name);
       OrderTemplates.assertPaymentTermsCardShowsNoItems(fy2.code);
 
-      cy.log(
+      trace(
         'Step 17. Click "Actions" button; Select "Duplicate" option; Click "Submit" in the "Duplicate template" modal',
       );
       cy.intercept('POST', '**/orders/order-templates').as('template2Created');
@@ -632,7 +654,7 @@ describe('Settings | Orders', () => {
         });
       });
 
-      cy.log(
+      trace(
         'Step 18. Click on the eye icon next to the "Multi-year prepayment" checkbox and "Payment terms" accordion; Click "Save"',
       );
       OrderTemplateForm.fillPrepaymentTotalPrice(100);
@@ -652,7 +674,7 @@ describe('Settings | Orders', () => {
       // Expected: "Order templates" pane; toast "The template was saved"
       OrderTemplates.waitLoading();
 
-      cy.log(
+      trace(
         'Step 19. Navigate to "Orders" app; Select "Order" toggle; Click "New"; Select order template #2; Fill mandatory fields; Click "Save & close"',
       );
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.ORDERS);
@@ -670,7 +692,7 @@ describe('Settings | Orders', () => {
       // Expected: "Purchase order" pane; toast "The Purchase order - number has been successfully saved"
       OrderDetails.waitLoading();
 
-      cy.log(
+      trace(
         'Step 20. Click "Actions" button in the "PO lines" accordion; Select "Add PO line" option',
       );
       OrderDetails.selectAddPOLine();
@@ -679,7 +701,7 @@ describe('Settings | Orders', () => {
       OrderLineEditForm.assertMultiYearPrepaymentAbsent();
       OrderLineEditForm.assertPaymentTermsSectionAbsent();
 
-      cy.log('Step 21. Fill in all required fields; Click "Save & close" button');
+      trace('Step 21. Fill in all required fields; Click "Save & close" button');
       fillPolRequiredFields({
         form: OrderLineEditForm,
         title: testData.polTitle2,
@@ -692,7 +714,7 @@ describe('Settings | Orders', () => {
       OrderLineDetails.assertMultiYearPrepaymentAbsent();
       OrderLineDetails.assertPaymentTermsSectionAbsent();
 
-      cy.log(
+      trace(
         'Step 22. Click "New" button on the "Orders" pane; Select order template #1; Fill mandatory fields; Click "Save & close"',
       );
       OrderLineDetails.backToOrderDetails();
@@ -706,7 +728,7 @@ describe('Settings | Orders', () => {
       // Expected: "Purchase order" pane; toast "The Purchase order - number has been successfully saved"
       OrderDetails.waitLoading();
 
-      cy.log(
+      trace(
         'Step 23. Click "Actions" button in the "PO lines" accordion; Select "Add PO line" option',
       );
       OrderDetails.selectAddPOLine();
@@ -727,7 +749,7 @@ describe('Settings | Orders', () => {
         { required: true },
       );
 
-      cy.log(
+      trace(
         'Step 24. Fill in all required fields; Do NOT fill "Fund distribution" and "Payment terms"; Click "Save & close"',
       );
       fillPolRequiredFields({
@@ -738,7 +760,7 @@ describe('Settings | Orders', () => {
       OrderLineEditForm.clickSaveButton({ orderLineCreated: false, orderLineUpdated: false });
       OrderLineEditForm.assertPaymentTermsMixTypesOfZeroPriceValidationError();
 
-      cy.log(
+      trace(
         'Step 25. Fill "Total price" with 1500; Enter 300 in the Fiscal year 2 card (Fund B); Enter 25 in the Fiscal year 3 card (Fund A)',
       );
       OrderLineEditForm.fillPrepaymentTotalPrice(1500);
@@ -755,7 +777,7 @@ describe('Settings | Orders', () => {
       OrderLineEditForm.assertPaymentTermsPercentageValidationError();
       OrderLineEditForm.assertPaymentTermsRemainingAmount('825.00');
 
-      cy.log(
+      trace(
         'Step 26. Add fund distribution in the Fiscal year 1 card; Select Fund A; Select expense class #1; Select % toggle; Enter 25',
       );
       OrderLineEditForm.addFundDistributionInFYCard(fy2.code);
@@ -779,7 +801,7 @@ describe('Settings | Orders', () => {
       OrderLineEditForm.assertPaymentTermsPercentageValidationError();
       OrderLineEditForm.assertPaymentTermsRemainingAmount('450.00');
 
-      cy.log('Step 27. Add fund distribution in the Fiscal year 1 card; Select Fund B; Enter 250');
+      trace('Step 27. Add fund distribution in the Fiscal year 1 card; Select Fund B; Enter 250');
       OrderLineEditForm.addFundDistributionInFYCard(fy2.code);
       OrderLineEditForm.selectFundInPaymentTermsCard({
         fyCode: fy2.code,
@@ -798,7 +820,7 @@ describe('Settings | Orders', () => {
       OrderLineEditForm.assertPaymentTermsPercentageValidationError();
       OrderLineEditForm.assertPaymentTermsRemainingAmount('200.00');
 
-      cy.log('Step 28. Add fund distribution in the Fiscal year 3 card; Select Fund A; Enter 200');
+      trace('Step 28. Add fund distribution in the Fiscal year 3 card; Select Fund A; Enter 200');
       OrderLineEditForm.addFundDistributionInFYCard(fy4.code);
       OrderLineEditForm.selectFundInPaymentTermsCard({
         fyCode: fy4.code,
@@ -816,7 +838,7 @@ describe('Settings | Orders', () => {
       // Expected: "You can not have multiple distributions for the same fund with the same expense class."
       OrderLineEditForm.assertMultipleDistributionsSameFundError();
 
-      cy.log('Step 29. Select Fund B instead of Fund A in the Fiscal year 3 card');
+      trace('Step 29. Select Fund B instead of Fund A in the Fiscal year 3 card');
       OrderLineEditForm.selectFundInPaymentTermsCard({
         fyCode: fy4.code,
         fundName: fundB.name,
@@ -827,7 +849,7 @@ describe('Settings | Orders', () => {
       // Expected: "Remaining amount to be distributed: $0.00"
       OrderLineEditForm.assertPaymentTermsRemainingAmount('0.00');
 
-      cy.log('Step 30. Click "Save & close" button');
+      trace('Step 30. Click "Save & close" button');
       OrderLineEditForm.clickSaveButton({ orderLineCreated: true, orderLineUpdated: false });
       // Expected: "PO Line details"; toast "The purchase order line was successfully created";
       // Ongoing accordion shows checked Multi-year prepayment; Fund distribution accordion blank;
@@ -876,7 +898,7 @@ describe('Settings | Orders', () => {
         ],
       });
 
-      cy.log('Step 31. Click "Actions" button; Select "Edit" option');
+      trace('Step 31. Click "Actions" button; Select "Edit" option');
       FinanceHelper.interceptGetFiscalYearsRequest();
       OrderLineDetails.openOrderLineEditForm();
       FinanceHelper.waitForGetFiscalYearsRequestCompletion();
@@ -894,6 +916,7 @@ describe('Settings | Orders', () => {
         fundB,
         expenseClass1,
       });
+      trace('TEST: complete');
     },
   );
 });
