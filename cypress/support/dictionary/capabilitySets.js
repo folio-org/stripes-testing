@@ -349,6 +349,26 @@ export default {
     resource: 'UI-Data-Export',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiExportManagerExportManagerView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Export-Manager Export-Manager',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  dataExportManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Data-Export',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  dataExportConfigManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Data-Export Config',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  dataExportJobManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Data-Export Job',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
   uiInventoryHoldingsCreate: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Holdings',
@@ -481,6 +501,11 @@ export default {
   },
 
   // Procedural capability sets
+  uiExportManagerJobsDownloadAndResendExecute: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Export-Manager Jobs DownloadAndResend',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
   uiUsersResetPassword: {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'UI-Users Reset Password',

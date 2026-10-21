@@ -188,6 +188,22 @@ Cypress.Commands.add('getAuthoritiesPersonalNameCountViaAPI', () => {
   });
 });
 
+Cypress.Commands.add('createFailedLinkedBibUpdatesReportViaAPI', () => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'data-export-spring/jobs',
+    body: {
+      type: 'FAILED_LINKED_BIB_UPDATES',
+      description: 'List of controlled bibliographic fields failed to update',
+      outputFormat: 'Failed updates: Linked bibliographic fields (CSV)',
+      exportTypeSpecificParameters: {},
+    },
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body;
+  });
+});
+
 Cypress.Commands.add('getSrsRecordsByAuthorityId', (instanceId) => {
   cy.okapiRequest({
     method: REQUEST_METHOD.GET,
