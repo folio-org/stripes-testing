@@ -281,12 +281,15 @@ const multiYearPaymentTerms = {
         .perform((element) => {
           const items = getFiscalYearDistributionItems(element);
 
-          expect(items).to.have.length(fyCodes.length);
+          // Keep DOM nodes out of assertion logs: Allure serializes actual values.
+          expect(items.length, 'fiscal year card count').to.equal(fyCodes.length);
           items.forEach((item, index) => {
             const removeButtons = item.querySelectorAll(FIELD_SELECTORS.REMOVE_FISCAL_YEAR_BUTTON);
             const expectedCount = fyCodes[index] === removableFyCode ? 1 : 0;
 
-            expect(removeButtons).to.have.length(expectedCount);
+            expect(removeButtons.length, `remove button count for ${fyCodes[index]}`).to.equal(
+              expectedCount,
+            );
           });
         }),
     );
