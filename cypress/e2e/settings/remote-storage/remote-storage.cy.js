@@ -32,7 +32,7 @@ describe('remote-storage-configuration', () => {
     [
       Configurations.configurations.CaiaSoft,
       Configurations.configurations.DematicEMS,
-      Configurations.configurations.DematicStagingDirector,
+      Configurations.configurations.DematicTCP_IP,
     ].forEach((configuration) => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
       configuration.create(name);
@@ -57,7 +57,7 @@ describe('remote-storage-configuration', () => {
     { tags: ['smoke', 'vega', 'C163920'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
-      const configuration = Configurations.configurations.DematicStagingDirector;
+      const configuration = Configurations.configurations.DematicTCP_IP;
       const urlToEdit = 'newTestUrl';
       const timingToEdit = '7';
 
