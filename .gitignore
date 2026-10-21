@@ -40,3 +40,6 @@ cypress.local.js
 
 .agents/*
 skills-lock.json
+.local/
+.playwright-cli
+.write-test
