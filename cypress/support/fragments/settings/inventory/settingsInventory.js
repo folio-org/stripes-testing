@@ -1,4 +1,4 @@
-import { Pane, NavListItem } from '../../../../../interactors';
+import { Pane, PaneHeader, NavListItem } from '../../../../../interactors';
 import FastAddNewRecord from '../../inventory/fastAddNewRecord';
 
 const inventoryPane = Pane('Inventory');
@@ -20,7 +20,15 @@ export const INVENTORY_SETTINGS_TABS = {
   INSTANCE_STATUS_TYPES: 'Instance status types',
   CONTRIBUTOR_TYPES: 'Contributor types',
   HOLDINGS_TYPES: 'Holdings types',
+  HOLDINGS_NOTE_TYPES: 'Holdings note types',
   ALTERNATIVE_TITLE_TYPES: 'Alternative title types',
+  RESOURCE_IDENTIFIER_TYPES: 'Resource identifier types',
+  ITEM_NOTE_TYPES: 'Item note types',
+  CALL_NUMBER_TYPES: 'Call number types',
+  CLASSIFICATION_IDENTIFIER_TYPES: 'Classification identifier types',
+  INSTANCE_NOTE_TYPES: 'Instance note types',
+  MODES_OF_ISSUANCE: 'Modes of issuance',
+  NATURE_OF_CONTENT: 'Nature of content',
 };
 
 export default {
@@ -55,5 +63,26 @@ export default {
     } else {
       cy.expect(inventoryPane.find(NavListItem(name)).absent());
     }
+  },
+
+  verifyGroupOptions(groupName, options) {
+    cy.get('[data-test-nav-list-section]')
+      .filter((_, section) => {
+        const header = section.querySelector('[data-test-nav-list-section-header]');
+        return header?.textContent.trim() === groupName;
+      })
+      .should('have.length', 1)
+      .find('[data-test-nav-list-item]')
+      .should(($items) => {
+        expect([...$items].map((item) => item.textContent.trim())).to.have.members(options);
+      });
+  },
+
+  checkInventoryNavPaneFocused() {
+    cy.expect(
+      inventoryPane
+        .find(PaneHeader({ id: 'paneHeaderapp-settings-nav-pane' }))
+        .has({ focused: true }),
+    );
   },
 };

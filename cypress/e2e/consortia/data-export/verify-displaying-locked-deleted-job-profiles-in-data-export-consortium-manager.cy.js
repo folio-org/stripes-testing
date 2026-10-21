@@ -16,7 +16,7 @@ import ConsortiumManager from '../../../support/fragments/settings/consortium-ma
 import ConsortiumManagerApp, {
   settingsItems,
 } from '../../../support/fragments/consortium-manager/consortiumManagerApp';
-import DataExport from '../../../support/fragments/consortium-manager/dataExport';
+import DataExport from '../../../support/fragments/consortium-manager/data-export/dataExportLogsConsortiumManager';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import TopMenu from '../../../support/fragments/topMenu';

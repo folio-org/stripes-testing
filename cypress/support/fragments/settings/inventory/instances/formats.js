@@ -106,6 +106,10 @@ export default {
       Button('Delete').click(),
     ]);
   },
+  verifyNewButtonActive() {
+    cy.expect(rootPane.find(Button('+ New')).has({ disabled: false }));
+  },
+
   choose() {
     cy.do(NavListItem('Formats').click());
     this.waitLoading();
