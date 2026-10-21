@@ -212,8 +212,8 @@ Cypress.Commands.add('selectTenantAndContinue', (tenantName) => {
 
 Cypress.Commands.add('verifyDefaultEurekaLoginPage', () => {
   cy.expect([
-    TextInput('Username').exists(),
-    TextInput('Password').exists(),
+    TextInput({ id: 'username' }).exists(),
+    TextInput({ id: 'password' }).exists(),
     Button({ name: 'login' }).exists(),
   ]);
   if (Cypress.env('ecsEnabled')) {
@@ -224,8 +224,8 @@ Cypress.Commands.add('verifyDefaultEurekaLoginPage', () => {
 Cypress.Commands.add('inputCredentialsAndLogin', (username, password) => {
   if (Cypress.env('eureka')) {
     cy.do([
-      TextInput('Username').fillIn(username),
-      TextInput('Password').fillIn(password),
+      TextInput({ id: 'username' }).fillIn(username),
+      TextInput({ id: 'password' }).fillIn(password),
       Button({ name: 'login' }).click(),
     ]);
   } else {
