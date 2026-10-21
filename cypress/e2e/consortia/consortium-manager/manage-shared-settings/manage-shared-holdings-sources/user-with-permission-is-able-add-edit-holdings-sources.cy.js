@@ -183,7 +183,7 @@ describe('Consortia', () => {
               actionIcons.edit,
             );
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive(false);
-            HoldingsSourcesConsortiumManager.verifyEditRowInList({
+            ConsortiaControlledVocabularyPaneset.verifyEditRowInList({
               name: testData.holdingsSourceName,
               source: 'consortium',
               lastUpdated: [todayDate, systemUserName],

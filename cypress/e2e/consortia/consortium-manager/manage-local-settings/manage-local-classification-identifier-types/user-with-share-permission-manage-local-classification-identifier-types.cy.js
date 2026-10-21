@@ -153,7 +153,7 @@ describe('Consortia', () => {
               actionIcons.edit,
             );
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive(false);
-            ClassificationIdentifierTypesConsortiumManager.verifyEditRowInList({
+            ConsortiaControlledVocabularyPaneset.verifyEditRowInList({
               name: testData.name,
               source: 'local',
               lastUpdated: [todayDate, user.lastName],

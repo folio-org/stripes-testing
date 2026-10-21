@@ -158,7 +158,7 @@ describe('Consortia', () => {
               actionIcons.edit,
             );
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive(false);
-            InstanceNoteTypesConsortiumManager.verifyEditRowInList({
+            ConsortiaControlledVocabularyPaneset.verifyEditRowInList({
               name: testData.name,
               source: 'local',
               lastUpdated: [todayDate, user.lastName],

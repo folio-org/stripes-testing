@@ -199,7 +199,7 @@ describe('Consortia', () => {
               actionIcons.edit,
             );
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive(false);
-            InstanceStatusTypeConsortiumManager.verifyEditRowInList({
+            ConsortiaControlledVocabularyPaneset.verifyEditRowInList({
               name: testData.instanceStatusTypeName,
               code: testData.instanceStatusTypeCode,
               source: 'consortium',

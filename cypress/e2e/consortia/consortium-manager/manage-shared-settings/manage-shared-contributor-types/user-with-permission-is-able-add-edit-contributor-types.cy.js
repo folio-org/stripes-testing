@@ -199,7 +199,7 @@ describe('Consortia', () => {
               actionIcons.edit,
             );
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive(false);
-            ContributorTypesConsortiumManager.verifyEditRowInList({
+            ConsortiaControlledVocabularyPaneset.verifyEditRowInList({
               name: testData.contributorTypeName,
               code: testData.contributorTypeCode,
               source: 'consortium',

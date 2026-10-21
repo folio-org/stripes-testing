@@ -157,7 +157,7 @@ describe('Consortia', () => {
               actionIcons.edit,
             );
             ConsortiaControlledVocabularyPaneset.verifyEditModeIsActive(false);
-            ModesOfIssuanceConsortiumManager.verifyEditRowInList({
+            ConsortiaControlledVocabularyPaneset.verifyEditRowInList({
               name: testData.name,
               source: 'local',
               lastUpdated: [todayDate, `${user.lastName}, ${user.firstName}`],
