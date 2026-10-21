@@ -50,7 +50,7 @@ describe('orders: create', () => {
         organization.id = organizationsResponse;
         order.vendor = organizationsResponse;
 
-        cy.getDefaultMaterialType().then((mtypes) => {
+        cy.getMaterialTypes({ limit: 1 }).then((mtypes) => {
           cy.getAcquisitionMethodsApi({
             query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
           }).then((params) => {
@@ -117,7 +117,7 @@ describe('orders: create', () => {
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
       OrderLines.changeLocation(testData.locations[1].name, '1');
-      OrderLines.saveOrderLine();
+      OrderLines.saveOrderLine({ isWaiterNeeded: false });
       InteractorsTools.checkCalloutMessage(
         `The purchase order line ${testData.orderNumber}-1 was successfully updated`,
       );
