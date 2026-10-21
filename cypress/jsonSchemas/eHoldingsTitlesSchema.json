@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "eHoldings Titles",
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["titles"]
+          },
+          "attributes": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": ["string", "null"]
+              },
+              "publisherName": {
+                "type": ["string", "null"]
+              },
+              "isTitleCustom": {
+                "type": ["boolean", "null"]
+              },
+              "publicationType": {
+                "type": ["string", "null"]
+              },
+              "identifiers": {
+                "type": ["array", "null"],
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": ["string", "null"]
+                    },
+                    "subtype": {
+                      "type": ["string", "null"]
+                    },
+                    "type": {
+                      "type": ["string", "null"]
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "subjects": {
+                "type": ["array", "null"],
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "subject": {
+                      "type": ["string", "null"]
+                    },
+                    "type": {
+                      "type": ["string", "null"]
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "contributors": {
+                "type": ["array", "null"],
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": ["string", "null"]
+                    },
+                    "contributor": {
+                      "type": ["string", "null"]
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "alternateTitles": {
+                "type": ["array", "null"],
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "alternateTitle": {
+                      "type": ["string", "null"]
+                    },
+                    "titleType": {
+                      "type": ["string", "null"]
+                    }
+                  },
+                  "required": []
+                }
+              },
+              "relationships": {
+                "type": ["object", "null"]
+              }
+            },
+            "required": []
+          },
+          "relationships": {
+            "type": ["object", "null"]
+          }
+        },
+        "required": ["id", "type", "attributes"]
+      }
+    },
+    "facets": {
+      "type": ["object", "null"],
+      "properties": {
+        "packages": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": ["integer", "string", "null"]
+              },
+              "name": {
+                "type": ["string", "null"]
+              },
+              "count": {
+                "type": ["integer", "null"]
+              }
+            },
+            "required": []
+          }
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "totalResults": {
+          "type": "integer"
+        }
+      },
+      "required": ["totalResults"]
+    },
+    "jsonapi": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": ["version"]
+    }
+  },
+  "required": ["data", "meta"]
+}
