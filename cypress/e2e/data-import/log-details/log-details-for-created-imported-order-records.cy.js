@@ -35,6 +35,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Log details', () => {
     let user;
+    // All imported PO lines may belong to one order - collect ids, delete each once in after()
+    const createdOrderIds = new Set();
     const quantityOfOrders = '7';
     const filePathForCreateOrder = 'marcFileForC376973.mrc';
     const marcFileName = `C376973 autotestFileName${getRandomPostfix()}.mrc`;
@@ -127,6 +129,7 @@ describe('Data Import', () => {
     after('Delete test data', () => {
       cy.getAdminToken(false).then(() => {
         Users.deleteViaApi(user.userId);
+        createdOrderIds.forEach((orderId) => Orders.deleteOrderViaApi(orderId));
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
@@ -161,7 +164,7 @@ describe('Data Import', () => {
           // Cleanup only - not a TestRail-required step. The hotlink's existence/target is
           // already verified above; reading the order id out of its href
           FileDetails.getOrderAndOrderLineIds(rowNumber).then(({ orderId }) => {
-            Orders.deleteOrderViaApi(orderId);
+            createdOrderIds.add(orderId);
           });
         });
       },
