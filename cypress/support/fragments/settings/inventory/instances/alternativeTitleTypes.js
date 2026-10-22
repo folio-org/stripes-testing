@@ -92,6 +92,10 @@ export default {
       Button('Delete').click(),
     ]);
   },
+  verifyNewButtonActive() {
+    cy.expect(rootPane.find(Button('New')).has({ disabled: false }));
+  },
+
   choose() {
     cy.do([
       NavListItem('Alternative title types').click(),

@@ -55,7 +55,9 @@ const generatePackageBodyForUpdate = (updatedPackageData) => {
       type: updatedPackageData.type,
       attributes: {
         name: updatedPackageData.attributes.name,
-        customDisplayName: updatedPackageData.attributes.customDisplayName,
+        // backend does not allow for empty customDisplayName values
+        // undefined value drops the whole field as cy.request() uses JSON.stringify
+        customDisplayName: updatedPackageData.attributes.customDisplayName || undefined,
         isSelected: updatedPackageData.attributes.isSelected,
         allowKbToAddTitles:
           updatedPackageData.attributes.isSelected && !updatedPackageData.attributes.isCustom,

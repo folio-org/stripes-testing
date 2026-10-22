@@ -8,7 +8,7 @@ import { APPLICATION_NAMES } from '../../../support/constants';
 
 let user;
 const caiaSoft = Configurations.configurations.CaiaSoft;
-const dematicStagingDirector = Configurations.configurations.DematicStagingDirector;
+const dematicTCPIP = Configurations.configurations.DematicTCP_IP;
 const dematicEMS = Configurations.configurations.DematicEMS;
 
 describe('remote-storage-configuration', () => {
@@ -41,15 +41,15 @@ describe('remote-storage-configuration', () => {
       // #4 Select the "New" button
       Configurations.openCreateConfigurationForm();
 
-      // #6 "Provider name" dropdown expands and consists of the options: "Dematic EMS (API)", "Dematic StagingDirector (TCP/IP)", "CaiaSoft"
+      // #6 "Provider name" dropdown expands and consists of the options: "Dematic EMS (API)", "Dematic (TCP/IP)", "CaiaSoft"
       Configurations.checkProviderNameDropdownValues();
 
       // #5 Fill in "Remote storage name"
-      // #7 Select  the "Dematic StagingDirector (TCP/IP)" from the "Provider name" dropdown
+      // #7 Select  the "Dematic (TCP/IP)" from the "Provider name" dropdown
       // #8 Fill into "Data synchronization schedule Runs every" input field with "1" minute value
-      dematicStagingDirector.fillRequiredFields(name);
+      dematicTCPIP.fillRequiredFields(name);
       // Check that the entered values is shown in the input fields
-      dematicStagingDirector.verifyRequiredFields(name);
+      dematicTCPIP.verifyRequiredFields(name);
 
       // #9 Select "Save & close" button
       Configurations.clickSaveAndCloseThenCheck();

@@ -7,7 +7,7 @@ import ConsortiumManager from '../../../support/fragments/settings/consortium-ma
 import ConsortiumManagerApp, {
   settingsItems,
 } from '../../../support/fragments/consortium-manager/consortiumManagerApp';
-import DataExport from '../../../support/fragments/consortium-manager/dataExport';
+import DataExport from '../../../support/fragments/consortium-manager/data-export/dataExportLogsConsortiumManager';
 import FileManager from '../../../support/utils/fileManager';
 import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
 import DataExportResults from '../../../support/fragments/data-export/dataExportResults';

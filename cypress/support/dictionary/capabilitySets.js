@@ -62,6 +62,21 @@ export default {
     resource: 'UI-Inventory Settings Holdings-Sources',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInventorySettingsClassificationTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Classification-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsInstanceNoteTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Instance-Note-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsModesOfIssuanceView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Modes-Of-Issuance',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventorySettingsSubjectSourcesView: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Inventory Settings Subject-Sources',
@@ -80,6 +95,36 @@ export default {
   uiDataImportSettingsManage: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Data-Import Settings',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiUsersSettingsPermsetsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Permsets',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiUsersSettingsPermsetsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Permsets',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiUsersSettingsDepartmentsCreateEditViewEdit: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Departments Create-Edit-View',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
+  uiUsersSettingsDepartmentsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Departments',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiUsersSettingsUsergroupsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Usergroups',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiUsersSettingsUsergroupsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Usergroups',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
   moduleListsManage: {
@@ -138,6 +183,11 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Users',
     action: CAPABILITY_ACTIONS.CREATE,
+  },
+  uiUsersPermsEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Users Perms',
+    action: CAPABILITY_ACTIONS.EDIT,
   },
   uiUsersLoansView: {
     type: CAPABILITY_TYPES.DATA,
@@ -299,6 +349,26 @@ export default {
     resource: 'UI-Data-Export',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiExportManagerExportManagerView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Export-Manager Export-Manager',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  dataExportManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Data-Export',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  dataExportConfigManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Data-Export Config',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  dataExportJobManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Data-Export Job',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
   uiInventoryHoldingsCreate: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Holdings',
@@ -431,6 +501,11 @@ export default {
   },
 
   // Procedural capability sets
+  uiExportManagerJobsDownloadAndResendExecute: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Export-Manager Jobs DownloadAndResend',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
   uiUsersResetPassword: {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'UI-Users Reset Password',
