@@ -5,6 +5,7 @@ import InventoryHoldings from '../../../../support/fragments/inventory/holdings/
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -64,11 +65,9 @@ describe('Inventory', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.College);
-              cy.getLocations({
-                limit: 1,
-                query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
-              }).then((res) => {
-                memberLocation = res;
+              // Member tenants have only the inactive DCB location - use the shared AT_ location
+              Locations.getOrCreateTenantLocationViaApi(Affiliations.College).then((location) => {
+                memberLocation = location;
               });
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                 holdingsSourceId = folioSource.id;

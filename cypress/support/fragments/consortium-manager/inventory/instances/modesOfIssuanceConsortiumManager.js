@@ -3,6 +3,7 @@ import { REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
+import { ConsortiumUtils } from '../../../../utils';
 
 const id = uuid();
 
@@ -39,22 +40,19 @@ export default {
   },
 
   getIssuanceModeByNameAndTenant(name, tenantId) {
-    return cy.getConsortiaId().then((consortiaId) => {
-      cy.getPublications([tenantId], '/modes-of-issuance?limit=2000&offset=0').then(
-        (publicationId) => {
-          cy.okapiRequest({
-            method: REQUEST_METHOD.GET,
-            path: `consortia/${consortiaId}/publications/${publicationId}/results`,
-          }).then(({ body }) => {
-            const issuanceModes = JSON.parse(
-              body.publicationResults.find((publication) => publication.tenantId === tenantId)
-                .response,
-            ).issuanceModes;
+    return cy
+      .getPublications([tenantId], '/modes-of-issuance?limit=2000&offset=0')
+      .then((publicationId) => {
+        // Wait for the publication to finish: tenant results have no response while it is in progress
+        return ConsortiumUtils.getPublicationResults(publicationId).then(
+          ({ publicationResults }) => {
+            const issuanceModes = publicationResults.find(
+              (publication) => publication.tenantId === tenantId,
+            ).response.issuanceModes;
             return issuanceModes.find((issuanceMode) => issuanceMode.name === name);
-          });
-        },
-      );
-    });
+          },
+        );
+      });
   },
 
   deleteIssuanceModeByNameAndTenant(name, tenantId) {

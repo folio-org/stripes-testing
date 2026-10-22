@@ -197,7 +197,10 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'Yes', false);
           InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'No', true);
 
-          BrowseCallNumber.clickOnResultByRowIndex(1);
+          BrowseCallNumber.clickOnFirstFoundResult({
+            shared: false,
+            tenantId: Affiliations.College,
+          });
           InventorySearchAndFilter.validateSearchTabIsDefault();
           InventorySearchAndFilter.verifyResultListExists();
           InventorySearchAndFilter.checkNoSharedInstancesInResultList();
@@ -221,7 +224,10 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'Yes', true);
           InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'No', false);
 
-          BrowseCallNumber.clickOnResultByRowIndex(1);
+          BrowseCallNumber.clickOnFirstFoundResult({
+            shared: true,
+            tenantId: Affiliations.College,
+          });
           InventorySearchAndFilter.validateSearchTabIsDefault();
           InventorySearchAndFilter.verifyResultListExists();
           InventorySearchAndFilter.checkSharedInstancesInResultList();
