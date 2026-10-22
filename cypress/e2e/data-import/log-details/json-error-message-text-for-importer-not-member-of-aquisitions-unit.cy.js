@@ -40,14 +40,18 @@ describe('Data Import', () => {
     const filePathForCreateOrder = 'marcBibFileForC385666.mrc';
     const marcFileName = `C385666 autotestFileName${getRandomPostfix()}.mrc`;
     const assignedAcqUnit = AcquisitionUnits.getDefaultAcquisitionUnit({ protectRead: true });
+    // DI order mapping resolves acq units from a mod-orders cache, which does not see units
+    // created after it was loaded (MODORDERS-1488) - so prefer the reference "main" unit.
+    // A new unit is created only if "main" is not available.
     const notAssignedAcqUnit = AcquisitionUnits.getDefaultAcquisitionUnit({ protectRead: true });
+    let isNotAssignedAcqUnitCreated = false;
     const mappingProfile = {
       name: `C385666 Check acquisitions unit.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,
       orderStatus: ORDER_STATUSES.OPEN,
       approved: true,
       vendor: VENDOR_NAMES.GOBI,
-      acquisitionsUnits: notAssignedAcqUnit.name,
+      acquisitionsUnits: null,
       title: '245$a',
       acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
       orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
@@ -67,7 +71,17 @@ describe('Data Import', () => {
     before('Create test user and login', () => {
       cy.getAdminToken();
       AcquisitionUnits.createAcquisitionUnitViaApi(assignedAcqUnit);
-      AcquisitionUnits.createAcquisitionUnitViaApi(notAssignedAcqUnit);
+      AcquisitionUnits.getAcquisitionUnitViaApi({
+        query: 'name=="main" and isDeleted==false and protectCreate==true',
+      }).then(({ acquisitionsUnits }) => {
+        if (acquisitionsUnits.length) {
+          mappingProfile.acquisitionsUnits = acquisitionsUnits[0].name;
+        } else {
+          AcquisitionUnits.createAcquisitionUnitViaApi(notAssignedAcqUnit);
+          isNotAssignedAcqUnitCreated = true;
+          mappingProfile.acquisitionsUnits = notAssignedAcqUnit.name;
+        }
+      });
 
       cy.then(() => {
         cy.createTempUser([
@@ -88,9 +102,11 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         AcquisitionUnits.deleteAcquisitionUnitViaApi(assignedAcqUnit.id);
-        AcquisitionUnits.deleteAcquisitionUnitViaApi(notAssignedAcqUnit.id);
+        if (isNotAssignedAcqUnitCreated) {
+          AcquisitionUnits.deleteAcquisitionUnitViaApi(notAssignedAcqUnit.id);
+        }
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
