@@ -147,6 +147,16 @@ export default {
     resource: 'UI-Myprofile Settings Main-Nav-Order',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  settingsMyprofileEnabledView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'Settings Myprofile Enabled',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiTenantSettingsSettingsLocaleManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Tenant-Settings Settings Locale',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 
   // Data capability sets
   capabilities: {

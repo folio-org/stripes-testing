@@ -14,6 +14,7 @@ import {
   including,
   ListItem,
 } from '../../../../../../interactors';
+import { INVENTORY_CLASSIFICATION_TYPES } from '../../../../constants';
 
 const classificationBrowseSectionName = 'Classification browse';
 const classificationBrowseItem = NavListItem(classificationBrowseSectionName);
@@ -34,18 +35,9 @@ const defaultClassificationBrowseIdsAlgorithms = [
   { id: 'dewey', algorithm: 'dewey' },
   { id: 'lc', algorithm: 'lc' },
 ];
-const classificationIdentifierTypesDropdownDefaultOptions = [
-  'Additional Dewey',
-  'Canadian Classification',
-  'Dewey',
-  'GDC',
-  'LC',
-  'LC (local)',
-  'National Agricultural Library',
-  'NLM',
-  'SUDOC',
-  'UDC',
-];
+const classificationIdentifierTypesDropdownDefaultOptions = Object.values(
+  INVENTORY_CLASSIFICATION_TYPES,
+);
 const tableHeaderTexts = ['Name', 'Classification identifier types', 'Actions'];
 
 export {
