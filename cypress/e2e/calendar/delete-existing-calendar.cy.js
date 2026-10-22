@@ -1,41 +1,38 @@
-import {
+import Calendar, {
   createCalendar,
-  createServicePoint,
-  deleteServicePoint,
-  openCalendarSettings,
+  deleteCalendarIfExists,
+  getTestCalendar,
+  getTestServicePoint,
 } from '../../support/fragments/calendar/calendar';
-import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import ModalFragments from '../../support/fragments/calendar/modal-fragments';
 import PaneActions from '../../support/fragments/calendar/pane-actions';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
 
-const testServicePoint = calendarFixtures.servicePoint;
-const testCalendar = calendarFixtures.calendar;
+const testServicePoint = getTestServicePoint();
+const testCalendar = getTestCalendar({ assignments: [testServicePoint.id] });
 
 describe('Calendar', () => {
   describe('Calendar New', () => {
+    let testCalendarResponse;
+
     before(() => {
-      // login
-      cy.loginAsAdmin();
-
-      // get admin token to use in okapiRequest to retrieve service points
-      if (!Cypress.env('token')) {
-        cy.getAdminToken();
-      }
-
-      // reset db state
-      deleteServicePoint(testServicePoint.id, false);
-
-      // create test service point
-      createServicePoint(testServicePoint, (response) => {
-        testCalendar.assignments = [response.body.id];
-
-        createCalendar(testCalendar);
-        openCalendarSettings();
+      // Create data via API before the UI login: getAdminToken clears cookies,
+      // which ends a UI session that is already open
+      cy.getAdminToken();
+      ServicePoints.createViaApi(testServicePoint);
+      createCalendar(testCalendar, (calResponse) => {
+        testCalendarResponse = calResponse.body;
       });
+
+      cy.loginAsAdmin({ path: TopMenu.settingsCalendarPath, waiter: Calendar.waitCalendarPaneToLoad });
     });
 
     after(() => {
-      deleteServicePoint(testServicePoint.id, true);
+      cy.getAdminToken();
+      // The test deletes the calendar; this only cleans up if it failed before that
+      deleteCalendarIfExists(testCalendarResponse?.id);
+      ServicePoints.deleteViaApi(testServicePoint.id);
     });
 
     it('C360943 Delete -> Delete existing calendar (helios)', { tags: ['smoke', 'helios', 'C360943'] }, () => {

@@ -1,62 +1,50 @@
-import {
+import Calendar, {
   createCalendar,
-  createServicePoint,
   deleteCalendar,
-  deleteServicePoint,
-  openCalendarSettings,
+  getTestCalendar,
+  getTestServicePoint,
 } from '../../support/fragments/calendar/calendar';
 import {
   checkCalendarFields,
   checkExpandButton,
   checkMenuAction,
 } from '../../support/fragments/calendar/calendar-info-pane';
-
-import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import PaneActions from '../../support/fragments/calendar/pane-actions';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
 
-const testServicePoint = calendarFixtures.servicePoint;
-const testCalendar = calendarFixtures.calendar;
+const testServicePoint = getTestServicePoint();
+const testCalendar = getTestCalendar({ assignments: [testServicePoint.id] });
 
 describe('Calendar', () => {
   describe('Calendar New', () => {
     let testCalendarResponse;
 
     before(() => {
-      // login and open calendar settings
-      cy.loginAsAdmin();
-
-      // get admin token to use in okapiRequest to retrieve service points
-      if (!Cypress.env('token')) {
-        cy.getAdminToken();
-      }
-
-      // reset db state
-      deleteServicePoint(testServicePoint.id, false);
-
-      // create test service point and calendar
-      createServicePoint(testServicePoint, (response) => {
-        testCalendar.assignments = [response.body.id];
-
-        createCalendar(testCalendar, (calResponse) => {
-          testCalendarResponse = calResponse.body;
-        });
+      // Create data via API before the UI login: getAdminToken clears cookies,
+      // which ends a UI session that is already open
+      cy.getAdminToken();
+      ServicePoints.createViaApi(testServicePoint);
+      createCalendar(testCalendar, (calResponse) => {
+        testCalendarResponse = calResponse.body;
       });
-    });
 
-    beforeEach(() => {
-      openCalendarSettings();
-      PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
+      cy.loginAsAdmin({ path: TopMenu.settingsCalendarPath, waiter: Calendar.waitCalendarPaneToLoad });
     });
 
     after(() => {
-      // delete test calendar
-      deleteCalendar(testCalendarResponse.id);
+      cy.getAdminToken();
+      if (testCalendarResponse) {
+        deleteCalendar(testCalendarResponse.id);
+      }
+      ServicePoints.deleteViaApi(testServicePoint.id);
     });
 
     it(
       'C360941 Checking the view of calendar on "Current calendar assignments" tab (helios)',
       { tags: ['smoke', 'helios', 'C360941'] },
       () => {
+        PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
         PaneActions.currentCalendarAssignmentsPane.checkNewButtonExists();
         PaneActions.currentCalendarAssignmentsPane.checkCalendarWithServicePointExists(
           testServicePoint.name,
