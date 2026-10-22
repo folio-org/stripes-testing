@@ -245,7 +245,7 @@ describe('Invoices', () => {
             });
 
             trace('Operation: cy.login (line 175)');
-            cy.login(userProperties.username, userProperties.password);
+            cy.login(userProperties.username, userProperties.password, { trace });
           });
       });
 

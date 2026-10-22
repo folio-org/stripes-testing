@@ -379,6 +379,7 @@ describe('Orders', () => {
         const { user, order } = f.ctx();
         trace('cy.login (site 301)');
         cy.login(user.username, user.password, {
+          trace,
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
         });

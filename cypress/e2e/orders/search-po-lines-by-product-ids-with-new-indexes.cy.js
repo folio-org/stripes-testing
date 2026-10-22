@@ -261,6 +261,7 @@ describe('Orders', () => {
 
         trace('cy.login');
         return cy.login(currentFlow.get(R.USER).username, currentFlow.get(R.USER).password, {
+          trace,
           path: TopMenu.orderLinesPath,
           waiter: OrderLines.waitLoading,
         });

@@ -616,6 +616,7 @@ describe('Orders', () => {
 
         trace('cy.login (site 475)');
         cy.login(f.get(R.USER).username, f.get(R.USER).password, {
+          trace,
           path: TopMenu.settingsOrdersPath,
           waiter: Orders.waitSettingsPageLoading,
         });

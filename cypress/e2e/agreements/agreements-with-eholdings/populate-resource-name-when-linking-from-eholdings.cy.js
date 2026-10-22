@@ -265,6 +265,7 @@ describe('Agreements', () => {
 
           trace('cy.login');
           return cy.login(currentFlow.get(R.USER).username, currentFlow.get(R.USER).password, {
+            trace,
             path: TopMenu.eholdingsPath,
             waiter: EHoldingsSearch.waitLoading,
           });

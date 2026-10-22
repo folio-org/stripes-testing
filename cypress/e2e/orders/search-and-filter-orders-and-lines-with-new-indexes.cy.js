@@ -458,6 +458,7 @@ describe('Orders', () => {
       .step((currentFlow) => {
         trace('SETUP step 22: cy.login');
         cy.login(currentFlow.get(R.USER).username, currentFlow.get(R.USER).password, {
+          trace,
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
         });

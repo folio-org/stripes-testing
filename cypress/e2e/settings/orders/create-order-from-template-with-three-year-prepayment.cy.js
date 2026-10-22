@@ -493,6 +493,7 @@ describe('Settings | Orders', () => {
 
         trace('cy.login [site 63]');
         cy.login(user.username, user.password, {
+          trace,
           path: TopMenu.settingsOrdersPath,
           waiter: Orders.waitSettingsPageLoading,
         });
