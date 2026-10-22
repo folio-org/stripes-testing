@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
@@ -21,6 +20,7 @@ import SettingsInventory, {
 import SettingsPane from '../../../../../support/fragments/settings/settingsPane';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
+import DateTools from '../../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('Consortia', () => {
@@ -29,6 +29,7 @@ describe('Consortia', () => {
       describe('Manage shared Holdings types', () => {
         let user;
         const systemUserName = 'System';
+        const todayDate = DateTools.getFormattedDate({ date: new Date() }, 'M/D/YYYY');
         const testData = {
           holdingsTypeName: `AT_C411495_HoldingsType_${getRandomPostfix()}`,
           editedHoldingsTypeName: `AT_C411495_HoldingsType_${getRandomPostfix()}_edited`,
@@ -138,12 +139,7 @@ describe('Consortia', () => {
               messages.created(testData.holdingsTypeName, SHARED_SETTING_LIBRARIES),
             );
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              [
-                testData.holdingsTypeName,
-                'consortium',
-                moment().format('l'),
-                SHARED_SETTING_LIBRARIES,
-              ],
+              [testData.holdingsTypeName, 'consortium', todayDate, SHARED_SETTING_LIBRARIES],
               [actionIcons.edit, actionIcons.trash],
             );
 
@@ -157,7 +153,7 @@ describe('Consortia', () => {
             HoldingsTypes.waitLoading();
             HoldingsTypes.verifyConsortiumHoldingsTypeInTheList({
               name: testData.holdingsTypeName,
-              lastUpdated: [moment().format('l'), systemUserName],
+              lastUpdated: [todayDate, systemUserName],
             });
 
             // Step 12: Switch to member tenant and verify
@@ -167,7 +163,7 @@ describe('Consortia', () => {
             HoldingsTypes.waitLoading();
             HoldingsTypes.verifyConsortiumHoldingsTypeInTheList({
               name: testData.holdingsTypeName,
-              lastUpdated: [moment().format('l'), systemUserName],
+              lastUpdated: [todayDate, systemUserName],
             });
 
             // Step 13: Switch back to central tenant and click "Edit" for the shared holdings type
@@ -203,12 +199,7 @@ describe('Consortia', () => {
               messages.updated(testData.editedHoldingsTypeName, SHARED_SETTING_LIBRARIES),
             );
             ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
-              [
-                testData.editedHoldingsTypeName,
-                'consortium',
-                moment().format('l'),
-                SHARED_SETTING_LIBRARIES,
-              ],
+              [testData.editedHoldingsTypeName, 'consortium', todayDate, SHARED_SETTING_LIBRARIES],
               [actionIcons.edit, actionIcons.trash],
             );
             ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
@@ -242,7 +233,7 @@ describe('Consortia', () => {
             HoldingsTypes.waitLoading();
             HoldingsTypes.verifyConsortiumHoldingsTypeInTheList({
               name: testData.editedHoldingsTypeName,
-              lastUpdated: [moment().format('l'), systemUserName],
+              lastUpdated: [todayDate, systemUserName],
             });
 
             // Step 21: Switch to member tenant and verify updated values
@@ -252,7 +243,7 @@ describe('Consortia', () => {
             HoldingsTypes.waitLoading();
             HoldingsTypes.verifyConsortiumHoldingsTypeInTheList({
               name: testData.editedHoldingsTypeName,
-              lastUpdated: [moment().format('l'), systemUserName],
+              lastUpdated: [todayDate, systemUserName],
             });
           },
         );
