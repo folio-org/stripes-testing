@@ -47,6 +47,14 @@ try {
  */
 async function setupAfterSpecChaining(on, config) {
   if (config.env.itemsFilePath) {
+    on('before:browser:launch', (browser, launchOptions) => {
+      if (browser.family === 'chromium') {
+        launchOptions.args.push('--no-sandbox');
+        launchOptions.args.push('--disable-gpu');
+      }
+      return launchOptions;
+    });
+
     let testRailAfterSpecHandler;
 
     // Intercept after:spec registration from TestRail plugin
