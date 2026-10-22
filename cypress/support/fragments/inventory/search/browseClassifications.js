@@ -58,6 +58,50 @@ export default {
     ]);
   },
 
+  // Counts rows matching the given column values (Classification, Title, Contributors,
+  // Number of titles) - only classificationNumber and expectedCount are required, the rest
+  // are checked only when provided. For result tables where the same classification value
+  // appears on several rows (e.g. same text, different identifier types),
+  // verifyValueInResultTableIsHighlighted/checkRowValues only confirm at least one match
+  // exists, which isn't enough to prove the expected row distribution.
+  verifyRowsCount({
+    classificationNumber,
+    title,
+    contributors,
+    numberOfTitles,
+    expectedCount,
+    isHighlighted = true,
+  }) {
+    cy.expect(
+      browseInventoryPane
+        .find(MultiColumnListCell(`${classificationNumber}`), { columnIndex: 0 })
+        .exists(),
+    );
+    cy.wait(2000);
+    cy.get('#browse-inventory-results-pane-content div[class^="mclRow-"]').then(($rows) => {
+      const matchingRows = [...$rows].filter((row) => {
+        const cells = row.querySelectorAll('div[class*="mclCell-"]');
+        const [classificationCell, titleCell, contributorsCell, numberOfTitlesCell] = cells;
+        const isBold = Boolean(classificationCell?.querySelector('strong'));
+
+        if (classificationCell?.textContent?.trim() !== classificationNumber) return false;
+        if (isBold !== isHighlighted) return false;
+        if (title !== undefined && titleCell?.textContent?.trim() !== title) return false;
+        if (contributors !== undefined && contributorsCell?.textContent?.trim() !== contributors) {
+          return false;
+        }
+        if (
+          numberOfTitles !== undefined &&
+          numberOfTitlesCell?.textContent?.trim() !== `${numberOfTitles}`
+        ) {
+          return false;
+        }
+        return true;
+      });
+      expect(matchingRows.length).to.equal(expectedCount);
+    });
+  },
+
   checkNumberOfTitlesInRow(callNumber, numberOfTitles) {
     cy.do(
       MultiColumnListCell(callNumber).perform((element) => {
@@ -134,6 +178,65 @@ export default {
         error: `Classification number did not appear: "${classificationNumber}"`,
       },
     );
+  },
+
+  // Waits until every {value, number} pair in expectedPairs is present via the API, with
+  // totalRecords matching number - unlike waitForClassificationNumberToAppear (which only
+  // waits for a value to exist at all), this confirms the full expected data set has finished
+  // indexing before the UI is checked, avoiding a race where only some rows/counters are ready
+  waitForClassificationNumberPairsToAppear(expectedPairs, classificationBrowseId = 'all') {
+    const uniqueValues = [...new Set(expectedPairs.map(({ value }) => value))];
+
+    return cy.recurse(
+      () => uniqueValues.reduce(
+        (chain, value) => chain.then((accumulatedItems) => this.getClassificationNumbersViaApi(classificationBrowseId, value).then((response) => accumulatedItems.concat(
+          response.body.items.filter((item) => item.classificationNumber === value),
+        ))),
+        cy.wrap([]),
+      ),
+      (allItems) => {
+        const actualCounts = allItems.map((item) => item.totalRecords).sort();
+        const expectedCounts = expectedPairs.map(({ number }) => number).sort();
+        return JSON.stringify(actualCounts) === JSON.stringify(expectedCounts);
+      },
+      {
+        limit: 14,
+        delay: 5000,
+        timeout: 72000,
+        error: 'Classification numbers did not fully appear with expected counts',
+        // cy.recurse calls this on every attempt with the remaining attempt count in
+        // `limit` - only log once we're on the last one and it still failed, so a normal
+        // retry doesn't spam the log but a real failure shows what was actually returned
+        log: (allItems, { successful, limit }) => {
+          if (successful || limit > 1) return;
+          const actualCounts = allItems.map((item) => item.totalRecords).sort();
+          const expectedCounts = expectedPairs.map(({ number }) => number).sort();
+          cy.log(
+            `waitForClassificationNumberPairsToAppear gave up - expected counts ${JSON.stringify(expectedCounts)}, got ${JSON.stringify(actualCounts)}, items: ${JSON.stringify(allItems)}`,
+          );
+        },
+      },
+    );
+  },
+
+  // verifyRowsCount doesn't retry - it reads the DOM once. Register this before any action
+  // that re-triggers a browse search (clicking Search, or changing/toggling a filter), then
+  // pass the returned alias to waitForBrowseResultsToLoad to wait for that search's actual
+  // response (not just the request firing) before reading rows, plus a short pause for the
+  // list to re-render. A fresh alias is generated on every call so a late-resolving earlier
+  // request can't be mistaken by cy.wait() for the one just triggered.
+  classificationNumbersInterceptCount: 0,
+
+  interceptClassificationNumbersApi() {
+    this.classificationNumbersInterceptCount += 1;
+    const alias = `getClassificationNumbersSearch${this.classificationNumbersInterceptCount}`;
+    cy.intercept('GET', '**/browse/classification-numbers/*/instances**').as(alias);
+    return alias;
+  },
+
+  waitForBrowseResultsToLoad(alias) {
+    cy.wait(`@${alias}`);
+    cy.wait(1000);
   },
 
   checkPaginationButtonsShown() {
