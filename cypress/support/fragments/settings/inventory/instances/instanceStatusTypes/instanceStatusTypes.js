@@ -120,6 +120,10 @@ export default {
     ]);
   },
 
+  verifyNewButtonActive() {
+    cy.expect(rootPane.find(Button('+ New')).has({ disabled: false }));
+  },
+
   choose() {
     cy.do(NavListItem('Instance status types').click());
     this.waitLoading();

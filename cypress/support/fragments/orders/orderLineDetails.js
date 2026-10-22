@@ -27,6 +27,7 @@ import {
   ORDER_LINE_FORM_LABELS,
   RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS,
 } from '../../constants';
+import { POLINE_DETAILS_FIELDS } from '../../constants/orders/order-line';
 import InteractorsTools from '../../utils/interactorsTools';
 import ExportDetails from '../exportManager/exportDetails';
 import TransactionDetails from '../finance/transactions/transactionDetails';
@@ -493,7 +494,12 @@ export default {
       }
     });
   },
-  checkLocationsSection({ locations = [], byValue = false, checkByIndex = true } = {}) {
+  checkLocationsSection({
+    locations = [],
+    byValue = false,
+    checkByIndex = true,
+    isExactCount = false,
+  } = {}) {
     locations.forEach((locationInformation, index) => {
       // With byValue, find the row by its first value (e.g. holding/location name) instead of its position
       const row = byValue ? InfoRow(including(locationInformation[0].value)) : InfoRow({ index });
@@ -513,6 +519,26 @@ export default {
         }
       });
     });
+
+    if (isExactCount) {
+      cy.expect(locationDetailsSection.find(InfoRow({ index: locations.length })).absent());
+    }
+  },
+  checkLocationsSectionInAnyOrder({ locations = [], isExactCount = false } = {}) {
+    const anchorKeys = [POLINE_DETAILS_FIELDS.HOLDING_NAME, POLINE_DETAILS_FIELDS.LOCATION_NAME];
+
+    locations.forEach((locationInformation) => {
+      const anchorEntry = locationInformation.find(({ key }) => anchorKeys.includes(key));
+      const row = locationDetailsSection.find(InfoRow(including(anchorEntry.value)));
+
+      locationInformation.forEach(({ key, value }) => {
+        cy.expect(row.find(KeyValue(key)).has({ value: including(String(value)) }));
+      });
+    });
+
+    if (isExactCount) {
+      cy.expect(locationDetailsSection.find(InfoRow({ index: locations.length })).absent());
+    }
   },
   verifyLocationPresentInSection(locationName) {
     cy.expect(locationDetailsSection.find(HTML(including(locationName))).exists());

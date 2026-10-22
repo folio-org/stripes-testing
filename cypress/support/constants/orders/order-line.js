@@ -205,6 +205,9 @@ export const POLINE_DETAILS_FIELDS = {
   INTERNAL_NOTE: 'Internal note',
   ACTIVATION_STATUS: 'Activation status',
   TRIAL: 'Trial',
+  INSTANCE_ID: 'Instance ID',
+  PRODUCT_ID: 'Product ID',
+  PRODUCT_ID_TYPE: 'Product ID type',
 };
 
 export const ORDER_LINE_RESULTS_ACTIONS_LABELS = {

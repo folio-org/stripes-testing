@@ -71,6 +71,9 @@ const addHoldingButton = instanceDetailsSection.find(Button('Add holdings'));
 const viewHoldingsButton = Button('View holdings');
 const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
+const selectAllItemsForMovementCheckbox = Checkbox({
+  ariaLabel: 'Select/unselect all items for movement',
+});
 const identifiersAccordion = Accordion('Identifiers');
 const singleRecordImportModal = Modal('Re-import');
 const source = KeyValue('Source');
@@ -1012,6 +1015,26 @@ export default {
       InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
     }
 
+    cy.wait(1000);
+  },
+
+  moveAllItemsToAnotherHolding({ fromHolding, toHolding, itemsCount, shouldOpen = true }) {
+    const holdingAccordion = Accordion({ label: including(`Holdings: ${fromHolding}`) });
+
+    if (shouldOpen) {
+      openHoldings(fromHolding);
+    }
+
+    cy.do(holdingAccordion.find(selectAllItemsForMovementCheckbox).click());
+    cy.wait(1000);
+    cy.do(holdingAccordion.find(Button('Move to')).click());
+    cy.wait(500);
+    cy.do(
+      DropdownMenu()
+        .find(Button(including(toHolding)))
+        .click(),
+    );
+    InteractorsTools.checkCalloutMessage(`${itemsCount} items have been successfully moved.`);
     cy.wait(1000);
   },
 
