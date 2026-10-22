@@ -1,18 +1,20 @@
 import { Permissions } from '../../support/dictionary';
 import Calendar, {
   createCalendar,
-  createServicePoint,
   deleteCalendar,
-  deleteServicePoint,
+  getTestCalendar,
+  getTestServicePoint,
   openCalendarSettings,
 } from '../../support/fragments/calendar/calendar';
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
 import PaneActions from '../../support/fragments/calendar/pane-actions';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 
-const testServicePoint = calendarFixtures.servicePoint;
-const testCalendar = calendarFixtures.calendar;
+const testServicePoint = getTestServicePoint();
+const testCalendar = getTestCalendar({ assignments: [testServicePoint.id] });
 
 const addExceptionsOpeningData = calendarFixtures.data.addExceptionsOpening;
 const addExceptionsOpeningExpectedUIValues = calendarFixtures.expectedUIValues.addExceptionsOpening;
@@ -20,18 +22,13 @@ const addExceptionsOpeningExpectedUIValues = calendarFixtures.expectedUIValues.a
 describe('Calendar', () => {
   describe('Calendar New', () => {
     let testCalendarResponse;
+    let user;
 
     before('Create test data and login', () => {
-      cy.loginAsAdmin();
-
-      deleteServicePoint(testServicePoint.id, false);
-
-      createServicePoint(testServicePoint, (response) => {
-        testCalendar.assignments = [response.body.id];
-
-        createCalendar(testCalendar, (calResponse) => {
-          testCalendarResponse = calResponse.body;
-        });
+      cy.getAdminToken();
+      ServicePoints.createViaApi(testServicePoint);
+      createCalendar(testCalendar, (calResponse) => {
+        testCalendarResponse = calResponse.body;
       });
 
       cy.createTempUser([
@@ -40,6 +37,7 @@ describe('Calendar', () => {
         Permissions.calendarDelete.gui,
         Permissions.calendarEditCalendars.gui,
       ]).then((userProperties) => {
+        user = userProperties;
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.settingsCalendarPath,
           waiter: Calendar.waitCalendarPaneToLoad,
@@ -49,8 +47,13 @@ describe('Calendar', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      deleteServicePoint(testServicePoint.id, true);
-      deleteCalendar(testCalendarResponse.id);
+      if (testCalendarResponse) {
+        deleteCalendar(testCalendarResponse.id);
+      }
+      ServicePoints.deleteViaApi(testServicePoint.id);
+      if (user) {
+        Users.deleteViaApi(user.userId);
+      }
     });
 
     it(
@@ -81,16 +84,13 @@ describe('Calendar', () => {
         CreateCalendarForm.verifyOpeningsSubRowAbsent(2);
 
         // intercept must be set up before save is triggered inside addOpeningExceptions
-        cy.intercept(
-          Cypress.env('OKAPI_HOST') + '/calendar/calendars/' + testCalendarResponse.id,
-          (req) => {
-            if (req.method === 'PUT') {
-              req.continue((res) => {
-                expect(res.statusCode).equals(200);
-              });
-            }
-          },
-        ).as('updateCalendar');
+        cy.intercept(`**/calendar/calendars/${testCalendarResponse.id}`, (req) => {
+          if (req.method === 'PUT') {
+            req.continue((res) => {
+              expect(res.statusCode).equals(200);
+            });
+          }
+        }).as('updateCalendar');
 
         CreateCalendarForm.addOpeningExceptions(addExceptionsOpeningData);
 

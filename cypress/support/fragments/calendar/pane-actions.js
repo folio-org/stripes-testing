@@ -6,14 +6,30 @@ import {
   HTML,
   including,
   Link,
+  matching,
+  MetaSection,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
   MultiColumnListRow,
   not,
+  or,
   Pane,
   PaneHeader,
 } from '../../../../interactors';
+
+// Long calendar or service point names widen the table, which can scroll the last columns out of
+// view; their headers are still clickable, so they are matched whether or not they are visible
+const tableHeader = (name) => MultiColumnListHeader(name, { visible: or(true, false) });
+
+// The calendar pane re-renders when the "Source" user of its record metadata finishes loading:
+// that resets an edit or duplicate form opened before it, and reopens collapsed accordions.
+// Until then the source reads "Unknown user"; afterwards it shows the user's name, as a link or
+// as plain text depending on the viewer's permissions
+export const waitForCalendarPaneLoaded = (calendarName) => {
+  const metaSection = MetaSection({ updatedByText: matching(/^Source: (?!Unknown user)\S/) });
+  cy.expect((calendarName ? Pane(calendarName).find(metaSection) : metaSection).exists());
+};
 
 export default {
   newButtonExists() {
@@ -36,22 +52,22 @@ export default {
   },
   calendarTable: {
     clickCalendarNameHeader() {
-      cy.do(MultiColumnListHeader('Calendar name').click());
+      cy.do(tableHeader('Calendar name').click());
     },
     clickStartDateHeader() {
-      cy.do(MultiColumnListHeader('Start date').click());
+      cy.do(tableHeader('Start date').click());
     },
     clickEndDateHeader() {
-      cy.do(MultiColumnListHeader('End date').click());
+      cy.do(tableHeader('End date').click());
     },
     clickAssignmentsHeader() {
-      cy.do(MultiColumnListHeader('Assignments').click());
+      cy.do(tableHeader('Assignments').click());
     },
     clickServicePointHeader() {
-      cy.do(MultiColumnListHeader('Service point').click());
+      cy.do(tableHeader('Service point').click());
     },
     clickCurrentStatusHeader() {
-      cy.do(MultiColumnListHeader('Current status').click());
+      cy.do(tableHeader('Current status').click());
     },
   },
   openCalendarWithServicePoint(servicePoint) {
@@ -283,6 +299,7 @@ export default {
       cy.do(jobs);
     },
     selectDuplicateAction({ calendarName }) {
+      waitForCalendarPaneLoaded(calendarName);
       cy.do(Pane(calendarName).clickAction('Duplicate'));
     },
     selectDeleteAction({ calendarName }) {
@@ -295,6 +312,7 @@ export default {
       cy.url().should('match', /\/settings\/calendar\/all\/edit\/.+$/g);
     },
     selectEditAction({ calendarName }) {
+      waitForCalendarPaneLoaded(calendarName);
       cy.do(Pane(calendarName).clickAction('Edit'));
     },
     checkDeleteHoursOfOperation({ calendarName, openingHoursData }) {
@@ -409,6 +427,7 @@ export default {
   },
   currentCalendarAssignmentsPane: {
     clickEditAction(calendarName) {
+      waitForCalendarPaneLoaded(calendarName);
       cy.do([Pane(calendarName).clickAction('Edit')]);
 
       cy.url().should('match', /\/settings\/calendar\/active\/edit\/.+$/g);
@@ -528,7 +547,8 @@ export default {
         parseInt(startMonth, 10) - 1,
         parseInt(startDay, 10),
       );
-      let dayOfWeekIndex = startDateObj.getUTCDay(); // to keep track of current day of the week
+      // startDateObj is local midnight, so read the local weekday; getUTCDay() is a day early east of UTC
+      let dayOfWeekIndex = startDateObj.getDay(); // to keep track of current day of the week
       let currDay = 1; // to keep track of dayLabel property of "CalendarCell"s
 
       let currDate = `${startYear}-${startMonth}-${('0' + startDay).slice(-2)}`; // to keep track of current date so exceptions can be verified

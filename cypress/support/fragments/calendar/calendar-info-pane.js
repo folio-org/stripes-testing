@@ -9,8 +9,11 @@ import {
   KeyValue,
   Accordion,
 } from '../../../../interactors';
+import { waitForCalendarPaneLoaded } from './pane-actions';
 
 export const checkExpandButton = () => {
+  // Otherwise the accordions can reopen after "Collapse all" is clicked
+  waitForCalendarPaneLoaded();
   cy.do([
     Button('Expand all').absent(),
     Button('Collapse all').exists(),

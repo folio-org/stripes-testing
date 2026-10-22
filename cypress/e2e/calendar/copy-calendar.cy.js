@@ -1,35 +1,40 @@
-import {
+import Calendar, {
   createCalendar,
   deleteCalendar,
+  deleteCalendarIfExists,
+  getTestCalendar,
   openCalendarSettings,
 } from '../../support/fragments/calendar/calendar';
-
-import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
 import PaneActions from '../../support/fragments/calendar/pane-actions';
+import TopMenu from '../../support/fragments/topMenu';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
-const testCalendar = calendarFixtures.calendar;
+const testCalendar = getTestCalendar();
 
 describe('Calendar', () => {
   describe('Calendar New', () => {
     let testCalendarResponse;
-    const duplicateCalendarName = 'test-calendar-a8531527-aa3b-447a-8c76-88f905ade409-duplicate';
+    let duplicateCalendarID;
+    const duplicateCalendarName = getTestEntityValue('C360953_Calendar_duplicate');
 
     before(() => {
-      // login
-      openCalendarSettings(false);
-
-      // get admin token to use in okapiRequest to retrieve service points
-      if (!Cypress.env('token')) {
-        cy.getAdminToken();
-      }
-
-      // create test calendar
+      // Create data via API before the UI login: getAdminToken clears cookies,
+      // which ends a UI session that is already open
+      cy.getAdminToken();
       createCalendar(testCalendar, (calResponse) => {
         testCalendarResponse = calResponse.body;
       });
 
-      openCalendarSettings();
+      cy.loginAsAdmin({ path: TopMenu.settingsCalendarPath, waiter: Calendar.waitCalendarPaneToLoad });
+    });
+
+    after(() => {
+      cy.getAdminToken();
+      deleteCalendarIfExists(testCalendarResponse?.id);
+      if (duplicateCalendarID) {
+        deleteCalendar(duplicateCalendarID);
+      }
     });
 
     it(
@@ -41,11 +46,9 @@ describe('Calendar', () => {
         PaneActions.individualCalendarPane.selectDuplicateAction({
           calendarName: testCalendarResponse.name,
         });
-        CreateCalendarForm.editNameAndSave({ newCalendarName: duplicateCalendarName });
 
-        // intercept http request
-        let duplicateCalendarID;
-        cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars', (req) => {
+        // intercept http request; registered before the form is saved so the request isn't missed
+        cy.intercept('**/calendar/calendars', (req) => {
           if (req.method === 'POST') {
             req.continue((res) => {
               expect(res.statusCode).equals(201);
@@ -54,15 +57,14 @@ describe('Calendar', () => {
           }
         }).as('createDuplicateCalendar');
 
+        CreateCalendarForm.editNameAndSave({ newCalendarName: duplicateCalendarName });
+
         // check that duplicate calendar exists in list of calendars
         cy.wait('@createDuplicateCalendar').then(() => {
           deleteCalendar(testCalendarResponse.id);
           openCalendarSettings();
           PaneActions.allCalendarsPane.openAllCalendarsPane();
           PaneActions.allCalendarsPane.checkCalendarExists(duplicateCalendarName);
-
-          // delete duplicate calendar
-          deleteCalendar(duplicateCalendarID);
         });
       },
     );

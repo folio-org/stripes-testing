@@ -1,4 +1,17 @@
 import { Button, Link, Modal, MultiColumnListCell, Pane } from '../../../../interactors';
+import { getTestEntityValue } from '../../utils/stringTools';
+import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
+import calendarFixtures from './calendar-e2e-test-values';
+
+// Calendar specs run in parallel, so each one creates its own service point and calendar
+// instead of sharing the fixture IDs and names, which another spec could delete or replace
+export const getTestServicePoint = () => ServicePoints.getDefaultServicePoint();
+
+export const getTestCalendar = (overrides = {}) => ({
+  ...Cypress._.cloneDeep(calendarFixtures.calendar),
+  name: getTestEntityValue('Calendar'),
+  ...overrides,
+});
 
 export const openCalendarSettings = (isLoggedIn = true) => {
   if (!isLoggedIn) {
@@ -52,6 +65,16 @@ export const deleteCalendar = (calendarID, callback = null) => {
     expect(response.status).equals(204);
     if (callback) {
       callback(response);
+    }
+  });
+};
+
+// For cleanup of a calendar the test may already have deleted (or purged): deletes it only if it
+// is still there, so the cleanup doesn't log a 404
+export const deleteCalendarIfExists = (calendarID) => {
+  cy.getCalendars().then(({ calendars }) => {
+    if (calendars.some(({ id }) => id === calendarID)) {
+      deleteCalendar(calendarID);
     }
   });
 };
