@@ -1886,7 +1886,11 @@ export default {
   },
 
   setExpirationDate() {
-    cy.do(setExpirationDateButton.click());
+    cy.get('body').then(($body) => {
+      if ($body.find('button:contains("Set")').length > 0) {
+        cy.do(setExpirationDateButton.click());
+      }
+    });
   },
 
   closeKeycloakModalIfExists() {
@@ -2181,5 +2185,43 @@ export default {
     // Fourth row
     const _usernameField = row(3).find(usernameField);
     cy.expect([username ? _usernameField.has({ value: username }) : _usernameField.exists()]);
+  },
+
+  expandAccordion(accordionLabel) {
+    const accordion = getAccordionByLabel(accordionLabel);
+    cy.do(accordion.clickHeader());
+    cy.expect(accordion.has({ open: true }));
+  },
+
+  chooseCustomFieldMultiSelectOption(accordionLabel, fieldLabel, optionValue) {
+    cy.do(
+      getAccordionByLabel(accordionLabel)
+        .find(MultiSelect({ label: including(fieldLabel) }))
+        .choose(optionValue),
+    );
+  },
+
+  clearCustomFieldMultiSelect(accordionLabel, fieldLabel, option) {
+    cy.do(
+      getAccordionByLabel(accordionLabel)
+        .find(MultiSelect({ label: including(fieldLabel) }))
+        .remove(option),
+    );
+  },
+
+  verifyMultiSelectCustomFieldError(accordionLabel, fieldLabel, errorMessage) {
+    cy.expect(
+      getAccordionByLabel(accordionLabel)
+        .find(MultiSelect({ label: including(fieldLabel) }))
+        .has({ error: errorMessage }),
+    );
+  },
+
+  verifyMultiSelectCustomFieldNoError(accordionLabel, fieldLabel) {
+    cy.expect(
+      getAccordionByLabel(accordionLabel)
+        .find(MultiSelect({ label: including(fieldLabel) }))
+        .has({ error: '' }),
+    );
   },
 };
