@@ -78,22 +78,23 @@ describe('fse-agreements', { retries: { runMode: 1 } }, () => {
   );
 
   it(
-    `FDOPS-6964 - Entitlement log entries carry package IDs and resource URLs for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    `FDOPS-6964 - Entitlement log entries carry expected fields for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['fse', 'api', 'entitlements', 'agreements', 'sanity', 'FDOPS-6964'] },
     () => {
-      cy.getEntitlements().then((response) => {
+      cy.getEntitlementLogEntries().then((response) => {
         cy.expect(response.status).to.eq(200);
 
-        const entitlements = response.body.results ?? response.body;
+        const entitlementLogEntries = response.body.results ?? response.body;
 
-        if (!entitlements.length) {
+        if (!entitlementLogEntries.length) {
           cy.log('No entitlement log entries found — skipping field checks');
           return;
         }
 
-        entitlements.forEach((entitlement) => {
-          cy.expect(entitlement).to.have.property('packageId');
-          cy.expect(entitlement).to.have.property('resourceURL');
+        entitlementLogEntries.forEach((entry) => {
+          cy.expect(entry).to.have.property('seqId');
+          cy.expect(entry).to.have.property('eventType');
+          cy.expect(entry).to.have.property('resource_name');
         });
       });
     },

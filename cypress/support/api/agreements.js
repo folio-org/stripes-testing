@@ -38,10 +38,10 @@ Cypress.Commands.add('getErmIdentifierById', (id) => {
   });
 });
 
-Cypress.Commands.add('getEntitlements', () => {
+Cypress.Commands.add('getEntitlementLogEntries', () => {
   cy.okapiRequest({
     method: 'GET',
-    path: 'erm/entitlements',
+    path: 'erm/entitlementLogEntry',
     isDefaultSearchParamsRequired: false,
   });
 });
