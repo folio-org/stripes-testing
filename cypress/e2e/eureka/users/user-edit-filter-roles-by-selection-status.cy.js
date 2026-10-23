@@ -115,7 +115,7 @@ describe('Eureka', () => {
         UserEdit.verifyRoleInModal(roleAName, { isShown: true, isChecked: true });
         UserEdit.verifyRoleInModal(roleBName, { isShown: true, isChecked: false });
 
-        // Step 7: Check "Assigned" in "Role assigment status" filter
+        // Step 7: Check "Assigned" in "Role assignment status" filter
         // Expected: no results (nothing has been saved/assigned yet)
         UserEdit.selectRoleAssignmentFilterOptionInModal(assignmentFilterOptions.ASSIGNED);
         UserEdit.verifyRolesFoundCountInModal(0);
@@ -181,7 +181,7 @@ describe('Eureka', () => {
         UserEdit.verifyRoleInModal(roleAName, { isShown: true, isChecked: false });
         UserEdit.verifyRoleStatusInModal(roleAName, assignmentFilterOptions.ASSIGNED);
 
-        // Step 15: Check "Assigned" in "Role assigment status" facet
+        // Step 15: Check "Assigned" in "Role assignment status" facet
         // Expected: only Role A is returned
         UserEdit.selectRoleAssignmentFilterOptionInModal(assignmentFilterOptions.ASSIGNED);
         UserEdit.verifyRolesFoundCountInModal(1);
