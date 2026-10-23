@@ -124,6 +124,14 @@ export default {
     this.verifySelectedSettingIsDisplayed(settingName);
   },
 
+  verifySettingsItemIsSelected(settingName) {
+    cy.expect(
+      Section({ id: 'settings-nav-pane' })
+        .find(NavListItem(settingName))
+        .has({ className: including('isActive') }),
+    );
+  },
+
   verifyStatusOfConsortiumManager(members) {
     this.waitLoading();
     this.verifySettingPaneIsDisplayed();

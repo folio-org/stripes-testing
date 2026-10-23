@@ -83,10 +83,10 @@ export default {
 
     cy.expect([
       row.find(TextField({ placeholder: 'name' })).has({ value: name }),
-      sourceCell.has({ content: source }),
-      sourceCell.find(TextField()).absent(),
       lastUpdatedCell.find(TextField()).absent(),
     ]);
+    // some settings (e.g. loan types) have no "Source" column
+    if (source) cy.expect([sourceCell.has({ content: source }), sourceCell.find(TextField()).absent()]);
     if (code) cy.expect(row.find(TextField({ placeholder: 'code' })).has({ value: code }));
     lastUpdated.forEach((text) => {
       cy.expect(lastUpdatedCell.has({ content: including(text) }));
