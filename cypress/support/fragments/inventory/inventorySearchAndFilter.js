@@ -111,6 +111,11 @@ const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
 const clearIcon = Button({ icon: 'times-circle-solid' });
+const searchAndFilterPane = Pane('Search & filter');
+const collapseSearchPaneButton = Button({
+  ariaLabelledby: 'collapse-filter-pane-button-tooltip-text',
+});
+const expandSearchPaneButton = Button({ ariaLabelledby: 'expand-filter-pane-button-tooltip-text' });
 const getSearchErrorText = (query) => `Search could not be processed for ${query}. Please check your query and try again.`;
 const anyBrowseResultList = MultiColumnList({ id: including('browse-results-list-') });
 const URI_CHAR_LIMIT = 8192;
@@ -1896,5 +1901,30 @@ export default {
         ),
       }).absent(),
     );
+  },
+
+  // Real mouse clicks (cypress-real-events), so the browser moves focus the way it does for a user
+  clickCollapseSearchPaneButton() {
+    cy.get('button[data-test-collapse-filter-pane-button]').realClick();
+  },
+
+  clickExpandSearchPaneButton() {
+    cy.get('button[data-test-expand-filter-pane-button]').realClick();
+  },
+
+  verifySearchPaneCollapsed() {
+    cy.expect([searchAndFilterPane.absent(), expandSearchPaneButton.exists()]);
+  },
+
+  verifySearchPaneExpanded() {
+    cy.expect([searchAndFilterPane.exists(), collapseSearchPaneButton.exists()]);
+  },
+
+  verifyCollapseSearchPaneButtonFocused() {
+    cy.expect(collapseSearchPaneButton.has({ focused: true }));
+  },
+
+  verifyExpandSearchPaneButtonFocused() {
+    cy.expect(expandSearchPaneButton.has({ focused: true }));
   },
 };
