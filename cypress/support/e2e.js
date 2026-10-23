@@ -34,10 +34,10 @@ Cypress.on('window:before:load', (window) => {
 });
 
 Cypress.on('fail', (err) => {
-  const password = Cypress.env('diku_password');
-  if (typeof password === 'string' && password.length > 0) {
-    // Treat passwords as literal text, including regex and replacement characters.
-    err.message = err.message.split(password).join('[FILTERED]');
+  if (err.message.includes(Cypress.env('diku_password'))) {
+    // replace all matches of password in the log with mask
+    const passwordRegex = new RegExp(Cypress.env('diku_password'), 'g');
+    err.message = err.message.replace(passwordRegex, '[FILTERED]');
   }
   // Mask API key if present in the format apikey=...
   const apiKeyRegex = /apikey=([A-Za-z0-9\-_]+)/g;

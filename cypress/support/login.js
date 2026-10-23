@@ -29,13 +29,9 @@ Cypress.Commands.add(
       path = '/',
       waiter = () => cy.expect(Heading(including('Welcome')).exists()),
       authRefresh = false,
-      trace,
     } = {},
   ) => {
     function loginFn() {
-      const mark = (message) => {
-        if (trace) trace(`Login: ${message}`);
-      };
       // We use a behind-the-scenes method of ensuring we are logged
       // out, rather than using the UI, in accordance with the Best
       // Practices guidance at
@@ -43,36 +39,25 @@ Cypress.Commands.add(
       localforage.removeItem('okapiSess');
 
       if (Cypress.env('eureka')) {
-        mark('log out via API');
         cy.logoutViaApi();
-        mark('clear cookies');
         cy.clearCookies({ domain: null }).then(() => {
-          mark('visit requested page');
           cy.visit(path);
 
-          mark('select tenant');
           cy.selectTenantIfDropdown();
 
-          mark('submit credentials');
           cy.inputCredentialsAndLogin(username, password);
-          mark('wait for requested page');
           waiter();
-          mark('complete');
         });
       } else {
-        mark('visit requested page');
         cy.visit(path);
 
         // Todo: find the way to wrap interactor to cy chainable object
-        mark('submit credentials');
         cy.inputCredentialsAndLogin(username, password);
         // TODO: find the way how customize waiter timeout in case of interactors(cy.wrap may be)
         // https://stackoverflow.com/questions/57464806/set-timeout-for-cypress-expect-assertion
         // https://docs.cypress.io/api/commands/wrap#Requirements
 
-        mark('wait for requested page');
         waiter();
-        mark('complete');
         // There seems to be a race condition here: sometimes there is
         // re-render that happens so quickly that following actions like
         //       cy.get('#app-list-item-clickable-courses-module').click()

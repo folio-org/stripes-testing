@@ -205,32 +205,15 @@ const multiYearPaymentTerms = {
   assertFiscalYearOptionAbsent(fyCode) {
     cy.expect(SelectionOption(including(fyCode)).absent());
   },
-  selectStartingFiscalYear(fyCode, { trace } = {}) {
-    const actions = [
+  selectStartingFiscalYear(fyCode) {
+    cy.do([
       paymentTermsSection.perform((el) => el.scrollIntoView()),
       paymentTermsSection
         .find(Selection(including(PAYMENT_TERMS_LABELS.STARTING_FISCAL_YEAR)))
         .open(),
       SelectionList().filter(fyCode),
       SelectionOption(including(fyCode)).click(),
-    ];
-
-    if (!trace) {
-      cy.do(actions);
-      return;
-    }
-
-    const labels = [
-      'scroll to payment terms',
-      'open dropdown',
-      'filter options',
-      'click matching option',
-    ];
-    actions.forEach((action, index) => {
-      trace(`Starting fiscal year: ${labels[index]}`);
-      cy.do(action);
-    });
-    trace('Starting fiscal year: selection complete');
+    ]);
   },
   clearPrepaymentTotalPrice() {
     this.fillPrepaymentTotalPrice('');

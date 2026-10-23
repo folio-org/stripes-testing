@@ -34,13 +34,8 @@ import getRandomStringCode from '../../support/utils/generateTextCode';
 import { parsePrepaymentFiscalYearDistribution } from '../../support/utils/ordersExport';
 import { FinanceHelper } from '../../support/fragments/finance';
 
-// Temporary Jenkins diagnostics; remove after the freeze investigation.
-const trace = (message) => cy.task('log', `[C1404903] ${message}`);
-
 const OrderLineEditForm = { ...OrderLineEditFormFragment, ...MultiYearPaymentTerms };
 
-// The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
-// #freeze pipeline deadlock
 describe('Orders', () => {
   const flow = new ExecutionFlowManager();
 
@@ -91,99 +86,67 @@ describe('Orders', () => {
   const FUND_DISTRIBUTION_VALIDATION_PATH = '**/orders/order-lines/fund-distributions/validate';
 
   const createBudgetStep = (fundKey, fiscalYearKey, budgetKey, budgetStatus) => (f) => {
-    trace('FLOW: createBudgetStep');
     const { [fundKey]: fund, [fiscalYearKey]: fiscalYear, expenseClass } = f.ctx();
 
-    trace('Budgets.createViaApi (site 93)');
     return Budgets.createViaApi({
       ...Budgets.getDefaultBudget(),
       fiscalYearId: fiscalYear.id,
       fundId: fund.id,
       allocated: 1000,
       budgetStatus,
-    }).then((budget) => {
-      trace('Budgets.updateBudgetViaApi (site 99)');
-      return Budgets.updateBudgetViaApi({
-        ...budget,
-        statusExpenseClasses: [
-          {
-            status: BUDGET_STATUSES.ACTIVE,
-            expenseClassId: expenseClass.id,
-          },
-        ],
-      }).then(() => {
-        f.set(budgetKey, budget, () => {
-          trace('Budgets.deleteViaApi (site 108)');
-          return Budgets.deleteViaApi(budget.id, false);
-        });
-      });
-    });
+    }).then((budget) => Budgets.updateBudgetViaApi({
+      ...budget,
+      statusExpenseClasses: [
+        {
+          status: BUDGET_STATUSES.ACTIVE,
+          expenseClassId: expenseClass.id,
+        },
+      ],
+    }).then(() => {
+      f.set(budgetKey, budget, () => Budgets.deleteViaApi(budget.id, false));
+    }));
   };
 
   before(() => {
-    trace('SETUP: start');
-
-    trace('cy.getAdminToken (site 113)');
     cy.getAdminToken();
-    trace('cy.clearLocalStorage (site 114)');
     cy.clearLocalStorage();
 
-    trace('cy.getTenantLocaleApi (site 116)');
     cy.getTenantLocaleApi().then((locale) => flow.set(R.LOCALE, locale));
 
     flow
       // Precondition 1: "Set purchase order lines limit" is set to more than 1
       .step(() => {
-        trace('FLOW: step 1');
-
-        trace('OrderLinesLimit.setPOLLimitViaApi (site 121)');
         return OrderLinesLimit.setPOLLimitViaApi(2);
       })
       // Precondition 2: Create a current FY and three future FYs in the same series
       .step((f) => {
-        trace('FLOW: step 2');
-
         const series = getRandomStringCode(5);
 
-        trace('cy.wrap (site 127)');
         return cy.wrap([R.FY1, R.FY2, R.FY3, R.FY4]).each((key, index) => {
-          trace('FiscalYears.createViaApi (site 128)');
           return FiscalYears.createViaApi({
             ...FiscalYears.getDefaultFiscalYear(),
             ...DateTools.getFullFiscalYearStartAndEnd(index),
             code: `${series}${new Date().getFullYear() + index}`,
             series,
           }).then((fy) => {
-            f.set(key, fy, () => {
-              trace('FiscalYears.deleteFiscalYearViaApi (site 134)');
-              return FiscalYears.deleteFiscalYearViaApi(fy.id, false);
-            });
+            f.set(key, fy, () => FiscalYears.deleteFiscalYearViaApi(fy.id, false));
           });
         });
       })
       // Precondition 3: Create active Ledger related to FY1
       .step((f) => {
-        trace('FLOW: step 3');
-
         const { fy1 } = f.ctx();
-        trace('Ledgers.createViaApi (site 141)');
         return Ledgers.createViaApi({
           ...Ledgers.getDefaultLedger(),
           fiscalYearOneId: fy1.id,
           ledgerStatus: LEDGER_STATUSES.ACTIVE,
         }).then((ledger) => {
-          f.set(R.LEDGER, ledger, () => {
-            trace('Ledgers.deleteLedgerViaApi (site 146)');
-            return Ledgers.deleteLedgerViaApi(ledger.id, false);
-          });
+          f.set(R.LEDGER, ledger, () => Ledgers.deleteLedgerViaApi(ledger.id, false));
         });
       })
       // Precondition 4: Create Fund A
       .step((f) => {
-        trace('FLOW: step 4');
-
         const { ledger } = f.ctx();
-        trace('Funds.createViaApi (site 152)');
         return Funds.createViaApi({
           ...Funds.getDefaultFund(),
           ledgerId: ledger.id,
@@ -191,18 +154,12 @@ describe('Orders', () => {
           code: `${R.FUND_A}${getRandomPostfix()}`,
           fundStatus: FUND_STATUSES.ACTIVE,
         }).then((response) => {
-          f.set(R.FUND_A, response.fund, () => {
-            trace('Funds.deleteFundViaApi (site 159)');
-            return Funds.deleteFundViaApi(response.fund.id, false);
-          });
+          f.set(R.FUND_A, response.fund, () => Funds.deleteFundViaApi(response.fund.id, false));
         });
       })
       // Precondition 4: Create Fund B
       .step((f) => {
-        trace('FLOW: step 5');
-
         const { ledger } = f.ctx();
-        trace('Funds.createViaApi (site 165)');
         return Funds.createViaApi({
           ...Funds.getDefaultFund(),
           name: `AT_FUND_${R.FUND_B}_${getRandomPostfix()}`,
@@ -210,26 +167,17 @@ describe('Orders', () => {
           ledgerId: ledger.id,
           fundStatus: FUND_STATUSES.ACTIVE,
         }).then((response) => {
-          f.set(R.FUND_B, response.fund, () => {
-            trace('Funds.deleteFundViaApi (site 172)');
-            return Funds.deleteFundViaApi(response.fund.id, false);
-          });
+          f.set(R.FUND_B, response.fund, () => Funds.deleteFundViaApi(response.fund.id, false));
         });
       })
       // Precondition 4: Create expense class "Electronic"
       .step((f) => {
-        trace('FLOW: step 6');
-
-        trace('ExpenseClasses.createExpenseClassViaApi (site 177)');
         return ExpenseClasses.createExpenseClassViaApi({
           ...ExpenseClasses.getDefaultExpenseClass(),
           name: `Electronic_${getRandomPostfix()}`,
           code: `EL${getRandomPostfix()}`,
         }).then((ec) => {
-          f.set(R.EXPENSE_CLASS, ec, () => {
-            trace('ExpenseClasses.deleteExpenseClassViaApi (site 182)');
-            return ExpenseClasses.deleteExpenseClassViaApi(ec.id, { failOnStatusCode: false });
-          });
+          f.set(R.EXPENSE_CLASS, ec, () => ExpenseClasses.deleteExpenseClassViaApi(ec.id, { failOnStatusCode: false }));
         });
       })
       // Precondition 4: Create budget for Fund A in FY1 with expense class
@@ -242,9 +190,6 @@ describe('Orders', () => {
       .step(createBudgetStep(R.FUND_B, R.FY2, R.BUDGET_B2, BUDGET_STATUSES.PLANNED))
       // Precondition 5: Fetch acquisition method "Other" for POL creation
       .step((f) => {
-        trace('FLOW: step 7');
-
-        trace('cy.getAcquisitionMethodsApi (site 195)');
         return cy
           .getAcquisitionMethodsApi({
             query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.OTHER}"`,
@@ -255,24 +200,15 @@ describe('Orders', () => {
       })
       // Precondition 5: Create organization (vendor)
       .step((f) => {
-        trace('FLOW: step 8');
-
-        trace('NewOrganization.createViaApi (site 205)');
         return NewOrganization.createViaApi(NewOrganization.getDefaultOrganization()).then(
           (org) => {
-            f.set(R.ORG, org, () => {
-              trace('Organizations.deleteOrganizationViaApi (site 207)');
-              return Organizations.deleteOrganizationViaApi(org.id);
-            });
+            f.set(R.ORG, org, () => Organizations.deleteOrganizationViaApi(org.id));
           },
         );
       })
       // Precondition 5: Create Ongoing order in Pending status
       .step((f) => {
-        trace('FLOW: step 9');
-
         const { org } = f.ctx();
-        trace('Orders.createOrderViaApi (site 214)');
         return Orders.createOrderViaApi({
           id: uuid(),
           vendor: org.id,
@@ -280,18 +216,12 @@ describe('Orders', () => {
           ongoing: { isSubscription: false, manualRenewal: false },
           workflowStatus: ORDER_STATUSES.PENDING,
         }).then((order) => {
-          f.set(R.ORDER, order, () => {
-            trace('Orders.deleteOrderViaApi (site 221)');
-            return Orders.deleteOrderViaApi(order.id, false);
-          });
+          f.set(R.ORDER, order, () => Orders.deleteOrderViaApi(order.id, false));
         });
       })
       // Precondition 5: Create POL with 4-year multi-year prepayment starting FY1
       .step((f) => {
-        trace('FLOW: step 10');
-
         const { order, fundA, fundB, fy1, fy2, fy3, fy4, expenseClass, acqMethod } = f.ctx();
-        trace('OrderLines.createOrderLineViaApi (site 227)');
         return OrderLines.createOrderLineViaApi({
           ...BasicOrderLine.getDefaultOrderLine({
             purchaseOrderId: order.id,
@@ -348,17 +278,11 @@ describe('Orders', () => {
             ],
           },
         }).then((pol) => {
-          f.set(R.POL, pol, () => {
-            trace('OrderLines.deleteOrderLineViaApi (site 283)');
-            return OrderLines.deleteOrderLineViaApi(pol.id, false);
-          });
+          f.set(R.POL, pol, () => OrderLines.deleteOrderLineViaApi(pol.id, false));
         });
       })
       // Precondition 6: Create authorized user with Orders edit/create + export CSV permissions
       .step((f) => {
-        trace('FLOW: step 11');
-
-        trace('cy.createTempUser (site 288)');
         return cy
           .createTempUser([
             Permissions.uiOrdersCreate.gui,
@@ -366,64 +290,39 @@ describe('Orders', () => {
             Permissions.uiExportOrders.gui,
           ])
           .then((userProperties) => {
-            f.set(R.USER, userProperties, () => {
-              trace('Users.deleteViaApi (site 295)');
-              return Users.deleteViaApi(userProperties.userId);
-            });
+            f.set(R.USER, userProperties, () => Users.deleteViaApi(userProperties.userId));
           });
       })
       // Precondition 7: Log in and navigate to Orders; open details pane for the order
       .step((f) => {
-        trace('FLOW: step 12');
-
         const { user, order } = f.ctx();
-        trace('cy.login (site 301)');
         cy.login(user.username, user.password, {
-          trace,
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
         });
-        trace('Orders.selectOrderByPONumber (site 305)');
         Orders.selectOrderByPONumber(order.poNumber);
-        trace('OrderDetails.waitLoading (site 306)');
         OrderDetails.waitLoading();
       });
-
-    trace('SETUP: complete');
   });
 
   after(() => {
-    trace('CLEANUP: start');
-
-    trace('cy.getAdminToken (site 311)');
     cy.getAdminToken();
-    trace('FileManager.deleteFilesFromDownloadsByMask (site 312)');
     FileManager.deleteFilesFromDownloadsByMask(testData.csvFileName);
-    trace('flow.cleanup (site 313)');
     flow.cleanup();
-
-    trace('CLEANUP: complete');
   });
 
-  // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
-  // #freeze pipeline deadlock
   it(
     'C1404903 Create an order with two-year prepayment term starting from the future fiscal year (thunderjet)',
     { tags: ['extendedPathBroken', 'thunderjet', 'C1404903Broken'] },
     () => {
-      trace('TEST: start');
-
       const { fy1, fy2, fy3, fy4, fundA, fundB, expenseClass, locale } = flow.ctx();
 
       const triggerValidation = () => {
-        trace('OrderLineEditForm.scrollToPaymentTermsSection (site 325)');
         OrderLineEditForm.scrollToPaymentTermsSection();
-        trace('cy.wait (site 326)');
         cy.wait('@validateFD');
       };
       const formatAmount = (value) => NumberTools.formatCurrency(value, locale);
       const assertEnteredFutureYearDistributions = () => {
-        trace('OrderLineEditForm.assertFiscalYearCardFundDistributions (site 330)');
         OrderLineEditForm.assertFiscalYearCardFundDistributions({
           fyCode: fy2.code,
           distributions: [
@@ -435,7 +334,6 @@ describe('Orders', () => {
             },
           ],
         });
-        trace('OrderLineEditForm.assertFiscalYearCardFundDistributions (site 341)');
         OrderLineEditForm.assertFiscalYearCardFundDistributions({
           fyCode: fy3.code,
           distributions: [
@@ -445,34 +343,23 @@ describe('Orders', () => {
         });
       };
 
-      trace('cy.intercept (site 350)');
       cy.intercept('PUT', FUND_DISTRIBUTION_VALIDATION_PATH).as('validateFD');
-      trace('FinanceHelper.interceptGetFiscalYearsRequest (site 351)');
       FinanceHelper.interceptGetFiscalYearsRequest();
 
-      trace('Step 1. Click on the PO line record; Click "Actions" button; Select "Edit" option');
-      trace('OrderDetails.openPolDetails (site 354)');
+      cy.log('Step 1. Click on the PO line record; Click "Actions" button; Select "Edit" option');
       OrderDetails.openPolDetails(testData.polTitle);
-      trace('OrderLineDetails.openOrderLineEditForm (site 355)');
       OrderLineDetails.openOrderLineEditForm();
 
-      trace('FinanceHelper.waitForGetFiscalYearsRequestCompletion (site 357)');
       FinanceHelper.waitForGetFiscalYearsRequestCompletion();
 
-      trace('OrderLineEditForm.scrollToPaymentTermsSection (site 359)');
       OrderLineEditForm.scrollToPaymentTermsSection();
-      trace('OrderLineEditForm.assertMultiYearPrepaymentCheckedAndEnabled (site 360)');
       OrderLineEditForm.assertMultiYearPrepaymentCheckedAndEnabled();
-      trace('OrderLineEditForm.assertPrepaymentTermValue (site 361)');
       OrderLineEditForm.assertPrepaymentTermValue(4);
-      trace('OrderLineEditForm.assertFiscalYearCards (site 362)');
       OrderLineEditForm.assertFiscalYearCards([fy1.code, fy2.code, fy3.code, fy4.code]);
-      trace('OrderLineEditForm.assertOnlyFiscalYearCardRemovable (site 363)');
       OrderLineEditForm.assertOnlyFiscalYearCardRemovable(
         [fy1.code, fy2.code, fy3.code, fy4.code],
         fy4.code,
       );
-      trace('OrderLineEditForm.assertFiscalYearCardFundDistributions (site 367)');
       OrderLineEditForm.assertFiscalYearCardFundDistributions({
         fyCode: fy1.code,
         distributions: [
@@ -490,7 +377,6 @@ describe('Orders', () => {
           },
         ],
       });
-      trace('OrderLineEditForm.assertFiscalYearCardFundDistributions (site 384)');
       OrderLineEditForm.assertFiscalYearCardFundDistributions({
         fyCode: fy2.code,
         distributions: [
@@ -502,174 +388,127 @@ describe('Orders', () => {
           },
         ],
       });
-      trace('OrderLineEditForm.assertFiscalYearCardFundDistributions (site 395)');
       OrderLineEditForm.assertFiscalYearCardFundDistributions({
         fyCode: fy3.code,
         distributions: [{ fundName: fundB.name, fundCode: fundB.code, value: 25 }],
       });
-      trace('OrderLineEditForm.assertFiscalYearCardFundDistributions (site 399)');
       OrderLineEditForm.assertFiscalYearCardFundDistributions({
         fyCode: fy4.code,
         distributions: [],
       });
-      trace('OrderLineEditForm.assertAddFiscalYearButtonDisabled (site 403)');
       OrderLineEditForm.assertAddFiscalYearButtonDisabled();
 
-      trace('Step 2. Select the next future fiscal year in the "Starting fiscal year" dropdown');
-      trace('OrderLineEditForm.selectStartingFiscalYear (site 406)');
+      cy.log('Step 2. Select the next future fiscal year in the "Starting fiscal year" dropdown');
       OrderLineEditForm.selectStartingFiscalYear(fy2.code);
 
-      trace('FinanceHelper.waitForGetFiscalYearsRequestCompletion (site 408)');
       FinanceHelper.waitForGetFiscalYearsRequestCompletion();
 
-      trace('OrderLineEditForm.assertPrepaymentTermValue (site 410)');
       OrderLineEditForm.assertPrepaymentTermValue(2);
-      trace('OrderLineEditForm.assertFiscalYearCards (site 411)');
       OrderLineEditForm.assertFiscalYearCards([fy2.code, fy3.code]);
-      trace('OrderLineEditForm.assertOnlyFiscalYearCardRemovable (site 412)');
       OrderLineEditForm.assertOnlyFiscalYearCardRemovable([fy2.code, fy3.code], fy3.code);
-      trace('OrderLineEditForm.assertFiscalYearCardFundDistributions (site 413)');
       OrderLineEditForm.assertFiscalYearCardFundDistributions({
         fyCode: fy2.code,
         distributions: [],
       });
-      trace('OrderLineEditForm.assertFiscalYearCardFundDistributions (site 417)');
       OrderLineEditForm.assertFiscalYearCardFundDistributions({
         fyCode: fy3.code,
         distributions: [],
       });
-      trace('OrderLineEditForm.assertAddFiscalYearButtonEnabled (site 421)');
       OrderLineEditForm.assertAddFiscalYearButtonEnabled();
 
-      trace('Step 3. Click "Add fiscal year" button');
-      trace('OrderLineEditForm.clickAddFiscalYearButton (site 424)');
+      cy.log('Step 3. Click "Add fiscal year" button');
       OrderLineEditForm.clickAddFiscalYearButton();
-      trace('OrderLineEditForm.assertPrepaymentTermValue (site 425)');
       OrderLineEditForm.assertPrepaymentTermValue(3);
-      trace('OrderLineEditForm.assertFiscalYearCards (site 426)');
       OrderLineEditForm.assertFiscalYearCards([fy2.code, fy3.code, fy4.code]);
-      trace('OrderLineEditForm.assertOnlyFiscalYearCardRemovable (site 427)');
       OrderLineEditForm.assertOnlyFiscalYearCardRemovable([fy2.code, fy3.code, fy4.code], fy4.code);
       [fy2.code, fy3.code, fy4.code].forEach((fyCode) => {
-        trace('OrderLineEditForm.assertFiscalYearCardFundDistributions (site 429)');
         OrderLineEditForm.assertFiscalYearCardFundDistributions({
           fyCode,
           distributions: [],
         });
       });
-      trace('OrderLineEditForm.assertAddFiscalYearButtonDisabled (site 434)');
       OrderLineEditForm.assertAddFiscalYearButtonDisabled();
 
-      trace('Step 4. Fill in the Fiscal year cards with fund distribution data');
+      cy.log('Step 4. Fill in the Fiscal year cards with fund distribution data');
       // The first card now represents FY2 because the starting fiscal year was shifted in step 2.
-      trace('OrderLineEditForm.addFundDistributionInFYCard (site 438)');
       OrderLineEditForm.addFundDistributionInFYCard(fy2.code);
-      trace('OrderLineEditForm.selectFundInPaymentTermsCard (site 439)');
       OrderLineEditForm.selectFundInPaymentTermsCard({
         fyCode: fy2.code,
         fundName: fundA.name,
         fundCode: fundA.code,
       });
-      trace('cy.wait (site 444)');
       cy.wait(1000);
-      trace('OrderLineEditForm.selectExpenseClassInFYCard (site 445)');
       OrderLineEditForm.selectExpenseClassInFYCard({
         fyCode: fy2.code,
         expenseClassName: expenseClass.name,
       });
-      trace('OrderLineEditForm.fillFundDistributionValueInFYCard (site 449)');
       OrderLineEditForm.fillFundDistributionValueInFYCard({
         fyCode: fy2.code,
         value: 50,
       });
 
       // The second card (FY3) contains Fund A and Fund B, each with $10.
-      trace('OrderLineEditForm.addFundDistributionInFYCard (site 455)');
       OrderLineEditForm.addFundDistributionInFYCard(fy3.code);
-      trace('OrderLineEditForm.selectFundInPaymentTermsCard (site 456)');
       OrderLineEditForm.selectFundInPaymentTermsCard({
         fyCode: fy3.code,
         fundName: fundA.name,
         fundCode: fundA.code,
       });
-      trace('triggerValidation (site 461)');
       triggerValidation();
-      trace('OrderLineEditForm.fillFundDistributionValueInFYCard (site 462)');
       OrderLineEditForm.fillFundDistributionValueInFYCard({
         fyCode: fy3.code,
         value: 10,
       });
-      trace('triggerValidation (site 466)');
       triggerValidation();
 
-      trace('OrderLineEditForm.addFundDistributionInFYCard (site 468)');
       OrderLineEditForm.addFundDistributionInFYCard(fy3.code);
-      trace('OrderLineEditForm.selectFundInPaymentTermsCard (site 469)');
       OrderLineEditForm.selectFundInPaymentTermsCard({
         fyCode: fy3.code,
         fundName: fundB.name,
         fundCode: fundB.code,
         rowIndex: 1,
       });
-      trace('triggerValidation (site 475)');
       triggerValidation();
-      trace('OrderLineEditForm.fillFundDistributionValueInFYCard (site 476)');
       OrderLineEditForm.fillFundDistributionValueInFYCard({
         fyCode: fy3.code,
         value: 10,
         rowIndex: 1,
       });
-      trace('triggerValidation (site 481)');
       triggerValidation();
 
       // The third card (FY4) contains Fund A and Fund B, each with 15%.
-      trace('OrderLineEditForm.addFundDistributionInFYCard (site 484)');
       OrderLineEditForm.addFundDistributionInFYCard(fy4.code);
-      trace('OrderLineEditForm.selectFundInPaymentTermsCard (site 485)');
       OrderLineEditForm.selectFundInPaymentTermsCard({
         fyCode: fy4.code,
         fundName: fundA.name,
         fundCode: fundA.code,
       });
-      trace('triggerValidation (site 490)');
       triggerValidation();
-      trace('OrderLineEditForm.selectDistributionTypePercentInFYCard (site 491)');
       OrderLineEditForm.selectDistributionTypePercentInFYCard({ fyCode: fy4.code });
-      trace('OrderLineEditForm.fillFundDistributionValueInFYCard (site 492)');
       OrderLineEditForm.fillFundDistributionValueInFYCard({
         fyCode: fy4.code,
         value: 15,
       });
-      trace('triggerValidation (site 496)');
       triggerValidation();
 
-      trace('OrderLineEditForm.addFundDistributionInFYCard (site 498)');
       OrderLineEditForm.addFundDistributionInFYCard(fy4.code);
-      trace('OrderLineEditForm.selectFundInPaymentTermsCard (site 499)');
       OrderLineEditForm.selectFundInPaymentTermsCard({
         fyCode: fy4.code,
         fundName: fundB.name,
         fundCode: fundB.code,
         rowIndex: 1,
       });
-      trace('triggerValidation (site 505)');
       triggerValidation();
-      trace('OrderLineEditForm.selectDistributionTypePercentInFYCard (site 506)');
       OrderLineEditForm.selectDistributionTypePercentInFYCard({ fyCode: fy4.code, rowIndex: 1 });
-      trace('OrderLineEditForm.fillFundDistributionValueInFYCard (site 507)');
       OrderLineEditForm.fillFundDistributionValueInFYCard({
         fyCode: fy4.code,
         value: 15,
         rowIndex: 1,
       });
-      trace('triggerValidation (site 512)');
       triggerValidation();
 
-      trace('OrderLineEditForm.assertPrepaymentTermsRemainingAmount (site 514)');
       OrderLineEditForm.assertPrepaymentTermsRemainingAmount(formatAmount(0));
-      trace('assertEnteredFutureYearDistributions (site 515)');
       assertEnteredFutureYearDistributions();
-      trace('OrderLineEditForm.assertFiscalYearCardFundDistributions (site 516)');
       OrderLineEditForm.assertFiscalYearCardFundDistributions({
         fyCode: fy4.code,
         distributions: [
@@ -678,116 +517,78 @@ describe('Orders', () => {
         ],
       });
 
-      trace('Step 5. Click trash icon next to the Fiscal year 3 card');
-      trace('OrderLineEditForm.removeLastFYCard (site 525)');
+      cy.log('Step 5. Click trash icon next to the Fiscal year 3 card');
       OrderLineEditForm.removeLastFYCard();
-      trace('triggerValidation (site 526)');
       triggerValidation();
 
-      trace('OrderLineEditForm.assertPrepaymentTermValue (site 528)');
       OrderLineEditForm.assertPrepaymentTermValue(2);
-      trace('OrderLineEditForm.assertFiscalYearCards (site 529)');
       OrderLineEditForm.assertFiscalYearCards([fy2.code, fy3.code]);
-      trace('OrderLineEditForm.assertOnlyFiscalYearCardRemovable (site 530)');
       OrderLineEditForm.assertOnlyFiscalYearCardRemovable([fy2.code, fy3.code], fy3.code);
-      trace('assertEnteredFutureYearDistributions (site 531)');
       assertEnteredFutureYearDistributions();
-      trace('OrderLineEditForm.assertAddFiscalYearButtonEnabled (site 532)');
       OrderLineEditForm.assertAddFiscalYearButtonEnabled();
-      trace('OrderLineEditForm.assertPrepaymentTermsDistributionError (site 533)');
       OrderLineEditForm.assertPrepaymentTermsDistributionError(formatAmount(30));
 
-      trace('Step 6. Click "Add fiscal year" button');
-      trace('OrderLineEditForm.clickAddFiscalYearButton (site 536)');
+      cy.log('Step 6. Click "Add fiscal year" button');
       OrderLineEditForm.clickAddFiscalYearButton();
-      trace('OrderLineEditForm.assertPrepaymentTermValue (site 537)');
       OrderLineEditForm.assertPrepaymentTermValue(3);
-      trace('OrderLineEditForm.assertFiscalYearCards (site 538)');
       OrderLineEditForm.assertFiscalYearCards([fy2.code, fy3.code, fy4.code]);
-      trace('OrderLineEditForm.assertOnlyFiscalYearCardRemovable (site 539)');
       OrderLineEditForm.assertOnlyFiscalYearCardRemovable([fy2.code, fy3.code, fy4.code], fy4.code);
-      trace('assertEnteredFutureYearDistributions (site 540)');
       assertEnteredFutureYearDistributions();
-      trace('OrderLineEditForm.assertFiscalYearCardFundDistributions (site 541)');
       OrderLineEditForm.assertFiscalYearCardFundDistributions({
         fyCode: fy4.code,
         distributions: [],
       });
-      trace('OrderLineEditForm.assertAddFiscalYearButtonDisabled (site 545)');
       OrderLineEditForm.assertAddFiscalYearButtonDisabled();
 
-      trace(
+      cy.log(
         'Step 7. Fill in Fiscal year 3 card with valid values; Click trash icon next to the Fiscal year 3 card',
       );
-      trace('OrderLineEditForm.addFundDistributionInFYCard (site 550)');
       OrderLineEditForm.addFundDistributionInFYCard(fy4.code);
-      trace('OrderLineEditForm.selectFundInPaymentTermsCard (site 551)');
       OrderLineEditForm.selectFundInPaymentTermsCard({
         fyCode: fy4.code,
         fundName: fundA.name,
         fundCode: fundA.code,
         rowIndex: 0,
       });
-      trace('triggerValidation (site 557)');
       triggerValidation();
-      trace('OrderLineEditForm.fillFundDistributionValueInFYCard (site 558)');
       OrderLineEditForm.fillFundDistributionValueInFYCard({
         fyCode: fy4.code,
         value: 30,
         rowIndex: 0,
       });
-      trace('triggerValidation (site 563)');
       triggerValidation();
 
-      trace('OrderLineEditForm.assertPrepaymentTermsRemainingAmount (site 565)');
       OrderLineEditForm.assertPrepaymentTermsRemainingAmount(formatAmount(0));
 
-      trace('OrderLineEditForm.removeLastFYCard (site 567)');
       OrderLineEditForm.removeLastFYCard();
 
-      trace('OrderLineEditForm.assertPrepaymentTermValue (site 569)');
       OrderLineEditForm.assertPrepaymentTermValue(2);
-      trace('OrderLineEditForm.assertFiscalYearCards (site 570)');
       OrderLineEditForm.assertFiscalYearCards([fy2.code, fy3.code]);
-      trace('OrderLineEditForm.assertOnlyFiscalYearCardRemovable (site 571)');
       OrderLineEditForm.assertOnlyFiscalYearCardRemovable([fy2.code, fy3.code], fy3.code);
-      trace('assertEnteredFutureYearDistributions (site 572)');
       assertEnteredFutureYearDistributions();
-      trace('OrderLineEditForm.assertAddFiscalYearButtonEnabled (site 573)');
       OrderLineEditForm.assertAddFiscalYearButtonEnabled();
 
-      trace(
+      cy.log(
         'Step 8. Add Fund A with expense class in the "Fund distribution" accordion; Change value to 80 in the Fiscal year 1 card; Click "Save & close" button',
       );
-      trace('OrderLineEditForm.scrollToFundDistributionSection (site 578)');
       OrderLineEditForm.scrollToFundDistributionSection();
-      trace('OrderLineEditForm.clickAddFundDistributionButton (site 579)');
       OrderLineEditForm.clickAddFundDistributionButton();
-      trace('OrderLineEditForm.expandFundIdDropdown (site 580)');
       OrderLineEditForm.expandFundIdDropdown(0);
-      trace('OrderLineEditForm.selectFundFromOpenDropdown (site 581)');
       OrderLineEditForm.selectFundFromOpenDropdown(fundA.name, fundA.code);
-      trace('OrderLineEditForm.selectExpenseClass (site 582)');
       OrderLineEditForm.selectExpenseClass(expenseClass.name, 0);
-      trace('OrderLineEditForm.fillFundDistributionValueInFYCard (site 583)');
       OrderLineEditForm.fillFundDistributionValueInFYCard({
         fyCode: fy2.code,
         value: 80,
         rowIndex: 0,
       });
-      trace('triggerValidation (site 588)');
       triggerValidation();
 
-      trace('OrderLineEditForm.clickSaveButton (site 590)');
       OrderLineEditForm.clickSaveButton({ orderLineCreated: false, orderLineUpdated: true });
-      trace('OrderLineDetails.waitLoading (site 591)');
       OrderLineDetails.waitLoading();
 
-      trace('OrderLineDetails.checkFundDistibutionTableContent (site 593)');
       OrderLineDetails.checkFundDistibutionTableContent([
         { name: fundA.name, expenseClass: expenseClass.name },
       ]);
-      trace('OrderLineDetails.assertPaymentTerms (site 596)');
       OrderLineDetails.assertPaymentTerms({
         totalPrice: formatAmount(100),
         prepaymentTerm: 2,
@@ -814,79 +615,54 @@ describe('Orders', () => {
         ],
       });
 
-      trace(
+      cy.log(
         'Step 9. Click left back arrow; Click "Actions" button in "PO lines" accordion; Select "Add PO line" option',
       );
-      trace('OrderLineDetails.backToOrderDetails (site 625)');
       OrderLineDetails.backToOrderDetails();
-      trace('OrderDetails.selectAddPOLine (site 626)');
       OrderDetails.selectAddPOLine();
-      trace('OrderLineEditForm.waitLoading (site 627)');
       OrderLineEditForm.waitLoading();
 
-      trace(
+      cy.log(
         'Step 10. Check "Multi-year prepayment" checkbox; Fill in required fields; Select current FY in "Starting fiscal year" dropdown; Remove all FY cards; Click "Save & close" button',
       );
-      trace('OrderLineEditForm.toggleMultiYearPrepayment (site 632)');
       OrderLineEditForm.toggleMultiYearPrepayment();
-      trace('OrderLineEditForm.fillItemDetails (site 633)');
       OrderLineEditForm.fillItemDetails({ title: testData.secondPolTitle });
-      trace('OrderLineEditForm.fillPoLineDetails (site 634)');
       OrderLineEditForm.fillPoLineDetails({
         acquisitionMethod: ACQUISITION_METHOD_NAMES_IN_PROFILE.OTHER,
         orderFormat: ORDER_FORMAT_VALUES.OTHER,
       });
-      trace('OrderLineEditForm.fillCostDetails (site 638)');
       OrderLineEditForm.fillCostDetails({ physicalUnitPrice: '100', quantityPhysical: '1' });
-      trace('OrderLineEditForm.fillPrepaymentTotalPrice (site 639)');
       OrderLineEditForm.fillPrepaymentTotalPrice(100);
-      trace('OrderLineEditForm.selectStartingFiscalYear (site 640)');
       OrderLineEditForm.selectStartingFiscalYear(fy1.code);
 
-      trace('FinanceHelper.waitForGetFiscalYearsRequestCompletion (site 642)');
       FinanceHelper.waitForGetFiscalYearsRequestCompletion();
 
-      trace('OrderLineEditForm.scrollToPaymentTermsSection (site 644)');
       OrderLineEditForm.scrollToPaymentTermsSection();
-      trace('OrderLineEditForm.removeLastFYCard (site 645)');
       OrderLineEditForm.removeLastFYCard();
-      trace('OrderLineEditForm.removeLastFYCard (site 646)');
       OrderLineEditForm.removeLastFYCard();
-      trace('OrderLineEditForm.clickSaveButton (site 647)');
       OrderLineEditForm.clickSaveButton({ orderLineUpdated: false });
-      trace('OrderLineEditForm.waitLoading (site 648)');
       OrderLineEditForm.waitLoading();
-      trace('OrderLineEditForm.assertAtLeastTwoFYsValidationError (site 649)');
       OrderLineEditForm.assertAtLeastTwoFYsValidationError();
 
-      trace(
+      cy.log(
         'Step 11. Add two FY cards; Click "Add fund distribution" in FY1 card; Select Fund A; Select expense class; Change type to %; Click "Save & close"',
       );
-      trace('OrderLineEditForm.clickAddFiscalYearButton (site 654)');
       OrderLineEditForm.clickAddFiscalYearButton();
-      trace('OrderLineEditForm.clickAddFiscalYearButton (site 655)');
       OrderLineEditForm.clickAddFiscalYearButton();
-      trace('OrderLineEditForm.addFundDistributionInFYCard (site 656)');
       OrderLineEditForm.addFundDistributionInFYCard(fy1.code);
-      trace('OrderLineEditForm.selectFundInPaymentTermsCard (site 657)');
       OrderLineEditForm.selectFundInPaymentTermsCard({
         fyCode: fy1.code,
         fundName: fundA.name,
         fundCode: fundA.code,
       });
-      trace('triggerValidation (site 662)');
       triggerValidation();
-      trace('OrderLineEditForm.selectExpenseClassInFYCard (site 663)');
       OrderLineEditForm.selectExpenseClassInFYCard({
         fyCode: fy1.code,
         expenseClassName: expenseClass.name,
       });
-      trace('OrderLineEditForm.selectDistributionTypePercentInFYCard (site 667)');
       OrderLineEditForm.selectDistributionTypePercentInFYCard({ fyCode: fy1.code });
-      trace('triggerValidation (site 668)');
       triggerValidation();
 
-      trace('OrderLineEditForm.assertFiscalYearCardFundDistributions (site 670)');
       OrderLineEditForm.assertFiscalYearCardFundDistributions({
         fyCode: fy1.code,
         distributions: [
@@ -899,12 +675,9 @@ describe('Orders', () => {
         ],
       });
 
-      trace('OrderLineEditForm.clickSaveButton (site 682)');
       OrderLineEditForm.clickSaveButton({ orderLineCreated: true, orderLineUpdated: false });
-      trace('OrderLineDetails.waitLoading (site 683)');
       OrderLineDetails.waitLoading();
 
-      trace('OrderLineDetails.assertPaymentTerms (site 685)');
       OrderLineDetails.assertPaymentTerms({
         totalPrice: formatAmount(100),
         prepaymentTerm: 2,
@@ -925,20 +698,15 @@ describe('Orders', () => {
         ],
       });
 
-      trace(
+      cy.log(
         'Step 12. Click "Actions" button on the "Orders" pane; Select "Export results (CSV)" option; Leave "All" selected; Click "Export" button',
       );
-      trace('OrderLineDetails.backToOrderDetails (site 708)');
       OrderLineDetails.backToOrderDetails();
-      trace('OrderDetails.closeOrderDetails (site 709)');
       OrderDetails.closeOrderDetails();
-      trace('Orders.waitLoading (site 710)');
       Orders.waitLoading();
-      trace('Orders.exportResultsToCsv (site 711)');
       Orders.exportResultsToCsv();
 
-      trace('Step 13. Open downloaded .csv file');
-      trace('FileManager.convertCsvToJson (site 714)');
+      cy.log('Step 13. Open downloaded .csv file');
       FileManager.convertCsvToJson(testData.csvFileName).then((data) => {
         const firstPoLine = data.find((row) => row[CSV_HEADERS.STARTING_FISCAL_YEAR] === fy2.code);
         const secondPoLine = data.find((row) => row[CSV_HEADERS.STARTING_FISCAL_YEAR] === fy1.code);
@@ -1011,8 +779,6 @@ describe('Orders', () => {
         ]);
         expect(secondPoLine[CSV_HEADERS.FISCAL_YEAR_DISTRIBUTIONS]).to.not.include(fy2.code);
       });
-
-      trace('TEST: complete');
     },
   );
 });

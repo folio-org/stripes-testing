@@ -184,18 +184,14 @@ const constants = {
 };
 
 const UI = {
-  waitLoading({ trace } = {}) {
-    if (trace) trace('Lists loading: verify landing-page panes');
+  waitLoading() {
     cy.expect([HTML(including('Lists')).exists(), filterPane.exists(), listsPane.exists()]);
-    if (trace) trace('Lists loading: allow initial rendering');
     cy.wait(5000);
     // wait for Lists landing page to be loaded (main pane and filter pane). Do NOT wait for every list to complete compiling (if any)
-    if (trace) trace('Lists loading: wait for landing-page spinners');
     cy.xpath(
       '//div[starts-with(@class, "paneContent---")]/div/div[contains(@class, "spinner---")]',
       { timeout: 120000 },
     ).should('not.exist');
-    if (trace) trace('Lists loading: complete');
   },
 
   filtersWaitLoading() {

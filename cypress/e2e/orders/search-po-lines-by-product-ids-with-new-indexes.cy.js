@@ -20,10 +20,6 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import { OrderLinesLimit } from '../../support/fragments/settings/orders';
 
-const trace = (message) => {
-  return cy.task('log', `[C1385305] ${message}`);
-};
-
 const { PANE_REQUEST_PHASES, PANE_REQUEST_PROFILE_NAMES } = PaneRequestWaiter;
 const { KEYWORD, PRODUCT_ID, PRODUCT_ID_ISBN } = ORDER_LINE_SEARCH_INDEX_LABELS;
 const TAGS_FILTER_LABEL = 'Tags';
@@ -40,8 +36,6 @@ const R = {
   USER: 'user',
 };
 
-// The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
-// #freeze pipeline deadlock
 describe('Orders', () => {
   const flow = new ExecutionFlowManager();
   const postfix = getRandomPostfix();
@@ -58,7 +52,6 @@ describe('Orders', () => {
   const createLine = (order, lineData) => {
     const types = flow.get(R.PRODUCT_ID_TYPES);
 
-    trace('OrderLines.createOrderLineViaApi');
     return OrderLines.createOrderLineViaApi({
       ...BasicOrderLine.defaultOrderLine,
       id: uuid(),
@@ -96,154 +89,98 @@ describe('Orders', () => {
   };
 
   before('Create C1385305 preconditions', () => {
-    trace('SETUP: start');
-
-    trace('cy.getAdminToken');
     cy.getAdminToken();
-    trace('cy.clearAllLocalStorage');
     cy.clearAllLocalStorage();
 
     flow
       .step(() => {
-        trace('SETUP: step 1');
-
-        trace('OrderLinesLimit.setPOLLimitViaApi');
         OrderLinesLimit.setPOLLimitViaApi(2);
       })
       .step((currentFlow) => {
-        trace('SETUP: step 2');
-
         const label = `AT_C1385305_${postfix}`;
 
-        trace('cy.createTagApi');
-        return cy.createTagApi({ label }).then((id) => currentFlow.set(R.TAG, { id, label }, () => {
-          trace('cy.deleteTagApi');
-          return cy.deleteTagApi(id, true);
-        }));
+        return cy
+          .createTagApi({ label })
+          .then((id) => currentFlow.set(R.TAG, { id, label }, () => cy.deleteTagApi(id, true)));
       })
       .step((currentFlow) => {
-        trace('SETUP: step 3');
-
         const organization = {
           ...NewOrganization.defaultUiOrganizations,
           name: `AT_C1385305_Vendor_${postfix}`,
           tags: { tagList: [currentFlow.get(R.TAG).label] },
         };
 
-        trace('Organizations.createOrganizationViaApi');
-        return Organizations.createOrganizationViaApi(organization).then((id) => currentFlow.set(R.ORGANIZATION, { ...organization, id }, () => {
-          trace('Organizations.deleteOrganizationViaApi');
-          return Organizations.deleteOrganizationViaApi(id);
-        }));
+        return Organizations.createOrganizationViaApi(organization).then((id) => currentFlow.set(R.ORGANIZATION, { ...organization, id }, () => Organizations.deleteOrganizationViaApi(id)));
       })
+      .step((currentFlow) => cy.getLocations({ limit: 1 }).then((location) => currentFlow.set(R.LOCATION, location)))
       .step((currentFlow) => {
-        trace('SETUP: step 4');
-
-        trace('cy.getLocations');
-        return cy
-          .getLocations({ limit: 1 })
-          .then((location) => currentFlow.set(R.LOCATION, location));
-      })
-      .step((currentFlow) => {
-        trace('SETUP: step 5');
-
-        trace('cy.getDefaultMaterialType');
         return cy
           .getDefaultMaterialType()
           .then((materialType) => currentFlow.set(R.MATERIAL_TYPE, materialType));
       })
       .step((currentFlow) => {
-        trace('SETUP: step 6');
-
-        trace('cy.getAcquisitionMethodsApi');
         return cy
           .getAcquisitionMethodsApi()
           .then(({ body }) => currentFlow.set(R.ACQUISITION_METHOD, body.acquisitionMethods[0]));
       })
       .step((currentFlow) => {
-        trace('SETUP: step 7');
-
         const types = {};
 
         return cy
           .wrap(['ISBN', 'ISSN', 'LCCN'])
-          .each((name) => {
-            trace('cy.getProductIdTypes');
-            return cy
-              .getProductIdTypes({
-                query: `name=="${name}"`,
-              })
-              .then((type) => {
-                types[name] = type;
-              });
-          })
+          .each((name) => cy
+            .getProductIdTypes({
+              query: `name=="${name}"`,
+            })
+            .then((type) => {
+              types[name] = type;
+            }))
           .then(() => currentFlow.set(R.PRODUCT_ID_TYPES, types));
       })
       .step((currentFlow) => {
-        trace('SETUP: step 8');
-
         const orders = [];
 
         return cy
           .wrap([1, 2])
-          .each((number) => {
-            trace('Orders.createOrderViaApi');
-            return Orders.createOrderViaApi({
-              ...NewOrder.getDefaultOrder({ vendorId: currentFlow.get(R.ORGANIZATION).id }),
-              id: uuid(),
-              notes: [`AT1385305-${number}-${postfix}`],
-              tags: { tagList: [currentFlow.get(R.TAG).label] },
-            }).then((order) => orders.push(order));
-          })
-          .then(() => currentFlow.set(R.ORDERS, orders, () => orders.forEach(({ id }) => {
-            trace('Orders.deleteOrderViaApi');
-            return Orders.deleteOrderViaApi(id, false);
-          })));
+          .each((number) => Orders.createOrderViaApi({
+            ...NewOrder.getDefaultOrder({ vendorId: currentFlow.get(R.ORGANIZATION).id }),
+            id: uuid(),
+            notes: [`AT1385305-${number}-${postfix}`],
+            tags: { tagList: [currentFlow.get(R.TAG).label] },
+          }).then((order) => orders.push(order)))
+          .then(() => currentFlow.set(R.ORDERS, orders, () => orders.forEach(({ id }) => Orders.deleteOrderViaApi(id, false))));
       })
       .step((currentFlow) => {
-        trace('SETUP: step 9');
-
         const [order1, order2] = currentFlow.get(R.ORDERS);
         const lines = [];
 
-        trace('createLine');
         return createLine(order1, {
           title: `AT_C1385305_Title_1_${postfix}`,
           productIds: [{ id: identifiers.isbn1, qualifier: 'hardcover', type: 'ISBN' }],
         })
           .then((line) => lines.push(line))
-          .then(() => {
-            trace('createLine');
-            return createLine(order1, {
-              title: `AT_C1385305_Title_2_${postfix}`,
-              productIds: [
-                { id: identifiers.isbn2Qualified, type: 'ISBN' },
-                { id: identifiers.lccn, type: 'LCCN' },
-              ],
-            }).then((line) => lines.push(line));
-          })
-          .then(() => {
-            trace('createLine');
-            return createLine(order2, {
-              title: `AT_C1385305_Title_3_${postfix}`,
-              productIds: [
-                { id: identifiers.issn, type: 'ISSN' },
-                { id: identifiers.isbnHyphenated, type: 'ISBN' },
-              ],
-            }).then((line) => lines.push(line));
-          })
+          .then(() => createLine(order1, {
+            title: `AT_C1385305_Title_2_${postfix}`,
+            productIds: [
+              { id: identifiers.isbn2Qualified, type: 'ISBN' },
+              { id: identifiers.lccn, type: 'LCCN' },
+            ],
+          }).then((line) => lines.push(line)))
+          .then(() => createLine(order2, {
+            title: `AT_C1385305_Title_3_${postfix}`,
+            productIds: [
+              { id: identifiers.issn, type: 'ISSN' },
+              { id: identifiers.isbnHyphenated, type: 'ISBN' },
+            ],
+          }).then((line) => lines.push(line)))
           .then(() => currentFlow.set(R.LINES, lines));
       })
       .step((currentFlow) => cy.wrap(currentFlow.get(R.ORDERS)).each((order) => {
-        trace('Orders.updateOrderViaApi');
         return Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' }).then(({ body }) => {
           Object.assign(order, body);
         });
       }))
       .step((currentFlow) => {
-        trace('SETUP: step 10');
-
-        trace('cy.createTempUser');
         return cy
           .createTempUser([
             Permissions.uiOrdersView.gui,
@@ -251,34 +188,19 @@ describe('Orders', () => {
             Permissions.uiClaimingView.gui,
             Permissions.uiTagsPermissionAll.gui,
           ])
-          .then((user) => currentFlow.set(R.USER, user, () => {
-            trace('Users.deleteViaApi');
-            return Users.deleteViaApi(user.userId);
-          }));
+          .then((user) => currentFlow.set(R.USER, user, () => Users.deleteViaApi(user.userId)));
       })
       .step((currentFlow) => {
-        trace('SETUP: step 11');
-
-        trace('cy.login');
         return cy.login(currentFlow.get(R.USER).username, currentFlow.get(R.USER).password, {
-          trace,
           path: TopMenu.orderLinesPath,
           waiter: OrderLines.waitLoading,
         });
       });
-
-    trace('SETUP: complete');
   });
 
   after('Delete C1385305 data', () => {
-    trace('CLEANUP: start');
-
-    trace('cy.getAdminToken');
     cy.getAdminToken();
-    trace('flow.cleanup');
     flow.cleanup();
-
-    trace('CLEANUP: complete');
   });
 
   const resolveTitles = (lineIndexes) => lineIndexes.map((lineIndex) => flow.get(R.LINES)[lineIndex].titleOrPackage);
@@ -325,14 +247,11 @@ describe('Orders', () => {
     { step: 37, value: `${identifiers.isbnHyphenated.slice(0, -3)}*`, expected: [2] },
   ];
 
-  const waitForSearch = ({ pane, index, trigger }) => {
-    trace('PaneRequestWaiter.waitForPaneRequests');
-    return PaneRequestWaiter.waitForPaneRequests({
-      pane,
-      conditions: { isbnConversion: index === PRODUCT_ID_ISBN },
-      trigger,
-    });
-  };
+  const waitForSearch = ({ pane, index, trigger }) => PaneRequestWaiter.waitForPaneRequests({
+    pane,
+    conditions: { isbnConversion: index === PRODUCT_ID_ISBN },
+    trigger,
+  });
 
   const searchOrderLinesAndVerify = ({ context = 'Orders', pane, search, assert }) => {
     const indexes = [KEYWORD, PRODUCT_ID, PRODUCT_ID_ISBN];
@@ -341,18 +260,9 @@ describe('Orders', () => {
       indexes.forEach((index, indexPosition) => {
         const expectedLineIndexes = expected[indexPosition];
 
-        trace(`<--- ${context} STEP ${step}: Search ${index} --->`);
-        trace('waitForSearch');
-        waitForSearch({
-          pane,
-          index,
-          trigger: () => {
-            trace('search');
-            return search(index, value);
-          },
-        });
-        trace(`<--- ${context} STEP ${step}: Verify ${index} results --->`);
-        trace('assert');
+        cy.log(`<--- ${context} STEP ${step}: Search ${index} for ${value} --->`);
+        waitForSearch({ pane, index, trigger: () => search(index, value) });
+        cy.log(`<--- ${context} STEP ${step}: Verify ${index} results --->`);
         assert(resolveTitles(expectedLineIndexes));
       });
     });
@@ -367,189 +277,111 @@ describe('Orders', () => {
   }) => {
     titleSearchScenarios.forEach(({ step, value, expected }) => {
       indexes.forEach((index) => {
-        trace(`<--- ${context} STEP ${step}: Search ${index} --->`);
-        trace('waitForSearch');
-        waitForSearch({
-          pane,
-          index,
-          trigger: () => {
-            trace('search');
-            return search(index, value);
-          },
-        });
-        trace(`<--- ${context} STEP ${step}: Verify ${index} results --->`);
-        trace('assert');
+        cy.log(`<--- ${context} STEP ${step}: Search ${index} for ${value} --->`);
+        waitForSearch({ pane, index, trigger: () => search(index, value) });
+        cy.log(`<--- ${context} STEP ${step}: Verify ${index} results --->`);
         assert(resolveTitles(expected));
       });
     });
   };
 
   const filterByTagAndWait = ({ pane, trigger }) => {
-    trace('PaneRequestWaiter.waitForPaneRequests');
     PaneRequestWaiter.waitForPaneRequests({
       pane,
       trigger,
     });
   };
 
-  // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
-  // #freeze pipeline deadlock
   it(
     'C1385305 Search PO lines by product IDs with new indexes (thunderjet)',
     { tags: ['extendedPathBroken', 'thunderjet', 'C1385305Broken'] },
     () => {
-      trace('TEST: start');
-
       const tagLabel = flow.get(R.TAG).label;
 
-      trace('<--- Filter order lines by tag to isolate test data --->');
-      trace('filterByTagAndWait');
+      cy.log('<--- Filter order lines by tag to isolate test data --->');
       filterByTagAndWait({
         pane: PANE_REQUEST_PROFILE_NAMES.ORDER_LINES,
-        trigger: () => {
-          trace('OrderLines.filterByTags');
-          return OrderLines.filterByTags([tagLabel]);
-        },
+        trigger: () => OrderLines.filterByTags([tagLabel]),
       });
 
-      trace('searchOrderLinesAndVerify');
       searchOrderLinesAndVerify({
         pane: PANE_REQUEST_PROFILE_NAMES.ORDER_LINES,
-        search: (index, value) => {
-          trace('OrderLines.searchByParameter');
-          return OrderLines.searchByParameter(index, value);
-        },
-        assert: (titles) => {
-          trace('OrderLines.assertTitlesInResults');
-          return OrderLines.assertTitlesInResults(titles);
-        },
+        search: (index, value) => OrderLines.searchByParameter(index, value),
+        assert: (titles) => OrderLines.assertTitlesInResults(titles),
       });
 
-      trace('<--- STEP 19: Repeat searches in the Receiving POL look-up plugin --->');
-      trace('PaneRequestWaiter.waitForPaneRequests');
+      cy.log('<--- STEP 19: Repeat searches in the Receiving POL look-up plugin --->');
       PaneRequestWaiter.waitForPaneRequests({
         pane: PANE_REQUEST_PROFILE_NAMES.RECEIVING,
         phase: PANE_REQUEST_PHASES.FILTERS,
         trigger: () => {
-          trace('TopMenuNavigation.navigateToApp');
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.RECEIVING);
-          trace('Receiving.waitLoading');
           Receiving.waitLoading();
         },
       });
-      trace('Receiving.clickNewTitleOption');
       Receiving.clickNewTitleOption();
-      trace('ReceivingEditForm.waitLoading');
       ReceivingEditForm.waitLoading({ timeout: 60_000 });
-      trace('PaneRequestWaiter.waitForPaneRequests');
       PaneRequestWaiter.waitForPaneRequests({
         pane: PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE,
         phase: PANE_REQUEST_PHASES.FILTERS,
-        trigger: () => {
-          trace('Receiving.clickPOLNumberLookUpButton');
-          return Receiving.clickPOLNumberLookUpButton();
-        },
+        trigger: () => Receiving.clickPOLNumberLookUpButton(),
       });
-      trace('SelectOrderLinesModal.verifyModalView');
       SelectOrderLinesModal.verifyModalView({ multiselect: false });
-      trace('filterByTagAndWait');
       filterByTagAndWait({
         pane: PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE,
-        trigger: () => {
-          trace('SelectOrderLinesModal.filterByMultiSelectOptions');
-          return SelectOrderLinesModal.filterByMultiSelectOptions(TAGS_FILTER_LABEL, [tagLabel]);
-        },
+        trigger: () => SelectOrderLinesModal.filterByMultiSelectOptions(TAGS_FILTER_LABEL, [tagLabel]),
       });
-      trace('searchOrderLinesAndVerify');
       searchOrderLinesAndVerify({
         context: 'Select order lines plugin (STEP 19 repeats)',
         pane: PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE,
-        search: (index, value) => {
-          trace('SelectOrderLinesModal.searchByParameter');
-          return SelectOrderLinesModal.searchByParameter(index, value);
-        },
-        assert: (titles) => {
-          trace('SelectOrderLinesModal.assertSearchResults');
-          return SelectOrderLinesModal.assertSearchResults(titles);
-        },
+        search: (index, value) => SelectOrderLinesModal.searchByParameter(index, value),
+        assert: (titles) => SelectOrderLinesModal.assertSearchResults(titles),
       });
-      trace('SelectOrderLinesModal.closeModal');
       SelectOrderLinesModal.closeModal();
-      trace('ReceivingEditForm.clickCancelButton');
       ReceivingEditForm.clickCancelButton();
-      trace('Receiving.waitLoading');
       Receiving.waitLoading();
 
-      trace('<--- STEPS 20-37: Repeat product-ID searches in Receiving --->');
-      trace('Receiving.resetFilters');
+      cy.log('<--- STEPS 20-37: Repeat product-ID searches in Receiving --->');
       Receiving.resetFilters();
-      trace('filterByTagAndWait');
       filterByTagAndWait({
         pane: PANE_REQUEST_PROFILE_NAMES.RECEIVING,
-        trigger: () => {
-          trace('Receiving.filterByMultiSelectOptions');
-          return Receiving.filterByMultiSelectOptions(TAGS_FILTER_LABEL, [tagLabel]);
-        },
+        trigger: () => Receiving.filterByMultiSelectOptions(TAGS_FILTER_LABEL, [tagLabel]),
       });
-      trace('searchTitlesAndVerify');
       searchTitlesAndVerify({
         context: 'Receiving',
         pane: PANE_REQUEST_PROFILE_NAMES.RECEIVING,
-        search: (index, value) => {
-          trace('Receiving.searchByParameter');
-          return Receiving.searchByParameter({ parameter: index, value });
-        },
-        assert: (titles) => {
-          trace('Receiving.assertReceivingResults');
-          return Receiving.assertReceivingResults(titles);
-        },
+        search: (index, value) => Receiving.searchByParameter({ parameter: index, value }),
+        assert: (titles) => Receiving.assertReceivingResults(titles),
         indexes: [
           RECEIVING_TITLE_SEARCH_INDEX_LABELS.KEYWORD,
           RECEIVING_TITLE_SEARCH_INDEX_LABELS.PRODUCT_ID,
         ],
       });
 
-      trace('<--- STEP 38: Repeat product-ID searches in Claiming --->');
-      trace('PaneRequestWaiter.waitForPaneRequests');
+      cy.log('<--- STEP 38: Repeat product-ID searches in Claiming --->');
       PaneRequestWaiter.waitForPaneRequests({
         pane: PANE_REQUEST_PROFILE_NAMES.CLAIMING,
         phase: PANE_REQUEST_PHASES.FILTERS,
         trigger: () => {
-          trace('TopMenuNavigation.navigateToApp');
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CLAIMING);
-          trace('Claiming.waitLoading');
           Claiming.waitLoading();
         },
       });
-      trace('Claiming.clearAllFilters');
       Claiming.clearAllFilters();
-      trace('filterByTagAndWait');
       filterByTagAndWait({
         pane: PANE_REQUEST_PROFILE_NAMES.CLAIMING,
-        trigger: () => {
-          trace('Claiming.filterByMultiSelectOptions');
-          return Claiming.filterByMultiSelectOptions(TAGS_FILTER_LABEL, [tagLabel]);
-        },
+        trigger: () => Claiming.filterByMultiSelectOptions(TAGS_FILTER_LABEL, [tagLabel]),
       });
-      trace('searchTitlesAndVerify');
       searchTitlesAndVerify({
         context: 'Claiming (STEP 38 repeats)',
         pane: PANE_REQUEST_PROFILE_NAMES.CLAIMING,
-        search: (index, value) => {
-          trace('Claiming.searchByParameter');
-          return Claiming.searchByParameter(index, value);
-        },
-        assert: (titles) => {
-          trace('Claiming.assertPiecesWithTitlesDisplayed');
-          return Claiming.assertPiecesWithTitlesDisplayed(titles);
-        },
+        search: (index, value) => Claiming.searchByParameter(index, value),
+        assert: (titles) => Claiming.assertPiecesWithTitlesDisplayed(titles),
         indexes: [
           RECEIVING_TITLE_SEARCH_INDEX_LABELS.KEYWORD,
           RECEIVING_TITLE_SEARCH_INDEX_LABELS.PRODUCT_ID,
         ],
       });
-
-      trace('TEST: complete');
     },
   );
 });
