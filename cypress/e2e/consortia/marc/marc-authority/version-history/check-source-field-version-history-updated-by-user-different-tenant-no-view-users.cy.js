@@ -121,6 +121,7 @@ describe('MARC', () => {
             QuickMarcEditor.pressSaveAndClose();
             MarcAuthority.waitLoading();
             MarcAuthority.contains(testData.authorityHeadingUpdated);
+            cy.logout();
 
             // User A logs in to Central
             cy.resetTenant();

@@ -6,6 +6,7 @@ import {
   HTML,
   including,
   matching,
+  or,
   Modal,
   Pane,
   Select,
@@ -18,6 +19,7 @@ import InteractorsTools from '../../../utils/interactorsTools';
 import getRandomPostfix from '../../../utils/stringTools';
 import InstanceStates from '../instanceStates';
 
+const requiredFieldErrorText = 'Please select to continue';
 const itemEditForm = HTML({ className: including('paneset-') });
 const administrativeDataSection = itemEditForm.find(Accordion('Administrative data'));
 const statisticalCodeFieldSet = administrativeDataSection.find(FieldSet('Statistical code'));
@@ -31,6 +33,8 @@ const adminDataFields = {
 const itemDataFields = {
   materialType: itemEditForm.find(Select({ id: 'additem_materialType' })),
   copyNumber: itemEditForm.find(TextField({ name: 'copyNumber' })),
+  callNumber: itemEditForm.find(TextArea({ id: 'additem_callnumber' })),
+  chronology: itemEditForm.find(TextArea({ id: 'additem_chronology' })),
 };
 
 const loanDataFields = {
@@ -87,6 +91,54 @@ export default {
   },
   verifyBarcodeFieldFocusedByDefault: () => {
     cy.get('input[name="barcode"]').should('be.focused');
+  },
+  verifyBarcode: (barcode) => {
+    cy.expect(adminDataFields.barcode.has({ value: barcode }));
+  },
+  pressEnterInBarcodeField: () => {
+    cy.get('input[name="barcode"]').focus().type('{enter}');
+  },
+  verifyRequiredFieldsErrorMessages: ({ materialType = true, loanType = true } = {}) => {
+    const elementsToCheckMessage = [];
+    const elementsToCheckNoMessage = [];
+    if (materialType) elementsToCheckMessage.push(itemDataFields.materialType);
+    else if (materialType === false) elementsToCheckNoMessage.push(itemDataFields.materialType);
+    if (loanType) elementsToCheckMessage.push(loanDataFields.loanType);
+    else if (loanType === false) elementsToCheckNoMessage.push(loanDataFields.loanType);
+    cy.expect(elementsToCheckMessage.map((el) => el.has({ error: requiredFieldErrorText })));
+    cy.expect(elementsToCheckNoMessage.map((el) => el.has({ error: undefined })));
+  },
+  addCallNumberValue: (value) => {
+    cy.do(itemDataFields.callNumber.fillIn(value));
+  },
+  verifyCallNumberValue: (value) => {
+    cy.expect(itemDataFields.callNumber.has({ value }));
+  },
+  verifyCopyNumberValue: (value) => {
+    cy.expect(itemDataFields.copyNumber.has({ value }));
+  },
+  verifyChronologyNumberValue: (value) => {
+    cy.expect(itemDataFields.chronology.has({ value }));
+  },
+  pressEnterInCallNumberField: () => {
+    cy.wait(500);
+    cy.get('#additem_callnumber').focus().type('{enter}');
+  },
+  addCopyNumberValue: (value) => {
+    cy.do(itemDataFields.copyNumber.fillIn(value));
+  },
+  pressEnterInCopyNumberField: () => {
+    cy.get('input[name="copyNumber"]').focus().type('{enter}');
+  },
+  pressEnterInChronologyField: () => {
+    cy.get('#additem_chronology').focus().type('{enter}');
+  },
+  verifyFormIsStillOpen: (itemTitle) => {
+    cy.expect([
+      Pane(including(itemTitle)).exists(),
+      cancelBtn.has({ disabled: or(true, false) }),
+      saveAndCloseBtn.has({ disabled: or(true, false) }),
+    ]);
   },
   addAdministrativeNote: (note) => {
     cy.do([

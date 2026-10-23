@@ -2020,6 +2020,21 @@ export default {
       });
   },
 
+  // Logs and checks the source file an authority record was saved with. A record created right after its
+  // source file can be saved without it (prefix not resolved yet) - log it so failures show the cause.
+  checkAuthoritySourceFileViaApi(authorityId, expectedSourceFileId) {
+    cy.okapiRequest({
+      path: `authority-storage/authorities/${authorityId}`,
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      const actual = body.sourceFileId ?? 'none';
+      cy.log(
+        `Authority ${authorityId} sourceFileId: ${actual} (expected: ${expectedSourceFileId})`,
+      );
+      expect(actual, 'authority record source file').to.equal(expectedSourceFileId);
+    });
+  },
+
   deleteViaAPI: (internalAuthorityId, ignoreErrors = false) => {
     cy.okapiRequest({
       method: 'DELETE',

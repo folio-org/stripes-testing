@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../constants';
 import { MultiColumnListHeader } from '../../../../../interactors';
 import ConsortiumManagerApp from '../consortiumManagerApp';
+import { ConsortiumUtils } from '../../../utils';
 
 const id = uuid();
 
@@ -38,18 +39,12 @@ export default {
   },
 
   getPatronGroupByNameAndTenant(groupName, tenantId) {
-    return cy.getConsortiaId().then((consortiaId) => {
-      cy.getPublications([tenantId], '/groups?limit=2000&offset=0').then((publicationId) => {
-        cy.okapiRequest({
-          method: REQUEST_METHOD.GET,
-          path: `consortia/${consortiaId}/publications/${publicationId}/results`,
-        }).then(({ body }) => {
-          const groups = JSON.parse(
-            body.publicationResults.find((publication) => publication.tenantId === tenantId)
-              .response,
-          ).usergroups;
-          return groups.find((group) => group.group === groupName);
-        });
+    return cy.getPublications([tenantId], '/groups?limit=2000&offset=0').then((publicationId) => {
+      // Wait for the publication to finish: tenant results have no response while it is in progress
+      return ConsortiumUtils.getPublicationResults(publicationId).then(({ publicationResults }) => {
+        const groups = publicationResults.find((publication) => publication.tenantId === tenantId)
+          .response.usergroups;
+        return groups.find((group) => group.group === groupName);
       });
     });
   },

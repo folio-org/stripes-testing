@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader, NavListItem, Spinner } from '../../../../../../interactors';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
+import { ConsortiumUtils } from '../../../../utils';
 
 const paneTitle = 'Instance status type';
 const optionName = 'Instance status types';
@@ -41,24 +42,21 @@ export default {
   },
 
   getInstanceStatusTypeByNameAndTenant(name, tenantId) {
-    return cy.getConsortiaId().then((consortiaId) => {
-      cy.getPublications([tenantId], '/instance-statuses?limit=2000&offset=0').then(
-        (publicationId) => {
-          cy.okapiRequest({
-            method: REQUEST_METHOD.GET,
-            path: `consortia/${consortiaId}/publications/${publicationId}/results`,
-          }).then(({ body }) => {
-            const alternativeTitleTypes = JSON.parse(
-              body.publicationResults.find((publication) => publication.tenantId === tenantId)
-                .response,
-            ).alternativeTitleTypes;
+    return cy
+      .getPublications([tenantId], '/instance-statuses?limit=2000&offset=0')
+      .then((publicationId) => {
+        // Wait for the publication to finish: tenant results have no response while it is in progress
+        return ConsortiumUtils.getPublicationResults(publicationId).then(
+          ({ publicationResults }) => {
+            const alternativeTitleTypes = publicationResults.find(
+              (publication) => publication.tenantId === tenantId,
+            ).response.instanceStatuses;
             return alternativeTitleTypes.find(
               (alternativeTitleType) => alternativeTitleType.name === name,
             );
-          });
-        },
-      );
-    });
+          },
+        );
+      });
   },
 
   deleteInstanceStatusTypeByNameAndTenant(name, tenantId) {

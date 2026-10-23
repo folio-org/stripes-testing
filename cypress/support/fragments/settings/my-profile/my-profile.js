@@ -12,6 +12,11 @@ export default {
         .click(),
     );
   },
+  verifyLanguageAndLocalizationIsLastTab() {
+    cy.get('#app-settings-nav-pane-content [class^=NavListItem]')
+      .last()
+      .should('contain.text', 'Language & localization');
+  },
   openLanguageAndLocalization() {
     cy.do(
       PaneContent({ id: 'app-settings-nav-pane-content' })

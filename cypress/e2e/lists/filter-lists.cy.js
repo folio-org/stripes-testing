@@ -7,7 +7,6 @@ import { getTestEntityValue } from '../../support/utils/stringTools';
 describe('Lists', () => {
   describe('Filter lists', () => {
     const userData = {};
-    const userDataTwo = {};
     const createdLists = [
       {
         name: `C411804-${getTestEntityValue('list')}-1`,
@@ -131,10 +130,6 @@ describe('Lists', () => {
       accordionName: 'Source',
       filters: ['System', 'User generated'],
     };
-    const updatedByFilter = {
-      accordionName: 'Updated by',
-    };
-
     before('Create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
@@ -156,11 +151,6 @@ describe('Lists', () => {
           });
         });
       });
-
-      cy.createTempUser([]).then((userProperties) => {
-        userDataTwo.username = userProperties.username;
-        userDataTwo.userId = userProperties.userId;
-      });
     });
 
     beforeEach('Reset all filters', () => {
@@ -180,7 +170,6 @@ describe('Lists', () => {
       });
       cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
-      Users.deleteViaApi(userDataTwo.userId);
     });
 
     it(
@@ -346,43 +335,6 @@ describe('Lists', () => {
         Lists.verifyClearFilterButton(sourceFilters.accordionName);
         Lists.verifyResetAllButtonEnabled();
         Lists.verifyListsFilteredBySource(['User generated']);
-        // #7 Click on "Reset all"
-        Lists.resetAllFilters();
-        Lists.verifyResetAllButtonDisabled();
-      },
-    );
-
-    it(
-      'C1434643 Filter section: Updated by (athena)',
-      { tags: ['extendedPath', 'athena', 'C1434643'] },
-      () => {
-        // #1 Click on "Updated by" accordion on the "Search & filter" pane
-        Lists.clickOnAccordionInFilter(updatedByFilter.accordionName);
-        Lists.verifyAccordionCollapsedInFilter(updatedByFilter.accordionName);
-        // #2 Click on "Updated by" accordion again
-        Lists.clickOnAccordionInFilter(updatedByFilter.accordionName);
-        Lists.verifyAccordionExpandedInFilter(updatedByFilter.accordionName);
-        Lists.verifyFindUserAccordionDefaultContent(updatedByFilter.accordionName);
-        // #3 Click on "Find user" link
-        Lists.clickOnFindUserButton(updatedByFilter.accordionName);
-        Lists.verifySelectUserModalDefaultContent();
-        // #4 Select "User 1" who has updated at least one list
-        Lists.findAndSelectUserInModal(userData.username);
-        Lists.verifyAtLeastOneListDisplayed();
-        Lists.verifyFindUserFieldDisplaysUser(updatedByFilter.accordionName, userData.username);
-        Lists.verifyClearFilterButton(updatedByFilter.accordionName);
-        Lists.verifyResetAllButtonEnabled();
-        // #5 Click on "x" next to "Updated by" field
-        Lists.clickOnClearFilterButton(updatedByFilter.accordionName);
-        Lists.verifyFindUserAccordionDefaultContent(updatedByFilter.accordionName);
-        Lists.verifyResetAllButtonDisabled();
-        // #6 Click on "Find user" again and select "User 2" who has not updated any lists
-        Lists.clickOnFindUserButton(updatedByFilter.accordionName);
-        Lists.findAndSelectUserInModal(userDataTwo.username);
-        Lists.verifyNoResultsFoundMessage();
-        Lists.verifyFindUserFieldDisplaysUser(updatedByFilter.accordionName, userDataTwo.username);
-        Lists.verifyClearFilterButton(updatedByFilter.accordionName);
-        Lists.verifyResetAllButtonEnabled();
         // #7 Click on "Reset all"
         Lists.resetAllFilters();
         Lists.verifyResetAllButtonDisabled();

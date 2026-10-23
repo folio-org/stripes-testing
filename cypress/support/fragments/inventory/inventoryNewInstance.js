@@ -60,6 +60,13 @@ export default {
   waitLoading() {
     cy.expect(rootSection.exists());
   },
+  verifySaveButtonDisabled: (disabled = true) => {
+    cy.expect(saveAndCloseButton.has({ disabled }));
+  },
+  pressEnterInIdentifierField: (index = 0) => {
+    cy.wait(500);
+    cy.get(`input[name="identifiers[${index}].value"]`).focus().type('{enter}');
+  },
   fillRequiredValues(
     resourceTitle = `autotest_instance_title_${getRandomPostfix()}`,
     resourceType = deafultResouceType,

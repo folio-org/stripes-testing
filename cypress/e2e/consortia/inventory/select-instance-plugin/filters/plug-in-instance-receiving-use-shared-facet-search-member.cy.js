@@ -225,6 +225,11 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'No', false);
 
             InventorySearchAndFilter.clearDefaultFilter(heldbyAccordionName);
+            // Reopen "Shared" so its options are reloaded for the query without "Held by"
+            cy.intercept('/search/instances/facets?*facet=shared*').as('getSharedFacet');
+            InventorySearchAndFilter.toggleAccordionByName(sharedAccordionName, false);
+            InventorySearchAndFilter.toggleAccordionByName(sharedAccordionName);
+            cy.wait('@getSharedFacet').its('response.statusCode').should('eq', 200);
             cy.intercept('/search/instances?*').as('getInstances');
             InventorySearchAndFilter.selectOptionInExpandedFilter(sharedAccordionName, 'No', true);
             cy.wait('@getInstances').its('response.statusCode').should('eq', 200);
