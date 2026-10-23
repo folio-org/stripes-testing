@@ -19,6 +19,9 @@ const expandAllButton = Button('Expand all');
 const managementPane = Pane('Management');
 const expandPaneIcon = Button({ icon: 'caret-right' });
 const collapsePaneIcon = Button({ icon: 'caret-left' });
+const managementPaneToggleButton = Button({
+  id: 'consortium-manager-navigation-pane-toggle-button',
+});
 const memberDropdownButton = Button({ id: 'consortium-member-select' });
 const memberDropdownList = SelectionList({ id: 'sl-container-consortium-member-select' });
 
@@ -251,6 +254,23 @@ export default {
     }
     this.waitLoading();
     this.verifySelectMembersButton();
+  },
+
+  // Real mouse click (cypress-real-events), so the browser moves focus the way it does for a user
+  clickManagementPaneToggleButton() {
+    cy.get('#consortium-manager-navigation-pane-toggle-button').realClick();
+  },
+
+  verifyManagementPaneCollapsed() {
+    cy.expect([managementPane.absent(), managementPaneToggleButton.has({ icon: 'caret-right' })]);
+  },
+
+  verifyManagementPaneExpanded() {
+    cy.expect([managementPane.exists(), managementPaneToggleButton.has({ icon: 'caret-left' })]);
+  },
+
+  verifyManagementPaneToggleButtonFocused() {
+    cy.expect(managementPaneToggleButton.has({ focused: true }));
   },
 
   verifyTenantsInDropdown: (memberNamesArray) => {
