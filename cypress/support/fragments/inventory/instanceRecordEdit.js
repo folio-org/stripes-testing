@@ -467,6 +467,24 @@ export default {
     cy.do(addAlternativeTitleButton.click());
   },
 
+  fillAlternativeTitle(value, index = 0) {
+    cy.do(TextArea({ name: `alternativeTitles[${index}].alternativeTitle` }).fillIn(value));
+  },
+
+  verifyAlternativeTitle(value, index = 0) {
+    cy.expect(TextArea({ name: `alternativeTitles[${index}].alternativeTitle` }).has({ value }));
+  },
+
+  pressEnterInAlternativeTitleField(index = 0) {
+    cy.wait(500);
+    cy.get(`textarea[name="alternativeTitles[${index}].alternativeTitle"]`).focus().type('{enter}');
+  },
+
+  pressEnterInTitleField: () => {
+    cy.wait(500);
+    cy.get('textarea[name="title"]').focus().type('{enter}');
+  },
+
   verifyAvailableAlternativeTitleTypes(expectedTypes, rowIndex = 0) {
     const types = Array.isArray(expectedTypes) ? expectedTypes : [expectedTypes];
     types.forEach((type) => {
@@ -596,6 +614,10 @@ export default {
   },
   fillCatalogedDate(date) {
     cy.do(TextField({ name: 'catalogedDate' }).fillIn(date));
+  },
+  pressEnterInDateField: (dateNumber = 1) => {
+    cy.wait(500);
+    cy.get(`input[name="dates.date${dateNumber}"]`).focus().type('{enter}');
   },
   verifyInstanceHridAndSourceAreNotEditable() {
     cy.expect([

@@ -205,6 +205,10 @@ export default {
     cy.expect(NavList({ title: sectionName }).has({ count: expectedCount }));
   },
 
+  verifyMyProfileIconInSettings() {
+    cy.expect(NavListItem('My profile').has({ icon: 'My profile' }));
+  },
+
   verifyNotesIconInSettings() {
     cy.expect(notesNavItem.has({ icon: 'Notes' }));
   },

@@ -155,9 +155,12 @@ export default {
   },
 
   getIdByName(typeName) {
+    // name="..." is CQL's tokenized/relevance match, not exact equality - e.g. it would match
+    // both "LC" and "LC (local)" for typeName "LC" since both start with that token. Use ==
+    // for an exact-phrase match so similarly-named types can't collide.
     return cy
       .okapiRequest({
-        path: `classification-types?query=name="${typeName}"`,
+        path: `classification-types?query=name=="${typeName}"`,
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
