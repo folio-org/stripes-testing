@@ -775,7 +775,7 @@ describe('Bulk-edit', () => {
             user.userId,
             [],
             [
-              CapabilitySets.uiInventoryItemCreate,
+              CapabilitySets.uiInventoryItemEdit,
               CapabilitySets.uiBulkEditQueryExecute,
               CapabilitySets.uiBulkEditLogsView,
             ],
