@@ -33,6 +33,7 @@ const holdingsHrId = rootForm.find(TextField({ name: 'hrid' }));
 const sourceSelect = rootForm.find(Select({ name: 'sourceId' }));
 const readonlyFields = [holdingsHrId, sourceSelect];
 const callNumberField = rootForm.find(TextArea({ name: 'callNumber' }));
+const copyNumberField = rootForm.find(TextField({ name: 'copyNumber' }));
 const statisticalCodeFieldSet = FieldSet('Statistical code');
 const addStatisticalCodeButton = Button('Add statistical code');
 const callNumberTypeSelect = rootForm.find(Select('Call number type'));
@@ -440,7 +441,47 @@ export default {
     if (callNumberType) this.chooseCallNumberType(callNumberType);
     if (callNumberPrefix !== undefined) cy.do(TextArea('Call number prefix').fillIn(callNumberPrefix));
     if (callNumberSuffix !== undefined) cy.do(TextArea('Call number suffix').fillIn(callNumberSuffix));
-    if (copyNumber !== undefined) cy.do(TextField('Copy number').fillIn(copyNumber));
+    if (copyNumber !== undefined) cy.do(copyNumberField.fillIn(copyNumber));
+  },
+  verifyCallNumberValues({
+    callNumber,
+    callNumberType,
+    callNumberPrefix,
+    callNumberSuffix,
+    copyNumber,
+  }) {
+    if (callNumber !== undefined) cy.expect(callNumberField.has({ value: callNumber }));
+    if (callNumberType) cy.expect(callNumberTypeSelect.has({ checkedOptionText: callNumberType }));
+    if (callNumberPrefix !== undefined) cy.expect(TextArea('Call number prefix').has({ value: callNumberPrefix }));
+    if (callNumberSuffix !== undefined) cy.expect(TextArea('Call number suffix').has({ value: callNumberSuffix }));
+    if (copyNumber !== undefined) cy.expect(copyNumberField.has({ value: copyNumber }));
+  },
+  pressEnterInCopyNumberField: () => {
+    cy.wait(500);
+    cy.get('input[name="copyNumber"]').focus().type('{enter}');
+  },
+  pressEnterInCallNumberField: () => {
+    cy.wait(500);
+    cy.get('textarea[name="callNumber"]').focus().type('{enter}');
+  },
+  verifyHoldingSavedCallout: () => {
+    InteractorsTools.checkCalloutMessage(
+      matching(new RegExp(InstanceStates.holdingSavedSuccessfully)),
+    );
+  },
+  verifyAcquisitionMethod: (value) => {
+    cy.expect(acquisitionMethodField.has({ value }));
+  },
+  pressEnterInAcquisitionMethodField: () => {
+    cy.wait(500);
+    cy.get('input[name="acquisitionMethod"]').focus().type('{enter}');
+  },
+  verifyDigitizationPolicy: (value) => {
+    cy.expect(digitizationPolicyField.has({ value }));
+  },
+  pressEnterInDigitizationPolicyField: () => {
+    cy.wait(500);
+    cy.get('#edit_digitizationpolicy').focus().type('{enter}');
   },
   markAsSuppressedFromDiscovery() {
     cy.do(Checkbox('Suppress from discovery').click());
@@ -450,7 +491,7 @@ export default {
   },
   checkButtonsEnabled({ saveAndClose = false, saveAndKeep = false, cancel = true } = {}) {
     cy.expect(saveAndCloseButton.has({ disabled: !saveAndClose }));
-    cy.expect(saveAndKeepEditingButton.has({ disabled: !saveAndKeep }));
+    if (saveAndKeep !== null && saveAndKeep !== undefined) cy.expect(saveAndKeepEditingButton.has({ disabled: !saveAndKeep }));
     cy.expect(cancelButton.has({ disabled: !cancel }));
   },
   saveAndKeepEditing({ holdingSaved = false } = {}) {

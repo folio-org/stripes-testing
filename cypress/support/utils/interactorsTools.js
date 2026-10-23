@@ -197,6 +197,10 @@ export default {
     cy.wait(1000);
     cy.get('[class^=calloutBase-][class*="error"]').should('not.exist');
   },
+  checkNoSuccessCallouts: () => {
+    cy.wait(1000);
+    cy.get('[class^=calloutBase-][class*="success"]').should('not.exist');
+  },
   checkModalMessage(title, message) {
     cy.expect(Modal(including(title)).has({ message: including(message) }));
   },
