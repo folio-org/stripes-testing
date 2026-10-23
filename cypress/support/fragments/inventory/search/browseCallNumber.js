@@ -212,6 +212,46 @@ export default {
     cy.expect(previousButton.has({ disabled: !isActive }));
   },
 
+  /**
+   * Clicks the first call number on the current browse page whose record is still found by search
+   * with the same filters the click applies. Use when browsing without a query: the page then shows
+   * any tenant's call numbers, and a record another spec has just deleted can still be listed in
+   * browse (its index catches up later) while search no longer finds it.
+   * @param {Object} filters
+   * @param {boolean} filters.shared - "Shared" facet value selected in browse
+   * @param {string} filters.tenantId - "Held by" tenant selected in browse
+   */
+  clickOnFirstFoundResult({ shared, tenantId }) {
+    const isFound = (callNumber) => cy
+      .okapiRequest({
+        path: 'search/instances',
+        searchParams: {
+          query:
+              `(itemFullCallNumbers=="${callNumber.replace(/"/g, '\\"')}") and shared=="${shared}" ` +
+              `and holdings.tenantId=="${tenantId}" and staffSuppress=="false"`,
+          limit: 1,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.totalRecords > 0);
+    const clickFirstFound = (callNumbers) => {
+      if (!callNumbers.length) {
+        throw new Error(
+          'No call number on the browse page is found by search with the selected filters',
+        );
+      }
+      return isFound(callNumbers[0]).then((found) => {
+        if (found) this.clickOnResult(callNumbers[0]);
+        else clickFirstFound(callNumbers.slice(1));
+      });
+    };
+
+    cy.expect(resultList.exists());
+    cy.get('[id^="browse-results-list-"] [data-row-index] [class*="mclCell-"]:first-child')
+      .then(($cells) => [...$cells].map((cell) => cell.innerText.trim()).filter(Boolean))
+      .then((callNumbers) => clickFirstFound(callNumbers));
+  },
+
   getCallNumbersViaApi(typeCode, callNumberValue) {
     return cy
       .okapiRequest({

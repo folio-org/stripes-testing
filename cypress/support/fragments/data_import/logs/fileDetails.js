@@ -527,6 +527,12 @@ export default {
       });
   },
 
+  verifyTitleInAnyRow: (title, specialColumnName) => {
+    cy.then(() => specialColumnName.index()).then((index) => cy.expect(
+      resultsList.find(MultiColumnListCell({ columnIndex: index, content: title })).exists(),
+    ));
+  },
+
   verifyTitle: (title, specialColumnName, rowIndex = 0) => {
     cy.then(() => specialColumnName.index()).then((index) => cy.expect(
       resultsList
