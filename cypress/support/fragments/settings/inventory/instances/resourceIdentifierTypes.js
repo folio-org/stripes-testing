@@ -55,12 +55,22 @@ export default {
     }
   },
 
-  verifyLocalResourceIdentifierTypesInTheList({ name, source = 'local', actions = [] }) {
+  verifyLocalResourceIdentifierTypesInTheList({
+    name,
+    source = 'local',
+    lastUpdated = [],
+    actions = [],
+  }) {
     const row = MultiColumnListRow({ content: including(name), isContainer: false });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
     ]);
+    lastUpdated.forEach((text) => {
+      cy.expect(
+        row.find(MultiColumnListCell({ columnIndex: 2, content: including(text) })).exists(),
+      );
+    });
     if (actions.length === 0) {
       cy.expect(row.find(actionsCell).has({ content: '' }));
     } else {

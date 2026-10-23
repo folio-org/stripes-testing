@@ -87,6 +87,51 @@ export default {
     resource: 'UI-Inventory Settings Identifier-Types',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInventorySettingsNatureOfContentTermsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Nature-Of-Content-Terms',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsLoanTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Loan-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsStatisticalCodeTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Statistical-Code-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsStatisticalCodesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Statistical-Codes',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsHoldingsNoteTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Holdings-Note-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsItemNoteTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Item-Note-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsMaterialTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Material-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsCallNumberTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Call-Number-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsElectronicAccessRelationshipsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Electronic-Access-Relationships',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventorySettingsListView: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Inventory Settings List',
