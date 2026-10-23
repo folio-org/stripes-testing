@@ -52,6 +52,8 @@ describe('Eureka', () => {
             ),
           ).to.have.lengthOf(1);
         });
+        cy.logout();
+
         cy.login(userB.username, userB.password);
         cy.wait('@selfCall').then((call) => {
           expect(call.response.statusCode).to.eq(200);

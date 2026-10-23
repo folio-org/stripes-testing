@@ -113,6 +113,7 @@ describe('Eureka', () => {
           });
         }).then(() => {
           cy.login(userBodies[0].username, testData.newPassword);
+          cy.logout();
           cy.login(userBodies[3].username, testData.newPassword);
         });
       },
