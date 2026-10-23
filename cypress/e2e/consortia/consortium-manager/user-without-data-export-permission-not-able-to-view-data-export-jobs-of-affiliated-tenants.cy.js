@@ -40,9 +40,6 @@ describe('Consortia', () => {
       cy.resetTenant();
       cy.getAdminToken();
       ExportFile.exportFileViaApi(testData.fileName);
-      DataExportLogsConsortiumManager.getRecordsTotalCountViaApi().then((count) => {
-        testData.centralRecordsCount = count;
-      });
 
       cy.setTenant(Affiliations.College);
       cy.createTempUser([Permissions.dataExportSettingsViewOnly.gui])
@@ -100,10 +97,14 @@ describe('Consortia', () => {
         ConsortiumManagerApp.verifySelectedMember(defaultMemberName);
 
         // Step 5: Select central tenant option in "Member" dropdown => Check data in logs table
+        // Count is taken from the request the UI rendered, so jobs created by parallel tests don't break it
+        cy.intercept('GET', '**/data-export/job-executions?*').as('getLogs');
         ConsortiumManagerApp.selectTenantFromDropdown(tenantNames.central);
         ConsortiumManagerApp.verifySelectedMember(tenantNames.central);
         DataExportLogsConsortiumManager.waitLoading();
-        DataExportLogsConsortiumManager.verifyRecordsFound(testData.centralRecordsCount);
+        cy.wait('@getLogs').then(({ response }) => {
+          DataExportLogsConsortiumManager.verifyRecordsFound(response.body.totalRecords);
+        });
         DataExportLogsConsortiumManager.verifyLogWithFileNameDisplayed(testData.fileName);
         DataExportLogsConsortiumManager.verifyListSortedBy(
           DATA_EXPORT_LOGS_COLUMNS.ENDED_RUNNING,

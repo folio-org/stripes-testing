@@ -52,7 +52,7 @@ export default {
   },
 
   verifyLocalMaterialTypesInTheList({ name, source = 'local', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
@@ -79,7 +79,7 @@ export default {
 
   clickTrashButtonForMaterialTypes(name) {
     cy.do([
-      MultiColumnListRow({ content: including(name) })
+      MultiColumnListRow({ content: including(name), isContainer: false })
         .find(MultiColumnListCell({ columnIndex: 3 }))
         .find(Button({ icon: 'trash' }))
         .click(),

@@ -70,7 +70,7 @@ export default {
 
   clickTrashButtonForLoanTypes(name) {
     cy.do([
-      MultiColumnListRow({ content: including(name) })
+      MultiColumnListRow({ content: including(name), isContainer: false })
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .find(Button({ icon: 'trash' }))
         .click(),
