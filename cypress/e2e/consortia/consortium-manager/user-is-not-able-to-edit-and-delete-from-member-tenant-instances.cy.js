@@ -218,7 +218,6 @@ describe('Consortia', () => {
 
     after('delete test data', () => {
       cy.resetTenant();
-      cy.setTenant(Affiliations.Consortia);
       cy.getAdminToken();
       ContributorTypesConsortiumManager.deleteViaApi(testData.centralSharedContributorTypes);
       ClassificationIdentifierTypesConsortiumManager.deleteViaApi(
@@ -251,7 +250,6 @@ describe('Consortia', () => {
 
       cy.setTenant(Affiliations.University);
       InstanceStatusTypes.deleteViaApi(testData.universityLocalInstanceStatusTypes.id);
-      cy.resetTenant();
     });
 
     it(
