@@ -218,7 +218,6 @@ describe('Consortia', () => {
 
     after('delete test data', () => {
       cy.resetTenant();
-      cy.setTenant(Affiliations.Consortia);
       cy.getAdminToken();
       ContributorTypesConsortiumManager.deleteViaApi(testData.centralSharedContributorTypes);
       ClassificationIdentifierTypesConsortiumManager.deleteViaApi(
@@ -239,8 +238,6 @@ describe('Consortia', () => {
       Users.deleteViaApi(testData.user.userId);
 
       cy.setTenant(Affiliations.College);
-      cy.clearCookies({ domain: null });
-      cy.getCollegeAdminToken();
       InstanceNoteTypes.deleteViaApi(testData.collegeLocalInstanceNoteTypes.id);
       ClassificationIdentifierTypes.deleteViaApiByName(
         testData.newClassificationIdentifierTypeName,
@@ -252,10 +249,7 @@ describe('Consortia', () => {
       );
 
       cy.setTenant(Affiliations.University);
-      cy.clearCookies({ domain: null });
-      cy.getUniversityAdminToken();
       InstanceStatusTypes.deleteViaApi(testData.universityLocalInstanceStatusTypes.id);
-      cy.resetTenant();
     });
 
     it(
