@@ -90,7 +90,7 @@ const addRolesButton = Button({ dataTestID: 'add-roles-button' });
 const unassignAllRolesButton = Button({ dataTestID: 'unassign-all-roles-button' });
 const selectRolesModal = Modal('Select user roles');
 const roleAssignmentFilter = selectRolesModal.find(
-  Accordion({ id: including('Role assigment status') }),
+  Accordion({ id: including('Role assignment status') }),
 );
 const selectAllCheckbox = Checkbox({ name: 'selected-selectAll' });
 const rolesPane = selectRolesModal.find(Pane('User roles'));
