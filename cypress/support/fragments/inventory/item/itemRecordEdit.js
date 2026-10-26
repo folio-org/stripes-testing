@@ -25,6 +25,7 @@ const administrativeDataSection = itemEditForm.find(Accordion('Administrative da
 const statisticalCodeFieldSet = administrativeDataSection.find(FieldSet('Statistical code'));
 const cancelBtn = Button({ id: 'cancel-item-edit' });
 const saveAndCloseBtn = Button({ id: 'clickable-save-item' });
+const saveAndKeepEditingBtn = Button('Save & keep editing');
 
 const adminDataFields = {
   barcode: administrativeDataSection.find(TextField('Barcode')),
@@ -84,6 +85,22 @@ export default {
   },
   cancel: () => {
     cy.do(cancelBtn.click());
+  },
+  checkButtonsEnabled({ saveAndClose = false, saveKeepEditing = false, cancel = true } = {}) {
+    cy.expect([
+      cancelBtn.has({ disabled: !cancel }),
+      saveAndCloseBtn.has({ disabled: !saveAndClose }),
+      saveAndKeepEditingBtn.has({ disabled: !saveKeepEditing }),
+    ]);
+  },
+  clickSaveAndKeepEditingButton({ itemSaved = false } = {}) {
+    cy.do(saveAndKeepEditingBtn.click());
+
+    if (itemSaved) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(InstanceStates.itemSavedSuccessfully)),
+      );
+    }
   },
   addBarcode: (barcode) => {
     cy.do(adminDataFields.barcode.fillIn(barcode));
