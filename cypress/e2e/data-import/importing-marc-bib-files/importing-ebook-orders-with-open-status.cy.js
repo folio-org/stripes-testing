@@ -14,7 +14,9 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import { Budgets } from '../../../support/fragments/finance';
 import OrderLines from '../../../support/fragments/orders/orderLines';
+import Orders from '../../../support/fragments/orders/orders';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -24,16 +26,26 @@ import FieldMappingProfiles from '../../../support/fragments/settings/dataImport
 import SettingsDataImport, {
   SETTINGS_TABS,
 } from '../../../support/fragments/settings/dataImport/settingsDataImport';
+import ExpenseClasses from '../../../support/fragments/settings/finance/expenseClasses';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix, { randomNDigitNumber } from '../../../support/utils/stringTools';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
+    let budget;
     const quantityOfItems = '17';
-    const marcFileName = `C375989 autotestFileName${getRandomPostfix()}.mrc`;
+    // 981$b in the fixture holds this placeholder; the fund code must have the same length
+    // so the MARC record lengths stay valid after the replacement
+    const fundCodePlaceholder = 'AT_FUND_PLACEHOLD';
+    const marcFile = {
+      fixtureName: 'marcFileForC375989.mrc',
+      modifiedFileName: `C375989 modifiedFile${getRandomPostfix()}.mrc`,
+      marcFileName: `C375989 autotestFileName${getRandomPostfix()}.mrc`,
+    };
     const mappingProfile = {
       name: `C375989 Test Order mapping profile ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,
@@ -84,7 +96,26 @@ describe('Data Import', () => {
       profileName: `C375989 Test Order ${getRandomPostfix()}`,
     };
 
-    before('Create user and login', () => {
+    before('Create fund with budget, user and login', () => {
+      cy.getAdminToken();
+      ExpenseClasses.getExpenseClassesViaApi({ query: 'name=="Electronic"' }).then(
+        ([electronicExpenseClass]) => {
+          const finance = Budgets.createBudgetWithFundLedgerAndFYViaApi({
+            fund: { code: `AT_C375989_${randomNDigitNumber(6)}` },
+            budget: { allocated: 10000 },
+            expenseClasses: [electronicExpenseClass],
+          });
+          budget = finance.budget;
+
+          DataImport.editMarcFile(
+            marcFile.fixtureName,
+            marcFile.modifiedFileName,
+            [new RegExp(fundCodePlaceholder, 'g')],
+            [finance.fund.code],
+          );
+        },
+      );
+
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -102,7 +133,18 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${marcFile.modifiedFileName}`);
       cy.getAdminToken().then(() => {
+        Orders.getOrdersApi({
+          limit: 100,
+          query: `metadata.createdByUserId=="${user.userId}"`,
+        }).then((orders) => {
+          orders.forEach((order) => Orders.deleteOrderViaApi(order.id));
+        });
+        Budgets.getBudgetByIdViaApi(budget.id).then((budgetResp) => {
+          Budgets.updateBudgetViaApi({ ...budgetResp, statusExpenseClasses: [] });
+        });
+        Budgets.deleteBudgetWithFundLedgerAndFYViaApi(budget);
         Users.deleteViaApi(user.userId);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -132,13 +174,13 @@ describe('Data Import', () => {
 
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
         DataImport.verifyUploadState();
-        DataImport.uploadFile('marcFileForC375989.mrc', marcFileName);
+        DataImport.uploadFile(marcFile.modifiedFileName, marcFile.marcFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        Logs.waitFileIsImported(marcFileName);
-        Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFileName);
+        Logs.waitFileIsImported(marcFile.marcFileName);
+        Logs.checkJobStatus(marcFile.marcFileName, JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(marcFile.marcFileName);
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfItems);
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.verifyPOLDetailsIsOpened();
