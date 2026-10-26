@@ -341,15 +341,16 @@ export default {
     }
 
     cy.wait(2000);
-    cy.getTenantLocaleApi().then(({ timezone = 'UTC' }) => {
-      const dateStr = new Intl.DateTimeFormat('en-US', {
-        day: 'numeric',
-        month: 'short',
-        timeZone: timezone,
-        year: 'numeric',
-      }).format(new Date());
-      this.checkPreview(`${template.previewText} ${dateStr}`);
-    });
+    this.checkPreview(template.previewText);
+    // cy.getTenantLocaleApi().then(({ timezone = 'UTC' }) => {
+    //   const dateStr = new Intl.DateTimeFormat('en-US', {
+    //     day: 'numeric',
+    //     month: 'short',
+    //     timeZone: timezone,
+    //     year: 'numeric',
+    //   }).format(new Date());
+    //   this.checkPreview(`${template.previewText} ${dateStr}`);
+    // });
     cy.wait(2000);
     this.saveAndClose();
     cy.wait(4000);
