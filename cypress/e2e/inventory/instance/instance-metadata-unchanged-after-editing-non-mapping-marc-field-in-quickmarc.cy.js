@@ -72,21 +72,19 @@ describe('Inventory', () => {
         InventoryInstances.selectInstanceById(testData.instanceId);
         InventoryInstance.waitLoading();
         InventoryInstance.waitInstanceRecordViewOpened();
-        cy.contains('button', /Record last updated:/)
-          .invoke('text')
-          .then((text) => {
-            // Step 2: Open Edit MARC bibliographic record; update non-mapping 591 field; save
-            InventoryInstance.editMarcBibliographicRecord();
-            QuickMarcEditor.waitLoading();
-            QuickMarcEditor.updateExistingField('591', testData.updatedTag982Content);
-            QuickMarcEditor.pressSaveAndClose();
-            QuickMarcEditor.checkAfterSaveAndClose();
-            InventoryInstance.waitLoading();
-            InventoryInstance.waitInstanceRecordViewOpened();
+        InstanceRecordView.getLastUpdatedDateAndTime().then((baseline) => {
+          // Step 2: Open Edit MARC bibliographic record; update non-mapping 591 field; save
+          InventoryInstance.editMarcBibliographicRecord();
+          QuickMarcEditor.waitLoading();
+          QuickMarcEditor.updateExistingField('591', testData.updatedTag982Content);
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.checkAfterSaveAndClose();
+          InventoryInstance.waitLoading();
+          InventoryInstance.waitInstanceRecordViewOpened();
 
-            // Step 3: Verify Record last updated in Administrative data is unchanged
-            InstanceRecordView.verifyLastUpdatedDateAndTime(text.split('updated: ')[1]);
-          });
+          // Step 3: Verify Record last updated in Administrative data is unchanged
+          InstanceRecordView.verifyLastUpdatedDateAndTime(baseline);
+        });
       },
     );
   });
