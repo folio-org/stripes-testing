@@ -90,7 +90,6 @@ describe('Eureka', () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           Users.waitLoading();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.reload();
         }, 20_000);
         Users.waitLoading();
       });
