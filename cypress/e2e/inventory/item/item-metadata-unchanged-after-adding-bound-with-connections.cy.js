@@ -12,7 +12,7 @@ import InventoryItems from '../../../support/fragments/inventory/item/inventoryI
 
 const capabSetsToAssign = [
   CapabilitySets.uiInventoryInstanceView,
-  CapabilitySets.uiInventoryItemCreate,
+  CapabilitySets.uiInventoryItemEdit,
 ];
 
 describe('Inventory', () => {
