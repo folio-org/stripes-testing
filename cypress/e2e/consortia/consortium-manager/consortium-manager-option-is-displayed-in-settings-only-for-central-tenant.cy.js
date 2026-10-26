@@ -3,9 +3,6 @@ import Affiliations, { tenantNames } from '../../../support/dictionary/affiliati
 import Users from '../../../support/fragments/users/users';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import TopMenu from '../../../support/fragments/topMenu';
-import Capabilities from '../../../support/dictionary/capabilities';
 
 describe('Consortia', () => {
   describe('Consortium manager', () => {
@@ -20,14 +17,14 @@ describe('Consortia', () => {
         })
         .then(() => {
           cy.assignAffiliationToUser(Affiliations.College, user.userId);
-          cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
-          UsersSearchPane.searchByUsername(user.username);
-          UsersSearchPane.openUser(user.username);
           cy.setTenant(Affiliations.College);
-          cy.assignPermissionsToExistingUser(user.userId, [
-            Capabilities.UIConsortiaSettingsMembershipView,
-            Capabilities.UIConsortiaSettingsMembershipEdit,
-          ]);
+          // Member tenant: assign ALL settings capability sets
+          cy.getCapabilitySetsApi(5000, { query: 'type==SETTINGS' }).then((capabSets) => {
+            cy.addCapabilitySetsToNewUserApi(
+              user.userId,
+              capabSets.map((set) => set.id),
+            );
+          });
 
           cy.resetTenant();
           cy.waitForAuthRefresh(() => {
