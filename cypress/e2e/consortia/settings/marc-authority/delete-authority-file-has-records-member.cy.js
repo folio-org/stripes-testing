@@ -62,6 +62,8 @@ describe('MARC', () => {
             testData.baseURL,
           ).then((sourceId) => {
             authorityFileId = sourceId;
+            cy.wait(70_000); // source file should be processed by scheduled job before assigning
+            cy.getAdminToken(false);
             // Create a shared MARC authority record assigned to the file in Central tenant
             MarcAuthorities.createMarcAuthorityViaAPI(
               testData.prefix,
@@ -96,16 +98,12 @@ describe('MARC', () => {
           { tags: ['criticalPathECS', 'promin', 'C436925'] },
           () => {
             cy.resetTenant();
-            cy.waitForAuthRefresh(() => {
-              cy.login(user.username, user.password);
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              TopMenuNavigation.navigateToApp(
-                APPLICATION_NAMES.SETTINGS,
-                testData.marcAuthorityTabName,
-              );
-              SettingsPane.waitLoading();
-              cy.reload();
-            }, 20_000);
+            cy.login(user.username, user.password);
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            TopMenuNavigation.navigateToApp(
+              APPLICATION_NAMES.SETTINGS,
+              testData.marcAuthorityTabName,
+            );
             SettingsPane.waitLoading();
             // Step 1: Switch to Member tenant and go to Manage authority files
             ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);

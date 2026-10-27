@@ -71,6 +71,7 @@ describe('MARC', () => {
               authorityFields,
             ).then((createdRecordId) => {
               createdAuthorityRecordId = createdRecordId;
+              MarcAuthorities.checkAuthoritySourceFileViaApi(createdRecordId, authorityFileId);
               cy.resetTenant();
               cy.createTempUser(perms).then((userProps) => {
                 user = userProps;
