@@ -125,27 +125,12 @@ export default {
     cy.do(metaSection.clickHeader());
     cy.expect(metaSection.has({ open: isOpen }));
   },
-  verifyMetadataContent({ updated, updatedBy, created, createdBy } = {}) {
-    if (updated) {
-      cy.expect(
-        titleInformationSection.find(MetaSection({ updatedText: including(updated) })).exists(),
-      );
-    }
-    if (updatedBy) {
-      cy.expect(
-        titleInformationSection.find(MetaSection({ updatedByText: including(updatedBy) })).exists(),
-      );
-    }
-    if (created) {
-      cy.expect(
-        titleInformationSection.find(MetaSection({ createdText: including(created) })).exists(),
-      );
-    }
-    if (createdBy) {
-      cy.expect(
-        titleInformationSection.find(MetaSection({ createdByText: including(createdBy) })).exists(),
-      );
-    }
+  verifyMetadataContent(metadata = {}) {
+    Object.entries(metadata).forEach(([key, value]) => {
+      if (value) {
+        cy.expect(titleInformationSection.find(MetaSection({ [key]: including(value) })).exists());
+      }
+    });
   },
   verifyAcquisitionUnitInTitleInformation(acquisitionUnitName, shouldExist = true) {
     cy.do(

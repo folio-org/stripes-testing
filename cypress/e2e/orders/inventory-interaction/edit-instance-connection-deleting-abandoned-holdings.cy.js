@@ -36,6 +36,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { getFullName } from '../../../support/utils/acquisitions';
 
 describe('Orders', () => {
   describe('Inventory interaction', () => {
@@ -251,7 +252,7 @@ describe('Orders', () => {
               testData.locale.timezone,
               testData.locale.locale,
             ),
-            updatedBy: `${testData.user.personal.lastName}, ${testData.user.personal.firstName}`,
+            updatedBy: getFullName(testData.user),
           });
         });
 
@@ -301,12 +302,12 @@ describe('Orders', () => {
             DEFAULT_WAIT_TIME,
           );
           ReceivingDetails.verifyMetadataContent({
-            updated: DateTools.getFormattedDateTimeInTimezoneForMetadata(
+            updatedText: DateTools.getFormattedDateTimeInTimezoneForMetadata(
               metadata.updatedDate,
               testData.locale.timezone,
               testData.locale.locale,
             ),
-            updatedBy: `${testData.user.personal.lastName}, ${testData.user.personal.firstName}`,
+            updatedByText: getFullName(testData.user),
           });
         });
       },
