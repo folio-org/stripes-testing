@@ -11,6 +11,7 @@ import {
   MultiColumnList,
   Checkbox,
   DropdownMenu,
+  MetaSection,
 } from '../../../../interactors';
 import {
   COMMON_BUTTON_LABELS,
@@ -117,6 +118,34 @@ export default {
     cy.do(
       titleInformationSection.find(Button({ id: 'accordion-toggle-button-information' })).click(),
     );
+  },
+  toggleMetadataAccordion(isOpen = true) {
+    const metaSection = titleInformationSection.find(MetaSection());
+
+    cy.do(metaSection.clickHeader());
+    cy.expect(metaSection.has({ open: isOpen }));
+  },
+  verifyMetadataContent({ updated, updatedBy, created, createdBy } = {}) {
+    if (updated) {
+      cy.expect(
+        titleInformationSection.find(MetaSection({ updatedText: including(updated) })).exists(),
+      );
+    }
+    if (updatedBy) {
+      cy.expect(
+        titleInformationSection.find(MetaSection({ updatedByText: including(updatedBy) })).exists(),
+      );
+    }
+    if (created) {
+      cy.expect(
+        titleInformationSection.find(MetaSection({ createdText: including(created) })).exists(),
+      );
+    }
+    if (createdBy) {
+      cy.expect(
+        titleInformationSection.find(MetaSection({ createdByText: including(createdBy) })).exists(),
+      );
+    }
   },
   verifyAcquisitionUnitInTitleInformation(acquisitionUnitName, shouldExist = true) {
     cy.do(

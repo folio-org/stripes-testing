@@ -1,6 +1,7 @@
 import {
   APPLICATION_NAMES,
   CHANGE_INSTANCE_HOLDINGS_OPERATIONS,
+  DEFAULT_WAIT_TIME,
   ITEM_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   ORDER_STATUSES,
@@ -33,6 +34,7 @@ import { Locations } from '../../../support/fragments/settings/tenant';
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
+import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Orders', () => {
@@ -52,6 +54,9 @@ describe('Orders', () => {
 
       cy.clearLocalStorage();
       cy.getAdminToken();
+      cy.getTenantLocaleApi().then((locale) => {
+        testData.locale = locale;
+      });
       Locations.getViaApiAnyDefault().then((locations) => {
         [testData.location] = locations;
 
@@ -209,6 +214,11 @@ describe('Orders', () => {
         DeleteHoldingsModal.verifyModalView();
 
         // Step 6: Click "Delete Holdings" button
+        let instanceConnectionChangedAt;
+
+        cy.then(() => {
+          instanceConnectionChangedAt = Date.now();
+        });
         DeleteHoldingsModal.clickDeleteHoldingsButton();
         OrderLineDetails.checkOrderLineDetails({
           itemDetails: [
@@ -227,6 +237,22 @@ describe('Orders', () => {
         OrderLines.verifyProductIdentifier({
           productId: testData.firstInstance.productId,
           productIdType: testData.productIdType.name,
+        });
+        // The PO line is updated by the change of the instance connection
+        OrderLineDetails.toggleMetadataAccordion();
+        OrderLines.getOrderLineByIdViaApi(testData.orderLine.id).then(({ metadata }) => {
+          expect(new Date(metadata.updatedDate).getTime()).to.be.closeTo(
+            instanceConnectionChangedAt,
+            DEFAULT_WAIT_TIME,
+          );
+          OrderLineDetails.verifyMetadataContent({
+            updated: DateTools.getFormattedDateTimeInTimezoneForMetadata(
+              metadata.updatedDate,
+              testData.locale.timezone,
+              testData.locale.locale,
+            ),
+            updatedBy: `${testData.user.personal.lastName}, ${testData.user.personal.firstName}`,
+          });
         });
 
         // Step 7: Click on "Title" link in "Item details" accordion on "PO Line details" pane
@@ -266,6 +292,23 @@ describe('Orders', () => {
         Receivings.selectFromResultsList(testData.firstInstance.instanceTitle);
         ReceivingDetails.checkTitlePaneIsDisplayed(testData.firstInstance.instanceTitle);
         ReceivingDetails.verifyExpectedRecordsCount(1);
+        // The receiving title is updated by the change of the instance connection
+        ReceivingDetails.expandTitleInformationAccordion();
+        ReceivingDetails.toggleMetadataAccordion();
+        Receivings.getTitleByPoLineIdViaApi(testData.orderLine.id).then(({ metadata }) => {
+          expect(new Date(metadata.updatedDate).getTime()).to.be.closeTo(
+            instanceConnectionChangedAt,
+            DEFAULT_WAIT_TIME,
+          );
+          ReceivingDetails.verifyMetadataContent({
+            updated: DateTools.getFormattedDateTimeInTimezoneForMetadata(
+              metadata.updatedDate,
+              testData.locale.timezone,
+              testData.locale.locale,
+            ),
+            updatedBy: `${testData.user.personal.lastName}, ${testData.user.personal.firstName}`,
+          });
+        });
       },
     );
   });
