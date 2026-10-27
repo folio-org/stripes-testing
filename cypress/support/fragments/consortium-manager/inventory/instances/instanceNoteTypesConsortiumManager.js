@@ -74,9 +74,11 @@ export default {
     ConsortiaControlledVocabularyPaneset.waitLoading('Instance note types');
   },
 
-  choose() {
+  choose({ isVerifyNewButtonPresence = true } = {}) {
     ConsortiumManagerApp.chooseSecondMenuItem('Instance note types');
-    cy.expect(newButton.is({ disabled: false }));
+    if (isVerifyNewButtonPresence) {
+      cy.expect(newButton.is({ disabled: false }));
+    }
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });
