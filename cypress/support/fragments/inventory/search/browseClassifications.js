@@ -248,12 +248,25 @@ export default {
     cy.wait(2000);
   },
 
+  clickPreviousPaginationButton() {
+    cy.do(previousButton.click());
+    cy.wait(2000);
+  },
+
   getNextPaginationButtonState() {
     return cy.wrap(nextButton.perform((el) => !el.disabled));
   },
 
   getPreviousPaginationButtonState() {
     return cy.wrap(previousButton.perform((el) => !el.disabled));
+  },
+
+  verifyNextButtonDisabled(isDisabled = true) {
+    cy.expect(nextButton.has({ disabled: isDisabled }));
+  },
+
+  verifyPreviousButtonDisabled(isDisabled = true) {
+    cy.expect(previousButton.has({ disabled: isDisabled }));
   },
 
   checkRowValues(
