@@ -6,6 +6,7 @@ import {
   RECEIVING_PIECE_FORMATS,
   RECEIVING_PIECE_FORM_FIELD_LABELS,
 } from '../../support/constants';
+import { POLINE_DETAILS_FIELDS } from '../../support/constants/orders/order-line';
 import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import {
@@ -187,15 +188,15 @@ describe('Orders', () => {
 
       // Step 6: Click on "POL number" link on Title details pane
       const OrderLineDetails = ReceivingDetails.openOrderLineDetails();
-      OrderLineDetails.checkLocationsSection({
+      OrderLineDetails.checkLocationsSectionInAnyOrder({
         locations: [
           [
-            { key: 'Holding', value: testData.polLocation.name },
-            { key: 'Quantity physical', value: QUANTITY },
+            { key: POLINE_DETAILS_FIELDS.HOLDING_NAME, value: testData.polLocation.name },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_PHYSICAL, value: QUANTITY },
           ],
           [
-            { key: 'Holding', value: testData.newLocation.name },
-            { key: 'Quantity electronic', value: QUANTITY },
+            { key: POLINE_DETAILS_FIELDS.HOLDING_NAME, value: testData.newLocation.name },
+            { key: POLINE_DETAILS_FIELDS.QUANTITY_ELECTRONIC, value: QUANTITY },
           ],
         ],
       });

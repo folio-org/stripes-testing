@@ -28,7 +28,8 @@ const quantityRecordsInInvoice = {
 
 const actionsButtonClick = () => cy.do(actionsButton.click());
 const viewAllLogsButtonClick = () => cy.do(viewAllLogsButton.click());
-const selectAllLogs = () => cy.do(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).click());
+const selectAllLogs = () =>
+  cy.do(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).click());
 const deleteLogsButtonClick = () => cy.do(deleteSelectedLogsButton.click());
 
 export default {
@@ -55,22 +56,18 @@ export default {
     cy.expect(MultiColumnListCell(jobProfileName).exists());
   },
 
-  checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
+  checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) =>
+    cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
 
   checkJobStatus: (fileName, status) => {
     const newFileName = fileName.replace(/\.mrc$/i, '');
 
-    cy.do(
-      MultiColumnListCell({ content: including(newFileName) }).perform((element) => {
-        const rowNumber = element.parentElement.getAttribute('data-row-inner');
-
-        cy.expect(
-          MultiColumnList({ id: 'job-logs-list' })
-            .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
-            .find(MultiColumnListCell({ content: status }))
-            .exists(),
-        );
-      }),
+    // Find the row and check its status in one lookup: new jobs from parallel specs shift row numbers
+    cy.expect(
+      MultiColumnList({ id: 'job-logs-list' })
+        .find(MultiColumnListRow({ content: including(newFileName), isContainer: false }))
+        .find(MultiColumnListCell({ content: status }))
+        .exists(),
     );
   },
   checkJobStatusByUser: (fileName, username, status) => {
@@ -112,7 +109,8 @@ export default {
     cy.wait(3500);
   },
 
-  checkQuantityRecordsInFile: (quantityRecords) => cy.do(MultiColumnListCell({ row: 0, content: quantityRecords }).exists()),
+  checkQuantityRecordsInFile: (quantityRecords) =>
+    cy.do(MultiColumnListCell({ row: 0, content: quantityRecords }).exists()),
 
   clickOnHotLink: (row = 0, columnIndex = 3, status = 'Created') => {
     cy.do(
@@ -146,10 +144,13 @@ export default {
     });
   },
 
-  getCreatedItemsID: (rowIndex = 0) => cy.then(() => searchResultList
-    .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
-    .find(Link('Created'))
-    .href()),
+  getCreatedItemsID: (rowIndex = 0) =>
+    cy.then(() =>
+      searchResultList
+        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+        .find(Link('Created'))
+        .href(),
+    ),
 
   getCreatedItemID(rowIndex = 0) {
     return cy.then(() => {
@@ -169,7 +170,8 @@ export default {
     cy.wait(1500);
     cy.expect(runningAccordion.find(HTML(including(fileName))).exists());
   },
-  verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
+  verifyCheckboxForMarkingLogsAbsent: () =>
+    cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
   verifyDeleteSelectedLogsButtonAbsent: () => cy.expect(deleteSelectedLogsButton.absent()),
   closePane: () => {
     cy.do(times.click());
@@ -234,8 +236,11 @@ export default {
     cy.do(MultiColumnList({ id: 'job-logs-list' }).find(Link(jobProfileName)).click());
   },
 
-  getCreatedItemsTitle: (rowIndex = 0) => cy.then(() => searchResultList
-    .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
-    .find(Link({ href: including('/data-import/log/') }))
-    .text()),
+  getCreatedItemsTitle: (rowIndex = 0) =>
+    cy.then(() =>
+      searchResultList
+        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+        .find(Link({ href: including('/data-import/log/') }))
+        .text(),
+    ),
 };

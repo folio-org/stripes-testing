@@ -22,7 +22,8 @@ const deleteIcon = Button({ id: including('clickable-delete-noteTypes-') });
 const noteTypeInput = TextField();
 const errorMessageElement = HTML({ className: including('editableListError-') });
 const noteTypePane = PaneSet({ id: 'noteTypes' });
-const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType), isContainer: true });
+const rowWithText = (noteType) =>
+  MultiColumnListRow({ content: including(noteType), isContainer: true });
 const rowWithExactText = (noteType) => MultiColumnListRow({ content: noteType, isContainer: true });
 const newButton = Button({ id: 'clickable-add-noteTypes' });
 const generalButton = HTML({
@@ -64,6 +65,13 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => response.body.noteTypes);
+  },
+
+  getNoteTypeAssignmentStatus(noteTypeName) {
+    return this.getNoteTypesViaApi().then((noteTypes) => {
+      const noteType = noteTypes.find((nt) => nt.name === noteTypeName);
+      return noteType ? noteType.usage.isAssigned : null;
+    });
   },
 
   verifyNoteTypeIsNotAssigned(noteTypeId) {

@@ -541,7 +541,7 @@ describe('MARC', () => {
 
         it(
           'C770443 ECS | Auto-link 6XX "MARC Bib" fields using "Link headings" on Member tenant and verify fields after "Save & keep editing" (promin)',
-          { tags: ['extendedPathECS', 'promin', 'C770443'] },
+          { tags: ['extendedPathECS', 'promin', 'C770443', 'nonParallel'] },
           () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();
             InventoryInstances.searchByTitle(createdRecordIDs[7]);

@@ -60,6 +60,9 @@ const selectAppResetAllButton = selectApplicationModal.find(Button({ id: 'clicka
 const saveButtonInModal = selectApplicationModal.find(
   Button({ dataTestID: 'submit-applications-modal' }),
 );
+const appSelectionStatusAccordion = selectApplicationModal.find(
+  Accordion('Application selection status'),
+);
 const cancelButtonInModal = selectApplicationModal.find(Button('Cancel'));
 const capabilitiesAccordion = Accordion('Capabilities');
 const capabilitySetsAccordion = Accordion('Capability sets');
@@ -97,7 +100,8 @@ const recordLastUpdatedHeader = generalInformationAccordion.find(
 );
 const unassignAllCapabilitiesButton = Button('Unassign all capabilities/sets');
 const duplicateModal = Modal('Duplicate role?');
-const duplicateCalloutSuccessText = (roleName) => `The role ${roleName} has been successfully duplicated`;
+const duplicateCalloutSuccessText = (roleName) =>
+  `The role ${roleName} has been successfully duplicated`;
 const promoteUsersModal = Modal('Create user records in Keycloak');
 const confirmButton = Button('Confirm');
 const promoteUsersModalText =
@@ -117,7 +121,8 @@ const shareToAllModal = Modal('Confirm share to all');
 const submitButton = Button('Submit');
 const successShareText = 'Role has been shared successfully';
 const centrallyManagedKeyValue = KeyValue('Centrally managed');
-const createNameErrorText = (name) => `Role could not be created: Failed to create keycloak role: name = ${name}`;
+const createNameErrorText = (name) =>
+  `Role could not be created: Failed to create keycloak role: name = ${name}`;
 const successDeleteText = 'Role has been deleted successfully';
 const typeKeyValue = KeyValue('Type');
 const generalInfoDateFormat = 'M/D/YYYY h:mm A';
@@ -134,9 +139,12 @@ const unselectModalContentRegExp = (appNames, capabilitiesCount, setsCount) => {
     `By unselecting ${lookaheads}${appEntry}(?:, ${appEntry})*, ${capabCountText} capabilit(ies|y) and ${setCountText} capability sets* will also be unselected\\. Are you sure you'd like to proceed\\?`,
   );
 };
-const confirmShareModalText = (roleName) => `Are you sure you want to share ${roleName} with ALL members?  Please note: Sharing a role with many capabilities or capability sets can take several minutes to complete, especially in systems with a large number of members. Avoid refreshing or closing this page during the process.`;
-const shareNameErrorText = (tenantNames) => `Role could not be shared: Name is already in use at one or more member libraries - ${tenantNames.join(', ')}.`;
-const saveNameErrorText = (tenantNames) => `Role could not be updated: Name is already in use at one or more member libraries - ${tenantNames.join(', ')}.`;
+const confirmShareModalText = (roleName) =>
+  `Are you sure you want to share ${roleName} with ALL members?  Please note: Sharing a role with many capabilities or capability sets can take several minutes to complete, especially in systems with a large number of members. Avoid refreshing or closing this page during the process.`;
+const shareNameErrorText = (tenantNames) =>
+  `Role could not be shared: Name is already in use at one or more member libraries - ${tenantNames.join(', ')}.`;
+const saveNameErrorText = (tenantNames) =>
+  `Role could not be updated: Name is already in use at one or more member libraries - ${tenantNames.join(', ')}.`;
 
 const expectedCapabilityTableActions = {
   [CAPABILITY_TYPES.DATA]: [
@@ -157,15 +165,17 @@ const expectedCapabilityTableActions = {
 };
 const unselectSetConfirmModal = Modal({ id: 'unselect-capability-set-confirmation-modal' });
 const unselectSetConfirmModalTitle = 'Warning';
-const unselectSetModalTextRegexp = (resource, action, capabilitiesCount) => new RegExp(
-  `By unselecting ${resource} - ${action.toLowerCase()}, ${capabilitiesCount !== null ? capabilitiesCount : '\\d+'} capabilit(ies|y) will also be unselected\\.\\s+Are you sure you'd like to proceed\\?`,
-);
+const unselectSetModalTextRegexp = (resource, action, capabilitiesCount) =>
+  new RegExp(
+    `By unselecting ${resource} - ${action.toLowerCase()}, ${capabilitiesCount !== null ? capabilitiesCount : '\\d+'} capabilit(ies|y) will also be unselected\\.\\s+Are you sure you'd like to proceed\\?`,
+  );
 const unselectSetModalTextBottom =
   'If checked, this message will be automatically confirmed for the rest of the session.';
 const unselectSetModalCheckbox = Checkbox('Do not display this message again.');
 const showHiddenCapabilitiesCheckbox = Checkbox('Show hidden capabilities');
 
 export const selectAppFilterOptions = { SELECTED: 'Selected', UNSELECTED: 'Unselected' };
+export const selectAppAssignmentOptions = { ASSIGNED: 'Assigned', UNASSIGNED: 'Unassigned' };
 export const SETTINGS_SUBSECTION_AUTH_ROLES = 'Authorization roles';
 export const defaultRoleCrudErrorMessage =
   'Default role cannot be created, updated or deleted via roles API.';
@@ -490,11 +500,13 @@ export default {
 
   checkAfterSaveEdit: (roleName, roleDescription = '', { timeout = 72_000 } = {}) => {
     recurse(
-      () => cy.get('body').then(
-        ($body) => $body.find('[class^="paneTitleLabel"]').filter((_, el) => {
-          return el.textContent.trim() === 'Edit role';
-        }).length,
-      ),
+      () =>
+        cy.get('body').then(
+          ($body) =>
+            $body.find('[class^="paneTitleLabel"]').filter((_, el) => {
+              return el.textContent.trim() === 'Edit role';
+            }).length,
+        ),
       (count) => count === 0,
       { timeout, delay: 1000, limit: Math.floor(timeout / 1000) },
     );
@@ -527,7 +539,8 @@ export default {
       .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     cy.expect(targetCheckbox.has({ checked: isSelected }));
-    if (isEnabled === true || isEnabled === false) cy.expect(targetCheckbox.has({ disabled: !isEnabled }));
+    if (isEnabled === true || isEnabled === false)
+      cy.expect(targetCheckbox.has({ disabled: !isEnabled }));
   },
 
   verifyCapabilityTableAbsent(tableName) {
@@ -566,7 +579,8 @@ export default {
 
   checkUsersAccordion: (expectedCount = false) => {
     cy.expect(usersAccordion.has({ open: true }));
-    if (expectedCount) cy.expect(usersAccordion.find(MultiColumnList({ rowCount: expectedCount })).exists());
+    if (expectedCount)
+      cy.expect(usersAccordion.find(MultiColumnList({ rowCount: expectedCount })).exists());
     else cy.expect(usersAccordion.find(MultiColumnList()).absent());
   },
 
@@ -588,7 +602,8 @@ export default {
     cy.do(deleteRoleModal.find(deleteButton).click());
     if (!errorExpected) {
       recurse(
-        () => cy.get('body').then(($body) => $body.find('[class^="modal"][id^="confirmation"]').length),
+        () =>
+          cy.get('body').then(($body) => $body.find('[class^="modal"][id^="confirmation"]').length),
         (count) => count === 0,
         { timeout, delay: 1000, limit: Math.floor(timeout / 1000) },
       );
@@ -702,7 +717,8 @@ export default {
           .exists(),
       ]);
     }
-    if (resultsFound === false) cy.expect(resultsPaneInAssignModal.find(MultiColumnListRow()).absent());
+    if (resultsFound === false)
+      cy.expect(resultsPaneInAssignModal.find(MultiColumnListRow()).absent());
   },
 
   verifyCheckboxesCountInCapabilityRow: ({ table, resource }, expectedCount) => {
@@ -1081,7 +1097,8 @@ export default {
         cy.expect([
           rolesPane.find(MultiColumnListCell(roleDescription, { row: rowNumber })).exists(),
         ]);
-        if (updated) cy.expect(rolesPane.find(MultiColumnListCell(updated, { row: rowNumber })).exists());
+        if (updated)
+          cy.expect(rolesPane.find(MultiColumnListCell(updated, { row: rowNumber })).exists());
         if (updatedBy) {
           cy.expect(
             rolesPane.find(MultiColumnListCell(including(updatedBy), { row: rowNumber })).exists(),
@@ -1222,11 +1239,41 @@ export default {
     cy.expect(targetCheckbox.has({ checked: isChecked }));
   },
 
-  clearFilterInSelectAppModal: () => {
+  clearFilterInSelectAppModal() {
     cy.do(selectApplicationModal.find(clearFieldButton).click());
-    Object.values(selectAppFilterOptions).forEach((option) => {
-      cy.expect(selectApplicationModal.find(Checkbox(option)).has({ checked: false }));
+    cy.expect(selectApplicationModal.find(clearFieldButton).absent());
+    this.verifyFiltersResetInSelectAppModal({
+      checkSelectionFilter: true,
+      checkAssignmentFilter: false,
     });
+  },
+
+  toggleAppSelectionStatusAccordion: (isOpen = true) => {
+    cy.do(appSelectionStatusAccordion.clickHeader());
+    cy.expect(appSelectionStatusAccordion.has({ open: isOpen }));
+  },
+
+  checkApplicationStatusInModal: (appName, status) => {
+    const targetRow = selectApplicationModal.find(
+      MultiColumnListRow(matching(new RegExp(`${appName}-\\d\\..+`)), { isContainer: false }),
+    );
+    cy.expect(targetRow.find(MultiColumnListCell(status, { column: 'Status' })).exists());
+  },
+
+  verifyFiltersResetInSelectAppModal: ({
+    checkSelectionFilter = true,
+    checkAssignmentFilter = true,
+  } = {}) => {
+    if (checkSelectionFilter) {
+      Object.values(selectAppFilterOptions).forEach((option) => {
+        cy.expect(selectApplicationModal.find(Checkbox(option)).has({ checked: false }));
+      });
+    }
+    if (checkAssignmentFilter) {
+      Object.values(selectAppAssignmentOptions).forEach((option) => {
+        cy.expect(selectApplicationModal.find(Checkbox(option)).has({ checked: false }));
+      });
+    }
   },
 
   checkClearFilterButtonInSelectAppModal: (isShown = true) => {
@@ -1259,10 +1306,12 @@ export default {
 
   verifyCapabilityTableRowsSorted(table, { sets = false } = {}) {
     const targetAccordion = sets ? capabilitySetsAccordion : capabilitiesAccordion;
-    cy.then(() => targetAccordion
-      .find(capabilityTables[table])
-      .find(HTML({ className: including('mclRowContainer-') }))
-      .text()).then((tableText) => {
+    cy.then(() =>
+      targetAccordion
+        .find(capabilityTables[table])
+        .find(HTML({ className: including('mclRowContainer-') }))
+        .text(),
+    ).then((tableText) => {
       const rowTexts = tableText.split(/(?=app-)/);
       expect(rowTexts).to.deep.equal(rowTexts.toSorted());
     });
@@ -1287,14 +1336,15 @@ export default {
     capabilitySetTableNames = Object.values(CAPABILITY_TYPES),
     capabilityTableNames = Object.values(CAPABILITY_TYPES),
   } = {}) {
-    const expectedHeadersMatcher = (table) => or(
-      [
-        'Application',
-        'Resource',
-        ...expectedCapabilityTableActions[table].map((text) => `${text} `),
-      ],
-      ['Application', 'Resource', ...expectedCapabilityTableActions[table]],
-    );
+    const expectedHeadersMatcher = (table) =>
+      or(
+        [
+          'Application',
+          'Resource',
+          ...expectedCapabilityTableActions[table].map((text) => `${text} `),
+        ],
+        ['Application', 'Resource', ...expectedCapabilityTableActions[table]],
+      );
     capabilitySetTableNames.forEach((table) => {
       cy.expect(
         capabilitySetsAccordion.find(capabilityTables[table]).has({
@@ -1355,9 +1405,11 @@ export default {
   },
 
   verifyNoCapabilitiesOrSetsChecked: ({ noCheckedSets = true, noCheckedCapabs = true } = {}) => {
-    if (noCheckedSets) cy.expect(capabilitySetsAccordion.find(Checkbox({ checked: true })).absent());
+    if (noCheckedSets)
+      cy.expect(capabilitySetsAccordion.find(Checkbox({ checked: true })).absent());
     else cy.expect(capabilitySetsAccordion.find(Checkbox({ checked: true })).exists());
-    if (noCheckedCapabs) cy.expect(capabilitiesAccordion.find(Checkbox({ checked: true })).absent());
+    if (noCheckedCapabs)
+      cy.expect(capabilitiesAccordion.find(Checkbox({ checked: true })).absent());
     else cy.expect(capabilitiesAccordion.find(Checkbox({ checked: true })).exists());
   },
 

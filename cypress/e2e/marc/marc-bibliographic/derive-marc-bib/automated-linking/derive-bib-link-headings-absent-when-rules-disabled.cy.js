@@ -180,7 +180,7 @@ describe('MARC', () => {
 
         it(
           'C389482 "Link headings" button is NOT displayed in derive "MARC bib" window when auto-link for all heading types is disabled (promin)',
-          { tags: ['extendedPath', 'promin', 'C389482'] },
+          { tags: ['extendedPath', 'promin', 'nonParallel', 'C389482'] },
           () => {
             InventoryInstances.searchByTitle(createdInstanceId);
             InventoryInstances.selectInstanceById(createdInstanceId);

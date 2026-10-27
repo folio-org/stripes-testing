@@ -10,3 +10,9 @@ export const PACKAGE_TYPES = {
   VARIABLE: 'Variable',
   COMPLETE: 'Complete',
 };
+
+export const PACKAGE_ACCESS = {
+  ALL: 'All',
+  PUBLIC: 'Public',
+  CONTROLLED: 'Controlled',
+};

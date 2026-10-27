@@ -674,12 +674,14 @@ export default {
   },
 
   waitLoading: ({ headline } = {}) => {
-    cy.expect(rootSection.exists());
+    cy.expect([rootSection.exists(), userInformationAccordion.exists()]);
     // Wait for the headline to appear, as a cached version of another user's data may appear for a moment,
     // which is enough to trigger Actions -> Edit for the wrong user.
     if (headline) {
       cy.expect(rootSection.find(HTML(including(headline))).exists());
     }
+    cy.wait(500);
+    cy.expect(rootSection.find(Spinner()).absent());
   },
 
   startFeeFine: () => {
@@ -1014,6 +1016,16 @@ export default {
     ]);
   },
 
+  verifyProxySponsorUpdatedRelationship(username) {
+    const proxyUser = ProxyUser(including(username));
+    cy.expect([
+      proxyUser.exists(),
+      proxyUser.find(KeyValue('Relationship Status')).has({ value: 'Inactive' }),
+      proxyUser.find(KeyValue('Proxy can request for sponsor')).has({ value: 'No' }),
+      proxyUser.find(KeyValue('Notifications sent to')).has({ value: 'Proxy' }),
+    ]);
+  },
+
   verifyProxyNameDisplayed(lastName) {
     cy.expect(HTML(including(lastName)).exists());
   },
@@ -1329,12 +1341,18 @@ export default {
   },
 
   selectFilterOptionsInAffiliationsModal({ assigned = null, unassigned = null } = {}) {
-    if (assigned === true) cy.do(affiliationsAssignModal.find(assignedCheckbox).checkIfNotSelected());
-    else if (assigned === false) cy.do(affiliationsAssignModal.find(assignedCheckbox).uncheckIfSelected());
-    if (unassigned === true) cy.do(affiliationsAssignModal.find(unassignedCheckbox).checkIfNotSelected());
-    else if (unassigned === false) cy.do(affiliationsAssignModal.find(unassignedCheckbox).uncheckIfSelected());
-    if (assigned !== null) cy.expect(affiliationsAssignModal.find(assignedCheckbox).has({ checked: assigned }));
-    if (unassigned !== null) cy.expect(affiliationsAssignModal.find(unassignedCheckbox).has({ checked: unassigned }));
+    if (assigned === true)
+      cy.do(affiliationsAssignModal.find(assignedCheckbox).checkIfNotSelected());
+    else if (assigned === false)
+      cy.do(affiliationsAssignModal.find(assignedCheckbox).uncheckIfSelected());
+    if (unassigned === true)
+      cy.do(affiliationsAssignModal.find(unassignedCheckbox).checkIfNotSelected());
+    else if (unassigned === false)
+      cy.do(affiliationsAssignModal.find(unassignedCheckbox).uncheckIfSelected());
+    if (assigned !== null)
+      cy.expect(affiliationsAssignModal.find(assignedCheckbox).has({ checked: assigned }));
+    if (unassigned !== null)
+      cy.expect(affiliationsAssignModal.find(unassignedCheckbox).has({ checked: unassigned }));
   },
 
   verifyAffiliationChangeSuccessCallout() {

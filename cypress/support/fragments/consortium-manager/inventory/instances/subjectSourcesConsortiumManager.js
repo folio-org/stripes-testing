@@ -11,6 +11,7 @@ import {
   TextField,
 } from '../../../../../../interactors';
 import Affiliations, { tenantNames } from '../../../../dictionary/affiliations';
+import { ConsortiumUtils } from '../../../../utils';
 import DateTools from '../../../../utils/dateTools';
 import InteractorsTools from '../../../../utils/interactorsTools';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
@@ -257,16 +258,15 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
-        return cy
-          .okapiRequest({
-            path: `consortia/${consortiaId}/publications/${response.body.id}/results`,
-            isDefaultSearchParamsRequired: false,
-          })
-          .then((resp) => {
-            const parsedResponse = JSON.parse(resp.body.publicationResults[0].response);
-            const item = parsedResponse.subjectSources.find((obj) => obj.name === name);
+        // Wait for the publication to finish: tenant results have no response while it is in progress
+        return ConsortiumUtils.getPublicationResults(response.body.id).then(
+          ({ publicationResults }) => {
+            const item = publicationResults[0].response.subjectSources.find(
+              (obj) => obj.name === name,
+            );
             return item.id;
-          });
+          },
+        );
       });
   },
 
@@ -284,6 +284,7 @@ export default {
         },
       },
       isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
     });
   },
 
@@ -474,9 +475,10 @@ export default {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         const rowIndex = Number(rowNumber.replace('row-', ''));
 
-        const expectCell = (colIdx, expectedContent) => EditableListRow({ index: rowIndex })
-          .find(MultiColumnListCell({ columnIndex: colIdx }))
-          .has({ content: expectedContent });
+        const expectCell = (colIdx, expectedContent) =>
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: colIdx }))
+            .has({ content: expectedContent });
 
         const expectations = [
           expectCell(columnIndex.name, name),

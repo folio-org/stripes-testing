@@ -3,6 +3,7 @@ import { REQUEST_METHOD } from '../../../../constants';
 import { Button, MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
+import { ConsortiumUtils } from '../../../../utils';
 
 const id = uuid();
 const newButton = Button('New');
@@ -40,22 +41,19 @@ export default {
   },
 
   getInstanceNoteTypeByNameAndTenant(name, tenantId) {
-    return cy.getConsortiaId().then((consortiaId) => {
-      cy.getPublications([tenantId], '/instance-note-types?limit=2000&offset=0').then(
-        (publicationId) => {
-          cy.okapiRequest({
-            method: REQUEST_METHOD.GET,
-            path: `consortia/${consortiaId}/publications/${publicationId}/results`,
-          }).then(({ body }) => {
-            const instanceNoteTypes = JSON.parse(
-              body.publicationResults.find((publication) => publication.tenantId === tenantId)
-                .response,
-            ).instanceNoteTypes;
+    return cy
+      .getPublications([tenantId], '/instance-note-types?limit=2000&offset=0')
+      .then((publicationId) => {
+        // Wait for the publication to finish: tenant results have no response while it is in progress
+        return ConsortiumUtils.getPublicationResults(publicationId).then(
+          ({ publicationResults }) => {
+            const instanceNoteTypes = publicationResults.find(
+              (publication) => publication.tenantId === tenantId,
+            ).response.instanceNoteTypes;
             return instanceNoteTypes.find((instanceNoteType) => instanceNoteType.name === name);
-          });
-        },
-      );
-    });
+          },
+        );
+      });
   },
 
   deleteInstanceNoteTypeByNameAndTenant(name, tenantId) {
@@ -74,9 +72,11 @@ export default {
     ConsortiaControlledVocabularyPaneset.waitLoading('Instance note types');
   },
 
-  choose() {
+  choose({ isVerifyNewButtonPresence = true } = {}) {
     ConsortiumManagerApp.chooseSecondMenuItem('Instance note types');
-    cy.expect(newButton.is({ disabled: false }));
+    if (isVerifyNewButtonPresence) {
+      cy.expect(newButton.is({ disabled: false }));
+    }
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });

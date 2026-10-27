@@ -1,6 +1,8 @@
 import {
   HTML,
   including,
+  Callout,
+  calloutTypes,
   Button,
   TextField,
   Selection,
@@ -9,6 +11,7 @@ import {
 
 const nameField = TextField({ name: 'name' });
 const packageCreationCallout = 'Custom title created.';
+const duplicateTitleNameError = 'Custom Title with the provided name already exists';
 
 export default {
   waitLoading: () => {
@@ -70,5 +73,12 @@ export default {
 
   checkCreationOfNewCustomTitle: () => {
     cy.expect(HTML(including(packageCreationCallout)).exists());
+  },
+
+  verifyDuplicateTitleNameCallout: (message = duplicateTitleNameError) => {
+    const targetCallout = Callout(message, { type: calloutTypes.error });
+    cy.expect(targetCallout.exists());
+    cy.do(targetCallout.dismissToast());
+    cy.expect(targetCallout.absent());
   },
 };

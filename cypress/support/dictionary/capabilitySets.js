@@ -62,6 +62,21 @@ export default {
     resource: 'UI-Inventory Settings Holdings-Sources',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInventorySettingsClassificationTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Classification-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsInstanceNoteTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Instance-Note-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsModesOfIssuanceView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Modes-Of-Issuance',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventorySettingsSubjectSourcesView: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Inventory Settings Subject-Sources',
@@ -72,6 +87,51 @@ export default {
     resource: 'UI-Inventory Settings Identifier-Types',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInventorySettingsNatureOfContentTermsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Nature-Of-Content-Terms',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsLoanTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Loan-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsStatisticalCodeTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Statistical-Code-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsStatisticalCodesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Statistical-Codes',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsHoldingsNoteTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Holdings-Note-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsItemNoteTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Item-Note-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsMaterialTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Material-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsCallNumberTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Call-Number-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsElectronicAccessRelationshipsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Electronic-Access-Relationships',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventorySettingsListView: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Inventory Settings List',
@@ -80,6 +140,36 @@ export default {
   uiDataImportSettingsManage: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Data-Import Settings',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiUsersSettingsPermsetsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Permsets',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiUsersSettingsPermsetsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Permsets',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiUsersSettingsDepartmentsCreateEditViewEdit: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Departments Create-Edit-View',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
+  uiUsersSettingsDepartmentsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Departments',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiUsersSettingsUsergroupsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Usergroups',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiUsersSettingsUsergroupsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Users Settings Usergroups',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
   moduleListsManage: {
@@ -100,6 +190,16 @@ export default {
   myProfileMainNavOrderManage: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Myprofile Settings Main-Nav-Order',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  settingsMyprofileEnabledView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'Settings Myprofile Enabled',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiTenantSettingsSettingsLocaleManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Tenant-Settings Settings Locale',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
 
@@ -139,10 +239,20 @@ export default {
     resource: 'UI-Users',
     action: CAPABILITY_ACTIONS.CREATE,
   },
+  uiUsersPermsEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Users Perms',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   uiUsersLoansView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Users Loans',
     action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiUsersLoansRenew: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Users Loans-Renew',
+    action: CAPABILITY_ACTIONS.CREATE,
   },
   uiUsersFeeFinesView: {
     type: CAPABILITY_TYPES.DATA,
@@ -244,6 +354,11 @@ export default {
     resource: 'UI-Inventory Instance',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiInventoryInstanceCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Instance',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
   uiInventoryInstanceView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Instance',
@@ -294,20 +409,50 @@ export default {
     resource: 'UI-Data-Export',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiExportManagerExportManagerView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Export-Manager Export-Manager',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  dataExportManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Data-Export',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  dataExportConfigManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Data-Export Config',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  dataExportJobManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'Data-Export Job',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
   uiInventoryHoldingsCreate: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Holdings',
     action: CAPABILITY_ACTIONS.CREATE,
+  },
+  uiInventoryHoldingsEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Holdings',
+    action: CAPABILITY_ACTIONS.EDIT,
   },
   uiInventory: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
-  uiInventoryItemCreate: {
+  uiInventoryItemEdit: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Item',
     action: CAPABILITY_ACTIONS.EDIT,
+  },
+  uiInventoryItemCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Item',
+    action: CAPABILITY_ACTIONS.CREATE,
   },
   uiInventoryItemMove: {
     type: CAPABILITY_TYPES.PROCEDURAL,
@@ -426,6 +571,11 @@ export default {
   },
 
   // Procedural capability sets
+  uiExportManagerJobsDownloadAndResendExecute: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Export-Manager Jobs DownloadAndResend',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
   uiUsersResetPassword: {
     type: CAPABILITY_TYPES.PROCEDURAL,
     resource: 'UI-Users Reset Password',

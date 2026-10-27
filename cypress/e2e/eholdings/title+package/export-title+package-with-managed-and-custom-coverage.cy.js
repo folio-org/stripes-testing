@@ -9,6 +9,7 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { APPLICATION_NAMES } from '../../../support/constants';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import EHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingsResourceEdit';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -18,7 +19,9 @@ describe('eHoldings', () => {
       fileMask: '*_resource.csv',
       customCoverageRange: {
         startDay: '01/01/2020',
+        startDayApi: '2020-01-01',
         endDay: '12/31/2020',
+        endDayApi: '2020-12-31',
       },
     };
     const calloutMessage =
@@ -33,6 +36,17 @@ describe('eHoldings', () => {
 
     before('Creating user, logging in', () => {
       cy.getAdminToken();
+
+      EHoldingsResourceEdit.updateResourceAttributesViaApi(testData.resourceId, {
+        customCoverages: [
+          {
+            beginCoverage: testData.customCoverageRange.startDayApi,
+            endCoverage: testData.customCoverageRange.endDayApi,
+          },
+        ],
+        isSelected: true,
+      });
+
       cy.createTempUser([
         Permissions.uieHoldingsRecordsEdit.gui,
         Permissions.uiAgreementsSearchAndView.gui,

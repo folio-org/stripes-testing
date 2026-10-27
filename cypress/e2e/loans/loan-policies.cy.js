@@ -1,7 +1,7 @@
 import moment from 'moment';
 import uuid from 'uuid';
 
-import { LOAN_PROFILE } from '../../support/constants';
+import { LOAN_PROFILE, CLOSED_LIBRARY_DUE_DATE_MANAGEMENT } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
@@ -21,14 +21,6 @@ import DateTools from '../../support/utils/dateTools';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
 // ─── Shared constants ──────────────────────────────────────────────────────────
-export const CLOSED_LIBRARY_DUE_DATE_MANAGEMENT = {
-  CURRENT_DUE_DATE: 'CURRENT_DUE_DATE',
-  CURRENT_DUE_DATE_TIME: 'CURRENT_DUE_DATE_TIME',
-  END_OF_THE_CURRENT_SERVICE_POINT_HOURS: 'END_OF_THE_CURRENT_SERVICE_POINT_HOURS',
-  BEGINNING_OF_THE_NEXT_OPEN_SERVICE_POINT_HOURS: 'BEGINNING_OF_THE_NEXT_OPEN_SERVICE_POINT_HOURS',
-  END_OF_THE_PREVIOUS_OPEN_DAY: 'END_OF_THE_PREVIOUS_OPEN_DAY',
-  END_OF_THE_NEXT_OPEN_DAY: 'END_OF_THE_NEXT_OPEN_DAY',
-};
 const DAYS_OF_WEEK = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 const DATE_FORMAT = 'YYYY-MM-DD';
 const TIME_FORMAT = 'HH:mm';
@@ -253,7 +245,9 @@ function teardownLoanTest(ctx, loanPolicyId) {
   if (ctx.calendarId) deleteCalendar(ctx.calendarId);
   ServicePoints.deleteViaApi(ctx.servicePoint.id);
   if (ctx.fixedDueDateSchedule) {
-    LoanPolicy.deleteApi(loanPolicyId).then(() => cy.deleteFixedDueDateSchedule(ctx.fixedDueDateSchedule.id));
+    LoanPolicy.deleteApi(loanPolicyId).then(() =>
+      cy.deleteFixedDueDateSchedule(ctx.fixedDueDateSchedule.id),
+    );
   } else {
     LoanPolicy.deleteApi(loanPolicyId);
   }
@@ -434,11 +428,12 @@ describe('Loan Policies', () => {
     before('Create test data', () => {
       setupLoanTest(ctx, {
         loanPolicyId: loanPolicy.id,
-        calendarBodyFn: ({ servicePointId, calendarName }) => buildLongTermClosedOnDueDateCalendar({
-          servicePointId,
-          calendarName,
-          loanPeriodDays: LOAN_PERIOD_DAYS,
-        }),
+        calendarBodyFn: ({ servicePointId, calendarName }) =>
+          buildLongTermClosedOnDueDateCalendar({
+            servicePointId,
+            calendarName,
+            loanPeriodDays: LOAN_PERIOD_DAYS,
+          }),
         calendarName: getTestEntityValue('cal_c844247'),
         createPolicyFn: () => LoanPolicy.createViaApi(loanPolicy),
       });
@@ -488,12 +483,13 @@ describe('Loan Policies', () => {
     before('Create test data', () => {
       setupLoanTest(ctx, {
         loanPolicyId: loanPolicy.id,
-        calendarBodyFn: ({ servicePointId, calendarName }) => buildLongTermClosedOnDueDateCalendar({
-          servicePointId,
-          calendarName,
-          loanPeriodDays: LOAN_PERIOD_DAYS,
-          ensureTodayOpen: false,
-        }),
+        calendarBodyFn: ({ servicePointId, calendarName }) =>
+          buildLongTermClosedOnDueDateCalendar({
+            servicePointId,
+            calendarName,
+            loanPeriodDays: LOAN_PERIOD_DAYS,
+            ensureTodayOpen: false,
+          }),
         calendarName: getTestEntityValue('cal_c844248'),
         createPolicyFn: () => LoanPolicy.createViaApi(loanPolicy),
       });
@@ -545,12 +541,13 @@ describe('Loan Policies', () => {
     before('Create test data', () => {
       setupLoanTest(ctx, {
         loanPolicyId: loanPolicy.id,
-        calendarBodyFn: ({ servicePointId, calendarName }) => buildLongTermClosedOnDueDateCalendar({
-          servicePointId,
-          calendarName,
-          loanPeriodDays: LOAN_PERIOD_DAYS,
-          ensureTodayOpen: false,
-        }),
+        calendarBodyFn: ({ servicePointId, calendarName }) =>
+          buildLongTermClosedOnDueDateCalendar({
+            servicePointId,
+            calendarName,
+            loanPeriodDays: LOAN_PERIOD_DAYS,
+            ensureTodayOpen: false,
+          }),
         calendarName: getTestEntityValue('cal_c844249'),
         createPolicyFn: () => LoanPolicy.createViaApi(loanPolicy),
       });

@@ -222,7 +222,7 @@ describe('Lists', () => {
             QUERY_OPERATIONS.NOT_IN,
             'input',
             'test',
-            'pol.id not in test',
+            'pol.id not in [test]',
             'list-column-pol.id',
           );
         },
@@ -314,16 +314,17 @@ describe('Lists', () => {
       };
       const queryCustomFieldKeys = Object.keys(customFieldSpecs);
       const getCustomFieldName = (fieldLabel) => `${fieldLabel} ${customFieldNamePostfix}`;
-      const createCustomFieldData = ({ fieldLabel, generator, multiSelect, options }) => generator({
-        testNumber,
-        data: {
-          name: getCustomFieldName(fieldLabel),
-          selectField: {
-            multiSelect,
-            options: { values: options },
+      const createCustomFieldData = ({ fieldLabel, generator, multiSelect, options }) =>
+        generator({
+          testNumber,
+          data: {
+            name: getCustomFieldName(fieldLabel),
+            selectField: {
+              multiSelect,
+              options: { values: options },
+            },
           },
-        },
-      });
+        });
       const testData = {
         customFields: queryCustomFieldKeys.reduce((customFields, key) => {
           return {
@@ -333,7 +334,8 @@ describe('Lists', () => {
         }, {}),
       };
       const getCustomFieldLabel = ({ name }) => `User — ${name}`;
-      const getCustomFieldLabels = () => Object.values(testData.customFields).map(getCustomFieldLabel);
+      const getCustomFieldLabels = () =>
+        Object.values(testData.customFields).map(getCustomFieldLabel);
       const getCustomFieldValue = (key) => customFieldSpecs[key].options[0].value;
       const getQueryRow = (key, operator) => ({
         field: getCustomFieldLabel(testData.customFields[key]),
@@ -396,7 +398,9 @@ describe('Lists', () => {
         { tags: ['extendedPath', 'athena', 'C831957'] },
         () => {
           const multiSelectInRow = getQueryRow('multiSelect', QUERY_OPERATIONS.IN);
-          const equalsQueryRows = queryCustomFieldKeys.map((key) => getQueryRow(key, QUERY_OPERATIONS.EQUAL));
+          const equalsQueryRows = queryCustomFieldKeys.map((key) =>
+            getQueryRow(key, QUERY_OPERATIONS.EQUAL),
+          );
           const [multiSelectEqualsRow, singleSelectEqualsRow, radioButtonEqualsRow] =
             equalsQueryRows;
           const expectedInQuery = `(${multiSelectInRow.field} in [${multiSelectInRow.value}])`;
@@ -791,10 +795,12 @@ describe('Lists', () => {
       };
 
       const verifyPreviewHridIsPopulated = () => {
-        cy.then(() => previewTable
-          .find(MultiColumnListRow({ indexRow: 'row-0' }))
-          .find(MultiColumnListCell({ column: instanceFieldValues.instanceHrid }))
-          .innerText()).then((cellText) => {
+        cy.then(() =>
+          previewTable
+            .find(MultiColumnListRow({ indexRow: 'row-0' }))
+            .find(MultiColumnListCell({ column: instanceFieldValues.instanceHrid }))
+            .innerText(),
+        ).then((cellText) => {
           expect(cellText.trim()).to.not.equal('');
         });
       };
@@ -1047,10 +1053,12 @@ describe('Lists', () => {
           QueryModal.testQuery();
           Lists.verifyPreviewOfRecordsMatched();
           QueryModal.verifyNumberOfRowsInPreviewTable(1);
-          cy.then(() => previewTable
-            .find(MultiColumnListRow({ indexRow: 'row-0' }))
-            .find(MultiColumnListCell({ column: instanceFieldValues.languages }))
-            .innerText()).then((cellText) => {
+          cy.then(() =>
+            previewTable
+              .find(MultiColumnListRow({ indexRow: 'row-0' }))
+              .find(MultiColumnListCell({ column: instanceFieldValues.languages }))
+              .innerText(),
+          ).then((cellText) => {
             expect(cellText.trim()).to.equal(testData.localizedEnglishLanguageName);
           });
           QueryModal.verifyMatchedRecordsByIdentifier(

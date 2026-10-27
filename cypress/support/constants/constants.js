@@ -281,7 +281,7 @@ export const NOTE_TYPES = {
 
 export const REMOTE_STORAGE_PROVIDER_NAMES = {
   Dematic_EMS: 'Dematic EMS (API)',
-  DDEMATIC_STAGING_DIRECTOR: 'Dematic StagingDirector (TCP/IP)',
+  DEMATIC_TCP_IP: 'Dematic (TCP/IP)',
   CAIA_SOFT: 'CaiaSoft',
 };
 
@@ -1975,4 +1975,24 @@ export const MATCH_PROFILE_STATIC_VALUE_TYPES = {
   NUMBER: 'Number',
   DATE: 'Date',
   DATE_RANGE: 'Date range',
+};
+
+export const ARIA_LABELS = {
+  SELECT_ALL: 'Select all',
+};
+
+export const GENERIC_FIELDS_LABELS = {
+  ADDRESS: 'Address',
+  CODE: 'Code',
+  CURRENCY: 'Currency',
+  NAME: 'Name',
+  DESCRIPTION: 'Description',
+  NOTE: 'Note',
+  PREFIX: 'Prefix',
+  STATUS: 'Status',
+  SUFFIX: 'Suffix',
+  TAGS: 'Tags',
+  TITLE: 'Title',
+  TYPE: 'Type',
+  VALUE: 'Value',
 };

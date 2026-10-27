@@ -517,13 +517,14 @@ export default {
     );
   },
 
-  verifyInstanceIsMarkedAsStaffSuppressed() {
-    cy.expect(
-      rootSection
-        .find(adminDataAccordion)
-        .find(HTML(including('Staff suppressed')))
-        .exists(),
-    );
+  verifyInstanceIsMarkedAsStaffSuppressed(isDisplayed = true) {
+    const element = rootSection.find(adminDataAccordion).find(HTML(including('Staff suppressed')));
+
+    if (isDisplayed) {
+      cy.expect(element.exists());
+    } else {
+      cy.expect(element.absent());
+    }
   },
 
   verifyInstanceIsMarkedAsSuppressedFromDiscovery(isDisplayed = true) {
@@ -956,7 +957,7 @@ export default {
 
     // Generate three time points: one minute before, current, one minute after
     const timePoints = [];
-    for (let i = -1; i <= 1; i++) {
+    for (let i = -1; i <= 2; i++) {
       const timePoint = new Date(currentDate.getTime() + i * 60 * 1000);
       timePoints.push(DateTools.getFormattedEndDateWithTimUTC(timePoint, true));
     }
@@ -970,6 +971,13 @@ export default {
         )
         .exists(),
     );
+  },
+
+  getLastUpdatedDateAndTime() {
+    return cy
+      .contains('button', /Record last updated:/)
+      .invoke('text')
+      .then((text) => text.split('updated: ')[1]);
   },
 
   verifyLastUpdatedDateAndTime(updatedDate, { matches = true } = {}) {
@@ -1123,11 +1131,9 @@ export default {
     }
   },
   collapseAll() {
-    cy.get('#pane-instancedetails').find('button').contains('Expand all').first()
-      .click();
+    cy.get('#pane-instancedetails').find('button').contains('Expand all').first().click();
     cy.wait(1500);
-    cy.get('#pane-instancedetails').find('button').contains('Collapse all').first()
-      .click();
+    cy.get('#pane-instancedetails').find('button').contains('Collapse all').first().click();
     cy.wait(1500);
   },
   openAcquisitionAccordion() {

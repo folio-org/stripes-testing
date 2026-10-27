@@ -1,27 +1,26 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import getRandomPostfix from '../../../../utils/stringTools';
 import {
   Accordion,
   Button,
-  TextField,
-  TextArea,
-  KeyValue,
   Checkbox,
-  Link,
-  Heading,
-  Select,
-  Pane,
-  Modal,
-  PaneContent,
-  NavListItem,
-  RichEditor,
-  including,
-  MetaSection,
   Form,
+  Heading,
+  including,
+  KeyValue,
+  Link,
+  MetaSection,
+  Modal,
+  NavListItem,
+  Pane,
+  PaneContent,
+  RichEditor2,
+  Select,
+  TextArea,
+  TextField,
 } from '../../../../../../interactors';
-import richTextEditor from '../../../../../../interactors/rich-text-editor';
-import { NOTICE_CATEGORIES } from './noticePolicies';
+import getRandomPostfix from '../../../../utils/stringTools';
 import { actionsButtons } from './newNoticePolicy';
+import { NOTICE_CATEGORIES } from './noticePolicies';
 
 const titles = {
   addToken: 'Add token',
@@ -35,14 +34,21 @@ const newButton = Button({ id: 'clickable-create-entry' });
 const activeCheckbox = Checkbox({ id: 'input-patron-notice-active' });
 const categorySelect = Select({ name: 'category' });
 const noticeFormatField = Select({ label: 'Notice format*' });
+const tokenCategorySelector = '[data-testid="tokenListWrapper"] [class^="col-xs-12"]';
+const tokenCategoryQuery = (category) => {
+  return cy.get(tokenCategorySelector).filter((_, element) => {
+    return element.querySelector('[class^="categoryHeader"]')?.textContent.trim() === category;
+  });
+};
 const actionsButton = Button('Actions');
 const tokenButton = Button('{ }');
 const addTokenButton = Button(titles.addToken);
 const nameField = TextField({ id: 'input-patron-notice-name' });
 const subjectField = TextField({ id: 'input-patron-notice-subject' });
 const descriptionField = TextArea({ id: 'input-patron-notice-description' });
-const bodyField = richTextEditor();
+const bodyField = RichEditor2();
 const previewModal = Modal({ id: 'preview-modal' });
+const addTokenModal = Modal({ header: titles.addToken });
 
 export const createNoticeTemplate = ({
   name = 'autotest_template_name',
@@ -87,6 +93,100 @@ export default {
     cy.expect(Link(titles.templates).exists());
     cy.do(Link(titles.templates).click());
     cy.expect(Heading(titles.templates).exists());
+  },
+
+  verifyTemplatesListPane() {
+    cy.expect(Heading(titles.templates).exists());
+  },
+
+  verifyNewTemplateForm() {
+    cy.expect([
+      Pane(titles.newTemplate).exists(),
+      Heading(titles.newTemplate).exists(),
+      Accordion('General information').exists(),
+      Accordion('Patron notice content').exists(),
+    ]);
+  },
+
+  expandTemplateAccordion(label) {
+    const accordion = Accordion(label);
+    cy.expect(accordion.exists());
+    cy.do(accordion.expand());
+    cy.expect(accordion.has({ open: true }));
+  },
+
+  selectTemplateCategory(category) {
+    cy.do(categorySelect.choose(category));
+    cy.expect(categorySelect.has({ selectedOptionLabel: category }));
+  },
+
+  fillTemplateName(name) {
+    cy.do(nameField.fillIn(name));
+    cy.expect(nameField.has({ value: name }));
+  },
+
+  selectNoticeFormat(format) {
+    cy.do(noticeFormatField.choose(format));
+    cy.expect(noticeFormatField.has({ selectedOptionLabel: format }));
+  },
+
+  openAddTokenModal() {
+    cy.do(tokenButton.click());
+    cy.expect(addTokenModal.exists());
+  },
+
+  verifyTokenCategory(category) {
+    tokenCategoryQuery(category)
+      .should('have.length', 1)
+      .find('ul[data-test-available-tokens]')
+      .should('exist');
+  },
+
+  verifyItemTokenOrder() {
+    tokenCategoryQuery('Item')
+      .find('ul[data-test-available-tokens]')
+      .should(($tokenList) => {
+        const tokenNames = [...$tokenList.find('input[type="checkbox"]')].map(
+          (input) => input.value,
+        );
+        const titleIndex = tokenNames.indexOf('item.title');
+        const titleShortIndex = tokenNames.indexOf('item.titleShort');
+        const primaryContributorIndex = tokenNames.indexOf('item.primaryContributor');
+
+        expect(titleIndex, 'item.title token').to.be.at.least(0);
+        expect(titleShortIndex, 'item.titleShort token').to.be.greaterThan(titleIndex);
+        expect(primaryContributorIndex, 'item.primaryContributor token').to.be.greaterThan(
+          titleShortIndex,
+        );
+      });
+  },
+
+  closeAddTokenModal() {
+    cy.do(addTokenModal.find(Button('Cancel')).click());
+    cy.expect(addTokenModal.absent());
+  },
+
+  addTokenFromCategory(tokenName, category) {
+    this.openAddTokenModal();
+    this.verifyTokenCategory(category);
+    const tokenCheckbox = addTokenModal.find(Checkbox(tokenName));
+    cy.expect(tokenCheckbox.exists());
+    cy.do(tokenCheckbox.click());
+    cy.expect(tokenCheckbox.has({ checked: true }));
+    cy.expect(addTokenButton.has({ disabled: false }));
+    cy.do(addTokenButton.click());
+    cy.expect(addTokenModal.absent());
+    cy.expect(bodyField.has({ value: including(`{{${tokenName}}}`) }));
+  },
+
+  checkPreviewIncludes(values) {
+    cy.do(patronNoticeTemplatePaneContent.find(Button('Preview')).click());
+    cy.expect(previewModal.has({ header: 'Preview of patron notice template' }));
+    values.forEach((value) => {
+      cy.expect(previewModal.has({ message: including(value) }));
+    });
+    cy.do(previewModal.find(Button('Close')).click());
+    cy.expect(previewModal.absent());
   },
 
   openToSide(noticePolicyTemplate) {
@@ -199,7 +299,7 @@ export default {
   },
 
   clearBody() {
-    cy.do(RichEditor().fillIn(''));
+    cy.do(RichEditor2().fillIn(''));
   },
 
   saveAndClose() {
@@ -373,11 +473,12 @@ export default {
   },
 
   deleteNoticePolicyTemplateByNameViaAPI(name) {
-    this.getNoticePolicyTemplatesByNameViaAPI().then((policies) => {
+    return this.getNoticePolicyTemplatesByNameViaAPI().then((policies) => {
       const policy = policies.find((p) => p.name === name);
       if (policy !== undefined) {
-        this.deleteViaAPI(policy.id);
+        return this.deleteViaAPI(policy.id);
       }
+      return undefined;
     });
   },
 

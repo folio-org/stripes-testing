@@ -14,12 +14,12 @@ const getItemsV2 = async ({ params } = {}) => {
   return { data };
 };
 
-const getItemsToInvestigate = async ({ launchName, team }) => {
-  const latestLaunch = await getLatestLaunch({ name: launchName });
+const getItemsToInvestigate = async ({ launchName, team, launchId }) => {
+  const resolvedLaunchId = launchId || (await getLatestLaunch({ name: launchName })).id;
 
   const params = {
     sort: 'startTime,asc',
-    launchId: latestLaunch.id,
+    launchId: resolvedLaunchId,
     providerType: LAUNCH_PROVIDER_TYPE,
     'page.size': LIMIT,
     ...(team && { 'filter.cnt.name': team }),
@@ -56,6 +56,21 @@ const getItemsToInvestigate = async ({ launchName, team }) => {
   };
 };
 
+const getToInvestigateCount = async ({ launchId, team }) => {
+  const params = {
+    launchId,
+    providerType: LAUNCH_PROVIDER_TYPE,
+    'page.size': 1,
+    ...(team && { 'filter.cnt.name': team }),
+    'filter.in.issueType': TO_INVESTIGATE_ISSUE_TYPE,
+    'filter.in.type': SPEC_TYPES.STEP,
+    'filter.eq.hasStats': true,
+  };
+
+  const { data } = await getItemsV2({ params });
+  return data.page?.totalElements ?? 0;
+};
+
 const markTestsAsFlaky = async ({ testItemIds }) => {
   const issues = testItemIds.map((id) => ({
     id,
@@ -80,5 +95,6 @@ const markTestsAsFlaky = async ({ testItemIds }) => {
 
 module.exports = {
   getItemsToInvestigate,
+  getToInvestigateCount,
   markTestsAsFlaky,
 };

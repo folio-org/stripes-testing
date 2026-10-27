@@ -1,11 +1,19 @@
 import {
   Button,
+  EditableListRow,
   including,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiColumnListCell,
   NavListItem,
   Pane,
+  TextField,
 } from '../../../../../../interactors';
+import InteractorsTools from '../../../../utils/interactorsTools';
+
+const sectionName = 'Instance note types';
+const rootPane = Pane(sectionName);
+const actionsCell = MultiColumnListCell({ columnIndex: 3 });
 
 export const reasonsActions = {
   edit: 'edit',
@@ -24,17 +32,18 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `instance-note-types/${id}`,
-    isDefaultSearchParamsRequired: false,
-  }),
+  deleteViaApi: (id) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `instance-note-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    }),
   verifyConsortiumInstanceNoteTypesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({
       content: including(name),
       isContainer: false,
     });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
@@ -53,21 +62,33 @@ export default {
     }
   },
 
-  verifyLocalInstanceNoteTypesInTheList({ name, source = 'local', actions = [] }) {
+  verifyLocalInstanceNoteTypesInTheList({
+    name,
+    source = 'local',
+    lastUpdated = [],
+    actions = [],
+  }) {
     const row = MultiColumnListRow({
       content: including(name),
       isContainer: false,
     });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
+    const rowActionsCell = row.find(MultiColumnListCell({ column: 'Actions' }));
     cy.expect([
       row.exists(),
-      row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
+      row.find(MultiColumnListCell({ column: 'Source', content: source })).exists(),
     ]);
+    lastUpdated.forEach((text) => {
+      cy.expect(
+        row
+          .find(MultiColumnListCell({ column: 'Last updated', content: including(text) }))
+          .exists(),
+      );
+    });
     if (actions.length === 0) {
-      cy.expect(row.find(actionsCell).has({ content: '' }));
+      cy.expect(rowActionsCell.has({ content: '' }));
     } else {
       Object.values(reasonsActions).forEach((action) => {
-        const buttonSelector = row.find(actionsCell).find(Button({ icon: action }));
+        const buttonSelector = rowActionsCell.find(Button({ icon: action }));
         if (actions.includes(action)) {
           cy.expect(buttonSelector.exists());
         } else {
@@ -90,13 +111,46 @@ export default {
   clickTrashButtonForInstanceNoteTypes(name) {
     cy.do([
       MultiColumnListRow({ content: including(name), isContainer: false })
-        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .find(actionsCell)
         .find(Button({ icon: 'trash' }))
         .click(),
       Button('Delete').click(),
     ]);
   },
+  editInstanceNoteTypeName(oldName, newName) {
+    const rowSelector = MultiColumnListCell({ content: oldName });
+    cy.do(
+      rowSelector.perform((element) => {
+        const rowIndex = Number(
+          element.closest('[data-row-index]').getAttribute('data-row-index').replace('row-', ''),
+        );
+        cy.do([
+          EditableListRow({ index: rowIndex })
+            .find(actionsCell)
+            .find(Button({ icon: 'edit' }))
+            .click(),
+          TextField({ name: `items[${rowIndex}].name` }).fillIn(newName),
+          Button('Save').click(),
+        ]);
+      }),
+    );
+  },
+
+  verifyInstanceNoteTypeUpdatedCallout(name) {
+    InteractorsTools.checkCalloutContainsMessage(`${name} was successfully updated`);
+  },
+
+  waitLoading() {
+    ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
+
+  verifyNewButtonActive() {
+    cy.expect(rootPane.find(Button('New')).has({ disabled: false }));
+  },
+
   choose() {
-    cy.do([NavListItem('Instance note types').click(), Pane('Instance note types').exists()]);
+    cy.do([NavListItem(sectionName).click(), rootPane.exists()]);
   },
 };

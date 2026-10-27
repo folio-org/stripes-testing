@@ -31,7 +31,7 @@ const monthToLastDay = {
 
 const lastDayOfMonth = monthToLastDay[currentMonth];
 
-const nextMonth = ('0' + ((currentDate.getUTCMonth() + 2) % 12).toString()).slice(-2);
+const nextMonth = ('0' + (((currentDate.getUTCMonth() + 1) % 12) + 1).toString()).slice(-2);
 const nextMonthYearInt = currentDate.getUTCMonth() === 11 ? currentYearInt + 1 : currentYearInt;
 const nextMonthYear = nextMonthYearInt.toString();
 

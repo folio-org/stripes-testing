@@ -3,6 +3,10 @@ export const EXPORT_MANAGER_JOBS_FILTER_LABELS = {
   INTEGRATION_TYPE: 'Integration type',
 };
 
+export const EXPORT_MANAGER_JOBS_TYPES = {
+  CLAIMS: 'CLAIMS',
+};
+
 export const EXPORT_MANAGER_JOBS_INTEGRATION_TYPE_FILTER_OPTION_LABELS = {
   CLAIMS: 'Claims',
   ORDERS: 'Orders',

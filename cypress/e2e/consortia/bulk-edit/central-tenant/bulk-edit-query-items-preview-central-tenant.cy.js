@@ -98,7 +98,9 @@ const createItemsForTenant = ({
     if (count === 0) {
       return cy.wrap(null);
     }
-    return createMultipleItems(count - 1, currentIndex + 1).then(() => createItemRecord(currentIndex));
+    return createMultipleItems(count - 1, currentIndex + 1).then(() =>
+      createItemRecord(currentIndex),
+    );
   };
 
   return createMultipleItems(numberOfItems);
@@ -136,12 +138,14 @@ describe('Bulk-edit', () => {
           });
 
           cy.resetTenant()
-            .then(() => InventoryInstances.createFolioInstanceViaApi({
-              instance: {
-                instanceTypeId,
-                title: folioInstance.title,
-              },
-            }))
+            .then(() =>
+              InventoryInstances.createFolioInstanceViaApi({
+                instance: {
+                  instanceTypeId,
+                  title: folioInstance.title,
+                },
+              }),
+            )
             .then((createdInstanceData) => {
               folioInstance.uuid = createdInstanceData.instanceId;
 
@@ -155,11 +159,13 @@ describe('Bulk-edit', () => {
                 locationId = res.id;
               });
             })
-            .then(() => InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: folioInstance.uuid,
-              permanentLocationId: locationId,
-              sourceId,
-            }))
+            .then(() =>
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: folioInstance.uuid,
+                permanentLocationId: locationId,
+                sourceId,
+              }),
+            )
             .then((holding) => {
               folioInstance.holdingIdsCollege.push(holding.id);
               folioInstance.holdingHridsCollege.push(holding.hrid);
@@ -181,11 +187,13 @@ describe('Bulk-edit', () => {
                 locationId = res.id;
               });
             })
-            .then(() => InventoryHoldings.createHoldingRecordViaApi({
-              instanceId: folioInstance.uuid,
-              permanentLocationId: locationId,
-              sourceId,
-            }))
+            .then(() =>
+              InventoryHoldings.createHoldingRecordViaApi({
+                instanceId: folioInstance.uuid,
+                permanentLocationId: locationId,
+                sourceId,
+              }),
+            )
             .then((holding) => {
               folioInstance.holdingIdsUniversity.push(holding.id);
               folioInstance.holdingHridsUniversity.push(holding.hrid);
@@ -775,7 +783,7 @@ describe('Bulk-edit', () => {
             user.userId,
             [],
             [
-              CapabilitySets.uiInventoryItemCreate,
+              CapabilitySets.uiInventoryItemEdit,
               CapabilitySets.uiBulkEditQueryExecute,
               CapabilitySets.uiBulkEditLogsView,
             ],
@@ -817,7 +825,8 @@ describe('Bulk-edit', () => {
             // Step 39: Verify errors
             BulkEditSearchPane.verifyVisibleErrors(
               folioInstance.itemIdsUniversity,
-              (itemId) => `User ${user.username} does not have required permission to view the item record - id=${itemId} on the tenant ${Affiliations.University.toLowerCase()}`,
+              (itemId) =>
+                `User ${user.username} does not have required permission to view the item record - id=${itemId} on the tenant ${Affiliations.University.toLowerCase()}`,
               11,
             );
 
@@ -826,7 +835,8 @@ describe('Bulk-edit', () => {
             BulkEditActions.downloadErrors();
 
             const expectedErrors = folioInstance.itemIdsUniversity.map(
-              (itemId) => `ERROR,${itemId},${`User ${user.username} does not have required permission to view the item record - id=${itemId} on the tenant ${Affiliations.University.toLowerCase()}`}`,
+              (itemId) =>
+                `ERROR,${itemId},${`User ${user.username} does not have required permission to view the item record - id=${itemId} on the tenant ${Affiliations.University.toLowerCase()}`}`,
             );
 
             ExportFile.verifyFileIncludes(errorsFileItemUUID, expectedErrors);

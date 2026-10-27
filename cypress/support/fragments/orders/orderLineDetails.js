@@ -28,10 +28,12 @@ import {
   ORDER_LINE_FORM_LABELS,
   RELATED_INVOICE_LINES_TABLE_COLUMN_HEADERS,
 } from '../../constants';
+import { POLINE_DETAILS_FIELDS } from '../../constants/orders/order-line';
 import InteractorsTools from '../../utils/interactorsTools';
 import ExportDetails from '../exportManager/exportDetails';
 import TransactionDetails from '../finance/transactions/transactionDetails';
 import InventoryInstance from '../inventory/inventoryInstance';
+import MCLHelper from '../multiColumnList';
 import CancelConfirmationModal from './modals/cancelConfirmationModal';
 import SelectInstanceModal from './modals/selectInstanceModal';
 import OrderLineEditForm from './orderLineEditForm';
@@ -69,11 +71,14 @@ const addRoutingListButton = Button('Add routing list');
 const relatedInvoiceLinesSection = orderLineDetailsSection.find(
   Section({ id: 'relatedInvoiceLines' }),
 );
+const compareDateStrings = (left, right) => new Date(left) - new Date(right);
+const relatedInvoiceLinesList = relatedInvoiceLinesSection.find(MultiColumnList());
 const customFieldsAccordion = orderLineDetailsSection.find(Section({ id: 'customFieldsPOLine' }));
 const tagsButton = orderLineDetailsSection.find(Button({ id: 'clickable-show-tags' }));
 const tagsPane = Pane('Tags');
 const tagsMultiSelect = tagsPane.find(MultiSelect({ id: 'input-tag' }));
-const addTagOption = (tagName) => MultiSelectMenu().find(MultiSelectOption(and(including('Add tag for:'), including(tagName))));
+const addTagOption = (tagName) =>
+  MultiSelectMenu().find(MultiSelectOption(and(including('Add tag for:'), including(tagName))));
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -199,8 +204,8 @@ export default {
   clickTheLinkInFundDetailsSection({ fundName, columnIndex = 0 } = {}) {
     const tableRow = fundName
       ? fundDistributionsSection.find(
-        MultiColumnListRow({ content: including(fundName), isContainer: true }),
-      )
+          MultiColumnListRow({ content: including(fundName), isContainer: true }),
+        )
       : fundDistributionsSection.find(MultiColumnListRow({ rowIndexInParent: 'row-0' }));
     const link = tableRow.find(MultiColumnListCell({ columnIndex })).find(Link());
 
@@ -496,6 +501,24 @@ export default {
   checkItemDetailsSection(itemDetails = []) {
     this.checkSectionData({ details: itemDetails, section: itemDetailsSection });
   },
+  checkProductIdentifiers(productIds = []) {
+    productIds.forEach(({ productId, qualifier }, index) => {
+      if (productId) {
+        cy.expect(
+          itemDetailsSection
+            .find(MultiColumnListCell({ row: index, column: 'Product ID' }))
+            .has({ content: productId }),
+        );
+      }
+      if (qualifier !== undefined) {
+        cy.expect(
+          itemDetailsSection
+            .find(MultiColumnListCell({ row: index, column: 'Qualifier' }))
+            .has({ content: qualifier }),
+        );
+      }
+    });
+  },
   checkPoLineInformationSection(poLineInformation = []) {
     this.checkSectionData({ details: poLineInformation, section: purchaseOrderLineSection });
   },
@@ -528,17 +551,46 @@ export default {
       }
     });
   },
-  checkLocationsSection({ locations = [] } = {}) {
+  checkLocationsSection({ locations = [], checkByIndex = true, isExactCount = false } = {}) {
     locations.forEach((locationInformation, index) => {
       locationInformation.forEach(({ key, value }) => {
-        cy.expect(
-          locationDetailsSection
-            .find(InfoRow({ index }))
-            .find(KeyValue(key))
-            .has({ value: including(value) }),
-        );
+        if (checkByIndex) {
+          cy.expect(
+            locationDetailsSection
+              .find(InfoRow({ index }))
+              .find(KeyValue(key))
+              .has({ value: including(value) }),
+          );
+        } else {
+          cy.expect(
+            locationDetailsSection.find(KeyValue(key, { value: including(value) })).exists(),
+          );
+        }
       });
     });
+
+    if (isExactCount) {
+      cy.expect(locationDetailsSection.find(InfoRow({ index: locations.length })).absent());
+    }
+  },
+  checkLocationsSectionInAnyOrder({ locations = [], isExactCount = false } = {}) {
+    const anchorKeys = [POLINE_DETAILS_FIELDS.HOLDING_NAME, POLINE_DETAILS_FIELDS.LOCATION_NAME];
+
+    locations.forEach((locationInformation) => {
+      const anchorEntry = locationInformation.find(({ key }) => anchorKeys.includes(key));
+      const row = locationDetailsSection.find(InfoRow(including(anchorEntry.value)));
+
+      locationInformation.forEach(({ key, value }) => {
+        cy.expect(row.find(KeyValue(key)).has({ value: including(String(value)) }));
+      });
+    });
+
+    if (isExactCount) {
+      cy.expect(locationDetailsSection.find(InfoRow({ index: locations.length })).absent());
+    }
+  },
+  verifyLocationPresentInSection(locationName) {
+    cy.expect(locationDetailsSection.find(HTML(including(locationName))).exists());
   },
   verifyLocationAbsentInSection(locationName) {
     cy.expect(locationDetailsSection.find(HTML(including(locationName))).absent());
@@ -730,6 +782,25 @@ export default {
       .then((response) => {
         return response.body.id;
       });
+  },
+
+  assertRelatedInvoiceLinesRowCount(rowCount) {
+    MCLHelper.assertRowCount(relatedInvoiceLinesList, rowCount);
+  },
+
+  assertRelatedInvoiceLinesSortDirection(columnName, direction) {
+    MCLHelper.assertColumnSortDirection(relatedInvoiceLinesList, columnName, direction);
+  },
+
+  assertRelatedInvoiceLinesSorted(columnName, direction) {
+    MCLHelper.assertColumnValuesSorted(relatedInvoiceLinesList, columnName, {
+      direction,
+      comparator: compareDateStrings,
+    });
+  },
+
+  sortRelatedInvoiceLinesBy(columnName) {
+    MCLHelper.sortListBy(relatedInvoiceLinesList, columnName);
   },
 
   checkRelatedInvoiceLineColumnItem(rowIndex, columnName, value) {

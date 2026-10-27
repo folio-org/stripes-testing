@@ -38,12 +38,13 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `holdings-sources/${id}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode: false,
-  }),
+  deleteViaApi: (id) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `holdings-sources/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    }),
   waitLoading() {
     ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
@@ -53,13 +54,25 @@ export default {
     SettingsPane.selectSettingsTab(settingsOption);
     this.waitLoading();
   },
-  verifyConsortiumHoldingsSourcesInTheList({ name, source = 'consortium', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
+  verifyConsortiumHoldingsSourcesInTheList({
+    name,
+    source = 'consortium',
+    lastUpdated = [],
+    actions = [],
+  }) {
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
+    const actionsCell = MultiColumnListCell({ column: 'Actions' });
     cy.expect([
       row.exists(),
-      row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
+      row.find(MultiColumnListCell({ column: 'Source', content: source })).exists(),
     ]);
+    lastUpdated.forEach((text) => {
+      cy.expect(
+        row
+          .find(MultiColumnListCell({ column: 'Last updated', content: including(text) }))
+          .exists(),
+      );
+    });
     if (actions.length === 0) {
       cy.expect(row.find(actionsCell).has({ content: '' }));
     } else {

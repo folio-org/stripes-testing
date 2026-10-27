@@ -1,13 +1,19 @@
 import {
   Button,
   including,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiColumnListCell,
   NavListItem,
   Pane,
+  TextField,
 } from '../../../../../../interactors';
 
 export const identifierTypesSectionName = 'Classification identifier types';
+
+const rootPane = Pane(identifierTypesSectionName);
+const actionsCell = MultiColumnListCell({ columnIndex: 3 });
+const newButton = Button('New');
 
 export const reasonsActions = {
   edit: 'edit',
@@ -44,7 +50,9 @@ const API = {
   deleteViaApiByName(name) {
     return this.getViaApi().then((classificationIdentifierTypes) => {
       classificationIdentifierTypes
-        .filter((classificationIdentifierType) => new RegExp(name).test(classificationIdentifierType.name))
+        .filter((classificationIdentifierType) =>
+          new RegExp(name).test(classificationIdentifierType.name),
+        )
         .map((classificationIdentifierType) => this.deleteViaApi(classificationIdentifierType.id));
     });
   },
@@ -61,7 +69,6 @@ export default {
       content: including(name),
       isContainer: false,
     });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
@@ -80,18 +87,30 @@ export default {
     }
   },
 
-  verifyLocalClassificationIdentifierTypesInTheList({ name, source = 'local', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
+  verifyLocalClassificationIdentifierTypesInTheList({
+    name,
+    source = 'local',
+    lastUpdated = [],
+    actions = [],
+  }) {
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
+    const rowActionsCell = row.find(MultiColumnListCell({ column: 'Actions' }));
     cy.expect([
       row.exists(),
-      row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
+      row.find(MultiColumnListCell({ column: 'Source', content: source })).exists(),
     ]);
+    lastUpdated.forEach((text) => {
+      cy.expect(
+        row
+          .find(MultiColumnListCell({ column: 'Last updated', content: including(text) }))
+          .exists(),
+      );
+    });
     if (actions.length === 0) {
-      cy.expect(row.find(actionsCell).has({ content: '' }));
+      cy.expect(rowActionsCell.has({ content: '' }));
     } else {
       Object.values(reasonsActions).forEach((action) => {
-        const buttonSelector = row.find(actionsCell).find(Button({ icon: action }));
+        const buttonSelector = rowActionsCell.find(Button({ icon: action }));
         if (actions.includes(action)) {
           cy.expect(buttonSelector.exists());
         } else {
@@ -106,26 +125,44 @@ export default {
     cy.expect(row.absent());
   },
 
+  createClassificationIdentifierType(name) {
+    cy.do([
+      newButton.click(),
+      TextField({ name: 'items[0].name' }).fillIn(name),
+      Button('Save').click(),
+    ]);
+  },
+
   clickTrashButtonForClassificationIdentifierTypes(name) {
     cy.do([
       MultiColumnListRow({ content: including(name) })
-        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .find(actionsCell)
         .find(Button({ icon: 'trash' }))
         .click(),
       Button('Delete').click(),
     ]);
   },
+  waitLoading() {
+    ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
+
+  verifyNewButtonActive() {
+    cy.expect(rootPane.find(newButton).has({ disabled: false }));
+  },
+
   choose() {
-    cy.do([
-      NavListItem(identifierTypesSectionName).click(),
-      Pane(identifierTypesSectionName).exists(),
-    ]);
+    cy.do([NavListItem(identifierTypesSectionName).click(), rootPane.exists()]);
   },
 
   getIdByName(typeName) {
+    // name="..." is CQL's tokenized/relevance match, not exact equality - e.g. it would match
+    // both "LC" and "LC (local)" for typeName "LC" since both start with that token. Use ==
+    // for an exact-phrase match so similarly-named types can't collide.
     return cy
       .okapiRequest({
-        path: `classification-types?query=name="${typeName}"`,
+        path: `classification-types?query=name=="${typeName}"`,
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {

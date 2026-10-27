@@ -229,6 +229,9 @@ describe('MARC', () => {
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyKeywordsAsDefault();
             BrowseContributors.select();
+            cy.resetTenant();
+            cy.getToken(users.userProperties.username, users.userProperties.password);
+            cy.setTenant(Affiliations.College);
             BrowseContributors.waitForContributorToAppear(
               linkingTagAndValues.authorityHeading,
               true,

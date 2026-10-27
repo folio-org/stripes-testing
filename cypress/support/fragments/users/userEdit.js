@@ -90,7 +90,7 @@ const addRolesButton = Button({ dataTestID: 'add-roles-button' });
 const unassignAllRolesButton = Button({ dataTestID: 'unassign-all-roles-button' });
 const selectRolesModal = Modal('Select user roles');
 const roleAssignmentFilter = selectRolesModal.find(
-  Accordion({ id: including('Role assigment status') }),
+  Accordion({ id: including('Role assignment status') }),
 );
 const selectAllCheckbox = Checkbox({ name: 'selected-selectAll' });
 const rolesPane = selectRolesModal.find(Pane('User roles'));
@@ -282,17 +282,18 @@ Cypress.Commands.add('getUserServicePoints', (userId) => {
 });
 
 // servicePointIds is array of ids
-const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
-  method: 'POST',
-  path: 'service-points-users',
-  body: {
-    id: uuidv4(),
-    userId,
-    servicePointsIds: servicePointIds,
-    defaultServicePointId: defaultServicePointId || servicePointIds[0],
-  },
-  isDefaultSearchParamsRequired: false,
-});
+const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) =>
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'service-points-users',
+    body: {
+      id: uuidv4(),
+      userId,
+      servicePointsIds: servicePointIds,
+      defaultServicePointId: defaultServicePointId || servicePointIds[0],
+    },
+    isDefaultSearchParamsRequired: false,
+  });
 
 export default {
   roleAssignmentFilterOptions: {
@@ -842,7 +843,8 @@ export default {
     return cy.wait('@createUser', { timeout: 80_000 }).then(({ response }) => response.body.id);
   },
 
-  addServicePointViaApi: (servicePointId, userId, defaultServicePointId) => addServicePointsViaApi([servicePointId], userId, defaultServicePointId),
+  addServicePointViaApi: (servicePointId, userId, defaultServicePointId) =>
+    addServicePointsViaApi([servicePointId], userId, defaultServicePointId),
 
   // we can remove the service point if it is not Preference
   changeServicePointPreference: (userName = defaultUser.defaultUiPatron.body.userName) => {
@@ -859,33 +861,34 @@ export default {
     ]);
   },
 
-  changeServicePointPreferenceViaApi: (userId, servicePointIds, defaultServicePointId = null) => cy
-    .okapiRequest({
-      method: 'GET',
-      path: `service-points-users?query="userId"="${userId}"`,
-      isDefaultSearchParamsRequired: false,
-      failOnStatusCode: false,
-    })
-    .then((servicePointsUsers) => {
-      if (servicePointsUsers.body.servicePointsUsers.length === 0) {
-        return;
-      }
-      cy.okapiRequest({
-        method: 'PUT',
-        path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
-        body: {
-          userId,
-          servicePointsIds: [
-            ...new Set([
-              ...servicePointsUsers.body.servicePointsUsers[0].servicePointsIds,
-              ...servicePointIds,
-            ]),
-          ],
-          defaultServicePointId,
-        },
+  changeServicePointPreferenceViaApi: (userId, servicePointIds, defaultServicePointId = null) =>
+    cy
+      .okapiRequest({
+        method: 'GET',
+        path: `service-points-users?query="userId"="${userId}"`,
         isDefaultSearchParamsRequired: false,
-      });
-    }),
+        failOnStatusCode: false,
+      })
+      .then((servicePointsUsers) => {
+        if (servicePointsUsers.body.servicePointsUsers.length === 0) {
+          return;
+        }
+        cy.okapiRequest({
+          method: 'PUT',
+          path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
+          body: {
+            userId,
+            servicePointsIds: [
+              ...new Set([
+                ...servicePointsUsers.body.servicePointsUsers[0].servicePointsIds,
+                ...servicePointIds,
+              ]),
+            ],
+            defaultServicePointId,
+          },
+          isDefaultSearchParamsRequired: false,
+        });
+      }),
 
   addProfilePictureViaApi(userId, url) {
     return cy
@@ -1094,7 +1097,9 @@ export default {
   },
 
   verifyUserInformation: (allContentToCheck) => {
-    return allContentToCheck.forEach((contentToCheck) => cy.expect(Section({ id: 'editUserInfo' }, including(contentToCheck)).exists()));
+    return allContentToCheck.forEach((contentToCheck) =>
+      cy.expect(Section({ id: 'editUserInfo' }, including(contentToCheck)).exists()),
+    );
   },
 
   verifyTextFieldPresented(fieldData) {
@@ -1608,7 +1613,8 @@ export default {
       cy.then(() => rolesPane.subtitle()).then((subtitleText) => {
         const foundCount = Number(subtitleText.match(/\d+/)[0]);
         this.checkRolesCountInModal(foundCount);
-        if (count === 0) cy.expect(selectRolesModal.find(HTML(THE_LIST_CONTAINS_NO_ITEMS)).exists());
+        if (count === 0)
+          cy.expect(selectRolesModal.find(HTML(THE_LIST_CONTAINS_NO_ITEMS)).exists());
       });
       return;
     }
@@ -1831,6 +1837,30 @@ export default {
     cy.wait(1000);
   },
 
+  searchAndSelectSponsorUser(username) {
+    cy.do(selectUserModal.find(TextField({ name: 'query' })).fillIn(username));
+    cy.do(selectUserModal.find(Button('Search')).click());
+    cy.wait(1000);
+    cy.do(MultiColumnListCell({ row: 0, content: username }).click());
+    cy.wait(2000);
+  },
+
+  verifyNewProxySponsorCardExists(username) {
+    cy.expect(ProxyUser(including(username)).exists());
+  },
+
+  setAndVerifyProxySponsorCardDropdownValues(username) {
+    const card = ProxyUser(including(username));
+    cy.do(card.find(Select('Proxy can request for sponsor')).choose('No'));
+    cy.do(card.find(Select('Notifications sent to')).choose('Proxy'));
+    cy.do(card.find(Select('Relationship Status')).choose('Inactive'));
+    cy.expect([
+      card.find(Select('Proxy can request for sponsor')).has({ checkedOptionText: 'No' }),
+      card.find(Select('Notifications sent to')).has({ checkedOptionText: 'Proxy' }),
+      card.find(Select('Relationship Status')).has({ checkedOptionText: 'Inactive' }),
+    ]);
+  },
+
   verifyInvalidModal(type) {
     const modalTitle = `Invalid ${type}`;
     const pluralType = type.toLowerCase() === 'proxy' ? 'proxies' : `${type.toLowerCase()}s`;
@@ -1862,7 +1892,11 @@ export default {
   },
 
   setExpirationDate() {
-    cy.do(setExpirationDateButton.click());
+    cy.get('body').then(($body) => {
+      if ($body.find('button:contains("Set")').length > 0) {
+        cy.do(setExpirationDateButton.click());
+      }
+    });
   },
 
   closeKeycloakModalIfExists() {
@@ -2157,5 +2191,43 @@ export default {
     // Fourth row
     const _usernameField = row(3).find(usernameField);
     cy.expect([username ? _usernameField.has({ value: username }) : _usernameField.exists()]);
+  },
+
+  expandAccordion(accordionLabel) {
+    const accordion = getAccordionByLabel(accordionLabel);
+    cy.do(accordion.clickHeader());
+    cy.expect(accordion.has({ open: true }));
+  },
+
+  chooseCustomFieldMultiSelectOption(accordionLabel, fieldLabel, optionValue) {
+    cy.do(
+      getAccordionByLabel(accordionLabel)
+        .find(MultiSelect({ label: including(fieldLabel) }))
+        .choose(optionValue),
+    );
+  },
+
+  clearCustomFieldMultiSelect(accordionLabel, fieldLabel, option) {
+    cy.do(
+      getAccordionByLabel(accordionLabel)
+        .find(MultiSelect({ label: including(fieldLabel) }))
+        .remove(option),
+    );
+  },
+
+  verifyMultiSelectCustomFieldError(accordionLabel, fieldLabel, errorMessage) {
+    cy.expect(
+      getAccordionByLabel(accordionLabel)
+        .find(MultiSelect({ label: including(fieldLabel) }))
+        .has({ error: errorMessage }),
+    );
+  },
+
+  verifyMultiSelectCustomFieldNoError(accordionLabel, fieldLabel) {
+    cy.expect(
+      getAccordionByLabel(accordionLabel)
+        .find(MultiSelect({ label: including(fieldLabel) }))
+        .has({ error: '' }),
+    );
   },
 };

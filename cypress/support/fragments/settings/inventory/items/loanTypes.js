@@ -2,6 +2,7 @@ import { REQUEST_METHOD } from '../../../../constants';
 import {
   Button,
   including,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiColumnListCell,
   Pane,
@@ -20,6 +21,9 @@ const paneLoanType = Pane('Loan types');
 export default {
   waitLoading: () => {
     cy.expect(paneHeader.exists());
+    ['Loan type', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(paneLoanType.find(MultiColumnListHeader(header)).exists());
+    });
   },
   verifyLoanTypesOption: () => {
     cy.expect(Pane('Inventory').find(NavListItem('Loan types')).exists());
@@ -45,10 +49,15 @@ export default {
     });
   },
 
-  verifyLoanTypesInTheList({ name, actions = [] }) {
+  verifyLoanTypesInTheList({ name, lastUpdated = [], actions = [] }) {
     const row = MultiColumnListRow({ content: including(name), isContainer: false });
     const actionsCell = MultiColumnListCell({ columnIndex: 2 });
     cy.expect([row.exists()]);
+    lastUpdated.forEach((text) => {
+      cy.expect(
+        row.find(MultiColumnListCell({ columnIndex: 1, content: including(text) })).exists(),
+      );
+    });
     if (actions.length === 0) {
       cy.expect(row.find(actionsCell).has({ content: '' }));
     } else {
@@ -70,7 +79,7 @@ export default {
 
   clickTrashButtonForLoanTypes(name) {
     cy.do([
-      MultiColumnListRow({ content: including(name) })
+      MultiColumnListRow({ content: including(name), isContainer: false })
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .find(Button({ icon: 'trash' }))
         .click(),

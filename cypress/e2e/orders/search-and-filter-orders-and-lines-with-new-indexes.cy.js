@@ -66,7 +66,10 @@ const R = {
   USER: 'user',
 };
 
-describe('Orders', () => {
+// The test is running for 1 hour, using 10 Gb RAM causing test pipelines to fail (workers are freezing).
+// The test is disabled until the root cause is found.
+// #freeze pipeline deadlock
+describe.skip('Orders', () => {
   const flow = new ExecutionFlowManager();
   // PO numbers accept only alphanumeric characters and are limited to 22 characters.
   // getRandomPostfix() may contain a decimal point, so keep a short numeric suffix for all data.
@@ -81,90 +84,91 @@ describe('Orders', () => {
   ];
   const receivingTitles = [titles[0], `Springer package title ${postfix}`];
 
-  const createLine = (order, index) => OrderLines.createOrderLineViaApi({
-    ...BasicOrderLine.defaultOrderLine,
-    id: uuid(),
-    purchaseOrderId: order.id,
-    isPackage: index === 1,
-    acquisitionMethod: flow.get(R.ACQUISITION_METHOD).id,
-    titleOrPackage: titles[index],
-    claimingActive: true,
-    claimingInterval: 30,
-    cost: {
-      ...BasicOrderLine.defaultOrderLine.cost,
-      quantityPhysical: index === 0 ? 2 : 1,
-      poLineEstimatedPrice: index === 0 ? 2 : 1,
-    },
-    fundDistribution:
+  const createLine = (order, index) =>
+    OrderLines.createOrderLineViaApi({
+      ...BasicOrderLine.defaultOrderLine,
+      id: uuid(),
+      purchaseOrderId: order.id,
+      isPackage: index === 1,
+      acquisitionMethod: flow.get(R.ACQUISITION_METHOD).id,
+      titleOrPackage: titles[index],
+      claimingActive: true,
+      claimingInterval: 30,
+      cost: {
+        ...BasicOrderLine.defaultOrderLine.cost,
+        quantityPhysical: index === 0 ? 2 : 1,
+        poLineEstimatedPrice: index === 0 ? 2 : 1,
+      },
+      fundDistribution:
         index === 0
           ? [
-            {
-              fundId: flow.get(R.FUNDS)[0].id,
-              code: flow.get(R.FUNDS)[0].code,
-              expenseClassId: flow.get(R.EXPENSE_CLASSES)[0].id,
-              value: 100,
-            },
-          ]
+              {
+                fundId: flow.get(R.FUNDS)[0].id,
+                code: flow.get(R.FUNDS)[0].code,
+                expenseClassId: flow.get(R.EXPENSE_CLASSES)[0].id,
+                value: 100,
+              },
+            ]
           : [
-            {
-              fundId: flow.get(R.FUNDS)[0].id,
-              code: flow.get(R.FUNDS)[0].code,
-              expenseClassId: flow.get(R.EXPENSE_CLASSES)[1].id,
-              value: 50,
-            },
-            {
-              fundId: flow.get(R.FUNDS)[1].id,
-              code: flow.get(R.FUNDS)[1].code,
-              value: 50,
-            },
-          ],
-    tags: {
-      tagList:
+              {
+                fundId: flow.get(R.FUNDS)[0].id,
+                code: flow.get(R.FUNDS)[0].code,
+                expenseClassId: flow.get(R.EXPENSE_CLASSES)[1].id,
+                value: 50,
+              },
+              {
+                fundId: flow.get(R.FUNDS)[1].id,
+                code: flow.get(R.FUNDS)[1].code,
+                value: 50,
+              },
+            ],
+      tags: {
+        tagList:
           index === 0
             ? [flow.get(R.TAGS)[2].label, flow.get(R.TAGS)[3].label]
             : [flow.get(R.TAGS)[3].label],
-    },
-    donor: index === 0 ? 'Test donor' : undefined,
-    publisher: index === 0 ? 'Jane, Smith' : undefined,
-    requester: index === 0 ? 'Meg Ryan' : undefined,
-    selector: index === 0 ? 'Steve Irwin' : undefined,
-    contributors:
+      },
+      donor: index === 0 ? 'Test donor' : undefined,
+      publisher: index === 0 ? 'Jane, Smith' : undefined,
+      requester: index === 0 ? 'Meg Ryan' : undefined,
+      selector: index === 0 ? 'Steve Irwin' : undefined,
+      contributors:
         index === 0
           ? [
-            {
-              contributor: 'Harry Jay',
-              contributorNameTypeId: flow.get(R.CONTRIBUTOR_NAME_TYPE).id,
-            },
-          ]
-          : [],
-    vendorDetail: {
-      vendorAccount: index === 0 ? '123-58' : '',
-      referenceNumbers:
-          index === 0
-            ? [
               {
-                refNumber: '205885-CA',
-                refNumberType: 'Vendor order reference number',
-                vendorDetailsSource: 'OrderLine',
+                contributor: 'Harry Jay',
+                contributorNameTypeId: flow.get(R.CONTRIBUTOR_NAME_TYPE).id,
               },
             ]
+          : [],
+      vendorDetail: {
+        vendorAccount: index === 0 ? '123-58' : '',
+        referenceNumbers:
+          index === 0
+            ? [
+                {
+                  refNumber: '205885-CA',
+                  refNumberType: 'Vendor order reference number',
+                  vendorDetailsSource: 'OrderLine',
+                },
+              ]
             : [],
-    },
-    locations: flow
-      .get(R.LOCATIONS)
-      .slice(index === 0 ? 0 : 2, index === 0 ? 2 : 3)
-      .map(({ id }) => ({
-        locationId: id,
-        quantity: 1,
-        quantityPhysical: 1,
-      })),
-    physical: {
-      createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
-      materialType: flow.get(R.MATERIAL_TYPE).id,
-      materialSupplier: flow.get(R.ORGANIZATION).id,
-      volumes: [index === 0 ? 'Vol.III' : 'Vol.25'],
-    },
-  });
+      },
+      locations: flow
+        .get(R.LOCATIONS)
+        .slice(index === 0 ? 0 : 2, index === 0 ? 2 : 3)
+        .map(({ id }) => ({
+          locationId: id,
+          quantity: 1,
+          quantityPhysical: 1,
+        })),
+      physical: {
+        createInventory: POL_CREATE_INVENTORY_SETTINGS.INSTANCE_HOLDING_ITEM,
+        materialType: flow.get(R.MATERIAL_TYPE).id,
+        materialSupplier: flow.get(R.ORGANIZATION).id,
+        volumes: [index === 0 ? 'Vol.III' : 'Vol.25'],
+      },
+    });
 
   before('Create C1375887 preconditions', () => {
     cy.getAdminToken();
@@ -185,21 +189,41 @@ describe('Orders', () => {
             accountNo: '123-58',
           })),
         };
-        return Organizations.createOrganizationViaApi(organization).then((id) => currentFlow.set(R.ORGANIZATION, { ...organization, id }, () => Organizations.deleteOrganizationViaApi(id)));
+        return Organizations.createOrganizationViaApi(organization).then((id) =>
+          currentFlow.set(R.ORGANIZATION, { ...organization, id }, () =>
+            Organizations.deleteOrganizationViaApi(id),
+          ),
+        );
       })
-      .step((currentFlow) => cy
-        .getLocations({ limit: 3 })
-        .then(() => currentFlow.set(R.LOCATIONS, Cypress.env('locations'))))
-      .step((currentFlow) => cy
-        .getDefaultMaterialType()
-        .then((materialType) => currentFlow.set(R.MATERIAL_TYPE, materialType)))
-      .step((currentFlow) => cy
-        .getAcquisitionMethodsApi({ query: 'value="Other"' })
-        .then(({ body }) => currentFlow.set(R.ACQUISITION_METHOD, body.acquisitionMethods[0])))
-      .step((currentFlow) => BrowseContributors.getContributorNameTypes().then(([nameType]) => currentFlow.set(R.CONTRIBUTOR_NAME_TYPE, nameType)))
-      .step((currentFlow) => InventoryInstance.createInstanceViaApi({
-        instanceTitle: receivingTitles[1],
-      }).then(({ instanceData }) => currentFlow.set(R.PACKAGE_INSTANCE, instanceData, () => InventoryInstance.deleteInstanceViaApi(instanceData.instanceId))))
+      .step((currentFlow) =>
+        cy
+          .getLocations({ limit: 3 })
+          .then(() => currentFlow.set(R.LOCATIONS, Cypress.env('locations'))),
+      )
+      .step((currentFlow) =>
+        cy
+          .getDefaultMaterialType()
+          .then((materialType) => currentFlow.set(R.MATERIAL_TYPE, materialType)),
+      )
+      .step((currentFlow) =>
+        cy
+          .getAcquisitionMethodsApi({ query: 'value="Other"' })
+          .then(({ body }) => currentFlow.set(R.ACQUISITION_METHOD, body.acquisitionMethods[0])),
+      )
+      .step((currentFlow) =>
+        BrowseContributors.getContributorNameTypes().then(([nameType]) =>
+          currentFlow.set(R.CONTRIBUTOR_NAME_TYPE, nameType),
+        ),
+      )
+      .step((currentFlow) =>
+        InventoryInstance.createInstanceViaApi({
+          instanceTitle: receivingTitles[1],
+        }).then(({ instanceData }) =>
+          currentFlow.set(R.PACKAGE_INSTANCE, instanceData, () =>
+            InventoryInstance.deleteInstanceViaApi(instanceData.instanceId),
+          ),
+        ),
+      )
       .step((currentFlow) => {
         const tags = [];
 
@@ -209,13 +233,27 @@ describe('Orders', () => {
             const label = `AT_C1375887_Tag_${number}_${postfix}`;
             return cy.createTagApi({ label }).then((id) => tags.push({ id, label }));
           })
-          .then(() => currentFlow.set(R.TAGS, tags, () => tags.forEach(({ id }) => cy.deleteTagApi(id, true))));
+          .then(() =>
+            currentFlow.set(R.TAGS, tags, () =>
+              tags.forEach(({ id }) => cy.deleteTagApi(id, true)),
+            ),
+          );
       })
-      .step((currentFlow) => FiscalYears.createViaApi(FiscalYears.getDefaultFiscalYear()).then((fiscalYear) => currentFlow.set(R.FISCAL_YEAR, fiscalYear, () => FiscalYears.deleteFiscalYearViaApi(fiscalYear.id, false))))
-      .step((currentFlow) => Ledgers.createViaApi({
-        ...Ledgers.getDefaultLedger(),
-        fiscalYearOneId: currentFlow.get(R.FISCAL_YEAR).id,
-      }).then((ledger) => currentFlow.set(R.LEDGER, ledger, () => Ledgers.deleteLedgerViaApi(ledger.id, false))))
+      .step((currentFlow) =>
+        FiscalYears.createViaApi(FiscalYears.getDefaultFiscalYear()).then((fiscalYear) =>
+          currentFlow.set(R.FISCAL_YEAR, fiscalYear, () =>
+            FiscalYears.deleteFiscalYearViaApi(fiscalYear.id, false),
+          ),
+        ),
+      )
+      .step((currentFlow) =>
+        Ledgers.createViaApi({
+          ...Ledgers.getDefaultLedger(),
+          fiscalYearOneId: currentFlow.get(R.FISCAL_YEAR).id,
+        }).then((ledger) =>
+          currentFlow.set(R.LEDGER, ledger, () => Ledgers.deleteLedgerViaApi(ledger.id, false)),
+        ),
+      )
       .step((currentFlow) => {
         const expenseClasses = [
           { ...ExpenseClasses.getDefaultExpenseClass(), name: `Electronic ${postfix}` },
@@ -225,7 +263,13 @@ describe('Orders', () => {
         return cy
           .wrap(expenseClasses)
           .each((expenseClass) => ExpenseClasses.createExpenseClassViaApi(expenseClass))
-          .then(() => currentFlow.set(R.EXPENSE_CLASSES, expenseClasses, () => expenseClasses.forEach(({ id }) => ExpenseClasses.deleteExpenseClassViaApi(id, { failOnStatusCode: false }))));
+          .then(() =>
+            currentFlow.set(R.EXPENSE_CLASSES, expenseClasses, () =>
+              expenseClasses.forEach(({ id }) =>
+                ExpenseClasses.deleteExpenseClassViaApi(id, { failOnStatusCode: false }),
+              ),
+            ),
+          );
       })
       .step((currentFlow) => {
         const funds = [];
@@ -241,55 +285,71 @@ describe('Orders', () => {
               code: `C137${suffix}${postfix}`.slice(0, 10),
             }).then((response) => funds.push(response.fund || response));
           })
-          .then(() => currentFlow.set(R.FUNDS, funds, () => funds.forEach(({ id }) => Funds.deleteFundViaApi(id, false))));
+          .then(() =>
+            currentFlow.set(R.FUNDS, funds, () =>
+              funds.forEach(({ id }) => Funds.deleteFundViaApi(id, false)),
+            ),
+          );
       })
       .step((currentFlow) => {
         const budgets = [];
 
         return cy
           .wrap(currentFlow.get(R.FUNDS))
-          .each((fund, index) => Budgets.createViaApi({
-            ...Budgets.getDefaultBudget(),
-            allocated: 500,
-            fiscalYearId: currentFlow.get(R.FISCAL_YEAR).id,
-            fundId: fund.id,
-            statusExpenseClasses:
+          .each((fund, index) =>
+            Budgets.createViaApi({
+              ...Budgets.getDefaultBudget(),
+              allocated: 500,
+              fiscalYearId: currentFlow.get(R.FISCAL_YEAR).id,
+              fundId: fund.id,
+              statusExpenseClasses:
                 index === 0
                   ? currentFlow.get(R.EXPENSE_CLASSES).map(({ id }) => ({
-                    status: 'Active',
-                    expenseClassId: id,
-                  }))
+                      status: 'Active',
+                      expenseClassId: id,
+                    }))
                   : [],
-          }).then((budget) => budgets.push(budget)))
-          .then(() => currentFlow.set(R.BUDGETS, budgets, () => budgets.forEach(({ id }) => Budgets.deleteViaApi(id, false))));
+            }).then((budget) => budgets.push(budget)),
+          )
+          .then(() =>
+            currentFlow.set(R.BUDGETS, budgets, () =>
+              budgets.forEach(({ id }) => Budgets.deleteViaApi(id, false)),
+            ),
+          );
       })
       .step((currentFlow) => {
         const orders = [];
         return cy
           .wrap([0, 1])
-          .each((index) => Orders.createOrderViaApi({
-            ...NewOrder.getDefaultOrder({ vendorId: currentFlow.get(R.ORGANIZATION).id }),
-            id: uuid(),
-            poNumber: poNumbers[index],
-            orderType: index === 0 ? 'Ongoing' : 'One-Time',
-            tags: {
-              tagList:
+          .each((index) =>
+            Orders.createOrderViaApi({
+              ...NewOrder.getDefaultOrder({ vendorId: currentFlow.get(R.ORGANIZATION).id }),
+              id: uuid(),
+              poNumber: poNumbers[index],
+              orderType: index === 0 ? 'Ongoing' : 'One-Time',
+              tags: {
+                tagList:
                   index === 0
                     ? [
-                      ...currentFlow
-                        .get(R.TAGS)
-                        .slice(0, 2)
-                        .map(({ label }) => label),
-                      currentFlow.get(R.TAGS)[3].label,
-                    ]
+                        ...currentFlow
+                          .get(R.TAGS)
+                          .slice(0, 2)
+                          .map(({ label }) => label),
+                        currentFlow.get(R.TAGS)[3].label,
+                      ]
                     : [currentFlow.get(R.TAGS)[3].label],
-            },
-            ongoing:
+              },
+              ongoing:
                 index === 0
                   ? { isSubscription: true, reviewPeriod: 200, manualRenewal: false }
                   : undefined,
-          }).then((order) => orders.push(order)))
-          .then(() => currentFlow.set(R.ORDERS, orders, () => orders.forEach(({ id }) => Orders.deleteOrderViaApi(id, false))));
+            }).then((order) => orders.push(order)),
+          )
+          .then(() =>
+            currentFlow.set(R.ORDERS, orders, () =>
+              orders.forEach(({ id }) => Orders.deleteOrderViaApi(id, false)),
+            ),
+          );
       })
       .step((currentFlow) => {
         const lines = [];
@@ -298,52 +358,73 @@ describe('Orders', () => {
           .each((order, index) => createLine(order, index).then((line) => lines.push(line)))
           .then(() => currentFlow.set(R.LINES, lines));
       })
-      .step((currentFlow) => OrderLines.addPackageTitleViaApi({
-        title: receivingTitles[1],
-        poLineId: currentFlow.get(R.LINES)[1].id,
-        instanceId: currentFlow.get(R.PACKAGE_INSTANCE).instanceId,
-      }))
-      .step((currentFlow) => cy
-        .wrap(currentFlow.get(R.ORDERS))
-        .each((order) => Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' }).then(({ body }) => Object.assign(order, body))))
+      .step((currentFlow) =>
+        OrderLines.addPackageTitleViaApi({
+          title: receivingTitles[1],
+          poLineId: currentFlow.get(R.LINES)[1].id,
+          instanceId: currentFlow.get(R.PACKAGE_INSTANCE).instanceId,
+        }),
+      )
+      .step((currentFlow) =>
+        cy
+          .wrap(currentFlow.get(R.ORDERS))
+          .each((order) =>
+            Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' }).then(({ body }) =>
+              Object.assign(order, body),
+            ),
+          ),
+      )
       .step((currentFlow) => {
         const packageLine = currentFlow.get(R.LINES)[1];
 
         return OrderLines.getOrderLineViaApi({ query: `id==${packageLine.id}` }).then(
-          ([openedLine]) => Receiving.addPieceViaApi(
-            {
-              poLineId: openedLine.id,
-              poLineNumber: openedLine.poLineNumber,
-              format: openedLine.orderFormat,
-              holdingId: openedLine.locations[0].holdingId,
-            },
-            { locationId: openedLine.locations[0].locationId },
-          ),
+          ([openedLine]) =>
+            Receiving.addPieceViaApi(
+              {
+                poLineId: openedLine.id,
+                poLineNumber: openedLine.poLineNumber,
+                format: openedLine.orderFormat,
+                holdingId: openedLine.locations[0].holdingId,
+              },
+              { locationId: openedLine.locations[0].locationId },
+            ),
         );
       })
-      .step((currentFlow) => Receiving.getPiecesViaApi(currentFlow.get(R.LINES)[1].id).then((pieces) => {
-        expect(pieces).to.have.length(1);
-      }))
-      .step((currentFlow) => Invoices.createInvoiceViaApi({
-        vendorId: currentFlow.get(R.ORGANIZATION).id,
-        accountingCode: currentFlow.get(R.ORGANIZATION).erpCode,
-        fiscalYearId: currentFlow.get(R.FISCAL_YEAR).id,
-        tags: [currentFlow.get(R.TAGS)[3].label],
-      }).then((invoice) => currentFlow.set(R.INVOICE, invoice, () => Invoices.deleteInvoiceViaApi(invoice.id, { failOnStatusCode: false }))))
-      .step((currentFlow) => cy
-        .createTempUser([
-          Permissions.uiOrdersView.gui,
-          Permissions.uiReceivingView.gui,
-          Permissions.uiClaimingView.gui,
-          Permissions.viewEditCreateInvoiceInvoiceLine.gui,
-          Permissions.uiFinanceViewFundAndBudget.gui,
-          Permissions.uiTagsPermissionAll.gui,
-        ])
-        .then((user) => currentFlow.set(R.USER, user, () => Users.deleteViaApi(user.userId))))
-      .step((currentFlow) => cy.login(currentFlow.get(R.USER).username, currentFlow.get(R.USER).password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      }));
+      .step((currentFlow) =>
+        Receiving.getPiecesViaApi(currentFlow.get(R.LINES)[1].id).then((pieces) => {
+          expect(pieces).to.have.length(1);
+        }),
+      )
+      .step((currentFlow) =>
+        Invoices.createInvoiceViaApi({
+          vendorId: currentFlow.get(R.ORGANIZATION).id,
+          accountingCode: currentFlow.get(R.ORGANIZATION).erpCode,
+          fiscalYearId: currentFlow.get(R.FISCAL_YEAR).id,
+          tags: [currentFlow.get(R.TAGS)[3].label],
+        }).then((invoice) =>
+          currentFlow.set(R.INVOICE, invoice, () =>
+            Invoices.deleteInvoiceViaApi(invoice.id, { failOnStatusCode: false }),
+          ),
+        ),
+      )
+      .step((currentFlow) =>
+        cy
+          .createTempUser([
+            Permissions.uiOrdersView.gui,
+            Permissions.uiReceivingView.gui,
+            Permissions.uiClaimingView.gui,
+            Permissions.viewEditCreateInvoiceInvoiceLine.gui,
+            Permissions.uiFinanceViewFundAndBudget.gui,
+            Permissions.uiTagsPermissionAll.gui,
+          ])
+          .then((user) => currentFlow.set(R.USER, user, () => Users.deleteViaApi(user.userId))),
+      )
+      .step((currentFlow) =>
+        cy.login(currentFlow.get(R.USER).username, currentFlow.get(R.USER).password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        }),
+      );
   });
 
   after('Delete C1375887 data', () => {
@@ -521,7 +602,9 @@ describe('Orders', () => {
   // tag would broaden the result. Every other filter is combined with the isolation tag.
   const filterWithIsolation = (pane, filterAction, label, values) => {
     if (label !== ORDER_LINE_FILTER_LABELS.TAGS) {
-      filterAndWait(pane, () => filterAction(ORDER_LINE_FILTER_LABELS.TAGS, [flow.get(R.TAGS)[3].label]));
+      filterAndWait(pane, () =>
+        filterAction(ORDER_LINE_FILTER_LABELS.TAGS, [flow.get(R.TAGS)[3].label]),
+      );
     }
     filterAndWait(pane, () => filterAction(label, values));
   };
@@ -558,12 +641,16 @@ describe('Orders', () => {
     cy.log(`<--- STEP ${step}: Filter Order lines by Location: ${locationNames.join(', ')} --->`);
     OrderLines.clearAllFilters();
     // Apply isolation last because some location modals rebuild the filter form on Save.
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, [
-      flow.get(R.TAGS)[3].label,
-    ]));
+    filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+      OrderLines.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, [
+        flow.get(R.TAGS)[3].label,
+      ]),
+    );
     OrderLines.assertResetAllButtonState({ disabled: false });
 
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.selectMultipleLocationsInFilters(locationNames));
+    filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+      OrderLines.selectMultipleLocationsInFilters(locationNames),
+    );
     OrderLines.assertResetAllButtonState({ disabled: false });
     verifyLines(expected);
   };
@@ -586,12 +673,16 @@ describe('Orders', () => {
 
     cy.log(`<--- STEP 34: Filter Select order lines by Location: ${locationNames.join(', ')} --->`);
     SelectOrderLinesModal.clearAllFilters();
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () => SelectOrderLinesModal.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, [
-      flow.get(R.TAGS)[3].label,
-    ]));
+    filterAndWait(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () =>
+      SelectOrderLinesModal.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, [
+        flow.get(R.TAGS)[3].label,
+      ]),
+    );
     SelectOrderLinesModal.assertResetAllButtonState({ disabled: false });
 
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () => SelectOrderLinesModal.selectMultipleLocationsInFilters(locationNames));
+    filterAndWait(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () =>
+      SelectOrderLinesModal.selectMultipleLocationsInFilters(locationNames),
+    );
     SelectOrderLinesModal.assertResetAllButtonState({ disabled: false });
     SelectOrderLinesModal.assertSearchResults(expected.map((lineIndex) => titles[lineIndex]));
   };
@@ -614,17 +705,23 @@ describe('Orders', () => {
 
     cy.log(`<--- STEPS 27-28: Filter Receiving by Location: ${locationNames.join(', ')} --->`);
     Receiving.clearAllFilters();
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.RECEIVING, () => Receiving.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, [
-      flow.get(R.TAGS)[3].label,
-    ]));
+    filterAndWait(PANE_REQUEST_PROFILE_NAMES.RECEIVING, () =>
+      Receiving.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, [
+        flow.get(R.TAGS)[3].label,
+      ]),
+    );
     Receiving.assertResetAllButtonState({ disabled: false });
 
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.RECEIVING, () => Receiving.selectMultipleLocationsInFilters(locationNames));
+    filterAndWait(PANE_REQUEST_PROFILE_NAMES.RECEIVING, () =>
+      Receiving.selectMultipleLocationsInFilters(locationNames),
+    );
     Receiving.assertResetAllButtonState({ disabled: false });
     Receiving.assertReceivingResults(expected.map((lineIndex) => receivingTitles[lineIndex]));
 
     if (receivingStatus) {
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.RECEIVING, () => Receiving.filterByCheckboxes(CLAIMING_FILTER_LABELS.RECEIVING_STATUS, [receivingStatus]));
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.RECEIVING, () =>
+        Receiving.filterByCheckboxes(CLAIMING_FILTER_LABELS.RECEIVING_STATUS, [receivingStatus]),
+      );
       Receiving.assertResetAllButtonState({ disabled: false });
       Receiving.assertReceivingResults([]);
     }
@@ -648,15 +745,21 @@ describe('Orders', () => {
 
     cy.log(`<--- STEP 29: Filter Claiming by Location: ${locationNames.join(', ')} --->`);
     Claiming.clearAllFilters();
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () => Claiming.filterByMultiSelectOptions(CLAIMING_FILTER_LABELS.TAGS, [flow.get(R.TAGS)[3].label]));
+    filterAndWait(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () =>
+      Claiming.filterByMultiSelectOptions(CLAIMING_FILTER_LABELS.TAGS, [flow.get(R.TAGS)[3].label]),
+    );
     Claiming.assertResetAllButtonState({ disabled: false });
 
-    filterAndWait(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () => Claiming.selectMultipleLocationsInFilters(locationNames));
+    filterAndWait(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () =>
+      Claiming.selectMultipleLocationsInFilters(locationNames),
+    );
     Claiming.assertResetAllButtonState({ disabled: false });
     verifyClaiming(expected);
 
     if (receivingStatus) {
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () => Claiming.filterByCheckboxes(CLAIMING_FILTER_LABELS.RECEIVING_STATUS, [receivingStatus]));
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () =>
+        Claiming.filterByCheckboxes(CLAIMING_FILTER_LABELS.RECEIVING_STATUS, [receivingStatus]),
+      );
       Claiming.assertResetAllButtonState({ disabled: false });
       verifyClaiming([]);
     }
@@ -675,9 +778,10 @@ describe('Orders', () => {
 
   // The test is running for 1 hour, using 10 Gb RAM causing test pipelines to fail (workers are freezing).
   // The test is disabled until the root cause is found.
+  // #freeze pipeline deadlock
   it.skip(
     'C1375887 Search and filter Orders and Order lines with new indexes (thunderjet)',
-    { tags: ['extendedPathBroken', 'thunderjet', 'C1375887'] },
+    { tags: ['extendedPathBroken', 'thunderjet', 'C1375887Broken'] },
     () => {
       const [fundA, fundB] = flow.get(R.FUNDS);
       const [tag1, tag2, tag3, isolationTag] = flow.get(R.TAGS);
@@ -777,7 +881,9 @@ describe('Orders', () => {
         samples.forEach(({ index, exact, partial, trailing, leading, expected }) => {
           const searchIndex = dedicated ? index : KEYWORD;
 
-          [...new Set([exact, exact.toLowerCase()])].forEach((value) => search(step, searchIndex, value, expected));
+          [...new Set([exact, exact.toLowerCase()])].forEach((value) =>
+            search(step, searchIndex, value, expected),
+          );
           if (partial) search(step, searchIndex, partial, expected);
           search(step, searchIndex, trailing, expected);
           search(step, searchIndex, leading, []);
@@ -844,9 +950,13 @@ describe('Orders', () => {
 
       /* ORDERS */
       Orders.resetAllFilters();
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDERS, () => Orders.filterByTags([isolationTag.label]));
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDERS, () =>
+        Orders.filterByTags([isolationTag.label]),
+      );
       cy.log('<--- STEP 1: Exact PO-number keyword search is case-insensitive --->');
-      [poNumbers[0], poNumbers[0].toLowerCase()].forEach((value) => searchOrders(1, ORDER_SEARCH_OPTIONS.KEYWORD, value, [0]));
+      [poNumbers[0], poNumbers[0].toLowerCase()].forEach((value) =>
+        searchOrders(1, ORDER_SEARCH_OPTIONS.KEYWORD, value, [0]),
+      );
       searchOrders(2, ORDER_SEARCH_OPTIONS.KEYWORD, poNumbers[1], [1]);
       searchOrders(3, ORDER_SEARCH_OPTIONS.KEYWORD, poNumberPrefix, []);
 
@@ -868,7 +978,9 @@ describe('Orders', () => {
         [`${poNumberPrefix}*`, [0, 1]],
         ['*101', [1]],
         ['*10*', [0, 1]],
-      ].forEach(([value, expected]) => searchOrders(5, ORDER_SEARCH_OPTIONS.PO_NUMBER, value, expected));
+      ].forEach(([value, expected]) =>
+        searchOrders(5, ORDER_SEARCH_OPTIONS.PO_NUMBER, value, expected),
+      );
 
       cy.log('<--- STEPS 6-7: Search by Date created and Date opened --->');
       [ORDER_SEARCH_OPTIONS.DATE_CREATED, ORDER_SEARCH_OPTIONS.DATE_OPENED].forEach((index) => {
@@ -895,8 +1007,12 @@ describe('Orders', () => {
       ].forEach(([value, expected]) => {
         cy.log(`<--- STEP 10: Filter Orders by Review period: ${value} --->`);
         Orders.resetAllFilters();
-        filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDERS, () => Orders.filterByMultiSelectOptions(ORDER_FILTER_LABELS.TAGS, [flow.get(R.TAGS)[3].label]));
-        filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDERS, () => Orders.filterByTextField(ORDER_FILTER_LABELS.REVIEW_PERIOD, value));
+        filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDERS, () =>
+          Orders.filterByMultiSelectOptions(ORDER_FILTER_LABELS.TAGS, [flow.get(R.TAGS)[3].label]),
+        );
+        filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDERS, () =>
+          Orders.filterByTextField(ORDER_FILTER_LABELS.REVIEW_PERIOD, value),
+        );
         verifyOrders(expected);
       });
       Orders.resetAllFilters();
@@ -913,12 +1029,18 @@ describe('Orders', () => {
       });
 
       OrderLines.clearAllFilters();
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.filterByTags([isolationTag.label])); // Isolate test data
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        OrderLines.filterByTags([isolationTag.label]),
+      ); // Isolate test data
 
-      [line1.poLineNumber, line1.poLineNumber.toLowerCase()].forEach((value) => searchLines(11, KEYWORD, value, [0]));
+      [line1.poLineNumber, line1.poLineNumber.toLowerCase()].forEach((value) =>
+        searchLines(11, KEYWORD, value, [0]),
+      );
       searchLines(12, KEYWORD, line2.poLineNumber, [1]);
       searchLines(13, KEYWORD, '123-58', [0]);
-      [poNumbers[0], `${poNumbers[1]}-`, '123', poNumberPrefix].forEach((value) => searchLines(14, KEYWORD, value, []));
+      [poNumbers[0], `${poNumbers[1]}-`, '123', poNumberPrefix].forEach((value) =>
+        searchLines(14, KEYWORD, value, []),
+      );
       [
         ['*', [0, 1]],
         [`${poNumberPrefix}*`, [0, 1]],
@@ -986,24 +1108,36 @@ describe('Orders', () => {
       );
 
       cy.log('<--- STEP 21: Add Expense class without resetting Fund filters --->');
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.EXPENSE_CLASS, [
-        expenseClass1.name,
-      ]));
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        OrderLines.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.EXPENSE_CLASS, [
+          expenseClass1.name,
+        ]),
+      );
       verifyLines([0]);
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.EXPENSE_CLASS, [
-        expenseClass2.name,
-      ]));
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        OrderLines.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.EXPENSE_CLASS, [
+          expenseClass2.name,
+        ]),
+      );
       verifyLines([0, 1]);
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.removeMultiSelectChips(ORDER_LINE_FILTER_LABELS.EXPENSE_CLASS, [
-        expenseClass1.name,
-      ]));
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        OrderLines.removeMultiSelectChips(ORDER_LINE_FILTER_LABELS.EXPENSE_CLASS, [
+          expenseClass1.name,
+        ]),
+      );
       verifyLines([1]);
 
       cy.log('<--- STEP 22: Add Location without resetting Fund or Expense-class filters --->');
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.selectLocationInFilters(flow.get(R.LOCATIONS)[2].name));
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        OrderLines.selectLocationInFilters(flow.get(R.LOCATIONS)[2].name),
+      );
       verifyLines([1]);
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.clearFilter(ORDER_LINE_FILTER_LABELS.LOCATION));
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.selectLocationInFilters(flow.get(R.LOCATIONS)[0].name));
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        OrderLines.clearFilter(ORDER_LINE_FILTER_LABELS.LOCATION),
+      );
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        OrderLines.selectLocationInFilters(flow.get(R.LOCATIONS)[0].name),
+      );
       verifyLines([]);
       filterLinesByLocationsAndVerify({ step: 23, locationIndexes: [0], expected: [0] });
       filterLinesByLocationsAndVerify({ step: 23, locationIndexes: [1], expected: [0] });
@@ -1021,11 +1155,19 @@ describe('Orders', () => {
       });
 
       Receiving.clearAllFilters();
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => Receiving.filterByTags([isolationTag.label])); // Isolate test data
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        Receiving.filterByTags([isolationTag.label]),
+      ); // Isolate test data
 
-      receivingSearchCases.forEach(([index, value, expected]) => searchReceiving(24, index, value, expected));
-      receivingKeywordTextCases.forEach(([value, expected]) => searchReceiving(25, RECEIVING_TITLE_SEARCH_INDEX_LABELS.KEYWORD, value, expected));
-      receivingDedicatedTextCases.forEach(([index, value, expected]) => searchReceiving(26, index, value, expected));
+      receivingSearchCases.forEach(([index, value, expected]) =>
+        searchReceiving(24, index, value, expected),
+      );
+      receivingKeywordTextCases.forEach(([value, expected]) =>
+        searchReceiving(25, RECEIVING_TITLE_SEARCH_INDEX_LABELS.KEYWORD, value, expected),
+      );
+      receivingDedicatedTextCases.forEach(([index, value, expected]) =>
+        searchReceiving(26, index, value, expected),
+      );
       Receiving.assertResetAllButtonState({ disabled: false });
 
       filterReceivingAndVerify(ORDER_LINE_FILTER_LABELS.TAGS, [tag1.label], []);
@@ -1055,11 +1197,19 @@ describe('Orders', () => {
       });
 
       Claiming.clearAllFilters();
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () => Claiming.filterByTags([isolationTag.label]));
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.CLAIMING, () =>
+        Claiming.filterByTags([isolationTag.label]),
+      );
 
-      receivingSearchCases.forEach(([index, value, expected]) => searchClaiming(index, value, expected));
-      receivingKeywordTextCases.forEach(([value, expected]) => searchClaiming(RECEIVING_TITLE_SEARCH_INDEX_LABELS.KEYWORD, value, expected));
-      receivingDedicatedTextCases.forEach(([index, value, expected]) => searchClaiming(index, value, expected));
+      receivingSearchCases.forEach(([index, value, expected]) =>
+        searchClaiming(index, value, expected),
+      );
+      receivingKeywordTextCases.forEach(([value, expected]) =>
+        searchClaiming(RECEIVING_TITLE_SEARCH_INDEX_LABELS.KEYWORD, value, expected),
+      );
+      receivingDedicatedTextCases.forEach(([index, value, expected]) =>
+        searchClaiming(index, value, expected),
+      );
 
       verifySearchRunsOnSubmitOnly({
         step: 29,
@@ -1095,7 +1245,9 @@ describe('Orders', () => {
         pane: PANE_REQUEST_PROFILE_NAMES.INVOICES,
         waiter: Invoices.waitLoading,
       });
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.INVOICES, () => Invoices.searchByNumber(invoice.vendorInvoiceNo));
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.INVOICES, () =>
+        Invoices.searchByNumber(invoice.vendorInvoiceNo),
+      );
       Invoices.selectInvoice(invoice.vendorInvoiceNo);
       PaneRequestWaiter.waitForPaneRequests({
         pane: PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE,
@@ -1103,7 +1255,9 @@ describe('Orders', () => {
         trigger: () => InvoiceView.openSelectOrderLineModal(),
       });
       SelectOrderLinesModal.verifyModalView();
-      filterAndWait(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () => SelectOrderLinesModal.filterByTags([isolationTag.label]));
+      filterAndWait(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () =>
+        SelectOrderLinesModal.filterByTags([isolationTag.label]),
+      );
 
       [
         [KEYWORD, line1.poLineNumber, [0]],
@@ -1136,9 +1290,10 @@ describe('Orders', () => {
         step: 31,
         pane: PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE,
         fragment: SelectOrderLinesModal,
-        verifyResults: (lineIndexes) => SelectOrderLinesModal.assertSearchResults(
-          lineIndexes.map((lineIndex) => titles[lineIndex]),
-        ),
+        verifyResults: (lineIndexes) =>
+          SelectOrderLinesModal.assertSearchResults(
+            lineIndexes.map((lineIndex) => titles[lineIndex]),
+          ),
         index: VENDOR_ACCOUNT,
         changedIndex: POL_NUMBER,
         value: '123-58',

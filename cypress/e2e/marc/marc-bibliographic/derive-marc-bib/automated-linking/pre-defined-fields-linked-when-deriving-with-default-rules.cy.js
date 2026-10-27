@@ -208,6 +208,9 @@ describe('MARC', () => {
 
         after('Deleting created user and data', () => {
           cy.getAdminToken();
+          nonDefaultFields.forEach((tag) => {
+            QuickMarcEditor.setRulesForField(tag, true);
+          });
           Users.deleteViaApi(userData.userId);
           InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
           createdRecordsIDs.forEach((id, index) => {
@@ -217,7 +220,7 @@ describe('MARC', () => {
 
         it(
           'C389488 Pre-defined fields are linked after clicking on the "Link headings" button in derive "MARC bib" when only default fields enabled for autolinking (promin)',
-          { tags: ['extendedPath', 'promin', 'C389488'] },
+          { tags: ['extendedPath', 'promin', 'nonParallel', 'C389488'] },
           () => {
             // Step 1: Find and open detail view of MARC Bib record
             InventoryInstances.searchByTitle(createdRecordsIDs[0]);

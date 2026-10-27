@@ -105,6 +105,7 @@ const FORM_LABELS = {
   REMOVE_FISCAL_YEAR: 'Remove fiscal year',
   EDIT_IN_RECEIVING: 'Edit in receiving',
   SELECT_HOLDINGS: 'Select holdings',
+  CREATE_NEW_HOLDINGS: 'Create new holdings for location',
   SHOW_HIDDEN_FIELDS: 'Show hidden fields',
   ADD_PRODUCT_ID: 'Add product ID and product ID type',
   RECEIVING_RECORDS_MESSAGE:
@@ -218,12 +219,14 @@ export const vendorDetailsFields = {
 };
 
 const vendorReferenceNumberFields = {
-  refNumber: (index = 0) => vendorDetailsSection.find(
-    TextField({ name: `vendorDetail.referenceNumbers[${index}].refNumber` }),
-  ),
-  refNumberType: (index = 0) => vendorDetailsSection.find(
-    Select({ name: `vendorDetail.referenceNumbers[${index}].refNumberType` }),
-  ),
+  refNumber: (index = 0) =>
+    vendorDetailsSection.find(
+      TextField({ name: `vendorDetail.referenceNumbers[${index}].refNumber` }),
+    ),
+  refNumberType: (index = 0) =>
+    vendorDetailsSection.find(
+      Select({ name: `vendorDetail.referenceNumbers[${index}].refNumberType` }),
+    ),
 };
 
 const ongoingInformationFields = {
@@ -253,22 +256,29 @@ const costDetailsFields = {
 };
 
 const locationFields = {
-  newHoldingLocation: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].locationId` })),
-  quantityPhysical: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].quantityPhysical` })),
-  quantityElectronic: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].quantityElectronic` })),
-  holding: (index = 0) => locationSection
-    .find(RepeatableFieldItem({ index }))
-    .find(Selection(including(FORM_LABELS.SELECT_HOLDINGS))),
+  newHoldingLocation: (index = 0) =>
+    locationSection.find(TextField({ name: `locations[${index}].locationId` })),
+  quantityPhysical: (index = 0) =>
+    locationSection.find(TextField({ name: `locations[${index}].quantityPhysical` })),
+  quantityElectronic: (index = 0) =>
+    locationSection.find(TextField({ name: `locations[${index}].quantityElectronic` })),
+  holding: (index = 0) =>
+    locationSection
+      .find(RepeatableFieldItem({ index }))
+      .find(Selection(including(FORM_LABELS.SELECT_HOLDINGS))),
 };
 
 const fundDistributionFields = {
-  fund: (index = 0) => fundDistributionDetailsSection
-    .find(RepeatableFieldItem({ index }))
-    .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID))),
-  fundIdButton: (index = 0) => fundDistributionDetailsSection.find(Button({ id: `fundDistribution[${index}].fundId` })),
-  expenseClass: (index = 0) => fundDistributionDetailsSection
-    .find(RepeatableFieldItem({ index }))
-    .find(Selection(including('Expense class'))),
+  fund: (index = 0) =>
+    fundDistributionDetailsSection
+      .find(RepeatableFieldItem({ index }))
+      .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID))),
+  fundIdButton: (index = 0) =>
+    fundDistributionDetailsSection.find(Button({ id: `fundDistribution[${index}].fundId` })),
+  expenseClass: (index = 0) =>
+    fundDistributionDetailsSection
+      .find(RepeatableFieldItem({ index }))
+      .find(Selection(including('Expense class'))),
 };
 
 const buttons = {
@@ -519,19 +529,17 @@ export default {
       );
     }
     if (poLineDetails.materialType) {
-      if (poLineDetails.orderFormat === ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE) {
-        cy.do(
-          Select({ name: FORM_FIELD_NAMES.MATERIAL_TYPE_ERESOURCE }).choose(
-            poLineDetails.materialType,
-          ),
-        );
-      } else {
-        cy.do(
-          Select({ name: FORM_FIELD_NAMES.MATERIAL_TYPE_PHYSICAL }).choose(
-            poLineDetails.materialType,
-          ),
-        );
-      }
+      const materialTypeFieldName =
+        poLineDetails.orderFormat === ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE
+          ? FORM_FIELD_NAMES.MATERIAL_TYPE_ERESOURCE
+          : FORM_FIELD_NAMES.MATERIAL_TYPE_PHYSICAL;
+
+      cy.get(`select[name="${materialTypeFieldName}"]`).select(poLineDetails.materialType).blur();
+      cy.expect(
+        Select({ name: materialTypeFieldName }).has({
+          checkedOptionText: poLineDetails.materialType,
+        }),
+      );
     }
     if (poLineDetails.eresourceMaterialType) {
       cy.do(
@@ -604,6 +612,16 @@ export default {
   },
   clickAddLocationButton() {
     cy.do(Button(FORM_LABELS.ADD_LOCATION).click());
+  },
+  clickCreateNewHoldingsButton({ index = 0 } = {}) {
+    cy.do(
+      locationSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button(FORM_LABELS.CREATE_NEW_HOLDINGS))
+        .click(),
+    );
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.verifyModalView();
   },
 
   clickAddFundDistributionButton() {

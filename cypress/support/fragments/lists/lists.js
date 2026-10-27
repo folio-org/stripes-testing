@@ -19,6 +19,7 @@ import {
   MultiColumnListHeader,
   MultiColumnListRow,
   MultiSelect,
+  MultiSelectMenu,
   MultiSelectOption,
   not,
   or,
@@ -30,13 +31,13 @@ import {
   TextArea,
   TextField,
   Tooltip,
+  ValueChipRoot,
 } from '../../../../interactors';
 import ArrayUtils from '../../utils/arrays';
 import { formatNumber } from '../../utils/numberTools';
 import { poll } from '../../utils/polling';
 import getRandomPostfix, { pluralize } from '../../utils/stringTools';
 import { embeddedTableHeadersMap, extractValuesForTableType } from '../bulk-edit/query-modal';
-import SelectUser from '../users/modal/selectUser';
 
 const listInformationAccording = Accordion('List information');
 const queryAccordion = Accordion({ id: 'results-viewer-accordion' });
@@ -66,6 +67,8 @@ const statusAccordion = filterPane.find(Accordion('Status'));
 const visibilityAccordion = filterPane.find(Accordion('Visibility'));
 const recordTypesAccordion = filterPane.find(Accordion('Record types'));
 const sourceAccordion = filterPane.find(Accordion('Source'));
+const createdByAccordion = filterPane.find(Accordion('Created by'));
+const updatedByAccordion = filterPane.find(Accordion('Updated by'));
 const resetAllButton = filterPane.find(Button('Reset all'));
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = filterPane.find(Button('Search'));
@@ -1199,12 +1202,12 @@ const UI = {
   },
 
   openRecordTypeFilter() {
-    cy.do(filterPane.find(MultiSelect()).open());
+    cy.do(recordTypesAccordion.find(MultiSelect()).open());
     cy.wait(1000);
   },
 
   searchRecordTypeFilterInDropdown(type) {
-    cy.do(filterPane.find(MultiSelect()).filter(type));
+    cy.do(recordTypesAccordion.find(MultiSelect()).filter(type));
     cy.wait(1000);
   },
 
@@ -1219,7 +1222,7 @@ const UI = {
   },
 
   verifyRecordTypeSelectedinFilter(type) {
-    cy.expect(filterPane.find(MultiSelect()).has({ selected: type }));
+    cy.expect(recordTypesAccordion.find(MultiSelect()).has({ selected: type }));
   },
 
   verifyRecordTypeFilterDropdownContainsOptions(options) {
@@ -1232,6 +1235,84 @@ const UI = {
     cy.get('[class^=multiSelectEmptyMessage-]')
       .contains('No matching items found!')
       .should('be.visible');
+  },
+
+  verifyUserFilterMultiSelectDropdownDisplayed(accordionName) {
+    const multiSelect = filterPane.find(Accordion(accordionName)).find(MultiSelect());
+    cy.expect([multiSelect.exists(), multiSelect.has({ placeholder: '' })]);
+  },
+
+  openUserFilterDropdown(accordionName) {
+    cy.do(filterPane.find(Accordion(accordionName)).find(MultiSelect()).open());
+    cy.wait(1000);
+  },
+
+  searchUserInFilterDropdown(accordionName, searchTerm) {
+    cy.do(filterPane.find(Accordion(accordionName)).find(MultiSelect()).filter(searchTerm));
+    cy.wait(1000);
+  },
+
+  verifyUserFilterDropdownContainsUser(userName) {
+    cy.expect(MultiSelectOption(including(userName)).exists());
+  },
+
+  verifyUserFilterDropdownDoesNotContainUser(userName) {
+    cy.expect(MultiSelectOption(including(userName)).absent());
+  },
+
+  verifyUserFilterDropdownOptionsSortedAlphabetically() {
+    cy.then(() => MultiSelectMenu().optionList()).then((options) => {
+      const sortedOptions = [...options].sort((a, b) => a.localeCompare(b));
+      expect(options, 'user filter dropdown options sorted alphabetically').to.deep.equal(
+        sortedOptions,
+      );
+    });
+  },
+
+  selectUsersInFilter(accordionName, userNames) {
+    const names = Array.isArray(userNames) ? userNames : [userNames];
+    cy.do(
+      filterPane
+        .find(Accordion(accordionName))
+        .find(MultiSelect())
+        .choose(names.map((name) => including(name))),
+    );
+    cy.wait(1000);
+  },
+
+  selectUserInFilterByTypingAndEnter(accordionName, userName) {
+    this.openUserFilterDropdown(accordionName);
+    // Scoped by the accordion's own DOM id (e.g. "created-by-filter") because the generic
+    // "input[class*=multiSelectFilterField]" selector matches every multiselect filter on the
+    // pane (Record types, Created by, Updated by), not just the one that is currently open.
+    const accordionId = `${accordionName.toLowerCase().replace(/\s+/g, '-')}-filter`;
+    cy.get(`#${accordionId} input[class*="multiSelectFilterField"]`).type(`${userName}{enter}`);
+    cy.wait(1000);
+  },
+
+  removeUserFromFilter(accordionName, userName) {
+    cy.do(
+      filterPane
+        .find(Accordion(accordionName))
+        .find(ValueChipRoot(including(userName)))
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.wait(1000);
+  },
+
+  verifyUserChipDisplayed(accordionName, userName) {
+    const chip = filterPane.find(Accordion(accordionName)).find(ValueChipRoot(including(userName)));
+    cy.expect([chip.exists(), chip.find(Button({ icon: 'times' })).has({ disabled: false })]);
+  },
+
+  verifyUserChipAbsent(accordionName, userName) {
+    cy.expect(
+      filterPane
+        .find(Accordion(accordionName))
+        .find(ValueChipRoot(including(userName)))
+        .absent(),
+    );
   },
 
   verifyCheckboxChecked(name) {
@@ -1437,13 +1518,19 @@ const UI = {
   },
 
   selectCreatedByFilter(userName) {
-    cy.do(Button({ id: 'created-by-filter-button' }).click());
-    SelectUser.findAndSelectUserInNameColumn(userName);
+    cy.do(Button({ id: 'accordion-toggle-button-created-by-filter' }).click());
+    cy.do(createdByAccordion.find(MultiSelect()).filter(userName));
+    cy.wait(1000);
+    cy.do(createdByAccordion.find(MultiSelect()).choose(including(userName)));
+    cy.wait(1000);
   },
 
   selectUpdatedByFilter(userName) {
-    cy.do(Button({ id: 'updated-by-filter-button' }).click());
-    SelectUser.findAndSelectUserInNameColumn(userName);
+    cy.do(Button({ id: 'accordion-toggle-button-updated-by-filter' }).click());
+    cy.do(updatedByAccordion.find(MultiSelect()).filter(userName));
+    cy.wait(1000);
+    cy.do(updatedByAccordion.find(MultiSelect()).choose(including(userName)));
+    cy.wait(1000);
   },
 
   selectList(listName) {

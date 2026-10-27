@@ -17,6 +17,7 @@ import {
   Select,
   TextArea,
   TextInput,
+  ValueChipRoot,
 } from '../../../../../interactors';
 import { escapeRegex } from '../../../utils/stringTools';
 import InventorySearchAndFilter from '../inventorySearchAndFilter';
@@ -344,11 +345,14 @@ export default {
     );
   },
 
+  // quantity = number of separate browse entries sharing this exact value (e.g. same value
+  // under different authority links). numberOfTitles = each matching entry's own totalRecords
+  // (number of instances aggregated into that entry) - omit either to skip that condition
   waitForSubjectToAppear(
     subjectName,
     isPresent = true,
     isLinked = false,
-    { allUnlinked = false, allLinked = false, quantity = null } = {},
+    { allUnlinked = false, allLinked = false, quantity = null, numberOfTitles = null } = {},
   ) {
     const hasLinkedItem = (items) => {
       return items.some((item) => {
@@ -375,6 +379,10 @@ export default {
         const foundSubjects = response.body.items.filter((item) => {
           return item.value === subjectName;
         });
+        const numberOfTitlesCondition =
+          numberOfTitles !== null
+            ? foundSubjects.some((item) => item.totalRecords === numberOfTitles)
+            : true;
 
         if (isPresent) {
           if (isLinked) {
@@ -384,12 +392,14 @@ export default {
                   ? foundSubjects.length === quantity
                   : foundSubjects.length > 0) &&
                 !hasNotLinkedItem(foundSubjects) &&
-                hasLinkedItem(foundSubjects)
+                hasLinkedItem(foundSubjects) &&
+                numberOfTitlesCondition
               );
             }
             return (
               (quantity !== null ? foundSubjects.length === quantity : foundSubjects.length > 0) &&
-              hasLinkedItem(foundSubjects)
+              hasLinkedItem(foundSubjects) &&
+              numberOfTitlesCondition
             );
           } else {
             if (allUnlinked) {
@@ -398,12 +408,14 @@ export default {
                   ? foundSubjects.length === quantity
                   : foundSubjects.length > 0) &&
                 hasNotLinkedItem(foundSubjects) &&
-                !hasLinkedItem(foundSubjects)
+                !hasLinkedItem(foundSubjects) &&
+                numberOfTitlesCondition
               );
             }
             return (
               (quantity !== null ? foundSubjects.length === quantity : foundSubjects.length > 0) &&
-              hasNotLinkedItem(foundSubjects)
+              hasNotLinkedItem(foundSubjects) &&
+              numberOfTitlesCondition
             );
           }
         } else {
@@ -447,6 +459,12 @@ export default {
     cy.wait(4000);
   },
 
+  verifySubjectTypeSelected(subjectType) {
+    cy.expect(
+      MultiSelect({ id: 'subjectType-multiselect' }).find(ValueChipRoot(subjectType)).exists(),
+    );
+  },
+
   openInstance: (subject) => {
     getRowIndexesBySubjectName(subject.name).then((rowIndexes) => {
       cy.do(
@@ -465,7 +483,9 @@ export default {
         if (cell !== 'No value set-') {
           if (Array.isArray(cellContent)) {
             cellContent.forEach((content) => {
-              cy.expect(content).to.satisfy((cellValue) => cellContent.some((val) => cellValue.includes(val)));
+              cy.expect(content).to.satisfy((cellValue) =>
+                cellContent.some((val) => cellValue.includes(val)),
+              );
             });
           } else {
             cy.expect(cell).to.include(cellContent);

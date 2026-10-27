@@ -64,7 +64,9 @@ const OrderLineEditForm = { ...OrderLineEditFormFragment, ...MultiYearPaymentTer
 const OrderTemplateForm = { ...OrderTemplateFormFragment, ...MultiYearPaymentTerms };
 const { PANE_REQUEST_PHASES, PANE_REQUEST_PROFILE_NAMES } = PaneRequestWaiter;
 
-describe('Orders', () => {
+// The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
+// #freeze pipeline deadlock
+describe.skip('Orders', () => {
   const flow = new ExecutionFlowManager();
   const R = {
     FY1: 'fy1',
@@ -131,22 +133,23 @@ describe('Orders', () => {
       startingFiscalYear: fiscalYearsById.get(paymentTerms.startingFiscalYearId)?.code,
       totalPrice: String(paymentTerms.totalPrice),
       distributions: (paymentTerms.fiscalYearDistributions || []).flatMap(
-        ({ fiscalYearId, fundDistributions = [] }) => fundDistributions.map((distribution) => {
-          const value = Number(distribution.value);
-          const amount =
+        ({ fiscalYearId, fundDistributions = [] }) =>
+          fundDistributions.map((distribution) => {
+            const value = Number(distribution.value);
+            const amount =
               distribution.distributionType === FUND_DISTRIBUTION_TYPES.PERCENTAGE
                 ? (totalPrice * value) / 100
                 : value;
 
-          return {
-            fyCode: fiscalYearsById.get(fiscalYearId)?.code,
-            fundCode: fundsById.get(distribution.fundId)?.code || '',
-            expenseClass: distribution.expenseClassId || '',
-            value: String(distribution.value),
-            distributionType: distribution.distributionType,
-            amount: String(amount),
-          };
-        }),
+            return {
+              fyCode: fiscalYearsById.get(fiscalYearId)?.code,
+              fundCode: fundsById.get(distribution.fundId)?.code || '',
+              expenseClass: distribution.expenseClassId || '',
+              value: String(distribution.value),
+              distributionType: distribution.distributionType,
+              amount: String(amount),
+            };
+          }),
       ),
     };
   };
@@ -240,19 +243,23 @@ describe('Orders', () => {
     const line = flow.get(resourceKey);
     const updatedLine = { ...line, tags: { tagList: [testData.isolatingTag] } };
 
-    return OrderLines.updateOrderLineViaApi(updatedLine).then(() => flow.set(resourceKey, updatedLine));
+    return OrderLines.updateOrderLineViaApi(updatedLine).then(() =>
+      flow.set(resourceKey, updatedLine),
+    );
   };
 
-  const waitForFilters = (pane, trigger) => PaneRequestWaiter.waitForPaneRequests({
-    pane,
-    phase: PANE_REQUEST_PHASES.FILTERS,
-    trigger,
-  });
+  const waitForFilters = (pane, trigger) =>
+    PaneRequestWaiter.waitForPaneRequests({
+      pane,
+      phase: PANE_REQUEST_PHASES.FILTERS,
+      trigger,
+    });
 
-  const waitForResults = (pane, trigger) => PaneRequestWaiter.waitForPaneRequests({
-    pane,
-    trigger,
-  });
+  const waitForResults = (pane, trigger) =>
+    PaneRequestWaiter.waitForPaneRequests({
+      pane,
+      trigger,
+    });
 
   before(() => {
     cy.getAdminToken();
@@ -262,211 +269,271 @@ describe('Orders', () => {
 
     flow
       // Precondition 1: FY1 is current; FY2 and FY3 are sequential future fiscal years in one series.
-      .step((f) => cy.wrap([R.FY1, R.FY2, R.FY3]).each((key, index) => FiscalYears.createViaApi(buildFiscalYear(index)).then((fy) => {
-        f.set(key, fy, () => FiscalYears.deleteFiscalYearViaApi(fy.id, false));
-      })))
+      .step((f) =>
+        cy.wrap([R.FY1, R.FY2, R.FY3]).each((key, index) =>
+          FiscalYears.createViaApi(buildFiscalYear(index)).then((fy) => {
+            f.set(key, fy, () => FiscalYears.deleteFiscalYearViaApi(fy.id, false));
+          }),
+        ),
+      )
 
       // Precondition 2: An active ledger is linked to FY1.
-      .step((f) => Ledgers.createViaApi({
-        ...Ledgers.getDefaultLedger(),
-        fiscalYearOneId: f.get(R.FY1).id,
-        ledgerStatus: LEDGER_STATUSES.ACTIVE,
-      }).then((ledger) => f.set(R.LEDGER, ledger, () => Ledgers.deleteLedgerViaApi(ledger.id, false))))
+      .step((f) =>
+        Ledgers.createViaApi({
+          ...Ledgers.getDefaultLedger(),
+          fiscalYearOneId: f.get(R.FY1).id,
+          ledgerStatus: LEDGER_STATUSES.ACTIVE,
+        }).then((ledger) =>
+          f.set(R.LEDGER, ledger, () => Ledgers.deleteLedgerViaApi(ledger.id, false)),
+        ),
+      )
 
       // Precondition 3: Create active Funds A and B for the ledger.
-      .step((f) => cy.wrap([R.FUND_A, R.FUND_B]).each((key) => Funds.createViaApi({
-        ...Funds.getDefaultFund(),
-        ledgerId: f.get(R.LEDGER).id,
-        name: `AT_${key}_${postfix}`,
-        code: `${key}${postfix}`,
-        fundStatus: FUND_STATUSES.ACTIVE,
-      }).then(({ fund }) => f.set(key, fund, () => Funds.deleteFundViaApi(fund.id, false)))))
+      .step((f) =>
+        cy.wrap([R.FUND_A, R.FUND_B]).each((key) =>
+          Funds.createViaApi({
+            ...Funds.getDefaultFund(),
+            ledgerId: f.get(R.LEDGER).id,
+            name: `AT_${key}_${postfix}`,
+            code: `${key}${postfix}`,
+            fundStatus: FUND_STATUSES.ACTIVE,
+          }).then(({ fund }) => f.set(key, fund, () => Funds.deleteFundViaApi(fund.id, false))),
+        ),
+      )
 
       // Precondition 3: Create active FY1 budgets with $1000 allocated for both funds.
-      .step((f) => cy
-        .wrap([
-          [R.FUND_A, R.BUDGET_A],
-          [R.FUND_B, R.BUDGET_B],
-        ])
-        .each(([fundKey, budgetKey]) => Budgets.createViaApi({
-          ...Budgets.getDefaultBudget(),
-          fiscalYearId: f.get(R.FY1).id,
-          fundId: f.get(fundKey).id,
-          allocated: 1000,
-          budgetStatus: BUDGET_STATUSES.ACTIVE,
-        }).then((budget) => f.set(budgetKey, budget, () => Budgets.deleteViaApi(budget.id, false)))))
+      .step((f) =>
+        cy
+          .wrap([
+            [R.FUND_A, R.BUDGET_A],
+            [R.FUND_B, R.BUDGET_B],
+          ])
+          .each(([fundKey, budgetKey]) =>
+            Budgets.createViaApi({
+              ...Budgets.getDefaultBudget(),
+              fiscalYearId: f.get(R.FY1).id,
+              fundId: f.get(fundKey).id,
+              allocated: 1000,
+              budgetStatus: BUDGET_STATUSES.ACTIVE,
+            }).then((budget) =>
+              f.set(budgetKey, budget, () => Budgets.deleteViaApi(budget.id, false)),
+            ),
+          ),
+      )
 
       // Supporting data: vendor used by the template and both orders.
-      .step((f) => NewOrganization.createViaApi(NewOrganization.getDefaultOrganization()).then((org) => f.set(R.ORG, org, () => Organizations.deleteOrganizationViaApi(org.id))))
+      .step((f) =>
+        NewOrganization.createViaApi(NewOrganization.getDefaultOrganization()).then((org) =>
+          f.set(R.ORG, org, () => Organizations.deleteOrganizationViaApi(org.id)),
+        ),
+      )
 
       // Supporting data: acquisition method used by both precondition PO lines.
-      .step((f) => cy
-        .getAcquisitionMethodsApi({
-          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.OTHER}"`,
-        })
-        .then(({ body }) => f.set(R.ACQ_METHOD, body.acquisitionMethods[0])))
+      .step((f) =>
+        cy
+          .getAcquisitionMethodsApi({
+            query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.OTHER}"`,
+          })
+          .then(({ body }) => f.set(R.ACQ_METHOD, body.acquisitionMethods[0])),
+      )
 
       // Supporting data: tag used to isolate this case's records in shared environments.
-      .step((f) => cy
-        .createTagApi({ label: testData.isolatingTag })
-        .then((id) => f.set(R.TAG, { id, label: testData.isolatingTag }, () => cy.deleteTagApi(id, true))))
+      .step((f) =>
+        cy
+          .createTagApi({ label: testData.isolatingTag })
+          .then((id) =>
+            f.set(R.TAG, { id, label: testData.isolatingTag }, () => cy.deleteTagApi(id, true)),
+          ),
+      )
 
       // Supporting data: Inventory instance selected through the PO-line Title lookup in step 5.
-      .step((f) => cy
-        .getInstanceTypes({ limit: 1 })
-        .then((instanceTypes) => InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            title: testData.createdPolTitle,
-            instanceTypeId: instanceTypes[0].id,
-          },
-        }))
-        .then((instance) => f.set(R.INSTANCE, instance, () => InventoryInstance.deleteInstanceViaApi(instance.instanceId))))
+      .step((f) =>
+        cy
+          .getInstanceTypes({ limit: 1 })
+          .then((instanceTypes) =>
+            InventoryInstances.createFolioInstanceViaApi({
+              instance: {
+                title: testData.createdPolTitle,
+                instanceTypeId: instanceTypes[0].id,
+              },
+            }),
+          )
+          .then((instance) =>
+            f.set(R.INSTANCE, instance, () =>
+              InventoryInstance.deleteInstanceViaApi(instance.instanceId),
+            ),
+          ),
+      )
 
       // Precondition 4: Ongoing order template with two-year prepayment and the specified FY distributions.
-      .step((f) => OrderTemplates.createOrderTemplateViaApi({
-        ...OrderTemplates.getDefaultOrderTemplate({}),
-        templateName: testData.templateName,
-        templateCode: testData.templateCode,
-        orderType: ORDER_TYPES.ONGOING,
-        vendor: f.get(R.ORG).id,
-        multiYearPayment: true,
-        paymentTerms: {
-          prepaymentTerm: 2,
-          startingFiscalYearId: f.get(R.FY1).id,
-          fiscalYearDistributions: [
-            {
-              fiscalYearId: f.get(R.FY1).id,
-              fundDistributions: [
-                {
-                  fundId: f.get(R.FUND_A).id,
-                  code: f.get(R.FUND_A).code,
-                  distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
-                  value: 50,
-                },
-              ],
-            },
-            {
-              fiscalYearId: f.get(R.FY2).id,
-              fundDistributions: [
-                {
-                  fundId: f.get(R.FUND_A).id,
-                  code: f.get(R.FUND_A).code,
-                  distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
-                  value: 25,
-                },
-                {
-                  fundId: f.get(R.FUND_B).id,
-                  code: f.get(R.FUND_B).code,
-                  distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
-                  value: 25,
-                },
-              ],
-            },
-          ],
-        },
-      }).then((template) => f.set(R.TEMPLATE, template, () => OrderTemplates.deleteOrderTemplateViaApi(template.id))))
+      .step((f) =>
+        OrderTemplates.createOrderTemplateViaApi({
+          ...OrderTemplates.getDefaultOrderTemplate({}),
+          templateName: testData.templateName,
+          templateCode: testData.templateCode,
+          orderType: ORDER_TYPES.ONGOING,
+          vendor: f.get(R.ORG).id,
+          multiYearPayment: true,
+          paymentTerms: {
+            prepaymentTerm: 2,
+            startingFiscalYearId: f.get(R.FY1).id,
+            fiscalYearDistributions: [
+              {
+                fiscalYearId: f.get(R.FY1).id,
+                fundDistributions: [
+                  {
+                    fundId: f.get(R.FUND_A).id,
+                    code: f.get(R.FUND_A).code,
+                    distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
+                    value: 50,
+                  },
+                ],
+              },
+              {
+                fiscalYearId: f.get(R.FY2).id,
+                fundDistributions: [
+                  {
+                    fundId: f.get(R.FUND_A).id,
+                    code: f.get(R.FUND_A).code,
+                    distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
+                    value: 25,
+                  },
+                  {
+                    fundId: f.get(R.FUND_B).id,
+                    code: f.get(R.FUND_B).code,
+                    distributionType: FUND_DISTRIBUTION_TYPES.PERCENTAGE,
+                    value: 25,
+                  },
+                ],
+              },
+            ],
+          },
+        }).then((template) =>
+          f.set(R.TEMPLATE, template, () => OrderTemplates.deleteOrderTemplateViaApi(template.id)),
+        ),
+      )
 
       // Precondition 5: Pending ongoing order with a two-year, $1000 multi-year PO line.
-      .step((f) => Orders.createOrderViaApi({
-        id: uuid(),
-        vendor: f.get(R.ORG).id,
-        orderType: ORDER_TYPES.ONGOING,
-        ongoing: { isSubscription: false, manualRenewal: false },
-        workflowStatus: ORDER_STATUSES.PENDING,
-      }).then((order) => f.set(R.ORIGINAL_ORDER, order, () => Orders.deleteOrderViaApi(order.id, false))))
+      .step((f) =>
+        Orders.createOrderViaApi({
+          id: uuid(),
+          vendor: f.get(R.ORG).id,
+          orderType: ORDER_TYPES.ONGOING,
+          ongoing: { isSubscription: false, manualRenewal: false },
+          workflowStatus: ORDER_STATUSES.PENDING,
+        }).then((order) =>
+          f.set(R.ORIGINAL_ORDER, order, () => Orders.deleteOrderViaApi(order.id, false)),
+        ),
+      )
 
       // Precondition 5: Add the specified multi-year PO line to the pending order.
-      .step((f) => OrderLines.createOrderLineViaApi({
-        ...BasicOrderLine.getDefaultOrderLine({
-          purchaseOrderId: f.get(R.ORIGINAL_ORDER).id,
-          title: testData.originalPolTitle,
-          listUnitPrice: 1000,
-          quantity: 1,
-          acquisitionMethod: f.get(R.ACQ_METHOD).id,
-        }),
-        orderFormat: ORDER_FORMAT_VALUES.OTHER,
-        tags: { tagList: [testData.isolatingTag] },
-        multiYearPayment: true,
-        paymentTerms: {
-          totalPrice: 1000,
-          prepaymentTerm: 2,
-          startingFiscalYearId: f.get(R.FY1).id,
-          fiscalYearDistributions: [
-            {
-              fiscalYearId: f.get(R.FY1).id,
-              fundDistributions: [
-                {
-                  fundId: f.get(R.FUND_A).id,
-                  code: f.get(R.FUND_A).code,
-                  distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
-                  value: 500,
-                },
-              ],
-            },
-            {
-              fiscalYearId: f.get(R.FY2).id,
-              fundDistributions: [
-                {
-                  fundId: f.get(R.FUND_A).id,
-                  code: f.get(R.FUND_A).code,
-                  distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
-                  value: 250,
-                },
-                {
-                  fundId: f.get(R.FUND_B).id,
-                  code: f.get(R.FUND_B).code,
-                  distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
-                  value: 250,
-                },
-              ],
-            },
-          ],
-        },
-      }).then((line) => f.set(R.ORIGINAL_POL, line, () => OrderLines.deleteOrderLineViaApi(line.id, false))))
+      .step((f) =>
+        OrderLines.createOrderLineViaApi({
+          ...BasicOrderLine.getDefaultOrderLine({
+            purchaseOrderId: f.get(R.ORIGINAL_ORDER).id,
+            title: testData.originalPolTitle,
+            listUnitPrice: 1000,
+            quantity: 1,
+            acquisitionMethod: f.get(R.ACQ_METHOD).id,
+          }),
+          orderFormat: ORDER_FORMAT_VALUES.OTHER,
+          tags: { tagList: [testData.isolatingTag] },
+          multiYearPayment: true,
+          paymentTerms: {
+            totalPrice: 1000,
+            prepaymentTerm: 2,
+            startingFiscalYearId: f.get(R.FY1).id,
+            fiscalYearDistributions: [
+              {
+                fiscalYearId: f.get(R.FY1).id,
+                fundDistributions: [
+                  {
+                    fundId: f.get(R.FUND_A).id,
+                    code: f.get(R.FUND_A).code,
+                    distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
+                    value: 500,
+                  },
+                ],
+              },
+              {
+                fiscalYearId: f.get(R.FY2).id,
+                fundDistributions: [
+                  {
+                    fundId: f.get(R.FUND_A).id,
+                    code: f.get(R.FUND_A).code,
+                    distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
+                    value: 250,
+                  },
+                  {
+                    fundId: f.get(R.FUND_B).id,
+                    code: f.get(R.FUND_B).code,
+                    distributionType: FUND_DISTRIBUTION_TYPES.AMOUNT,
+                    value: 250,
+                  },
+                ],
+              },
+            ],
+          },
+        }).then((line) =>
+          f.set(R.ORIGINAL_POL, line, () => OrderLines.deleteOrderLineViaApi(line.id, false)),
+        ),
+      )
 
       // Precondition 6: A second ongoing order has a regular (non-multi-year) PO line.
-      .step((f) => Orders.createOrderViaApi({
-        id: uuid(),
-        vendor: f.get(R.ORG).id,
-        orderType: ORDER_TYPES.ONGOING,
-        ongoing: { isSubscription: false, manualRenewal: false },
-        workflowStatus: ORDER_STATUSES.PENDING,
-      }).then((order) => f.set(R.NON_MULTI_YEAR_ORDER, order, () => Orders.deleteOrderViaApi(order.id, false))))
+      .step((f) =>
+        Orders.createOrderViaApi({
+          id: uuid(),
+          vendor: f.get(R.ORG).id,
+          orderType: ORDER_TYPES.ONGOING,
+          ongoing: { isSubscription: false, manualRenewal: false },
+          workflowStatus: ORDER_STATUSES.PENDING,
+        }).then((order) =>
+          f.set(R.NON_MULTI_YEAR_ORDER, order, () => Orders.deleteOrderViaApi(order.id, false)),
+        ),
+      )
 
       // Precondition 6: Add a regular PO line to the second ongoing order.
-      .step((f) => OrderLines.createOrderLineViaApi({
-        ...BasicOrderLine.getDefaultOrderLine({
-          purchaseOrderId: f.get(R.NON_MULTI_YEAR_ORDER).id,
-          title: testData.nonMultiYearPolTitle,
-          acquisitionMethod: f.get(R.ACQ_METHOD).id,
-        }),
-        orderFormat: ORDER_FORMAT_VALUES.OTHER,
-        tags: { tagList: [testData.isolatingTag] },
-        multiYearPayment: false,
-      }).then((line) => f.set(R.NON_MULTI_YEAR_POL, line, () => OrderLines.deleteOrderLineViaApi(line.id, false))))
+      .step((f) =>
+        OrderLines.createOrderLineViaApi({
+          ...BasicOrderLine.getDefaultOrderLine({
+            purchaseOrderId: f.get(R.NON_MULTI_YEAR_ORDER).id,
+            title: testData.nonMultiYearPolTitle,
+            acquisitionMethod: f.get(R.ACQ_METHOD).id,
+          }),
+          orderFormat: ORDER_FORMAT_VALUES.OTHER,
+          tags: { tagList: [testData.isolatingTag] },
+          multiYearPayment: false,
+        }).then((line) =>
+          f.set(R.NON_MULTI_YEAR_POL, line, () => OrderLines.deleteOrderLineViaApi(line.id, false)),
+        ),
+      )
 
       // Precondition 7: Advance the series so FY1 is previous, FY2 current, and FY3 future.
-      .step((f) => cy
-        .wrap([
-          [R.FY1, -1],
-          [R.FY2, 0],
-          [R.FY3, 1],
-        ])
-        .each(([key, offset]) => {
-          const updatedFy = { ...f.get(key), ...DateTools.getFullFiscalYearStartAndEnd(offset) };
-          return FiscalYears.updateFiscalYearViaApi(updatedFy).then(() => f.set(key, updatedFy));
-        }))
+      .step((f) =>
+        cy
+          .wrap([
+            [R.FY1, -1],
+            [R.FY2, 0],
+            [R.FY3, 1],
+          ])
+          .each(([key, offset]) => {
+            const updatedFy = { ...f.get(key), ...DateTools.getFullFiscalYearStartAndEnd(offset) };
+            return FiscalYears.updateFiscalYearViaApi(updatedFy).then(() => f.set(key, updatedFy));
+          }),
+      )
 
       // Precondition 8: Create a user with only the capabilities specified by the test case.
-      .step((f) => cy
-        .createTempUser([
-          Permissions.uiOrdersEdit.gui,
-          Permissions.uiOrdersCreate.gui,
-          Permissions.uiReceivingViewEditCreate.gui,
-          Permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui,
-          Permissions.uiExportOrders.gui,
-        ])
-        .then((user) => f.set(R.USER, user, () => Users.deleteViaApi(user.userId))))
+      .step((f) =>
+        cy
+          .createTempUser([
+            Permissions.uiOrdersEdit.gui,
+            Permissions.uiOrdersCreate.gui,
+            Permissions.uiReceivingViewEditCreate.gui,
+            Permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui,
+            Permissions.uiExportOrders.gui,
+          ])
+          .then((user) => f.set(R.USER, user, () => Users.deleteViaApi(user.userId))),
+      )
 
       // Precondition 9: Log in at Settings > Orders > Order templates.
       .step((f) => {
@@ -485,9 +552,11 @@ describe('Orders', () => {
     flow.cleanup();
   });
 
-  it(
+  // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
+  // #freeze pipeline deadlock
+  it.skip(
     'C1404902 Multi-year prepayment behavior when a new fiscal year begins (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C1404902'] },
+    { tags: ['extendedPathBroken', 'thunderjet', 'C1404902Broken'] },
     () => {
       const { fy1, fy2, fy3, fundA, fundB, locale } = flow.ctx();
       const formatAmount = (value) => NumberTools.formatCurrency(value, locale);
@@ -509,7 +578,9 @@ describe('Orders', () => {
 
       Orders.createOrderByTemplateAndCapture(
         `${testData.templateName} (${testData.templateCode})`,
-      ).then((order) => flow.set(R.CREATED_ORDER, order, () => Orders.deleteOrderViaApi(order.id, false)));
+      ).then((order) =>
+        flow.set(R.CREATED_ORDER, order, () => Orders.deleteOrderViaApi(order.id, false)),
+      );
 
       OrderDetails.waitLoading();
 
@@ -538,7 +609,9 @@ describe('Orders', () => {
       OrderLineEditForm.selectStartingFiscalYear(fy2.code); // Current FY
 
       OrderLineEditForm.assertFiscalYearCards([fy2.code, fy3.code]);
-      [fy2.code, fy3.code].forEach((fyCode) => OrderLineEditForm.assertFiscalYearCardFundDistributions({ fyCode, distributions: [] }));
+      [fy2.code, fy3.code].forEach((fyCode) =>
+        OrderLineEditForm.assertFiscalYearCardFundDistributions({ fyCode, distributions: [] }),
+      );
       OrderLineEditForm.assertOnlyFiscalYearCardRemovable([fy2.code, fy3.code], fy3.code);
       OrderLineEditForm.assertAddFiscalYearButtonDisabled();
 
@@ -547,7 +620,9 @@ describe('Orders', () => {
       );
       OrderLineEditForm.toggleStartingFiscalYearDropdown();
 
-      [fy1.code, fy2.code, fy3.code].forEach((fyCode) => OrderLineEditForm.assertFiscalYearOptionPresent(fyCode));
+      [fy1.code, fy2.code, fy3.code].forEach((fyCode) =>
+        OrderLineEditForm.assertFiscalYearOptionPresent(fyCode),
+      );
 
       OrderLineEditForm.toggleStartingFiscalYearDropdown();
 
@@ -597,7 +672,9 @@ describe('Orders', () => {
       OrderLineEditForm.clickSaveButton({ orderLineCreated: true, orderLineUpdated: false });
 
       cy.wait('@createdPol').then(({ response }) => {
-        flow.set(R.CREATED_POL, response.body, () => OrderLines.deleteOrderLineViaApi(response.body.id, false));
+        flow.set(R.CREATED_POL, response.body, () =>
+          OrderLines.deleteOrderLineViaApi(response.body.id, false),
+        );
         return updateLineWithIsolatingTag(R.CREATED_POL);
       });
 
@@ -661,7 +738,9 @@ describe('Orders', () => {
       OrderLineEditForm.toggleStartingFiscalYearDropdown();
 
       OrderLineEditForm.assertFiscalYearOptionAbsent(fy1.code);
-      [fy2.code, fy3.code].forEach((fyCode) => OrderLineEditForm.assertFiscalYearOptionPresent(fyCode));
+      [fy2.code, fy3.code].forEach((fyCode) =>
+        OrderLineEditForm.assertFiscalYearOptionPresent(fyCode),
+      );
 
       OrderLineEditForm.toggleStartingFiscalYearDropdown();
 
@@ -678,12 +757,16 @@ describe('Orders', () => {
       cy.log('Step 11. Change the original PO line Starting FY to current FY2');
       OrderLineEditForm.selectStartingFiscalYear(fy2.code); // Current FY
 
-      [fy2.code, fy3.code].forEach((fyCode) => OrderLineEditForm.assertFiscalYearCardFundDistributions({ fyCode, distributions: [] }));
+      [fy2.code, fy3.code].forEach((fyCode) =>
+        OrderLineEditForm.assertFiscalYearCardFundDistributions({ fyCode, distributions: [] }),
+      );
 
       cy.log('Step 12. Verify previous, current, and future Starting FY options remain available');
       OrderLineEditForm.toggleStartingFiscalYearDropdown();
 
-      [fy1.code, fy2.code, fy3.code].forEach((fyCode) => OrderLineEditForm.assertFiscalYearOptionPresent(fyCode));
+      [fy1.code, fy2.code, fy3.code].forEach((fyCode) =>
+        OrderLineEditForm.assertFiscalYearOptionPresent(fyCode),
+      );
 
       OrderLineEditForm.toggleStartingFiscalYearDropdown();
 
@@ -772,7 +855,9 @@ describe('Orders', () => {
       InteractorsTools.checkCalloutMessage(OrderStates.orderDuplicatedSuccessfully);
 
       cy.wait('@duplicatedOrder').then(({ response }) => {
-        flow.set(R.DUPLICATED_ORDER, response.body, () => Orders.deleteOrderViaApi(response.body.id, false));
+        flow.set(R.DUPLICATED_ORDER, response.body, () =>
+          Orders.deleteOrderViaApi(response.body.id, false),
+        );
       });
 
       OrderDetails.waitLoading();
@@ -838,8 +923,12 @@ describe('Orders', () => {
         OrderLines.waitLoading();
       });
 
-      waitForResults(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.searchByParameter(ORDER_LINE_SEARCH_INDEX_LABELS.KEYWORD, `${titlePrefix}*`));
-      waitForResults(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.filterByTags([testData.isolatingTag]));
+      waitForResults(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        OrderLines.searchByParameter(ORDER_LINE_SEARCH_INDEX_LABELS.KEYWORD, `${titlePrefix}*`),
+      );
+      waitForResults(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        OrderLines.filterByTags([testData.isolatingTag]),
+      );
 
       Orders.clickExportResultsToCsvButton();
       ExportSettingsModal.checkExportSelectedPolFieldsRadioButton();
@@ -877,9 +966,11 @@ describe('Orders', () => {
           (row) => row[CSV_HEADERS.STARTING_FY] === createdLineExport.startingFiscalYear,
         );
         const regular = rows.find(
-          (row) => String(row[CSV_HEADERS.MULTI_YEAR]).toLowerCase() === regularLineExport.multiYear,
+          (row) =>
+            String(row[CSV_HEADERS.MULTI_YEAR]).toLowerCase() === regularLineExport.multiYear,
         );
-        const parse = (row) => parsePrepaymentFiscalYearDistribution(row[CSV_HEADERS.DISTRIBUTIONS]);
+        const parse = (row) =>
+          parsePrepaymentFiscalYearDistribution(row[CSV_HEADERS.DISTRIBUTIONS]);
 
         // The original and duplicated PO lines intentionally have identical payment terms.
         expect(previousFyRows).to.have.length(previousLineExports.length);
@@ -919,12 +1010,16 @@ describe('Orders', () => {
       );
 
       cy.log('Step 24. Select Multi-year prepayment Yes and verify only multi-year lines remain');
-      waitForResults(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.filterByCheckboxOptions(
-        ORDER_LINE_FILTER_LABELS.MULTI_YEAR_PREPAYMENT,
-        [COMMON_BUTTON_LABELS.YES],
-        { expandAccordion: false },
-      ));
-      waitForResults(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.filterByTags([testData.isolatingTag]));
+      waitForResults(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        OrderLines.filterByCheckboxOptions(
+          ORDER_LINE_FILTER_LABELS.MULTI_YEAR_PREPAYMENT,
+          [COMMON_BUTTON_LABELS.YES],
+          { expandAccordion: false },
+        ),
+      );
+      waitForResults(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        OrderLines.filterByTags([testData.isolatingTag]),
+      );
 
       flow.step((currentFlow) => {
         OrderLines.checkOrderLineFilterInList(currentFlow.get(R.ORIGINAL_POL).poLineNumber);
@@ -935,24 +1030,30 @@ describe('Orders', () => {
       cy.log(
         'Step 25. Select No as well and verify both multi-year and regular lines are returned',
       );
-      waitForResults(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.filterByCheckboxOptions(
-        ORDER_LINE_FILTER_LABELS.MULTI_YEAR_PREPAYMENT,
-        [COMMON_BUTTON_LABELS.NO],
-        { expandAccordion: false },
-      ));
+      waitForResults(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        OrderLines.filterByCheckboxOptions(
+          ORDER_LINE_FILTER_LABELS.MULTI_YEAR_PREPAYMENT,
+          [COMMON_BUTTON_LABELS.NO],
+          { expandAccordion: false },
+        ),
+      );
       OrderLines.checkOrderLineFilterInList(flow.get(R.NON_MULTI_YEAR_POL).poLineNumber);
 
       cy.log(
         'Step 26. Uncheck No, select Receipt status Pending, and verify the pending multi-year lines',
       );
-      waitForResults(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.filterByCheckboxOptions(
-        ORDER_LINE_FILTER_LABELS.MULTI_YEAR_PREPAYMENT,
-        [COMMON_BUTTON_LABELS.NO],
-        { expandAccordion: false },
-      ));
-      waitForResults(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () => OrderLines.filterByCheckboxOptions(ORDER_LINE_FILTER_LABELS.RECEIPT_STATUS, [
-        RECEIPT_STATUS_SELECTED.PENDING,
-      ]));
+      waitForResults(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        OrderLines.filterByCheckboxOptions(
+          ORDER_LINE_FILTER_LABELS.MULTI_YEAR_PREPAYMENT,
+          [COMMON_BUTTON_LABELS.NO],
+          { expandAccordion: false },
+        ),
+      );
+      waitForResults(PANE_REQUEST_PROFILE_NAMES.ORDER_LINES, () =>
+        OrderLines.filterByCheckboxOptions(ORDER_LINE_FILTER_LABELS.RECEIPT_STATUS, [
+          RECEIPT_STATUS_SELECTED.PENDING,
+        ]),
+      );
 
       flow.step((currentFlow) => {
         OrderLines.checkOrderLineFilterInList(currentFlow.get(R.CREATED_POL).poLineNumber);
@@ -968,7 +1069,9 @@ describe('Orders', () => {
       Receiving.clickNewTitleOption();
       Receiving.verifyNewTitlePageOpened();
 
-      waitForFilters(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () => Receiving.clickPOLNumberLookUpButton());
+      waitForFilters(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () =>
+        Receiving.clickPOLNumberLookUpButton(),
+      );
 
       SelectOrderLinesModal.verifyModalView({ multiselect: false });
       SelectOrderLinesModal.assertCheckboxFilterValues(
@@ -978,12 +1081,16 @@ describe('Orders', () => {
       );
 
       cy.log("Step 28. Select Yes and verify this test's multi-year lines are available");
-      waitForResults(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () => SelectOrderLinesModal.filterByCheckboxes(
-        ORDER_LINE_FILTER_LABELS.MULTI_YEAR_PREPAYMENT,
-        [COMMON_BUTTON_LABELS.YES],
-        { expandAccordion: false },
-      ));
-      waitForResults(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () => SelectOrderLinesModal.filterByTags([testData.isolatingTag]));
+      waitForResults(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () =>
+        SelectOrderLinesModal.filterByCheckboxes(
+          ORDER_LINE_FILTER_LABELS.MULTI_YEAR_PREPAYMENT,
+          [COMMON_BUTTON_LABELS.YES],
+          { expandAccordion: false },
+        ),
+      );
+      waitForResults(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () =>
+        SelectOrderLinesModal.filterByTags([testData.isolatingTag]),
+      );
 
       SelectOrderLinesModal.assertSearchResults(
         [testData.originalPolTitle, testData.createdPolTitle],
@@ -991,9 +1098,11 @@ describe('Orders', () => {
       );
 
       cy.log('Step 29. Search by the first part of the original PO line number');
-      waitForResults(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () => SelectOrderLinesModal.searchByName(
-        `${flow.get(R.ORIGINAL_POL).poLineNumber.split('-').slice(0, -1).join('-')}*`,
-      ));
+      waitForResults(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () =>
+        SelectOrderLinesModal.searchByName(
+          `${flow.get(R.ORIGINAL_POL).poLineNumber.split('-').slice(0, -1).join('-')}*`,
+        ),
+      );
 
       SelectOrderLinesModal.assertSearchResults([testData.originalPolTitle], {
         verifyRowCount: false,
@@ -1002,7 +1111,9 @@ describe('Orders', () => {
       cy.log(
         'Step 30. Clear the Multi-year filter and verify search results still follow the entered query',
       );
-      waitForResults(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () => SelectOrderLinesModal.clearFilter(ORDER_LINE_FILTER_LABELS.MULTI_YEAR_PREPAYMENT));
+      waitForResults(PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE, () =>
+        SelectOrderLinesModal.clearFilter(ORDER_LINE_FILTER_LABELS.MULTI_YEAR_PREPAYMENT),
+      );
 
       SelectOrderLinesModal.assertCheckboxFilterValues(
         ORDER_LINE_FILTER_LABELS.MULTI_YEAR_PREPAYMENT,

@@ -10,7 +10,8 @@ const overviewAccordion = Accordion('Overview');
 
 export default {
   verifyScreenName: (profileName) => cy.expect(Form(including(`Edit ${profileName}`)).exists()),
-  changeProfileName: (profileName) => cy.do(TextField({ name: 'profile.name' }).fillIn(profileName)),
+  changeProfileName: (profileName) =>
+    cy.do(TextField({ name: 'profile.name' }).fillIn(profileName)),
   saveAndClose: () => {
     cy.do(saveAndCloseButton.click());
     cy.expect(saveAndCloseButton.absent());
@@ -89,6 +90,48 @@ export default {
       })
       .then(() => {
         // Iterate through each element in profileNames
+        for (let i = 0; i < profileNames.length; i++) {
+          expect(profileNames[i]).to.include(arrayOfProfileNames[i]);
+        }
+        expect(numberOfProfiles).to.equal(profileNames.length);
+      });
+  },
+
+  verifyLinkedProfilesForMatches(arrayOfProfileNames, numberOfProfiles) {
+    if (numberOfProfiles === 0) {
+      cy.get('[id*="branch-ROOT-MATCH-editable"]').should('not.exist');
+      return;
+    }
+    const profileNames = [];
+
+    cy.get('[id*="branch-ROOT-MATCH-editable"]')
+      .each(($element) => {
+        cy.wrap($element)
+          .invoke('text')
+          .then((name) => {
+            profileNames.push(name);
+          });
+      })
+      .then(() => {
+        for (let i = 0; i < profileNames.length; i++) {
+          expect(profileNames[i]).to.include(arrayOfProfileNames[i]);
+        }
+        expect(numberOfProfiles).to.equal(profileNames.length);
+      });
+  },
+
+  verifyLinkedProfilesForNonMatches(arrayOfProfileNames, numberOfProfiles) {
+    const profileNames = [];
+
+    cy.get('[id*="branch-ROOT-NON_MATCH-editable"]')
+      .each(($element) => {
+        cy.wrap($element)
+          .invoke('text')
+          .then((name) => {
+            profileNames.push(name);
+          });
+      })
+      .then(() => {
         for (let i = 0; i < profileNames.length; i++) {
           expect(profileNames[i]).to.include(arrayOfProfileNames[i]);
         }

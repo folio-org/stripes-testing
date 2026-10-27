@@ -49,7 +49,8 @@ const sourceFileSelect = QuickMarcEditorRow({ tagValue: '001' }).find(
 const versionHistoryButton = Button({ icon: 'clock' });
 const versionHistoryToolTipText = 'Version history';
 const actionsButton = rootSection.find(Button('Actions', { disabled: or(true, false) }));
-const getLinkedBibUpdatesSuccessCalloutText = (numberOfRecords) => `This record has successfully saved and is in process. ${numberOfRecords} linked bibliographic record(s) updates have begun.`;
+const getLinkedBibUpdatesSuccessCalloutText = (numberOfRecords) =>
+  `This record has successfully saved and is in process. ${numberOfRecords} linked bibliographic record(s) updates have begun.`;
 
 // related with cypress\fixtures\oneMarcAuthority.mrc
 const defaultAuthority = {
@@ -171,13 +172,14 @@ const defaultAuthority = {
       changedProperties.splice(19, 0, '    ');
       return changedProperties;
     },
-    getNewValueSourceLine: () => defaultAuthority.tag008AuthorityBytesProperties
-      .convertToSource(
-        defaultAuthority.tag008AuthorityBytesProperties
-          .getAllProperties()
-          .map((property) => property.newValue),
-      )
-      .join(''),
+    getNewValueSourceLine: () =>
+      defaultAuthority.tag008AuthorityBytesProperties
+        .convertToSource(
+          defaultAuthority.tag008AuthorityBytesProperties
+            .getAllProperties()
+            .map((property) => property.newValue),
+        )
+        .join(''),
   },
   // 24 symbols
   ldrValue: '00846cz\\\\a2200241n\\\\4500',
@@ -219,7 +221,8 @@ export default {
     if (regexp) cy.expect(rootSection.find(HTML(matching(new RegExp(expectedText)))).exists());
     else cy.expect(rootSection.find(HTML(including(expectedText))).exists());
   },
-  notContains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).absent()),
+  notContains: (expectedText) =>
+    cy.expect(rootSection.find(HTML(including(expectedText))).absent()),
   checkTagInRow: (rowIndex, tag) => {
     cy.expect(
       rootSection
@@ -327,7 +330,8 @@ export default {
     this.waitLoading();
     cy.expect([calloutUpdatedRecordSuccess.exists(), rootSection.exists()]);
   },
-  checkPresentedColumns: (presentedColumns) => presentedColumns.forEach((columnName) => cy.expect(MultiColumnListHeader(columnName).exists())),
+  checkPresentedColumns: (presentedColumns) =>
+    presentedColumns.forEach((columnName) => cy.expect(MultiColumnListHeader(columnName).exists())),
   check008Field: (lang) => {
     cy.do([Select('Lang').choose(langOptions[lang])]);
   },
@@ -367,6 +371,14 @@ export default {
       cy.do(QuickMarcEditorRow({ tagValue: tag }).find(infoButton).click());
     }
     cy.expect(HTML('This field is protected.').exists());
+  },
+
+  checkInfoButtonAbsentForField: (tag, rowIndex) => {
+    if (rowIndex) {
+      cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(infoButton).absent());
+    } else {
+      cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(infoButton).absent());
+    }
   },
 
   checkAddNew001Tag: (rowIndex, content) => {

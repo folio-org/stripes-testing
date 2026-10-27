@@ -36,7 +36,9 @@ import { FinanceHelper } from '../../support/fragments/finance';
 
 const OrderLineEditForm = { ...OrderLineEditFormFragment, ...MultiYearPaymentTerms };
 
-describe('Orders', () => {
+// The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
+// #freeze pipeline deadlock
+describe.skip('Orders', () => {
   const flow = new ExecutionFlowManager();
 
   const R = {
@@ -94,17 +96,19 @@ describe('Orders', () => {
       fundId: fund.id,
       allocated: 1000,
       budgetStatus,
-    }).then((budget) => Budgets.updateBudgetViaApi({
-      ...budget,
-      statusExpenseClasses: [
-        {
-          status: BUDGET_STATUSES.ACTIVE,
-          expenseClassId: expenseClass.id,
-        },
-      ],
-    }).then(() => {
-      f.set(budgetKey, budget, () => Budgets.deleteViaApi(budget.id, false));
-    }));
+    }).then((budget) =>
+      Budgets.updateBudgetViaApi({
+        ...budget,
+        statusExpenseClasses: [
+          {
+            status: BUDGET_STATUSES.ACTIVE,
+            expenseClassId: expenseClass.id,
+          },
+        ],
+      }).then(() => {
+        f.set(budgetKey, budget, () => Budgets.deleteViaApi(budget.id, false));
+      }),
+    );
   };
 
   before(() => {
@@ -177,7 +181,9 @@ describe('Orders', () => {
           name: `Electronic_${getRandomPostfix()}`,
           code: `EL${getRandomPostfix()}`,
         }).then((ec) => {
-          f.set(R.EXPENSE_CLASS, ec, () => ExpenseClasses.deleteExpenseClassViaApi(ec.id, { failOnStatusCode: false }));
+          f.set(R.EXPENSE_CLASS, ec, () =>
+            ExpenseClasses.deleteExpenseClassViaApi(ec.id, { failOnStatusCode: false }),
+          );
         });
       })
       // Precondition 4: Create budget for Fund A in FY1 with expense class
@@ -311,9 +317,11 @@ describe('Orders', () => {
     flow.cleanup();
   });
 
-  it(
+  // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
+  // #freeze pipeline deadlock
+  it.skip(
     'C1404903 Create an order with two-year prepayment term starting from the future fiscal year (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C1404903'] },
+    { tags: ['extendedPathBroken', 'thunderjet', 'C1404903Broken'] },
     () => {
       const { fy1, fy2, fy3, fy4, fundA, fundB, expenseClass, locale } = flow.ctx();
 

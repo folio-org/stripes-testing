@@ -2,6 +2,7 @@ import { recurse } from 'cypress-recurse';
 import {
   Button,
   HTML,
+  Icon,
   List,
   ListItem,
   Modal,
@@ -14,6 +15,7 @@ import {
   Pane,
   Link,
   PaneHeader,
+  Tooltip,
 } from '../../../../interactors';
 import { FILTER_STATUSES } from './eholdingsConstants';
 import getRandomPostfix from '../../utils/stringTools';
@@ -47,23 +49,28 @@ const getdefaultPackage = () => {
 };
 
 const generatePackageBodyForUpdate = (updatedPackageData) => {
-  updatedPackageData.attributes.allowKbToAddTitles =
-    updatedPackageData.attributes.isSelected && !updatedPackageData.attributes.isCustom;
   return {
     data: {
       id: updatedPackageData.id,
       type: updatedPackageData.type,
       attributes: {
         name: updatedPackageData.attributes.name,
-        customDisplayName: updatedPackageData.attributes.customDisplayName,
+        // backend does not allow for empty customDisplayName values
+        // undefined value drops the whole field as cy.request() uses JSON.stringify
+        customDisplayName: updatedPackageData.attributes.customDisplayName || undefined,
         isSelected: updatedPackageData.attributes.isSelected,
-        allowKbToAddTitles: updatedPackageData.attributes.allowKbToAddTitles,
+        allowKbToAddTitles:
+          updatedPackageData.attributes.isSelected && !updatedPackageData.attributes.isCustom,
         contentType: updatedPackageData.attributes.contentType,
         customCoverage: updatedPackageData.attributes.customCoverage,
         customAltNames: updatedPackageData.attributes.customAltNames,
-        visibilityData: updatedPackageData.attributes.visibilityData,
+        visibility: updatedPackageData.attributes.isSelected
+          ? updatedPackageData.attributes.visibility
+          : null,
         isCustom: updatedPackageData.attributes.isCustom,
-        proxy: updatedPackageData.attributes.proxy,
+        proxy: updatedPackageData.attributes.isSelected
+          ? updatedPackageData.attributes.proxy
+          : null,
         packageToken: updatedPackageData.attributes.packageToken,
         isFullPackage: true,
       },
@@ -193,6 +200,10 @@ export default {
     cy.expect(KeyValue('Content type').has({ value: contentType }));
   },
 
+  verifyPackageHoldingStatus: (status) => {
+    cy.get(selectedText).should('have.text', status);
+  },
+
   getNotCustomSelectedPackageIdViaApi: () => {
     cy.okapiRequest({
       path: 'eholdings/packages',
@@ -201,7 +212,8 @@ export default {
     }).then(({ body }) => {
       const initialPackageIds = body.data
         .filter(
-          (specialPackage) => !specialPackage?.attributes?.isCustom &&
+          (specialPackage) =>
+            !specialPackage?.attributes?.isCustom &&
             specialPackage?.attributes?.name &&
             // TODO: can't see not complete package in response now
             // && specialPackage.attributes?.packageType !== 'Complete'
@@ -224,7 +236,8 @@ export default {
     }).then(({ body }) => {
       const initialPackageIds = body.data
         .filter(
-          (specialPackage) => !specialPackage?.attributes?.isCustom &&
+          (specialPackage) =>
+            !specialPackage?.attributes?.isCustom &&
             specialPackage?.attributes?.name &&
             specialPackage.attributes?.packageType !== 'Complete' &&
             // TODO: potencial issue with this package
@@ -252,6 +265,49 @@ export default {
         .find(ListItem({ className: including('list-item-'), h3Value: packageName }))
         .exists(),
     );
+  },
+
+  verifyHiddenIndicatorShown(packageName, isShown = true) {
+    const icon = resultSection
+      .find(ListItem({ className: including('list-item-'), h3Value: packageName }))
+      .find(Icon({ eyeClosed: true }));
+    if (isShown) cy.expect(icon.exists());
+    else cy.expect(icon.absent());
+  },
+
+  verifyHiddenIndicatorTooltipInResultRow({
+    packageName,
+    pf = true,
+    ftf = true,
+    marc = true,
+  } = {}) {
+    const icon = resultSection
+      .find(ListItem({ className: including('list-item-'), h3Value: packageName }))
+      .find(Icon({ eyeClosed: true }));
+    const tooltipTextParts = {
+      pf: 'Publication Finder',
+      ftf: 'Full Text Finder',
+      marc: 'MARC export',
+    };
+    const buildHiddenTooltipText = (options) => {
+      const parts = Object.keys(tooltipTextParts)
+        .filter((key) => options[key])
+        .map((key) => tooltipTextParts[key]);
+      let joinedParts;
+      if (parts.length <= 1) {
+        joinedParts = parts.join('');
+      } else if (parts.length === 2) {
+        joinedParts = parts.join(' and ');
+      } else {
+        joinedParts = `${parts.slice(0, -1).join(', ')}, and ${parts[parts.length - 1]}`;
+      }
+      return `Package is set to hide/exclude in ${joinedParts}`;
+    };
+    const text = buildHiddenTooltipText({ pf, ftf, marc });
+
+    cy.do(icon.hoverMouse());
+    cy.expect(Tooltip({ text }).exists());
+    cy.do(icon.unhoverMouse());
   },
 
   verifyPackageWithPackageDisplayNameExistsInResults(packageName, packageDisplayName) {
@@ -377,27 +433,14 @@ export default {
     });
   },
 
-  unassignPackageViaAPI(packageName, { isHidden = false } = {}) {
+  unassignPackageViaAPI(packageName) {
     this.getPackageViaApi(packageName).then((searchResponse) => {
-      this.getPackageDataViaApi(searchResponse.body.data[0].id).then(({ body: { data } }) => {
+      const targetPackage = searchResponse.body.data.filter(
+        (pkg) => pkg.attributes.name === packageName,
+      )[0];
+      this.getPackageDataViaApi(targetPackage.id).then(({ body: { data } }) => {
         data.attributes.isSelected = false;
-        data.attributes.visibility = [
-          {
-            category: 'PF',
-            reason: '',
-            hidden: isHidden,
-          },
-          {
-            category: 'FTF',
-            reason: '',
-            hidden: isHidden,
-          },
-          {
-            category: 'MARC',
-            reason: '',
-            hidden: isHidden,
-          },
-        ];
+        data.attributes.visibility = null;
         data.attributes.customCoverage = {
           beginCoverage: '',
           endCoverage: '',
@@ -408,6 +451,7 @@ export default {
   },
 
   createPackageViaAPI(packageBody = defaultPackage) {
+    packageBody.data.type = 'packages';
     return cy
       .okapiRequest({
         method: 'POST',
@@ -473,7 +517,8 @@ export default {
       });
   },
 
-  verifyPackageRecordProxy: (proxyName) => cy.expect(KeyValue('Proxy', { value: proxyName }).exists()),
+  verifyPackageRecordProxy: (proxyName) =>
+    cy.expect(KeyValue('Proxy', { value: proxyName }).exists()),
 
   verifyDetailsPaneAbsent: (packageName) => {
     cy.expect(Pane(including(packageName)).absent());
@@ -508,7 +553,10 @@ export default {
 
   setPackageCustomDisplayNameViaAPI(packageName, customDisplayName) {
     this.getPackageViaApi(packageName).then((searchResponse) => {
-      this.getPackageDataViaApi(searchResponse.body.data[0].id).then(({ body: { data } }) => {
+      const targetPackage = searchResponse.body.data.filter(
+        (pkg) => pkg.attributes.name === packageName,
+      )[0];
+      this.getPackageDataViaApi(targetPackage.id).then(({ body: { data } }) => {
         data.attributes.customDisplayName = customDisplayName;
         this.updatePackageViaApi(data);
       });

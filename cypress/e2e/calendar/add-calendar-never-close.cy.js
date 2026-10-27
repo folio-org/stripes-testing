@@ -1,48 +1,42 @@
-import {
-  createServicePoint,
+import Calendar, {
   deleteCalendar,
-  deleteServicePoint,
+  getTestServicePoint,
   openCalendarSettings,
 } from '../../support/fragments/calendar/calendar';
-
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
 import PaneActions from '../../support/fragments/calendar/pane-actions';
-
-const testServicePoint = calendarFixtures.servicePoint;
-const testCalendar = calendarFixtures.calendar;
-const newCalendarInfo = calendarFixtures.data.newCalendar;
-
-let calendarID;
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Calendar', () => {
   describe('Calendar New', () => {
+    const testServicePoint = getTestServicePoint();
+    const newCalendarInfo = {
+      ...calendarFixtures.data.newCalendar,
+      name: getTestEntityValue('C360955_Calendar'),
+    };
+    let calendarID;
+
     before(() => {
-      // login
-      cy.loginAsAdmin();
+      // Create data via API before the UI login: getAdminToken clears cookies,
+      // which ends a UI session that is already open
+      cy.getAdminToken();
+      ServicePoints.createViaApi(testServicePoint);
 
-      // get admin token to use in okapiRequest to retrieve service points
-      if (!Cypress.env('token')) {
-        cy.getAdminToken();
-      }
-
-      // reset db state
-      deleteServicePoint(testServicePoint.id, false);
-
-      // create test service point
-      createServicePoint(testServicePoint, (response) => {
-        testCalendar.assignments = [response.body.id];
+      cy.loginAsAdmin({
+        path: TopMenu.settingsCalendarPath,
+        waiter: Calendar.waitCalendarPaneToLoad,
       });
-
-      // cy.deleteCalendarUI();
-      openCalendarSettings();
     });
 
     after(() => {
-      deleteServicePoint(testServicePoint.id, true);
+      cy.getAdminToken();
       if (calendarID) {
         deleteCalendar(calendarID);
       }
+      ServicePoints.deleteViaApi(testServicePoint.id);
     });
 
     it(
@@ -51,10 +45,8 @@ describe('Calendar', () => {
       () => {
         PaneActions.allCalendarsPane.clickNewButton();
 
-        CreateCalendarForm.create247Calendar(newCalendarInfo, testServicePoint.name);
-
-        // intercept http request
-        cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars', (req) => {
+        // intercept http request; registered before the form is saved so the request isn't missed
+        cy.intercept('**/calendar/calendars', (req) => {
           if (req.method === 'POST') {
             req.continue((res) => {
               expect(res.statusCode).equals(201);
@@ -62,6 +54,8 @@ describe('Calendar', () => {
             });
           }
         }).as('createCalendar');
+
+        CreateCalendarForm.create247Calendar(newCalendarInfo, testServicePoint.name);
 
         cy.wait('@createCalendar').then(() => {
           openCalendarSettings();

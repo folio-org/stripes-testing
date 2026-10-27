@@ -4,6 +4,7 @@ import {
   or,
   Pane,
   Button,
+  Callout,
   TextField,
   MultiColumnListCell,
   Accordion,
@@ -19,7 +20,13 @@ import {
 import FiltersPaneHelper from '../filtersPane';
 import MCLHelper from '../multiColumnList';
 import ExportDetails from './exportDetails';
-import { EXPORT_MANAGER_JOBS_FILTER_LABELS } from '../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  EXPORT_MANAGER_CALLOUT_MESSAGES,
+  EXPORT_MANAGER_JOBS_FILTER_LABELS,
+} from '../../constants';
+
+const RESEND = 'Resend';
 
 const searchPane = Pane('Search & filter');
 const searchButton = Button({ type: 'submit' });
@@ -152,6 +159,19 @@ export default {
   openJobDetailView(jobId) {
     cy.then(() => exportJobsList.find(MultiColumnListCell(jobId)).row()).then((rowIndex) => {
       cy.do(exportJobsList.find(MultiColumnListRow({ index: rowIndex })).click());
+    });
+  },
+
+  verifyJobRowHasNoLinkInList(jobId) {
+    cy.expect(exportJobsList.find(MultiColumnListCell(jobId)).exists());
+    cy.then(() => exportJobsList.find(MultiColumnListCell(jobId)).row()).then((rowIndex) => {
+      cy.expect(
+        exportJobsList
+          .find(MultiColumnListRow({ index: rowIndex }))
+          .find(MultiColumnListCell({ column: 'Job ID' }))
+          .find(Link.selector('a')())
+          .absent(),
+      );
     });
   },
 
@@ -450,6 +470,18 @@ export default {
     cy.wait(7000);
   },
 
+  resendJob({ waitMs = 7_000 }) {
+    cy.wait(waitMs);
+    cy.do(Button(COMMON_BUTTON_LABELS.ACTIONS).click());
+    cy.wait(waitMs);
+    cy.do(Button(RESEND).click());
+    cy.wait(waitMs);
+  },
+
+  verifyResendFileUploadStarted() {
+    cy.expect(Callout(EXPORT_MANAGER_CALLOUT_MESSAGES.RESEND_FILE_SUCCESS).exists());
+  },
+
   verifyNoPermissionWarning() {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
@@ -480,7 +512,7 @@ export default {
         .has({ value: including(expectedValuesObject.startDate) }),
       jobDetailsPane
         .find(KeyValue('End time'))
-        .has({ value: including(expectedValuesObject.startDate) }),
+        .has({ value: including(expectedValuesObject.endDate) }),
     ]);
   },
 

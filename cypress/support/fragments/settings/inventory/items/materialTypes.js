@@ -2,9 +2,13 @@ import { REQUEST_METHOD } from '../../../../constants';
 import {
   Button,
   including,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiColumnListCell,
+  Pane,
 } from '../../../../../../interactors';
+
+const rootPane = Pane('Material types');
 
 export const reasonsActions = {
   edit: 'edit',
@@ -51,13 +55,26 @@ export default {
     }
   },
 
-  verifyLocalMaterialTypesInTheList({ name, source = 'local', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
+  waitLoading() {
+    ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
+
+  verifyLocalMaterialTypesInTheList({ name, source = 'local', lastUpdated = [], actions = [] }) {
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
     ]);
+    lastUpdated.forEach((text) => {
+      cy.expect(
+        row
+          .find(MultiColumnListCell({ column: 'Last updated', content: including(text) }))
+          .exists(),
+      );
+    });
     if (actions.length === 0) {
       cy.expect(row.find(actionsCell).has({ content: '' }));
     } else {
@@ -79,7 +96,7 @@ export default {
 
   clickTrashButtonForMaterialTypes(name) {
     cy.do([
-      MultiColumnListRow({ content: including(name) })
+      MultiColumnListRow({ content: including(name), isContainer: false })
         .find(MultiColumnListCell({ columnIndex: 3 }))
         .find(Button({ icon: 'trash' }))
         .click(),

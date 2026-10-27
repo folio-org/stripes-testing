@@ -31,6 +31,7 @@ scripts/update_permission_names/permissions_backups/*
 mcp.json
 parallelWorkers.json
 cypress/e2e/failed.cy.js
+scripts/report-portal/team-responsible-ones/team-responsible-ones.js
 environments.js
 CLAUDE.md
 .claude
@@ -41,3 +42,5 @@ cypress.local.js
 .agents/*
 skills-lock.json
 .local/
+.playwright-cli
+.write-test

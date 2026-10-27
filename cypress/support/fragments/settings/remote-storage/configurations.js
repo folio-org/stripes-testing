@@ -81,8 +81,8 @@ const configurations = {
       fillGeneralInfo(name, this.title);
     },
   },
-  DematicStagingDirector: {
-    title: REMOTE_STORAGE_PROVIDER_NAMES.DDEMATIC_STAGING_DIRECTOR,
+  DematicTCP_IP: {
+    title: REMOTE_STORAGE_PROVIDER_NAMES.DEMATIC_TCP_IP,
     create(name) {
       openCreateConfigurationForm();
       this.fillRequiredFields(name);
@@ -248,7 +248,7 @@ export default {
   editConfiguration(name, configuration, save = true) {
     // configuration keys must equals configurationFields keys
     // example { nameInput: 'test', urlInput: 'test', timingInput: '1' }
-    this.opentEditConfigurationForm(name);
+    this.openEditConfigurationForm(name);
 
     for (const param in configuration) {
       if (
@@ -328,7 +328,8 @@ export default {
       cy.do([
         generalInformationAccordion.find(Select()).choose(including(configurations[key].title)),
       ]);
-      if (configurations[key].title === 'Dematic StagingDirector') this.verifyDataSynchronizationSettingsAccordion(true);
+      if (configurations[key].title === REMOTE_STORAGE_PROVIDER_NAMES.DEMATIC_TCP_IP)
+        this.verifyDataSynchronizationSettingsAccordion(true);
       else this.verifyDataSynchronizationSettingsAccordion(false);
     });
     this.closeCreateConfigurationWithoutSaving();
@@ -356,7 +357,7 @@ export default {
   confirmCreateRemoteStorage() {
     cy.do(confirmationModal.find(saveBtn).click());
   },
-  opentEditConfigurationForm(name) {
+  openEditConfigurationForm(name) {
     cy.do([
       MultiColumnListCell({ content: name }).click(),
       Pane({ title: name }).find(actionsBtn).click(),

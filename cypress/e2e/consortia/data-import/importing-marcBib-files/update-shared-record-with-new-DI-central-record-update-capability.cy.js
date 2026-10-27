@@ -206,7 +206,7 @@ describe('Data Import', () => {
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImportedForConsortia(testData.marcFile.updatedFileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.checkJobStatus(testData.marcFile.updatedFileName, JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(testData.marcFile.updatedFileName);
           [
             FileDetails.columnNameInResultList.srsMarc,
@@ -214,7 +214,7 @@ describe('Data Import', () => {
           ].forEach((columnName) => {
             FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
           });
-          FileDetails.verifyTitle(
+          FileDetails.verifyTitleInAnyRow(
             `${testData.updatedInstanceTitle}/ Dabney Ewin.`,
             FileDetails.columnNameInResultList.title,
           );

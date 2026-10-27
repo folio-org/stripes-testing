@@ -57,12 +57,12 @@ describe('Lists', () => {
     describe('Composite Entity Types', () => {
       before('Create test data', () => {
         cy.getAdminToken();
-        ServicePoints.getCircDesk2ServicePointViaApi().then((servicePoint) => {
-          testData.userServicePoint = servicePoint;
+        ServicePoints.createViaApi(testData.userServicePoint).then(() => {
+          testData.defaultLocation = Locations.getDefaultLocation({
+            servicePointId: testData.userServicePoint.id,
+          }).location;
 
-          Locations.getViaApiAnyDefault().then((location) => {
-            testData.defaultLocation = location[0];
-
+          Locations.createViaApi(testData.defaultLocation).then(() => {
             testData.instanceId = InventoryInstances.createInstanceViaApi(
               instanceName,
               itemBarcode,
@@ -134,6 +134,8 @@ describe('Lists', () => {
         LostItemFeePolicy.deleteViaApi(lostItemFeePolicy.id);
         Users.deleteViaApi(user.userId);
         UsersOwners.deleteViaApi(testData.ownerId);
+        Locations.deleteViaApi(testData.defaultLocation);
+        ServicePoints.deleteViaApi(testData.userServicePoint.id);
         Lists.deleteListByNameViaApi(listName);
       });
 

@@ -151,6 +151,33 @@ export default {
     }
   },
 
+  verifyLocalStatisticalCodeInTheList({
+    code,
+    name,
+    type,
+    source = INVENTORY_RECORD_SOURCE.LOCAL,
+    lastUpdated = [],
+    actions = [],
+  }) {
+    const row = MultiColumnListRow({ content: including(code), isContainer: false });
+    const cellIncludes = (column, text) =>
+      row.find(MultiColumnListCell({ column, innerText: including(text) })).exists();
+    const actionsCell = row.find(MultiColumnListCell({ column: 'Actions' }));
+
+    cy.expect([row.exists(), cellIncludes('Source', source)]);
+    if (name) cy.expect(cellIncludes('Statistical code names', name));
+    if (type) cy.expect(cellIncludes('Statistical code types', type));
+    lastUpdated.forEach((text) => cy.expect(cellIncludes('Last updated', text)));
+    if (actions.length === 0) {
+      cy.expect(actionsCell.has({ content: '' }));
+    } else {
+      Object.values(ACTIONS).forEach((action) => {
+        const button = actionsCell.find(Button({ icon: action }));
+        cy.expect(actions.includes(action) ? button.exists() : button.absent());
+      });
+    }
+  },
+
   verifyStatisticalCodesAbsentInTheList({ code }) {
     cy.expect(MultiColumnListRow({ content: including(code), isContainer: false }).absent());
   },

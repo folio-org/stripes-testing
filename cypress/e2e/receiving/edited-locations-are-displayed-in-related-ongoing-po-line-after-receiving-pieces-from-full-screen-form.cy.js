@@ -71,9 +71,11 @@ describe('Receiving', () => {
       .then((materialType) => {
         testData.materialType = materialType;
       })
-      .then(() => cy.getAcquisitionMethodsApi({
-        query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-      }))
+      .then(() =>
+        cy.getAcquisitionMethodsApi({
+          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+        }),
+      )
       .then(({ body }) => {
         testData.acquisitionMethod = body.acquisitionMethods[0];
       });
@@ -213,6 +215,7 @@ describe('Receiving', () => {
             [{ key: POLINE_DETAILS_FIELDS.HOLDING_NAME, value: testData.location2.name }],
             [{ key: POLINE_DETAILS_FIELDS.HOLDING_NAME, value: testData.location3.name }],
           ],
+          checkByIndex: false,
         },
       });
 

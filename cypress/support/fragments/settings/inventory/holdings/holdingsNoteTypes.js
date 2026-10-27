@@ -1,15 +1,26 @@
 import {
   Button,
   including,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiColumnListCell,
+  Pane,
 } from '../../../../../../interactors';
 
 export const reasonsActions = {
   edit: 'edit',
   trash: 'trash',
 };
+
+const rootPane = Pane('Holdings note types');
+
 export default {
+  waitLoading() {
+    ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
+
   createViaApi: (body) => {
     return cy
       .okapiRequest({
@@ -22,11 +33,12 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `holdings-note-types/${id}`,
-    isDefaultSearchParamsRequired: false,
-  }),
+  deleteViaApi: (id) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `holdings-note-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+    }),
   verifyConsortiumHoldingsNoteTypesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name), isContainer: true });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
@@ -48,13 +60,25 @@ export default {
     }
   },
 
-  verifyLocalHoldingsNoteTypesInTheList({ name, source = 'local', actions = [] }) {
+  verifyLocalHoldingsNoteTypesInTheList({
+    name,
+    source = 'local',
+    lastUpdated = [],
+    actions = [],
+  }) {
     const row = MultiColumnListRow({ content: including(name), isContainer: true });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
     ]);
+    lastUpdated.forEach((text) => {
+      cy.expect(
+        row
+          .find(MultiColumnListCell({ column: 'Last updated', content: including(text) }))
+          .exists(),
+      );
+    });
     if (actions.length === 0) {
       cy.expect(row.find(actionsCell).has({ content: '' }));
     } else {

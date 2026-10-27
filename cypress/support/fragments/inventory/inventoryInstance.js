@@ -71,6 +71,9 @@ const addHoldingButton = instanceDetailsSection.find(Button('Add holdings'));
 const viewHoldingsButton = Button('View holdings');
 const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
+const selectAllItemsForMovementCheckbox = Checkbox({
+  ariaLabel: 'Select/unselect all items for movement',
+});
 const identifiersAccordion = Accordion('Identifiers');
 const singleRecordImportModal = Modal('Re-import');
 const source = KeyValue('Source');
@@ -437,7 +440,8 @@ export default {
   },
 
   openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
-  openInstanceNotesAccordion: () => cy.do(Button({ id: 'accordion-toggle-button-instance-details-notes' }).click()),
+  openInstanceNotesAccordion: () =>
+    cy.do(Button({ id: 'accordion-toggle-button-instance-details-notes' }).click()),
   checkAuthorityAppIconInSection: (sectionId, value, isPresent) => {
     if (isPresent) {
       cy.expect(
@@ -997,7 +1001,7 @@ export default {
         .find(Checkbox())
         .click(),
     );
-    cy.wait(500);
+    cy.wait(1000);
     cy.do(
       Accordion({ label: including(`Holdings: ${fromHolding}`) })
         .find(Button('Move to'))
@@ -1014,6 +1018,26 @@ export default {
       InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
     }
 
+    cy.wait(1000);
+  },
+
+  moveAllItemsToAnotherHolding({ fromHolding, toHolding, itemsCount, shouldOpen = true }) {
+    const holdingAccordion = Accordion({ label: including(`Holdings: ${fromHolding}`) });
+
+    if (shouldOpen) {
+      openHoldings(fromHolding);
+    }
+
+    cy.do(holdingAccordion.find(selectAllItemsForMovementCheckbox).click());
+    cy.wait(1000);
+    cy.do(holdingAccordion.find(Button('Move to')).click());
+    cy.wait(500);
+    cy.do(
+      DropdownMenu()
+        .find(Button(including(toHolding)))
+        .click(),
+    );
+    InteractorsTools.checkCalloutMessage(`${itemsCount} items have been successfully moved.`);
     cy.wait(1000);
   },
 
@@ -1309,10 +1333,12 @@ export default {
     });
   },
 
-  verifyResourceIdentifierAbsent: (value) => cy.expect(identifiersAccordion.find(MultiColumnListCell(including(value))).absent()),
-  verifyInstanceLanguage: (language) => cy.expect(
-    descriptiveDataAccordion.find(KeyValue('Language')).has({ value: including(language) }),
-  ),
+  verifyResourceIdentifierAbsent: (value) =>
+    cy.expect(identifiersAccordion.find(MultiColumnListCell(including(value))).absent()),
+  verifyInstanceLanguage: (language) =>
+    cy.expect(
+      descriptiveDataAccordion.find(KeyValue('Language')).has({ value: including(language) }),
+    ),
   verifyInstancePhysicalcyDescription: (description) => {
     cy.expect(
       descriptiveDataAccordion.find(KeyValue('Physical description')).has({ value: description }),
@@ -1610,14 +1636,15 @@ export default {
       const sharingInstanceId = interception.response.body.instanceIdentifier;
       const consortiaId = interception.request.url.split('/consortia/')[1].split('/')[0];
       return cy.recurse(
-        () => cy.okapiRequest({
-          path: `consortia/${consortiaId}/sharing/instances`,
-          searchParams: {
-            instanceIdentifier: sharingInstanceId,
-          },
-          isDefaultSearchParamsRequired: false,
-          failOnStatusCode: false,
-        }),
+        () =>
+          cy.okapiRequest({
+            path: `consortia/${consortiaId}/sharing/instances`,
+            searchParams: {
+              instanceIdentifier: sharingInstanceId,
+            },
+            isDefaultSearchParamsRequired: false,
+            failOnStatusCode: false,
+          }),
         (response) => response.body.sharingInstances[0].status === 'COMPLETE',
         {
           limit: 30,
@@ -1932,11 +1959,12 @@ export default {
       }
     });
   },
-  checkInstanceHrId: (expectedInstanceHrId) => cy.expect(
-    instanceDetailsSection
-      .find(KeyValue('Instance HRID'))
-      .has({ value: including(expectedInstanceHrId) }),
-  ),
+  checkInstanceHrId: (expectedInstanceHrId) =>
+    cy.expect(
+      instanceDetailsSection
+        .find(KeyValue('Instance HRID'))
+        .has({ value: including(expectedInstanceHrId) }),
+    ),
 
   verifySharedIconByTitle(title) {
     cy.expect(
@@ -2113,11 +2141,11 @@ export default {
     const holdingSection = Accordion(including(holdingsLocation));
     const targetEl = whileMoving
       ? holdingSection
-        .find(MultiColumnListCell({ columnIndex: 1, row: itemIndex }))
-        .find(TextField({ value: `${orderValue}` }))
+          .find(MultiColumnListCell({ columnIndex: 1, row: itemIndex }))
+          .find(TextField({ value: `${orderValue}` }))
       : holdingSection.find(
-        MultiColumnListCell({ columnIndex: 0, row: itemIndex, content: `${orderValue}` }),
-      );
+          MultiColumnListCell({ columnIndex: 0, row: itemIndex, content: `${orderValue}` }),
+        );
     cy.expect(targetEl.exists());
   },
 

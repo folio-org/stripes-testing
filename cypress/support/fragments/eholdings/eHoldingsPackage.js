@@ -36,15 +36,17 @@ const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
 const customLabelButton = Button('Custom labels');
 const displayLabel = (number) => TextField({ name: `customLabel${number}.displayLabel` });
-const fullTextFinderCheckbox = (number) => Checkbox({ name: `customLabel${number}.displayOnFullTextFinder` });
+const fullTextFinderCheckbox = (number) =>
+  Checkbox({ name: `customLabel${number}.displayOnFullTextFinder` });
 const saveButton = Button('Save');
 const calloutEditLabelSettings = HTML(including('Custom labels have been updated'));
 const getElementIdByName = (packageName) => packageName.replaceAll(' ', '-').toLowerCase();
-const waitTitlesLoading = () => cy.url().then((url) => {
-  const packageId = url.split('?')[0].split('/').at(-1);
-  cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
-  cy.wait('@getTitles', getLongDelay());
-});
+const waitTitlesLoading = () =>
+  cy.url().then((url) => {
+    const packageId = url.split('?')[0].split('/').at(-1);
+    cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
+    cy.wait('@getTitles', getLongDelay());
+  });
 const providerTokenField = TextArea({ name: 'providerTokenValue' });
 const providerTokenValue = KeyValue('Provider token');
 const newNoteButton = Button({ id: 'note-create-button' });
@@ -64,6 +66,8 @@ const keepEditingButton = Modal().find(Button('Keep editing'));
 const continueWithoutSavingButton = Modal().find(Button('Continue without saving'));
 const closeIconButton = Button({ icon: 'times' });
 const accessStatusTypeDropdown = Select({ id: 'eholdings-access-type-id' });
+const nameFieldInEditForm = TextArea({ name: 'customDisplayName' });
+const titlesList = MultiColumnList({ id: 'package-title-list' });
 
 export default {
   waitLoading: (specialPackage) => {
@@ -87,16 +91,22 @@ export default {
     });
   },
 
-  verifyHoldingStatus: (expectedStatus = FILTER_STATUSES.SELECTED) => {
-    waitTitlesLoading().then(() => {
-      cy.expect(titlesSection.exists());
-      cy.expect(Spinner().absent());
-    });
-    cy.reload();
+  checkTitleRowsShown() {
+    cy.expect(titlesList.find(MultiColumnListCell()).exists());
+    cy.expect(titlesList.has({ loading: false }));
+    cy.expect(titlesList.find(Spinner()).absent());
+  },
+
+  verifyHoldingStatus(expectedStatus = FILTER_STATUSES.SELECTED) {
+    this.checkTitleRowsShown();
     cy.url().then((url) => {
       const packageId = url.split('?')[0].split('/').at(-1);
-      cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
-      cy.wait('@getTitles', getLongDelay()).then(() => {
+      cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitlesUpd');
+      cy.reload();
+      cy.wait('@getTitlesUpd', getLongDelay()).then(() => {
+        this.checkTitleRowsShown();
+        cy.expect(titlesSection.exists());
+        cy.expect(Spinner().absent());
         cy.expect(titlesSection.find(HTML(including(expectedStatus))).exists());
       });
     });
@@ -206,6 +216,8 @@ export default {
     cy.do(PaneHeader().find(actionsButton).click());
     cy.expect(editButton.exists());
     cy.do(editButton.click());
+    cy.expect(nameFieldInEditForm.exists());
+    cy.expect(Spinner().absent());
   },
   getProxyValue: () => cy.then(() => KeyValue('Proxy').value()),
   proxy() {
@@ -222,7 +234,14 @@ export default {
         cy.do(proxySelect.choose(options[randomTwoDigitNumber()]));
       });
   },
-  changeToken(token) {
+  fillToken(token) {
+    cy.expect(HTML('Provider token').exists());
+    cy.wait(1000);
+    cy.get('body').then(($body) => {
+      if (!$body.find('textarea[name="providerTokenValue"]').length) {
+        cy.do(Button('Add a provider level token').click());
+      }
+    });
     cy.do(providerTokenField.fillIn(token));
   },
   verifyToken(token) {
@@ -264,6 +283,7 @@ export default {
     cy.wait('@getTitles').its('response.statusCode').should('eq', 200);
     this.verifyTitlesSearchQuery(searchValue);
     cy.expect(titlesSection.find(Spinner()).absent());
+    cy.wait(2000);
   },
   verifyTitleFound(title) {
     cy.expect(titlesSection.find(MultiColumnListCell(title)).exists());
@@ -310,12 +330,13 @@ export default {
     };
 
     return recurse(
-      () => cy.okapiRequest({
-        path,
-        searchParams,
-        isDefaultSearchParamsRequired: false,
-        failOnStatusCode: false,
-      }),
+      () =>
+        cy.okapiRequest({
+          path,
+          searchParams,
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: false,
+        }),
       (response) => {
         if (response.status !== 200) return false;
         const found = response.body.data.find((item) => {
@@ -382,5 +403,15 @@ export default {
   selectAccessStatusType: (accessStatusTypeName) => {
     cy.do(accessStatusTypeDropdown.choose(accessStatusTypeName));
     cy.expect(accessStatusTypeDropdown.has({ checkedOptionText: accessStatusTypeName }));
+  },
+
+  verifyPackageSaveCallout() {
+    cy.expect(
+      HTML(
+        including(
+          'Package saved. Note: A proxy or token update may take a few minutes and may require refreshing page.',
+        ),
+      ).exists(),
+    );
   },
 };

@@ -69,6 +69,12 @@ describe('Lists', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.LESS_THAN, 1);
           QueryModal.verifySelectedOperator(QUERY_OPERATIONS.LESS_THAN, 1);
           QueryModal.pickDate(tomorrowDate, 1);
+
+          // Add third filter — User type equals Staff
+          QueryModal.addNewRow(1);
+          QueryModal.selectField(usersFieldValues.userType, 2);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 2);
+          QueryModal.chooseValueSelect('Staff', 2);
           QueryModal.testQueryDisabled(false);
           QueryModal.runQueryDisabled();
           QueryModal.clickTestQuery();

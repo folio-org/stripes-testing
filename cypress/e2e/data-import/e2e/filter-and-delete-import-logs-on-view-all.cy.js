@@ -43,51 +43,52 @@ describe('Data Import', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.dataImportDeleteLogs.gui,
-      ]).then((userProperties) => {
-        firstTestData.user = userProperties;
+      ])
+        .then((userProperties) => {
+          firstTestData.user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
-        // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
-        for (let i = 0; i < 15; i++) {
-          const bibFileName = `C358136 autotestFileName${getRandomPostfix()}.mrc`;
-
-          DataImport.uploadFileViaApi(
-            firstTestData.marcFilePath,
-            bibFileName,
-            firstTestData.jobProfileName,
-          ).then((response) => {
-            firstTestData.instanceIds.push(response[0].instance.id);
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.dataImportPath,
+            waiter: DataImport.waitLoading,
           });
-        }
-      });
+          // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
+          for (let i = 0; i < 15; i++) {
+            const bibFileName = `C358136 autotestFileName${getRandomPostfix()}.mrc`;
 
-      cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
-        Permissions.dataImportDeleteLogs.gui,
-      ]).then((userProperties) => {
-        secondTestData.user = userProperties;
+            DataImport.uploadFileViaApi(
+              firstTestData.marcFilePath,
+              bibFileName,
+              firstTestData.jobProfileName,
+            ).then((response) => {
+              firstTestData.instanceIds.push(response[0].instance.id);
+            });
+          }
+        })
+        .then(() => {
+          cy.createTempUser([
+            Permissions.moduleDataImportEnabled.gui,
+            Permissions.dataImportDeleteLogs.gui,
+          ]).then((userProperties) => {
+            secondTestData.user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
-        // Log list should contain at least 30-35 import jobs
-        for (let i = 0; i < 10; i++) {
-          const authFileName = `C358136 autotestFileName${getRandomPostfix()}.mrc`;
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.dataImportPath,
+              waiter: DataImport.waitLoading,
+            });
+            // Log list should contain at least 30-35 import jobs
+            for (let i = 0; i < 10; i++) {
+              const authFileName = `C358136 autotestFileName${getRandomPostfix()}.mrc`;
 
-          DataImport.uploadFileViaApi(
-            secondTestData.marcFilePath,
-            authFileName,
-            secondTestData.jobProfileName,
-          ).then((response) => {
-            secondTestData.authorityIds.push(response[0].authority.id);
+              DataImport.uploadFileViaApi(
+                secondTestData.marcFilePath,
+                authFileName,
+                secondTestData.jobProfileName,
+              ).then((response) => {
+                secondTestData.authorityIds.push(response[0].authority.id);
+              });
+            }
           });
-        }
-      });
+        });
     });
 
     after('Delete test data', () => {

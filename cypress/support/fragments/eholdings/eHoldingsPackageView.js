@@ -412,6 +412,11 @@ export default {
   },
 
   chooseExclusionOptions({ pf = false, ftf = false, marc = false } = {}) {
+    cy.expect([
+      visibilityPfCheckbox.has({ disabled: false }),
+      visibilityFtfCheckbox.has({ disabled: false }),
+      visibilityMarcCheckbox.has({ disabled: false }),
+    ]);
     if (pf) cy.do(visibilityPfCheckbox.checkIfNotSelected());
     else cy.do(visibilityPfCheckbox.uncheckIfSelected());
     if (ftf) cy.do(visibilityFtfCheckbox.checkIfNotSelected());

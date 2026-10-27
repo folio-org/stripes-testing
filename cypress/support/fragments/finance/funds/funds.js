@@ -1315,12 +1315,13 @@ export default {
     });
   },
 
-  deleteFundViaApi: (fundId, failOnStatusCode) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `finance/funds/${fundId}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode,
-  }),
+  deleteFundViaApi: (fundId, failOnStatusCode) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `finance/funds/${fundId}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
+    }),
   deleteFundsByLedgerIdViaApi(ledgerId, failOnStatusCode) {
     this.getFundsViaApi({ query: `ledgerId=="${ledgerId}"` }).then(({ funds }) => {
       funds.forEach((fund) => this.deleteFundViaApi(fund.id, failOnStatusCode));
@@ -1595,7 +1596,7 @@ export default {
   },
 
   selectActionInUnassignAllLocationsModal: (action) => {
-    const button = action === 'cancel' ? cancelButton : submitButton;
+    const button = action?.toLocaleLowerCase() === 'cancel' ? cancelButton : submitButton;
     cy.do(unassignAllLocationsModal.find(button).click());
     cy.wait(2000);
   },

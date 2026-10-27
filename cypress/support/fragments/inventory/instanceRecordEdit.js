@@ -198,6 +198,10 @@ export default {
     );
   },
 
+  fillIdentifierValue(value, lineIndex = 0) {
+    cy.do(TextField({ name: `identifiers[${lineIndex}].value` }).fillIn(value));
+  },
+
   addIdentifier: (identifier, value, identifierLine = 0) => {
     cy.expect(identifierAccordion.exists());
     cy.do(Button('Add identifier').click());
@@ -467,6 +471,24 @@ export default {
     cy.do(addAlternativeTitleButton.click());
   },
 
+  fillAlternativeTitle(value, index = 0) {
+    cy.do(TextArea({ name: `alternativeTitles[${index}].alternativeTitle` }).fillIn(value));
+  },
+
+  verifyAlternativeTitle(value, index = 0) {
+    cy.expect(TextArea({ name: `alternativeTitles[${index}].alternativeTitle` }).has({ value }));
+  },
+
+  pressEnterInAlternativeTitleField(index = 0) {
+    cy.wait(500);
+    cy.get(`textarea[name="alternativeTitles[${index}].alternativeTitle"]`).focus().type('{enter}');
+  },
+
+  pressEnterInTitleField: () => {
+    cy.wait(500);
+    cy.get('textarea[name="title"]').focus().type('{enter}');
+  },
+
   verifyAvailableAlternativeTitleTypes(expectedTypes, rowIndex = 0) {
     const types = Array.isArray(expectedTypes) ? expectedTypes : [expectedTypes];
     types.forEach((type) => {
@@ -597,6 +619,10 @@ export default {
   fillCatalogedDate(date) {
     cy.do(TextField({ name: 'catalogedDate' }).fillIn(date));
   },
+  pressEnterInDateField: (dateNumber = 1) => {
+    cy.wait(500);
+    cy.get(`input[name="dates.date${dateNumber}"]`).focus().type('{enter}');
+  },
   verifyInstanceHridAndSourceAreNotEditable() {
     cy.expect([
       rootSection.find(TextField('Instance HRID')).has({ disabled: true }),
@@ -694,9 +720,11 @@ export default {
   },
   getClassificationOptionsList() {
     cy.do(addClassificationButton.click());
-    return cy.then(() => classificationSection
-      .find(Select({ name: 'classifications[0].classificationTypeId' }))
-      .optionsText());
+    return cy.then(() =>
+      classificationSection
+        .find(Select({ name: 'classifications[0].classificationTypeId' }))
+        .optionsText(),
+    );
   },
   deleteStatisticalCode(statisticalCode) {
     cy.do(rootSection.find(Button({ ariaLabel: 'Delete this item' })).click());

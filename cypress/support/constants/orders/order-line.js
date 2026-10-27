@@ -207,6 +207,9 @@ export const POLINE_DETAILS_FIELDS = {
   INTERNAL_NOTE: 'Internal note',
   ACTIVATION_STATUS: 'Activation status',
   TRIAL: 'Trial',
+  INSTANCE_ID: 'Instance ID',
+  PRODUCT_ID: 'Product ID',
+  PRODUCT_ID_TYPE: 'Product ID type',
 };
 
 export const ORDER_LINE_RESULTS_ACTIONS_LABELS = {
@@ -350,4 +353,10 @@ export const ORDER_LINE_FORM_LABELS = {
 export const ORDER_LINE_FORM_MESSAGES = {
   RECEIVING_WORKFLOW_INFO:
     'Selecting synchronized will keep the order quantity and the number of pieces to be received, in sync. This also means updating one will update the other. When the order is opened, the system will generate pieces based on the quantity order. Selecting “independent order and receipt quantity” will allow you to manage the number of receiving pieces and their locations independently. You can convert a POL to independent at anytime but you cannot convert back to synchronized when the order is open or closed.',
+};
+
+export const CHANGE_INSTANCE_HOLDINGS_OPERATIONS = {
+  MOVE: 'Move',
+  FIND_OR_CREATE_NEW: 'Find or create new',
+  CREATE_NEW: 'Create new',
 };

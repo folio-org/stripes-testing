@@ -1,5 +1,6 @@
 import {
   Button,
+  FieldSet,
   HTML,
   IconButton,
   Popover,
@@ -14,8 +15,7 @@ const nameField = TextField({ name: 'name' });
 const contentTypeSelect = Select({ name: 'contentType' });
 const accessStatusTypeSelect = Select({ id: 'eholdings-access-type-id' });
 const packageDisplayNameField = TextArea('Package display name');
-const customAlternateNamesLabel = HTML('Custom alternate names');
-const packageDisplayNameLabel = HTML('Package display name');
+const customAlternateNamesFieldSet = FieldSet('Custom alternate names');
 const infoIconButton = IconButton({ icon: 'info' });
 const saveAndCloseButton = Button({ type: 'submit' });
 const addDateRangeButton = Button('Add date range');
@@ -26,8 +26,7 @@ const addAlternateNameButton = Button('Add alternate name');
 const alternateNameField = (index = 0) => TextArea({ name: `customAltNames[${index}].altName` });
 const alternateNamesInfoPopoverText =
   'Add familiar alternate names to help staff and patrons easily search for and find packages.';
-const packageDisplayNameInfoPopoverText =
-  'Enter the Package name to display on search results and the detail record.';
+const packageDisplayNameInfoPopoverText = 'Customize the name of the package as it appears';
 
 export default {
   waitLoading: () => {
@@ -52,12 +51,12 @@ export default {
   },
 
   verifyCustomAlternateNamesInfoPopover: () => {
-    cy.do(customAlternateNamesLabel.find(infoIconButton).click());
+    cy.do(customAlternateNamesFieldSet.find(infoIconButton).click());
     cy.expect(Popover({ content: including(alternateNamesInfoPopoverText) }).exists());
   },
 
   verifyPackageDisplayNameInfoPopover: () => {
-    cy.do(packageDisplayNameLabel.find(infoIconButton).click());
+    cy.do(packageDisplayNameField.find(infoIconButton).click());
     cy.expect(Popover({ content: including(packageDisplayNameInfoPopoverText) }).exists());
   },
 
@@ -66,7 +65,7 @@ export default {
       nameField.exists(),
       contentTypeSelect.exists(),
       packageDisplayNameField.exists(),
-      customAlternateNamesLabel.exists(),
+      customAlternateNamesFieldSet.exists(),
       addAlternateNameButton.exists(),
       addDateRangeButton.exists(),
     ]);

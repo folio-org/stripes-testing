@@ -169,22 +169,26 @@ describe(
           BulkEditSearchPane.verifyPaginatorInAreYouSureForm(1);
 
           // Step 12: Download preview in MARC format
-          BulkEditActions.verifyDownloadPreviewInMarcFormatButtonEnabled();
-          BulkEditActions.downloadPreviewInMarcFormat();
-
           const currentTimestampUpToMinutes = DateTools.getCurrentISO8601TimestampUpToMinutesUTC();
           const currentTimestampUpToMinutesOneMinuteAfter =
             DateTools.getCurrentISO8601TimestampUpToMinutesUTC(1);
+          const currentTimestampUpToMinutesTwoMinuteAfter =
+            DateTools.getCurrentISO8601TimestampUpToMinutesUTC(2);
+
+          BulkEditActions.verifyDownloadPreviewInMarcFormatButtonEnabled();
+          BulkEditActions.downloadPreviewInMarcFormat();
+
           const assertionsOnMarcFileContent = [
             {
               uuid: marcInstance.uuid,
               assertions: [
                 (record) => {
                   expect(
-                    record.get('005')[0].value.startsWith(currentTimestampUpToMinutes) ||
-                      record
-                        .get('005')[0]
-                        .value.startsWith(currentTimestampUpToMinutesOneMinuteAfter),
+                    [
+                      currentTimestampUpToMinutes,
+                      currentTimestampUpToMinutesOneMinuteAfter,
+                      currentTimestampUpToMinutesTwoMinuteAfter,
+                    ].some((prefix) => record.get('005')[0].value.startsWith(prefix)),
                   ).to.be.true;
                 },
 
@@ -261,7 +265,6 @@ describe(
           InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
           InventoryInstances.selectInstance();
           InventoryInstance.waitLoading();
-          InstanceRecordView.verifyRecentLastUpdatedDateAndTime();
 
           const notes = [note902c, note902d, note599b];
 

@@ -122,17 +122,18 @@ export default {
       servicePointId,
     } = {},
     loanId,
-  ) => cy.okapiRequest({
-    method: 'POST',
-    path: `circulation/loans/${loanId}/declare-item-lost`,
-    body: {
-      comment,
-      declaredLostDateTime,
-      id,
-      servicePointId,
-    },
-    isDefaultSearchParamsRequired: false,
-  }),
+  ) =>
+    cy.okapiRequest({
+      method: 'POST',
+      path: `circulation/loans/${loanId}/declare-item-lost`,
+      body: {
+        comment,
+        declaredLostDateTime,
+        id,
+        servicePointId,
+      },
+      isDefaultSearchParamsRequired: false,
+    }),
   claimItemReturnedViaApi: (
     {
       comment = 'Reason why the item is claime returned',
@@ -140,41 +141,45 @@ export default {
       id,
     },
     loanId,
-  ) => cy.okapiRequest({
-    method: 'POST',
-    path: `circulation/loans/${loanId}/claim-item-returned`,
-    body: {
-      comment,
-      itemClaimedReturnedDateTime,
-      id,
-    },
-    isDefaultSearchParamsRequired: false,
-  }),
+  ) =>
+    cy.okapiRequest({
+      method: 'POST',
+      path: `circulation/loans/${loanId}/claim-item-returned`,
+      body: {
+        comment,
+        itemClaimedReturnedDateTime,
+        id,
+      },
+      isDefaultSearchParamsRequired: false,
+    }),
   declareClaimedReturnedItemMissingViaApi: ({
     comment = 'Reason why the item is declared missing',
     id = uuid(),
     loanId,
-  }) => cy.okapiRequest({
-    method: 'POST',
-    path: `circulation/loans/${loanId}/declare-claimed-returned-item-as-missing`,
-    body: {
-      comment,
-      id,
-    },
-    isDefaultSearchParamsRequired: false,
-  }),
-  renewItemViaApi: (apiBody) => cy.okapiRequest({
-    method: 'POST',
-    path: 'circulation/renew-by-barcode',
-    body: apiBody,
-    isDefaultSearchParamsRequired: false,
-  }),
-  changeDueDateViaApi: (apiBody, loanId) => cy.okapiRequest({
-    method: 'PUT',
-    path: `circulation/loans/${loanId}`,
-    body: apiBody,
-    isDefaultSearchParamsRequired: false,
-  }),
+  }) =>
+    cy.okapiRequest({
+      method: 'POST',
+      path: `circulation/loans/${loanId}/declare-claimed-returned-item-as-missing`,
+      body: {
+        comment,
+        id,
+      },
+      isDefaultSearchParamsRequired: false,
+    }),
+  renewItemViaApi: (apiBody) =>
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'circulation/renew-by-barcode',
+      body: apiBody,
+      isDefaultSearchParamsRequired: false,
+    }),
+  changeDueDateViaApi: (apiBody, loanId) =>
+    cy.okapiRequest({
+      method: 'PUT',
+      path: `circulation/loans/${loanId}`,
+      body: apiBody,
+      isDefaultSearchParamsRequired: false,
+    }),
   changeDueDateForAllOpenPatronLoans(userId, day) {
     this.getUserLoansIdViaApi(userId).then((userLoans) => {
       const loansData = userLoans.loans;
@@ -251,11 +256,13 @@ export default {
     cy.do(renewButton.click());
   },
   checkResultsInTheRowByBarcode: (allContentToCheck, itemBarcode) => {
-    return allContentToCheck.forEach((contentToCheck) => cy.expect(
-      MultiColumnListRow({ text: matching(itemBarcode), isContainer: false })
-        .find(MultiColumnListCell({ content: including(contentToCheck) }))
-        .exists(),
-    ));
+    return allContentToCheck.forEach((contentToCheck) =>
+      cy.expect(
+        MultiColumnListRow({ text: matching(itemBarcode), isContainer: false })
+          .find(MultiColumnListCell({ content: including(contentToCheck) }))
+          .exists(),
+      ),
+    );
   },
   checkColumnContentInTheRowByBarcode: (itemBarcode, column, content) => {
     cy.expect(
@@ -270,6 +277,24 @@ export default {
       cy.expect(MultiColumnListRow({ rowIndexInParent: `row-${i}` }).exists());
     }
   },
+  verifyOpenLoansTabSelected: () => {
+    cy.expect(ButtonGroup().has({ selectedTab: 'Open loans' }));
+  },
+  verifyQuantityOpenLoans: (count) => {
+    const label = count === 1 ? `${count} record found` : `${count} records found`;
+    return cy.expect(
+      Pane(including('Loans -'))
+        .find(HTML(including(label)))
+        .exists(),
+    );
+  },
+  verifyNoItemsInLoansPage: () => {
+    return cy.expect(
+      Pane(including('Loans -'))
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
+  },
   verifyQuantityOpenAndClaimedReturnedLoans: (numberOfOpenLoans, numberOfClaimedReturnedLoans) => {
     return cy.expect(
       Pane(including('Loans -'))
@@ -283,13 +308,14 @@ export default {
         .exists(),
     );
   },
-  getUserLoansIdViaApi: (userId, loanStatus = 'open') => cy
-    .okapiRequest({
-      method: 'GET',
-      path: `circulation/loans?query=(userId==${userId} and status.name==${loanStatus})`,
-      isDefaultSearchParamsRequired: false,
-    })
-    .then(({ body }) => body),
+  getUserLoansIdViaApi: (userId, loanStatus = 'open') =>
+    cy
+      .okapiRequest({
+        method: 'GET',
+        path: `circulation/loans?query=(userId==${userId} and status.name==${loanStatus})`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body),
 
   waitForLoanItemStatusInHistory(loanId, itemStatus, retriesLeft = 360, pollIntervalMs = 10000) {
     return cy
@@ -304,7 +330,9 @@ export default {
         if (response.status === 401) {
           return cy
             .getAdminToken()
-            .then(() => this.waitForLoanItemStatusInHistory(loanId, itemStatus, retriesLeft, pollIntervalMs));
+            .then(() =>
+              this.waitForLoanItemStatusInHistory(loanId, itemStatus, retriesLeft, pollIntervalMs),
+            );
         }
 
         if (response.status >= 400) {
@@ -357,13 +385,14 @@ export default {
       });
   },
 
-  getListTimersForTenant: () => cy
-    .okapiRequest({
-      method: 'GET',
-      path: `_/proxy/tenants/${Cypress.env('OKAPI_TENANT')}/timers`,
-      isDefaultSearchParamsRequired: false,
-    })
-    .then(({ body }) => body),
+  getListTimersForTenant: () =>
+    cy
+      .okapiRequest({
+        method: 'GET',
+        path: `_/proxy/tenants/${Cypress.env('OKAPI_TENANT')}/timers`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body),
 
   updateTimerForAgedToLost(mode) {
     if (typeof mode !== 'string') {

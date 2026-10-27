@@ -28,12 +28,13 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `instance-types/${id}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode: false,
-  }),
+  deleteViaApi: (id) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `instance-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    }),
   getViaApi: (searchParams = { limit: 1 }) => {
     return cy
       .okapiRequest({
@@ -106,20 +107,32 @@ export default {
       Button('Delete').click(),
     ]);
   },
+  verifyNewButtonActive() {
+    cy.expect(rootPane.find(Button('New')).has({ disabled: false }));
+  },
+
   choose() {
     cy.do(NavListItem('Resource types').click());
     this.waitLoading();
   },
 
-  verifyResourceTypeShown({ name, code, source, actions = [] }) {
+  verifyResourceTypeShown({ name, code, source, lastUpdated = [], actions = [] }) {
     const row = MultiColumnListRow({
       innerText: matching(new RegExp(`^${name}\n`)),
       isContainer: false,
     });
-    const actionsCell = MultiColumnListCell({ columnIndex: 4 });
+    const actionsCell = MultiColumnListCell({ column: 'Actions' });
     cy.expect(row.exists());
-    if (code) cy.expect(row.find(MultiColumnListCell({ columnIndex: 1, content: code })).exists());
-    if (source) cy.expect(row.find(MultiColumnListCell({ columnIndex: 2, content: source })).exists());
+    if (code) cy.expect(row.find(MultiColumnListCell({ column: 'Code', content: code })).exists());
+    if (source)
+      cy.expect(row.find(MultiColumnListCell({ column: 'Source', content: source })).exists());
+    lastUpdated.forEach((text) => {
+      cy.expect(
+        row
+          .find(MultiColumnListCell({ column: 'Last updated', content: including(text) }))
+          .exists(),
+      );
+    });
     if (actions.length === 0) {
       cy.expect(row.find(actionsCell).has({ content: '' }));
     } else {

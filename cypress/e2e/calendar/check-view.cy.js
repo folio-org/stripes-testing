@@ -1,76 +1,68 @@
-import {
+import Calendar, {
   createCalendar,
-  createServicePoint,
   deleteCalendar,
-  deleteServicePoint,
-  openCalendarSettings,
+  getTestCalendar,
+  getTestServicePoint,
 } from '../../support/fragments/calendar/calendar';
-import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import {
   checkCalendarFields,
   checkExpandButton,
   checkMenuAction,
 } from '../../support/fragments/calendar/calendar-info-pane';
 import PaneActions from '../../support/fragments/calendar/pane-actions';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
 
-const testServicePoint = calendarFixtures.servicePoint;
-const testCalendar = calendarFixtures.calendar;
+const testServicePoint = getTestServicePoint();
+const testCalendar = getTestCalendar({ assignments: [testServicePoint.id] });
 
 describe('Calendar', () => {
   describe('Calendar New', () => {
+    // mod-calendar ignores the fixture's calendar ID and assigns its own, so the ID from the
+    // response is used for cleanup
     let testCalendarResponse;
 
-    before(() => {
-      // login and open calendar settings
-      cy.loginAsAdmin();
+    before('Create test data and log in', () => {
+      // Create data via API before the UI login: getAdminToken clears cookies,
+      // which ends a UI session that is already open
+      cy.getAdminToken();
+      ServicePoints.createViaApi(testServicePoint);
+      createCalendar(testCalendar, (calResponse) => {
+        testCalendarResponse = calResponse.body;
+      });
 
-      // get admin token to use in okapiRequest to retrieve service points
-      if (!Cypress.env('token')) {
-        cy.getAdminToken();
-      }
-
-      // reset db state
-      deleteServicePoint(testServicePoint.id, false);
-
-      // create test service point and calendar
-      createServicePoint(testServicePoint, (response) => {
-        testCalendar.assignments = [response.body.id];
-
-        createCalendar(testCalendar, (calResponse) => {
-          testCalendarResponse = calResponse.body;
-        });
-        openCalendarSettings();
-        PaneActions.allCalendarsPane.openAllCalendarsPane();
+      cy.loginAsAdmin({
+        path: TopMenu.settingsCalendarPath,
+        waiter: Calendar.waitCalendarPaneToLoad,
       });
     });
 
-    beforeEach(() => {
-      openCalendarSettings();
-      PaneActions.allCalendarsPane.openAllCalendarsPane();
-    });
-
-    after(() => {
-      // delete test calendar
-      deleteCalendar(testCalendarResponse.id);
+    after('Delete test data', () => {
+      cy.getAdminToken();
+      if (testCalendarResponse) {
+        deleteCalendar(testCalendarResponse.id);
+      }
+      ServicePoints.deleteViaApi(testServicePoint.id);
     });
 
     it(
       'C360940 Checking the view of calendar on "All Calendars" tab (helios)',
       { tags: ['smoke', 'helios', 'C360940'] },
       () => {
+        PaneActions.allCalendarsPane.openAllCalendarsPane();
         PaneActions.allCalendarsPane.checkNewAndPurgeMenuItemsExist();
 
         PaneActions.allCalendarsPane.openAllCalendarsPane();
-        PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
+        PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
         checkCalendarFields(testCalendar, testServicePoint);
 
         PaneActions.allCalendarsPane.openAllCalendarsPane();
-        PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
+        PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
         checkExpandButton();
 
         PaneActions.allCalendarsPane.openAllCalendarsPane();
-        PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
-        checkMenuAction(testCalendarResponse.name);
+        PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
+        checkMenuAction(testCalendar.name);
       },
     );
   });

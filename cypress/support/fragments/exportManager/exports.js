@@ -31,12 +31,13 @@ export default {
    */
   getFinishedExportJobViaApi(jobId, { delay = DEFAULT_WAIT_TIME, timeout = 60_000 } = {}) {
     return recurse(
-      () => cy
-        .okapiRequest({
-          path: `data-export-spring/jobs/${jobId}`,
-          isDefaultSearchParamsRequired: false,
-        })
-        .then(({ body }) => body),
+      () =>
+        cy
+          .okapiRequest({
+            path: `data-export-spring/jobs/${jobId}`,
+            isDefaultSearchParamsRequired: false,
+          })
+          .then(({ body }) => body),
       (job) => Boolean(job && !PENDING_EXPORT_JOB_STATUSES_SET.has(job.status)),
       {
         delay,
@@ -103,20 +104,16 @@ export default {
 
   /* Interceptions */
 
-  interceptGetExportJobs() {
-    return cy
-      .intercept('GET', '/data-export-spring/jobs*')
-      .as('waiterForGetExportJobsQueryCompleted');
+  interceptGetExportJobs({ alias = 'waiterForGetExportJobsQueryCompleted' } = {}) {
+    return cy.intercept('GET', '/data-export-spring/jobs*').as(alias);
   },
 
   waitForGetExportJobsQueryCompleted() {
     return cy.wait('@waiterForGetExportJobsQueryCompleted');
   },
 
-  interceptGetExportConfigs() {
-    return cy
-      .intercept('GET', '/data-export-spring/configs*')
-      .as('waiterForGetExportConfigsQueryCompleted');
+  interceptGetExportConfigs({ alias = 'waiterForGetExportConfigsQueryCompleted' } = {}) {
+    return cy.intercept('GET', '/data-export-spring/configs*').as(alias);
   },
 
   waitForGetExportConfigsQueryCompleted() {

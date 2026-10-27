@@ -76,22 +76,23 @@ export default {
 
     return user;
   },
-  createViaApi: (user, { keycloak = false } = {}) => cy
-    .okapiRequest({
-      method: 'POST',
-      path: keycloak ? 'users-keycloak/users' : 'users',
-      body: user,
-      isDefaultSearchParamsRequired: false,
-    })
-    .then((response) => ({
-      id: response.body.id,
-      username: response.body.username,
-      barcode: response.body.barcode,
-      lastName: response.body.personal.lastName,
-      firstName: response.body.personal.firstName,
-      middleName: response.body.personal.middleName,
-      preferredFirstName: response.body.personal.preferredFirstName,
-    })),
+  createViaApi: (user, { keycloak = false } = {}) =>
+    cy
+      .okapiRequest({
+        method: 'POST',
+        path: keycloak ? 'users-keycloak/users' : 'users',
+        body: user,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => ({
+        id: response.body.id,
+        username: response.body.username,
+        barcode: response.body.barcode,
+        lastName: response.body.personal.lastName,
+        firstName: response.body.personal.firstName,
+        middleName: response.body.personal.middleName,
+        preferredFirstName: response.body.personal.preferredFirstName,
+      })),
 
   deleteViaApi: (userId, fromKeycloak = Cypress.env('eureka')) => {
     if (!userId) {
@@ -452,11 +453,12 @@ export default {
     cy.expect(userDetailsPane.exists());
   },
 
-  getUserAddressTypesApi: (addressTypeId) => cy
-    .okapiRequest({
-      path: `addresstypes/${addressTypeId}`,
-    })
-    .then(({ body }) => body),
+  getUserAddressTypesApi: (addressTypeId) =>
+    cy
+      .okapiRequest({
+        path: `addresstypes/${addressTypeId}`,
+      })
+      .then(({ body }) => body),
 
   checkCreateUserPaneOpened: (isOpened = true) => {
     cy.expect(Spinner().absent());
@@ -465,7 +467,7 @@ export default {
   },
 
   clickNewButton: () => {
-    cy.do(Dropdown('Actions').open());
+    cy.do(Section({ id: 'users-search-results-pane' }).find(Dropdown('Actions')).open());
     cy.expect(Button({ id: 'clickable-newuser' }).exists());
     cy.do(Button({ id: 'clickable-newuser' }).click());
     cy.expect(Spinner().exists());

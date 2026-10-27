@@ -1,11 +1,16 @@
 import {
   Button,
   including,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiColumnListCell,
   NavListItem,
   Pane,
 } from '../../../../../../interactors';
+
+const sectionName = 'Modes of issuance';
+const rootPane = Pane(sectionName);
+const actionsCell = MultiColumnListCell({ columnIndex: 3 });
 
 export const reasonsActions = {
   edit: 'edit',
@@ -24,17 +29,17 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `modes-of-issuance/${id}`,
-    isDefaultSearchParamsRequired: false,
-  }),
+  deleteViaApi: (id) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `modes-of-issuance/${id}`,
+      isDefaultSearchParamsRequired: false,
+    }),
   verifyConsortiumModesOfIssuancesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({
       content: including(name),
       isContainer: false,
     });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
@@ -53,18 +58,25 @@ export default {
     }
   },
 
-  verifyLocalModesOfIssuancesInTheList({ name, source = 'local', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
+  verifyLocalModesOfIssuancesInTheList({ name, source = 'local', lastUpdated = [], actions = [] }) {
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
+    const rowActionsCell = row.find(MultiColumnListCell({ column: 'Actions' }));
     cy.expect([
       row.exists(),
-      row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
+      row.find(MultiColumnListCell({ column: 'Source', content: source })).exists(),
     ]);
+    lastUpdated.forEach((text) => {
+      cy.expect(
+        row
+          .find(MultiColumnListCell({ column: 'Last updated', content: including(text) }))
+          .exists(),
+      );
+    });
     if (actions.length === 0) {
-      cy.expect(row.find(actionsCell).has({ content: '' }));
+      cy.expect(rowActionsCell.has({ content: '' }));
     } else {
       Object.values(reasonsActions).forEach((action) => {
-        const buttonSelector = row.find(actionsCell).find(Button({ icon: action }));
+        const buttonSelector = rowActionsCell.find(Button({ icon: action }));
         if (actions.includes(action)) {
           cy.expect(buttonSelector.exists());
         } else {
@@ -82,13 +94,23 @@ export default {
   clickTrashButtonForModesOfIssuances(name) {
     cy.do([
       MultiColumnListRow({ content: including(name) })
-        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .find(actionsCell)
         .find(Button({ icon: 'trash' }))
         .click(),
       Button('Delete').click(),
     ]);
   },
+  waitLoading() {
+    ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
+
+  verifyNewButtonActive() {
+    cy.expect(rootPane.find(Button('New')).has({ disabled: false }));
+  },
+
   choose() {
-    cy.do([NavListItem('Modes of issuance').click(), Pane('Modes of issuance').exists()]);
+    cy.do([NavListItem(sectionName).click(), rootPane.exists()]);
   },
 };

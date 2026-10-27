@@ -162,7 +162,7 @@ describe('Orders', () => {
 
     it(
       'C594361 Filter purchase orders and lines by "Fund code" and by "Donor" filter in member tenant (thunderjet)',
-      { tags: ['extendedPathECS', 'thunderjet', 'C594361'] },
+      { tags: ['extendedPathECS', 'thunderjet', 'C594361', 'LOC'] },
       () => {
         const {
           fundA,
@@ -368,7 +368,9 @@ function getPreconditionSteps() {
   const createOrder = (flow, orderKey) => {
     return Orders.createOrderViaApi(
       NewOrder.getDefaultOrder({ vendorId: flow.get(R.ORG_VENDOR).id }),
-    ).then((entity) => flow.set(orderKey, entity, () => Orders.deleteOrderViaApi(entity.id, false)));
+    ).then((entity) =>
+      flow.set(orderKey, entity, () => Orders.deleteOrderViaApi(entity.id, false)),
+    );
   };
 
   const createOrderLine = (flow, params) => {
@@ -401,7 +403,9 @@ function getPreconditionSteps() {
         materialSupplier: flow.get(R.ORG_VENDOR).id,
         volumes: [],
       },
-    }).then((entity) => flow.set(orderLineKey, entity, () => OrderLines.deleteOrderLineViaApi(entity.id, false)));
+    }).then((entity) =>
+      flow.set(orderLineKey, entity, () => OrderLines.deleteOrderLineViaApi(entity.id, false)),
+    );
   };
 
   /* STEPS */
@@ -422,7 +426,9 @@ function getPreconditionSteps() {
 
     cy.setTenant(tenant);
     cy[tokenCommandMapping[tenant]]();
-    cy.getAdminUserDetails({ force: true }).then((userDetails) => flow.set(R.ACTIVE_ADMIN, userDetails));
+    cy.getAdminUserDetails({ force: true }).then((userDetails) =>
+      flow.set(R.ACTIVE_ADMIN, userDetails),
+    );
   };
 
   const createAcquisitionUnit = (flow) => {
@@ -439,7 +445,8 @@ function getPreconditionSteps() {
         const acqUnitId = flow.get(R.ACQUISITION_UNIT).id;
 
         AcquisitionUnits.assignUserViaApi(flow.get(R.ACTIVE_ADMIN).id, acqUnitId).then(
-          (membershipId) => flow.toCleanup(R.ACQUISITION_UNIT, cleanup.bind(null, acqUnitId, membershipId)),
+          (membershipId) =>
+            flow.toCleanup(R.ACQUISITION_UNIT, cleanup.bind(null, acqUnitId, membershipId)),
         );
       });
   };
@@ -451,14 +458,18 @@ function getPreconditionSteps() {
       series,
     };
 
-    return FiscalYears.createViaApi(fiscalYear).then((entity) => flow.set(R.FISCAL_YEAR, entity, () => FiscalYears.deleteFiscalYearViaApi(entity.id, false)));
+    return FiscalYears.createViaApi(fiscalYear).then((entity) =>
+      flow.set(R.FISCAL_YEAR, entity, () => FiscalYears.deleteFiscalYearViaApi(entity.id, false)),
+    );
   };
 
   const createLedger = (flow) => {
     return Ledgers.createViaApi({
       ...Ledgers.getDefaultLedger(),
       fiscalYearOneId: flow.get(R.FISCAL_YEAR).id,
-    }).then((entity) => flow.set(R.LEDGER, entity, () => Ledgers.deleteLedgerViaApi(entity.id, false)));
+    }).then((entity) =>
+      flow.set(R.LEDGER, entity, () => Ledgers.deleteLedgerViaApi(entity.id, false)),
+    );
   };
 
   const createFundsAndBudgets = (flow) => {
@@ -514,14 +525,20 @@ function getPreconditionSteps() {
         name: `${orgKey}_donor_${orgBase.name}`,
       };
 
-      Organizations.createOrganizationViaApi(donorOrg).then((organizationId) => flow.set(orgKey, { ...donorOrg, id: organizationId }, cleanup.bind(null, organizationId)));
+      Organizations.createOrganizationViaApi(donorOrg).then((organizationId) =>
+        flow.set(orgKey, { ...donorOrg, id: organizationId }, cleanup.bind(null, organizationId)),
+      );
     });
   };
 
   const createVendorOrganization = (flow) => {
     const vendorOrg = NewOrganization.getDefaultOrganization({ isDonor: false, isVendor: true });
 
-    return Organizations.createOrganizationViaApi(vendorOrg).then((organizationId) => flow.set(R.ORG_VENDOR, { ...vendorOrg, id: organizationId }, () => Organizations.deleteOrganizationViaApi(organizationId)));
+    return Organizations.createOrganizationViaApi(vendorOrg).then((organizationId) =>
+      flow.set(R.ORG_VENDOR, { ...vendorOrg, id: organizationId }, () =>
+        Organizations.deleteOrganizationViaApi(organizationId),
+      ),
+    );
   };
 
   const fetchLocation = (flow) => {
@@ -543,58 +560,70 @@ function getPreconditionSteps() {
   const createOrder1WithTwoLines = (flow) => {
     // Order #1 with 2 lines: Fund A + Donor A, Fund B + Donor B
     return createOrder(flow, R.ORDER_1)
-      .then(() => createOrderLine(flow, {
-        orderKey: R.ORDER_1,
-        orderLineKey: R.ORDER_LINE_1_1,
-        fundKeys: [R.FUND_A],
-        donorOrganizationIds: [flow.get(R.ORG_DONOR_A).id],
-      }))
-      .then(() => createOrderLine(flow, {
-        orderKey: R.ORDER_1,
-        orderLineKey: R.ORDER_LINE_1_2,
-        fundKeys: [R.FUND_B],
-        donorOrganizationIds: [flow.get(R.ORG_DONOR_B).id],
-      }));
+      .then(() =>
+        createOrderLine(flow, {
+          orderKey: R.ORDER_1,
+          orderLineKey: R.ORDER_LINE_1_1,
+          fundKeys: [R.FUND_A],
+          donorOrganizationIds: [flow.get(R.ORG_DONOR_A).id],
+        }),
+      )
+      .then(() =>
+        createOrderLine(flow, {
+          orderKey: R.ORDER_1,
+          orderLineKey: R.ORDER_LINE_1_2,
+          fundKeys: [R.FUND_B],
+          donorOrganizationIds: [flow.get(R.ORG_DONOR_B).id],
+        }),
+      );
   };
 
   const createOrder2WithOneLine = (flow) => {
     // Order #2 with 1 line: Fund A + Donor A
-    return createOrder(flow, R.ORDER_2).then(() => createOrderLine(flow, {
-      orderKey: R.ORDER_2,
-      orderLineKey: R.ORDER_LINE_2,
-      fundKeys: [R.FUND_A],
-      donorOrganizationIds: [flow.get(R.ORG_DONOR_A).id],
-    }));
+    return createOrder(flow, R.ORDER_2).then(() =>
+      createOrderLine(flow, {
+        orderKey: R.ORDER_2,
+        orderLineKey: R.ORDER_LINE_2,
+        fundKeys: [R.FUND_A],
+        donorOrganizationIds: [flow.get(R.ORG_DONOR_A).id],
+      }),
+    );
   };
 
   const createOrder3WithOneLine = (flow) => {
     // Order #3 with 1 line: Fund B + Donor B
-    return createOrder(flow, R.ORDER_3).then(() => createOrderLine(flow, {
-      orderKey: R.ORDER_3,
-      orderLineKey: R.ORDER_LINE_3,
-      fundKeys: [R.FUND_B],
-      donorOrganizationIds: [flow.get(R.ORG_DONOR_B).id],
-    }));
+    return createOrder(flow, R.ORDER_3).then(() =>
+      createOrderLine(flow, {
+        orderKey: R.ORDER_3,
+        orderLineKey: R.ORDER_LINE_3,
+        fundKeys: [R.FUND_B],
+        donorOrganizationIds: [flow.get(R.ORG_DONOR_B).id],
+      }),
+    );
   };
 
   const createOrder4WithOneLine = (flow) => {
     // Order #4 with 1 line: Fund A + Fund B + Donor A + Donor B
-    return createOrder(flow, R.ORDER_4).then(() => createOrderLine(flow, {
-      orderKey: R.ORDER_4,
-      orderLineKey: R.ORDER_LINE_4,
-      fundKeys: [R.FUND_A, R.FUND_B],
-      donorOrganizationIds: [flow.get(R.ORG_DONOR_A).id, flow.get(R.ORG_DONOR_B).id],
-    }));
+    return createOrder(flow, R.ORDER_4).then(() =>
+      createOrderLine(flow, {
+        orderKey: R.ORDER_4,
+        orderLineKey: R.ORDER_LINE_4,
+        fundKeys: [R.FUND_A, R.FUND_B],
+        donorOrganizationIds: [flow.get(R.ORG_DONOR_A).id, flow.get(R.ORG_DONOR_B).id],
+      }),
+    );
   };
 
   const createOrder5WithOneLine = (flow) => {
     // Order #5 with 1 line: NO assigned funds, NO assigned donors
-    return createOrder(flow, R.ORDER_5).then(() => createOrderLine(flow, {
-      orderKey: R.ORDER_5,
-      orderLineKey: R.ORDER_LINE_5,
-      fundDistribution: [],
-      donorOrganizationIds: [],
-    }));
+    return createOrder(flow, R.ORDER_5).then(() =>
+      createOrderLine(flow, {
+        orderKey: R.ORDER_5,
+        orderLineKey: R.ORDER_LINE_5,
+        fundDistribution: [],
+        donorOrganizationIds: [],
+      }),
+    );
   };
 
   const createAuthorizedUserInMember = (flow) => {

@@ -54,9 +54,11 @@ describe('Receiving', () => {
       .then((materialType) => {
         testData.materialType = materialType;
       })
-      .then(() => cy.getAcquisitionMethodsApi({
-        query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-      }))
+      .then(() =>
+        cy.getAcquisitionMethodsApi({
+          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+        }),
+      )
       .then(({ body }) => {
         testData.acquisitionMethod = body.acquisitionMethods[0];
       });
@@ -153,7 +155,7 @@ describe('Receiving', () => {
       EditPieceModal.openActionsMenu();
       EditPieceModal.clickUnreceivableButton();
       ReceivingDetails.verifyExpectedRecordsCount(0);
-      ReceivingDetails.verifyUnreceivableRecordsCount(0);
+      ReceivingDetails.verifyUnreceivableRecordsCount(1);
       ReceivingDetails.checkUnreceivableTableContent([{ comment }]);
 
       // Step 5: Click on the piece record and check the comment

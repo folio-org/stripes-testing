@@ -37,7 +37,7 @@ describe('Lists', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Users.deleteViaApi(userData.userId);
       Users.deleteViaApi(userDataWithInventory.userId);
       Users.deleteViaApi(userDataWithHoldings.userId);

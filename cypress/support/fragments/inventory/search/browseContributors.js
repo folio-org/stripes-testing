@@ -66,7 +66,8 @@ const nameTypeButton = typeSelect.find(Button('Name type'));
 const nameTypeSearch = typeSelect.find(MultiSelect());
 const nameTypeClear = typeSelect.find(Button({ icon: 'times-circle-solid' }));
 const actionsButton = Button('Actions');
-const rowContributorName = (ContributorName, contributorNameType) => MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
+const rowContributorName = (ContributorName, contributorNameType) =>
+  MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
 
 export default {
   defaultInstanceAWithContributor,
@@ -275,6 +276,12 @@ export default {
     else cy.expect(targetCell.absent());
   },
 
+  checkValuePresentInSpecificRow(value, { rowIndex = 5, isPresent = true } = {}) {
+    const targetRow = MultiColumnListRow(including(value), { isContainer: false, index: rowIndex });
+    if (isPresent) cy.expect(targetRow.exists());
+    else cy.expect(targetRow.absent());
+  },
+
   checkAuthorityIconAndValueDisplayedForMultipleRows(rowCount, value) {
     for (let i = 0; i < rowCount; i++) {
       cy.expect([
@@ -316,7 +323,16 @@ export default {
     });
   },
 
-  waitForContributorToAppear(contributorName, isPresent = true, isLinked = false, quantity) {
+  // quantity = number of separate browse entries sharing this exact name (e.g. same name under
+  // different name types). numberOfTitles = each matching entry's own totalRecords (number of
+  // instances aggregated into that entry) - omit either to skip that condition
+  waitForContributorToAppear(
+    contributorName,
+    isPresent = true,
+    isLinked = false,
+    quantity,
+    numberOfTitles,
+  ) {
     const hasLinkedItem = (items) => {
       return items.some((item) => {
         return item.authorityId && item.authorityId !== '';
@@ -344,15 +360,18 @@ export default {
           return item.name === contributorName;
         });
         const quantityCondition = foundContributors.length === quantity;
+        const numberOfTitlesCondition = numberOfTitles
+          ? foundContributors.some((item) => item.totalRecords === numberOfTitles)
+          : true;
         if (isPresent) {
           if (isLinked) {
             return quantity
-              ? quantityCondition && hasLinkedItem(foundContributors)
-              : hasLinkedItem(foundContributors);
+              ? quantityCondition && hasLinkedItem(foundContributors) && numberOfTitlesCondition
+              : hasLinkedItem(foundContributors) && numberOfTitlesCondition;
           } else {
             return quantity
-              ? quantityCondition && hasNotLinkedItem(foundContributors)
-              : hasNotLinkedItem(foundContributors);
+              ? quantityCondition && hasNotLinkedItem(foundContributors) && numberOfTitlesCondition
+              : hasNotLinkedItem(foundContributors) && numberOfTitlesCondition;
           }
         } else {
           return foundContributors.length === 0;

@@ -1,46 +1,48 @@
-import {
+import Calendar, {
   createCalendar,
-  createServicePoint,
-  deleteServicePoint,
-  openCalendarSettings,
+  deleteCalendarIfExists,
+  getTestCalendar,
+  getTestServicePoint,
 } from '../../support/fragments/calendar/calendar';
-import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import ModalFragments from '../../support/fragments/calendar/modal-fragments';
 import PaneActions from '../../support/fragments/calendar/pane-actions';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
 
-const testServicePoint = calendarFixtures.servicePoint;
-const testCalendar = calendarFixtures.calendar;
-
-// set calendar start and end date to at least 3 months ago
-testCalendar.startDate = '2022-01-01';
-testCalendar.endDate = '2022-01-31';
-testCalendar.exceptions = [];
+const testServicePoint = getTestServicePoint();
+// Purging is environment-wide: this spec purges calendars that ended more than a year ago, so it
+// can't remove the calendar of purge-old-calendars-without-service-point, which ended ~5 months ago
+const testCalendar = getTestCalendar({
+  assignments: [testServicePoint.id],
+  startDate: '2022-01-01',
+  endDate: '2022-01-31',
+  exceptions: [],
+});
 
 describe('Calendar', () => {
   describe('Calendar New', () => {
+    let testCalendarResponse;
+
     before(() => {
-      // login
-      cy.loginAsAdmin();
+      // Create data via API before the UI login: getAdminToken clears cookies,
+      // which ends a UI session that is already open
+      cy.getAdminToken();
+      ServicePoints.createViaApi(testServicePoint);
+      createCalendar(testCalendar, (calResponse) => {
+        testCalendarResponse = calResponse.body;
+      });
 
-      // get admin token to use in okapiRequest to retrieve service points
-      if (!Cypress.env('token')) {
-        cy.getAdminToken();
-      }
-
-      // reset db state
-      deleteServicePoint(testServicePoint.id, false);
-
-      // create test service point
-      createServicePoint(testServicePoint, (response) => {
-        testCalendar.assignments = [response.body.id];
-
-        createCalendar(testCalendar);
-        openCalendarSettings();
+      cy.loginAsAdmin({
+        path: TopMenu.settingsCalendarPath,
+        waiter: Calendar.waitCalendarPaneToLoad,
       });
     });
 
     after(() => {
-      deleteServicePoint(testServicePoint.id, true);
+      cy.getAdminToken();
+      // The test purges the calendar; this only cleans up if it failed before that
+      deleteCalendarIfExists(testCalendarResponse?.id);
+      ServicePoints.deleteViaApi(testServicePoint.id);
     });
 
     it(
@@ -62,7 +64,8 @@ describe('Calendar', () => {
         PaneActions.allCalendarsPane.clickPurgeOldCalendarsAction();
         ModalFragments.checkPurgeOldCalendarsModalExists();
 
-        ModalFragments.purgeOldCalendars.purgeCalendarsMoreThanThreeMonthsOld({
+        ModalFragments.purgeOldCalendars.purgeCalendarsEndedMoreThan({
+          period: 'more than 1 year ago',
           calendarName: testCalendar.name,
           hasServicePoint: true,
         });

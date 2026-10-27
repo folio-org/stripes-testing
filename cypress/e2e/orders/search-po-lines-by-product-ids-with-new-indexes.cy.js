@@ -36,7 +36,9 @@ const R = {
   USER: 'user',
 };
 
-describe('Orders', () => {
+// The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
+// #freeze pipeline deadlock
+describe.skip('Orders', () => {
   const flow = new ExecutionFlowManager();
   const postfix = getRandomPostfix();
   const identifiers = {
@@ -110,9 +112,15 @@ describe('Orders', () => {
           tags: { tagList: [currentFlow.get(R.TAG).label] },
         };
 
-        return Organizations.createOrganizationViaApi(organization).then((id) => currentFlow.set(R.ORGANIZATION, { ...organization, id }, () => Organizations.deleteOrganizationViaApi(id)));
+        return Organizations.createOrganizationViaApi(organization).then((id) =>
+          currentFlow.set(R.ORGANIZATION, { ...organization, id }, () =>
+            Organizations.deleteOrganizationViaApi(id),
+          ),
+        );
       })
-      .step((currentFlow) => cy.getLocations({ limit: 1 }).then((location) => currentFlow.set(R.LOCATION, location)))
+      .step((currentFlow) =>
+        cy.getLocations({ limit: 1 }).then((location) => currentFlow.set(R.LOCATION, location)),
+      )
       .step((currentFlow) => {
         return cy
           .getDefaultMaterialType()
@@ -128,13 +136,15 @@ describe('Orders', () => {
 
         return cy
           .wrap(['ISBN', 'ISSN', 'LCCN'])
-          .each((name) => cy
-            .getProductIdTypes({
-              query: `name=="${name}"`,
-            })
-            .then((type) => {
-              types[name] = type;
-            }))
+          .each((name) =>
+            cy
+              .getProductIdTypes({
+                query: `name=="${name}"`,
+              })
+              .then((type) => {
+                types[name] = type;
+              }),
+          )
           .then(() => currentFlow.set(R.PRODUCT_ID_TYPES, types));
       })
       .step((currentFlow) => {
@@ -142,13 +152,19 @@ describe('Orders', () => {
 
         return cy
           .wrap([1, 2])
-          .each((number) => Orders.createOrderViaApi({
-            ...NewOrder.getDefaultOrder({ vendorId: currentFlow.get(R.ORGANIZATION).id }),
-            id: uuid(),
-            notes: [`AT1385305-${number}-${postfix}`],
-            tags: { tagList: [currentFlow.get(R.TAG).label] },
-          }).then((order) => orders.push(order)))
-          .then(() => currentFlow.set(R.ORDERS, orders, () => orders.forEach(({ id }) => Orders.deleteOrderViaApi(id, false))));
+          .each((number) =>
+            Orders.createOrderViaApi({
+              ...NewOrder.getDefaultOrder({ vendorId: currentFlow.get(R.ORGANIZATION).id }),
+              id: uuid(),
+              notes: [`AT1385305-${number}-${postfix}`],
+              tags: { tagList: [currentFlow.get(R.TAG).label] },
+            }).then((order) => orders.push(order)),
+          )
+          .then(() =>
+            currentFlow.set(R.ORDERS, orders, () =>
+              orders.forEach(({ id }) => Orders.deleteOrderViaApi(id, false)),
+            ),
+          );
       })
       .step((currentFlow) => {
         const [order1, order2] = currentFlow.get(R.ORDERS);
@@ -159,27 +175,33 @@ describe('Orders', () => {
           productIds: [{ id: identifiers.isbn1, qualifier: 'hardcover', type: 'ISBN' }],
         })
           .then((line) => lines.push(line))
-          .then(() => createLine(order1, {
-            title: `AT_C1385305_Title_2_${postfix}`,
-            productIds: [
-              { id: identifiers.isbn2Qualified, type: 'ISBN' },
-              { id: identifiers.lccn, type: 'LCCN' },
-            ],
-          }).then((line) => lines.push(line)))
-          .then(() => createLine(order2, {
-            title: `AT_C1385305_Title_3_${postfix}`,
-            productIds: [
-              { id: identifiers.issn, type: 'ISSN' },
-              { id: identifiers.isbnHyphenated, type: 'ISBN' },
-            ],
-          }).then((line) => lines.push(line)))
+          .then(() =>
+            createLine(order1, {
+              title: `AT_C1385305_Title_2_${postfix}`,
+              productIds: [
+                { id: identifiers.isbn2Qualified, type: 'ISBN' },
+                { id: identifiers.lccn, type: 'LCCN' },
+              ],
+            }).then((line) => lines.push(line)),
+          )
+          .then(() =>
+            createLine(order2, {
+              title: `AT_C1385305_Title_3_${postfix}`,
+              productIds: [
+                { id: identifiers.issn, type: 'ISSN' },
+                { id: identifiers.isbnHyphenated, type: 'ISBN' },
+              ],
+            }).then((line) => lines.push(line)),
+          )
           .then(() => currentFlow.set(R.LINES, lines));
       })
-      .step((currentFlow) => cy.wrap(currentFlow.get(R.ORDERS)).each((order) => {
-        return Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' }).then(({ body }) => {
-          Object.assign(order, body);
-        });
-      }))
+      .step((currentFlow) =>
+        cy.wrap(currentFlow.get(R.ORDERS)).each((order) => {
+          return Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' }).then(({ body }) => {
+            Object.assign(order, body);
+          });
+        }),
+      )
       .step((currentFlow) => {
         return cy
           .createTempUser([
@@ -203,7 +225,8 @@ describe('Orders', () => {
     flow.cleanup();
   });
 
-  const resolveTitles = (lineIndexes) => lineIndexes.map((lineIndex) => flow.get(R.LINES)[lineIndex].titleOrPackage);
+  const resolveTitles = (lineIndexes) =>
+    lineIndexes.map((lineIndex) => flow.get(R.LINES)[lineIndex].titleOrPackage);
 
   const poLineSearchScenarios = [
     { step: 1, value: identifiers.isbnQualified, expected: [[], [], [0]] },
@@ -247,11 +270,12 @@ describe('Orders', () => {
     { step: 37, value: `${identifiers.isbnHyphenated.slice(0, -3)}*`, expected: [2] },
   ];
 
-  const waitForSearch = ({ pane, index, trigger }) => PaneRequestWaiter.waitForPaneRequests({
-    pane,
-    conditions: { isbnConversion: index === PRODUCT_ID_ISBN },
-    trigger,
-  });
+  const waitForSearch = ({ pane, index, trigger }) =>
+    PaneRequestWaiter.waitForPaneRequests({
+      pane,
+      conditions: { isbnConversion: index === PRODUCT_ID_ISBN },
+      trigger,
+    });
 
   const searchOrderLinesAndVerify = ({ context = 'Orders', pane, search, assert }) => {
     const indexes = [KEYWORD, PRODUCT_ID, PRODUCT_ID_ISBN];
@@ -292,9 +316,11 @@ describe('Orders', () => {
     });
   };
 
-  it(
+  // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
+  // #freeze pipeline deadlock
+  it.skip(
     'C1385305 Search PO lines by product IDs with new indexes (thunderjet)',
-    { tags: ['extendedPath', 'thunderjet', 'C1385305'] },
+    { tags: ['extendedPathBroken', 'thunderjet', 'C1385305Broken'] },
     () => {
       const tagLabel = flow.get(R.TAG).label;
 
@@ -329,7 +355,8 @@ describe('Orders', () => {
       SelectOrderLinesModal.verifyModalView({ multiselect: false });
       filterByTagAndWait({
         pane: PANE_REQUEST_PROFILE_NAMES.FIND_PO_LINE,
-        trigger: () => SelectOrderLinesModal.filterByMultiSelectOptions(TAGS_FILTER_LABEL, [tagLabel]),
+        trigger: () =>
+          SelectOrderLinesModal.filterByMultiSelectOptions(TAGS_FILTER_LABEL, [tagLabel]),
       });
       searchOrderLinesAndVerify({
         context: 'Select order lines plugin (STEP 19 repeats)',

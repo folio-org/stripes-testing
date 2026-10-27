@@ -1,11 +1,16 @@
 import {
   Button,
   including,
+  MultiColumnListHeader,
   MultiColumnListRow,
   MultiColumnListCell,
   NavListItem,
   Pane,
 } from '../../../../../../interactors';
+
+const sectionName = 'Nature of content';
+const rootPane = Pane(sectionName);
+const actionsCell = MultiColumnListCell({ columnIndex: 3 });
 
 export const reasonsActions = {
   edit: 'edit',
@@ -41,18 +46,18 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id, ignoreErrors = true) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `nature-of-content-terms/${id}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode: !ignoreErrors,
-  }),
+  deleteViaApi: (id, ignoreErrors = true) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `nature-of-content-terms/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
+    }),
   verifyConsortiumNatureOfContentInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({
       content: including(name),
       isContainer: false,
     });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
@@ -71,13 +76,17 @@ export default {
     }
   },
 
-  verifyLocalNatureOfContentInTheList({ name, source = 'local', actions = [] }) {
-    const row = MultiColumnListRow({ content: including(name) });
-    const actionsCell = MultiColumnListCell({ columnIndex: 3 });
+  verifyLocalNatureOfContentInTheList({ name, source = 'local', lastUpdated = [], actions = [] }) {
+    const row = MultiColumnListRow({ content: including(name), isContainer: false });
     cy.expect([
       row.exists(),
       row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists(),
     ]);
+    lastUpdated.forEach((text) => {
+      cy.expect(
+        row.find(MultiColumnListCell({ columnIndex: 2, content: including(text) })).exists(),
+      );
+    });
     if (actions.length === 0) {
       cy.expect(row.find(actionsCell).has({ content: '' }));
     } else {
@@ -100,13 +109,23 @@ export default {
   clickTrashButtonForNatureOfContent(name) {
     cy.do([
       MultiColumnListRow({ content: including(name) })
-        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .find(actionsCell)
         .find(Button({ icon: 'trash' }))
         .click(),
       Button('Delete').click(),
     ]);
   },
+  waitLoading() {
+    ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
+      cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
+    });
+  },
+
+  verifyNewButtonActive() {
+    cy.expect(rootPane.find(Button('New')).has({ disabled: false }));
+  },
+
   choose() {
-    cy.do([NavListItem('Nature of content').click(), Pane('Nature of content').exists()]);
+    cy.do([NavListItem(sectionName).click(), rootPane.exists()]);
   },
 };

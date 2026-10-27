@@ -81,13 +81,14 @@ describe('Citation: duplicate work', () => {
 
   after('Delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
-    cy.getAdminToken();
+    cy.getAdminToken(false);
     if (testData.duplicateInstanceId) Work.deleteInstanceViaApi(testData.duplicateInstanceId);
     if (testData.duplicateWorkId) Work.deleteById(testData.duplicateWorkId);
     if (testData.instanceId) Work.deleteInstanceViaApi(testData.instanceId);
     if (testData.workId) Work.deleteById(testData.workId);
     if (testData.inventoryId) InventoryInstance.deleteInstanceViaApi(testData.inventoryId);
-    if (testData.duplicateInventoryId) InventoryInstance.deleteInstanceViaApi(testData.duplicateInventoryId);
+    if (testData.duplicateInventoryId)
+      InventoryInstance.deleteInstanceViaApi(testData.duplicateInventoryId);
     Users.deleteViaApi(user.userId);
   });
 

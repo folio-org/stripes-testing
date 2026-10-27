@@ -90,6 +90,12 @@ describe('Lists', () => {
           QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 1);
           QueryModal.pickDate(currentDate, 1);
 
+          // Add third filter — User type equals Staff
+          QueryModal.addNewRow(1);
+          QueryModal.selectField(usersFieldValues.userType, 2);
+          QueryModal.selectOperator(QUERY_OPERATIONS.EQUAL, 2);
+          QueryModal.chooseValueSelect('Staff', 2);
+
           // Step 6: Click "Test query" button
           QueryModal.clickTestQuery();
           QueryModal.testQueryDisabled(true);

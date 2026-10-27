@@ -13,6 +13,7 @@ import {
 } from '../../../../../../interactors';
 import getRandomPostfix from '../../../../utils/stringTools';
 import TenantPane from '../baseTenantPane';
+import ServicePoints from '../servicePoints/servicePoints';
 import LocationDetails from '../locations/locationDetails';
 import LocationEditForm from '../locations/locationEditForm';
 import Campuses from './campuses';
@@ -188,6 +189,60 @@ export default {
       .then((response) => {
         return response.body.locations;
       });
+  },
+  /**
+   * Returns the active location "AT_Loc <tenantId>" ("AT_Loc_<index> <tenantId>" for index > 1),
+   * code "AT_Loc_<tenantId>" ("AT_Loc_<index>_<tenantId>"), in the current tenant.
+   * Creates it (with its own institution, campus and library) only if it does not exist yet.
+   * The location is shared between specs and is never deleted.
+   */
+  getOrCreateTenantLocationViaApi(tenantId, index = 1) {
+    const name = index > 1 ? `AT_Loc_${index} ${tenantId}` : `AT_Loc ${tenantId}`;
+    const code = name.replace(' ', '_');
+    // Yields an array: a callback returning undefined would make Cypress pass the previous subject on
+    const findByCode = () =>
+      cy
+        .okapiRequest({
+          path: 'locations',
+          searchParams: { query: `code=="${code}"`, limit: 1 },
+          isDefaultSearchParamsRequired: false,
+        })
+        .then(({ body }) => body.locations);
+
+    return findByCode().then((existingLocations) => {
+      if (existingLocations.length) return existingLocations[0];
+      return ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
+        const { location } = getDefaultLocation({
+          servicePointId: servicePoints[0].id,
+          locationName: name,
+        });
+        return cy
+          .okapiRequest({
+            method: 'POST',
+            path: 'locations',
+            body: {
+              id: location.id,
+              code,
+              name,
+              isActive: true,
+              institutionId: location.institutionId,
+              campusId: location.campusId,
+              libraryId: location.libraryId,
+              discoveryDisplayName: name,
+              servicePointIds: location.servicePointIds,
+              primaryServicePoint: location.primaryServicePoint,
+            },
+            isDefaultSearchParamsRequired: false,
+            // the code is unique per tenant, so a parallel spec creating it first makes this fail
+            failOnStatusCode: false,
+          })
+          .then(() => findByCode())
+          .then((createdLocations) => {
+            expect(createdLocations, `location ${name}`).to.have.length(1);
+            return createdLocations[0];
+          });
+      });
+    });
   },
   createViaApi: ({
     id,

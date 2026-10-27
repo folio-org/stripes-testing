@@ -148,13 +148,15 @@ const importFile = (profileName, uniqueFileName) => {
 // LDR/008 constants (e.g. QuickMarcEditor.defaultValidLdr) are written.
 const toMarcIndicator = (indicator) => (indicator === '\\' ? ' ' : indicator);
 const toMarcBlanks = (content) => content.split('\\').join(' ');
-const parseSubfields = (content) => content
-  .split(/\$(?=\S)/)
-  .filter(Boolean)
-  .flatMap((part) => [part[0], part.slice(1).trim()]);
-const toMarcField = ({ tag, content, indicators }) => (indicators
-  ? [tag, indicators.map(toMarcIndicator).join(''), ...parseSubfields(content)]
-  : [tag, content]);
+const parseSubfields = (content) =>
+  content
+    .split(/\$(?=\S)/)
+    .filter(Boolean)
+    .flatMap((part) => [part[0], part.slice(1).trim()]);
+const toMarcField = ({ tag, content, indicators }) =>
+  indicators
+    ? [tag, indicators.map(toMarcIndicator).join(''), ...parseSubfields(content)]
+    : [tag, content];
 
 // Tags < '010' are control fields (no indicators/subfields); >= '010' are data fields.
 const isControlFieldTag = (tag) => tag < '010';
@@ -348,13 +350,15 @@ export default {
   // `indicators` for a control field (e.g. tag '001').
   //  - addFields: [{ tag, indicators, content }] - appended to every record
   //  - removeTags: ['670', '953'] - every field with one of these tags is removed
+  //  - removeFields: [{ tag, occurrence = 0 }] - removes just the Nth (0-based) existing field
+  //    with that tag, unlike removeTags which removes every occurrence
   //  - editFields: [{ tag, content, indicators, occurrence = 0 }] - replaces the content (and, if
   //    given, the indicators) of the Nth (0-based) existing field with that tag; indicators are
   //    left as-is when not provided
   editMarcFieldsInAllRecords(
     inputFileName,
     outputFileName,
-    { addFields = [], removeTags = [], editFields = [] } = {},
+    { addFields = [], removeTags = [], removeFields = [], editFields = [] } = {},
   ) {
     return FileManager.readFile(`cypress/fixtures/${inputFileName}`).then((fileContent) => {
       const readable = new Readable();
@@ -367,6 +371,15 @@ export default {
       return new Promise((resolve, reject) => {
         reader.on('data', (record) => {
           record.fields = record.fields.filter((field) => !removeTags.includes(field[0]));
+
+          removeFields.forEach(({ tag, occurrence = 0 }) => {
+            const matchingIndexes = record.fields
+              .map((field, index) => (field[0] === tag ? index : -1))
+              .filter((index) => index !== -1);
+            const targetIndex = matchingIndexes[occurrence];
+            if (targetIndex === undefined) return;
+            record.fields.splice(targetIndex, 1);
+          });
 
           editFields.forEach(({ tag, content, indicators, occurrence = 0 }) => {
             const matchingIndexes = record.fields
@@ -391,7 +404,9 @@ export default {
         });
         reader.on('error', reject);
         reader.on('end', () => resolve(updatedRecords.join('')));
-      }).then((updatedContent) => FileManager.createFile(`cypress/fixtures/${outputFileName}`, updatedContent));
+      }).then((updatedContent) =>
+        FileManager.createFile(`cypress/fixtures/${outputFileName}`, updatedContent),
+      );
     });
   },
 
@@ -440,13 +455,23 @@ export default {
   },
 
   verifyAllLogsCheckedStatus: ({ logsCount = 25, checked = true }) => {
-    new Array(logsCount).fill(null).forEach((_, index) => {
-      cy.expect(
-        jobLogsList
-          .find(MultiColumnListCell({ row: index, columnIndex: 0 }))
-          .find(Checkbox())
-          .is({ checked }),
-      );
+    cy.expect(
+      jobLogsList
+        .find(MultiColumnList())
+        .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
+        .exists(),
+    );
+    cy.wait(1000); // to make sure the whole list is loaded
+    cy.then(() => jobLogsList.find(MultiColumnList()).rowCount()).then((rowCount) => {
+      const logsToCheck = Math.min(logsCount, rowCount);
+      new Array(logsToCheck).fill(null).forEach((_, index) => {
+        cy.expect(
+          jobLogsList
+            .find(MultiColumnListCell({ row: index, columnIndex: 0 }))
+            .find(Checkbox())
+            .is({ checked }),
+        );
+      });
     });
   },
 
@@ -456,8 +481,10 @@ export default {
     cy.expect(logsPane.has({ subtitle }));
   },
 
-  verifyLogsPaneSubtitleAbsent: () => cy.expect(logsPane.find(HTML(including('selected'))).absent()),
-  verifyChooseFileButtonState: ({ isDisabled }) => cy.expect(orChooseFilesButton.has({ disabled: isDisabled })),
+  verifyLogsPaneSubtitleAbsent: () =>
+    cy.expect(logsPane.find(HTML(including('selected'))).absent()),
+  verifyChooseFileButtonState: ({ isDisabled }) =>
+    cy.expect(orChooseFilesButton.has({ disabled: isDisabled })),
 
   verifyDeleteLogsButtonDisabled: () => {
     cy.wait(1500);

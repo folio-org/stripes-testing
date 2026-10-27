@@ -94,6 +94,10 @@ describe('MARC', () => {
       'C365113 Apply "Authority source" facet to the search result list (promin)',
       { tags: ['criticalPath', 'promin', 'C365113'] },
       () => {
+        cy.intercept('GET', /authority-source-files\?.*limit=\d+/, (req) => {
+          req.url = req.url.replace(/limit=\d+/, 'limit=200');
+        });
+
         cy.getAdminToken();
         DataImport.uploadFileViaApi(
           marcFiles[1].marc,
@@ -111,13 +115,6 @@ describe('MARC', () => {
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.all);
         MarcAuthorities.checkResultsListRecordsCountGreaterThan(0);
         MarcAuthorities.checkAuthoritySourceOptions();
-        MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionA);
-        MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.optionA);
-        MarcAuthorities.checkValueResultsColumn(4, testData.facetOptions.optionA);
-        MarcAuthorities.checkValueResultsColumn(2, testData.facetValues.valueA);
-        MarcAuthorities.selectTitle(testData.facetValues.valueA);
-        MarcAuthority.contains(testData.prefixValues.prefixValA);
-        MarcAuthorities.closeAuthoritySourceOption();
 
         MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionB);
         MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.optionB);
@@ -136,6 +133,14 @@ describe('MARC', () => {
         InventoryInstance.closeAuthoritySource();
         MarcAuthorities.checkSearchOption('keyword');
         MarcAuthorities.checkSearchInput(testData.authority.all);
+
+        MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionA);
+        MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.optionA);
+        MarcAuthorities.checkValueResultsColumn(4, testData.facetOptions.optionA);
+        MarcAuthorities.checkValueResultsColumn(2, testData.facetValues.valueA);
+        MarcAuthorities.selectTitle(testData.facetValues.valueA);
+        MarcAuthority.contains(testData.prefixValues.prefixValA);
+        MarcAuthorities.closeAuthoritySourceOption();
       },
     );
 

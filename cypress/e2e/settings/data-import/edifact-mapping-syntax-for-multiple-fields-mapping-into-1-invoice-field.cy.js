@@ -57,7 +57,7 @@ describe('Data Import', () => {
           typeValue: FOLIO_RECORD_TYPE.INVOICE,
           name: `C345353 Test Harrassowitz invoice with space.${getRandomPostfix()}`,
           description: '',
-          batchGroup: BATCH_GROUP.FOLIO,
+          batchGroup: BATCH_GROUP.AMHERST,
           invoiceNote: 'RFF+API[2] " " NAD+SU+++[1]',
           organizationName: VENDOR_NAMES.HARRASSOWITZ,
           paymentMethod: PAYMENT_METHOD.CASH,
@@ -118,7 +118,9 @@ describe('Data Import', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
+        cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) =>
+          cy.deleteInvoiceFromStorageViaApi(id),
+        );
         collectionOfProfiles.forEach((profile) => {
           SettingsJobProfiles.deleteJobProfileByNameViaApi(profile.jobProfile.profileName);
           SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
@@ -193,7 +195,9 @@ describe('Data Import', () => {
         InvoiceView.verifyInvoiceLineSubscription(invoiceData[0].subscriptionInfo);
         InvoiceView.verifyInvoiceLineComment(invoiceData[0].comment);
 
-        cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
+        cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) =>
+          cy.deleteInvoiceFromStorageViaApi(id),
+        );
 
         // upload a marc file
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);

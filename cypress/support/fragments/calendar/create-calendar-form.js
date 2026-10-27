@@ -16,6 +16,13 @@ import {
   TimeDropdown,
 } from '../../../../interactors';
 
+// The form ignores a submit that comes right after the last change, leaving it open with nothing
+// saved, and the DOM shows nothing to wait for until the change is processed
+const clickSaveAndClose = () => {
+  cy.wait(1000);
+  cy.do(Button('Save and close').click());
+};
+
 export default {
   createCalendarWithoutHoursOfOperation(newCalendarInfo, servicePointName) {
     const toggleCalendarButton = HTML.extend('toggle calendar button').selector(
@@ -35,8 +42,8 @@ export default {
         .find(MultiColumnListCell({ column: 'Actions' }))
         .find(Button({ ariaLabel: 'trash' }))
         .click(),
-      Button('Save and close').click(),
     ]);
+    clickSaveAndClose();
   },
 
   create247Calendar(newCalendarInfo, servicePointName) {
@@ -118,9 +125,8 @@ export default {
         .click(),
       TimeDropdown().exists(),
       TimeDropdown().setTimeAndClose('23:59'),
-
-      Button('Save and close').click(),
     ]);
+    clickSaveAndClose();
   },
 
   clickAddRowInExceptions() {
@@ -157,8 +163,10 @@ export default {
 
   verifyOpeningsSubRowExists(rowIndex) {
     // clicking + stacks a second datepicker group inside the row's cells
-    cy.get(`[data-row-index="row-${rowIndex}"] [data-test-datepicker-container]`)
-      .should('have.length.gte', 2);
+    cy.get(`[data-row-index="row-${rowIndex}"] [data-test-datepicker-container]`).should(
+      'have.length.gte',
+      2,
+    );
   },
 
   clickTrashInExceptionsRow(rowIndex) {
@@ -262,7 +270,7 @@ export default {
       TimeDropdown().setTimeAndClose(addExceptionsOpeningData.endTime),
     ]);
 
-    cy.do(Button('Save and close').click());
+    clickSaveAndClose();
   },
 
   addHoursOfOperation(addHoursOfOperationData) {
@@ -307,14 +315,12 @@ export default {
       ]);
     }
 
-    cy.do(Button('Save and close').click());
+    clickSaveAndClose();
   },
 
   editNameAndSave({ newCalendarName }) {
-    cy.do([
-      TextField(including('Calendar name')).fillIn(newCalendarName),
-      Button('Save and close').click(),
-    ]);
+    cy.do(TextField(including('Calendar name')).fillIn(newCalendarName));
+    clickSaveAndClose();
   },
 
   deleteHoursOfOperationAndSave() {
@@ -330,26 +336,25 @@ export default {
       Accordion('Hours of operation')
         .find(MultiColumnListRow({ index: 3 }))
         .absent(),
-      Button('Save and close').click(),
     ]);
+    clickSaveAndClose();
   },
 
+  // Expects a calendar with one opening. The form also shows a "Closed" row for the rest of the
+  // week, which is derived from the openings, so deleting the opening leaves no rows
   editExistingCalendarsAndSave(editExistingCalendarsData) {
+    const hoursRowTrashButton = (index) =>
+      Accordion('Hours of operation')
+        .find(MultiColumnListRow({ index }))
+        .find(MultiColumnListCell({ column: 'Actions' }))
+        .find(Button({ ariaLabel: 'trash' }));
+
     cy.do([
       TextField(including('Calendar name')).fillIn(editExistingCalendarsData.name),
-      Accordion('Hours of operation')
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ column: 'Actions' }))
-        .find(Button({ ariaLabel: 'trash' }))
-        .click(),
-      Accordion('Hours of operation')
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ column: 'Actions' }))
-        .find(Button({ ariaLabel: 'trash' }))
-        .click(),
-
-      Button('Save and close').click(),
+      hoursRowTrashButton(0).click(),
+      hoursRowTrashButton(0).absent(),
     ]);
+    clickSaveAndClose();
   },
 
   editHoursOfOperationAndSave(editHoursOfOperationData) {
@@ -370,8 +375,7 @@ export default {
         .click(),
       TimeDropdown().exists(),
       TimeDropdown().setTimeAndClose(editHoursOfOperationData.endTime),
-
-      Button('Save and close').click(),
     ]);
+    clickSaveAndClose();
   },
 };

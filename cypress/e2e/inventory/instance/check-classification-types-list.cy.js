@@ -33,7 +33,7 @@ describe('Inventory', () => {
 
     it(
       'C618 Classification --> Classification types (promin) (TaaS)',
-      { tags: ['extendedPath', 'promin', 'C618'] },
+      { tags: ['extendedPath', 'promin', 'nonParallel', 'C618'] },
       () => {
         // Click on instance from preconditions
         InventoryInstances.searchByTitle(testData.instance.instanceTitle);

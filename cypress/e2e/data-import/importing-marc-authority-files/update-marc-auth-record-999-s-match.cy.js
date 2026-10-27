@@ -1,4 +1,4 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix, { randomNDigitNumber } from '../../../support/utils/stringTools';
 import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -21,40 +21,39 @@ import {
   APPLICATION_NAMES,
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
-  DEFAULT_JOB_PROFILE_NAMES,
 } from '../../../support/constants';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {
+    const randomPostfix = getRandomPostfix();
+    const authorityHeading = `AT_C350668_MarcAuthority_${randomPostfix}`;
+    const naturalId = `n350668${randomNDigitNumber(10)}`;
     const testData = {
-      createdRecordIDs: [],
       searchOption: 'Keyword',
-      createdRecordTitle: 'C350668 Chin, Staceyann, 1972- Crossfire.',
-      updatedBySRecordTitle: 'C350668 Chin, Staceyann, 1972- Updated by 999ffSs match',
-      updatedBySRecord1XXcontent:
-        '$a C350668 Chin, Staceyann, $d 1972- $t Updated by 999ffSs match',
-      added400fieldContent: '$a C350668 added field',
-      csvFile: `C350668 exportedCSVFile${getRandomPostfix()}.csv`,
-      exportedMarcFile: `C350668 exportedMarcFile${getRandomPostfix()}.mrc`,
-      marcFileForModify: 'marcAuthFileForC350668ModifiedByS.mrc',
-      modifiedMarcFile: `C350668 editedMarcFile${getRandomPostfix()}.mrc`,
-      uploadModifiedMarcFile: `C350668 testMarcFile${getRandomPostfix()}.mrc`,
+      updatedHeading: `${authorityHeading} Updated by 999ffSs match`,
+      updated100FieldContent: `$a ${authorityHeading} $t Updated by 999ffSs match`,
+      added400FieldContent: `$a ${authorityHeading} added field`,
+      csvFile: `AT_C350668_authorityUUIDs_${randomPostfix}.csv`,
+      exportedMarcFile: `AT_C350668_exportedMarcFile_${randomPostfix}.mrc`,
+      editedMarcFile: `AT_C350668_editedMarcFile_${randomPostfix}.mrc`,
     };
+    const marcAuthFields = [
+      { tag: '100', content: `$a ${authorityHeading}`, indicators: ['1', '\\'] },
+    ];
     const mappingProfile = {
-      name: `C350668 Update MARC authority records ${getRandomPostfix()}`,
+      name: `C350668 Update MARC authority records ${randomPostfix}`,
     };
     const actionProfile = {
-      name: `C350668 Update MARC authority records ${getRandomPostfix()}`,
+      name: `C350668 Update MARC authority records ${randomPostfix}`,
       action: 'UPDATE',
       folioRecordType: 'MARC_AUTHORITY',
     };
     const matchProfile = {
-      profileName: `C350668 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
+      profileName: `C350668 Update MARC authority records by matching 999 ff $s subfield value ${randomPostfix}`,
       incomingRecordFields: {
         field: '999',
         in1: 'f',
@@ -70,31 +69,23 @@ describe('Data Import', () => {
       recordType: EXISTING_RECORD_NAMES.MARC_AUTHORITY,
     };
     const jobProfile = {
-      profileName: `C350668 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
+      profileName: `C350668 Update MARC authority records by matching 999 ff $s subfield value ${randomPostfix}`,
     };
-    const marcFile = {
-      marc: 'marcAuthFileForC350668.mrc',
-      fileName: `C350668_testMarcFile.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
-      numOfRecords: 1,
-      authorityHeading: 'C350668 Chin, Staceyann, 1972- Crossfire. Spoken word',
-      propertyName: 'authority',
-    };
-    const propertyName = 'authority';
     let createdAuthorityID;
 
     before('Create test data and login', () => {
       cy.getAdminToken();
       // make sure there are no duplicate records in the system
-      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C350668*');
+      MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C350668_');
 
-      // create Field mapping profile
-      NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile)
-        .then((mappingProfileResponse) => {
-          mappingProfile.id = mappingProfileResponse.body.id;
-        })
+      cy.then(() => {
+        NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile).then(
+          (mappingProfileResponse) => {
+            mappingProfile.id = mappingProfileResponse.body.id;
+          },
+        );
+      })
         .then(() => {
-          // create Action profile and link it to Field mapping profile
           NewActionProfile.createActionProfileViaApi(actionProfile, mappingProfile.id).then(
             (actionProfileResponse) => {
               actionProfile.id = actionProfileResponse.body.id;
@@ -102,96 +93,100 @@ describe('Data Import', () => {
           );
         })
         .then(() => {
-          // create Match profile
-          return NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
-            matchProfile,
-          ).then((matchProfileResponse) => {
-            matchProfile.id = matchProfileResponse.body.id;
-          });
+          NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(matchProfile).then(
+            (matchProfileResponse) => {
+              matchProfile.id = matchProfileResponse.body.id;
+            },
+          );
         })
         .then(() => {
-          // create Job profiles for $s match
-          return NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+          NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
             jobProfile.profileName,
             matchProfile.id,
             actionProfile.id,
           );
-        });
-
-      // import (create) MARC authority
-      DataImport.uploadFileViaApi(marcFile.marc, marcFile.fileName, marcFile.jobProfileToRun).then(
-        (response) => {
-          response.forEach((record) => {
-            createdAuthorityID = record[propertyName].id;
+        })
+        .then(() => {
+          MarcAuthorities.createMarcAuthorityViaAPI(naturalId, '', marcAuthFields).then((id) => {
+            createdAuthorityID = id;
           });
-        },
-      );
-
-      cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-        Permissions.dataExportUploadExportDownloadFileViewLogs.gui,
-        Permissions.dataExportViewAddUpdateProfiles.gui,
-      ]).then((createdUserProperties) => {
-        testData.userProperties = createdUserProperties;
-        cy.login(testData.userProperties.username, testData.userProperties.password, {
-          path: TopMenu.marcAuthorities,
-          waiter: MarcAuthorities.waitLoading,
-          authRefresh: true,
+        })
+        .then(() => {
+          // Export the created record to get a file with its 999 ff $s
+          FileManager.createFile(`cypress/fixtures/${testData.csvFile}`, createdAuthorityID);
+          ExportFile.exportFileViaApi(
+            testData.csvFile,
+            'authority',
+            'Default authority export job profile',
+          ).then(() => {
+            ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
+          });
+        })
+        .then(() => {
+          cy.readFile(`cypress/downloads/${testData.exportedMarcFile}`, 'binary').then(
+            (content) => {
+              cy.writeFile(`cypress/fixtures/${testData.exportedMarcFile}`, content, 'binary');
+            },
+          );
+        })
+        .then(() => {
+          DataImport.editMarcFieldsInAllRecords(
+            testData.exportedMarcFile,
+            testData.editedMarcFile,
+            {
+              editFields: [{ tag: '100', content: testData.updated100FieldContent }],
+              addFields: [
+                { tag: '400', indicators: ['1', '\\'], content: testData.added400FieldContent },
+              ],
+            },
+          );
+        })
+        .then(() => {
+          // Steps 1-3: upload the file and run the 999 ff $s update job profile
+          DataImport.uploadFileViaApi(
+            testData.editedMarcFile,
+            testData.editedMarcFile,
+            jobProfile.profileName,
+          );
+        })
+        .then(() => {
+          cy.createTempUser([
+            Permissions.moduleDataImportEnabled.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+            Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+            Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          ]).then((createdUserProperties) => {
+            testData.userProperties = createdUserProperties;
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
+              path: TopMenu.dataImportPath,
+              waiter: DataImport.waitLoading,
+            });
+          });
         });
-      });
     });
 
     after('Deleting data', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
       SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
       SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
-      Users.deleteViaApi(testData.userProperties.userId);
-      if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
-      FileManager.deleteFile(`cypress/fixtures/${testData.exportedMarcFile}`);
+      Users.deleteViaApi(testData.userProperties?.userId);
+      if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID, true);
       FileManager.deleteFile(`cypress/fixtures/${testData.csvFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.exportedMarcFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.editedMarcFile}`);
+      FileManager.deleteFile(`cypress/downloads/${testData.exportedMarcFile}`);
     });
 
     it(
       'C350668 Update a MARC authority record via data import. Record match with 999 ff $s (promin)',
       { tags: ['criticalPath', 'promin', 'C350668'] },
       () => {
-        MarcAuthorities.searchBy(testData.searchOption, testData.createdRecordTitle);
-        MarcAuthorities.selectAllRecords();
-        MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('1 record selected');
-        MarcAuthorities.exportSelected();
-        cy.wait(1000);
-        ExportFile.downloadCSVFile(testData.csvFile, 'QuickAuthorityExport*');
-
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
-        ExportFile.uploadFile(testData.csvFile);
-        ExportFile.exportWithDefaultJobProfile(
-          testData.csvFile,
-          'Default authority',
-          'Authorities',
-        );
-        ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
-
-        // change exported file
-        DataImport.replace999SubfieldsInPreupdatedFile(
-          testData.exportedMarcFile,
-          testData.marcFileForModify,
-          testData.modifiedMarcFile,
-        );
-        TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_IMPORT);
-        DataImport.uploadFile(testData.modifiedMarcFile, testData.uploadModifiedMarcFile);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfile.profileName);
-        JobProfiles.runImportFile();
-        Logs.waitFileIsImported(testData.uploadModifiedMarcFile);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(testData.uploadModifiedMarcFile);
+        // Step 4: Wait for import to complete; verify the record is updated in the log
+        Logs.waitFileIsImported(testData.editedMarcFile);
+        Logs.checkJobStatus(testData.editedMarcFile, JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(testData.editedMarcFile);
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.authority,
@@ -199,11 +194,23 @@ describe('Data Import', () => {
           FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
 
+        // Wait until the updated heading is indexed - searching right after import can find nothing
+        cy.getAdminToken(false);
+        cy.recurse(
+          () => MarcAuthorities.getMarcAuthoritiesViaApi({ query: `(id==${createdAuthorityID})` }),
+          (authorities) =>
+            authorities.some(({ headingRef }) => headingRef === testData.updatedHeading),
+          { limit: 30, timeout: 62_000, delay: 2_000 },
+        );
+
+        // Step 5: Search for the updated record in MARC authority app
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.MARC_AUTHORITY);
-        MarcAuthorities.searchBy(testData.searchOption, testData.updatedBySRecordTitle);
-        MarcAuthorities.selectTitle(testData.updatedBySRecordTitle);
-        MarcAuthority.contains(testData.updatedBySRecord1XXcontent);
-        MarcAuthority.contains(testData.added400fieldContent);
+        MarcAuthorities.searchBy(testData.searchOption, testData.updatedHeading);
+
+        // Step 6: Open the record; verify it was updated
+        MarcAuthorities.selectTitle(testData.updatedHeading);
+        MarcAuthority.contains(testData.updated100FieldContent);
+        MarcAuthority.contains(testData.added400FieldContent);
       },
     );
   });

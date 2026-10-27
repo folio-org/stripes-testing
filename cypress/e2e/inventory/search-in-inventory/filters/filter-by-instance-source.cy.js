@@ -82,7 +82,7 @@ describe('Inventory', () => {
           );
 
           cy.then(() => {
-            cy.intercept('/search/instances*').as('getInstances1');
+            cy.intercept('/search/instances?*').as('getInstances1');
             InventorySearchAndFilter.selectOptionInExpandedFilter(
               sourceAccordionName,
               INSTANCE_SOURCE_NAMES.FOLIO,
@@ -106,7 +106,7 @@ describe('Inventory', () => {
             });
           })
             .then(() => {
-              cy.intercept('/search/instances*').as('getInstances2');
+              cy.intercept('/search/instances?*').as('getInstances2');
               InventorySearchAndFilter.selectOptionInExpandedFilter(
                 sourceAccordionName,
                 INSTANCE_SOURCE_NAMES.MARC,
@@ -124,7 +124,7 @@ describe('Inventory', () => {
               InventorySearchAndFilter.closeInstanceDetailPane();
             })
             .then(() => {
-              cy.intercept('/search/instances*').as('getInstances3');
+              cy.intercept('/search/instances?*').as('getInstances3');
               InventorySearchAndFilter.selectOptionInExpandedFilter(
                 sourceAccordionName,
                 INSTANCE_SOURCE_NAMES.FOLIO,

@@ -67,9 +67,11 @@ describe('Receiving', () => {
       .then((materialType) => {
         testData.materialType = materialType;
       })
-      .then(() => cy.getAcquisitionMethodsApi({
-        query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-      }))
+      .then(() =>
+        cy.getAcquisitionMethodsApi({
+          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+        }),
+      )
       .then(({ body }) => {
         testData.acquisitionMethod = body.acquisitionMethods[0];
       });
@@ -116,11 +118,13 @@ describe('Receiving', () => {
 
   const cancelOrderLine = () => {
     return OrderLines.getOrderLineByIdViaApi(testData.cancelledOrderLine.id)
-      .then((orderLine) => OrderLines.updateOrderLineViaApi({
-        ...orderLine,
-        paymentStatus: ORDER_LINE_PAYMENT_STATUS.CANCELLED,
-        receiptStatus: RECEIPT_STATUS_VIEW.CANCELLED,
-      }))
+      .then((orderLine) =>
+        OrderLines.updateOrderLineViaApi({
+          ...orderLine,
+          paymentStatus: ORDER_LINE_PAYMENT_STATUS.CANCELLED,
+          receiptStatus: RECEIPT_STATUS_VIEW.CANCELLED,
+        }),
+      )
       .then(() => OrderLines.getOrderLineByIdViaApi(testData.cancelledOrderLine.id))
       .then((orderLine) => {
         testData.cancelledOrderLine = orderLine;
@@ -223,6 +227,7 @@ describe('Receiving', () => {
       // Step 6: Click on the link under "Title" field in "Item details" accordion
       OrderLineDetails.openInventoryItem();
       InventoryInstance.waitLoading();
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.newLocation.name, 1);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.newLocation.name,
         records: [{ status: ITEM_STATUS_NAMES.IN_PROCESS }],

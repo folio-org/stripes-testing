@@ -45,11 +45,9 @@ describe('Inventory', () => {
           cy.getHoldingTypes({ limit: 1 }).then((res) => {
             testData.shadowHoldings.holdingTypeId = res[0].id;
           });
-          cy.getLocations({ query: '(isActive=true and name<>"*auto*" and name<>"AT_*")' }).then(
-            (res) => {
-              testData.shadowHoldings.locationId = res.id;
-            },
-          );
+          cy.getLocations({ query: '(name<>"*auto*" and name<>"AT_*")' }).then((res) => {
+            testData.shadowHoldings.locationId = res.id;
+          });
           cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` }).then((res) => {
             testData.shadowItem.loanTypeId = res[0].id;
           });

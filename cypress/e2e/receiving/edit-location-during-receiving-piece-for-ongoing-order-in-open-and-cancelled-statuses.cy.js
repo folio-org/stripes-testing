@@ -68,9 +68,11 @@ describe('Receiving', () => {
       .then((materialType) => {
         testData.materialType = materialType;
       })
-      .then(() => cy.getAcquisitionMethodsApi({
-        query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-      }))
+      .then(() =>
+        cy.getAcquisitionMethodsApi({
+          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+        }),
+      )
       .then(({ body }) => {
         testData.acquisitionMethod = body.acquisitionMethods[0];
       });
@@ -113,11 +115,13 @@ describe('Receiving', () => {
   const createCancelledOrder = () => {
     return createOpenedOrder('cancelledOrder', 'cancelledOrderLine')
       .then(() => Orders.getOrderByIdViaApi(testData.cancelledOrder.id))
-      .then((order) => Orders.updateOrderViaApi({
-        ...order,
-        workflowStatus: ORDER_STATUSES.CLOSED,
-        closeReason: { reason: ORDER_SYSTEM_CLOSING_REASONS.CANCELLED },
-      }));
+      .then((order) =>
+        Orders.updateOrderViaApi({
+          ...order,
+          workflowStatus: ORDER_STATUSES.CLOSED,
+          closeReason: { reason: ORDER_SYSTEM_CLOSING_REASONS.CANCELLED },
+        }),
+      );
   };
 
   const createUserAndLogin = () => {
@@ -221,6 +225,7 @@ describe('Receiving', () => {
 
       // Step 6: Click on the link under "Title" field in "Item details" accordion
       OrderLineDetails.openInventoryItem();
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.newLocation.name, 1);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.newLocation.name,
         records: [{ status: ITEM_STATUS_NAMES.IN_PROCESS }],
@@ -282,6 +287,7 @@ describe('Receiving', () => {
 
       // Step 13: Click on the link under "Title" field in "Item details" accordion
       OrderLineDetails.openInventoryItem();
+      InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.newLocation.name, 1);
       InventoryInstance.checkHoldingsTableContent({
         name: testData.newLocation.name,
         records: [{ status: ITEM_STATUS_NAMES.IN_PROCESS }],

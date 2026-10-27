@@ -22,6 +22,7 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import DateTools from '../../support/utils/dateTools';
 
 describe('Orders', () => {
   const testData = {
@@ -283,7 +284,10 @@ describe('Orders', () => {
         {
           vendorInvoiceNo: testData.invoice.vendorInvoiceNo,
           fiscalYear: testData.fiscalYear.code,
-          invoiceDate: new Date(testData.invoice.invoiceDate).toLocaleDateString('en-US'),
+          invoiceDate: DateTools.getFormattedDate(
+            { date: new Date(testData.invoice.invoiceDate) },
+            'MM/DD/YYYY',
+          ),
           vendorCode: testData.organization.code,
           vendorInvoiceNumber: testData.invoice.vendorInvoiceNo,
           status: testData.invoice.status,
@@ -298,7 +302,10 @@ describe('Orders', () => {
         {
           vendorInvoiceNo: testData.invoice.vendorInvoiceNo,
           fiscalYear: testData.fiscalYear.code,
-          invoiceDate: new Date(testData.invoice.invoiceDate).toLocaleDateString('en-US'),
+          invoiceDate: DateTools.getFormattedDate(
+            { date: new Date(testData.invoice.invoiceDate) },
+            'MM/DD/YYYY',
+          ),
           vendorCode: testData.organization.code,
           vendorInvoiceNumber: testData.invoice.vendorInvoiceNo,
           status: testData.invoice.status,

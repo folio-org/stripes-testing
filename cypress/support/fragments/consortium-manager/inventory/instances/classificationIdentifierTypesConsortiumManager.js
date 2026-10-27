@@ -3,6 +3,7 @@ import { REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
+import { ConsortiumUtils } from '../../../../utils';
 
 const id = uuid();
 
@@ -40,24 +41,21 @@ export default {
   },
 
   getClassificationIdentifierTypeByNameAndTenant(name, tenantId) {
-    return cy.getConsortiaId().then((consortiaId) => {
-      cy.getPublications([tenantId], '/classification-types?limit=2000&offset=0').then(
-        (publicationId) => {
-          cy.okapiRequest({
-            method: REQUEST_METHOD.GET,
-            path: `consortia/${consortiaId}/publications/${publicationId}/results`,
-          }).then(({ body }) => {
-            const classificationIdentifierTypes = JSON.parse(
-              body.publicationResults.find((publication) => publication.tenantId === tenantId)
-                .response,
-            ).classificationTypes;
+    return cy
+      .getPublications([tenantId], '/classification-types?limit=2000&offset=0')
+      .then((publicationId) => {
+        // Wait for the publication to finish: tenant results have no response while it is in progress
+        return ConsortiumUtils.getPublicationResults(publicationId).then(
+          ({ publicationResults }) => {
+            const classificationIdentifierTypes = publicationResults.find(
+              (publication) => publication.tenantId === tenantId,
+            ).response.classificationTypes;
             return classificationIdentifierTypes.find(
               (classificationIdentifierType) => classificationIdentifierType.name === name,
             );
-          });
-        },
-      );
-    });
+          },
+        );
+      });
   },
 
   deleteClassificationIdentifierTypeByNameAndTenant(name, tenantId) {

@@ -94,7 +94,7 @@ describe('Consortia', () => {
         });
 
         it(
-          'C407743 User with consortium manager share permission manages local departments in affiliated tenants',
+          'C407743 User with consortium manager share permission manages local departments in affiliated tenants (thunderjet)',
           { tags: ['extendedPathECS', 'thunderjet', 'C407743'] },
           () => {
             cy.log('Step 1. Open Consortium manager, select all members, and save the selection');
