@@ -18,22 +18,22 @@ import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 const testData = {
   centralSharedPatronGroup: {
     payload: {
-      group: getTestEntityValue('centralSharedPatronGroup_name'),
+      group: getTestEntityValue('C407753_centralSharedPatronGroup_name'),
     },
   },
   centralLocalPatronGroup: {
     id: uuid(),
-    name: getTestEntityValue('centralLocalPatronGroup_name'),
+    name: getTestEntityValue('C407753_centralLocalPatronGroup_name'),
     description: 'centralLocalPatronGroup_description',
   },
   collegeLocalPatronGroup: {
     id: uuid(),
-    name: getTestEntityValue('collegeLocalPatronGroup_name'),
+    name: getTestEntityValue('C407753_collegeLocalPatronGroup_name'),
     description: 'collegeLocalPatronGroup_description',
   },
   universityLocalPatronGroup: {
     id: uuid(),
-    name: getTestEntityValue('universityLocalPatronGroup_name'),
+    name: getTestEntityValue('C407753_universityLocalPatronGroup_name'),
     description: 'universityLocalPatronGroup_description',
   },
 };
@@ -83,7 +83,7 @@ describe('Consortium manager', () => {
               cy.resetTenant();
               cy.getAdminToken();
               cy.assignPermissionsToExistingUser(testData.user754.userId, [
-                permissions.consortiaSettingsConsortiumManagerView.gui,
+                permissions.consortiaSettingsConsortiumManagerEdit.gui,
                 permissions.uiUsersViewPatronGroups.gui,
               ]);
 
@@ -178,7 +178,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.university,
             ],
-            ['edit', 'trash'],
+            // ['edit', 'trash'], "Edit" and "Delete" icons are NOT displayed since Trillium
           );
 
           ConsortiumManagerApp.clickSelectMembers();
@@ -219,7 +219,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.university,
             ],
-            ['edit', 'trash'],
+            // ['edit', 'trash'], "Edit" and "Delete" icons are NOT displayed since Trillium
           );
         },
       );

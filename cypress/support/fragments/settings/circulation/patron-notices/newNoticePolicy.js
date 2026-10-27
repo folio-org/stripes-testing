@@ -77,8 +77,8 @@ const NOTICE_CARD_CONTROLS = {
 const getControl = (el, control) => el.querySelector(NOTICE_CARD_CONTROLS[control].selector);
 const getDragHandle = (el) => getControl(el, 'dragHandle');
 // Edit form cards keep the label next to the drag handle; read-only view cards have a plain header
-const getNoticeLabel = (el) => el.querySelector('[data-test-notice-card-drag-handle] > span:last-child')
-  ?? el.querySelector('[data-testid="header"]');
+const getNoticeLabel = (el) => el.querySelector('[data-test-notice-card-drag-handle] > span:last-child') ??
+  el.querySelector('[data-testid="header"]');
 const isLeftOf = (left, right) => left.getBoundingClientRect().right <= right.getBoundingClientRect().left;
 // Selected option label of a notice card dropdown; empty string when nothing is selected
 const getSelectedLabel = (el, testId) => {

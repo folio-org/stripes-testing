@@ -7,6 +7,7 @@ import ConsortiumManagerApp, {
   settingsItems,
 } from '../../../../../support/fragments/consortium-manager/consortiumManagerApp';
 import InstanceNoteTypesConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/instanceNoteTypesConsortiumManager';
+import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
@@ -123,7 +124,7 @@ describe('Consortium manager', () => {
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
           ConsortiumManagerApp.chooseSettingsItem(settingsItems.inventory);
-          InstanceNoteTypesConsortiumManager.choose();
+          InstanceNoteTypesConsortiumManager.choose({ isVerifyNewButtonPresence: false });
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList([
             testData.centralSharedType.payload.name,
             'consortium',
@@ -137,7 +138,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.central,
             ],
-            ['edit', 'trash'],
+            // ['edit', 'trash'], "Edit" and "Delete" icons are NOT displayed since Trillium
           );
 
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
@@ -147,7 +148,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.college,
             ],
-            ['edit', 'trash'],
+            //  ['edit', 'trash'], "Edit" and "Delete" icons are NOT displayed since Trillium
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
@@ -156,7 +157,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.university,
             ],
-            ['edit', 'trash'],
+            // ['edit', 'trash'], "Edit" and "Delete" icons are NOT displayed since Trillium
           );
 
           ConsortiumManagerApp.clickSelectMembers();
@@ -181,7 +182,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.college,
             ],
-            ['edit', 'trash'],
+            // ['edit', 'trash'], "Edit" and "Delete" icons are NOT displayed since Trillium
           );
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
@@ -190,7 +191,7 @@ describe('Consortium manager', () => {
               `${moment().format('l')} by`,
               tenantNames.university,
             ],
-            ['edit', 'trash'],
+            // ['edit', 'trash'], "Edit" and "Delete" icons are NOT displayed since Trillium
           );
         },
       );
@@ -199,9 +200,9 @@ describe('Consortium manager', () => {
         'C410910 User with "Consortium manager: Can create, edit and remove settings" permission is able to view the list of instance note types of affiliated tenants in "Consortium manager" app (consortia) (thunderjet)',
         { tags: ['criticalPathECS', 'thunderjet', 'C410910'] },
         () => {
-          cy.setTenant(Affiliations.College);
+          cy.resetTenant();
           cy.login(testData.user910.username, testData.user910.password);
-          // ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.central);
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager(3);
