@@ -111,6 +111,11 @@ const filterApplyButton = Button('Apply');
 const invalidDateErrorText = 'Please enter a valid year';
 const dateOrderErrorText = 'Start date is greater than end date';
 const clearIcon = Button({ icon: 'times-circle-solid' });
+const searchAndFilterPane = Pane('Search & filter');
+const collapseSearchPaneButton = Button({
+  ariaLabelledby: 'collapse-filter-pane-button-tooltip-text',
+});
+const expandSearchPaneButton = Button({ ariaLabelledby: 'expand-filter-pane-button-tooltip-text' });
 const getSearchErrorText = (query) => `Search could not be processed for ${query}. Please check your query and try again.`;
 const anyBrowseResultList = MultiColumnList({ id: including('browse-results-list-') });
 const URI_CHAR_LIMIT = 8192;
@@ -1226,6 +1231,27 @@ export default {
     cy.expect(checkbox.has({ checked: selected }));
   },
 
+  // The instances search (clicking Search, changing/selecting a filter, or coming back to
+  // Search from a create/edit form or the Browse pane) re-fires GET /search/instances -
+  // except when the change removes the last search param entirely (e.g. Reset all,
+  // deselecting the only active filter), which triggers no request at all. That makes this
+  // unsafe to bake into a shared method used in both contexts - callers must register this
+  // themselves right before an action they know will add/change a param, then pass the
+  // returned alias to waitForInstancesSearchToLoad. A fresh alias is generated each call so a
+  // late-resolving earlier request can't be mistaken by cy.wait() for the one just triggered.
+  instancesSearchInterceptCount: 0,
+
+  interceptInstancesSearch() {
+    this.instancesSearchInterceptCount += 1;
+    const alias = `instancesSearch${this.instancesSearchInterceptCount}`;
+    cy.intercept('GET', '/search/instances?*').as(alias);
+    return alias;
+  },
+
+  waitForInstancesSearchToLoad(alias) {
+    cy.wait(`@${alias}`);
+  },
+
   selectMultiSelectFilterOption(accordionName, optionName) {
     const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
     const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
@@ -1875,5 +1901,30 @@ export default {
         ),
       }).absent(),
     );
+  },
+
+  // Real mouse clicks (cypress-real-events), so the browser moves focus the way it does for a user
+  clickCollapseSearchPaneButton() {
+    cy.get('button[data-test-collapse-filter-pane-button]').realClick();
+  },
+
+  clickExpandSearchPaneButton() {
+    cy.get('button[data-test-expand-filter-pane-button]').realClick();
+  },
+
+  verifySearchPaneCollapsed() {
+    cy.expect([searchAndFilterPane.absent(), expandSearchPaneButton.exists()]);
+  },
+
+  verifySearchPaneExpanded() {
+    cy.expect([searchAndFilterPane.exists(), collapseSearchPaneButton.exists()]);
+  },
+
+  verifyCollapseSearchPaneButtonFocused() {
+    cy.expect(collapseSearchPaneButton.has({ focused: true }));
+  },
+
+  verifyExpandSearchPaneButtonFocused() {
+    cy.expect(expandSearchPaneButton.has({ focused: true }));
   },
 };

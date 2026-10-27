@@ -565,8 +565,8 @@ export default {
   },
 
   unsetAuthorityFileAsActiveViaApi(fileName) {
-    cy.getAuthoritySourceFileDataViaAPI(fileName).then((body) => {
-      cy.setActiveAuthoritySourceFileViaAPI(body.id, body._version + 1, false);
+    cy.getAuthoritySourceFileDataViaAPI(fileName).then((sourceFile) => {
+      if (sourceFile) cy.setActiveAuthoritySourceFileViaAPI(sourceFile.id, sourceFile._version + 1, false);
     });
   },
 

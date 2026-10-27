@@ -90,6 +90,7 @@ describe('MARC', () => {
             QuickMarcEditor.pressSaveAndClose();
             MarcAuthority.waitLoading();
             MarcAuthority.contains(testData.authorityHeadingUpdated);
+            cy.logout();
 
             // Precondition: User A is on the detail view of the updated record, Member tenant
             cy.setTenant(Affiliations.College);

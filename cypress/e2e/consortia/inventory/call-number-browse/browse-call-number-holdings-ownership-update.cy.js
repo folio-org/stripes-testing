@@ -14,6 +14,7 @@ import BrowseCallNumber from '../../../../support/fragments/inventory/search/bro
 import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import { CallNumberBrowseSettings } from '../../../../support/fragments/settings/inventory/instances/callNumberBrowse';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -58,11 +59,9 @@ describe('Inventory', () => {
           })
           .then(() => {
             cy.setTenant(Affiliations.College);
-            cy.getLocations({
-              limit: 1,
-              query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
-            }).then((res) => {
-              testData.holdings.locationId = res.id;
+            // Member tenants have only the inactive DCB location - use the shared AT_ location
+            Locations.getOrCreateTenantLocationViaApi(Affiliations.College).then((location) => {
+              testData.holdings.locationId = location.id;
             });
             InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
               testData.holdings.sourceId = folioSource.id;
@@ -100,11 +99,8 @@ describe('Inventory', () => {
           })
           .then(() => {
             cy.setTenant(Affiliations.University);
-            cy.getLocations({
-              limit: 1,
-              query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
-            }).then((res) => {
-              testData.holdings.locationUniversity = res;
+            Locations.getOrCreateTenantLocationViaApi(Affiliations.University).then((location) => {
+              testData.holdings.locationUniversity = location;
             });
           })
           .then(() => {

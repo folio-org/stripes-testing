@@ -465,7 +465,7 @@ export default {
   },
 
   clickNewButton: () => {
-    cy.do(Dropdown('Actions').open());
+    cy.do(Section({ id: 'users-search-results-pane' }).find(Dropdown('Actions')).open());
     cy.expect(Button({ id: 'clickable-newuser' }).exists());
     cy.do(Button({ id: 'clickable-newuser' }).click());
     cy.expect(Spinner().exists());

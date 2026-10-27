@@ -64,6 +64,9 @@ export default {
     cy.do(localeSelect.choose(language.name));
     cy.expect(localeSelect.has({ value: language.value }));
   },
+  verifyLocaleSelected(language) {
+    cy.expect(localeSelect.has({ value: language.value }));
+  },
   changeTimezone(timezone) {
     cy.do(timeZoneSelect.choose(timezone));
     cy.expect(timeZoneSelect.has({ value: timezone }));

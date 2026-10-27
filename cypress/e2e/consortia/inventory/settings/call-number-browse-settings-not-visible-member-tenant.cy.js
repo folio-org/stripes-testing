@@ -22,10 +22,6 @@ describe('Inventory', () => {
         before('Create test data', () => {
           cy.resetTenant();
           cy.getAdminToken();
-          CallNumberBrowseSettings.assignCallNumberTypesViaApi({
-            name: browseOption,
-            callNumberTypes: [],
-          });
           cy.createTempUser([Permissions.uiSettingsCallNumberBrowseView.gui]).then(
             (userProperties) => {
               user = userProperties;
@@ -35,37 +31,44 @@ describe('Inventory', () => {
               cy.assignPermissionsToExistingUser(user.userId, [
                 Permissions.uiSettingsCallNumberTypesCreateEditDelete.gui,
               ]);
-
               cy.resetTenant();
-              cy.login(user.username, user.password, {
-                path: TopMenu.settingsPath,
-                waiter: SettingsPane.waitLoading,
-              });
-              TopMenuNavigation.navigateToApp(
-                APPLICATION_NAMES.SETTINGS,
-                APPLICATION_NAMES.INVENTORY,
-              );
-              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
-              CallNumberBrowseSettings.openCallNumberBrowse();
-              CallNumberBrowseSettings.validateCallNumberBrowsePaneOpened();
             },
           );
         });
 
         after('Delete test data', () => {
           cy.resetTenant();
-          cy.getAdminToken();
+          cy.getAdminToken(false);
           CallNumberBrowseSettings.assignCallNumberTypesViaApi({
             name: browseOption,
             callNumberTypes: [],
           });
-          Users.deleteViaApi(user.userId);
+          if (user) Users.deleteViaApi(user.userId);
         });
 
         it(
           'C627462 "Call number browse" pane is not displayed on Member tenant when user has only "Call number types" permission on Member tenant (consortia) (promin)',
-          { tags: ['extendedPathECS', 'promin', 'C627462'] },
+          { tags: ['extendedPathECS', 'promin', 'nonParallel', 'C627462'] },
           () => {
+            // Preconditions: settings changed here (not in before()) so after() always restores them
+            cy.resetTenant();
+            cy.getAdminToken();
+            CallNumberBrowseSettings.assignCallNumberTypesViaApi({
+              name: browseOption,
+              callNumberTypes: [],
+            });
+            cy.login(user.username, user.password, {
+              path: TopMenu.settingsPath,
+              waiter: SettingsPane.waitLoading,
+            });
+            TopMenuNavigation.navigateToApp(
+              APPLICATION_NAMES.SETTINGS,
+              APPLICATION_NAMES.INVENTORY,
+            );
+            ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+            CallNumberBrowseSettings.openCallNumberBrowse();
+            CallNumberBrowseSettings.validateCallNumberBrowsePaneOpened();
+
             CallNumberBrowseSettings.clickEditButtonForItem(browseOption);
             CallNumberBrowseSettings.validateSaveButtonStatusForItem({
               itemName: browseOption,

@@ -87,6 +87,51 @@ export default {
     resource: 'UI-Inventory Settings Identifier-Types',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInventorySettingsNatureOfContentTermsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Nature-Of-Content-Terms',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsLoanTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Loan-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsStatisticalCodeTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Statistical-Code-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsStatisticalCodesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Statistical-Codes',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsHoldingsNoteTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Holdings-Note-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsItemNoteTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Item-Note-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsMaterialTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Material-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsCallNumberTypesView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Call-Number-Types',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInventorySettingsElectronicAccessRelationshipsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Inventory Settings Electronic-Access-Relationships',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventorySettingsListView: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Inventory Settings List',
@@ -145,6 +190,16 @@ export default {
   myProfileMainNavOrderManage: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Myprofile Settings Main-Nav-Order',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  settingsMyprofileEnabledView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'Settings Myprofile Enabled',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiTenantSettingsSettingsLocaleManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Tenant-Settings Settings Locale',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
 
@@ -299,6 +354,11 @@ export default {
     resource: 'UI-Inventory Instance',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiInventoryInstanceCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Instance',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
   uiInventoryInstanceView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Instance',
@@ -374,15 +434,25 @@ export default {
     resource: 'UI-Inventory Holdings',
     action: CAPABILITY_ACTIONS.CREATE,
   },
+  uiInventoryHoldingsEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Holdings',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   uiInventory: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
-  uiInventoryItemCreate: {
+  uiInventoryItemEdit: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Item',
     action: CAPABILITY_ACTIONS.EDIT,
+  },
+  uiInventoryItemCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Item',
+    action: CAPABILITY_ACTIONS.CREATE,
   },
   uiInventoryItemMove: {
     type: CAPABILITY_TYPES.PROCEDURAL,

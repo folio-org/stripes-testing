@@ -20,16 +20,8 @@ describe('Inventory', () => {
         const callNumberBrowseOptionMember = 'Library of Congress classification';
         const callNumberTypeMember = 'Dewey Decimal classification';
 
-        before('Create user, login', () => {
+        before('Create user', () => {
           cy.getAdminToken();
-          CallNumberBrowseSettings.assignCallNumberTypesViaApi({
-            name: callNumberBrowseOptionCentral,
-            callNumberTypes: [],
-          });
-          CallNumberBrowseSettings.assignCallNumberTypesViaApi({
-            name: callNumberBrowseOptionMember,
-            callNumberTypes: [],
-          });
           cy.createTempUser(permissions).then((userProperties) => {
             user = userProperties;
             cy.affiliateUserToTenant({
@@ -37,7 +29,28 @@ describe('Inventory', () => {
               userId: user.userId,
               permissions,
             });
+          });
+        });
 
+        after('Reset settings, delete user', () => {
+          cy.resetTenant();
+          cy.getAdminToken(false);
+          [callNumberBrowseOptionCentral, callNumberBrowseOptionMember].forEach((name) => {
+            CallNumberBrowseSettings.assignCallNumberTypesViaApi({ name, callNumberTypes: [] });
+          });
+          if (user) Users.deleteViaApi(user.userId);
+        });
+
+        it(
+          'C627461 Edit "Call number browse" option from Central/Member tenants (promin)',
+          { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C627461'] },
+          () => {
+            // Preconditions: settings changed here (not in before()) so after() always restores them
+            cy.resetTenant();
+            cy.getAdminToken();
+            [callNumberBrowseOptionCentral, callNumberBrowseOptionMember].forEach((name) => {
+              CallNumberBrowseSettings.assignCallNumberTypesViaApi({ name, callNumberTypes: [] });
+            });
             cy.login(user.username, user.password, {
               path: TopMenu.settingsPath,
               waiter: SettingsPane.waitLoading,
@@ -46,19 +59,7 @@ describe('Inventory', () => {
             ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
             CallNumberBrowseSettings.openCallNumberBrowse();
             CallNumberBrowseSettings.validateCallNumberBrowsePaneOpened();
-          });
-        });
 
-        after('Delete user', () => {
-          cy.resetTenant();
-          cy.getAdminToken();
-          Users.deleteViaApi(user.userId);
-        });
-
-        it(
-          'C627461 Edit "Call number browse" option from Central/Member tenants (promin)',
-          { tags: ['criticalPathECS', 'promin', 'C627461'] },
-          () => {
             CallNumberBrowseSettings.clickEditButtonForItem(callNumberBrowseOptionCentral);
             CallNumberBrowseSettings.validateSaveButtonStatusForItem({
               itemName: callNumberBrowseOptionCentral,

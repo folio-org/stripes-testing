@@ -86,7 +86,7 @@ describe('MARC', () => {
 
       it(
         'C423572 Create a new shared MARC authority record with "Local" authority file selected at Central tenant (consortia) (promin)',
-        { tags: ['criticalPathECS', 'promin', 'C423572'] },
+        { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C423572'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);
@@ -101,6 +101,7 @@ describe('MARC', () => {
           MarcAuthorities.checkRecordDetailPageMarkedValue(testData.marcValue);
           MarcAuthority.getId().then((id) => {
             testData.authorityId = id;
+            MarcAuthorities.checkAuthoritySourceFileViaApi(id, testData.authSourceID);
           });
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           MarcAuthorities.waitLoading();
