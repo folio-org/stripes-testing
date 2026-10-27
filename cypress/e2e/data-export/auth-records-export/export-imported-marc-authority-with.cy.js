@@ -16,7 +16,6 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 
 let user;
 let exportedFileName;
-let secondExportedFileName;
 let firstJobHrid;
 const marcAuthorityUUIDFileName = `AT_C423567_marcAuthorityUUIDFile_${getRandomPostfix()}.csv`;
 const recordsCount = 1;

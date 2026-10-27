@@ -148,7 +148,6 @@ const recalculateExpirationDateButton = Button({ id: 'expirationDate-modal-recal
 const userTypeChangeModal = Modal({ id: 'userType_confirmation_modal' });
 const userTypeChangeModalText =
   "Making this change will update the user's affiliations and the permissions they are granted for those affiliations when clicking Save & close. This action cannot easily be reversed, you would need to manually update the user's affiliations and permissions to reverse the resulting changes. Would you like to proceed?";
-let totalRows;
 const readingRoomAccessList = readingRoomAccessAccordion.find(MultiColumnList());
 const readingRoomAccessOptionValues = {
   allowed: 'ALLOWED',

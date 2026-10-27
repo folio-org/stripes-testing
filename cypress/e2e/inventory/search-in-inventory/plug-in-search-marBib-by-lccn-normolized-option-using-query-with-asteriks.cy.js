@@ -25,7 +25,6 @@ describe('Inventory', () => {
     };
     let orderNumber;
     let user;
-    let preconditionUserId;
     let orderID;
     const lccnOption = 'LCCN, normalized';
 

@@ -55,7 +55,6 @@ describe('MARC', () => {
         let memberField980Id;
         let memberField500Id;
         let memberField500OriginalData;
-        let authorityId;
 
         before('Create test data', () => {
           cy.resetTenant();
