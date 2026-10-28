@@ -57,7 +57,7 @@ describe('Data Import', () => {
 
     before('Create test data via API', () => {
       cy.getAdminToken();
-      InventoryInstances.deleteFullInstancesByTitleViaApi(titlePrefix);
+      InventoryInstances.deleteFullInstancesByTitleViaApi('C451482_');
 
       cy.then(() => {
         // Any active, non-test-owned location works here - the submatch only ever evaluates
