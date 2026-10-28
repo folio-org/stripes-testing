@@ -8,6 +8,7 @@ import {
   HTML,
   Callout,
   including,
+  MultiColumnListCell,
   NavListItem,
   Pane,
   PaneContent,
@@ -22,6 +23,7 @@ import {
 } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import getRandomPostfix from '../../../utils/stringTools';
+import OrderLineDetails from '../../orders/orderLineDetails';
 import OrderTemplateForm from './orderTemplateForm';
 
 const FUND_RESTRICTION_ERROR = 'Location-restricted fund applied to invalid location';
@@ -32,6 +34,8 @@ const templatePaymentTermsSection = templateViewPane.find(Accordion({ id: 'payme
 const actionsButton = Button('Actions');
 const deleteModal = Modal('Delete template');
 const duplicateModal = Modal('Duplicate template');
+const duplicateCancelButton = duplicateModal.find(Button(COMMON_BUTTON_LABELS.CANCEL));
+const duplicateSubmitButton = duplicateModal.find(Button('Submit'));
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -166,21 +170,65 @@ export default {
     );
   },
 
-  duplicateTemplate() {
+  verifyExpandCollapseAllButton({ expanded = false } = {}) {
+    const label = expanded ? COMMON_BUTTON_LABELS.COLLAPSE_ALL : COMMON_BUTTON_LABELS.EXPAND_ALL;
+
+    cy.expect(templateViewPane.find(Button(label)).has({ disabled: false }));
+  },
+
+  openDuplicateModal() {
     cy.do([actionsButton.click(), DropdownMenu().find(Button('Duplicate')).click()]);
     cy.expect(duplicateModal.exists());
-    cy.do(duplicateModal.find(Button('Submit')).click());
+  },
+
+  verifyDuplicateModalContent() {
+    cy.expect([
+      duplicateModal.has({
+        message: including('Are you sure you want to duplicate the template?'),
+      }),
+      duplicateCancelButton.has({ disabled: false }),
+      duplicateSubmitButton.has({ disabled: false, className: including('primary') }),
+    ]);
+  },
+
+  cancelDuplicateModal() {
+    cy.do(duplicateCancelButton.click());
+    cy.expect([duplicateModal.absent(), templateViewPane.exists()]);
+  },
+
+  submitDuplicateModal() {
+    cy.do(duplicateSubmitButton.click());
     InteractorsTools.checkCalloutMessage('The template was successfully duplicated');
   },
 
+  duplicateTemplate() {
+    this.openDuplicateModal();
+    this.submitDuplicateModal();
+  },
+
+  // fields: [{ key, value, checkbox }]; fundDistribution: fund names shown in "Fund distribution"
+  checkTemplateViewDetails({ fields = [], fundDistribution = [] } = {}) {
+    OrderLineDetails.checkSectionData({ details: fields, section: templateViewPane });
+    fundDistribution.forEach((fundName) => {
+      cy.expect(
+        templateViewPane
+          .find(MultiColumnListCell({ column: 'Fund', content: including(fundName) }))
+          .exists(),
+      );
+    });
+  },
+
   getOrderTemplateByNameViaApi(templateName) {
-    return cy
-      .okapiRequest({
-        path: 'orders/order-templates',
-        searchParams: { query: `templateName=="${templateName}"`, limit: 1 },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then(({ body }) => body.orderTemplates?.[0]);
+    return (
+      cy
+        .okapiRequest({
+          path: 'orders/order-templates',
+          searchParams: { query: `templateName=="${templateName}"`, limit: 1 },
+          isDefaultSearchParamsRequired: false,
+        })
+        // null, not undefined: a .then returning undefined would yield the whole response instead
+        .then(({ body }) => body.orderTemplates?.[0] ?? null)
+    );
   },
   deleteOrderTemplateViaApi(orderTemplateId, { failOnStatusCode = false } = {}) {
     return cy.okapiRequest({

@@ -4,6 +4,10 @@ import {
   Checkbox,
   Form,
   including,
+  matching,
+  MultiSelect,
+  MultiSelectMenu,
+  MultiSelectOption,
   PaneHeader,
   RepeatableFieldItem,
   Section,
@@ -13,11 +17,13 @@ import {
   SelectionOption,
   TextArea,
   TextField,
+  ValueChipRoot,
 } from '../../../../../interactors';
 import {
   COMMON_BUTTON_LABELS,
   DEFAULT_WAIT_TIME,
   ORDER_LINE_FORM_LABELS,
+  ORDER_TEMPLATE_FORM_ACCORDION_LABELS,
 } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import SearchHelper from '../../finance/financeHelper';
@@ -58,12 +64,16 @@ const infoSectionFields = {
   templateCode: orderTemplateInfoSection.find(TextField({ name: 'templateCode' })),
   templateDescription: orderTemplateInfoSection.find(TextArea({ name: 'templateDescription' })),
   hideAll: orderTemplateInfoSection.find(Checkbox({ name: 'hideAll' })),
+  categories: orderTemplateInfoSection.find(
+    MultiSelect({ label: including('Order template categories') }),
+  ),
 };
 
 const poInfoSectionFields = {
   poInformationSection: orderTemplatePoInfoSection.find(Button('PO information')),
   organizationLookUp: orderTemplatePoInfoSection.find(Button('Organization look-up')),
   orderType: orderTemplatePoInfoSection.find(Select({ name: 'orderType' })),
+  vendor: orderTemplatePoInfoSection.find(TextField({ name: 'vendor' })),
 };
 
 const poLineDetailsSectionFields = {
@@ -71,6 +81,14 @@ const poLineDetailsSectionFields = {
   acquisitionMethod: orderTemplateLineDetailsSection.find(Selection('Acquisition method')),
   receiptStatus: orderTemplateLineDetailsSection.find(Select({ name: 'receiptStatus' })),
   checkinItems: orderTemplateLineDetailsSection.find(Select({ name: 'checkinItems' })),
+  orderFormat: orderTemplateLineDetailsSection.find(Select({ name: 'orderFormat' })),
+  claimingActive: orderTemplateLineDetailsSection.find(Checkbox({ name: 'claimingActive' })),
+  claimingInterval: orderTemplateLineDetailsSection.find(TextField({ name: 'claimingInterval' })),
+};
+
+const eresourceDetailsFields = {
+  createInventory: orderTemplateForm.find(Select({ name: 'eresource.createInventory' })),
+  activationDue: orderTemplateForm.find(TextField({ name: 'eresource.activationDue' })),
 };
 
 const defaultSections = {
@@ -131,7 +149,12 @@ export default {
     cy.do(orderTemplateForm.find(Accordion(including(label))).expand());
   },
 
-  fillOrderTemplateFields({ templateInformation, poInformation, poLineDetails } = {}) {
+  fillOrderTemplateFields({
+    templateInformation,
+    poInformation,
+    poLineDetails,
+    eresourceDetails,
+  } = {}) {
     if (templateInformation) {
       this.fillInfoSectionFields(templateInformation);
     }
@@ -140,6 +163,24 @@ export default {
     }
     if (poLineDetails) {
       this.fillPoLineDetailsFields(poLineDetails);
+    }
+    if (eresourceDetails) {
+      this.fillEresourceDetailsFields(eresourceDetails);
+    }
+  },
+  // activationDue: number of days; empty string clears the field
+  fillEresourceDetailsFields({ createInventory, activationDue }) {
+    this.expandAccordion(ORDER_TEMPLATE_FORM_ACCORDION_LABELS.E_RESOURCES_DETAILS);
+
+    if (createInventory) {
+      cy.do(eresourceDetailsFields.createInventory.choose(createInventory));
+    }
+    if (activationDue !== undefined) {
+      cy.do(
+        activationDue === ''
+          ? eresourceDetailsFields.activationDue.clear()
+          : eresourceDetailsFields.activationDue.fillIn(String(activationDue)),
+      );
     }
   },
   fillInfoSectionFields({ templateName, templateCode, templateDescription, hideAll }) {
@@ -160,7 +201,7 @@ export default {
       cy.do(infoSectionFields.hideAll.click());
     }
   },
-  assertInfoSectionFields({ templateName, templateCode }) {
+  assertInfoSectionFields({ templateName, templateCode, templateDescription, categories }) {
     const expectations = [];
 
     if (templateName !== undefined) {
@@ -169,8 +210,70 @@ export default {
     if (templateCode !== undefined) {
       expectations.push(infoSectionFields.templateCode.has({ value: templateCode }));
     }
+    if (templateDescription !== undefined) {
+      expectations.push(infoSectionFields.templateDescription.has({ value: templateDescription }));
+    }
+    // categories: names of all selected "Order template categories" (shown as chips with "x" icon)
+    if (categories !== undefined) {
+      expectations.push(infoSectionFields.categories.has({ selectedCount: categories.length }));
+      categories.forEach((category) => {
+        expectations.push(
+          infoSectionFields.categories
+            .find(ValueChipRoot(category))
+            .find(Button({ icon: 'times' }))
+            .exists(),
+        );
+      });
+    }
 
     cy.expect(expectations);
+  },
+
+  // Clicking an option selects it, clicking a selected option ("-" icon) unselects it
+  clickCategoryOptions(categories = []) {
+    cy.do(infoSectionFields.categories.open());
+    categories.forEach((category) => {
+      cy.do(MultiSelectMenu().find(MultiSelectOption(category)).clickSegment());
+    });
+  },
+
+  removeCategory(category) {
+    cy.do(
+      infoSectionFields.categories
+        .find(ValueChipRoot(category))
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
+  checkCategoryOptions(options = []) {
+    cy.do(infoSectionFields.categories.open());
+
+    options.forEach(({ name, selected = false }) => {
+      cy.expect(MultiSelectMenu().find(MultiSelectOption(name)).has({ selected }));
+    });
+  },
+
+  // Duplicated template title: "<name> (Copy) - MM/DD/YYYY, H:MM:SS AM"
+  verifyDuplicatedTemplateTitle(originalName, { checkNameField = true } = {}) {
+    const escapedName = originalName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const copyNamePattern = new RegExp(
+      `^${escapedName} \\(Copy\\) - \\d{1,2}/\\d{1,2}/\\d{4}, \\d{1,2}:\\d{2}:\\d{2}\\s?[AP]M$`,
+    );
+
+    cy.expect(orderTemplateEditorPaneHeader.has({ title: matching(copyNamePattern) }));
+
+    if (checkNameField) {
+      cy.expect(infoSectionFields.templateName.has({ value: matching(copyNamePattern) }));
+    }
+  },
+
+  getTemplateName() {
+    return cy.get('#order-template-form input[name="templateName"]').invoke('val');
+  },
+
+  verifyFormButtons({ saveDisabled = true } = {}) {
+    cy.expect([closeFormButton.exists(), saveButton.has({ disabled: saveDisabled })]);
   },
   fillPoInfoSectionFields({ organizationName, orderType }) {
     cy.do(poInfoSectionFields.poInformationSection.click());
@@ -185,7 +288,12 @@ export default {
       cy.do(poInfoSectionFields.orderType.choose(orderType));
     }
   },
-  fillPoLineDetailsFields({ acquisitionMethod, receiptStatus }) {
+  checkPoInfoSectionFields(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(poInfoSectionFields[label].has(conditions));
+    });
+  },
+  fillPoLineDetailsFields({ acquisitionMethod, receiptStatus, orderFormat }) {
     cy.do(poLineDetailsSectionFields.poLineDetailsSection.click());
 
     if (acquisitionMethod) {
@@ -196,6 +304,10 @@ export default {
     }
     if (receiptStatus) {
       cy.do(poLineDetailsSectionFields.receiptStatus.choose(receiptStatus));
+    }
+    // Empty string selects the blank option
+    if (orderFormat !== undefined) {
+      cy.do(poLineDetailsSectionFields.orderFormat.choose(orderFormat));
     }
   },
   checkPoLineDetailsFields(fields = []) {

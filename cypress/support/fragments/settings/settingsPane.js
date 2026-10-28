@@ -12,6 +12,7 @@ import {
   Modal,
   MultiColumnListCell,
   MultiColumnListHeader,
+  MultiColumnListRow,
   NavList,
   NavListItem,
   or,
@@ -114,6 +115,25 @@ export default {
   checkAddNewBtnAbsent() {
     cy.expect(addButton.absent());
   },
+  // record: text that identifies the row; cells: [{ column, content }] checked by column header;
+  // actions: icons expected in actions column, e.g. ['edit', 'trash'], [] means the column is empty
+  checkTableRow({ record, cells = [], actions, actionsColumn = 'Actions' }) {
+    const row = table.find(MultiColumnListRow(including(record), { isContainer: false }));
+
+    cells.forEach(({ column, content }) => {
+      cy.expect(row.find(MultiColumnListCell({ column, content })).exists());
+    });
+
+    if (actions) {
+      const actionsCell = row.find(MultiColumnListCell({ column: actionsColumn }));
+
+      ['edit', 'trash'].forEach((icon) => {
+        const actionButton = actionsCell.find(Button({ icon }));
+
+        cy.expect(actions.includes(icon) ? actionButton.exists() : actionButton.absent());
+      });
+    }
+  },
   checkColumnAbsent(content) {
     cy.expect(table.find(ColumnHeader()).exists());
     cy.expect(table.find(ColumnHeader(content)).absent());
@@ -197,8 +217,15 @@ export default {
     else cy.expect(Pane(secondPaneName).find(Link(tabName)).absent());
   },
 
-  checkPaneIsOpened: (paneName) => {
+  checkPaneIsOpened: (paneName, subheader) => {
     cy.expect(Pane(paneName).exists());
+    if (subheader) {
+      cy.expect(
+        Pane(paneName)
+          .find(HTML(including(subheader)))
+          .exists(),
+      );
+    }
   },
 
   verifyTabsCountInSection: (sectionName, expectedCount) => {

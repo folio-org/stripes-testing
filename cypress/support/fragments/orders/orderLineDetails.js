@@ -542,8 +542,11 @@ export default {
     });
   },
   checkSectionData({ details, section }) {
-    details.forEach(({ key, value, checkbox }) => {
-      if (checkbox) {
+    details.forEach(({ key, value, checkbox, absent }) => {
+      if (absent) {
+        // Check by label: read-only checkboxes are disabled and would not match Checkbox(key)
+        cy.expect(section.find(HTML(including(key))).absent());
+      } else if (checkbox) {
         cy.expect(section.find(Checkbox(key)).has(value));
       } else {
         cy.expect(section.find(KeyValue(key)).has({ value: including(value) }));

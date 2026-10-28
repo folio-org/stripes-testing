@@ -21,6 +21,7 @@ const lineDetailsSection = receivingEditForm.find(Section({ id: 'lineDetails' })
 
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: 'title', disabled: true })),
+  titleInput: itemDetailsSection.find(TextField({ name: 'title' })),
   publisher: itemDetailsSection.find(TextField({ name: 'publisher' })),
   publishedDate: itemDetailsSection.find(TextField({ name: 'publishedDate' })),
   edition: itemDetailsSection.find(TextField({ name: 'edition' })),
@@ -65,6 +66,9 @@ export default {
       cy.expect(itemDetailsFields.title.has({ value: title }));
     }
   },
+  verifyTitleFieldEnabled(isEnabled = true) {
+    cy.expect(itemDetailsFields.titleInput.has({ disabled: !isEnabled }));
+  },
   checLineDetailsFields({ poLineNumber, receivingNote, mustAcknowledgeReceivingNote }) {
     if (poLineNumber) {
       cy.expect(lineDetailsFields.poLineNumber.has({ value: poLineNumber }));
@@ -89,7 +93,11 @@ export default {
       this.fillLineDetailsFields(lineDetails);
     }
   },
-  fillItemDetailsFields({ publisher, publishedDate, edition }) {
+  fillItemDetailsFields({ title, publisher, publishedDate, edition }) {
+    if (title) {
+      cy.do(itemDetailsFields.titleInput.fillIn(title));
+      cy.expect(itemDetailsFields.titleInput.has({ value: title }));
+    }
     if (publisher) {
       cy.do(itemDetailsFields.publisher.fillIn(publisher));
     }

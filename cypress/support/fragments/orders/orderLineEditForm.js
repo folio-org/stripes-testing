@@ -208,10 +208,28 @@ export const physicalResourceDetailsFields = {
   createInventory: physicalResourceDetailsSection.find(
     Select({ name: FORM_FIELD_NAMES.CREATE_INVENTORY_PHYSICAL }),
   ),
+  materialSupplier: physicalResourceDetailsSection.find(
+    TextField({ name: 'physical.materialSupplier' }),
+  ),
+  receiptDue: physicalResourceDetailsSection.find(TextField({ name: 'physical.receiptDue' })),
+  expectedReceiptDate: physicalResourceDetailsSection.find(
+    TextField({ name: 'physical.expectedReceiptDate' }),
+  ),
+  materialType: physicalResourceDetailsSection.find(
+    Select({ name: FORM_FIELD_NAMES.MATERIAL_TYPE_PHYSICAL }),
+  ),
 };
 
 export const eResourcesDetailsFields = {
   createInventory: Select({ name: FORM_FIELD_NAMES.CREATE_INVENTORY_ERESOURCE }),
+  accessProvider: TextField({ name: 'eresource.accessProvider' }),
+  materialType: Select({ name: FORM_FIELD_NAMES.MATERIAL_TYPE_ERESOURCE }),
+  activationDue: TextField({ name: 'eresource.activationDue' }),
+  expectedActivation: TextField({ name: 'eresource.expectedActivation' }),
+  userLimit: TextField({ name: FORM_FIELD_NAMES.USER_LIMIT }),
+  activated: Checkbox({ name: 'eresource.activated' }),
+  trial: Checkbox({ name: 'eresource.trial' }),
+  resourceUrl: TextField({ name: 'eresource.resourceUrl' }),
 };
 
 export const vendorDetailsFields = {
@@ -305,9 +323,14 @@ export default {
     });
   },
   checkFieldsConditions({ fields, section }) {
-    fields.forEach(({ label, conditions }) => {
-      cy.expect(section[label].has(conditions));
+    fields.forEach(({ label, conditions, absent }) => {
+      cy.expect(absent ? section[label].absent() : section[label].has(conditions));
     });
+  },
+  checkTemplateName(templateName) {
+    cy.expect(
+      orderLineEditFormRoot.find(KeyValue('Template name')).has({ value: including(templateName) }),
+    );
   },
   checkItemDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: itemDetailsFields });
