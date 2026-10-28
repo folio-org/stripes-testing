@@ -24,6 +24,7 @@ import {
   ORDER_FORMAT_NAMES_IN_PROFILE,
   RECORD_STATUSES,
   INSTANCE_STATUS_TERM_NAMES,
+  LOCATION_NAMES,
 } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
@@ -363,7 +364,7 @@ function verifyHoldingsUpdated() {
   cy.do(viewHoldingsButton.click());
   cy.expect(holdingsTypeKeyValue.has({ value: 'Monograph' }));
   cy.expect(callNumberTypeKeyValue.has({ value: 'Library of Congress classification' }));
-  cy.expect(permanentLocationKeyValue.has({ value: 'Main Library' }));
+  cy.expect(permanentLocationKeyValue.has({ value: including(LOCATION_NAMES.MAIN_LIBRARY_UI) }));
   closeDetailView();
 }
 

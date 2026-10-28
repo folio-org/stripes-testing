@@ -298,7 +298,7 @@ describe('Data Import', () => {
         // verify Instance, Holdings and Item details
         cy.wait(5000);
         MatchOnVRN.clickOnUpdatedHotlink();
-        InventoryInstance.waitInstanceRecordViewOpened(item.title);
+        InventoryInstance.waitInstanceRecordViewOpened();
         MatchOnVRN.verifyInstanceUpdated();
         MatchOnVRN.verifyHoldingsUpdated();
         InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.MAIN_LIBRARY_UI);
