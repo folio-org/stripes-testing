@@ -103,6 +103,7 @@ describe('Data Export', () => {
       ];
 
       // Step 1: Initiate export of deleted MARC bib records from today's date
+      cy.wait(3000); // Wait for the deleted instances to be processed by the system
       cy.getAdminToken();
       cy.runDataExportMarcBibDeleted({ from: currentDate }).then((response) => {
         expect(response.status).to.equal(200);
