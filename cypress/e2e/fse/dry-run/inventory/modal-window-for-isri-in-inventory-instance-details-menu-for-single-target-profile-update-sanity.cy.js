@@ -50,6 +50,7 @@ describe('Inventory', () => {
         instanceHRID = response[0].instance.hrid;
         instanceId = response[0].instance.id;
       });
+      cy.getUserToken(user.username, user.password);
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication, false);
 
       cy.allure().logCommandSteps(false);

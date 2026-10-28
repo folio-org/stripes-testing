@@ -8,7 +8,6 @@ import {
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
   RECORD_STATUSES,
-  VENDOR_NAMES,
 } from '../../../../support/constants';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -19,6 +18,8 @@ import HoldingsRecordView from '../../../../support/fragments/inventory/holdings
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
+import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../../support/fragments/organizations/organizations';
 import OrderLines from '../../../../support/fragments/orders/orderLines';
 import Orders from '../../../../support/fragments/orders/orders';
 import {
@@ -47,6 +48,7 @@ describe('Data Import', () => {
     let locationName;
     let locationUiName;
     let loanTypeName;
+    let createdOrganizationId;
     const instanceTitle = 'Quiet time.';
     const filePathForCreateOrder = 'marcFileForCreateOrder.mrc';
     const marcFileName = `C380474 autotestFileName${getRandomPostfix()}.mrc`;
@@ -57,7 +59,10 @@ describe('Data Import', () => {
           name: `C380474 Test Physical resource open order with instance, holdings, item ${getRandomPostfix()}`,
           orderStatus: ORDER_STATUSES.OPEN,
           approved: true,
-          vendor: VENDOR_NAMES.GOBI,
+          // vendor is set in before() - fetched from an existing vendor organization, or a
+          // newly-created one if none exists. The order mapping profile just needs SOME valid
+          // vendor assigned; the imported MARC file has no vendor-specific content
+          vendor: undefined,
           title: '245$a',
           acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
           orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
@@ -121,6 +126,20 @@ describe('Data Import', () => {
         loanTypeName = res[0].name;
         collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType = loanTypeName;
       });
+      Organizations.getOrganizationViaApi({ limit: 1, query: 'isVendor=true' }).then(
+        (existingOrganization) => {
+          if (existingOrganization) {
+            collectionOfMappingAndActionProfiles[0].mappingProfile.vendor =
+              existingOrganization.name;
+          } else {
+            const newOrganization = { ...NewOrganization.defaultUiOrganizations };
+            Organizations.createOrganizationViaApi(newOrganization).then((organizationId) => {
+              createdOrganizationId = organizationId;
+              collectionOfMappingAndActionProfiles[0].mappingProfile.vendor = newOrganization.name;
+            });
+          }
+        },
+      );
 
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
@@ -150,6 +169,9 @@ describe('Data Import', () => {
             InventoryInstance.deleteInstanceViaApi(instance.id);
           },
         );
+        // Only delete the organization if this test created it - never delete one we just
+        // fetched and reused, since it may belong to other data/tests in the environment
+        if (createdOrganizationId) Organizations.deleteOrganizationViaApi(createdOrganizationId);
       });
     });
 
