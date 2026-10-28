@@ -157,6 +157,13 @@ export default {
     return ItemRecordEdit;
   },
 
+  // Locale-safe sibling of openItemEditForm: accepts the "Actions"/"Edit" button text as
+  // parameters instead of hardcoding English, and skips ItemRecordEdit.waitLoading(itemTitle)
+  // since that also hardcodes button-state assertions unrelated to the labels themselves
+  openItemEditFormWithLabels(actionsLabel, editLabel) {
+    cy.do([Button(actionsLabel).click(), Button(editLabel).click()]);
+  },
+
   clickDeleteButton() {
     cy.do([actionsButton.click(), Button('Delete').click()]);
 
