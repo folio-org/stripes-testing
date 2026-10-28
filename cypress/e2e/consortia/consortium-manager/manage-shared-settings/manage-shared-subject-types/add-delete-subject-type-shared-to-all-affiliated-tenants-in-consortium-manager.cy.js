@@ -33,7 +33,7 @@ describe('Consortia', () => {
         };
 
         before('Create userand login', () => {
-          cy.clearCookies({ domain: null });
+          cy.clearAllCookies();
           cy.getAdminToken();
           cy.createTempUser([
             Permissions.consortiaSettingsConsortiumManagerShare.gui,

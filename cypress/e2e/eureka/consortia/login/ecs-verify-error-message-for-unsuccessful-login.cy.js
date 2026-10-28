@@ -52,7 +52,7 @@ describe('Eureka', () => {
           .then(() => {
             cy.wait(6000);
             cy.logoutViaApi();
-            cy.clearCookies({ domain: null });
+            cy.clearAllCookies();
             cy.resetTenant();
             cy.visit('/');
             cy.selectTenantIfDropdown();
@@ -104,7 +104,7 @@ describe('Eureka', () => {
           cy.setTenant(Affiliations.College);
           cy.wait(3000);
           cy.logoutViaApi();
-          cy.clearCookies({ domain: null });
+          cy.clearAllCookies();
           cy.visit('/');
           cy.selectTenantIfDropdown();
           cy.inputCredentialsAndLogin(testData.userC.username, testData.userC.password);

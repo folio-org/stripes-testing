@@ -23,7 +23,7 @@ describe('Eureka', () => {
         // Setup (getAdminToken) leaves an admin "folioAccessToken" cookie behind, and
         // cy.okapiRequest auto-attaches matching cookies - clear it so step 1 genuinely has
         // no credentials
-        cy.clearCookies({ domain: null });
+        cy.clearAllCookies();
 
         // Step 1: no token - 401
         cy.logoutAllViaApi().then((response) => {
@@ -38,7 +38,7 @@ describe('Eureka', () => {
           const token = accessTokenCookie.match(/folioAccessToken=([^;]+)/)[1];
 
           // removing token from cookies so that it could be sent specifically via header
-          cy.clearCookies({ domain: null });
+          cy.clearAllCookies();
 
           // Step 3: valid token, right after logging in - 204
           cy.logoutAllViaApi({ 'x-okapi-token': token }).then((response) => {

@@ -40,7 +40,7 @@ Cypress.Commands.add(
 
       if (Cypress.env('eureka')) {
         cy.logoutViaApi();
-        cy.clearCookies({ domain: null }).then(() => {
+        cy.clearAllCookies().then(() => {
           cy.visit(path);
 
           cy.selectTenantIfDropdown();

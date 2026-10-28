@@ -52,7 +52,7 @@ describe('Eureka', () => {
       ];
 
       before('Create role, user', () => {
-        cy.clearCookies({ domain: null });
+        cy.clearAllCookies();
         cy.createTempUser([]).then((createdUserProperties) => {
           testData.user = createdUserProperties;
           cy.assignCapabilitiesToExistingUser(testData.user.userId, [], capabSetsToAssign);

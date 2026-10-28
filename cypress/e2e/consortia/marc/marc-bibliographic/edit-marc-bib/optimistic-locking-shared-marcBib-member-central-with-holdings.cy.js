@@ -152,7 +152,7 @@ describe('MARC', () => {
                     expect(status).to.eq(202);
                     // Switch back to User A's token
                     cy.setTenant(Affiliations.College);
-                    cy.clearCookies({ domain: null });
+                    cy.clearAllCookies();
                     cy.getToken(userA.username, userA.password);
                     cy.wait(2000);
 

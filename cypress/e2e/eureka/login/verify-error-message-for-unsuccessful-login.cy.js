@@ -28,7 +28,7 @@ describe('Eureka', () => {
       cy.then(() => {
         cy.wait(3000);
         cy.logoutViaApi();
-        cy.clearCookies({ domain: null });
+        cy.clearAllCookies();
         cy.visit('/');
         cy.selectTenantIfDropdown();
       });

@@ -16,7 +16,7 @@ describe('Eureka', () => {
           user = createdUserProperties;
 
           cy.logoutViaApi();
-          cy.clearCookies({ domain: null });
+          cy.clearAllCookies();
         });
       });
 
@@ -38,7 +38,7 @@ describe('Eureka', () => {
           cy.verifyDefaultEurekaLoginPage();
           cy.url().then((memberLoginUrl) => {
             cy.logoutViaApi();
-            cy.clearCookies({ domain: null });
+            cy.clearAllCookies();
 
             cy.visit(memberLoginUrl);
             cy.verifyDefaultEurekaLoginPage();

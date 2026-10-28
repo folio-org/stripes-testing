@@ -46,7 +46,7 @@ describe('Consortia', () => {
         let tempUserC411557;
 
         before('Create test data', () => {
-          cy.clearCookies({ domain: null });
+          cy.clearAllCookies();
           cy.resetTenant();
           cy.getAdminToken();
           ResourceTypesConsortiumManager.createViaApi(testData.centralSharedResourceType).then(

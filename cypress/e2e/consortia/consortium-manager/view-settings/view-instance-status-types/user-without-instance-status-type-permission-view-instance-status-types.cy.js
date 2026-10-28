@@ -49,7 +49,7 @@ describe('Consortia', () => {
         let tempUserC411536;
 
         before('Create test data', () => {
-          cy.clearCookies({ domain: null });
+          cy.clearAllCookies();
           cy.resetTenant();
           cy.getAdminToken();
           InstanceStatusTypeConsortiumManager.createViaApi(

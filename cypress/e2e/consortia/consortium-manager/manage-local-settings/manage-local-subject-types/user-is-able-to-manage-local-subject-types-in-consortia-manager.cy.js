@@ -29,7 +29,7 @@ describe('Consortia', () => {
         const subjectTypeNameForKeepEdit = `C594411 autotestSubjectTypeName${getRandomPostfix()}`;
 
         before('Create users data', () => {
-          cy.clearCookies({ domain: null });
+          cy.clearAllCookies();
           cy.getAdminToken();
           cy.createTempUser([
             Permissions.consortiaSettingsConsortiumManagerEdit.gui,

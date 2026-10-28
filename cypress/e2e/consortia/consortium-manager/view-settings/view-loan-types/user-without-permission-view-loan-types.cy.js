@@ -43,7 +43,7 @@ describe('Consortia', () => {
         let tempUserC411760;
 
         before('Create test data', () => {
-          cy.clearCookies({ domain: null });
+          cy.clearAllCookies();
           cy.resetTenant();
           cy.getAdminToken();
           LoanTypesConsortiumManager.createViaApi(testData.centralSharedLoanType).then(

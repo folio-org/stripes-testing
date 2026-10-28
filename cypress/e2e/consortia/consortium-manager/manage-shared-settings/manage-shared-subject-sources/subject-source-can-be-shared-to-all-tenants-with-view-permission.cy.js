@@ -118,7 +118,7 @@ describe('Consortia', () => {
         }
 
         before('Create user and login', () => {
-          cy.clearCookies({ domain: null });
+          cy.clearAllCookies();
           cy.resetTenant();
           cy.getAdminToken();
 

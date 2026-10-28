@@ -61,7 +61,7 @@ describe('Consortium manager', () => {
       let tempUserC648472;
 
       before('create test data', () => {
-        cy.clearCookies({ domain: null });
+        cy.clearAllCookies();
         cy.getAdminToken();
         HoldingsSourcesConsortiumManager.createViaApi(testData.centralSharedSource).then(
           (newSource) => {

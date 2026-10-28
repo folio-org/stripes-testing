@@ -3,7 +3,7 @@ import Affiliations from '../../support/dictionary/affiliations';
 describe('Eureka - Prepare for testing', () => {
   // assign an admin role to the user in the specified tenant
   function assignAdminRole(affiliation, userId) {
-    cy.clearCookies({ domain: null });
+    cy.clearAllCookies();
     cy.setTenant(affiliation);
 
     if (affiliation === Affiliations.College) {
@@ -34,7 +34,7 @@ describe('Eureka - Prepare for testing', () => {
 
   it('Clear all cookies', { tags: ['clearCookies', 'eureka'] }, () => {
     // workaround for EUREKA-396 - otherwise tests may fail in consecutive runs for different tenants:
-    if (Cypress.env('eureka')) cy.clearCookies({ domain: null });
+    if (Cypress.env('eureka')) cy.clearAllCookies();
   });
 
   it(

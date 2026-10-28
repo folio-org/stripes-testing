@@ -7,7 +7,7 @@ describe('Users', () => {
       'C409509 Verify that labels are present on the input box of log in (vega)',
       { tags: ['extendedPath', 'vega', 'C409509', 'eurekaPhase1'] },
       () => {
-        cy.clearCookies({ domain: null }).then(() => {
+        cy.clearAllCookies().then(() => {
           cy.visit('/');
           Login.openForgotPassword();
           ForgotPasswordOrUsername.waitLoadingForgotPassword();

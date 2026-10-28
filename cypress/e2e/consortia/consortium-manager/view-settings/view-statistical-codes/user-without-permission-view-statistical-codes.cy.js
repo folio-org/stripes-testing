@@ -58,7 +58,7 @@ describe('Consortia', () => {
         let statisticalCodeType;
 
         before('Create test data', () => {
-          cy.clearCookies({ domain: null });
+          cy.clearAllCookies();
           cy.resetTenant();
           cy.getAdminToken();
           // Get statistical code type for creating codes

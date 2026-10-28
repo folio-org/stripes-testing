@@ -6,7 +6,6 @@ const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
 const { rm, unlink } = require('fs');
 const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
-const { cloudPlugin } = require('cypress-cloud/plugin');
 const registerReportPortalPlugin = require('@reportportal/agent-js-cypress/lib/plugin');
 const webpackPreprocessor = require('@cypress/webpack-batteries-included-preprocessor');
 const testRailPlugin = require('cypress-testrail-simple/src/plugin');
@@ -123,6 +122,7 @@ module.exports = defineConfig({
   },
   reporterOptions: reportportalOptions,
   e2e: {
+    chromeWebSecurity: false,
     async setupNodeEvents(on, config) {
       on('file:preprocessor', webpackPreprocessor());
 
@@ -234,14 +234,12 @@ module.exports = defineConfig({
       // eslint-disable-next-line global-require
       const grepConfig = require('@cypress/grep/src/plugin')(config);
 
-      const result = await cloudPlugin(on, grepConfig);
-
       // Since Cypress's on() overwrites previous handlers (except for 'task' event),
       // we need to ensure that all handlers that need to run on after:spec
       // are registered in setupAfterSpecChaining to ensure they all execute.
       await setupAfterSpecChaining(on, config);
 
-      return result;
+      return grepConfig;
     },
     baseUrl: envOverrides.baseUrl || 'https://folio-etesting-cypress-diku.ci.folio.org',
     testIsolation: false,

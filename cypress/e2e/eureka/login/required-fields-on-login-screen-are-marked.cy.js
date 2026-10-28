@@ -8,7 +8,7 @@ describe('Eureka', () => {
 
     before(() => {
       cy.logoutViaApi();
-      cy.clearCookies({ domain: null });
+      cy.clearAllCookies();
     });
 
     it(

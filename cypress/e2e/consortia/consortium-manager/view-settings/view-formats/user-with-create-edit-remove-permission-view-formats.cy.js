@@ -47,7 +47,7 @@ describe('Consortia', () => {
         let tempUserC410719;
 
         before('Create test data', () => {
-          cy.clearCookies({ domain: null });
+          cy.clearAllCookies();
           cy.resetTenant();
           cy.getAdminToken();
           FormatsConsortiumManager.createViaApi(testData.centralSharedFormat).then((newFormat) => {
