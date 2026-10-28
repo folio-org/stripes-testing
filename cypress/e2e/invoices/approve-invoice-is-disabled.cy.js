@@ -19,12 +19,6 @@ describe('Invoices', () => {
     user: {},
   };
 
-  const setApprovePayValue = (isApprovePayEnabled) => {
-    cy.getAdminToken().then(() => {
-      Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
-    });
-  };
-
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
       const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi();
@@ -47,6 +41,7 @@ describe('Invoices', () => {
   });
 
   beforeEach(() => {
+    cy.getAdminToken();
     testData.order = NewOrder.getDefaultOrder({ vendorId: organization.id });
     testData.orderLine = BasicOrderLine.getDefaultOrderLine({
       listUnitPrice: 98,
@@ -63,15 +58,11 @@ describe('Invoices', () => {
         testData.invoice = invoice;
       });
     });
-
-    cy.login(testData.user.username, testData.user.password, {
-      path: TopMenu.invoicesPath,
-      waiter: Invoices.waitLoading,
-      authRefresh: true,
-    });
   });
 
   afterEach(() => {
+    cy.logout();
+    cy.wait(5000);
     cy.getAdminToken();
     Invoices.deleteInvoiceViaApi(testData.invoice.id);
     Orders.deleteOrderViaApi(testData.order.id);
@@ -95,8 +86,13 @@ describe('Invoices', () => {
       isApprovePayEnabled: false,
     },
   ].forEach(({ description, isApprovePayEnabled }) => {
-    it(description, { tags: ['criticalPath', 'thunderjet', 'C397321'] }, () => {
-      setApprovePayValue(isApprovePayEnabled);
+    it(description, { tags: ['criticalPath', 'thunderjet', 'C397321', 'nonParallel'] }, () => {
+      Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
+
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.invoicesPath,
+        waiter: Invoices.waitLoading,
+      });
 
       // Click on "Vendor invoice number" link
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
