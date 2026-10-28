@@ -9,6 +9,7 @@ import {
   MultiSelectMenu,
   MultiSelectOption,
   PaneHeader,
+  Popover,
   RepeatableFieldItem,
   Section,
   Select,
@@ -24,10 +25,12 @@ import {
   DEFAULT_WAIT_TIME,
   ORDER_LINE_FORM_LABELS,
   ORDER_TEMPLATE_FORM_ACCORDION_LABELS,
+  SUPPRESS_INSTANCE_FROM_DISCOVERY_INFO,
 } from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import SearchHelper from '../../finance/financeHelper';
 import AreYouSureModal from '../../orders/modals/areYouSureModal';
+import SelectInstanceModal from '../../orders/modals/selectInstanceModal';
 
 const LOCATION_FIELD_ID_PREFIX = 'field-locations';
 
@@ -84,6 +87,13 @@ const poLineDetailsSectionFields = {
   orderFormat: orderTemplateLineDetailsSection.find(Select({ name: 'orderFormat' })),
   claimingActive: orderTemplateLineDetailsSection.find(Checkbox({ name: 'claimingActive' })),
   claimingInterval: orderTemplateLineDetailsSection.find(TextField({ name: 'claimingInterval' })),
+};
+
+const itemDetailsFields = {
+  title: orderTemplateItemDetailsSection.find(TextField({ name: 'titleOrPackage' })),
+  suppressInstanceFromDiscovery: orderTemplateItemDetailsSection.find(
+    Checkbox({ name: 'suppressInstanceFromDiscovery' }),
+  ),
 };
 
 const eresourceDetailsFields = {
@@ -287,6 +297,28 @@ export default {
     if (orderType) {
       cy.do(poInfoSectionFields.orderType.choose(orderType));
     }
+  },
+  checkItemDetailsFields(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(itemDetailsFields[label].has(conditions));
+    });
+  },
+  clickSuppressInstanceFromDiscoveryCheckbox() {
+    cy.do(itemDetailsFields.suppressInstanceFromDiscovery.click());
+  },
+  verifySuppressInstanceFromDiscoveryInfoPopover() {
+    cy.do(orderTemplateItemDetailsSection.find(Button({ icon: 'info' })).click());
+    cy.expect(Popover().has({ content: including(SUPPRESS_INSTANCE_FROM_DISCOVERY_INFO) }));
+  },
+  selectInstanceByTitleLookUp(instanceTitle) {
+    cy.do(orderTemplateItemDetailsSection.find(Button('Title look-up')).click());
+    SelectInstanceModal.waitLoading();
+    SelectInstanceModal.searchByName(instanceTitle);
+    SelectInstanceModal.selectInstance();
+  },
+  // Clearing a linked title opens the "Remove instance connection" modal
+  clearTitle() {
+    cy.do(itemDetailsFields.title.clear());
   },
   checkPoInfoSectionFields(fields = []) {
     fields.forEach(({ label, conditions }) => {

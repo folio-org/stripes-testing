@@ -31,6 +31,7 @@ import {
   ORDER_AND_ORDER_LINE_BUTTONS,
   ORDER_FORMAT_NAMES,
   POLINE_DETAILS_FIELDS,
+  SUPPRESS_INSTANCE_FROM_DISCOVERY_INFO,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import AreYouSureModal from './modals/areYouSureModal';
@@ -369,13 +370,7 @@ export default {
   },
   verifySuppressInstanceFromDiscoveryInfoPopover() {
     cy.do(itemDetailsSection.find(Button({ icon: 'info' })).click());
-    cy.expect(
-      Popover().has({
-        content: including(
-          'When true this will suppress any instance record that is created when this order is Opened. If the order line is linked to an existing instance using the Title Lookup or it is matched to an existing instance by product identifier. This flag will not suppress the existing instance.',
-        ),
-      }),
-    );
+    cy.expect(Popover().has({ content: including(SUPPRESS_INSTANCE_FROM_DISCOVERY_INFO) }));
   },
   verifyReceivingWorkflowInfoPopover(message) {
     cy.do(
