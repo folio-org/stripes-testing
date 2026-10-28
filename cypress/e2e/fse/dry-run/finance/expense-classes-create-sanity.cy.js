@@ -21,7 +21,7 @@ describe('Finance', () => {
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
         path: SettingsMenu.expenseClassesPath,
-        waiter: SettingsFinance.waitExpenseClassesLoading,
+        waiter: SettingsFinance.waitLoading,
       });
       cy.allure().logCommandSteps(true);
     });
@@ -30,7 +30,7 @@ describe('Finance', () => {
       'C15857 Create edit and delete Expense classes (thunderjet)',
       { tags: ['dryRun', 'thunderjet', 'C15857'] },
       () => {
-        SettingsFinance.waitExpenseClassesLoading();
+        SettingsFinance.waitLoading();
         SettingsFinance.createNewExpenseClass(expenseClass);
         SettingsFinance.checkExpenseClass(expenseClass, newExpenseClass.source);
 

@@ -136,6 +136,7 @@ describe('Data Export', () => {
     { tags: ['dryRun', 'athena', 'C446023'] },
     () => {
       // Step 1-2: Upload the .csv file
+      cy.intercept('POST', /\/data-export\/file-definitions$/).as('fileDefinition');
       ExportFileHelper.uploadFile(marcInstanceUUIDFileName);
       ExportFileHelper.exportWithDefaultJobProfile(
         marcInstanceUUIDFileName,
@@ -143,58 +144,56 @@ describe('Data Export', () => {
         'Instances',
       );
       DataExportLogs.verifyAreYouSureModalAbsent();
+
       cy.getUserToken(user.username, user.password, { log: false });
-      cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
-      cy.wait('@getInfo', getLongDelay()).then(({ response }) => {
-        const exportedFile = marcInstanceUUIDFileName.replace('.csv', '');
-        const { jobExecutions } = response.body;
-        const jobData = jobExecutions.find((jobExecution) => {
-          return jobExecution.exportedFiles[0].fileName.includes(exportedFile);
+      cy.wait('@fileDefinition', getLongDelay())
+        .then(({ response }) => cy.waitForDataExportJobCompletion(response.body.jobExecutionId))
+        .then((jobData) => {
+          const exportedFile = marcInstanceUUIDFileName.replace('.csv', '');
+          firstJobHrid = jobData.hrId;
+          exportedFileName = `${exportedFile}-${firstJobHrid}.mrc`;
+
+          DataExportResults.verifySuccessExportResultCells(
+            exportedFileName,
+            recordsCount,
+            firstJobHrid,
+            user.username,
+            'Default instances',
+          );
+
+          // Step 3: Download the recently created file by clicking on its name hyperlink at the "Data Export" logs table
+          DataExportLogs.clickButtonWithText(exportedFileName);
+
+          // Step 4: Check exported records included in the file
+          const assertionsOnMarcFileContent = [
+            {
+              uuid: marcInstance.id,
+              assertions: [
+                (record) => expect(record.leader).to.exist,
+                (record) => {
+                  expect(record.fields[0]).to.deep.eq(['001', marcInstance.hrid]);
+                },
+                (record) => {
+                  expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
+                },
+                ...expectedMarcFields.map((fieldData, index) => (record) => {
+                  expect(record.fields[index + 2]).to.deep.eq(fieldData);
+                }),
+                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+                (record) => {
+                  expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.id);
+                },
+              ],
+            },
+          ];
+
+          parseMrcFileContentAndVerify(
+            exportedFileName,
+            assertionsOnMarcFileContent,
+            recordsCount,
+            false,
+          );
         });
-        firstJobHrid = jobData.hrId;
-        exportedFileName = `${exportedFile}-${firstJobHrid}.mrc`;
-
-        DataExportResults.verifySuccessExportResultCells(
-          exportedFileName,
-          recordsCount,
-          firstJobHrid,
-          user.username,
-          'Default instances',
-        );
-
-        // Step 3: Download the recently created file by clicking on its name hyperlink at the "Data Export" logs table
-        DataExportLogs.clickButtonWithText(exportedFileName);
-
-        // Step 4: Check exported records included in the file
-        const assertionsOnMarcFileContent = [
-          {
-            uuid: marcInstance.id,
-            assertions: [
-              (record) => expect(record.leader).to.exist,
-              (record) => {
-                expect(record.fields[0]).to.deep.eq(['001', marcInstance.hrid]);
-              },
-              (record) => {
-                expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
-              },
-              ...expectedMarcFields.map((fieldData, index) => (record) => {
-                expect(record.fields[index + 2]).to.deep.eq(fieldData);
-              }),
-              (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
-              (record) => {
-                expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.id);
-              },
-            ],
-          },
-        ];
-
-        parseMrcFileContentAndVerify(
-          exportedFileName,
-          assertionsOnMarcFileContent,
-          recordsCount,
-          false,
-        );
-      });
 
       // Step 5: Go to "Inventory" app
       TopMenuNavigation.navigateToAppAdaptive(APPLICATION_NAMES.INVENTORY);
@@ -225,6 +224,7 @@ describe('Data Export', () => {
       TopMenuNavigation.navigateToAppAdaptive(APPLICATION_NAMES.DATA_EXPORT);
 
       // Step 11: Trigger the data export by submitting .csv file with UUID of inventory instance from Preconditions
+      cy.intercept('POST', /\/data-export\/file-definitions$/).as('fileDefinition2');
       ExportFileHelper.uploadFile(marcInstanceUUIDFileName);
       ExportFileHelper.exportWithDefaultJobProfile(
         marcInstanceUUIDFileName,
@@ -232,57 +232,55 @@ describe('Data Export', () => {
         'Instances',
       );
       DataExportLogs.verifyAreYouSureModalAbsent();
-      cy.wait(2000);
-      cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo2');
-      cy.wait('@getInfo2', getLongDelay()).then(({ response }) => {
-        const exportedFile = marcInstanceUUIDFileName.replace('.csv', '');
-        const jobs = response.body.jobExecutions;
-        const jobData = jobs.find(
-          (job) => job.exportedFiles[0].fileName.includes(exportedFile) && job.hrId !== firstJobHrid,
-        );
-        const jobId = jobData.hrId;
-        secondExportedFileName = `${marcInstanceUUIDFileName.replace('.csv', '')}-${jobId}.mrc`;
 
-        DataExportResults.verifySuccessExportResultCells(
-          secondExportedFileName,
-          recordsCount,
-          jobId,
-          user.username,
-          'Default instances',
-        );
+      // Wait until the second export job is completed
+      cy.getUserToken(user.username, user.password, { log: false });
+      cy.wait('@fileDefinition2', getLongDelay())
+        .then(({ response }) => cy.waitForDataExportJobCompletion(response.body.jobExecutionId))
+        .then((jobData) => {
+          const jobId = jobData.hrId;
+          secondExportedFileName = `${marcInstanceUUIDFileName.replace('.csv', '')}-${jobId}.mrc`;
 
-        // Step 12: Download the recently created file by clicking on its name hyperlink at the "Data Export" logs table
-        DataExportLogs.clickButtonWithText(secondExportedFileName);
+          DataExportResults.verifySuccessExportResultCells(
+            secondExportedFileName,
+            recordsCount,
+            jobId,
+            user.username,
+            'Default instances',
+          );
 
-        const assertionsOnUpdatedMarcFileContent = [
-          {
-            uuid: marcInstance.id,
-            assertions: [
-              (record) => expect(record.leader).to.exist,
-              (record) => {
-                expect(record.fields[0]).to.deep.eq(['001', marcInstance.hrid]);
-              },
-              (record) => {
-                expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
-              },
-              ...updatedExpectedMarcFields.map((fieldData, index) => (record) => {
-                expect(record.fields[index + 2]).to.deep.eq(fieldData);
-              }),
-              (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
-              (record) => {
-                expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.id);
-              },
-            ],
-          },
-        ];
+          // Step 12: Download the recently created file by clicking on its name hyperlink at the "Data Export" logs table
+          DataExportLogs.clickButtonWithText(secondExportedFileName);
 
-        parseMrcFileContentAndVerify(
-          secondExportedFileName,
-          assertionsOnUpdatedMarcFileContent,
-          recordsCount,
-          false,
-        );
-      });
+          const assertionsOnUpdatedMarcFileContent = [
+            {
+              uuid: marcInstance.id,
+              assertions: [
+                (record) => expect(record.leader).to.exist,
+                (record) => {
+                  expect(record.fields[0]).to.deep.eq(['001', marcInstance.hrid]);
+                },
+                (record) => {
+                  expect(record.get('005')[0].value.startsWith(todayDateYYYYMMDD)).to.be.true;
+                },
+                ...updatedExpectedMarcFields.map((fieldData, index) => (record) => {
+                  expect(record.fields[index + 2]).to.deep.eq(fieldData);
+                }),
+                (record) => expect(record.get('999')[0].subf[0][0]).to.eq('i'),
+                (record) => {
+                  expect(record.get('999')[0].subf[0][1]).to.eq(marcInstance.id);
+                },
+              ],
+            },
+          ];
+
+          parseMrcFileContentAndVerify(
+            secondExportedFileName,
+            assertionsOnUpdatedMarcFileContent,
+            recordsCount,
+            false,
+          );
+        });
     },
   );
 });

@@ -7,6 +7,7 @@ import {
   MultiColumnListCell,
   Modal,
   PaneHeader,
+  Pane,
   Select,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -28,6 +29,9 @@ function getEditableListRow(rowNumber) {
 }
 
 export default {
+  waitLoading() {
+    cy.expect(Pane({ id: 'controlled-vocab-pane' }).exists());
+  },
   waitExpenseClassesLoading: () => {
     cy.expect(MultiColumnListHeader({ id: 'list-column-name' }).exists());
   },
