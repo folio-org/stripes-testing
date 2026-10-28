@@ -96,7 +96,7 @@ export default {
 
   clickTrashButtonForMaterialTypes(name) {
     cy.do([
-      MultiColumnListRow({ content: including(name) })
+      MultiColumnListRow({ content: including(name), isContainer: false })
         .find(MultiColumnListCell({ columnIndex: 3 }))
         .find(Button({ icon: 'trash' }))
         .click(),

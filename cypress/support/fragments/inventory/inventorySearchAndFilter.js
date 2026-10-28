@@ -1197,11 +1197,20 @@ export default {
     const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
     const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
     cy.do(multiSelect.open());
-    cy.then(() => multiSelect
-      .find(MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))))
-      .totalRecords()).then((actualCount) => {
-      expect(actualCount).to.be.at.least(minCount);
-    });
+    // Counters can still come from the facets response for the previous query - retry until refreshed
+    cy.recurse(
+      () => cy.then(() => multiSelect
+        .find(MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))))
+        .totalRecords()),
+      (actualCount) => actualCount >= minCount,
+      {
+        limit: 15,
+        delay: 1000,
+        timeout: 20_000,
+        log: (actualCount) => cy.log(`"${optionName}" counter: ${actualCount} (expected >= ${minCount})`),
+        error: `"${optionName}" counter in "${accordionName}" stayed below ${minCount}`,
+      },
+    );
   },
 
   verifyCheckboxInAccordion(accordionName, checkboxValue, isChecked = null) {

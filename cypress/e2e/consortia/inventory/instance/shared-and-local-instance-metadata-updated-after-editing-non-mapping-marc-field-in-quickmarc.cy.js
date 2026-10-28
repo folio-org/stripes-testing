@@ -77,6 +77,13 @@ describe('Inventory', () => {
           },
         );
 
+        // "Record last updated" shows minutes only - let the creation minute pass so the
+        // edits in the test can't land in the same minute as the baseline
+        cy.wait(60_000);
+        cy.resetTenant();
+        cy.getAdminToken(false);
+        cy.setTenant(Affiliations.College);
+
         // User created in College (member) so it logs in there directly (ECS skill Pattern 1)
         cy.createTempUser([]).then((createdUser) => {
           testData.user = createdUser;

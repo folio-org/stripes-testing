@@ -12,6 +12,7 @@ import Users from '../../../../../support/fragments/users/users';
 import VersionHistorySection from '../../../../../support/fragments/inventory/versionHistorySection';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import DateTools from '../../../../../support/utils/dateTools';
+import Locations from '../../../../../support/fragments/settings/tenant/location-setup/locations';
 
 const capabSetsToAssign = [
   CapabilitySets.uiInventoryInstanceEdit,
@@ -45,10 +46,7 @@ describe('Inventory', () => {
         cy.getHoldingTypes({ limit: 1, query: 'source=folio' }).then((holdingTypes) => {
           testData.holdingTypeId = holdingTypes[0].id;
         });
-        cy.getLocations({
-          limit: 1,
-          query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
-        }).then((location) => {
+        Locations.getOrCreateTenantLocationViaApi(Affiliations.College).then((location) => {
           testData.location = location;
         });
         cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((res) => {
