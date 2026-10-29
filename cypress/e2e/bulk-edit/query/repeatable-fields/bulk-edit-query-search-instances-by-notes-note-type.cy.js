@@ -9,6 +9,7 @@ import QueryModal, {
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import DateTools from '../../../../support/utils/dateTools';
 import { INSTANCE_NOTE_TYPES } from '../../../../support/constants';
 import InstanceNoteTypes from '../../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
 
@@ -275,6 +276,10 @@ describe('Bulk-edit', () => {
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
           QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
           QueryModal.fillInValueTextfield('AT_C805773_FolioInstance', 1);
+          QueryModal.addNewRow(1);
+          QueryModal.selectField(instanceFieldValues.createdDate, 2);
+          QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN_OR_EQUAL_TO, 2);
+          QueryModal.pickDate(DateTools.getCurrentDate(), 2);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
 

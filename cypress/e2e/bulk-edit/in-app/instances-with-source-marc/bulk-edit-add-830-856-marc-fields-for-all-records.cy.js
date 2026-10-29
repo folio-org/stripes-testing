@@ -154,6 +154,10 @@ describe(
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 2);
           QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 2);
           QueryModal.fillInValueTextfield(marcInstance.title, 2);
+          QueryModal.addNewRow(2);
+          QueryModal.selectField(instanceFieldValues.createdDate, 3);
+          QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN_OR_EQUAL_TO, 3);
+          QueryModal.pickDate(DateTools.getCurrentDate(), 3);
           cy.intercept('GET', '**/preview?limit=100&offset=0&step=UPLOAD*').as('getPreview');
           cy.intercept('GET', '/query/**').as('waiterForQueryCompleted');
           QueryModal.clickTestQuery();

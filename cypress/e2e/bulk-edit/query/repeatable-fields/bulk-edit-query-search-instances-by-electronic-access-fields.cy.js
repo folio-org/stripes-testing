@@ -9,6 +9,7 @@ import QueryModal, {
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import DateTools from '../../../../support/utils/dateTools';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import UrlRelationship from '../../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
 import { ELECTRONIC_ACCESS_RELATIONSHIP_NAME } from '../../../../support/constants';
@@ -207,6 +208,10 @@ describe('Bulk-edit', () => {
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
           QueryModal.selectOperator(STRING_OPERATORS.START_WITH, 1);
           QueryModal.fillInValueTextfield('AT_C808446_Instance', 1);
+          QueryModal.addNewRow(1);
+          QueryModal.selectField(instanceFieldValues.createdDate, 2);
+          QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN_OR_EQUAL_TO, 2);
+          QueryModal.pickDate(DateTools.getCurrentDate(), 2);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
 

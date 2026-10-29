@@ -9,6 +9,7 @@ import QueryModal, {
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import DateTools from '../../../../support/utils/dateTools';
 import { INSTANCE_NOTE_TYPES } from '../../../../support/constants';
 import InstanceNoteTypes from '../../../../support/fragments/settings/inventory/instance-note-types/instanceNoteTypes';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -204,6 +205,8 @@ describe('Bulk-edit', () => {
           // Get note type name for verification
           const noteTypeName = INSTANCE_NOTE_TYPES.ACTION_NOTE;
 
+          const todayDate = DateTools.getCurrentDate();
+
           // Create expected instances for verification
           const expectedInstances = createExpectedInstances(instances, noteTypeName);
 
@@ -220,10 +223,14 @@ describe('Bulk-edit', () => {
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
           QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH, 1);
           QueryModal.fillInValueTextfield('AT_C808445_Instance', 1);
+          QueryModal.addNewRow(1);
+          QueryModal.selectField(instanceFieldValues.createdDate, 2);
+          QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN_OR_EQUAL_TO, 2);
+          QueryModal.pickDate(todayDate, 2);
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyQueryAreaContent(
-            '(instance.administrative_notes starts with Includes index) AND (instance.title starts with AT_C808445_Instance)',
+            `(instance.administrative_notes starts with Includes index) AND (instance.title starts with AT_C808445_Instance) AND (instance.created_at >= ${todayDate})`,
           );
 
           let expectedInstancesToFind = [expectedInstances[0], expectedInstances[1]];
@@ -259,7 +266,7 @@ describe('Bulk-edit', () => {
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyQueryAreaContent(
-            '(instance.notes[*]->note contains record) AND (instance.title starts with AT_C808445_Instance)',
+            `(instance.notes[*]->note contains record) AND (instance.title starts with AT_C808445_Instance) AND (instance.created_at >= ${todayDate})`,
           );
 
           expectedInstancesToFind = [expectedInstances[0], expectedInstances[1]];
@@ -282,7 +289,7 @@ describe('Bulk-edit', () => {
           QueryModal.clickTestQuery();
           QueryModal.verifyPreviewOfRecordsMatched();
           QueryModal.verifyQueryAreaContent(
-            '(instance.notes[*]->staff_only == True) AND (instance.title starts with AT_C808445_Instance)',
+            `(instance.notes[*]->staff_only == True) AND (instance.title starts with AT_C808445_Instance) AND (instance.created_at >= ${todayDate})`,
           );
 
           expectedInstancesToFind = [expectedInstances[0], expectedInstances[1]];
