@@ -1,3 +1,4 @@
+import { including } from '../../../../interactors';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
@@ -59,7 +60,7 @@ describe('MARC', () => {
         { tags: ['dryRun', 'spitfire', 'C350572'] },
         () => {
           MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-          MarcAuthorities.selectFirst(testData.authority.title);
+          MarcAuthorities.selectFirst(including(testData.authority.title));
           MarcAuthority.edit();
           MarcAuthority.addNewField(
             5,
@@ -80,7 +81,7 @@ describe('MARC', () => {
             testData.authority.searchOption,
             testData.authority.newField.title,
           );
-          MarcAuthorities.checkRow(testData.authority.newField.title);
+          MarcAuthorities.checkRow(including(testData.authority.newField.title));
         },
       );
     });

@@ -1,3 +1,4 @@
+import { including } from '@interactors/html';
 import { DEFAULT_JOB_PROFILE_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -108,7 +109,7 @@ describe('MARC', () => {
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthorities.waitLoading();
           MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
-          MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
+          MarcAuthorities.selectTitle(including(marcFiles[1].authorityHeading));
           MarcAuthority.edit();
           cy.wait(2000);
           QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedValue);
@@ -124,7 +125,7 @@ describe('MARC', () => {
           QuickMarcEditor.confirmUpdateLinkedBibs(1);
           MarcAuthorities.closeMarcViewPane();
           MarcAuthorities.searchBy('Keyword', testData.updated1XXFieldValue);
-          MarcAuthorities.checkResultList([marcFiles[1].updatedAuthorityHeading]);
+          MarcAuthorities.checkResultList([including(marcFiles[1].updatedAuthorityHeading)]);
           MarcAuthorities.verifyNumberOfTitles(5, '1');
           MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
           InventoryInstance.checkInstanceTitle(marcFiles[0].instanceTitle);
