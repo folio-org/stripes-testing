@@ -71,7 +71,7 @@ describe('Receiving', () => {
               secondInstance = instanceData.instanceData;
             });
 
-            cy.getUsers({ limit: 1, query: `"username"="${user.username}"` }).then((users) => {
+            cy.getUsers({ limit: 1, query: `"username"=="${user.username}"` }).then((users) => {
               userData = users[0];
 
               AcquisitionUnits.assignUserViaApi(userData.id, firstAcquisitionUnit.id).then(() => {

@@ -1,3 +1,5 @@
+import { recurse } from 'cypress-recurse';
+
 Cypress.Commands.add('dataExportGetJobByStatus', (jobStatus) => {
   return cy.okapiRequest({
     path: `data-export/job-executions?limit=1&query=status==${jobStatus}`,
@@ -125,4 +127,28 @@ Cypress.Commands.add('configureDataExportFileLimit', (key, value) => {
     },
     isDefaultSearchParamsRequired: false,
   });
+});
+
+Cypress.Commands.add('waitForDataExportJobCompletion', (jobIdOrHrid, timeout = 300_000) => {
+  const findJob = (response) => (response.body.jobExecutions || []).find(
+    (job) => job.id === jobIdOrHrid || String(job.hrId) === String(jobIdOrHrid),
+  );
+
+  return recurse(
+    () => cy.okapiRequest({
+      path: 'data-export/job-executions',
+      searchParams: {
+        query:
+            'status=(COMPLETED OR COMPLETED_WITH_ERRORS OR FAIL) sortBy completedDate/sort.descending',
+        limit: 100,
+      },
+      isDefaultSearchParamsRequired: false,
+    }),
+    (response) => !!findJob(response),
+    {
+      log: `Waiting for data export job ${jobIdOrHrid} to complete`,
+      timeout,
+      delay: 3000,
+    },
+  ).then((response) => findJob(response));
 });

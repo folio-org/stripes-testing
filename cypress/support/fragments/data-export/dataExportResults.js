@@ -57,7 +57,7 @@ export default {
       id: row.find(MultiColumnListCell({ columnIndex: 9 })),
     };
     cy.getAdminToken(false).then(() => {
-      cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(
+      cy.getUsers({ limit: 1, query: `username==${userName || Cypress.env('diku_login')}` }).then(
         () => {
           let userNameToVerify;
 

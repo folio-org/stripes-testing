@@ -1,5 +1,8 @@
 /* eslint-disable no-unused-expressions */
-import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../../../support/constants';
+import {
+  APPLICATION_NAMES,
+  BULK_EDIT_TABLE_COLUMN_HEADERS,
+} from '../../../../../../support/constants';
 import BulkEditActions from '../../../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../../../support/fragments/bulk-edit/bulk-edit-files';
 import BulkEditLogs from '../../../../../../support/fragments/bulk-edit/bulk-edit-logs';
@@ -11,6 +14,7 @@ import InventorySearchAndFilter from '../../../../../../support/fragments/invent
 import InventoryViewSource from '../../../../../../support/fragments/inventory/inventoryViewSource';
 import QuickMarcEditor from '../../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../../../support/fragments/topMenuNavigation';
 import DateTools from '../../../../../../support/utils/dateTools';
 import FileManager from '../../../../../../support/utils/fileManager';
 import parseMrcFileContentAndVerify from '../../../../../../support/utils/parseMrcFileContent';
@@ -270,7 +274,7 @@ describe('Bulk-edit', () => {
 
         parseMrcFileContentAndVerify(fileNames.changedRecordsMarc, assertionsOnMarcFileContent, 1);
 
-        cy.visit(TopMenu.inventoryPath);
+        TopMenuNavigation.navigateToAppAdaptive(APPLICATION_NAMES.INVENTORY);
         InventoryInstances.waitContentLoading();
         InventorySearchAndFilter.searchInstanceByTitle(marcInstance.title);
         InventoryInstances.selectInstance();

@@ -87,9 +87,9 @@ describe('Data Export', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InstanceRecordView.verifyInstanceRecordViewOpened();
+        cy.intercept('POST', '/data-export/quick-export').as('getIds');
         InstanceRecordView.exportInstanceMarc();
 
-        cy.intercept('POST', '/data-export/quick-export').as('getIds');
         cy.wait('@getIds', getLongDelay()).then((req) => {
           const expectedIDs = req.request.body.uuids;
           const jobHrid = req.response.body.jobExecutionHrId;
@@ -101,26 +101,22 @@ describe('Data Export', () => {
             [expectedIDs],
           );
 
+          cy.getUserToken(user.username, user.password, { log: false });
+          cy.waitForDataExportJobCompletion(jobHrid);
+
           // Navigate to Data export app
           TopMenuNavigation.navigateToAppAdaptive(APPLICATION_NAMES.DATA_EXPORT);
           DataExportLogs.waitLoading();
 
           // Verify new export job in logs
-          cy.getUserToken(user.username, user.password, { log: false });
-          cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getJobInfo');
-          cy.wait('@getJobInfo', getLongDelay()).then(({ response }) => {
+          cy.then(() => {
             exportedMrcFileName = `quick-export-${jobHrid}.mrc`;
-            const { jobExecutions } = response.body;
-            const jobData = jobExecutions.find((jobExecution) => {
-              return jobExecution.exportedFiles[0].fileName.includes(exportedMrcFileName);
-            });
-            const jobId = jobData.hrId;
 
             // Verify success export result cells and download the MRC file
             DataExportResults.verifySuccessExportResultCells(
               exportedMrcFileName,
               1,
-              jobId,
+              jobHrid,
               user.username,
             );
             DataExportLogs.clickButtonWithText(exportedMrcFileName);

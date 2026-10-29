@@ -5,7 +5,6 @@ import {
   INVOICE_STATUSES,
   PAYMENT_METHOD,
   RECORD_STATUSES,
-  VENDOR_NAMES,
 } from '../../../../support/constants';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -13,6 +12,8 @@ import NewJobProfile from '../../../../support/fragments/data_import/job_profile
 import FileDetails from '../../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import { InvoiceView, Invoices } from '../../../../support/fragments/invoices';
+import Organizations from '../../../../support/fragments/organizations/organizations';
+import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
 import {
   ActionProfiles as SettingsActionProfiles,
   FieldMappingProfiles as SettingsFieldMappingProfiles,
@@ -42,9 +43,12 @@ describe('Data Import', () => {
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
-      organizationName: VENDOR_NAMES.GOBI,
+      // organizationName is set in before() - fetched from an existing vendor organization,
+      // or a newly-created one if none exists. The imported EDI file has no GOBI-specific
+      // content (just generic EDI routing ids), so any vendor organization works here
       paymentMethod: PAYMENT_METHOD.CASH,
     };
+    let createdOrganizationId;
     const actionProfile = {
       name: `C343338 autoTestActionProf.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
@@ -64,6 +68,20 @@ describe('Data Import', () => {
         if (groups?.[0]) mappingProfile.batchGroup = `"${groups[0].name}"`;
       });
 
+      Organizations.getOrganizationViaApi({ limit: 1, query: 'isVendor=true' }).then(
+        (existingOrganization) => {
+          if (existingOrganization) {
+            mappingProfile.organizationName = existingOrganization.name;
+          } else {
+            const newOrganization = { ...NewOrganization.defaultUiOrganizations };
+            Organizations.createOrganizationViaApi(newOrganization).then((organizationId) => {
+              createdOrganizationId = organizationId;
+              mappingProfile.organizationName = newOrganization.name;
+            });
+          }
+        },
+      );
+
       cy.allure().logCommandSteps(false);
       cy.login(user.username, user.password, {
         path: SettingsMenu.mappingProfilePath,
@@ -82,6 +100,9 @@ describe('Data Import', () => {
         cy.getInvoiceIdApi({
           query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"`,
         }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
+        // Only delete the organization if this test created it - never delete one we just
+        // fetched and reused, since it may belong to other data/tests in the environment
+        if (createdOrganizationId) Organizations.deleteOrganizationViaApi(createdOrganizationId);
       });
     });
 
