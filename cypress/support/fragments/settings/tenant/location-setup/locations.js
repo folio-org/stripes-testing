@@ -191,14 +191,17 @@ export default {
       });
   },
   /**
-   * Returns the active location "AT_Loc <tenantId>" ("AT_Loc_<index> <tenantId>" for index > 1),
-   * code "AT_Loc_<tenantId>" ("AT_Loc_<index>_<tenantId>"), in the current tenant.
-   * Creates it (with its own institution, campus and library) only if it does not exist yet.
-   * The location is shared between specs and is never deleted.
+   * Finds the shared "AT_Loc_<index>_<tenantId>" location (name and code are the same string)
+   * in the current tenant, creating it - with its own institution, campus and library - only if
+   * it does not exist yet. The location is shared between specs and is never deleted.
+   *
+   * @param {String} tenantId - The tenant to find or create the location in
+   * @param {Number} [index=1] - Distinguishes multiple shared locations per tenant; starts from 1
+   * @returns {Cypress.Chainable<Object>} The existing or newly created location record
    */
   getOrCreateTenantLocationViaApi(tenantId, index = 1) {
-    const name = index > 1 ? `AT_Loc_${index} ${tenantId}` : `AT_Loc ${tenantId}`;
-    const code = name.replace(' ', '_');
+    const name = `AT_Loc_${index}_${tenantId}`;
+    const code = name;
     // Yields an array: a callback returning undefined would make Cypress pass the previous subject on
     const findByCode = () => cy
       .okapiRequest({

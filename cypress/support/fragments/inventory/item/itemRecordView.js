@@ -16,6 +16,7 @@ import {
   Spinner,
   TextField,
   ValueChipRoot,
+  calloutTypes,
 } from '../../../../../interactors';
 import { COMMON_BUTTON_LABELS, ITEM_STATUS_NAMES } from '../../../constants';
 import dateTools from '../../../utils/dateTools';
@@ -195,6 +196,17 @@ export default {
     UpdateOwnershipModal.validateUpdateOwnershipModalView(tenant);
     UpdateOwnershipModal.validateAbilityToCreateNewHoldings(tenant);
     UpdateOwnershipModal.updateHoldings(tenant, location);
+  },
+
+  verifyOwnershipUpdatedCallout: (hrid, tenant) => {
+    cy.expect(
+      Callout({
+        type: calloutTypes.success,
+        textContent: including(
+          `Ownership of item ${hrid} has been successfully updated to ${tenant || ''}`,
+        ),
+      }).exists(),
+    );
   },
 
   verifyEffectiveLocationForItemInDetails: (location) => {
