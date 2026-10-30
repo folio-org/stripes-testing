@@ -1,20 +1,41 @@
 import uuid from 'uuid';
 
 import {
+  Accordion,
   Button,
+  Callout,
   DropdownMenu,
+  HTML,
+  Card,
+  Checkbox,
+  including,
+  MultiColumnListCell,
   NavListItem,
   Pane,
   PaneContent,
   Modal,
+  Section,
 } from '../../../../../interactors';
-import { DEFAULT_WAIT_TIME } from '../../../constants';
+import {
+  DEFAULT_WAIT_TIME,
+  COMMON_BUTTON_LABELS,
+  ORDER_LINE_FORM_LABELS,
+} from '../../../constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import getRandomPostfix from '../../../utils/stringTools';
+import OrderLineDetails from '../../orders/orderLineDetails';
 import OrderTemplateForm from './orderTemplateForm';
+
+const FUND_RESTRICTION_ERROR = 'Location-restricted fund applied to invalid location';
+
+const templateViewPane = Pane({ id: 'order-settings-order-template-view' });
+const templatePaymentTermsSection = templateViewPane.find(Accordion({ id: 'paymentTerms' }));
 
 const actionsButton = Button('Actions');
 const deleteModal = Modal('Delete template');
+const duplicateModal = Modal('Duplicate template');
+const duplicateCancelButton = duplicateModal.find(Button(COMMON_BUTTON_LABELS.CANCEL));
+const duplicateSubmitButton = duplicateModal.find(Button('Submit'));
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -111,14 +132,141 @@ export default {
       })
       .then(({ body }) => body);
   },
+  assertPolOngoingOrderSectionAbsent() {
+    cy.expect(templateViewPane.find(Section({ id: 'polOngoingOrder' })).absent());
+  },
+
+  assertPaymentTermsSectionAbsent() {
+    cy.expect(templateViewPane.find(Accordion({ id: 'paymentTerms' })).absent());
+  },
+
+  expandAll() {
+    cy.do(templateViewPane.find(Button('Expand all')).click());
+  },
+
+  // View mode: "Multi-year prepayment" is shown as a checked read-only checkbox
+  assertMultiYearPrepaymentChecked() {
+    cy.expect(
+      templateViewPane
+        .find(Checkbox({ labelText: ORDER_LINE_FORM_LABELS.MULTI_YEAR_PREPAYMENT }))
+        .has({ checked: true, disabled: true }),
+    );
+  },
+
+  assertPaymentTermsCardContainsFund(fyCode, fundName) {
+    cy.expect(
+      templatePaymentTermsSection
+        .find(Card({ headerStart: including(fyCode) }))
+        .has({ text: including(fundName) }),
+    );
+  },
+
+  assertPaymentTermsCardShowsNoItems(fyCode) {
+    cy.expect(
+      templatePaymentTermsSection
+        .find(Card({ headerStart: including(fyCode) }))
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
+  },
+
+  verifyExpandCollapseAllButton({ expanded = false } = {}) {
+    const label = expanded ? COMMON_BUTTON_LABELS.COLLAPSE_ALL : COMMON_BUTTON_LABELS.EXPAND_ALL;
+
+    cy.expect(templateViewPane.find(Button(label)).has({ disabled: false }));
+  },
+
+  openDuplicateModal() {
+    cy.do([actionsButton.click(), DropdownMenu().find(Button('Duplicate')).click()]);
+    cy.expect(duplicateModal.exists());
+  },
+
+  verifyDuplicateModalContent() {
+    cy.expect([
+      duplicateModal.has({
+        message: including('Are you sure you want to duplicate the template?'),
+      }),
+      duplicateCancelButton.has({ disabled: false }),
+      duplicateSubmitButton.has({ disabled: false, className: including('primary') }),
+    ]);
+  },
+
+  cancelDuplicateModal() {
+    cy.do(duplicateCancelButton.click());
+    cy.expect([duplicateModal.absent(), templateViewPane.exists()]);
+  },
+
+  submitDuplicateModal() {
+    cy.do(duplicateSubmitButton.click());
+    InteractorsTools.checkCalloutMessage('The template was successfully duplicated');
+  },
+
+  duplicateTemplate() {
+    this.openDuplicateModal();
+    this.submitDuplicateModal();
+  },
+
+  // fields: [{ key, value, checkbox }]; fundDistribution: fund names shown in "Fund distribution"
+  // physicalResourceDetails: [{ key, value }] checked only within "Physical resource details",
+  // because P/E mix template also has the same labels in "E-resources details"
+  checkTemplateViewDetails({
+    fields = [],
+    fundDistribution = [],
+    physicalResourceDetails = [],
+  } = {}) {
+    OrderLineDetails.checkSectionData({ details: fields, section: templateViewPane });
+    OrderLineDetails.checkSectionData({
+      details: physicalResourceDetails,
+      section: templateViewPane.find(Section({ id: 'physical' })),
+    });
+    fundDistribution.forEach((fundName) => {
+      cy.expect(
+        templateViewPane
+          .find(MultiColumnListCell({ column: 'Fund', content: including(fundName) }))
+          .exists(),
+      );
+    });
+  },
+
+  // All key-values show no value and all checkboxes are unchecked,
+  // except key-values with labels listed in "except".
+  // Empty value is rendered as "No value set-" (screen reader text + "-"),
+  // empty list as "The list contains no items"
+  verifyTemplateViewFieldsEmpty({ except = [] } = {}) {
+    const emptyValues = ['', '-', 'No value set-', 'The list contains no items'];
+
+    // .should() retries as one command; expect inside interactor perform() logs every retry
+    cy.get('#order-settings-order-template-view').should(($pane) => {
+      const filledKeyValues = [...$pane[0].querySelectorAll('[class^=kvRoot]')]
+        .map((kv) => ({
+          label: kv.querySelector('[class^=kvLabel]')?.textContent.trim(),
+          value: kv.querySelector('[class^=kvValue]')?.textContent.trim() ?? '',
+        }))
+        .filter(({ label }) => !except.includes(label))
+        .filter(({ value }) => !emptyValues.includes(value))
+        .map(({ label, value }) => `${label}: ${value}`);
+      const checkedCheckboxes = [...$pane[0].querySelectorAll('input[type=checkbox]')]
+        .filter((checkbox) => checkbox.checked)
+        .map((checkbox) => `checkbox: ${checkbox.name || checkbox.id}`);
+
+      expect(
+        [...filledKeyValues, ...checkedCheckboxes],
+        'Filled fields in the order template view',
+      ).to.deep.equal([]);
+    });
+  },
+
   getOrderTemplateByNameViaApi(templateName) {
-    return cy
-      .okapiRequest({
-        path: 'orders/order-templates',
-        searchParams: { query: `templateName=="${templateName}"`, limit: 1 },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then(({ body }) => body.orderTemplates?.[0]);
+    return (
+      cy
+        .okapiRequest({
+          path: 'orders/order-templates',
+          searchParams: { query: `templateName=="${templateName}"`, limit: 1 },
+          isDefaultSearchParamsRequired: false,
+        })
+        // null, not undefined: a .then returning undefined would yield the whole response instead
+        .then(({ body }) => body.orderTemplates?.[0] ?? null)
+    );
   },
   deleteOrderTemplateViaApi(orderTemplateId) {
     return cy.okapiRequest({
@@ -129,5 +277,8 @@ export default {
   openEditForm() {
     cy.do([actionsButton.click(), DropdownMenu().find(Button('Edit')).click()]);
     OrderTemplateForm.waitLoading();
+  },
+  checkFundRestrictionErrorToastAbsent() {
+    cy.expect(Callout(including(FUND_RESTRICTION_ERROR)).absent());
   },
 };
