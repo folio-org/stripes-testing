@@ -1018,6 +1018,43 @@ export default {
     })
     .then((response) => (returnBody ? response.body : response.body.id)),
 
+  /**
+   * Finds the existing reusable "AT_Org_<index>_<tenantId>" vendor Organization (name and code are the
+   * same string) in the current tenant, creating it only if it does not exist yet - for tests
+   * that only need a valid vendor reference (e.g. to create an Order via API) and don't
+   * exercise the Organization itself. The organization is shared between specs and is never
+   * deleted. Same tenant+index, reuse-across-runs approach as
+   * Locations.getOrCreateTenantLocationViaApi.
+   *
+   * @param {String} tenantId - The tenant to find or create the organization in
+   * @param {Number} [index=1] - Distinguishes multiple reusable organizations per tenant; starts from 1
+   * @returns {Cypress.Chainable<Object>} The existing or newly created organization record
+   */
+  getOrCreateVendorOrg(tenantId, index = 1) {
+    const code = `AT_Org_${index}_${tenantId}`;
+
+    return this.getOrganizationViaApi({ query: `code=="${code}"`, limit: 1 }).then(
+      (existingOrganization) => {
+        // Check the `code` property, not bare truthiness: Cypress replaces an undefined
+        // .then() return (what getOrganizationViaApi yields on no match) with the raw response.
+        if (existingOrganization && existingOrganization.code === code) {
+          return existingOrganization;
+        }
+
+        return this.createOrganizationViaApi(
+          {
+            name: code,
+            code,
+            status: 'Active',
+            isVendor: true,
+            erpCode: code,
+          },
+          { returnBody: true },
+        );
+      },
+    );
+  },
+
   createBankingInformationViaApi: (bankingInformation) => cy
     .okapiRequest({
       method: 'POST',
