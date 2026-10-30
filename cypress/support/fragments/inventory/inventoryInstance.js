@@ -207,9 +207,7 @@ const pressAddHoldingsButton = () => {
 
 const waitLoading = () => {
   cy.wait(1000);
-  cy.get('#pane-instancedetails').within(() => {
-    cy.contains('button', 'Action').should('exist');
-  });
+  cy.get('#pane-instancedetails [data-test-pane-header-actions-button="true"]').should('exist');
 };
 
 const openHoldings = (...holdingToBeOpened) => {
@@ -979,6 +977,20 @@ export default {
       MultiColumnListRow({ rowIndexInParent: indexRowNumber }),
     );
     cy.expect([row.find(MultiColumnListCell({ content: status })).exists()]);
+  },
+
+  // Verifies several statuses are present in the Holdings accordion at once, without relying on
+  // row position - unlike checkHoldingsStatus, which toggles the accordion header on every call
+  // (unsafe to call twice in a row without re-collapsing)
+  checkHoldingsAccordionContainsStatuses: (
+    statuses,
+    languageAccordionValue = 'Holdings: Main Library >',
+  ) => {
+    const holdingsAccordion = Accordion({ label: including(languageAccordionValue) });
+    cy.do(holdingsAccordion.clickHeader());
+    cy.expect(
+      statuses.map((status) => holdingsAccordion.find(MultiColumnListCell({ content: status })).exists()),
+    );
   },
 
   moveItemToAnotherHolding({
