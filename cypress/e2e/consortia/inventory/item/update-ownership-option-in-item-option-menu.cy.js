@@ -18,7 +18,6 @@ import Locations from '../../../../support/fragments/settings/tenant/location-se
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
-import InteractorsTools from '../../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory', () => {
@@ -232,8 +231,9 @@ describe('Inventory', () => {
             tenantNames.university,
             testData.universityTenant.firstLocationName,
           );
-          InteractorsTools.checkCalloutMessage(
-            `Ownership of item ${testData.collegeTenant.item.hrid} has been successfully updated to ${tenantNames.university}`,
+          ItemRecordView.verifyOwnershipUpdatedCallout(
+            testData.collegeTenant.item.hrid,
+            tenantNames.university,
           );
           InstanceRecordView.waitLoading();
           InstanceRecordView.verifyItemsCount(0, testData.collegeTenant.locationName);

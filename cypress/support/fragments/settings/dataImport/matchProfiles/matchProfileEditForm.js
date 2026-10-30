@@ -115,6 +115,26 @@ export default {
     });
     cy.do([subfieldField.focus(), subfieldField.fillIn(value)]);
   },
+  changeIncomingRecordSubfieldValue(value) {
+    const subfieldField = TextField({
+      name: 'profile.matchDetails[0].incomingMatchExpression.fields[3].value',
+    });
+    cy.do([subfieldField.focus(), subfieldField.fillIn(value)]);
+  },
+  verifyIncomingRecordFieldValues({ field, in1, in2, subfield } = {}) {
+    const fieldNames = {
+      field: 'profile.matchDetails[0].incomingMatchExpression.fields[0].value',
+      in1: 'profile.matchDetails[0].incomingMatchExpression.fields[1].value',
+      in2: 'profile.matchDetails[0].incomingMatchExpression.fields[2].value',
+      subfield: 'profile.matchDetails[0].incomingMatchExpression.fields[3].value',
+    };
+    const expectedValues = { field, in1, in2, subfield };
+    Object.keys(expectedValues)
+      .filter((key) => expectedValues[key] !== undefined)
+      .forEach((key) => {
+        cy.expect(TextField({ name: fieldNames[key] }).has({ value: expectedValues[key] }));
+      });
+  },
   changesNotSaved() {
     cy.expect(TextField({ name: 'profile.name' }).exists());
     cy.expect(selectActionProfile.exists());

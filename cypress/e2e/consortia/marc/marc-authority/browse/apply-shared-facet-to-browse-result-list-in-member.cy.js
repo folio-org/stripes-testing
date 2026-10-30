@@ -174,9 +174,11 @@ describe('MARC', () => {
         });
       });
 
+      // nonParallel: steps 5, 7 expect the same tenant-wide "Shared" counters as in step 3 -
+      // authorities created/deleted by parallel specs in between would change them
       it(
         'C404449 Apply "Shared" facet to the browse result list in "Member" tenant (consortia) (promin)',
-        { tags: ['criticalPathECS', 'promin', 'C404449'] },
+        { tags: ['criticalPathECS', 'promin', 'C404449', 'nonParallel'] },
         () => {
           // 1 Check the "Search & filter" pane.
           MarcAuthorities.verifyExistanceOfSharedAccordion();
