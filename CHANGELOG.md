@@ -10,6 +10,7 @@
 * Supply Personal Data Disclosure form. Refs UITEST-135.
 * Lock `axios` to `1.19.0` to include security updates. Refs UITEST-144.
 * Conform `AutoSuggest` interactor to work with updated component from stripes-components. Refs UITEST-146.
+* Conform `MultiSelect` interactor to work with updated component from stripes-components (no `role="application"`/`aria-expanded` on the container; read from the combobox).
 
 ## [5.0.1](https://github.com/folio-org/stripes-testing/tree/v5.0.1) (2026-03-31)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v5.0.0...v5.0.1)
