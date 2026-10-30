@@ -1829,6 +1829,141 @@ export default {
       });
   },
 
+  // Updates ONLY the Instance's statistical codes (Add these to existing) - a single, narrowly
+  // scoped mapping profile, for tests that chain several independent single-field Update
+  // actions off one match (unlike createInstanceMappingProfileForUpdateViaApi, which always
+  // enables several fields together)
+  createInstanceStatisticalCodeMappingProfileViaApi: ({ name, statisticalCode }) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: {
+          profile: {
+            name,
+            incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+            existingRecordType: 'INSTANCE',
+            description: '',
+            mappingDetails: {
+              name: 'instance',
+              recordType: 'INSTANCE',
+              mappingFields: [
+                {
+                  name: 'statisticalCodeIds',
+                  enabled: true,
+                  path: 'instance.statisticalCodeIds[]',
+                  value: '',
+                  subfields: [
+                    {
+                      order: 0,
+                      path: 'instance.statisticalCodeIds[]',
+                      fields: [
+                        {
+                          name: 'statisticalCodeId',
+                          enabled: true,
+                          path: 'instance.statisticalCodeIds[]',
+                          value: `"${statisticalCode}"`,
+                        },
+                      ],
+                    },
+                  ],
+                  repeatableFieldAction: 'EXTEND_EXISTING',
+                },
+              ],
+            },
+          },
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  // Updates ONLY the Instance's administrative notes (Add these to existing) - see note on
+  // createInstanceStatisticalCodeMappingProfileViaApi above
+  createInstanceAdministrativeNoteMappingProfileViaApi: ({ name, administrativeNote }) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: {
+          profile: {
+            name,
+            incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+            existingRecordType: 'INSTANCE',
+            description: '',
+            mappingDetails: {
+              name: 'instance',
+              recordType: 'INSTANCE',
+              mappingFields: [
+                {
+                  name: 'administrativeNotes',
+                  enabled: true,
+                  path: 'instance.administrativeNotes[]',
+                  value: '',
+                  subfields: [
+                    {
+                      order: 0,
+                      path: 'instance.administrativeNotes[]',
+                      fields: [
+                        {
+                          name: 'administrativeNote',
+                          enabled: true,
+                          path: 'instance.administrativeNotes[]',
+                          value: `"${administrativeNote}"`,
+                        },
+                      ],
+                    },
+                  ],
+                  repeatableFieldAction: 'EXTEND_EXISTING',
+                },
+              ],
+            },
+          },
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  // Updates ONLY the Instance status term - see note on
+  // createInstanceStatisticalCodeMappingProfileViaApi above
+  createInstanceStatusTermMappingProfileViaApi: ({ name, statusTerm }) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: {
+          profile: {
+            name,
+            incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+            existingRecordType: 'INSTANCE',
+            description: '',
+            mappingDetails: {
+              name: 'instance',
+              recordType: 'INSTANCE',
+              mappingFields: [
+                {
+                  name: 'statusId',
+                  enabled: true,
+                  path: 'instance.statusId',
+                  value: `"${statusTerm}"`,
+                  subfields: [],
+                },
+              ],
+            },
+          },
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
   createHoldingsMappingProfileForUpdateViaApi: (profile) => {
     return cy
       .okapiRequest({

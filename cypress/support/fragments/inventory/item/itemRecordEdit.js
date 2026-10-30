@@ -83,6 +83,9 @@ export default {
       saveAndCloseBtn.has({ disabled: true }),
     ]);
   },
+  checkTextFieldValue: (fieldLabel, fieldValue) => {
+    cy.expect(TextField(fieldLabel).has({ value: fieldValue }));
+  },
   checkButtonsEnabled({ saveAndClose = false, saveKeepEditing = false, cancel = true } = {}) {
     cy.expect([
       cancelBtn.has({ disabled: !cancel }),

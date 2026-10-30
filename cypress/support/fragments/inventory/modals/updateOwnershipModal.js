@@ -34,6 +34,15 @@ export default {
     cy.do(Modal('Update ownership of items').find(Button('Confirm')).click());
   },
 
+  updateHoldingsWithNewLocation(tenant, locationName) {
+    selectAffiliation(tenant);
+    cy.do(updateOwnershipModal.find(Button('Create new holdings for location')).click());
+    SelectLocationModal.pickLocation(locationName);
+    cy.do(updateButton.click());
+    cy.expect(updateOwnershipModal.absent());
+    cy.do(Modal('Update ownership of items').find(Button('Confirm')).click());
+  },
+
   validateAbilityToCreateNewHoldings(tenant) {
     selectAffiliation(tenant);
     cy.do(updateOwnershipModal.find(Button('Create new holdings for location')).click());
