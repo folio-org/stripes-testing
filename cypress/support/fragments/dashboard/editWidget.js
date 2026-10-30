@@ -6,7 +6,8 @@ const EDIT_WIDGET = 'Edit widget';
 const editWidgetPane = Pane(including(EDIT_WIDGET));
 const WidgetForm = WidgetFormConstructor(editWidgetPane);
 
-const getDefinitionLabelsMap = (definitionEntity) => new Map(definitionEntity.columns.map((c) => [c.name, c.label]));
+const getDefinitionLabelsMap = (definitionEntity) =>
+  new Map(definitionEntity.columns.map((c) => [c.name, c.label]));
 
 export default {
   ...WidgetForm,
@@ -55,7 +56,7 @@ export default {
     };
 
     Object.entries(configuration)
-      .filter(([_, v]) => Boolean(v))
+      .filter(([, v]) => Boolean(v))
       .forEach(([k, v]) => {
         HANDLERS_DICT[k](v, simpleSearchDefinition);
       });
@@ -68,7 +69,7 @@ export default {
   assertFilterColumns(columns, simpleSearchDefinition) {
     const labelsMap = getDefinitionLabelsMap(simpleSearchDefinition.filters);
 
-    columns.forEach(({ fieldType: _, name, rules }, index) => {
+    columns.forEach(({ name, rules }, index) => {
       WidgetForm.assertFilterColumn(labelsMap.get(name), { index });
 
       rules?.forEach(({ comparator, filterValue }, ruleIndex) => {

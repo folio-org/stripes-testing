@@ -90,7 +90,8 @@ describe('MARC', () => {
           cy.resetTenant();
           cy.getAdminToken();
           if (user) Users.deleteViaApi(user.userId);
-          if (createdAuthorityRecordId) MarcAuthorities.deleteViaAPI(createdAuthorityRecordId, true);
+          if (createdAuthorityRecordId)
+            MarcAuthorities.deleteViaAPI(createdAuthorityRecordId, true);
           if (authorityFileId) {
             ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(testData.name);
             cy.deleteAuthoritySourceFileViaAPI(authorityFileId, true);

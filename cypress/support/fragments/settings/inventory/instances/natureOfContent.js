@@ -46,12 +46,13 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id, ignoreErrors = true) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `nature-of-content-terms/${id}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode: !ignoreErrors,
-  }),
+  deleteViaApi: (id, ignoreErrors = true) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `nature-of-content-terms/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: !ignoreErrors,
+    }),
   verifyConsortiumNatureOfContentInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({
       content: including(name),

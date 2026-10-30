@@ -18,7 +18,7 @@ let environments = {};
 try {
   // eslint-disable-next-line global-require
   ({ activeEnvironment, environments } = require('./environments'));
-} catch (e) {
+} catch {
   // cypress/environments.js is gitignored and proceed with defaults
 }
 
@@ -36,7 +36,7 @@ let cypressLocal = {};
 try {
   // eslint-disable-next-line global-require, import/extensions
   cypressLocal = require('./cypress.local.js');
-} catch (e) {
+} catch {
   // cypress.local.js is gitignored and optional
 }
 

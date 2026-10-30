@@ -63,7 +63,8 @@ const iconTimes = Button({ icon: 'times' });
 const tagsButton = orderDetailsPane.find(Button({ id: 'clickable-show-tags' }));
 const tagsPane = Pane('Tags');
 const tagsMultiSelect = tagsPane.find(MultiSelect({ id: 'input-tag' }));
-const addTagOption = (tagName) => MultiSelectMenu().find(MultiSelectOption(and(including('Add tag for:'), including(tagName))));
+const addTagOption = (tagName) =>
+  MultiSelectMenu().find(MultiSelectOption(and(including('Add tag for:'), including(tagName))));
 
 const invoicesList = MultiColumnList({ id: 'orderInvoices' });
 

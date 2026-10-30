@@ -1,4 +1,12 @@
-import { Button, Checkbox, Link, Modal, RichEditor2, Section, TextArea } from '../../../../../interactors';
+import {
+  Button,
+  Checkbox,
+  Link,
+  Modal,
+  RichEditor2,
+  Section,
+  TextArea,
+} from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const routingListConfigurationSection = Section({ id: 'routing-list-configuration-template-pane' });

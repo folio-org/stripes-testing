@@ -116,7 +116,8 @@ const collapseSearchPaneButton = Button({
   ariaLabelledby: 'collapse-filter-pane-button-tooltip-text',
 });
 const expandSearchPaneButton = Button({ ariaLabelledby: 'expand-filter-pane-button-tooltip-text' });
-const getSearchErrorText = (query) => `Search could not be processed for ${query}. Please check your query and try again.`;
+const getSearchErrorText = (query) =>
+  `Search could not be processed for ${query}. Please check your query and try again.`;
 const anyBrowseResultList = MultiColumnList({ id: including('browse-results-list-') });
 const URI_CHAR_LIMIT = 8192;
 const uriCharLimitErrorText = `Search URI request character limit has been exceeded. The character limit is ${URI_CHAR_LIMIT}. Please revise your search and/or facet selections.`;
@@ -218,7 +219,8 @@ export default {
   getInstanceHRID,
   checkInstanceDetails,
   getAllSearchResults: () => MultiColumnList(),
-  getSearchResult: (row = 0, col = 0) => paneResultsSection.find(MultiColumnListCell({ row, columnIndex: col })),
+  getSearchResult: (row = 0, col = 0) =>
+    paneResultsSection.find(MultiColumnListCell({ row, columnIndex: col })),
   waitLoading: () => cy.expect([Form().find(inventorySearchAndFilter).exists()]),
   browseCallNumberIsAbsent: () => cy.expect(HTML('Browse call numbers').absent()),
   browseSubjectIsAbsent: () => cy.expect(HTML('Browse subjects').absent()),
@@ -594,7 +596,8 @@ export default {
     cy.expect(MultiColumnListCell({ content: including(value) }).exists());
   },
 
-  verifyContentNotExistInSearchResult: (cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).absent()),
+  verifyContentNotExistInSearchResult: (cellContent) =>
+    cy.expect(MultiColumnListCell({ content: cellContent }).absent()),
 
   getInstancesByIdentifierViaApi(identifier, limit = 100) {
     return cy
@@ -1014,10 +1017,14 @@ export default {
   },
 
   verifySearchToggleButtonSelected: () => cy.expect(searchToggleButton.has({ default: false })),
-  verifySearchButtonDisabled: (isDisabled = true) => cy.expect(searchButton.has({ disabled: isDisabled })),
-  verifyResetAllButtonDisabled: (isDisabled = true) => cy.expect(resetAllBtn.has({ disabled: isDisabled })),
-  verifyPreviouseButtonDisabled: (isDisabled = true) => cy.expect(previousButton.has({ disabled: isDisabled })),
-  verifyNextButtonDisabled: (isDisabled = true) => cy.expect(nextButton.has({ disabled: isDisabled })),
+  verifySearchButtonDisabled: (isDisabled = true) =>
+    cy.expect(searchButton.has({ disabled: isDisabled })),
+  verifyResetAllButtonDisabled: (isDisabled = true) =>
+    cy.expect(resetAllBtn.has({ disabled: isDisabled })),
+  verifyPreviouseButtonDisabled: (isDisabled = true) =>
+    cy.expect(previousButton.has({ disabled: isDisabled })),
+  verifyNextButtonDisabled: (isDisabled = true) =>
+    cy.expect(nextButton.has({ disabled: isDisabled })),
 
   verifyBrowseInventorySearchResults({ records = [] } = {}) {
     cy.expect(inventorySearchResultsPane.exists());
@@ -1209,15 +1216,19 @@ export default {
     cy.do(multiSelect.open());
     // Counters can still come from the facets response for the previous query - retry until refreshed
     cy.recurse(
-      () => cy.then(() => multiSelect
-        .find(MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))))
-        .totalRecords()),
+      () =>
+        cy.then(() =>
+          multiSelect
+            .find(MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))))
+            .totalRecords(),
+        ),
       (actualCount) => actualCount >= minCount,
       {
         limit: 15,
         delay: 1000,
         timeout: 20_000,
-        log: (actualCount) => cy.log(`"${optionName}" counter: ${actualCount} (expected >= ${minCount})`),
+        log: (actualCount) =>
+          cy.log(`"${optionName}" counter: ${actualCount} (expected >= ${minCount})`),
         error: `"${optionName}" counter in "${accordionName}" stayed below ${minCount}`,
       },
     );
@@ -1225,7 +1236,8 @@ export default {
 
   verifyCheckboxInAccordion(accordionName, checkboxValue, isChecked = null) {
     cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).exists());
-    if (isChecked !== null) cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).has({ checked: isChecked }));
+    if (isChecked !== null)
+      cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).has({ checked: isChecked }));
   },
 
   verifyTextFieldInAccordion(accordionName, textFieldValue) {
@@ -1550,7 +1562,8 @@ export default {
   },
 
   verifyErrorMessageInTextField(textFieldInteractor, isError = true, errorText) {
-    if (isError) cy.expect(textFieldInteractor.has({ error: errorText, errorBorder: true, errorIcon: true }));
+    if (isError)
+      cy.expect(textFieldInteractor.has({ error: errorText, errorBorder: true, errorIcon: true }));
     else {
       cy.expect(
         textFieldInteractor.has({ error: undefined, errorBorder: false, errorIcon: false }),

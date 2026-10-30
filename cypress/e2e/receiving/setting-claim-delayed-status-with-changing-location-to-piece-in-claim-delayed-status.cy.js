@@ -82,9 +82,11 @@ describe('Receiving', () => {
       .then((materialType) => {
         testData.materialType = materialType;
       })
-      .then(() => cy.getAcquisitionMethodsApi({
-        query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-      }))
+      .then(() =>
+        cy.getAcquisitionMethodsApi({
+          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+        }),
+      )
       .then(({ body }) => {
         testData.acquisitionMethod = body.acquisitionMethods[0];
       });
@@ -128,11 +130,13 @@ describe('Receiving', () => {
       return Pieces.updateOrderPiecesStatusesBatchViaApi({
         pieceIds: [piece.id],
         receivingStatus: RECEIVING_PIECE_STATUSES.LATE,
-      }).then(() => Pieces.updateOrderPiecesStatusesBatchViaApi({
-        pieceIds: [piece.id],
-        receivingStatus: RECEIVING_PIECE_STATUSES.CLAIM_DELAYED,
-        claimingInterval: 1,
-      }));
+      }).then(() =>
+        Pieces.updateOrderPiecesStatusesBatchViaApi({
+          pieceIds: [piece.id],
+          receivingStatus: RECEIVING_PIECE_STATUSES.CLAIM_DELAYED,
+          claimingInterval: 1,
+        }),
+      );
     });
   };
 

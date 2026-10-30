@@ -66,9 +66,11 @@ describe('Receiving', () => {
       .then((materialType) => {
         testData.materialType = materialType;
       })
-      .then(() => cy.getAcquisitionMethodsApi({
-        query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-      }))
+      .then(() =>
+        cy.getAcquisitionMethodsApi({
+          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+        }),
+      )
       .then(({ body }) => {
         testData.acquisitionMethod = body.acquisitionMethods[0];
       });
@@ -139,9 +141,10 @@ describe('Receiving', () => {
   // piece #3 with item in the new Loc 3 holding
   const createPieces = () => {
     const [location1HoldingId, location2HoldingId] = [testData.location1, testData.location2].map(
-      (location) => testData.instanceHoldings.find(
-        ({ permanentLocationId }) => permanentLocationId === location.id,
-      ).id,
+      (location) =>
+        testData.instanceHoldings.find(
+          ({ permanentLocationId }) => permanentLocationId === location.id,
+        ).id,
     );
 
     return createPiece({ holdingId: location1HoldingId, createItem: true })

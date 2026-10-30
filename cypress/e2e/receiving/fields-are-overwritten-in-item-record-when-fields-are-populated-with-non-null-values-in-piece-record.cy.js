@@ -83,9 +83,11 @@ describe('Receiving', () => {
       .then((materialType) => {
         testData.materialType = materialType;
       })
-      .then(() => cy.getAcquisitionMethodsApi({
-        query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-      }))
+      .then(() =>
+        cy.getAcquisitionMethodsApi({
+          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+        }),
+      )
       .then(({ body }) => {
         testData.acquisitionMethod = body.acquisitionMethods[0];
       });
@@ -129,9 +131,11 @@ describe('Receiving', () => {
       query: `purchaseOrderLineIdentifier=="${testData.orderLine.id}"`,
     })
       .then(([item]) => InventoryItems.editItemViaApi({ ...item, ...itemFields }))
-      .then(() => InventoryItems.getItemViaApi({
-        query: `purchaseOrderLineIdentifier=="${testData.orderLine.id}"`,
-      }))
+      .then(() =>
+        InventoryItems.getItemViaApi({
+          query: `purchaseOrderLineIdentifier=="${testData.orderLine.id}"`,
+        }),
+      )
       .then(([item]) => {
         testData.item = item;
       });

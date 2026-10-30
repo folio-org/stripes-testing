@@ -49,14 +49,18 @@ describe('Invoices', () => {
           return Ledgers.createViaApi({
             ...Ledgers.getDefaultLedger(),
             fiscalYearOneId: f.get(R.FY).id,
-          }).then((ledger) => f.set(R.LEDGER, ledger, (v) => Ledgers.deleteLedgerViaApi(v.id, false)));
+          }).then((ledger) =>
+            f.set(R.LEDGER, ledger, (v) => Ledgers.deleteLedgerViaApi(v.id, false)),
+          );
         })
         .step((f) => {
           // Precondition 3: Active Fund #1 related to the Ledger
           return Funds.createViaApi({
             ...Funds.getDefaultFund(),
             ledgerId: f.get(R.LEDGER).id,
-          }).then((response) => f.set(R.FUND, response.fund, (v) => Funds.deleteFundViaApi(v.id, false)));
+          }).then((response) =>
+            f.set(R.FUND, response.fund, (v) => Funds.deleteFundViaApi(v.id, false)),
+          );
         })
         .step((f) => {
           // Precondition 3: Current budget with money allocation for Fund #1
@@ -81,7 +85,9 @@ describe('Invoices', () => {
           return Invoices.createInvoiceViaApi({
             vendorId: f.get(R.ORG).id,
             fiscalYearId: f.get(R.FY).id,
-          }).then((invoice) => f.set(R.INVOICE, invoice, (v) => Invoices.deleteInvoiceViaApi(v.id)));
+          }).then((invoice) =>
+            f.set(R.INVOICE, invoice, (v) => Invoices.deleteInvoiceViaApi(v.id)),
+          );
         })
         .step((f) => {
           // Precondition 6: User with Invoice: Can view, edit and create new Invoices and Invoice lines

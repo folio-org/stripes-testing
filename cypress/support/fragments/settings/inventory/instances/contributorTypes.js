@@ -30,21 +30,23 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `contributor-types/${id}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode: false,
-  }),
-  getViaApi: (searchParams) => cy
-    .okapiRequest({
-      path: 'contributor-types',
-      searchParams,
+  deleteViaApi: (id) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `contributor-types/${id}`,
       isDefaultSearchParamsRequired: false,
-    })
-    .then((response) => {
-      return response.body.contributorTypes;
+      failOnStatusCode: false,
     }),
+  getViaApi: (searchParams) =>
+    cy
+      .okapiRequest({
+        path: 'contributor-types',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body.contributorTypes;
+      }),
   waitLoading() {
     ['Name', 'Code', 'Source', 'Last updated', 'Actions'].forEach((header) => {
       cy.expect(rootPane.find(MultiColumnListHeader(header)).exists());
@@ -100,7 +102,8 @@ export default {
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect(row.exists());
     if (code) cy.expect(row.find(MultiColumnListCell({ columnIndex: 1, content: code })).exists());
-    if (source) cy.expect(row.find(MultiColumnListCell({ columnIndex: 2, content: source })).exists());
+    if (source)
+      cy.expect(row.find(MultiColumnListCell({ columnIndex: 2, content: source })).exists());
     lastUpdated.forEach((text) => {
       cy.expect(
         row.find(MultiColumnListCell({ columnIndex: 3, content: including(text) })).exists(),

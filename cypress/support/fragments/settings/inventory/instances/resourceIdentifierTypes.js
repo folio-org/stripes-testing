@@ -29,12 +29,13 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id, { failOnStatusCode } = {}) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `identifier-types/${id}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode,
-  }),
+  deleteViaApi: (id, { failOnStatusCode } = {}) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `identifier-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode,
+    }),
   verifyConsortiumResourceIdentifierTypesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name), isContainer: false });
     cy.expect([

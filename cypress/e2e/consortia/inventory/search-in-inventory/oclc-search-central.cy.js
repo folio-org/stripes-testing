@@ -75,7 +75,8 @@ describe('Inventory', () => {
       const sharedFolioInstanceIndexes = identifiersData
         .map((item, index) => ({ item, index }))
         .filter(
-          ({ item }) => item.affiliation === Affiliations.Consortia &&
+          ({ item }) =>
+            item.affiliation === Affiliations.Consortia &&
             item.instanceSource === INSTANCE_SOURCE_NAMES.FOLIO,
         )
         .map(({ index }) => index);

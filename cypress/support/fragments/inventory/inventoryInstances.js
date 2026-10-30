@@ -47,9 +47,10 @@ const actionsButton = rootSection.find(Button('Actions'));
 const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-select' }).find(
   Checkbox({ ariaLabel: including(' results') }),
 );
-const instanceCheckbox = (idx) => inventoriesList
-  .find(MultiColumnListRow({ index: idx }))
-  .find(Checkbox({ ariaLabel: 'Select instance' }));
+const instanceCheckbox = (idx) =>
+  inventoriesList
+    .find(MultiColumnListRow({ index: idx }))
+    .find(Checkbox({ ariaLabel: 'Select instance' }));
 
 const singleRecordImportModal = Modal('Single record import');
 const filterSection = Section({ id: 'pane-filter' });
@@ -239,13 +240,14 @@ const defaultField008Values = {
  * */
 const createInstanceViaAPI = (instanceWithSpecifiedNewId) => {
   return recurse(
-    () => cy.okapiRequest({
-      method: 'POST',
-      path: 'inventory/instances',
-      isDefaultSearchParamsRequired: false,
-      failOnStatusCode: false,
-      body: instanceWithSpecifiedNewId,
-    }),
+    () =>
+      cy.okapiRequest({
+        method: 'POST',
+        path: 'inventory/instances',
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+        body: instanceWithSpecifiedNewId,
+      }),
     (response) => response.status === 201,
     {
       limit: 10,
@@ -649,7 +651,9 @@ export default {
         } else {
           instance.items?.forEach((item) => cy.deleteItemViaApi(item.id));
         }
-        instance.holdings?.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id, { skipWait: true }));
+        instance.holdings?.forEach((holding) =>
+          cy.deleteHoldingRecordViaApi(holding.id, { skipWait: true }),
+        );
         InventoryInstance.deleteInstanceViaApi(instance.id);
       },
     );

@@ -19,8 +19,12 @@ describe('Patron notices', () => {
     });
     const templates = {
       loan: [1, 2, 3].map((number) => getTemplate(NOTICE_CATEGORIES.loan, `LoanTemplate${number}`)),
-      request: [1, 2].map((number) => getTemplate(NOTICE_CATEGORIES.request, `RequestTemplate${number}`)),
-      feeFine: [1, 2].map((number) => getTemplate(NOTICE_CATEGORIES.AutomatedFeeFineCharge, `FeeFineTemplate${number}`)),
+      request: [1, 2].map((number) =>
+        getTemplate(NOTICE_CATEGORIES.request, `RequestTemplate${number}`),
+      ),
+      feeFine: [1, 2].map((number) =>
+        getTemplate(NOTICE_CATEGORIES.AutomatedFeeFineCharge, `FeeFineTemplate${number}`),
+      ),
     };
     const [loanTemplate1, loanTemplate2, loanTemplate3] = templates.loan;
     const [requestTemplate1, requestTemplate2] = templates.request;

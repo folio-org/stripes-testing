@@ -25,7 +25,10 @@ describe('Calendar', () => {
       cy.getAdminToken();
       ServicePoints.createViaApi(testServicePoint);
 
-      cy.loginAsAdmin({ path: TopMenu.settingsCalendarPath, waiter: Calendar.waitCalendarPaneToLoad });
+      cy.loginAsAdmin({
+        path: TopMenu.settingsCalendarPath,
+        waiter: Calendar.waitCalendarPaneToLoad,
+      });
     });
 
     after(() => {

@@ -35,7 +35,10 @@ describe('Calendar', () => {
         testCalendarResponse = calResponse.body;
       });
 
-      cy.loginAsAdmin({ path: TopMenu.settingsCalendarPath, waiter: Calendar.waitCalendarPaneToLoad });
+      cy.loginAsAdmin({
+        path: TopMenu.settingsCalendarPath,
+        waiter: Calendar.waitCalendarPaneToLoad,
+      });
     });
 
     after(() => {
@@ -60,126 +63,128 @@ describe('Calendar', () => {
 
         PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
 
-        cy.wait(['@getCalendars', '@getServicePoints']).then(([calendarsCall, servicePointsCall]) => {
-          calendars.push(...calendarsCall.response.body.calendars);
-          servicePoints.push(...servicePointsCall.response.body.servicepoints);
+        cy.wait(['@getCalendars', '@getServicePoints']).then(
+          ([calendarsCall, servicePointsCall]) => {
+            calendars.push(...calendarsCall.response.body.calendars);
+            servicePoints.push(...servicePointsCall.response.body.servicepoints);
 
-          // use servicePoints and calendars data to build the list of rows in the table
-          // baseRows is the list of rows in the order in which they are built initially
-          const baseRows = servicePoints.map((servicePoint) => {
-            const filteredCalendars = calendars.filter((calendar) => {
-              return (
-                isBetweenDatesByDay(
-                  new Date(),
-                  dateFromYYYYMMDD(calendar.startDate),
-                  dateFromYYYYMMDD(calendar.endDate),
-                ) && calendar.assignments.includes(servicePoint.id)
-              );
-            });
-            if (filteredCalendars.length === 0) {
+            // use servicePoints and calendars data to build the list of rows in the table
+            // baseRows is the list of rows in the order in which they are built initially
+            const baseRows = servicePoints.map((servicePoint) => {
+              const filteredCalendars = calendars.filter((calendar) => {
+                return (
+                  isBetweenDatesByDay(
+                    new Date(),
+                    dateFromYYYYMMDD(calendar.startDate),
+                    dateFromYYYYMMDD(calendar.endDate),
+                  ) && calendar.assignments.includes(servicePoint.id)
+                );
+              });
+              if (filteredCalendars.length === 0) {
+                return {
+                  servicePoint: servicePoint.name.concat(
+                    servicePoint.inactive ? ' (inactive)' : '',
+                  ),
+                  servicePointId: servicePoint.id,
+                  calendarName: 'None',
+                  startDate: '',
+                  startDateObj: undefined,
+                  endDate: '',
+                  endDateObj: undefined,
+                  currentStatus: 'Closed',
+                  calendar: null,
+                };
+              }
               return {
-                servicePoint: servicePoint.name.concat(
-                  servicePoint.inactive ? ' (inactive)' : '',
-                ),
                 servicePointId: servicePoint.id,
-                calendarName: 'None',
-                startDate: '',
-                startDateObj: undefined,
-                endDate: '',
-                endDateObj: undefined,
-                currentStatus: 'Closed',
-                calendar: null,
+                servicePoint: servicePoint.name.concat(servicePoint.inactive ? ' (inactive)' : ''),
+                calendarName: filteredCalendars[0].name,
+                startDate: getLocalizedDate(filteredCalendars[0].startDate),
+                startDateObj: dateFromYYYYMMDD(filteredCalendars[0].startDate),
+                endDate: getLocalizedDate(filteredCalendars[0].endDate),
+                endDateObj: dateFromYYYYMMDD(filteredCalendars[0].endDate),
+                currentStatus: getCurrentStatus(new Date(Date.now()), filteredCalendars[0]),
+                calendar: filteredCalendars[0],
               };
-            }
-            return {
-              servicePointId: servicePoint.id,
-              servicePoint: servicePoint.name.concat(servicePoint.inactive ? ' (inactive)' : ''),
-              calendarName: filteredCalendars[0].name,
-              startDate: getLocalizedDate(filteredCalendars[0].startDate),
-              startDateObj: dateFromYYYYMMDD(filteredCalendars[0].startDate),
-              endDate: getLocalizedDate(filteredCalendars[0].endDate),
-              endDateObj: dateFromYYYYMMDD(filteredCalendars[0].endDate),
-              currentStatus: getCurrentStatus(new Date(Date.now()), filteredCalendars[0]),
-              calendar: filteredCalendars[0],
-            };
-          });
+            });
 
-          // currentRows is the list of rows resulting from the sorting of baseRows using the primary and secondary sort
-          let currentRows;
+            // currentRows is the list of rows resulting from the sorting of baseRows using the primary and secondary sort
+            let currentRows;
 
-          // 'sorts' contains the primary and secondary sort
-          // The SortableMultiColumnList component uses a primary sort and an optional secondary sort to sort its data
-          // see 'addSort' for how this sorts array is updated
-          let sorts = [];
+            // 'sorts' contains the primary and secondary sort
+            // The SortableMultiColumnList component uses a primary sort and an optional secondary sort to sort its data
+            // see 'addSort' for how this sorts array is updated
+            let sorts = [];
 
-          // check for sorting by service point name in ascending order
-          sorts = addSort(sorts, 'servicePoint');
-          currentRows = sortRows(baseRows, sorts);
-          assertRowsAreProperlySorted(currentRows, 'servicePoint');
+            // check for sorting by service point name in ascending order
+            sorts = addSort(sorts, 'servicePoint');
+            currentRows = sortRows(baseRows, sorts);
+            assertRowsAreProperlySorted(currentRows, 'servicePoint');
 
-          // check for sorting by service point name in descending order
-          PaneActions.calendarTable.clickServicePointHeader();
+            // check for sorting by service point name in descending order
+            PaneActions.calendarTable.clickServicePointHeader();
 
-          sorts = addSort(sorts, 'servicePoint');
-          currentRows = sortRows(baseRows, sorts);
-          assertRowsAreProperlySorted(currentRows, 'servicePoint');
+            sorts = addSort(sorts, 'servicePoint');
+            currentRows = sortRows(baseRows, sorts);
+            assertRowsAreProperlySorted(currentRows, 'servicePoint');
 
-          // sort in ascending order by calendar name
-          PaneActions.calendarTable.clickCalendarNameHeader();
+            // sort in ascending order by calendar name
+            PaneActions.calendarTable.clickCalendarNameHeader();
 
-          sorts = addSort(sorts, 'calendarName');
-          currentRows = sortRows(baseRows, sorts);
-          assertRowsAreProperlySorted(currentRows, 'calendarName');
+            sorts = addSort(sorts, 'calendarName');
+            currentRows = sortRows(baseRows, sorts);
+            assertRowsAreProperlySorted(currentRows, 'calendarName');
 
-          // sort in descending order by calendar name
-          PaneActions.calendarTable.clickCalendarNameHeader();
+            // sort in descending order by calendar name
+            PaneActions.calendarTable.clickCalendarNameHeader();
 
-          sorts = addSort(sorts, 'calendarName');
-          currentRows = sortRows(baseRows, sorts);
-          assertRowsAreProperlySorted(currentRows, 'calendarName');
+            sorts = addSort(sorts, 'calendarName');
+            currentRows = sortRows(baseRows, sorts);
+            assertRowsAreProperlySorted(currentRows, 'calendarName');
 
-          // sort in ascending order by start date
-          PaneActions.calendarTable.clickStartDateHeader();
+            // sort in ascending order by start date
+            PaneActions.calendarTable.clickStartDateHeader();
 
-          sorts = addSort(sorts, 'startDate');
-          currentRows = sortRows(baseRows, sorts);
-          assertRowsAreProperlySorted(currentRows, 'startDate');
+            sorts = addSort(sorts, 'startDate');
+            currentRows = sortRows(baseRows, sorts);
+            assertRowsAreProperlySorted(currentRows, 'startDate');
 
-          // sort in descending order by start date
-          PaneActions.calendarTable.clickStartDateHeader();
+            // sort in descending order by start date
+            PaneActions.calendarTable.clickStartDateHeader();
 
-          sorts = addSort(sorts, 'startDate');
-          currentRows = sortRows(baseRows, sorts);
-          assertRowsAreProperlySorted(currentRows, 'startDate');
+            sorts = addSort(sorts, 'startDate');
+            currentRows = sortRows(baseRows, sorts);
+            assertRowsAreProperlySorted(currentRows, 'startDate');
 
-          // sort in ascending order by end date
-          PaneActions.calendarTable.clickEndDateHeader();
+            // sort in ascending order by end date
+            PaneActions.calendarTable.clickEndDateHeader();
 
-          sorts = addSort(sorts, 'endDate');
-          currentRows = sortRows(baseRows, sorts);
-          assertRowsAreProperlySorted(currentRows, 'endDate');
+            sorts = addSort(sorts, 'endDate');
+            currentRows = sortRows(baseRows, sorts);
+            assertRowsAreProperlySorted(currentRows, 'endDate');
 
-          // sort in descending order by end date
-          PaneActions.calendarTable.clickEndDateHeader();
+            // sort in descending order by end date
+            PaneActions.calendarTable.clickEndDateHeader();
 
-          sorts = addSort(sorts, 'endDate');
-          currentRows = sortRows(baseRows, sorts);
-          assertRowsAreProperlySorted(currentRows, 'endDate');
+            sorts = addSort(sorts, 'endDate');
+            currentRows = sortRows(baseRows, sorts);
+            assertRowsAreProperlySorted(currentRows, 'endDate');
 
-          // sort in ascending order by status
-          PaneActions.calendarTable.clickCurrentStatusHeader();
+            // sort in ascending order by status
+            PaneActions.calendarTable.clickCurrentStatusHeader();
 
-          sorts = addSort(sorts, 'currentStatus');
-          currentRows = sortRows(baseRows, sorts);
-          assertRowsAreProperlySorted(currentRows, 'currentStatus');
+            sorts = addSort(sorts, 'currentStatus');
+            currentRows = sortRows(baseRows, sorts);
+            assertRowsAreProperlySorted(currentRows, 'currentStatus');
 
-          // sort in descending order by status
-          PaneActions.calendarTable.clickCurrentStatusHeader();
+            // sort in descending order by status
+            PaneActions.calendarTable.clickCurrentStatusHeader();
 
-          sorts = addSort(sorts, 'currentStatus');
-          currentRows = sortRows(baseRows, sorts);
-          assertRowsAreProperlySorted(currentRows, 'currentStatus');
-        });
+            sorts = addSort(sorts, 'currentStatus');
+            currentRows = sortRows(baseRows, sorts);
+            assertRowsAreProperlySorted(currentRows, 'currentStatus');
+          },
+        );
       },
     );
   });

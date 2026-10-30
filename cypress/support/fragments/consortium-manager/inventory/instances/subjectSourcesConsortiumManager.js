@@ -475,9 +475,10 @@ export default {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         const rowIndex = Number(rowNumber.replace('row-', ''));
 
-        const expectCell = (colIdx, expectedContent) => EditableListRow({ index: rowIndex })
-          .find(MultiColumnListCell({ columnIndex: colIdx }))
-          .has({ content: expectedContent });
+        const expectCell = (colIdx, expectedContent) =>
+          EditableListRow({ index: rowIndex })
+            .find(MultiColumnListCell({ columnIndex: colIdx }))
+            .has({ content: expectedContent });
 
         const expectations = [
           expectCell(columnIndex.name, name),

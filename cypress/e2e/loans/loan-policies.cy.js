@@ -245,7 +245,9 @@ function teardownLoanTest(ctx, loanPolicyId) {
   if (ctx.calendarId) deleteCalendar(ctx.calendarId);
   ServicePoints.deleteViaApi(ctx.servicePoint.id);
   if (ctx.fixedDueDateSchedule) {
-    LoanPolicy.deleteApi(loanPolicyId).then(() => cy.deleteFixedDueDateSchedule(ctx.fixedDueDateSchedule.id));
+    LoanPolicy.deleteApi(loanPolicyId).then(() =>
+      cy.deleteFixedDueDateSchedule(ctx.fixedDueDateSchedule.id),
+    );
   } else {
     LoanPolicy.deleteApi(loanPolicyId);
   }
@@ -426,11 +428,12 @@ describe('Loan Policies', () => {
     before('Create test data', () => {
       setupLoanTest(ctx, {
         loanPolicyId: loanPolicy.id,
-        calendarBodyFn: ({ servicePointId, calendarName }) => buildLongTermClosedOnDueDateCalendar({
-          servicePointId,
-          calendarName,
-          loanPeriodDays: LOAN_PERIOD_DAYS,
-        }),
+        calendarBodyFn: ({ servicePointId, calendarName }) =>
+          buildLongTermClosedOnDueDateCalendar({
+            servicePointId,
+            calendarName,
+            loanPeriodDays: LOAN_PERIOD_DAYS,
+          }),
         calendarName: getTestEntityValue('cal_c844247'),
         createPolicyFn: () => LoanPolicy.createViaApi(loanPolicy),
       });
@@ -480,12 +483,13 @@ describe('Loan Policies', () => {
     before('Create test data', () => {
       setupLoanTest(ctx, {
         loanPolicyId: loanPolicy.id,
-        calendarBodyFn: ({ servicePointId, calendarName }) => buildLongTermClosedOnDueDateCalendar({
-          servicePointId,
-          calendarName,
-          loanPeriodDays: LOAN_PERIOD_DAYS,
-          ensureTodayOpen: false,
-        }),
+        calendarBodyFn: ({ servicePointId, calendarName }) =>
+          buildLongTermClosedOnDueDateCalendar({
+            servicePointId,
+            calendarName,
+            loanPeriodDays: LOAN_PERIOD_DAYS,
+            ensureTodayOpen: false,
+          }),
         calendarName: getTestEntityValue('cal_c844248'),
         createPolicyFn: () => LoanPolicy.createViaApi(loanPolicy),
       });
@@ -537,12 +541,13 @@ describe('Loan Policies', () => {
     before('Create test data', () => {
       setupLoanTest(ctx, {
         loanPolicyId: loanPolicy.id,
-        calendarBodyFn: ({ servicePointId, calendarName }) => buildLongTermClosedOnDueDateCalendar({
-          servicePointId,
-          calendarName,
-          loanPeriodDays: LOAN_PERIOD_DAYS,
-          ensureTodayOpen: false,
-        }),
+        calendarBodyFn: ({ servicePointId, calendarName }) =>
+          buildLongTermClosedOnDueDateCalendar({
+            servicePointId,
+            calendarName,
+            loanPeriodDays: LOAN_PERIOD_DAYS,
+            ensureTodayOpen: false,
+          }),
         calendarName: getTestEntityValue('cal_c844249'),
         createPolicyFn: () => LoanPolicy.createViaApi(loanPolicy),
       });

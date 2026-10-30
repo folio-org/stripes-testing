@@ -32,12 +32,13 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `instance-note-types/${id}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode: false,
-  }),
+  deleteViaApi: (id) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `instance-note-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    }),
   verifyConsortiumInstanceNoteTypesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({
       content: including(name),

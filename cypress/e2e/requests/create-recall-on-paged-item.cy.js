@@ -12,7 +12,6 @@ import Users from '../../support/fragments/users/users';
 
 describe('C724 Create recall on paged item (vega extended)', () => {
   let userData = {};
-  let requestId;
   let itemBarcode;
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({
@@ -35,12 +34,14 @@ describe('C724 Create recall on paged item (vega extended)', () => {
           location,
         });
       })
-      .then(() => cy.createTempUser([
-        Permissions.uiRequestsAll.gui,
-        Permissions.inventoryAll.gui,
-        Permissions.usersViewRequests.gui,
-        Permissions.uiUsersView.gui,
-      ]))
+      .then(() =>
+        cy.createTempUser([
+          Permissions.uiRequestsAll.gui,
+          Permissions.inventoryAll.gui,
+          Permissions.usersViewRequests.gui,
+          Permissions.uiUsersView.gui,
+        ]),
+      )
       .then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointsViaApi(

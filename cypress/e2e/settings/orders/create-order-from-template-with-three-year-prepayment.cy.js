@@ -238,7 +238,9 @@ describe.skip('Settings | Orders', () => {
       ...ExpenseClasses.getDefaultExpenseClass(),
       name,
     }).then((expenseClass) => {
-      f.set(resourceKey, expenseClass, () => ExpenseClasses.deleteExpenseClassViaApi(expenseClass.id, { failOnStatusCode: false }));
+      f.set(resourceKey, expenseClass, () =>
+        ExpenseClasses.deleteExpenseClassViaApi(expenseClass.id, { failOnStatusCode: false }),
+      );
     });
   };
 
@@ -346,7 +348,9 @@ describe.skip('Settings | Orders', () => {
       .step((f) => {
         return cy
           .createAcquisitionMethodApi({ value: testData.acqMethodName })
-          .then(({ body }) => f.set(R.ACQ_METHOD, body, () => cy.deleteAcquisitionMethodApi(body.id)));
+          .then(({ body }) =>
+            f.set(R.ACQ_METHOD, body, () => cy.deleteAcquisitionMethodApi(body.id)),
+          );
       })
       .step((f) => {
         cy.wrap([testData.polTitle1, testData.polTitle2]).each((title) => {
@@ -359,7 +363,9 @@ describe.skip('Settings | Orders', () => {
                 },
               });
             })
-            .then((instance) => f.toCleanup(title, () => InventoryInstance.deleteInstanceViaApi(instance.instanceId)));
+            .then((instance) =>
+              f.toCleanup(title, () => InventoryInstance.deleteInstanceViaApi(instance.instanceId)),
+            );
         });
       })
       // Precondition 4: Authorized user with the following capability sets:
@@ -404,7 +410,8 @@ describe.skip('Settings | Orders', () => {
         flow.ctx();
       const fiscalYearCodes = [fy2.code, fy3.code, fy4.code];
       const formatAmount = (value) => NumberTools.formatCurrency(value, locale);
-      const comparableTemplate = (template) => Cypress._.omit(template, ['id', 'templateName', 'metadata']);
+      const comparableTemplate = (template) =>
+        Cypress._.omit(template, ['id', 'templateName', 'metadata']);
 
       cy.intercept('PUT', '**/orders/order-lines/fund-distributions/validate').as(
         'validateFundDistributions',
@@ -578,7 +585,9 @@ describe.skip('Settings | Orders', () => {
       OrderTemplateForm.clickSaveButton();
       // Expected: "Order templates" pane; toast "The template was saved"
       cy.wait('@template1Created').then(({ response }) => {
-        flow.set(R.TEMPLATE_1, response.body, () => OrderTemplates.deleteOrderTemplateViaApi(response.body.id, { failOnStatusCode: false }));
+        flow.set(R.TEMPLATE_1, response.body, () =>
+          OrderTemplates.deleteOrderTemplateViaApi(response.body.id, { failOnStatusCode: false }),
+        );
       });
       OrderTemplates.waitLoading();
 
@@ -604,9 +613,11 @@ describe.skip('Settings | Orders', () => {
       cy.wait('@template2Created').then(({ response }) => {
         const duplicatedTemplate = response.body;
 
-        flow.set(R.TEMPLATE_2, duplicatedTemplate, () => OrderTemplates.deleteOrderTemplateViaApi(duplicatedTemplate.id, {
-          failOnStatusCode: false,
-        }));
+        flow.set(R.TEMPLATE_2, duplicatedTemplate, () =>
+          OrderTemplates.deleteOrderTemplateViaApi(duplicatedTemplate.id, {
+            failOnStatusCode: false,
+          }),
+        );
 
         expect(duplicatedTemplate.templateName).to.match(
           new RegExp(`^${Cypress._.escapeRegExp(testData.template1Name)} \\(Copy\\) - `),

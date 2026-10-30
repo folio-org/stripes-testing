@@ -75,11 +75,13 @@ describe('Data Import', () => {
             const apId = apResponse.body.id;
             return NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
               matchProfile,
-            ).then((mpResponse) => NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
-              jobProfile.profileName,
-              mpResponse.body.id,
-              apId,
-            ));
+            ).then((mpResponse) =>
+              NewJobProfile.createJobProfileWithLinkedMatchAndActionProfilesViaApi(
+                jobProfile.profileName,
+                mpResponse.body.id,
+                apId,
+              ),
+            );
           });
 
         DataImport.createMarcFile({

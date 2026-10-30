@@ -28,11 +28,12 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `alternative-title-types/${id}`,
-    isDefaultSearchParamsRequired: false,
-  }),
+  deleteViaApi: (id) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `alternative-title-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+    }),
   verifyConsortiumAlternativeTitleTypesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({
       content: including(name),
@@ -126,7 +127,8 @@ export default {
     });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });
     cy.expect(row.exists());
-    if (source) cy.expect(row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists());
+    if (source)
+      cy.expect(row.find(MultiColumnListCell({ columnIndex: 1, content: source })).exists());
     if (actions.length === 0) {
       cy.expect(row.find(actionsCell).has({ content: '' }));
     } else {

@@ -38,12 +38,13 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `holdings-sources/${id}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode: false,
-  }),
+  deleteViaApi: (id) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `holdings-sources/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    }),
   waitLoading() {
     ['Name', 'Source', 'Last updated', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());

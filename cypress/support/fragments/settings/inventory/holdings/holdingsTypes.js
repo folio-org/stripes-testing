@@ -27,12 +27,13 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `holdings-types/${id}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode: false,
-  }),
+  deleteViaApi: (id) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `holdings-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    }),
   getViaApi: (searchParams = { limit: 1 }) => {
     return cy
       .okapiRequest({

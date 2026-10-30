@@ -86,7 +86,8 @@ export default {
     cy.expect(Spinner().absent());
     cy.expect(callNumberField.exists());
   },
-  checkReadOnlyFields: () => readonlyFields.forEach((element) => cy.expect(element.has({ disabled: true }))),
+  checkReadOnlyFields: () =>
+    readonlyFields.forEach((element) => cy.expect(element.has({ disabled: true }))),
   closeWithoutSave: () => cy.do(cancelButton.click()),
   fillHoldingFields({
     permanentLocation,
@@ -439,8 +440,10 @@ export default {
   }) {
     if (callNumber !== undefined) this.fillCallNumber(callNumber);
     if (callNumberType) this.chooseCallNumberType(callNumberType);
-    if (callNumberPrefix !== undefined) cy.do(TextArea('Call number prefix').fillIn(callNumberPrefix));
-    if (callNumberSuffix !== undefined) cy.do(TextArea('Call number suffix').fillIn(callNumberSuffix));
+    if (callNumberPrefix !== undefined)
+      cy.do(TextArea('Call number prefix').fillIn(callNumberPrefix));
+    if (callNumberSuffix !== undefined)
+      cy.do(TextArea('Call number suffix').fillIn(callNumberSuffix));
     if (copyNumber !== undefined) cy.do(copyNumberField.fillIn(copyNumber));
   },
   verifyCallNumberValues({
@@ -452,8 +455,10 @@ export default {
   }) {
     if (callNumber !== undefined) cy.expect(callNumberField.has({ value: callNumber }));
     if (callNumberType) cy.expect(callNumberTypeSelect.has({ checkedOptionText: callNumberType }));
-    if (callNumberPrefix !== undefined) cy.expect(TextArea('Call number prefix').has({ value: callNumberPrefix }));
-    if (callNumberSuffix !== undefined) cy.expect(TextArea('Call number suffix').has({ value: callNumberSuffix }));
+    if (callNumberPrefix !== undefined)
+      cy.expect(TextArea('Call number prefix').has({ value: callNumberPrefix }));
+    if (callNumberSuffix !== undefined)
+      cy.expect(TextArea('Call number suffix').has({ value: callNumberSuffix }));
     if (copyNumber !== undefined) cy.expect(copyNumberField.has({ value: copyNumber }));
   },
   pressEnterInCopyNumberField: () => {
@@ -491,7 +496,8 @@ export default {
   },
   checkButtonsEnabled({ saveAndClose = false, saveAndKeep = false, cancel = true } = {}) {
     cy.expect(saveAndCloseButton.has({ disabled: !saveAndClose }));
-    if (saveAndKeep !== null && saveAndKeep !== undefined) cy.expect(saveAndKeepEditingButton.has({ disabled: !saveAndKeep }));
+    if (saveAndKeep !== null && saveAndKeep !== undefined)
+      cy.expect(saveAndKeepEditingButton.has({ disabled: !saveAndKeep }));
     cy.expect(cancelButton.has({ disabled: !cancel }));
   },
   saveAndKeepEditing({ holdingSaved = false } = {}) {

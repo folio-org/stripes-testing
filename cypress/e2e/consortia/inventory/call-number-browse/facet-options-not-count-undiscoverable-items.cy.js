@@ -86,11 +86,11 @@ describe('Inventory - Call Number Browse: Facet options do not count undiscovera
             const servicePointId = servicePoints.length
               ? cy.wrap(servicePoints[0].id)
               : ServicePoints.createViaApi(ServicePoints.getDefaultServicePoint()).then(
-                (response) => {
-                  testData.createdServicePoint[tenant] = response.body.id;
-                  return response.body.id;
-                },
-              );
+                  (response) => {
+                    testData.createdServicePoint[tenant] = response.body.id;
+                    return response.body.id;
+                  },
+                );
 
             servicePointId.then((id) => {
               testData.defaultLocation[tenant] = Location.getDefaultLocation(id);

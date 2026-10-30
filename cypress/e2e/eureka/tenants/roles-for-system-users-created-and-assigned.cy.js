@@ -157,7 +157,8 @@ describe('Eureka', () => {
                 (capab) => capab.permission,
               );
               const expectedPermissionNames = expectedSystemRole.permissionNames.filter(
-                (permission) => allExistingCapabilities.find((capab) => capab.permission === permission),
+                (permission) =>
+                  allExistingCapabilities.find((capab) => capab.permission === permission),
               );
               const missingPermissions = expectedPermissionNames.filter(
                 (permission) => !assignedPermissionNames.includes(permission),

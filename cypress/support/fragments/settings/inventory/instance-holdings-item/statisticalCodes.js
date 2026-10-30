@@ -160,7 +160,8 @@ export default {
     actions = [],
   }) {
     const row = MultiColumnListRow({ content: including(code), isContainer: false });
-    const cellIncludes = (column, text) => row.find(MultiColumnListCell({ column, innerText: including(text) })).exists();
+    const cellIncludes = (column, text) =>
+      row.find(MultiColumnListCell({ column, innerText: including(text) })).exists();
     const actionsCell = row.find(MultiColumnListCell({ column: 'Actions' }));
 
     cy.expect([row.exists(), cellIncludes('Source', source)]);

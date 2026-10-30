@@ -13,9 +13,10 @@ describe('eHoldings', () => {
     const searchTerm = 'Nature';
     const testData = {};
 
-    const toSlug = (value) => String(value)
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, '');
+    const toSlug = (value) =>
+      String(value)
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '');
     const toIsFreeAccess = (access) => access === PACKAGE_ACCESS.PUBLIC;
 
     // Guarantees every alias below is unique, even across calls sharing the same (or empty)
@@ -49,17 +50,21 @@ describe('eHoldings', () => {
       action();
       return cy
         .wait(`@${alias}`, { timeout: 80_000 })
-        .then(({ response }) => response.body.data
-          .filter(
-            (pkg) => access === undefined ||
+        .then(({ response }) =>
+          response.body.data
+            .filter(
+              (pkg) =>
+                access === undefined ||
                 access === PACKAGE_ACCESS.ALL ||
                 pkg.attributes.isFreeAccess === toIsFreeAccess(access),
-          )
-          .map(
-            (pkg) => `${pkg.attributes.name}${
-              pkg.attributes.customDisplayName ? ` (${pkg.attributes.customDisplayName})` : ''
-            }`,
-          ));
+            )
+            .map(
+              (pkg) =>
+                `${pkg.attributes.name}${
+                  pkg.attributes.customDisplayName ? ` (${pkg.attributes.customDisplayName})` : ''
+                }`,
+            ),
+        );
     };
 
     const verifyResultsMatch = (packageNames) => {

@@ -86,7 +86,8 @@ export default {
       lastUpdatedCell.find(TextField()).absent(),
     ]);
     // some settings (e.g. loan types) have no "Source" column
-    if (source) cy.expect([sourceCell.has({ content: source }), sourceCell.find(TextField()).absent()]);
+    if (source)
+      cy.expect([sourceCell.has({ content: source }), sourceCell.find(TextField()).absent()]);
     if (code) cy.expect(row.find(TextField({ placeholder: 'code' })).has({ value: code }));
     lastUpdated.forEach((text) => {
       cy.expect(lastUpdatedCell.has({ content: including(text) }));
@@ -149,10 +150,12 @@ export default {
   },
 
   verifyRecordInTheList(record, actionButtons = []) {
-    cy.then(() => MultiColumnListRow({
-      content: including(record[0]),
-      isContainer: true,
-    }).rowIndexInParent()).then((rowIndexInParent) => {
+    cy.then(() =>
+      MultiColumnListRow({
+        content: including(record[0]),
+        isContainer: true,
+      }).rowIndexInParent(),
+    ).then((rowIndexInParent) => {
       cy.wrap(record).each((text, columnIndex) => {
         cy.expect(
           MultiColumnListRow({ rowIndexInParent })
@@ -192,10 +195,12 @@ export default {
   // if some entity is created for all tenants, it should be searched by name and member name
   // use for searching identifiers array
   verifyRecordInTheListForMultipleRecords(identifiers, record, actionButtons = []) {
-    cy.then(() => MultiColumnListRow({
-      content: and(including(identifiers[0]), including(identifiers[1])),
-      isContainer: true,
-    }).rowIndexInParent()).then((rowIndexInParent) => {
+    cy.then(() =>
+      MultiColumnListRow({
+        content: and(including(identifiers[0]), including(identifiers[1])),
+        isContainer: true,
+      }).rowIndexInParent(),
+    ).then((rowIndexInParent) => {
       cy.wrap(record).each((text, columnIndex) => {
         cy.expect(
           MultiColumnListRow({ rowIndexInParent })

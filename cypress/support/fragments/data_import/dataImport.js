@@ -148,13 +148,15 @@ const importFile = (profileName, uniqueFileName) => {
 // LDR/008 constants (e.g. QuickMarcEditor.defaultValidLdr) are written.
 const toMarcIndicator = (indicator) => (indicator === '\\' ? ' ' : indicator);
 const toMarcBlanks = (content) => content.split('\\').join(' ');
-const parseSubfields = (content) => content
-  .split(/\$(?=\S)/)
-  .filter(Boolean)
-  .flatMap((part) => [part[0], part.slice(1).trim()]);
-const toMarcField = ({ tag, content, indicators }) => (indicators
-  ? [tag, indicators.map(toMarcIndicator).join(''), ...parseSubfields(content)]
-  : [tag, content]);
+const parseSubfields = (content) =>
+  content
+    .split(/\$(?=\S)/)
+    .filter(Boolean)
+    .flatMap((part) => [part[0], part.slice(1).trim()]);
+const toMarcField = ({ tag, content, indicators }) =>
+  indicators
+    ? [tag, indicators.map(toMarcIndicator).join(''), ...parseSubfields(content)]
+    : [tag, content];
 
 // Tags < '010' are control fields (no indicators/subfields); >= '010' are data fields.
 const isControlFieldTag = (tag) => tag < '010';
@@ -402,7 +404,9 @@ export default {
         });
         reader.on('error', reject);
         reader.on('end', () => resolve(updatedRecords.join('')));
-      }).then((updatedContent) => FileManager.createFile(`cypress/fixtures/${outputFileName}`, updatedContent));
+      }).then((updatedContent) =>
+        FileManager.createFile(`cypress/fixtures/${outputFileName}`, updatedContent),
+      );
     });
   },
 
@@ -477,8 +481,10 @@ export default {
     cy.expect(logsPane.has({ subtitle }));
   },
 
-  verifyLogsPaneSubtitleAbsent: () => cy.expect(logsPane.find(HTML(including('selected'))).absent()),
-  verifyChooseFileButtonState: ({ isDisabled }) => cy.expect(orChooseFilesButton.has({ disabled: isDisabled })),
+  verifyLogsPaneSubtitleAbsent: () =>
+    cy.expect(logsPane.find(HTML(including('selected'))).absent()),
+  verifyChooseFileButtonState: ({ isDisabled }) =>
+    cy.expect(orChooseFilesButton.has({ disabled: isDisabled })),
 
   verifyDeleteLogsButtonDisabled: () => {
     cy.wait(1500);

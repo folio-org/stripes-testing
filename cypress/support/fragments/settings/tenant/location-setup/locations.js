@@ -203,13 +203,14 @@ export default {
     const name = `AT_Loc_${index}_${tenantId}`;
     const code = name;
     // Yields an array: a callback returning undefined would make Cypress pass the previous subject on
-    const findByCode = () => cy
-      .okapiRequest({
-        path: 'locations',
-        searchParams: { query: `code=="${code}"`, limit: 1 },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then(({ body }) => body.locations);
+    const findByCode = () =>
+      cy
+        .okapiRequest({
+          path: 'locations',
+          searchParams: { query: `code=="${code}"`, limit: 1 },
+          isDefaultSearchParamsRequired: false,
+        })
+        .then(({ body }) => body.locations);
 
     return findByCode().then((existingLocations) => {
       if (existingLocations.length) return existingLocations[0];

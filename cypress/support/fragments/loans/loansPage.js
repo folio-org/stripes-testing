@@ -151,11 +151,13 @@ export default {
     expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
   },
   verifyResultsInTheRow: (allContentToCheck, rowIndex = 0) => {
-    return allContentToCheck.forEach((contentToCheck) => cy.expect(
-      MultiColumnListRow({ indexRow: `row-${rowIndex}` })
-        .find(MultiColumnListCell({ content: including(contentToCheck) }))
-        .exists(),
-    ));
+    return allContentToCheck.forEach((contentToCheck) =>
+      cy.expect(
+        MultiColumnListRow({ indexRow: `row-${rowIndex}` })
+          .find(MultiColumnListCell({ content: including(contentToCheck) }))
+          .exists(),
+      ),
+    );
   },
   checkLoanDate(date) {
     cy.expect(LoanDateKeyValue.has({ value: including(date) }));
@@ -225,7 +227,9 @@ export default {
 
   verifyCallNumbersCaseInsensitivelySorted(isDescending = false) {
     getCallNumberValues().then((callNumbers) => {
-      const sorted = [...callNumbers].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      const sorted = [...callNumbers].sort((a, b) =>
+        a.localeCompare(b, undefined, { sensitivity: 'base' }),
+      );
 
       if (isDescending) {
         sorted.reverse();

@@ -36,15 +36,17 @@ const availableProxies = ['Inherited - None', 'FOLIO-Bugfest', 'EZProxy'];
 const proxySelect = Select({ id: 'eholdings-proxy-id' });
 const customLabelButton = Button('Custom labels');
 const displayLabel = (number) => TextField({ name: `customLabel${number}.displayLabel` });
-const fullTextFinderCheckbox = (number) => Checkbox({ name: `customLabel${number}.displayOnFullTextFinder` });
+const fullTextFinderCheckbox = (number) =>
+  Checkbox({ name: `customLabel${number}.displayOnFullTextFinder` });
 const saveButton = Button('Save');
 const calloutEditLabelSettings = HTML(including('Custom labels have been updated'));
 const getElementIdByName = (packageName) => packageName.replaceAll(' ', '-').toLowerCase();
-const waitTitlesLoading = () => cy.url().then((url) => {
-  const packageId = url.split('?')[0].split('/').at(-1);
-  cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
-  cy.wait('@getTitles', getLongDelay());
-});
+const waitTitlesLoading = () =>
+  cy.url().then((url) => {
+    const packageId = url.split('?')[0].split('/').at(-1);
+    cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
+    cy.wait('@getTitles', getLongDelay());
+  });
 const providerTokenField = TextArea({ name: 'providerTokenValue' });
 const providerTokenValue = KeyValue('Provider token');
 const newNoteButton = Button({ id: 'note-create-button' });
@@ -328,12 +330,13 @@ export default {
     };
 
     return recurse(
-      () => cy.okapiRequest({
-        path,
-        searchParams,
-        isDefaultSearchParamsRequired: false,
-        failOnStatusCode: false,
-      }),
+      () =>
+        cy.okapiRequest({
+          path,
+          searchParams,
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: false,
+        }),
       (response) => {
         if (response.status !== 200) return false;
         const found = response.body.data.find((item) => {

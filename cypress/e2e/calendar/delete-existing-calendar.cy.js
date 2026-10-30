@@ -25,7 +25,10 @@ describe('Calendar', () => {
         testCalendarResponse = calResponse.body;
       });
 
-      cy.loginAsAdmin({ path: TopMenu.settingsCalendarPath, waiter: Calendar.waitCalendarPaneToLoad });
+      cy.loginAsAdmin({
+        path: TopMenu.settingsCalendarPath,
+        waiter: Calendar.waitCalendarPaneToLoad,
+      });
     });
 
     after(() => {
@@ -35,26 +38,30 @@ describe('Calendar', () => {
       ServicePoints.deleteViaApi(testServicePoint.id);
     });
 
-    it('C360943 Delete -> Delete existing calendar (helios)', { tags: ['smoke', 'helios', 'C360943'] }, () => {
-      PaneActions.allCalendarsPane.openAllCalendarsPane();
-      PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
-      PaneActions.individualCalendarPane.selectDeleteAction({
-        calendarName: testCalendar.name,
-      });
-      ModalFragments.checkCalendarDeletionModalWithCancelButton();
+    it(
+      'C360943 Delete -> Delete existing calendar (helios)',
+      { tags: ['smoke', 'helios', 'C360943'] },
+      () => {
+        PaneActions.allCalendarsPane.openAllCalendarsPane();
+        PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
+        PaneActions.individualCalendarPane.selectDeleteAction({
+          calendarName: testCalendar.name,
+        });
+        ModalFragments.checkCalendarDeletionModalWithCancelButton();
 
-      PaneActions.individualCalendarPane.checkIndividualCalendarPaneExists(testCalendar.name);
-      PaneActions.individualCalendarPane.selectDeleteAction({
-        calendarName: testCalendar.name,
-      });
-      ModalFragments.checkCalendarDeletionModalWithDismiss();
+        PaneActions.individualCalendarPane.checkIndividualCalendarPaneExists(testCalendar.name);
+        PaneActions.individualCalendarPane.selectDeleteAction({
+          calendarName: testCalendar.name,
+        });
+        ModalFragments.checkCalendarDeletionModalWithDismiss();
 
-      PaneActions.individualCalendarPane.selectDeleteAction({
-        calendarName: testCalendar.name,
-      });
-      ModalFragments.checkCalendarDeletionModalExists();
-      ModalFragments.clickDeleteButtonOnCalendarDeletionModal();
-      PaneActions.allCalendarsPane.checkCalendarAbsent(testCalendar.name);
-    });
+        PaneActions.individualCalendarPane.selectDeleteAction({
+          calendarName: testCalendar.name,
+        });
+        ModalFragments.checkCalendarDeletionModalExists();
+        ModalFragments.clickDeleteButtonOnCalendarDeletionModal();
+        PaneActions.allCalendarsPane.checkCalendarAbsent(testCalendar.name);
+      },
+    );
   });
 });

@@ -13,8 +13,6 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import { LOCATION_NAMES } from '../../support/constants';
 
 let user;
-let annexLocationId;
-let popularReadingCollectionLocationId;
 const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,
   barcode: `barcode-${getRandomPostfix()}`,

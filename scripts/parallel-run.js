@@ -17,7 +17,9 @@ argv.forEach((val, index) => {
   } else if (val.startsWith('env=')) {
     envVarsArg = val.replace('env=', '');
   } else if (val.toLowerCase() === 'useOriginalTags'.toLowerCase()) {
-    console.log('useOriginalTags flag detected, passing tags as is, without splitting into chunks.');
+    console.log(
+      'useOriginalTags flag detected, passing tags as is, without splitting into chunks.',
+    );
     useOriginalTags = true;
   }
 });

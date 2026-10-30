@@ -114,7 +114,7 @@ async function getAllTestCases(api, projectId) {
 
 async function updateTestCasesInTestRun(api, testRunId, testCases, include_all = false) {
   try {
-    await api.post(`update_run/${testRunId}`, { 'case_ids': testCases, 'include_all': include_all });
+    await api.post(`update_run/${testRunId}`, { case_ids: testCases, include_all: include_all });
     console.log(`Test run ${testRunId} updated successfully.`);
   } catch (error) {
     console.error('Error updating test run:', error);
@@ -123,16 +123,28 @@ async function updateTestCasesInTestRun(api, testRunId, testCases, include_all =
 
 async function updateTestCasesInTestRunInPlanEntry(api, testRunId, testCases, include_all = false) {
   try {
-    await api.post(`update_run_in_plan_entry/${testRunId}`, { 'case_ids': testCases, 'include_all': include_all });
+    await api.post(`update_run_in_plan_entry/${testRunId}`, {
+      case_ids: testCases,
+      include_all: include_all,
+    });
     console.log(`Test run ${testRunId} updated successfully.`);
   } catch (error) {
     console.error('Error updating test run:', error);
   }
 }
 
-async function updateTestCasesInPlanEntry(api, testPlanId, testRunId, testCases, include_all = false) {
+async function updateTestCasesInPlanEntry(
+  api,
+  testPlanId,
+  testRunId,
+  testCases,
+  include_all = false,
+) {
   try {
-    await api.post(`update_plan_entry/${testPlanId}/${testRunId}`, { 'case_ids': testCases, 'include_all': include_all });
+    await api.post(`update_plan_entry/${testPlanId}/${testRunId}`, {
+      case_ids: testCases,
+      include_all: include_all,
+    });
     console.log(`Test run ${testRunId} updated successfully.`);
   } catch (error) {
     console.error('Error updating test run:', error);
@@ -141,8 +153,7 @@ async function updateTestCasesInPlanEntry(api, testPlanId, testRunId, testCases,
 
 async function getRunDetails(api, runId) {
   try {
-    const response = await api.get(`get_run/${runId}`, {
-    });
+    const response = await api.get(`get_run/${runId}`, {});
     return response.data;
   } catch (error) {
     console.error('Error fetching test run:', error);
@@ -152,8 +163,7 @@ async function getRunDetails(api, runId) {
 
 async function getPlanDetails(api, planId) {
   try {
-    const response = await api.get(`get_plan/${planId}`, {
-    });
+    const response = await api.get(`get_plan/${planId}`, {});
     return response.data;
   } catch (error) {
     console.error('Error fetching test run:', error);

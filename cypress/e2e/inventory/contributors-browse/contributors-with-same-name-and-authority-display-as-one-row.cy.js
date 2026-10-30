@@ -39,7 +39,9 @@ describe('Inventory', () => {
       { tag: '700', content: '$a Field700_1', indicators: ['1', '\\'] },
       { tag: '700', content: '$a Field700_2', indicators: ['1', '\\'] },
     ];
-    precedingContributors.forEach((contrib) => marcBibFields.push({ tag: '700', content: `$a ${contrib}`, indicators: ['1', '\\'] }));
+    precedingContributors.forEach((contrib) =>
+      marcBibFields.push({ tag: '700', content: `$a ${contrib}`, indicators: ['1', '\\'] }),
+    );
 
     before('Create and link test data via API, login', () => {
       cy.getAdminToken();
@@ -107,7 +109,9 @@ describe('Inventory', () => {
         BrowseContributors.select();
 
         BrowseContributors.waitForContributorToAppear(testData.contributorName, true, true, 1);
-        precedingContributors.forEach((contrib) => BrowseContributors.waitForContributorToAppear(contrib));
+        precedingContributors.forEach((contrib) =>
+          BrowseContributors.waitForContributorToAppear(contrib),
+        );
 
         // Step 3-4: search the contributor name - exactly one highlighted row is displayed,
         // with a MARC Authority icon to its left (both linked "700" fields collapse into one row)

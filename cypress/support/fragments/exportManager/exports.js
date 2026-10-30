@@ -31,12 +31,13 @@ export default {
    */
   getFinishedExportJobViaApi(jobId, { delay = DEFAULT_WAIT_TIME, timeout = 60_000 } = {}) {
     return recurse(
-      () => cy
-        .okapiRequest({
-          path: `data-export-spring/jobs/${jobId}`,
-          isDefaultSearchParamsRequired: false,
-        })
-        .then(({ body }) => body),
+      () =>
+        cy
+          .okapiRequest({
+            path: `data-export-spring/jobs/${jobId}`,
+            isDefaultSearchParamsRequired: false,
+          })
+          .then(({ body }) => body),
       (job) => Boolean(job && !PENDING_EXPORT_JOB_STATUSES_SET.has(job.status)),
       {
         delay,

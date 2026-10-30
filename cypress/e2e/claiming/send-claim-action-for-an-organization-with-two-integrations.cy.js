@@ -166,7 +166,8 @@ describe('Claiming', () => {
       cy.wait('@captureJobsStep4').then(({ response }) => {
         const jobs = response.body.jobRecords || [];
         const int1 = jobs.find(
-          (j) => j.exportTypeSpecificParameters?.vendorEdiOrdersExportConfig?.configName ===
+          (j) =>
+            j.exportTypeSpecificParameters?.vendorEdiOrdersExportConfig?.configName ===
             integration1.integrationName,
         );
 
@@ -204,7 +205,9 @@ describe('Claiming', () => {
         cy.expect(csvFileData).to.have.lengthOf(2);
 
         const F = EXPORT_MANAGER_CLAIMING_CSV_JOB_FIELD_LABELS;
-        const rows = csvFileData.sort((a, b) => a[F.DISPLAY_SUMMARY].localeCompare(b[F.DISPLAY_SUMMARY]));
+        const rows = csvFileData.sort((a, b) =>
+          a[F.DISPLAY_SUMMARY].localeCompare(b[F.DISPLAY_SUMMARY]),
+        );
 
         PIECE_DATA.forEach((piece, idx) => {
           const row = rows[idx];
@@ -233,7 +236,8 @@ describe('Claiming', () => {
       cy.wait('@captureJobsStep7').then(({ response }) => {
         const jobs = response.body.jobRecords || [];
         const int2 = jobs.find(
-          (j) => j.exportTypeSpecificParameters?.vendorEdiOrdersExportConfig?.configName ===
+          (j) =>
+            j.exportTypeSpecificParameters?.vendorEdiOrdersExportConfig?.configName ===
             integration2.integrationName,
         );
 

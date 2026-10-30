@@ -198,7 +198,8 @@ describe('Data Import', () => {
         cy.getAdminToken(false);
         cy.recurse(
           () => MarcAuthorities.getMarcAuthoritiesViaApi({ query: `(id==${createdAuthorityID})` }),
-          (authorities) => authorities.some(({ headingRef }) => headingRef === testData.updatedHeading),
+          (authorities) =>
+            authorities.some(({ headingRef }) => headingRef === testData.updatedHeading),
           { limit: 30, timeout: 62_000, delay: 2_000 },
         );
 

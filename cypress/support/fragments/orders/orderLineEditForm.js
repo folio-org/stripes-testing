@@ -219,12 +219,14 @@ export const vendorDetailsFields = {
 };
 
 const vendorReferenceNumberFields = {
-  refNumber: (index = 0) => vendorDetailsSection.find(
-    TextField({ name: `vendorDetail.referenceNumbers[${index}].refNumber` }),
-  ),
-  refNumberType: (index = 0) => vendorDetailsSection.find(
-    Select({ name: `vendorDetail.referenceNumbers[${index}].refNumberType` }),
-  ),
+  refNumber: (index = 0) =>
+    vendorDetailsSection.find(
+      TextField({ name: `vendorDetail.referenceNumbers[${index}].refNumber` }),
+    ),
+  refNumberType: (index = 0) =>
+    vendorDetailsSection.find(
+      Select({ name: `vendorDetail.referenceNumbers[${index}].refNumberType` }),
+    ),
 };
 
 const ongoingInformationFields = {
@@ -254,22 +256,29 @@ const costDetailsFields = {
 };
 
 const locationFields = {
-  newHoldingLocation: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].locationId` })),
-  quantityPhysical: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].quantityPhysical` })),
-  quantityElectronic: (index = 0) => locationSection.find(TextField({ name: `locations[${index}].quantityElectronic` })),
-  holding: (index = 0) => locationSection
-    .find(RepeatableFieldItem({ index }))
-    .find(Selection(including(FORM_LABELS.SELECT_HOLDINGS))),
+  newHoldingLocation: (index = 0) =>
+    locationSection.find(TextField({ name: `locations[${index}].locationId` })),
+  quantityPhysical: (index = 0) =>
+    locationSection.find(TextField({ name: `locations[${index}].quantityPhysical` })),
+  quantityElectronic: (index = 0) =>
+    locationSection.find(TextField({ name: `locations[${index}].quantityElectronic` })),
+  holding: (index = 0) =>
+    locationSection
+      .find(RepeatableFieldItem({ index }))
+      .find(Selection(including(FORM_LABELS.SELECT_HOLDINGS))),
 };
 
 const fundDistributionFields = {
-  fund: (index = 0) => fundDistributionDetailsSection
-    .find(RepeatableFieldItem({ index }))
-    .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID))),
-  fundIdButton: (index = 0) => fundDistributionDetailsSection.find(Button({ id: `fundDistribution[${index}].fundId` })),
-  expenseClass: (index = 0) => fundDistributionDetailsSection
-    .find(RepeatableFieldItem({ index }))
-    .find(Selection(including('Expense class'))),
+  fund: (index = 0) =>
+    fundDistributionDetailsSection
+      .find(RepeatableFieldItem({ index }))
+      .find(Selection(including(FUND_DISTRIBUTION_LABELS.FUND_ID))),
+  fundIdButton: (index = 0) =>
+    fundDistributionDetailsSection.find(Button({ id: `fundDistribution[${index}].fundId` })),
+  expenseClass: (index = 0) =>
+    fundDistributionDetailsSection
+      .find(RepeatableFieldItem({ index }))
+      .find(Selection(including('Expense class'))),
 };
 
 const buttons = {

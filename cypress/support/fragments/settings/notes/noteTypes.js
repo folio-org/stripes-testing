@@ -22,7 +22,8 @@ const deleteIcon = Button({ id: including('clickable-delete-noteTypes-') });
 const noteTypeInput = TextField();
 const errorMessageElement = HTML({ className: including('editableListError-') });
 const noteTypePane = PaneSet({ id: 'noteTypes' });
-const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType), isContainer: true });
+const rowWithText = (noteType) =>
+  MultiColumnListRow({ content: including(noteType), isContainer: true });
 const rowWithExactText = (noteType) => MultiColumnListRow({ content: noteType, isContainer: true });
 const newButton = Button({ id: 'clickable-add-noteTypes' });
 const generalButton = HTML({

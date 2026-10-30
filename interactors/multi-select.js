@@ -4,7 +4,8 @@ import Button from './button';
 const open = (el) => el.getAttribute('aria-expanded') === 'true';
 
 const control =
-  ({ shouldOpen = true } = {}) => async (interactor) => {
+  ({ shouldOpen = true } = {}) =>
+  async (interactor) => {
     let isOpen;
     await interactor.perform((el) => {
       isOpen = open(el);
@@ -14,18 +15,19 @@ const control =
     }
   };
 
-const filter = ({ find }, value) => find(TextField({ className: including('multiSelectFilterField-') })).perform((el) => {
-  el.focus();
-  const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
-  property.set.call(el, value);
-  el.dispatchEvent(
-    new InputEvent('input', {
-      inputType: 'insertFromPaste',
-      bubbles: true,
-      cancelable: false,
-    }),
-  );
-});
+const filter = ({ find }, value) =>
+  find(TextField({ className: including('multiSelectFilterField-') })).perform((el) => {
+    el.focus();
+    const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
+    property.set.call(el, value);
+    el.dispatchEvent(
+      new InputEvent('input', {
+        inputType: 'insertFromPaste',
+        bubbles: true,
+        cancelable: false,
+      }),
+    );
+  });
 
 export const MultiSelectMenu = HTML.extend('multiselect dropdown')
   .selector('[class^=multiSelectMenu]')
@@ -56,7 +58,8 @@ export const MultiSelectOption = HTML.extend('multi select option')
     },
   })
   .actions({
-    clickSegment: ({ perform }) => perform((el) => el.querySelector('[class^="optionSegment--"]').click()),
+    clickSegment: ({ perform }) =>
+      perform((el) => el.querySelector('[class^="optionSegment--"]').click()),
   });
 
 export const ValueChipRoot = HTML.extend('value chip root')
@@ -67,9 +70,10 @@ export const ValueChipRoot = HTML.extend('value chip root')
     return str;
   });
 
-const toArray = (values = []) => (Array.isArray(values) ? values : [values]).filter(
-  (value) => value !== undefined && value !== null,
-);
+const toArray = (values = []) =>
+  (Array.isArray(values) ? values : [values]).filter(
+    (value) => value !== undefined && value !== null,
+  );
 
 const select = async (interactor, values) => {
   await interactor.open();
@@ -148,14 +152,16 @@ export default createInteractor('multi select')
     optionsCount: (el) => el.querySelectorAll('[class^=multiSelectOption-]').length,
     filterValue: (el) => el.querySelector('input').value,
     focused: (el) => Boolean(el.querySelector(':focus')),
-    focusedValue: (el) => el.querySelector('ul').querySelector('button:focus').parentNode.textContent,
+    focusedValue: (el) =>
+      el.querySelector('ul').querySelector('button:focus').parentNode.textContent,
     error: (el) => el.querySelector('[class^=multiSelectError-]')?.textContent ?? '',
     ariaLabelledby: (el) => el.querySelector('[role=combobox]').getAttribute('aria-labelledby'),
     span: (el) => el.querySelector('span').textContent,
     disabled: (el) => el.querySelector('button[class^=multiSelectToggleButton-]').disabled,
   })
   .actions({
-    toggle: ({ find }) => find(Button({ className: including('multiSelectToggleButton-') })).click(),
+    toggle: ({ find }) =>
+      find(Button({ className: including('multiSelectToggleButton-') })).click(),
     open: control(),
     close: control({ shouldOpen: false }),
     fillIn: filter,
