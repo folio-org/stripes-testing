@@ -384,9 +384,29 @@ export default {
     resource: 'UI-Orders Order Export CSV',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
+  uiOrdersSettingsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Orders Settings',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiOrdersSettingsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Orders Settings',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiOrdersSettingsOrderTemplatesEdit: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Orders Settings Order-Templates',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   uiOrdersSettingsOrderTemplatesCreate: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Orders Settings Order-Templates',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
+  uiReceivingCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Receiving',
     action: CAPABILITY_ACTIONS.CREATE,
   },
   uiReceivingView: {
