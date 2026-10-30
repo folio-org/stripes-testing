@@ -207,14 +207,52 @@ export default {
   },
 
   // fields: [{ key, value, checkbox }]; fundDistribution: fund names shown in "Fund distribution"
-  checkTemplateViewDetails({ fields = [], fundDistribution = [] } = {}) {
+  // physicalResourceDetails: [{ key, value }] checked only within "Physical resource details",
+  // because P/E mix template also has the same labels in "E-resources details"
+  checkTemplateViewDetails({
+    fields = [],
+    fundDistribution = [],
+    physicalResourceDetails = [],
+  } = {}) {
     OrderLineDetails.checkSectionData({ details: fields, section: templateViewPane });
+    OrderLineDetails.checkSectionData({
+      details: physicalResourceDetails,
+      section: templateViewPane.find(Section({ id: 'physical' })),
+    });
     fundDistribution.forEach((fundName) => {
       cy.expect(
         templateViewPane
           .find(MultiColumnListCell({ column: 'Fund', content: including(fundName) }))
           .exists(),
       );
+    });
+  },
+
+  // All key-values show no value and all checkboxes are unchecked,
+  // except key-values with labels listed in "except".
+  // Empty value is rendered as "No value set-" (screen reader text + "-"),
+  // empty list as "The list contains no items"
+  verifyTemplateViewFieldsEmpty({ except = [] } = {}) {
+    const emptyValues = ['', '-', 'No value set-', 'The list contains no items'];
+
+    // .should() retries as one command; expect inside interactor perform() logs every retry
+    cy.get('#order-settings-order-template-view').should(($pane) => {
+      const filledKeyValues = [...$pane[0].querySelectorAll('[class^=kvRoot]')]
+        .map((kv) => ({
+          label: kv.querySelector('[class^=kvLabel]')?.textContent.trim(),
+          value: kv.querySelector('[class^=kvValue]')?.textContent.trim() ?? '',
+        }))
+        .filter(({ label }) => !except.includes(label))
+        .filter(({ value }) => !emptyValues.includes(value))
+        .map(({ label, value }) => `${label}: ${value}`);
+      const checkedCheckboxes = [...$pane[0].querySelectorAll('input[type=checkbox]')]
+        .filter((checkbox) => checkbox.checked)
+        .map((checkbox) => `checkbox: ${checkbox.name || checkbox.id}`);
+
+      expect(
+        [...filledKeyValues, ...checkedCheckboxes],
+        'Filled fields in the order template view',
+      ).to.deep.equal([]);
     });
   },
 

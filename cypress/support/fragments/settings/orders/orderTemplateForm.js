@@ -57,6 +57,8 @@ const orderTemplateFundDetailsSection = orderTemplateForm.find(
   Section({ id: 'fundDistributionAccordion' }),
 );
 const orderTemplateLocationDetailsSection = orderTemplateForm.find(Section({ id: 'location' }));
+const orderTemplatePhysicalSection = orderTemplateForm.find(Section({ id: 'physical' }));
+const orderTemplateOtherSection = orderTemplateForm.find(Section({ id: 'other' }));
 const orderTemplatePoLineTagsSection = orderTemplateForm.find(Section({ id: 'polTags' }));
 
 const saveButton = Button({ id: 'save-order-template-button' });
@@ -87,6 +89,17 @@ const poLineDetailsSectionFields = {
   orderFormat: orderTemplateLineDetailsSection.find(Select({ name: 'orderFormat' })),
   claimingActive: orderTemplateLineDetailsSection.find(Checkbox({ name: 'claimingActive' })),
   claimingInterval: orderTemplateLineDetailsSection.find(TextField({ name: 'claimingInterval' })),
+  binderyActive: orderTemplateLineDetailsSection.find(
+    Checkbox({ name: 'details.isBinderyActive' }),
+  ),
+};
+
+const physicalResourceDetailsFields = {
+  createInventory: orderTemplatePhysicalSection.find(Select({ name: 'physical.createInventory' })),
+};
+
+const otherResourceDetailsFields = {
+  createInventory: orderTemplateOtherSection.find(Select({ name: 'physical.createInventory' })),
 };
 
 const itemDetailsFields = {
@@ -94,6 +107,11 @@ const itemDetailsFields = {
   suppressInstanceFromDiscovery: orderTemplateItemDetailsSection.find(
     Checkbox({ name: 'suppressInstanceFromDiscovery' }),
   ),
+};
+
+const ongoingOrderFields = {
+  isSubscription: orderTemplateOngoingSection.find(Checkbox({ name: 'ongoing.isSubscription' })),
+  renewalInterval: orderTemplateOngoingSection.find(TextField({ name: 'ongoing.interval' })),
 };
 
 const eresourceDetailsFields = {
@@ -150,13 +168,86 @@ export default {
   assertPolOngoingOrderSectionPresent() {
     cy.expect(orderTemplatePOLOngoingSection.exists());
   },
+  assertOngoingOrderSectionAbsent() {
+    cy.expect(orderTemplateOngoingSection.absent());
+  },
+  assertOngoingOrderSectionPresent() {
+    cy.expect(orderTemplateOngoingSection.exists());
+  },
+  fillOngoingOrderFields({ isSubscription, renewalInterval }) {
+    this.expandAccordionById('ongoing');
+    if (isSubscription !== undefined) {
+      cy.do(
+        isSubscription
+          ? ongoingOrderFields.isSubscription.checkIfNotSelected()
+          : ongoingOrderFields.isSubscription.uncheckIfSelected(),
+      );
+    }
+    if (renewalInterval !== undefined) {
+      cy.do(ongoingOrderFields.renewalInterval.fillIn(String(renewalInterval)));
+    }
+  },
+  checkOngoingOrderFields({ isSubscription, renewalInterval }) {
+    this.expandAccordionById('ongoing');
+    if (isSubscription !== undefined) {
+      cy.expect(ongoingOrderFields.isSubscription.has({ checked: isSubscription }));
+    }
+    if (renewalInterval !== undefined) {
+      cy.expect(ongoingOrderFields.renewalInterval.has({ value: String(renewalInterval) }));
+    }
+  },
+
+  // All text fields, text areas and selects are empty and all checkboxes are unchecked,
+  // except fields with names listed in "except"
+  verifyFormFieldsEmpty({ except = [] } = {}) {
+    cy.get('#order-template-form').should(($form) => {
+      const filledFields = [
+        ...$form[0].querySelectorAll(
+          'input:not([type=hidden]):not([type=button]):not([id^=multiselect-input]), textarea, select',
+        ),
+      ]
+        .filter((field) => !except.includes(field.name))
+        .filter((field) => (field.type === 'checkbox' ? field.checked : field.value !== ''))
+        .map((field) => field.name || field.id);
+      // MultiSelect keeps selected values as chips; its input is only a filter
+      const multiSelectValues = [...$form[0].querySelectorAll('[class^=valueChipValue-]')].map(
+        (chip) => `multiselect: ${chip.textContent}`,
+      );
+
+      expect(
+        [...filledFields, ...multiSelectValues],
+        'Filled fields in the order template form',
+      ).to.deep.equal([]);
+    });
+  },
 
   expandAll() {
     cy.do(orderTemplateForm.find(Button(COMMON_BUTTON_LABELS.EXPAND_ALL)).click());
+    cy.wait(2000);
+  },
+
+  verifyExpandCollapseAllButton({ expanded = false } = {}) {
+    const label = expanded ? COMMON_BUTTON_LABELS.COLLAPSE_ALL : COMMON_BUTTON_LABELS.EXPAND_ALL;
+
+    cy.expect(orderTemplateForm.find(Button(label)).has({ disabled: false }));
   },
 
   expandAccordion(label) {
     cy.do(orderTemplateForm.find(Accordion(including(label))).expand());
+  },
+
+  expandAccordionById(id) {
+    const accordion = orderTemplateForm.find(Accordion({ id }));
+
+    cy.wait(2000);
+    cy.then(() => accordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.then(() => accordion.label()).then((label) => {
+          cy.do(accordion.find(Button(label)).click());
+        });
+      }
+    });
+    cy.expect(accordion.has({ open: true }));
   },
 
   fillOrderTemplateFields({
@@ -286,7 +377,7 @@ export default {
     cy.expect([closeFormButton.exists(), saveButton.has({ disabled: saveDisabled })]);
   },
   fillPoInfoSectionFields({ organizationName, orderType }) {
-    cy.do(poInfoSectionFields.poInformationSection.click());
+    this.expandAccordionById('poInfo');
 
     if (organizationName) {
       cy.do(poInfoSectionFields.organizationLookUp.click());
@@ -321,12 +412,13 @@ export default {
     cy.do(itemDetailsFields.title.clear());
   },
   checkPoInfoSectionFields(fields = []) {
+    this.expandAccordionById('poInfo');
     fields.forEach(({ label, conditions }) => {
       cy.expect(poInfoSectionFields[label].has(conditions));
     });
   },
-  fillPoLineDetailsFields({ acquisitionMethod, receiptStatus, orderFormat }) {
-    cy.do(poLineDetailsSectionFields.poLineDetailsSection.click());
+  fillPoLineDetailsFields({ acquisitionMethod, receiptStatus, orderFormat, receivingWorkflow }) {
+    this.expandAccordionById('lineDetails');
 
     if (acquisitionMethod) {
       cy.do([
@@ -341,8 +433,41 @@ export default {
     if (orderFormat !== undefined) {
       cy.do(poLineDetailsSectionFields.orderFormat.choose(orderFormat));
     }
+    if (receivingWorkflow) {
+      cy.do(poLineDetailsSectionFields.checkinItems.choose(receivingWorkflow));
+    }
+  },
+  clickBinderyActiveCheckbox() {
+    cy.do(poLineDetailsSectionFields.binderyActive.click());
+  },
+  fillPhysicalResourceDetailsFields({ createInventory }) {
+    this.expandAccordionById('physical');
+
+    if (createInventory) {
+      cy.do(physicalResourceDetailsFields.createInventory.choose(createInventory));
+    }
+  },
+  checkPhysicalResourceDetailsFields(fields = []) {
+    this.expandAccordionById('physical');
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(physicalResourceDetailsFields[label].has(conditions));
+    });
+  },
+  fillOtherResourceDetailsFields({ createInventory }) {
+    this.expandAccordionById('other');
+
+    if (createInventory) {
+      cy.do(otherResourceDetailsFields.createInventory.choose(createInventory));
+    }
+  },
+  checkOtherResourceDetailsFields(fields = []) {
+    this.expandAccordionById('other');
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(otherResourceDetailsFields[label].has(conditions));
+    });
   },
   checkPoLineDetailsFields(fields = []) {
+    this.expandAccordionById('lineDetails');
     fields.forEach(({ label, conditions }) => {
       cy.expect(poLineDetailsSectionFields[label].has(conditions));
     });

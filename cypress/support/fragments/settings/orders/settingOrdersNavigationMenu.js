@@ -34,6 +34,9 @@ export default {
   selectCategories: () => {
     cy.do(NavListItem('Suffixes').click());
   },
+  selectSuffixes: () => {
+    cy.do(NavListItem('Suffixes').click());
+  },
   selectInstanceMatching: () => {
     cy.do(NavListItem('Instance matching').click());
   },

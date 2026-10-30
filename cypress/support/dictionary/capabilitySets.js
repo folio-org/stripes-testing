@@ -389,6 +389,11 @@ export default {
     resource: 'UI-Orders Settings',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiOrdersSettingsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Orders Settings',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
   uiOrdersSettingsOrderTemplatesEdit: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Orders Settings Order-Templates',
