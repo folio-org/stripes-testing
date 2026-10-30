@@ -504,6 +504,85 @@ export default {
       });
   },
 
+  // Nested matches: matchProfileId1 -> for matches -> matchProfileId2 -> for matches ->
+  // matchProfileId3 -> for matches -> actionProfileId1 and actionProfileId2 (parallel)
+  createJobProfileWithLinkedTripleNestedMatchAndTwoActionProfilesViaApi: (
+    profileName,
+    matchProfileId1,
+    matchProfileId2,
+    matchProfileId3,
+    actionProfileId1,
+    actionProfileId2,
+  ) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile: {
+            name: profileName,
+            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+          },
+          addedRelations: [
+            {
+              masterProfileId: null,
+              masterWrapperId: null,
+              masterProfileType: 'JOB_PROFILE',
+              detailProfileId: matchProfileId1,
+              detailWrapperId: null,
+              detailProfileType: 'MATCH_PROFILE',
+              order: 0,
+            },
+            {
+              masterProfileId: matchProfileId1,
+              masterWrapperId: null,
+              masterProfileType: 'MATCH_PROFILE',
+              detailProfileId: matchProfileId2,
+              detailWrapperId: null,
+              detailProfileType: 'MATCH_PROFILE',
+              order: 0,
+              reactTo: 'MATCH',
+            },
+            {
+              masterProfileId: matchProfileId2,
+              masterWrapperId: null,
+              masterProfileType: 'MATCH_PROFILE',
+              detailProfileId: matchProfileId3,
+              detailWrapperId: null,
+              detailProfileType: 'MATCH_PROFILE',
+              order: 0,
+              reactTo: 'MATCH',
+            },
+            {
+              masterProfileId: matchProfileId3,
+              masterWrapperId: null,
+              masterProfileType: 'MATCH_PROFILE',
+              detailProfileId: actionProfileId1,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 0,
+              reactTo: 'MATCH',
+            },
+            {
+              masterProfileId: matchProfileId3,
+              masterWrapperId: null,
+              masterProfileType: 'MATCH_PROFILE',
+              detailProfileId: actionProfileId2,
+              detailWrapperId: null,
+              detailProfileType: 'ACTION_PROFILE',
+              order: 1,
+              reactTo: 'MATCH',
+            },
+          ],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((responce) => {
+        return responce.body.id;
+      });
+  },
+
   createJobProfileWithLinkedMatchAndActionProfileAndNonMatchActionProfileViaApi: (
     profileName,
     matchProfileId,

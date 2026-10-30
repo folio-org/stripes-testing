@@ -160,7 +160,7 @@ export default {
           return field === protectedField;
         });
         fieldsToRemove.forEach(({ id }) => {
-          this.deleteViaApi(id);
+          this.deleteViaApi(id, true);
         });
       }
     });
