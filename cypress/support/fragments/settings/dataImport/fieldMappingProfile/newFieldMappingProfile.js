@@ -1323,6 +1323,12 @@ export default {
       });
   },
 
+  // holdingsType and electronic access (relationship/uri/linkText/materialsSpecified/urlPublicNote)
+  // are optional, additive to the base permanentLocationId field - shapes captured via a live
+  // network probe of the UI form (NewFieldMappingProfile.fillHoldingsType/addElectronicAccess).
+  // permanentLocation must be the bare location name (e.g. LOCATION_NAMES.ANNEX) - this method
+  // already wraps it in quotes itself, so a pre-quoted value here double-quotes and fails to
+  // resolve during import
   createHoldingsMappingProfileViaApi: (profile) => {
     // eslint-disable-next-line no-unused-vars
     let locationId;
@@ -1343,6 +1349,78 @@ export default {
       });
     }
 
+    const mappingFields = [
+      {
+        name: 'permanentLocationId',
+        enabled: true,
+        path: 'holdings.permanentLocationId',
+        value: `"${profile.permanentLocation}"`,
+        subfields: [],
+        acceptedValues: {
+          locationId: profile.permanentLocation,
+        },
+      },
+    ];
+
+    if (profile.holdingsType) {
+      mappingFields.push({
+        name: 'holdingsTypeId',
+        enabled: true,
+        path: 'holdings.holdingsTypeId',
+        value: `"${profile.holdingsType}"`,
+        subfields: [],
+      });
+    }
+
+    if (profile.uri) {
+      mappingFields.push({
+        name: 'electronicAccess',
+        enabled: true,
+        path: 'holdings.electronicAccess[]',
+        value: '',
+        subfields: [
+          {
+            order: 0,
+            path: 'holdings.electronicAccess[]',
+            fields: [
+              {
+                name: 'relationshipId',
+                enabled: true,
+                path: 'holdings.electronicAccess[].relationshipId',
+                value: profile.relationship,
+              },
+              {
+                name: 'uri',
+                enabled: true,
+                required: true,
+                path: 'holdings.electronicAccess[].uri',
+                value: profile.uri,
+              },
+              {
+                name: 'linkText',
+                enabled: true,
+                path: 'holdings.electronicAccess[].linkText',
+                value: profile.linkText,
+              },
+              {
+                name: 'materialsSpecification',
+                enabled: true,
+                path: 'holdings.electronicAccess[].materialsSpecification',
+                value: profile.materialsSpecified,
+              },
+              {
+                name: 'publicNote',
+                enabled: true,
+                path: 'holdings.electronicAccess[].publicNote',
+                value: profile.urlPublicNote,
+              },
+            ],
+          },
+        ],
+        repeatableFieldAction: 'EXTEND_EXISTING',
+      });
+    }
+
     return cy
       .okapiRequest({
         method: 'POST',
@@ -1355,18 +1433,7 @@ export default {
             mappingDetails: {
               name: 'holdings',
               recordType: 'HOLDINGS',
-              mappingFields: [
-                {
-                  name: 'permanentLocationId',
-                  enabled: true,
-                  path: 'holdings.permanentLocationId',
-                  value: `"${profile.permanentLocation}"`,
-                  subfields: [],
-                  acceptedValues: {
-                    locationId: profile.permanentLocation,
-                  },
-                },
-              ],
+              mappingFields,
             },
           },
           addedRelations: [],
@@ -1431,7 +1498,10 @@ export default {
       });
   },
 
-  createMappingProfileForUpdateMarcBibViaApi: (profile) => {
+  // marcFieldProtectionSettings: protection rules (as returned by MarcFieldProtection.createViaApi,
+  // i.e. {id, field, indicator1, indicator2, subfield, data, source}) this profile should override -
+  // matches the "Override protected fields" grid on the UI form, captured via a live network probe
+  createMappingProfileForUpdateMarcBibViaApi: (profile, marcFieldProtectionSettings = []) => {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -1448,6 +1518,10 @@ export default {
               marcMappingDetails: [],
               marcMappingOption: 'UPDATE',
             },
+            marcFieldProtectionSettings: marcFieldProtectionSettings.map((rule) => ({
+              ...rule,
+              override: true,
+            })),
           },
         },
         isDefaultSearchParamsRequired: false,
