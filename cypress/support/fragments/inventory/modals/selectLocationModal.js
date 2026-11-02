@@ -27,7 +27,10 @@ export default {
     cy.wait(1500);
   },
 
-  selectLocation(action, holdingsHrid, firstMember, secondMember, locationName) {
+  // Searches by name and picks the first matching location, closing this modal - the
+  // reusable core of selectLocation, without the Holdings-ownership-specific confirmation
+  // that follows it there
+  pickLocation(locationName) {
     this.search(locationName);
     cy.do(
       selectLocationModal
@@ -36,6 +39,10 @@ export default {
         .click(),
     );
     cy.expect(selectLocationModal.absent());
+  },
+
+  selectLocation(action, holdingsHrid, firstMember, secondMember, locationName) {
+    this.pickLocation(locationName);
     this.validateUpdateOwnershipOfHoldings(holdingsHrid, firstMember, secondMember);
 
     if (action === 'cancel') {

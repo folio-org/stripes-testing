@@ -76,7 +76,7 @@ describe('Consortium manager', () => {
             permissions.inventoryCRUDItemNoteTypes.gui,
             permissions.uiCreateEditDeleteLoanTypes.gui,
           ]);
-          ItemNoteTypes.createItemNoteTypeViaApi(testData.collegeLocalItemNoteTypes);
+          ItemNoteTypes.createItemNoteTypeViaApi(testData.collegeLocalItemNoteTypes.name);
           LoanTypes.createLoanTypesViaApi(testData.collegeLocalLoanTypes);
           cy.resetTenant();
           cy.getAdminToken();
