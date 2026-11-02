@@ -45,13 +45,14 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile, false);
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(
         'C436948 Verify that "Save & close" button cannot be clicked two times in a row in "Create a new MARC authority record" window (promin)',
-        { tags: ['extendedPath', 'promin', 'C436948'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C436948'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           MarcAuthority.setValid008DropdownValues();

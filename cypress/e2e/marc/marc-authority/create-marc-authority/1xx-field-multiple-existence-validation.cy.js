@@ -68,12 +68,13 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(LC_NAME_AUTHORITY_FILE, false);
         Users.deleteViaApi(user.userId);
       });
 
       it(
         'C503061 "1XX" multiple field existence validation in "Create a new MARC authority record" pane (promin)',
-        { tags: ['extendedPath', 'promin', 'C503061'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C503061'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.waitLoading();

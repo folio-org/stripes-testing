@@ -64,7 +64,7 @@ describe('MARC', () => {
 
       it(
         'C423536 Create a new MARC authority record with "FOLIO" authority file selected (promin)',
-        { tags: ['criticalPath', 'promin', 'C423536'] },
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C423536'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);

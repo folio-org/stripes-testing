@@ -67,13 +67,14 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile, false);
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(
         'C1045404 Create/Edit MARC authority record with 003 and 035 fields (no normalization) (promin)',
-        { tags: ['criticalPath', 'promin', 'C1045404'] },
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C1045404'] },
         () => {
           // Step 1: Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();
