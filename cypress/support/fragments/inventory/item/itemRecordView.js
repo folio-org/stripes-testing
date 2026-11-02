@@ -16,6 +16,7 @@ import {
   Spinner,
   TextField,
   ValueChipRoot,
+  calloutTypes,
 } from '../../../../../interactors';
 import { COMMON_BUTTON_LABELS, ITEM_STATUS_NAMES } from '../../../constants';
 import dateTools from '../../../utils/dateTools';
@@ -157,6 +158,13 @@ export default {
     return ItemRecordEdit;
   },
 
+  // Locale-safe sibling of openItemEditForm: accepts the "Actions"/"Edit" button text as
+  // parameters instead of hardcoding English, and skips ItemRecordEdit.waitLoading(itemTitle)
+  // since that also hardcodes button-state assertions unrelated to the labels themselves
+  openItemEditFormWithLabels(actionsLabel, editLabel) {
+    cy.do([Button(actionsLabel).click(), Button(editLabel).click()]);
+  },
+
   clickDeleteButton() {
     cy.do([actionsButton.click(), Button('Delete').click()]);
 
@@ -188,6 +196,17 @@ export default {
     UpdateOwnershipModal.validateUpdateOwnershipModalView(tenant);
     UpdateOwnershipModal.validateAbilityToCreateNewHoldings(tenant);
     UpdateOwnershipModal.updateHoldings(tenant, location);
+  },
+
+  verifyOwnershipUpdatedCallout: (hrid, tenant) => {
+    cy.expect(
+      Callout({
+        type: calloutTypes.success,
+        textContent: including(
+          `Ownership of item ${hrid} has been successfully updated to ${tenant || ''}`,
+        ),
+      }).exists(),
+    );
   },
 
   verifyEffectiveLocationForItemInDetails: (location) => {

@@ -87,7 +87,7 @@ describe('Inventory', () => {
             [],
             [
               CapabilitySets.uiInventoryInstanceView,
-              CapabilitySets.uiInventoryItemCreate,
+              CapabilitySets.uiInventoryItemEdit,
               CapabilitySets.uiDataImport,
               CapabilitySets.uiDataImportSettingsManage,
             ],

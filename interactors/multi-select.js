@@ -149,7 +149,7 @@ export default createInteractor('multi select')
     filterValue: (el) => el.querySelector('input').value,
     focused: (el) => Boolean(el.querySelector(':focus')),
     focusedValue: (el) => el.querySelector('ul').querySelector('button:focus').parentNode.textContent,
-    error: (el) => el.querySelector('[class^=feedbackError]').textContent,
+    error: (el) => el.querySelector('[class^=multiSelectError-]')?.textContent ?? '',
     ariaLabelledby: (el) => el.querySelector('[role=combobox]').getAttribute('aria-labelledby'),
     span: (el) => el.querySelector('span').textContent,
     disabled: (el) => el.querySelector('button[class^=multiSelectToggleButton-]').disabled,

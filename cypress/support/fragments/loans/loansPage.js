@@ -238,4 +238,8 @@ export default {
   verifyClosedLoansVisible() {
     cy.get('body').should('contain', 'Closed');
   },
+
+  verifyMessage(message) {
+    cy.contains(message).should('be.visible');
+  },
 };

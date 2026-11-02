@@ -13,3 +13,4 @@ export * from './organizations';
 export * from './query-builder';
 export * from './receiving';
 export * from './tenant';
+export * from './loans';

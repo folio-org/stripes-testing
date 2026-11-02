@@ -1065,6 +1065,16 @@ export default {
     ]);
   },
 
+  // Expands the Item status facet and verifies the given option labels are listed, without
+  // selecting any of them
+  verifyItemStatusFacetOptionsExist(statuses) {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-itemStatus' }).click(),
+      MultiSelect({ id: 'itemStatus-multiselect' }).open(),
+    ]);
+    cy.expect(statuses.map((status) => MultiSelectOption(including(status)).exists()));
+  },
+
   selectBrowseOption(option) {
     cy.do(browseSearchAndFilterInput.choose(option));
   },
@@ -1197,11 +1207,20 @@ export default {
     const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
     const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
     cy.do(multiSelect.open());
-    cy.then(() => multiSelect
-      .find(MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))))
-      .totalRecords()).then((actualCount) => {
-      expect(actualCount).to.be.at.least(minCount);
-    });
+    // Counters can still come from the facets response for the previous query - retry until refreshed
+    cy.recurse(
+      () => cy.then(() => multiSelect
+        .find(MultiSelectOption(matching(new RegExp(`^${escapedValue}\\(\\d+\\)$`))))
+        .totalRecords()),
+      (actualCount) => actualCount >= minCount,
+      {
+        limit: 15,
+        delay: 1000,
+        timeout: 20_000,
+        log: (actualCount) => cy.log(`"${optionName}" counter: ${actualCount} (expected >= ${minCount})`),
+        error: `"${optionName}" counter in "${accordionName}" stayed below ${minCount}`,
+      },
+    );
   },
 
   verifyCheckboxInAccordion(accordionName, checkboxValue, isChecked = null) {
@@ -1229,6 +1248,27 @@ export default {
     // wait for facet options to reload in all facets
     cy.wait(ONE_SECOND);
     cy.expect(checkbox.has({ checked: selected }));
+  },
+
+  // The instances search (clicking Search, changing/selecting a filter, or coming back to
+  // Search from a create/edit form or the Browse pane) re-fires GET /search/instances -
+  // except when the change removes the last search param entirely (e.g. Reset all,
+  // deselecting the only active filter), which triggers no request at all. That makes this
+  // unsafe to bake into a shared method used in both contexts - callers must register this
+  // themselves right before an action they know will add/change a param, then pass the
+  // returned alias to waitForInstancesSearchToLoad. A fresh alias is generated each call so a
+  // late-resolving earlier request can't be mistaken by cy.wait() for the one just triggered.
+  instancesSearchInterceptCount: 0,
+
+  interceptInstancesSearch() {
+    this.instancesSearchInterceptCount += 1;
+    const alias = `instancesSearch${this.instancesSearchInterceptCount}`;
+    cy.intercept('GET', '/search/instances?*').as(alias);
+    return alias;
+  },
+
+  waitForInstancesSearchToLoad(alias) {
+    cy.wait(`@${alias}`);
   },
 
   selectMultiSelectFilterOption(accordionName, optionName) {

@@ -354,6 +354,11 @@ export default {
     resource: 'UI-Inventory Instance',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiInventoryInstanceCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Instance',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
   uiInventoryInstanceView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Instance',
@@ -379,9 +384,29 @@ export default {
     resource: 'UI-Orders Order Export CSV',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
+  uiOrdersSettingsView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Orders Settings',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiOrdersSettingsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Orders Settings',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiOrdersSettingsOrderTemplatesEdit: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Orders Settings Order-Templates',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   uiOrdersSettingsOrderTemplatesCreate: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Orders Settings Order-Templates',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
+  uiReceivingCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Receiving',
     action: CAPABILITY_ACTIONS.CREATE,
   },
   uiReceivingView: {
@@ -429,15 +454,25 @@ export default {
     resource: 'UI-Inventory Holdings',
     action: CAPABILITY_ACTIONS.CREATE,
   },
+  uiInventoryHoldingsEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Holdings',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   uiInventory: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
-  uiInventoryItemCreate: {
+  uiInventoryItemEdit: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Item',
     action: CAPABILITY_ACTIONS.EDIT,
+  },
+  uiInventoryItemCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Inventory Item',
+    action: CAPABILITY_ACTIONS.CREATE,
   },
   uiInventoryItemMove: {
     type: CAPABILITY_TYPES.PROCEDURAL,

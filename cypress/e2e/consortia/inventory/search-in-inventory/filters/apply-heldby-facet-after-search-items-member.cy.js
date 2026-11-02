@@ -12,6 +12,7 @@ import { INSTANCE_SOURCE_NAMES, ITEM_STATUS_NAMES } from '../../../../../support
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import InventoryHoldings from '../../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryItems from '../../../../../support/fragments/inventory/item/inventoryItems';
+import Locations from '../../../../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -166,11 +167,8 @@ describe('Inventory', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.College);
-              cy.getLocations({
-                limit: 1,
-                query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
-              }).then((res) => {
-                locations[Affiliations.College] = res;
+              Locations.getOrCreateTenantLocationViaApi(Affiliations.College).then((location) => {
+                locations[Affiliations.College] = location;
               });
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
                 holdingsSourceId = folioSource.id;
@@ -184,12 +182,11 @@ describe('Inventory', () => {
                 materialTypeId = res.id;
               });
               cy.setTenant(Affiliations.University);
-              cy.getLocations({
-                limit: 1,
-                query: '(isActive=true and name<>"AT_*" and name<>"*auto*")',
-              }).then((res) => {
-                locations[Affiliations.University] = res;
-              });
+              Locations.getOrCreateTenantLocationViaApi(Affiliations.University).then(
+                (location) => {
+                  locations[Affiliations.University] = location;
+                },
+              );
             })
             .then(() => {
               instancesData.forEach((instanceData, instanceIndex) => {

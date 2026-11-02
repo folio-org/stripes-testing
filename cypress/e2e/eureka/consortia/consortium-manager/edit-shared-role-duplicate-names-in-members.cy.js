@@ -21,7 +21,7 @@ describe('Eureka', () => {
       memberRoleNameUpdated: `AT_C1263896_UserRole_Updated_${randomPostfix}_Member`,
       sharedRoleCapabilitySets: [CapabilitySets.uiOrganizationsView],
       memberRoleCollegeCapabilitySets: [CapabilitySets.uiInventoryHoldingsCreate],
-      memberRoleUniversityCapabilitySets: [CapabilitySets.uiInventoryItemCreate],
+      memberRoleUniversityCapabilitySets: [CapabilitySets.uiInventoryItemEdit],
     };
 
     const capabSetsToAssignCentral = [

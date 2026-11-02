@@ -97,14 +97,10 @@ describe('Eureka', () => {
         cy.resetTenant();
         cy.getAdminToken();
         if (Cypress.env('runAsAdmin')) cy.deleteRolesForUserApi(testData.testUser.userId);
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.tempUser.username, testData.tempUser.password, {
-            path: TopMenu.usersPath,
-            waiter: Users.waitLoading,
-          });
-          cy.reload();
-          Users.waitLoading();
-        }, 20_000);
+        cy.login(testData.tempUser.username, testData.tempUser.password, {
+          path: TopMenu.usersPath,
+          waiter: Users.waitLoading,
+        });
         UsersSearchPane.searchByUsername(testData.testUser.username);
       });
 
@@ -128,6 +124,7 @@ describe('Eureka', () => {
         { tags: ['criticalPathECS', 'eureka', 'C514892'] },
         () => {
           UsersSearchPane.selectUserFromList(testData.testUser.username);
+          UsersCard.waitLoading();
           UsersCard.verifyUserRolesCounter('0');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.central);
@@ -163,9 +160,11 @@ describe('Eureka', () => {
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.USERS);
           Users.waitLoading();
+          UsersCard.waitLoading();
           UsersSearchPane.resetAllFilters();
           UsersSearchPane.searchByUsername(testData.testUser.username);
           UsersSearchPane.selectUserFromList(testData.testUser.username);
+          UsersCard.waitLoading();
           UsersCard.verifyUserRolesCounter('2');
           UsersCard.clickUserRolesAccordion();
           UsersCard.verifyUserRoleNames([testData.centralRoleNameA, testData.centralRoleNameB]);
@@ -204,6 +203,7 @@ describe('Eureka', () => {
           Users.waitLoading();
           UsersSearchPane.searchByUsername(testData.testUser.username);
           UsersSearchPane.clickOnUserRowContaining(testData.testUser.username);
+          UsersCard.waitLoading();
           UsersCard.verifyUserRolesCounter('2');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.college);
@@ -243,6 +243,7 @@ describe('Eureka', () => {
           Users.waitLoading();
           UsersSearchPane.searchByUsername(testData.testUser.username);
           UsersSearchPane.clickOnUserRowContaining(testData.testUser.username);
+          UsersCard.waitLoading();
           UsersCard.verifyUserRolesCounter('2');
           UsersCard.clickUserRolesAccordion();
           UsersCard.checkSelectedRolesAffiliation(tenantNames.university);

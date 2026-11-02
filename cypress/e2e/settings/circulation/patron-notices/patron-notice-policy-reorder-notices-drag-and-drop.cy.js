@@ -220,7 +220,10 @@ describe('Patron notices', () => {
         // Step 4: Click "Delete notice" on Notice 1
         NewNoticePolicy.clickDeleteNotice('loan', 0);
         NewNoticePolicy.verifyNoticeCardLabels('loan', 2);
-        NewNoticePolicy.verifyNoticeTemplatesOrder('loan', [loanTemplate1.name, loanTemplate2.name]);
+        NewNoticePolicy.verifyNoticeTemplatesOrder('loan', [
+          loanTemplate1.name,
+          loanTemplate2.name,
+        ]);
 
         // Step 5: Click "Add notice", then drag the appended card above Notice 1
         NewNoticePolicy.addEmptyNotice('loan', 2);

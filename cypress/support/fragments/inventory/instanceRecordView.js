@@ -973,6 +973,13 @@ export default {
     );
   },
 
+  getLastUpdatedDateAndTime() {
+    return cy
+      .contains('button', /Record last updated:/)
+      .invoke('text')
+      .then((text) => text.split('updated: ')[1]);
+  },
+
   verifyLastUpdatedDateAndTime(updatedDate, { matches = true } = {}) {
     if (matches) {
       cy.expect(
