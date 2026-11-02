@@ -158,6 +158,9 @@ export const POL_CREATE_INVENTORY_SETTINGS_VIEW = {
   NONE: 'None',
 };
 
+export const SUPPRESS_INSTANCE_FROM_DISCOVERY_INFO =
+  'When true this will suppress any instance record that is created when this order is Opened. If the order line is linked to an existing instance using the Title Lookup or it is matched to an existing instance by product identifier. This flag will not suppress the existing instance.';
+
 export const POLINE_DETAILS_FIELDS = {
   TITLE: 'Title',
   ACQUISITION_METHOD: 'Acquisition method',

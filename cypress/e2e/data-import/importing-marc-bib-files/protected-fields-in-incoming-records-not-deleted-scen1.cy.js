@@ -56,6 +56,12 @@ describe('Data Import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
+        MarcFieldProtection.getListViaApi({
+          query: `"field"=="${protectedFieldData.protectedField}"`,
+        }).then((list) => {
+          list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+        });
+
         DataImport.uploadFileViaApi('marcFileForC358968.mrc', fileName, jobProfileToRun).then(
           (response) => {
             instanceHrid = response[0].instance.hrid;
@@ -81,7 +87,7 @@ describe('Data Import', () => {
 
     it(
       'C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (promin)',
-      { tags: ['criticalPath', 'promin', 'C358968'] },
+      { tags: ['criticalPath', 'promin', 'nonParallel', 'C358968'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);

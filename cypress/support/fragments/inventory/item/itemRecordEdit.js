@@ -90,6 +90,9 @@ export default {
   cancel: () => {
     cy.do(cancelBtn.click());
   },
+  checkTextFieldValue: (fieldLabel, fieldValue) => {
+    cy.expect(TextField(fieldLabel).has({ value: fieldValue }));
+  },
   checkButtonsEnabled({ saveAndClose = false, saveKeepEditing = false, cancel = true } = {}) {
     cy.expect([
       cancelBtn.has({ disabled: !cancel }),
