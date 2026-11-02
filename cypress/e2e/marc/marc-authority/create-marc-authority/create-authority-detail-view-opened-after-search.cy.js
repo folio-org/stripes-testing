@@ -68,13 +68,14 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile, false);
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeadingPrefix);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(
         'C451569 Detail view of created "MARC authority" record is open automatically after creation when user is on search result list with one result (promin)',
-        { tags: ['extendedPath', 'promin', 'C451569'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C451569'] },
         () => {
           MarcAuthorities.searchBeats(existingAuthorityHeading);
           MarcAuthorities.selectTitle(existingAuthorityHeading);

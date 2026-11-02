@@ -99,6 +99,7 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile, false);
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
         Users.deleteViaApi(testData.userProperties.userId);
         if (localFieldId) {
@@ -108,7 +109,7 @@ describe('MARC', () => {
 
       it(
         'C503162 Create "MARC authority" record with multiple control fields (002, 003, 004, 009) which have subfield "$a" (promin)',
-        { tags: ['extendedPath', 'promin', 'C503162'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C503162'] },
         () => {
           // 1. Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();

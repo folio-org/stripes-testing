@@ -83,7 +83,7 @@ describe('MARC', () => {
 
       it(
         'C422248 Verify options displayed in "Authority file look-up" modal from Central tenant when some authority files (FOLIO and LOCAL) have the "Active" checkbox selected in the settings (consortia) (promin)',
-        { tags: ['criticalPathECS', 'promin', 'C422248'] },
+        { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C422248'] },
         () => {
           // Click on "Actions" button in second pane >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();

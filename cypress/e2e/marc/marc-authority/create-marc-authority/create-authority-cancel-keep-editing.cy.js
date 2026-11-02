@@ -42,13 +42,14 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile, false);
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(
         'C423524 Select "Keep editing" in "Are you sure" modal and save the record in "Create a new MARC authority record" window (promin)',
-        { tags: ['extendedPath', 'promin', 'C423524'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C423524'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           MarcAuthority.setValid008DropdownValues();

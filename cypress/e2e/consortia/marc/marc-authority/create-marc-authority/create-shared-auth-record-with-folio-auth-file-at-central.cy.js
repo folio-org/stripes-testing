@@ -66,7 +66,7 @@ describe('MARC', () => {
 
       it(
         'C423569 Create a new shared MARC authority record with "FOLIO" authority file selected at Central tenant (consortia) (promin)',
-        { tags: ['criticalPathECS', 'promin', 'C423569'] },
+        { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C423569'] },
         () => {
           // Step 1: Click Actions > + New
           MarcAuthorities.clickActionsAndNewAuthorityButton();

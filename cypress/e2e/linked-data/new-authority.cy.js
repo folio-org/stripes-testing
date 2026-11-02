@@ -124,7 +124,7 @@ describe('Citation: MARC Authority integration', () => {
 
   it(
     'C633470 [User journey] Marigold - Create new MARC authority (promin)',
-    { tags: ['criticalPath', 'shiftLeft', 'promin', 'C633470', 'marigold'] },
+    { tags: ['criticalPath', 'shiftLeft', 'promin', 'nonParallel', 'C633470', 'marigold'] },
     () => {
       // create new authority via UI
       MarcAuthorities.clickActionsAndNewAuthorityButton();

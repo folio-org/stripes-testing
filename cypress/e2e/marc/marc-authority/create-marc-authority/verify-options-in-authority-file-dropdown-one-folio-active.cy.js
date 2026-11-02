@@ -41,6 +41,7 @@ describe('MARC', () => {
             ).then((sourceId) => {
               localAuthFile.fileId = sourceId;
             });
+            ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
             ManageAuthorityFiles.setAuthorityFileToActiveViaApi(
               DEFAULT_FOLIO_AUTHORITY_FILES.LC_DEMOGRAPHIC_GROUP_TERMS,
             );
@@ -69,7 +70,7 @@ describe('MARC', () => {
       it(
         `C422244 Verify options displayed in "Select authority file" dropdown in "Create a new MARC authority record" window
         when only one FOLIO has the "Active" checkbox selected in the settings (promin)`,
-        { tags: ['criticalPathFlaky', 'promin', 'C422244'] },
+        { tags: ['criticalPathFlaky', 'promin', 'nonParallel', 'C422244'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(paneHeaderCreateNewMarcAuthorityRecord);

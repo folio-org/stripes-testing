@@ -95,6 +95,28 @@ export default {
     cy.expect(titlesList.find(Spinner()).absent());
   },
 
+  // Selection is applied in the external KB with a delay: poll the opened package until the KB reports
+  // it (and all its titles) selected / not selected. Get a token that can read eHoldings before calling.
+  waitForSelectionStatusViaApi(isSelected = true) {
+    cy.url().then((url) => {
+      const packageId = url.split('?')[0].split('/').at(-1);
+      recurse(
+        () => cy.okapiRequest({
+          path: `eholdings/packages/${packageId}`,
+          isDefaultSearchParamsRequired: false,
+        }),
+        ({ body: { data } }) => data.attributes.isSelected === isSelected &&
+          data.attributes.selectedCount === (isSelected ? data.attributes.titleCount : 0),
+        {
+          timeout: 3 * 60_000,
+          delay: 5_000,
+          log: true,
+          error: `Package ${packageId} is not ${isSelected ? 'selected' : 'unselected'} in the KB after 3 minutes`,
+        },
+      );
+    });
+  },
+
   verifyHoldingStatus(expectedStatus = FILTER_STATUSES.SELECTED) {
     this.checkTitleRowsShown();
     cy.url().then((url) => {

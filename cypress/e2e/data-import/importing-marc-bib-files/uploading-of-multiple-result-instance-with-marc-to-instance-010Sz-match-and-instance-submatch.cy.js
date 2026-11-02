@@ -144,7 +144,7 @@ describe('Data Import', () => {
       });
 
       after('Delete test data', () => {
-        cy.getAdminToken().then(() => {
+        cy.getAdminToken(false).then(() => {
           SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
           matchProfiles.forEach((profile) => {
             SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
