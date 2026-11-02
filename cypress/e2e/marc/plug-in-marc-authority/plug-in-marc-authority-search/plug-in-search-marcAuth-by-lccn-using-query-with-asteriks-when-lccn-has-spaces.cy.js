@@ -51,6 +51,8 @@ describe('MARC', () => {
       const createdAuthorityIDs = [];
 
       before('Creating user', () => {
+        cy.getAdminToken();
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C440116 ');
         cy.createTempUser([
           Permissions.inventoryAll.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -82,11 +84,11 @@ describe('MARC', () => {
       });
 
       after('Deleting created user', () => {
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         Users.deleteViaApi(testData.userProperties.userId);
         InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
         createdAuthorityIDs.forEach((id, index) => {
-          if (index) MarcAuthority.deleteViaAPI(id);
+          if (index) MarcAuthority.deleteViaAPI(id, true);
         });
       });
 
@@ -100,6 +102,10 @@ describe('MARC', () => {
           InventoryInstance.verifyAndClickLinkIcon('700');
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySearchOptions();
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
 
           searchQueries.forEach((query) => {
             MarcAuthorities.searchByParameter(testData.searchOption, query);

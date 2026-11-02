@@ -104,6 +104,10 @@ describe('MARC', () => {
             testData.matchOptions.containsAny,
           );
           // #5 Click on the "Search" button
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorities.clickSearchButton();
           [3, 7, 6, 1, 11]
             .map((index) => records[index])

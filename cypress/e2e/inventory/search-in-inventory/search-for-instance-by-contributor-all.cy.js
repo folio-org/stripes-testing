@@ -101,7 +101,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       testData.users.forEach((user) => {
         Users.deleteViaApi(user.userId);
       });
@@ -205,6 +205,7 @@ describe('Inventory', () => {
           );
           InventoryInstances.clickSearchBtnInAdvSearchModal();
           InventoryInstances.checkAdvSearchModalAbsence();
+          if (!Cypress.env('ecsEnabled')) InventorySearchAndFilter.clearDefaultHeldbyFilter();
           testData.searchResulsAllInstances.forEach((result) => {
             InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
           });

@@ -61,7 +61,7 @@ describe('Inventory', () => {
     });
 
     after('Delete created instance', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.instanceId);
     });
@@ -75,7 +75,7 @@ describe('Inventory', () => {
         BrowseSubjects.searchBrowseSubjects(testData.subject.name);
         cy.wait(3000);
         cy.ifConsortia(true, () => {
-          InventorySearchAndFilter.clearDefaultHeldbyFilter();
+          InventorySearchAndFilter.byShared('No');
         });
 
         BrowseSubjects.verifyDuplicateSubjectsWithDifferentSources(testData.subject);

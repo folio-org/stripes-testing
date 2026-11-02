@@ -70,7 +70,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Users.deleteViaApi(testData.user.userId);
       testData.instanceIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
@@ -82,20 +82,29 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'promin', 'C368045'] },
       () => {
         testData.positiveSearchQueries.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventoryInstances.searchByTitle(query);
           InventorySearchAndFilter.checkRowsCount(3);
           testData.searchResults.forEach((result) => {
             InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
           });
-          InventoryInstances.resetAllFilters();
+          InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         });
 
         testData.negativeSearchQueries.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventoryInstances.searchByTitle(query, false);
           InventorySearchAndFilter.verifyNoRecordsFound();
-          InventoryInstances.resetAllFilters();
+          InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         });
 
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.searchByTitle('A History Of Richard Linklater Dazed And Confused');
         InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[2], true);

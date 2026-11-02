@@ -1491,6 +1491,7 @@ export default {
       inventorySearchInput.fillIn(value),
     ]);
     this.verifySelectedSearchOption(option);
+    if (!Cypress.env('ecsEnabled')) this.clearDefaultHeldbyFilter();
     cy.expect([inventorySearchInput.has({ value }), searchButton.has({ disabled: false })]);
     cy.do(searchButton.click());
   },

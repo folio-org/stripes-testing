@@ -44,7 +44,7 @@ const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
 const effectiveLocationInput = Accordion('Effective location (item)');
 const sourceAccordion = Accordion('Source');
-const sharedAccordion = Accordion({ id: 'shared' });
+const sharedAccordion = Accordion('Shared');
 const languageInput = Accordion({ id: 'language' });
 const resourceTypeAccordion = Accordion({ id: 'resource' });
 const formatAccordion = Accordion({ id: 'format' });
@@ -252,14 +252,15 @@ export default {
   },
 
   byEffectiveLocation(values) {
+    const escapedLocation = values ? InteractorsTools.escapeRegExp(values) : 'Main Library';
     cy.do(effectiveLocationInput.clickHeader());
     // wait to avoid robotic clicks
     cy.wait(2000);
     cy.do([
       effectiveLocationInput.find(Button({ ariaLabel: 'open menu' })).click(),
-      MultiSelectOption(including(values ?? 'Main Library')).clickSegment(),
+      MultiSelectOption(matching(new RegExp(`^${escapedLocation} \\(`))).clickSegment(),
     ]);
-    cy.expect(ValueChipRoot(including(values ?? 'Main Library')).exists());
+    cy.expect(ValueChipRoot(matching(new RegExp(`^${escapedLocation}`))).exists());
   },
 
   byLanguage(lang) {
@@ -283,9 +284,9 @@ export default {
     cy.then(() => sharedAccordion.open()).then((isOpen) => {
       if (!isOpen) cy.do(sharedAccordion.clickHeader());
       if (condititon === 'Yes') {
-        cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-true' }))[action]());
+        cy.do(sharedAccordion.find(Checkbox('Yes'))[action]());
       } else {
-        cy.do(sharedAccordion.find(Checkbox({ id: 'clickable-filter-shared-false' }))[action]());
+        cy.do(sharedAccordion.find(Checkbox('No'))[action]());
       }
       cy.wait(1000);
       cy.expect(sharedAccordion.find(Spinner()).absent());

@@ -83,10 +83,6 @@ describe('MARC', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.waitForAuthRefresh(() => {
-            cy.reload();
-            InventoryInstances.waitContentLoading();
-          }, 20_000);
           InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
@@ -114,8 +110,8 @@ describe('MARC', () => {
     describe('plug-in MARC authority | Search', () => {
       const testData = {
         forC359206: {
-          lcControlNumberA: 'n  00000913',
-          lcControlNumberB: 'n  79125031',
+          lcControlNumberA: 'n35920600000913',
+          lcControlNumberB: 'n35920679125031',
           searchOption: 'Identifier (all)',
           valueA: 'C359206 Erbil, H. Yıldırım',
           valueB: 'C359206 Twain, Mark,',
@@ -144,10 +140,7 @@ describe('MARC', () => {
       before('Creating user', () => {
         cy.getAdminToken();
         // make sure there are no duplicate authority records in the system
-
-        ['C359206*'].forEach((title) => {
-          MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(title);
-        });
+        MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C359206');
 
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -175,7 +168,7 @@ describe('MARC', () => {
       });
 
       after('Deleting created user', () => {
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         Users.deleteViaApi(testData.userProperties.userId);
         InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
         createdAuthorityIDs.forEach((id, index) => {

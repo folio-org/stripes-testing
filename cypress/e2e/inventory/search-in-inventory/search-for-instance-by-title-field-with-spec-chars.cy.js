@@ -90,7 +90,7 @@ describe('Inventory', () => {
       { tags: ['criticalPathFlaky', 'promin', 'C368027', 'eurekaPhase1'] },
       () => {
         testData.searchQueries.forEach((query) => {
-          cy.ifConsortia(() => {
+          cy.ifConsortia(true, () => {
             InventorySearchAndFilter.byShared('No');
           });
           InventoryInstances.searchByTitle(query);
@@ -98,10 +98,10 @@ describe('Inventory', () => {
           testData.searchResults.forEach((result) => {
             InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
           });
-          InventoryInstances.resetAllFilters();
+          InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         });
 
-        cy.ifConsortia(() => {
+        cy.ifConsortia(true, () => {
           InventorySearchAndFilter.byShared('No');
         });
         InventoryInstances.searchByTitle(

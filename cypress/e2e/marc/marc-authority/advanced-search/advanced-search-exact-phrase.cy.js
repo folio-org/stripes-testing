@@ -70,7 +70,7 @@ describe('MARC', () => {
       });
 
       after(() => {
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         MarcAuthority.deleteViaAPI(createdAuthorityIDs[0]);
         MarcAuthority.deleteViaAPI(createdAuthorityIDs[1]);
         MarcAuthority.deleteViaAPI(createdAuthorityIDs[3]);
@@ -95,6 +95,10 @@ describe('MARC', () => {
           );
           // #5 Click on the "Search" button
           MarcAuthorities.clickSearchButton();
+          cy.ifConsortia(true, () => {
+            MarcAuthorities.clickAccordionByName('Shared');
+            MarcAuthorities.actionsSelectCheckbox('No');
+          });
           MarcAuthorities.checkRowByContent(Object.values(records[1]).join(''));
 
           // #6 Click on the "Advanced search" button placed on the "Search & filter" pane.

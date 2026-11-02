@@ -225,7 +225,7 @@ describe('Inventory', () => {
       });
 
       after('Clean up', () => {
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         Users.deleteViaApi(tempUser.userId);
         InventoryInstances.deleteFullInstancesByTitleViaApi(instanceTitle);
         CallNumberBrowseSettings.assignCallNumberTypesViaApi({
@@ -246,6 +246,7 @@ describe('Inventory', () => {
           InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
           cy.ifConsortia(true, () => {
             InventorySearchAndFilter.clearDefaultHeldbyFilter();
+            InventorySearchAndFilter.byShared('No');
           });
           expectedValuesInApi.forEach((value) => {
             BrowseCallNumber.waitForCallNumberToAppear(value);

@@ -155,7 +155,9 @@ describe('Inventory', () => {
                 InventoryInstance.waitInventoryLoading();
                 InstanceRecordView.verifyResourceType(instanceTypes[1].name);
                 InventorySearchAndFilter.clearFilter(testData.resourceTypeAccordionName);
-                InventorySearchAndFilter.verifyResultPaneEmpty();
+                cy.ifConsortia(false, () => {
+                  InventorySearchAndFilter.verifyResultPaneEmpty();
+                });
 
                 cy.intercept('/search/instances*').as('getInstancesQuery');
                 InventoryInstances.searchByTitle(testData.instancesTitlePrefix);

@@ -27,6 +27,7 @@ function checkdisabledDeleteButtons(fieldset, buttonsCount, deleteInFieldsetButt
 }
 
 export default {
+  escapeRegExp,
   // TODO: add checking of checkbox state
   checkAccordionDisabledElements(accordions, deleteInFieldsetButton = deleteButton) {
     accordions.forEach((accordion) => {

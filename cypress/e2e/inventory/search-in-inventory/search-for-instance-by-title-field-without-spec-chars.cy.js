@@ -83,8 +83,6 @@ describe('Inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          cy.reload();
-          InventoryInstances.waitContentLoading();
         }, 20_000);
       });
     });
@@ -102,7 +100,7 @@ describe('Inventory', () => {
       { tags: ['criticalPath', 'promin', 'C368026', 'eurekaPhase1'] },
       () => {
         testData.positiveSearchQueries.forEach((query) => {
-          cy.ifConsortia(() => {
+          cy.ifConsortia(true, () => {
             InventorySearchAndFilter.byShared('No');
           });
           InventoryInstances.searchByTitle(query);
@@ -110,15 +108,21 @@ describe('Inventory', () => {
           testData.searchResults.forEach((result) => {
             InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
           });
-          InventoryInstances.resetAllFilters();
+          InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         });
 
         testData.negativeSearchQueries.forEach((query) => {
+          cy.ifConsortia(true, () => {
+            InventorySearchAndFilter.byShared('No');
+          });
           InventoryInstances.searchByTitle(query, false);
           InventorySearchAndFilter.verifyNoRecordsFound();
-          InventoryInstances.resetAllFilters();
+          InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         });
 
+        cy.ifConsortia(true, () => {
+          InventorySearchAndFilter.byShared('No');
+        });
         InventoryInstances.searchByTitle('Fight Club by writer Chuck Palahniuk');
         InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[2], true);
