@@ -146,8 +146,8 @@ describe('Lists', () => {
       });
 
       it(
-        'C1453710 User can build and save a Holdings list queried by statistical code UUIDs and holdings type UUID (athena)',
-        { tags: ['extendedPath', 'athena', 'C1453710'] },
+        'C1563917 User can build and save a Holdings list queried by statistical code UUIDs and holdings type UUID (athena)',
+        { tags: ['extendedPath', 'athena', 'C1563917'] },
         () => {
           // Step 1: Create new list with Holdings record type
           Lists.openNewListPane();

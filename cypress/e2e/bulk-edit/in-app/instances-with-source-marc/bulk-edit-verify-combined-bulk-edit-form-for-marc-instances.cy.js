@@ -8,6 +8,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import DateTools from '../../../../support/utils/dateTools';
 import QueryModal, {
   QUERY_OPERATIONS,
   instanceFieldValues,
@@ -234,6 +235,10 @@ describe(
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle);
           QueryModal.selectOperator(QUERY_OPERATIONS.START_WITH);
           QueryModal.fillInValueTextfield('AT_C478255');
+          QueryModal.addNewRow();
+          QueryModal.selectField(instanceFieldValues.createdDate, 1);
+          QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN_OR_EQUAL_TO, 1);
+          QueryModal.pickDate(DateTools.getCurrentDate(), 1);
           QueryModal.clickTestQuery();
           QueryModal.clickRunQuery();
 
@@ -247,7 +252,7 @@ describe(
           // Step 29: Verify the header of "Bulk edit" form
           BulkEditActions.verifyBulkEditMarcFieldsFormHeaderAfterQuery(
             '2 instance',
-            '(instance.title starts with AT_C478255)',
+            `(instance.title starts with AT_C478255) AND (instance.created_at >= ${DateTools.getCurrentDate()})`,
           );
 
           // Step 30: Verify the title of HTML page

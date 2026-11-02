@@ -313,8 +313,8 @@ describe('Lists', () => {
       });
 
       it(
-        "C1453683 User can build and save a Loans list queried by a user's department UUID and by loan policy UUID (athena)",
-        { tags: ['extendedPath', 'athena', 'C1453683'] },
+        "C1563918 User can build and save a Loans list queried by a user's department UUID and by loan policy UUID (athena)",
+        { tags: ['extendedPath', 'athena', 'C1563918'] },
         () => {
           // Step 1: Create new list with Loans record type
           Lists.openNewListPane();

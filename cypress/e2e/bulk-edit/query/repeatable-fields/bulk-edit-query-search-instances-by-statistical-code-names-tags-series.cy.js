@@ -9,6 +9,7 @@ import QueryModal, {
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import DateTools from '../../../../support/utils/dateTools';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import { BULK_EDIT_TABLE_COLUMN_HEADERS } from '../../../../support/constants';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
@@ -18,6 +19,7 @@ let user;
 let instanceTypeId;
 let statisticalCodes;
 let fileNames;
+const currentDate = DateTools.getCurrentDate();
 const testInstancesData = [
   {
     // Instance 1
@@ -182,9 +184,13 @@ describe('Bulk-edit', () => {
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
           QueryModal.selectOperator(STRING_OPERATORS.START_WITH, 1);
           QueryModal.fillInValueTextfield('AT_C805789_Instance', 1);
+          QueryModal.addNewRow(1);
+          QueryModal.selectField(instanceFieldValues.createdDate, 2);
+          QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN_OR_EQUAL_TO, 2);
+          QueryModal.pickDate(currentDate, 2);
           QueryModal.clickTestQuery();
           QueryModal.verifyQueryAreaContent(
-            `(instance.statistical_code_names == ${statisticalCodes[0].fullName}) AND (instance.title starts with AT_C805789_Instance)`,
+            `(instance.statistical_code_names == ${statisticalCodes[0].fullName}) AND (instance.title starts with AT_C805789_Instance) AND (instance.created_at >= ${currentDate})`,
           );
           QueryModal.verifyPreviewOfRecordsMatched();
 
@@ -223,7 +229,7 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueMultiselect('urgent');
           QueryModal.clickTestQuery();
           QueryModal.verifyQueryAreaContent(
-            '(instance.tags in [important, urgent]) AND (instance.title starts with AT_C805789_Instance)',
+            `(instance.tags in [important, urgent]) AND (instance.title starts with AT_C805789_Instance) AND (instance.created_at >= ${currentDate})`,
           );
           QueryModal.verifyPreviewOfRecordsMatched();
 
@@ -247,7 +253,7 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueTextfield('series; 1');
           QueryModal.clickTestQuery();
           QueryModal.verifyQueryAreaContent(
-            '(instance.series contains series; 1) AND (instance.title starts with AT_C805789_Instance)',
+            `(instance.series contains series; 1) AND (instance.title starts with AT_C805789_Instance) AND (instance.created_at >= ${currentDate})`,
           );
           QueryModal.verifyPreviewOfRecordsMatched();
 

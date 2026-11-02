@@ -9,10 +9,12 @@ import QueryModal, {
 } from '../../../../support/fragments/bulk-edit/query-modal';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import DateTools from '../../../../support/utils/dateTools';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import SubjectSources from '../../../../support/fragments/settings/inventory/instances/subjectSources';
 
 let user;
+const currentDate = DateTools.getCurrentDate();
 let subjectSources;
 let subjectTypes;
 const testInstancesData = [
@@ -183,9 +185,13 @@ describe('Bulk-edit', () => {
           QueryModal.selectField(instanceFieldValues.instanceResourceTitle, 1);
           QueryModal.selectOperator(STRING_OPERATORS.START_WITH, 1);
           QueryModal.fillInValueTextfield('AT_C808477_FolioInstance', 1);
+          QueryModal.addNewRow(1);
+          QueryModal.selectField(instanceFieldValues.createdDate, 2);
+          QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN_OR_EQUAL_TO, 2);
+          QueryModal.pickDate(currentDate, 2);
           QueryModal.clickTestQuery();
           QueryModal.verifyQueryAreaContent(
-            '(instance.subjects[*]->subject_value contains Bulgaria) AND (instance.title starts with AT_C808477_FolioInstance)',
+            `(instance.subjects[*]->subject_value contains Bulgaria) AND (instance.title starts with AT_C808477_FolioInstance) AND (instance.created_at >= ${currentDate})`,
           );
           QueryModal.verifyPreviewOfRecordsMatched();
 
@@ -215,7 +221,7 @@ describe('Bulk-edit', () => {
           QueryModal.fillInValueMultiselect('National Agricultural Library subject authority file');
           QueryModal.clickTestQuery();
           QueryModal.verifyQueryAreaContent(
-            '(instance.subjects[*]->subject_source in [Library of Congress Subject Headings, National Agricultural Library subject authority file]) AND (instance.title starts with AT_C808477_FolioInstance)',
+            `(instance.subjects[*]->subject_source in [Library of Congress Subject Headings, National Agricultural Library subject authority file]) AND (instance.title starts with AT_C808477_FolioInstance) AND (instance.created_at >= ${currentDate})`,
           );
           QueryModal.verifyPreviewOfRecordsMatched();
 
@@ -244,7 +250,7 @@ describe('Bulk-edit', () => {
           QueryModal.chooseValueSelect('Geographic name');
           QueryModal.clickTestQuery();
           QueryModal.verifyQueryAreaContent(
-            '(instance.subjects[*]->subject_type == Geographic name) AND (instance.title starts with AT_C808477_FolioInstance)',
+            `(instance.subjects[*]->subject_type == Geographic name) AND (instance.title starts with AT_C808477_FolioInstance) AND (instance.created_at >= ${currentDate})`,
           );
           QueryModal.verifyPreviewOfRecordsMatched();
 
@@ -270,7 +276,7 @@ describe('Bulk-edit', () => {
           QueryModal.clickGarbage(0);
           QueryModal.clickTestQuery();
           QueryModal.verifyQueryAreaContent(
-            '(instance.title starts with AT_C808477_FolioInstance)',
+            `(instance.title starts with AT_C808477_FolioInstance) AND (instance.created_at >= ${currentDate})`,
           );
           QueryModal.verifyMatchedRecordsByIdentifier(
             mappedInstancesDataToUIView[3].hrid,
