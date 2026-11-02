@@ -15,6 +15,7 @@ import Locations from '../../../support/fragments/settings/tenant/location-setup
 let user;
 let holdingHRID;
 let locationId;
+let newLocationName;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -36,8 +37,9 @@ describe('Bulk-edit', () => {
           item.itemBarcode,
         );
 
-        Locations.getViaApiAnyDefault().then((locations) => {
+        Locations.getViaApiAnyDefault(2).then((locations) => {
           locationId = locations[0].id;
+          newLocationName = locations[1].name;
         });
         cy.getHoldings({
           limit: 1,
@@ -109,7 +111,7 @@ describe('Bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.openStartBulkEditForm();
 
-        const permLocation = 'Main Library';
+        const permLocation = newLocationName;
         BulkEditActions.replacePermanentLocation(permLocation, 'holdings', 0);
 
         BulkEditActions.confirmChanges();

@@ -132,7 +132,7 @@
             "type": ["string", "null"]
           },
           "purchase_order.notes": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "updated_by_user.last_name_first_name": {
             "type": ["string", "null"]
@@ -330,7 +330,7 @@
             "type": ["string", "null"]
           },
           "instance.nature_of_content_term": {
-            "type": ["string", "null"]
+            "type": ["string", "null", "array"]
           },
           "instance.hrid": {
             "type": ["string", "null"]

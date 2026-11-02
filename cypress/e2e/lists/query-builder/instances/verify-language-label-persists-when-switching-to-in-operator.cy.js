@@ -9,6 +9,7 @@ import { Lists } from '../../../../support/fragments/lists/lists';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import DateTools from '../../../../support/utils/dateTools';
 
 let user;
 const testCaseId = 'C1045967';
@@ -104,6 +105,10 @@ describe('Lists', () => {
           QueryModal.verifySelectedOperator(QUERY_OPERATIONS.EQUAL, 1);
           QueryModal.chooseValueSelect(testData.languageLabel, 1);
           QueryModal.verifySelectedValue(testData.languageLabel, 1);
+          QueryModal.addNewRow(1);
+          QueryModal.selectField(instanceFieldValues.createdDate, 2);
+          QueryModal.selectOperator(QUERY_OPERATIONS.GREATER_THAN_OR_EQUAL_TO, 2);
+          QueryModal.pickDate(DateTools.getCurrentDate(), 2);
 
           // Step 2: Click "Test query"
           QueryModal.clickTestQuery();
