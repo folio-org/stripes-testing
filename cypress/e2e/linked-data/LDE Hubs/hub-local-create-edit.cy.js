@@ -95,7 +95,7 @@ describe('MG Hubs: Create and edit local hub', () => {
 
   it(
     'C987719 C1030042 Create and edit local hub (promin)',
-    { tags: ['criticalPath', 'shiftLeft', 'promin', 'C987719', 'C1030042'] },
+    { tags: ['criticalPath', 'shiftLeft', 'promin', 'nonParallel', 'C987719', 'C1030042'] },
     () => {
       // Switch to Hubs tab
       SearchAndFilter.switchToHubsTab();

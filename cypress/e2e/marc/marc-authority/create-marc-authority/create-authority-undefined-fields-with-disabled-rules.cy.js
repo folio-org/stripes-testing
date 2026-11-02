@@ -62,6 +62,7 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile, false);
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeadingPrefix);
         Users.deleteViaApi(testData.userProperties.userId);
       });

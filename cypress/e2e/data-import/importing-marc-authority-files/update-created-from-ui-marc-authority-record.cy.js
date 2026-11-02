@@ -201,7 +201,7 @@ describe('Data Import', () => {
 
     it(
       'C423564 C423563 Update of created from UI MARC authority record (promin)',
-      { tags: ['criticalPath', 'promin', 'C423564', 'C423563'] },
+      { tags: ['criticalPath', 'promin', 'nonParallel', 'C423564', 'C423563'] },
       () => {
         // Click on "Actions" button in second pane >> Select "+ New" option
         MarcAuthorities.clickActionsAndNewAuthorityButton();

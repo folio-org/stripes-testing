@@ -46,13 +46,14 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile, false);
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(
         'C436897 Delete created from UI "MARC authority" record (promin)',
-        { tags: ['extendedPath', 'promin', 'C436897'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C436897'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           MarcAuthority.setValid008DropdownValues();

@@ -49,7 +49,7 @@ describe('MARC', () => {
 
       it(
         'C423525 Detail view of created "MARC authority" record is open automatically after creation when user is on search result list with one result (promin)',
-        { tags: ['extendedPath', 'promin', 'C423525'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C423525'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           MarcAuthority.setValid008DropdownValues();

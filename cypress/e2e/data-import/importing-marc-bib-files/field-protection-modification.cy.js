@@ -61,6 +61,13 @@ describe('Data Import', () => {
 
     before('login', () => {
       cy.getAdminToken();
+      ['*', fieldsForDelete[2]].forEach((field) => {
+        MarcFieldProtection.getListViaApi({
+          query: `"field"=="${field}"`,
+        }).then((list) => {
+          list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id, true));
+        });
+      });
       // create protection fields
       MarcFieldProtection.createViaApi({
         field: '*',
@@ -102,7 +109,14 @@ describe('Data Import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        fieldsForDeleteIds.forEach((fieldId) => MarcFieldProtection.deleteViaApi(fieldId));
+        fieldsForDeleteIds.forEach((fieldId) => MarcFieldProtection.deleteViaApi(fieldId, true));
+        ['*', fieldsForDelete[2]].forEach((field) => {
+          MarcFieldProtection.getListViaApi({
+            query: `"field"=="${field}"`,
+          }).then((list) => {
+            list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id, true));
+          });
+        });
         // delete profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
@@ -118,7 +132,7 @@ describe('Data Import', () => {
 
     it(
       'C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (promin)',
-      { tags: ['criticalPath', 'promin', 'C350678'] },
+      { tags: ['criticalPath', 'promin', 'nonParallel', 'C350678'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();

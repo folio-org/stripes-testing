@@ -88,7 +88,7 @@ describe('MARC', () => {
 
         it(
           'C423583 Create a new local MARC authority record with "Local" authority file selected at Member tenant (consortia) (promin)',
-          { tags: ['criticalPathECS', 'promin', 'C423583'] },
+          { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C423583'] },
           () => {
             // Steps 1-3: Click Actions > + New, select Local authority file, and verify 001 field, set 008 values
             MarcAuthorities.clickActionsAndNewAuthorityButton();

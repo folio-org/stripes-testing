@@ -104,7 +104,7 @@ describe('MARC', () => {
 
         it(
           'C423565 Link MARC Bib with created on UI MARC authority record (promin)',
-          { tags: ['criticalPath', 'promin', 'C423565'] },
+          { tags: ['criticalPath', 'promin', 'nonParallel', 'C423565'] },
           () => {
             // Creating marc authority part
             MarcAuthorities.clickActionsAndNewAuthorityButton();
