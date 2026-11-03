@@ -16,7 +16,7 @@ describe('fse-consortia - UI (no data manipulation)', { testIsolation: true }, (
     `TC195511 - verify that consortium manager is displayed correctly for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['consortia-sanity', 'fse', 'ui', 'TC195511'] },
     () => {
-      cy.getAdminToken(false).then(() => {
+      cy.getAdminToken().then(() => {
         cy.getUserTenants().then((userTenants) => {
           // get primary tenant
           const filteredTenants = userTenants.filter((element) => element.isPrimary === true);
@@ -37,7 +37,7 @@ describe('fse-consortia - UI (no data manipulation)', { testIsolation: true }, (
     `TC195512 - switch active affiliation ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['consortia-sanity', 'fse', 'ui', 'TC195512'] },
     () => {
-      cy.getAdminToken(false).then(() => {
+      cy.getAdminToken().then(() => {
         cy.getUserAffiliationsCount().then((count) => {
           cy.getUserTenants().then((userTenants) => {
             if (count > 1) {
