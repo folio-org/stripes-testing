@@ -1,7 +1,7 @@
 import ConsortiumMgr from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
-describe('fse-consortia - UI (no data manipulation)', { testIsolation: true }, () => {
+describe('fse-consortia - UI (no data manipulation)', {}, () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
