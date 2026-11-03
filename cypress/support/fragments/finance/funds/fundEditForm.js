@@ -3,6 +3,8 @@ import {
   HTML,
   MultiColumnListCell,
   MultiColumnListRow,
+  MultiSelect,
+  MultiSelectOption,
   Section,
   Selection,
   SelectionList,
@@ -37,6 +39,7 @@ const fundInfoSectionFields = {
   ledger: fundInfoSection.find(Selection({ name: 'fund.ledgerId' })),
   status: fundInfoSection.find(Selection({ name: 'fund.fundStatus' })),
   externalAccount: fundInfoSection.find(TextField({ name: 'fund.externalAccountNo' })),
+  acqUnits: fundInfoSection.find(MultiSelect({ id: 'fund-acq-units' })),
 };
 
 const buttons = {
@@ -78,7 +81,7 @@ export default {
       this.fillDonorInfoSectionFields(donorInfo);
     }
   },
-  fillFundInfoSectionFields({ name, code, ledger, fundStatus, externalAccountNo }) {
+  fillFundInfoSectionFields({ name, code, ledger, fundStatus, externalAccountNo, acqUnits } = {}) {
     if (name) {
       cy.do(fundInfoSectionFields.name.fillIn(name));
     }
@@ -95,6 +98,13 @@ export default {
       cy.do(fundInfoSectionFields.externalAccount.fillIn(externalAccountNo));
     }
     cy.wait(2000);
+    if (acqUnits) {
+      cy.wait(4000);
+      cy.do([
+        fundInfoSectionFields.acqUnits.find(Button({ ariaLabel: 'open menu' })).click(),
+        MultiSelectOption(...acqUnits).click(),
+      ]);
+    }
   },
   fillDonorInfoSectionFields({ donorName, shouldExpand = true, clickSave = true }) {
     if (shouldExpand) {

@@ -23,6 +23,7 @@ import {
   Spinner,
   TextArea,
   TextField,
+  ValueChipRoot,
 } from '../../../../interactors';
 import { AppList } from '../../../../interactors/applist';
 import DateTools from '../../utils/dateTools';
@@ -98,6 +99,7 @@ const openintegrationDetailsSectionButton = Button({
 });
 const bankingInformationButton = Button('Banking information');
 const bankingInformationAddButton = Button({ id: 'bankingInformation-add-button' });
+const orgAcqUnitsMultiSelect = MultiSelect({ id: 'org-acq-units' });
 const nextButton = Button('Next', { disabled: or(true, false) });
 const previousButton = Button('Previous', { disabled: or(true, false) });
 const contactStatusButton = Button({ id: 'accordion-toggle-button-inactive' });
@@ -2035,6 +2037,26 @@ export default {
       .should('be.visible')
       .invoke('text')
       .then((t) => expect(t.trim()).to.eq(expected));
+  },
+
+  addAU(acqUnits = []) {
+    cy.wait(4000);
+    cy.do([
+      orgAcqUnitsMultiSelect.find(Button({ ariaLabel: 'open menu' })).click(),
+      MultiSelectOption(...acqUnits).click(),
+    ]);
+  },
+
+  verifyAcqUnitSelectionDisabled(isDisabled = true) {
+    cy.expect(
+      orgAcqUnitsMultiSelect
+        .find(Button({ className: including('multiSelectToggleButton') }))
+        .has({ disabled: isDisabled }),
+    );
+  },
+
+  verifyAcqUnitSelected(auName) {
+    cy.expect(orgAcqUnitsMultiSelect.find(ValueChipRoot(auName)).exists());
   },
 
   interceptGetOrganizations() {

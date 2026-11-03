@@ -48,6 +48,7 @@ import SelectDonorModal from './modals/selectDonorModal';
 import OrderLineDetails from './orderLineDetails';
 import SelectOrganizationModal from './modals/selectOrganizationModal';
 import AcqVersionHistory from '../acqVersionHistory';
+import InventorySearchAndFilter from '../inventory/inventorySearchAndFilter';
 
 const path = require('path');
 
@@ -2023,8 +2024,10 @@ export default {
 
   selectRandomInstanceInTitleLookUP: (instanceName, rowNumber = 0) => {
     cy.wait(4000);
+    cy.do(Button({ id: 'find-instance-trigger' }).click());
+    cy.expect(selectInstanceModal.exists());
+    if (!Cypress.env('ecsEnabled')) InventorySearchAndFilter.clearDefaultHeldbyFilter();
     cy.do([
-      Button({ id: 'find-instance-trigger' }).click(),
       selectInstanceModal.find(TextField({ name: 'query' })).fillIn(instanceName),
       selectInstanceModal.find(searchButton).click(),
       selectInstanceModal.find(MultiColumnListRow({ index: rowNumber })).click(),

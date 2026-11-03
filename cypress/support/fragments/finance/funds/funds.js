@@ -1426,6 +1426,18 @@ export default {
     cy.wait(3000);
   },
 
+  verifyAcqUnitSelectionDisabled(isDisabled = true) {
+    cy.expect(
+      fundAcqUnitsSelection
+        .find(Button({ className: including('multiSelectToggleButton') }))
+        .has({ disabled: isDisabled }),
+    );
+  },
+
+  verifyAcqUnitSelected(auName) {
+    cy.expect(fundAcqUnitsSelection.find(ValueChipRoot(auName)).exists());
+  },
+
   verifyDetailsInTransaction: (fiscalYear, amount, source, type, fund) => {
     cy.wait(6000);
     cy.expect(

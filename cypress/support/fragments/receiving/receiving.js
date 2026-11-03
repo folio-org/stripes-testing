@@ -27,6 +27,7 @@ import {
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
+import InventoryInstanceSelectInstanceModal from '../inventory/modals/inventoryInstanceSelectInstanceModal';
 import MultiColumnListHelper from '../multiColumnList';
 import FiltersPaneHelper from '../filtersPane';
 import ExportSettingsModal from './modals/exportSettingsModal';
@@ -816,8 +817,11 @@ export default {
   },
 
   fillTitleLookup(titleName) {
+    cy.do(titleLookUpButton.click());
+    cy.expect(Modal('Select instance').exists());
+    // "Held by" filter is selected by default on ECS member tenants
+    InventoryInstanceSelectInstanceModal.clearDefaultHeldbyFilter();
     cy.do([
-      titleLookUpButton.click(),
       Modal('Select instance')
         .find(TextField({ name: 'query' }))
         .fillIn(titleName),
