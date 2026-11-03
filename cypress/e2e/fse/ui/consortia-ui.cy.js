@@ -42,7 +42,7 @@ describe('fse-consortia - UI (no data manipulation)', { testIsolation: true }, (
           cy.getUserTenants().then((userTenants) => {
             if (count > 1) {
               const primaryTenant = userTenants.filter((element) => element.isPrimary === true)[0];
-              ConsortiumMgr.checkCurrentTenantInTopMenu(primaryTenant);
+              ConsortiumMgr.checkCurrentTenantInTopMenu(primaryTenant.tenantName);
               // get any tenant from the list, but not the first one (central)
               const tenantNumber = Math.floor(Math.random() * (count - 1)) + 1;
               cy.wait(2000);
