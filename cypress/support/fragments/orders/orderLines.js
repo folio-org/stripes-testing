@@ -104,6 +104,7 @@ const secondFundDistributionSelect = Button({ id: 'fundDistribution[1].fundId' }
 const secondFundDistributionExpenseClass = Button({ id: 'fundDistribution[1].expenseClassId' });
 const secondFundDistributionField = TextField({ name: 'fundDistribution[1].value' });
 const itemDetailsSection = Section({ id: 'ItemDetails' });
+const packageTitlesSection = Section({ id: 'linkedInstances' });
 const poLineInfoSection = Section({ id: 'poLine' });
 const fundDistributionSection = Section({ id: 'FundDistribution' });
 const locationSection = Section({ id: 'location' });
@@ -376,11 +377,19 @@ export default {
     InteractorsTools.checkCalloutMessage(
       `The title ${instanceTitle} has been successfully added for PO line ${polNumber}-1`,
     );
-    cy.expect(Section({ id: 'linkedInstances' }).find(Link(instanceTitle)).exists());
+    cy.expect(packageTitlesSection.find(Link(instanceTitle)).exists());
   },
 
   verifyPackageTitleExists: (instanceTitle) => {
-    cy.expect(Section({ id: 'linkedInstances' }).find(Link(instanceTitle)).exists());
+    cy.expect(packageTitlesSection.find(Link(instanceTitle)).exists());
+  },
+
+  verifyPackageTitlesAccordionExists: () => {
+    cy.expect(Accordion({ id: 'linkedInstances' }).exists());
+  },
+
+  verifyPackageTitlesCount: (count) => {
+    cy.expect(packageTitlesSection.find(MultiColumnList()).has({ rowCount: count }));
   },
 
   backToEditingOrder: () => {
@@ -1248,7 +1257,7 @@ export default {
   },
 
   selectInstanceInPackageTitles: (instanceTitle) => {
-    cy.do(Section({ id: 'linkedInstances' }).find(Link(instanceTitle)).click());
+    cy.do(packageTitlesSection.find(Link(instanceTitle)).click());
   },
 
   addFundToPOL(fund, value) {
@@ -2722,7 +2731,12 @@ export default {
     });
   },
 
-  checkDonorInformation(donors) {
+  checkDonorInformation(donors, { visible = true, exactCount = false, editable = false } = {}) {
+    if (!visible) {
+      cy.expect(donorsInformationSection.absent());
+      return;
+    }
+
     donors.forEach((donor) => {
       cy.expect(
         donorsInformationSection
@@ -2730,6 +2744,28 @@ export default {
           .exists(),
       );
     });
+
+    if (exactCount) {
+      cy.expect(donorsInformationSection.find(MultiColumnList()).has({ rowCount: donors.length }));
+    }
+
+    // Edit mode: each row has "Name" (not a link), "Code" and a "Delete" (Unassign) icon
+    if (editable) {
+      donors.forEach((donor, index) => {
+        cy.expect([
+          donorsInformationSection
+            .find(MultiColumnListCell({ column: 'Name', content: donor }))
+            .has({ clickable: false }),
+          donorsInformationSection
+            .find(MultiColumnListCell({ row: index, column: 'Code' }))
+            .exists(),
+          donorsInformationSection
+            .find(MultiColumnListRow({ index }))
+            .find(Button({ ariaLabel: 'Unassign' }))
+            .exists(),
+        ]);
+      });
+    }
   },
 
   checkDonorIsAbsent(donor) {

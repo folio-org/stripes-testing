@@ -75,6 +75,12 @@ describe('Data Import', () => {
     };
 
     before('Create test user and login', () => {
+      cy.getAdminToken();
+      MarcFieldProtection.getListViaApi({
+        query: '"field"=="*"',
+      }).then((list) => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id, true));
+      });
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -95,8 +101,10 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken(false).then(() => {
-        MarcFieldProtection.getListViaApi({ query: 'data==NcD' }).then((response) => {
-          MarcFieldProtection.deleteViaApi(response[0].id);
+        MarcFieldProtection.getListViaApi({
+          query: '"field"=="*"',
+        }).then((list) => {
+          list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id, true));
         });
         Users.deleteViaApi(user.userId);
       });
@@ -104,7 +112,7 @@ describe('Data Import', () => {
 
     it(
       'C359189 Check that protected fields in incoming records are not deleted during import: Scenario 2 (promin)',
-      { tags: ['criticalPath', 'promin', 'C359189'] },
+      { tags: ['criticalPath', 'promin', 'nonParallel', 'C359189'] },
       () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.DATA_IMPORT);
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MARC_FIELD_PROTECTION);

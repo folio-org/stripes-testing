@@ -360,7 +360,9 @@ describe('Data Import', () => {
           'Default authority',
           'Authorities',
         );
-        ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
+        ExportFile.getExportJobByUploadedFileViaApi(testData.csvFile).then((exportJob) => {
+          ExportFile.downloadExportedMarcFile(testData.exportedMarcFile, exportJob);
+        });
 
         // Steps 3-4. Open exported .mrc, update $a of 1XX field by adding "UPDATED", save the file
         DataImport.editMarcFile(

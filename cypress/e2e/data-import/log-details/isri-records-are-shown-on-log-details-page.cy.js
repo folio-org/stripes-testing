@@ -63,6 +63,9 @@ describe('Data Import', () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
         LogsViewAll.checkByReverseChronologicalOrder();
+        // only this user's jobs, so row 0 is not another spec's import
+        LogsViewAll.openUserIdAccordion();
+        LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
         LogsViewAll.checkJobProfileNameByRow(0, 'No file name');
       },
     );

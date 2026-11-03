@@ -1065,6 +1065,16 @@ export default {
     ]);
   },
 
+  // Expands the Item status facet and verifies the given option labels are listed, without
+  // selecting any of them
+  verifyItemStatusFacetOptionsExist(statuses) {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-itemStatus' }).click(),
+      MultiSelect({ id: 'itemStatus-multiselect' }).open(),
+    ]);
+    cy.expect(statuses.map((status) => MultiSelectOption(including(status)).exists()));
+  },
+
   selectBrowseOption(option) {
     cy.do(browseSearchAndFilterInput.choose(option));
   },

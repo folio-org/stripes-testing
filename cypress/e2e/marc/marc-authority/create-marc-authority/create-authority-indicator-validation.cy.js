@@ -112,6 +112,7 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile, false);
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
         Users.deleteViaApi(testData.userProperties.userId);
         toggleAllUndefinedValidationRules(specId, { enable: false });

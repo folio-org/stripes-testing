@@ -86,13 +86,14 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile, false);
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(
         'C423480 Fields without tag and subfield values are deleted during saving (create MARC authority) (promin)',
-        { tags: ['extendedPath', 'promin', 'C423480'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C423480'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           MarcAuthority.setValid008DropdownValues();

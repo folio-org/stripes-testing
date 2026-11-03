@@ -61,13 +61,16 @@ describe('MARC', () => {
 
       after('Delete users, data', () => {
         cy.getAdminToken();
+        ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(
+          DEFAULT_FOLIO_AUTHORITY_FILES.FACETED_APPLICATION_OF_SUBJECT_TERMINOLOGY,
+        );
         Users.deleteViaApi(user.userId);
         MarcAuthority.deleteViaAPI(createdAuthorityId, true);
       });
 
       it(
         'C436862 Change "Active" checkbox state of FOLIO "Authority file" which has assigned "MARC authority" records (promin)',
-        { tags: ['criticalPath', 'promin', 'C436862'] },
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C436862'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
           cy.login(user.username, user.password, {

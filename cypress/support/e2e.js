@@ -19,6 +19,7 @@ import './users';
 import 'cypress-file-upload';
 import 'cypress-recurse/commands';
 import './commands';
+import DiFailureLog from './fragments/data_import/diFailureLog';
 import 'cypress-real-events';
 
 registerCypressGrep();
@@ -48,6 +49,11 @@ Cypress.on('fail', (err) => {
 
 beforeEach(() => {
   cy.intercept('POST', '/authn/refresh').as('/authn/refresh');
+});
+
+// On a failed test, log the data import job statuses and record errors of the files it uploaded
+afterEach(function logDataImportJobsOnFailure() {
+  DiFailureLog.logForFailedTest(this.currentTest);
 });
 
 // cypress.local.js support hooks (gitignored, local-only)

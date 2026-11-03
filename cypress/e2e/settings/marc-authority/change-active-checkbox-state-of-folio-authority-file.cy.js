@@ -19,6 +19,7 @@ describe('MARC', () => {
 
       before('Create users, data', () => {
         cy.getAdminToken();
+        ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(folioAuthorityFile.name);
         cy.createTempUser([Permissions.uiSettingsManageAuthorityFiles.gui]).then(
           (userProperties) => {
             user = userProperties;
@@ -36,7 +37,7 @@ describe('MARC', () => {
 
       it(
         'C436860 Change "Active" checkbox state of FOLIO "Authority file" which does not have assigned "MARC authority" records (promin)',
-        { tags: ['criticalPath', 'promin', 'C436860'] },
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C436860'] },
         () => {
           // 1 Go to "Settings" app >> "MARC authority" >> "Manage authority files"
           cy.login(user.username, user.password, {

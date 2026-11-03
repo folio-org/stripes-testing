@@ -18,6 +18,7 @@ const cannotDeletePrefixModal = Modal('Cannot delete the prefix');
 const cannotDeleteSuffixModal = Modal('Cannot delete the suffix');
 const buttonOkay = Button('Okay');
 const saveButton = Button('Save');
+const cancelButton = Button('Cancel');
 const deleteButton = Button('Delete');
 const editEntityButton = Button({ icon: 'edit' });
 const deleteEntityButton = Button({ icon: 'trash' });
@@ -62,6 +63,14 @@ const UI = {
     cy.do(descriptionField.fillIn(desc));
     cy.wait(1000);
     cy.do(saveButton.click());
+  },
+
+  fillName(name) {
+    cy.do(nameField.fillIn(name));
+  },
+
+  clickCancelButton() {
+    cy.do(cancelButton.click());
   },
 
   checkPrefixExists(name) {
@@ -180,7 +189,7 @@ const API = {
   deletePrefixViaApi(id) {
     cy.okapiRequest({
       method: 'DELETE',
-      path: `orders/prefixes/${id}`,
+      path: `orders/configuration/prefixes/${id}`,
       isDefaultSearchParamsRequired: false,
       failOnStatusCode: false,
     });
@@ -205,7 +214,7 @@ const API = {
   deleteSuffixViaApi(id) {
     cy.okapiRequest({
       method: 'DELETE',
-      path: `orders/suffixes/${id}`,
+      path: `orders/configuration/suffixes/${id}`,
       isDefaultSearchParamsRequired: false,
       failOnStatusCode: false,
     });

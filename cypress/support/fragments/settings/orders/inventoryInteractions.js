@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import OrderStorageSettings from '../../orders/orderStorageSettings';
 
 const INSTANCE_MATCHING_SETTING_KEY = 'disableInstanceMatching';
@@ -47,5 +48,22 @@ export default {
   },
   setLoanTypeSetting(setting) {
     return OrderStorageSettings.updateSettingViaApi(setting);
+  },
+
+  /* Instance status (code), instance type (code) and loan type (name) together; creates missing settings */
+  setInstanceStatusTypeAndLoanTypeViaApi({ instanceStatusCode, instanceTypeCode, loanTypeName }) {
+    [
+      [INSTANCE_STATUS_SETTING_KEY, instanceStatusCode],
+      [INSTANCE_TYPE_SETTING_KEY, instanceTypeCode],
+      [LOAN_TYPE_SETTING_KEY, loanTypeName],
+    ].forEach(([key, value]) => {
+      OrderStorageSettings.getSettingsViaApi({ key }).then(([setting]) => {
+        if (setting) {
+          OrderStorageSettings.updateSettingViaApi({ ...setting, value });
+        } else {
+          OrderStorageSettings.createSettingViaApi({ id: uuid(), key, value });
+        }
+      });
+    });
   },
 };

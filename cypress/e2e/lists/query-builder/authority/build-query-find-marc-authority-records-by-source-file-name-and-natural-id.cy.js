@@ -93,7 +93,8 @@ describe('Lists', () => {
           code: testData.localSourceFileCode,
         }).then((body) => {
           localSourceFileId = body.id;
-          cy.wait(70_000); // Wait for the source file to be processed
+          cy.getAdminToken();
+          cy.waitForAuthoritySourceFileInMappingViaAPI(localSourceFileId);
           cy.getAdminToken();
 
           // Records 1–5: LCNAF (prefix 'n'; record 1 uses 'nr' for step 17)
@@ -219,7 +220,7 @@ describe('Lists', () => {
       });
 
       after('Delete test data', () => {
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C1322608_');
         ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(localSourceFileName);
         cy.deleteAuthoritySourceFileViaAPI(localSourceFileId, true);
