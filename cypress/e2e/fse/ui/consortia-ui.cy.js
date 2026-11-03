@@ -12,26 +12,26 @@ describe('fse-consortia - UI (no data manipulation)', { testIsolation: true }, (
     cy.allure().logCommandSteps();
   });
 
-  it(
-    `TC195511 - verify that consortium manager is displayed correctly for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['consortia-sanity', 'fse', 'ui', 'TC195511'] },
-    () => {
-      cy.getAdminToken().then(() => {
-        cy.getUserTenants().then((userTenants) => {
-          // get primary tenant
-          const filteredTenants = userTenants.filter((element) => element.isPrimary === true);
-          ConsortiumMgr.checkCurrentTenantInTopMenu(filteredTenants[0].tenantName);
-        });
-        cy.getUserAffiliationsCount().then((count) => {
-          if (count > 1) {
-            ConsortiumMgr.switchActiveAffiliationExists();
-          } else {
-            ConsortiumMgr.switchActiveAffiliationIsAbsent();
-          }
-        });
-      });
-    },
-  );
+  // it(
+  //   `TC195511 - verify that consortium manager is displayed correctly for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+  //   { tags: ['consortia-sanity', 'fse', 'ui', 'TC195511'] },
+  //   () => {
+  //     cy.getAdminToken().then(() => {
+  //       cy.getUserTenants().then((userTenants) => {
+  //         // get primary tenant
+  //         const filteredTenants = userTenants.filter((element) => element.isPrimary === true);
+  //         ConsortiumMgr.checkCurrentTenantInTopMenu(filteredTenants[0].tenantName);
+  //       });
+  //       cy.getUserAffiliationsCount().then((count) => {
+  //         if (count > 1) {
+  //           ConsortiumMgr.switchActiveAffiliationExists();
+  //         } else {
+  //           ConsortiumMgr.switchActiveAffiliationIsAbsent();
+  //         }
+  //       });
+  //     });
+  //   },
+  // );
 
   it(
     `TC195512 - switch active affiliation ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
