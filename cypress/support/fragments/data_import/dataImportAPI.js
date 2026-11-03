@@ -1,4 +1,5 @@
 import { recurse } from 'cypress-recurse';
+import DiFailureLog from './diFailureLog';
 import { ACCEPTED_DATA_TYPE_NAMES, DEFAULT_JOB_PROFILE_NAMES } from '../../constants';
 import SettingsJobProfile from '../settings/dataImport/jobProfiles/jobProfiles';
 
@@ -249,6 +250,7 @@ function getRecordSourceId(jobExecutionId) {
 }
 
 function uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName) {
+  DiFailureLog.rememberUpload(fileName);
   const uiKeyValue = fileName;
 
   return uploadDefinitions(uiKeyValue, fileName).then((response) => {
@@ -316,6 +318,7 @@ function uploadFileWithoutSplitFilesViaApi(filePathName, fileName, profileName) 
 }
 
 function uploadFileWithSplitFilesViaApi(filePathName, fileName, profileName) {
+  DiFailureLog.rememberUpload(fileName);
   const uiKeyValue = fileName;
 
   return uploadDefinitions(uiKeyValue, fileName).then((response) => {

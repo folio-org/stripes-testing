@@ -36,12 +36,13 @@ describe('MARC', () => {
 
       after('Delete user', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(LC_NAME_AUTHORITY_FILE, false);
         Users.deleteViaApi(user.userId);
       });
 
       it(
         'C663333 Close "Create a new MARC authority record" window without save using "Cancel" and "X" buttons (promin)',
-        { tags: ['extendedPath', 'promin', 'C663333'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C663333'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(testData.headerText);

@@ -59,7 +59,7 @@ describe('Data Import', () => {
         MarcFieldProtection.getListViaApi({
           query: `"field"=="${protectedFieldData.protectedField}"`,
         }).then((list) => {
-          list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+          list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id, true));
         });
 
         DataImport.uploadFileViaApi('marcFileForC358968.mrc', fileName, jobProfileToRun).then(
@@ -74,11 +74,11 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         MarcFieldProtection.getListViaApi({
           query: `"field"=="${protectedFieldData.protectedField}"`,
         }).then((list) => {
-          list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+          list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id, true));
         });
         Users.deleteViaApi(user.userId);
         InventoryInstance.deleteInstanceViaApi(instanceid);

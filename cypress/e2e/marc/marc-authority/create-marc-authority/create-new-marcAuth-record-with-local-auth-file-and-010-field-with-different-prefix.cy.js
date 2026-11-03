@@ -71,7 +71,9 @@ describe('MARC', () => {
             });
           })
           .then(() => {
-            cy.wait(70_000); // wait for new source files to be processed
+            cy.getAdminToken();
+            cy.waitForAuthoritySourceFileInMappingViaAPI(localAuthFile1.id);
+            cy.waitForAuthoritySourceFileInMappingViaAPI(localAuthFile2.id);
             cy.getAdminToken();
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,
@@ -81,7 +83,7 @@ describe('MARC', () => {
       });
 
       after('Delete users, data', () => {
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         Users.deleteViaApi(users.userProperties.userId);
         MarcAuthority.deleteViaAPI(createdAuthorityId, true);
         cy.deleteAuthoritySourceFileViaAPI(localAuthFile1.id, true);

@@ -27,6 +27,7 @@ import TopMenu from '../topMenu';
 import JobProfiles from './job_profiles/jobProfiles';
 import Logs from './logs/logs';
 import { DataImportAPI } from './dataImportAPI';
+import DiFailureLog from './diFailureLog';
 
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
 const actionsButton = Button('Actions');
@@ -51,6 +52,7 @@ const buttonCancel = Button('Cancel');
 const chooseOtherFilesButton = Button('Choose other files to upload');
 
 const uploadFile = (filePathName, fileName, shouldWaitFullUpload = true) => {
+  DiFailureLog.rememberUpload(fileName);
   cy.expect(sectionPaneJobsTitle.exists());
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
   if (shouldWaitFullUpload) {

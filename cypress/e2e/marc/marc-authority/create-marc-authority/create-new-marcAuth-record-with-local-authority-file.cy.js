@@ -55,7 +55,9 @@ describe('MARC', () => {
               localAuthFile.isActive,
             ).then((sourceId) => {
               localAuthFile.id = sourceId;
-              cy.wait(70_000);
+              cy.getAdminToken(false);
+              cy.waitForAuthoritySourceFileInMappingViaAPI(localAuthFile.id);
+              cy.getAdminToken(false);
 
               ManageAuthorityFiles.setAllDefaultFOLIOFilesToActiveViaAPI();
             });
@@ -69,7 +71,7 @@ describe('MARC', () => {
       });
 
       after('Delete users, data', () => {
-        cy.getAdminToken();
+        cy.getAdminToken(false);
         Users.deleteViaApi(users.userProperties.userId);
         MarcAuthority.deleteViaAPI(createdAuthorityId, true);
         ManageAuthorityFiles.unsetAllDefaultFOLIOFilesAsActiveViaAPI();
@@ -78,7 +80,7 @@ describe('MARC', () => {
 
       it(
         'C423528 Create a new MARC authority record with "Local" authority file selected (promin)',
-        { tags: ['criticalPath', 'promin', 'C423528'] },
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C423528'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.checkPaneheaderContains(headerText);

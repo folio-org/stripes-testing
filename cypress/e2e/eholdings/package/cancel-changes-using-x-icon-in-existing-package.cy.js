@@ -23,7 +23,7 @@ describe('eHoldings', () => {
         permissions.uieHoldingsRecordsEdit.gui,
         permissions.uieHoldingsPackageTitleSelectUnselect.gui,
       ]).then((userProperties) => {
-        testData.userId = userProperties.userId;
+        testData.user = userProperties;
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
@@ -33,7 +33,7 @@ describe('eHoldings', () => {
 
     after('Deleting user, data', () => {
       cy.getAdminToken();
-      Users.deleteViaApi(testData.userId);
+      Users.deleteViaApi(testData.user.userId);
     });
 
     it(
@@ -51,8 +51,11 @@ describe('eHoldings', () => {
         EHoldingsPackage.waitLoading(testData.package);
         EHoldingsPackage.checkTitleRowsShown();
         EHoldingsPackage.addToHoldings();
+        cy.getAdminToken(false);
+        EHoldingsPackage.waitForSelectionStatusViaApi();
         EHoldingsPackage.verifyHoldingStatus(FILTER_STATUSES.SELECTED);
         EHoldingsPackage.verifySelectedPackage();
+        cy.getToken(testData.user.username, testData.user.password);
 
         EHoldingsPackage.editProxyActions();
         EHoldingsProviderEdit.changeProxy();
