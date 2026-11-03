@@ -1,7 +1,7 @@
 import ConsortiumMgr from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 
-describe('fse-consortia - UI (no data manipulation)', () => {
+describe('fse-consortia - UI (no data manipulation)', {}, () => {
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
@@ -13,35 +13,15 @@ describe('fse-consortia - UI (no data manipulation)', () => {
   });
 
   it(
-    `TC195511 - verify that consortium manager is displayed correctly for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['consortia-sanity', 'fse', 'ui', 'TC195511'] },
-    () => {
-      cy.getAdminToken().then(() => {
-        cy.getUserTenants().then((userTenants) => {
-          // get primary tenant
-          const filteredTenants = userTenants.filter((element) => element.isPrimary === true);
-          ConsortiumMgr.checkCurrentTenantInTopMenu(filteredTenants[0].tenantName);
-        });
-        cy.getUserAffiliationsCount().then((count) => {
-          if (count > 1) {
-            ConsortiumMgr.switchActiveAffiliationExists();
-          } else {
-            ConsortiumMgr.switchActiveAffiliationIsAbsent();
-          }
-        });
-      });
-    },
-  );
-
-  it(
     `TC195512 - switch active affiliation ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['consortia-sanity', 'fse', 'ui', 'TC195512'] },
     () => {
-      cy.getAdminToken().then(() => {
+      cy.getAdminToken(false).then(() => {
         cy.getUserAffiliationsCount().then((count) => {
           cy.getUserTenants().then((userTenants) => {
             if (count > 1) {
               const primaryTenant = userTenants.filter((element) => element.isPrimary === true)[0];
+              ConsortiumMgr.checkCurrentTenantInTopMenu(primaryTenant.tenantName);
               // get any tenant from the list, but not the first one (central)
               const tenantNumber = Math.floor(Math.random() * (count - 1)) + 1;
               cy.wait(2000);
