@@ -4,6 +4,7 @@ import {
   POL_CREATE_INVENTORY_SETTINGS,
   POLINE_DETAILS_FIELDS,
   RECEIPT_STATUS_VIEW,
+  RECEIVING_PIECE_FORM_FIELD_LABELS,
 } from '../../support/constants';
 import { Permissions } from '../../support/dictionary';
 import AcqVersionHistory from '../../support/fragments/acqVersionHistory';
@@ -18,6 +19,7 @@ import {
 } from '../../support/fragments/orders';
 import SelectLocationModal from '../../support/fragments/orders/modals/selectLocationModal';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import EditPieceModal from '../../support/fragments/receiving/modals/editPieceModal';
 import {
   ReceivingDetails,
   Receivings,
@@ -37,6 +39,7 @@ describe('Orders', () => {
 
   before('Create test data', () => {
     testData.title = `AT_C927735_POLTitle_${getRandomPostfix()}`;
+    testData.comment = `AT_C927735_Comment_${getRandomPostfix()}`;
     testData.organization = {
       ...NewOrganization.getDefaultOrganization(),
       name: `AT_C927735_Organization_${getRandomPostfix()}`,
@@ -199,6 +202,42 @@ describe('Orders', () => {
       ]);
       // quantity is 1 per holding after receiving into a new holding
       OrderLineDetails.checkHighlightedFieldsInVersionHistoryView(['1'], { exactMatch: true });
+
+      // Step 7: Close "Version history" pane, "Actions" -> "Receive", click on the Title name
+      AcqVersionHistory.closeVersionHistory(entityType);
+      OrderLines.openReceiving();
+      Receivings.selectFromResultsList(testData.title);
+      ReceivingDetails.verifyReceivedRecordsCount(2);
+
+      // Step 8: Edit "Comment" of a received piece and save it
+      Receivings.selectRecordInReceivedList();
+      EditPieceModal.waitLoading();
+      EditPieceModal.fillPieceDetails({
+        [RECEIVING_PIECE_FORM_FIELD_LABELS.COMMENT]: testData.comment,
+      });
+      EditPieceModal.clickSaveAndCloseButton();
+      ReceivingDetails.verifyReceivedRecordsCount(2);
+
+      // Step 9: Click "POL number" link and click "Version history" icon - current version is a system maintenance update
+      ReceivingDetails.openOrderLineDetails();
+      OrderLineDetails.openVersionHistory();
+      cy.wait('@versionHistory').then(({ response }) => {
+        const [lastEvent] = response.body.orderLineAuditEvents;
+
+        testData.pieceEditDate = formatDateTime(testData.locale, lastEvent.eventDate);
+      });
+      cy.then(() => {
+        AcqVersionHistory.assertVersionHistoryCard(entityType, {
+          index: 0,
+          eventDate: testData.pieceEditDate,
+          isCurrent: true,
+          isSystemMaintenanceUpdate: true,
+        });
+        OrderLineDetails.verifyMetadataContent({
+          updated: testData.pieceEditDate.replace(',', ''),
+        });
+      });
+      OrderLineDetails.checkHighlightedFieldsInVersionHistoryView();
     },
   );
 });
