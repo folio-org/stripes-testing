@@ -37,34 +37,32 @@ describe('fse-consortia - UI (no data manipulation)', { testIsolation: true }, (
     `TC195512 - switch active affiliation ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['consortia-sanity', 'fse', 'ui', 'TC195512'] },
     () => {
-      cy.getAdminToken().then(() => {
-        cy.getUserAffiliationsCount().then((count) => {
-          cy.getUserTenants().then((userTenants) => {
-            if (count > 1) {
-              const primaryTenant = userTenants.filter((element) => element.isPrimary === true)[0];
-              ConsortiumMgr.checkCurrentTenantInTopMenu(primaryTenant.tenantName);
-              // get any tenant from the list, but not the first one (central)
-              const tenantNumber = Math.floor(Math.random() * (count - 1)) + 1;
-              cy.wait(2000);
-              // switch affiliation and verify that it was switched
-              ConsortiumMgr.switchActiveAffiliation(
-                primaryTenant.tenantName,
-                userTenants[tenantNumber].tenantName,
-              );
-              cy.wait(2000);
-              // switch back
-              ConsortiumMgr.switchActiveAffiliation(
-                userTenants[tenantNumber].tenantName,
-                primaryTenant.tenantName,
-              );
-            } else {
-              cy.log(
-                `Can't switch affiliation since there's only one assigned to the user ${Cypress.env(
-                  'diku_login',
-                )}`,
-              );
-            }
-          });
+      cy.getUserAffiliationsCount().then((count) => {
+        cy.getUserTenants().then((userTenants) => {
+          if (count > 1) {
+            const primaryTenant = userTenants.filter((element) => element.isPrimary === true)[0];
+            ConsortiumMgr.checkCurrentTenantInTopMenu(primaryTenant.tenantName);
+            // get any tenant from the list, but not the first one (central)
+            const tenantNumber = Math.floor(Math.random() * (count - 1)) + 1;
+            cy.wait(2000);
+            // switch affiliation and verify that it was switched
+            ConsortiumMgr.switchActiveAffiliation(
+              primaryTenant.tenantName,
+              userTenants[tenantNumber].tenantName,
+            );
+            cy.wait(2000);
+            // switch back
+            ConsortiumMgr.switchActiveAffiliation(
+              userTenants[tenantNumber].tenantName,
+              primaryTenant.tenantName,
+            );
+          } else {
+            cy.log(
+              `Can't switch affiliation since there's only one assigned to the user ${Cypress.env(
+                'diku_login',
+              )}`,
+            );
+          }
         });
       });
     },
