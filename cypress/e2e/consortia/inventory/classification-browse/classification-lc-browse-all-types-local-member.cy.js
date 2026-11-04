@@ -250,6 +250,7 @@ describe('Inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
+          cy.getToken(user.username, user.password);
           InventoryInstances.waitContentLoading();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventoryInstances.waitContentLoading();
@@ -283,11 +284,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.browseSearch(secondExact.value);
           BrowseClassifications.verifySearchResultsTable();
           BrowseClassifications.verifyValueInResultTableIsHighlighted(secondExact.value);
+          BrowseClassifications.storeClassificationId(secondExact.value);
           InventorySearchAndFilter.selectFoundItemFromBrowse(secondExact.value);
-          InventorySearchAndFilter.verifySearchOptionAndQuery(
-            'Query search',
-            `classifications.classificationNumber=="${secondExact.value}"`,
-          );
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId();
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.switchToBrowseTab();
           BrowseClassifications.verifySearchResultsTable();

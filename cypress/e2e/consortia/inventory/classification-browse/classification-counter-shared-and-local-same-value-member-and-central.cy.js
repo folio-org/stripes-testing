@@ -29,7 +29,6 @@ const classificationBrowseId = defaultClassificationBrowseIdsAlgorithms[0].id; /
 const classificationBrowseAlgorithm = defaultClassificationBrowseIdsAlgorithms[0].algorithm;
 const sharedAccordionName = 'Shared';
 const querySearchOption = 'Query search';
-const searchQuery = `classifications.classificationNumber=="${classificationValue}"`;
 
 // Classification identifier types created by this test
 const localCentralTypeName = `AT_C471478_ClassifType_${randomPostfix}`;
@@ -253,6 +252,7 @@ describe('Inventory', () => {
         'C471478 Check "Number of titles" counter when different Instances have same classifications, from Member and Central tenant using "Classification (all)" option when settings are empty (consortia) (promin)',
         { tags: ['criticalPathECS', 'promin', 'C471478'] },
         () => {
+          cy.getToken(user.username, user.password);
           // Step 1: browse "Classification (all)" for the shared value - 11 rows at counter 2
           // (shared+local pair), 1 row at counter 1 (local-only type), Title/Contributors empty
           precedingValues.forEach((value) => {
@@ -285,9 +285,9 @@ describe('Inventory', () => {
           // than a specific type, but the query itself filters only by classificationNumber
           // (not type), so the result count is always the full sum regardless of which row
           // was clicked
-          BrowseClassifications.selectFoundValueByRow(5, classificationValue);
+          BrowseClassifications.selectFoundValueByRowAndStoreId(5, classificationValue);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(querySearchOption, searchQuery);
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.verifyNumberOfSearchResults(allInstancesCount);
           InventorySearchAndFilter.checkSharedAndLocalInstancesInResultList();
 
@@ -328,9 +328,9 @@ describe('Inventory', () => {
           // Step 5: click exact match - Local instances only. Still 5 preceding filler rows
           // (local halves) at indices 0-4, so target rows are still 5-16 - pick a different
           // index than step 2 for variety
-          BrowseClassifications.selectFoundValueByRow(10, classificationValue);
+          BrowseClassifications.selectFoundValueByRowAndStoreId(10, classificationValue);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(querySearchOption, searchQuery);
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.verifyNumberOfSearchResults(localInstancesCount);
           InventorySearchAndFilter.checkNoSharedInstancesInResultList();
 
@@ -371,9 +371,9 @@ describe('Inventory', () => {
           // Step 8: click exact match - Shared instances only. 5 preceding filler rows
           // (shared halves) at indices 0-4, target rows (only 11, no local-only type) at 5-15 -
           // pick the last valid index for variety
-          BrowseClassifications.selectFoundValueByRow(15, classificationValue);
+          BrowseClassifications.selectFoundValueByRowAndStoreId(15, classificationValue);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(querySearchOption, searchQuery);
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.verifyNumberOfSearchResults(sharedInstancesCount);
           InventorySearchAndFilter.checkSharedInstancesInResultList();
 

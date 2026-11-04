@@ -27,7 +27,6 @@ const classificationBrowseId = defaultClassificationBrowseIdsAlgorithms[1].id; /
 const classificationBrowseAlgorithm = defaultClassificationBrowseIdsAlgorithms[1].algorithm;
 const sharedAccordionName = 'Shared';
 const querySearchOption = 'Query search';
-const searchQuery = `classifications.classificationNumber=="${classificationValue}"`;
 
 // Classification identifier types created by this test
 const localCentralTypeName = `AT_C471479_ClassifType_${randomPostfix}`;
@@ -40,8 +39,8 @@ const localMemberTypeName = `AT_C471479_ClassifType2_${randomPostfix}`;
 // Settings - even "Classification (all)" would filter by type if given some (it just has
 // none in C471478, which is why that test's redirect query is type-blind). Here "Dewey
 // Decimal classification" is configured with [Dewey, Additional Dewey], so its redirect
-// query bakes those 2 types in (confirmed live:
-// "classifications.classificationNumber==... and (classificationTypeId==DEWEY or
+// query bakes those 2 types in (expected shape:
+// "(classificationId==\"<id>\") and (classificationTypeId==DEWEY or
 // classificationTypeId==ADDITIONAL_DEWEY)"), so the other 9 types below never contribute to
 // ANY count in this test - not the browse rows, and not the Search-tab totals either
 const allTypesWithPairs = [...Object.values(INVENTORY_CLASSIFICATION_TYPES), localCentralTypeName];
@@ -262,9 +261,9 @@ describe('Inventory', () => {
           // "Classification (all)", which has none, so its own redirect stays type-blind) -
           // so the result count is just the 2 Dewey Decimal types' shared+local halves, not
           // the full noise universe
-          BrowseClassifications.selectFoundValueByRow(5, classificationValue);
+          BrowseClassifications.selectFoundValueByRowAndStoreId(5, classificationValue);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(querySearchOption, searchQuery);
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.verifyNumberOfSearchResults(allInstancesCount);
           InventorySearchAndFilter.checkSharedAndLocalInstancesInResultList();
 
@@ -296,9 +295,9 @@ describe('Inventory', () => {
           });
 
           // Step 5: click exact match - Local halves of the 2 Dewey Decimal types only
-          BrowseClassifications.selectFoundValueByRow(5, classificationValue);
+          BrowseClassifications.selectFoundValueByRowAndStoreId(5, classificationValue);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(querySearchOption, searchQuery);
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.verifyNumberOfSearchResults(localInstancesCount);
           InventorySearchAndFilter.checkNoSharedInstancesInResultList();
 
@@ -336,9 +335,9 @@ describe('Inventory', () => {
           });
 
           // Step 8: click exact match - Shared halves of the 2 Dewey Decimal types only
-          BrowseClassifications.selectFoundValueByRow(5, classificationValue);
+          BrowseClassifications.selectFoundValueByRowAndStoreId(5, classificationValue);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(querySearchOption, searchQuery);
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.verifyNumberOfSearchResults(sharedInstancesCount);
           InventorySearchAndFilter.checkSharedInstancesInResultList();
 
@@ -377,9 +376,9 @@ describe('Inventory', () => {
           // Step 12: click exact match on Central - Shared halves of the 2 Dewey Decimal
           // types only (Central never sees Local instances anyway, and the redirect query
           // also excludes the 9 other noise types regardless of Shared/Local)
-          BrowseClassifications.selectFoundValueByRow(5, classificationValue);
+          BrowseClassifications.selectFoundValueByRowAndStoreId(5, classificationValue);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(querySearchOption, searchQuery);
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.verifyNumberOfSearchResults(sharedInstancesCount);
           InventorySearchAndFilter.checkSharedInstancesInResultList();
         },
