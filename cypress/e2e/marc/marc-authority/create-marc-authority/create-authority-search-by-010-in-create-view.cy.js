@@ -124,13 +124,14 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile, false);
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(
         'C476803 Run search for "MARC authority" records by "010" field values from "Create a new MARC authority record" window (promin)',
-        { tags: ['extendedPath', 'promin', 'C476803'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C476803'] },
         () => {
           function goToCreateAuth(field010Content) {
             MarcAuthorities.clickActionsAndNewAuthorityButton();

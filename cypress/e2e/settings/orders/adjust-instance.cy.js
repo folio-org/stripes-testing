@@ -8,6 +8,7 @@ import { NewOrganization, Organizations } from '../../../support/fragments/organ
 import InstanceStatusTypes from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
 import NewInstanceStatusType from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/newInstanceStatusType';
 import ResourceTypes from '../../../support/fragments/settings/inventory/instances/resourceTypes';
+import InventoryInteractions from '../../../support/fragments/settings/orders/inventoryInteractions';
 import SettingOrdersNavigationMenu from '../../../support/fragments/settings/orders/settingOrdersNavigationMenu';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -36,10 +37,10 @@ describe('Orders', () => {
     const organization = {
       ...NewOrganization.defaultUiOrganizations,
     };
-    const defaultSettingsOfInstance = {
-      instanceStatus: 'Cataloged',
-      instanceType: 'cartographic image',
-      loanType: 'Can circulate',
+    const settingsToRestore = {
+      instanceStatusCode: 'cat', // Cataloged
+      instanceTypeCode: 'cri', // cartographic image
+      loanTypeName: 'Can circulate',
     };
 
     before(() => {
@@ -113,7 +114,10 @@ describe('Orders', () => {
     });
 
     after(() => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
+      // Restore first: while these settings point to the deleted test records, every order open
+      // that creates an instance fails with 500 for the rest of the run
+      InventoryInteractions.setInstanceStatusTypeAndLoanTypeViaApi(settingsToRestore);
       Orders.deleteOrderViaApi(order.id);
       Users.deleteViaApi(testData.user.userId);
       cy.getInstance({
@@ -126,21 +130,11 @@ describe('Orders', () => {
       InstanceStatusTypes.deleteViaApi(testData.instanceStatusTypeId);
       ResourceTypes.deleteViaApi(testData.instanceTypeId);
       cy.deleteLoanType(testData.loanTypeId);
-      cy.loginAsAdmin({
-        path: SettingsMenu.ordersInstanceStatusPath,
-        waiter: SettingsOrders.waitLoadingInstanceStatus,
-      });
-      SettingOrdersNavigationMenu.selectInstanceStatus();
-      SettingsOrders.selectInstanceStatus(defaultSettingsOfInstance.instanceStatus);
-      SettingOrdersNavigationMenu.selectInstanceType();
-      SettingsOrders.selectInstanceType(defaultSettingsOfInstance.instanceType);
-      SettingOrdersNavigationMenu.selectLoanType();
-      SettingsOrders.selectLoanType(defaultSettingsOfInstance.loanType);
     });
 
     it(
       'C9219 Adjust Instance status, instance type and loan type defaults (items for receiving includes "Order closed" statuses) (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet', 'C9219'] },
+      { tags: ['criticalPath', 'thunderjet', 'nonParallel', 'C9219'] },
       () => {
         SettingsOrders.selectInstanceStatus(testData.instanceStatusType.name);
         SettingOrdersNavigationMenu.selectInstanceType();

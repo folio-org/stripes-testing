@@ -63,12 +63,13 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(LC_NAME_AUTHORITY_FILE, false);
         Users.deleteViaApi(user.userId);
       });
 
       it(
         'C423520 "1XX" field existence validation in "Create a new MARC authority record" pane (promin)',
-        { tags: ['extendedPath', 'promin', 'C423520'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C423520'] },
         () => {
           // Step 1: Click on "Actions" button >> Select "+ New" option
           MarcAuthorities.clickActionsAndNewAuthorityButton();

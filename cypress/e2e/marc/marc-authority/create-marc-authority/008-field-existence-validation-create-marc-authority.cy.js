@@ -43,12 +43,13 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(LC_NAME_AUTHORITY_FILE, false);
         Users.deleteViaApi(user.userId);
       });
 
       it(
         'C423493 "008" field existence validation in "Create a new MARC authority record" pane (promin)',
-        { tags: ['extendedPath', 'promin', 'C423493'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C423493'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.waitLoading();

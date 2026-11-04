@@ -73,6 +73,7 @@ describe('Data Export', () => {
     after('Delete users, data', () => {
       cy.resetTenant();
       cy.getAdminToken();
+      MarcAuthorities.setAuthoritySourceFileActivityViaAPI(LC_NAME_AUTHORITY_FILE, false);
       if (users?.userId) Users.deleteViaApi(users.userId);
       MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(authorityIdentifier);
       FileManager.deleteFileFromDownloadsByMask('QuickAuthorityExport*');
@@ -82,7 +83,7 @@ describe('Data Export', () => {
 
     it(
       'C436898 C436899 Export of created Shared MARC authority record from Central and Member tenant (consortia) (promin)',
-      { tags: ['criticalPathECS', 'promin', 'C436898', 'C436899'] },
+      { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C436898', 'C436899'] },
       () => {
         MarcAuthorities.clickActionsAndNewAuthorityButton();
         QuickMarcEditor.checkPaneheaderContains('New shared MARC authority record');

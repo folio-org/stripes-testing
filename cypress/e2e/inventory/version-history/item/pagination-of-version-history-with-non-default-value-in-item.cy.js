@@ -60,7 +60,6 @@ describe('Inventory', () => {
 
       before('Create test data', () => {
         cy.getAdminToken();
-        cy.setVersionHistoryRecordsPerPage(25);
 
         cy.then(() => {
           cy.getDefaultMaterialType().then((materialTypes) => {
@@ -119,25 +118,27 @@ describe('Inventory', () => {
                 [],
                 [CapabilitySets.uiInventory],
               );
-
-              cy.login(testData.user.username, testData.user.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
             });
           });
       });
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        cy.setVersionHistoryRecordsPerPage(10);
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.barcode);
         Users.deleteViaApi(testData.user.userId);
       });
 
       it(
         'C651578 Pagination of "Version history" with Non-default value in Item (promin)',
-        { tags: ['criticalPath', 'promin', 'C651578'] },
+        { tags: ['criticalPath', 'promin', 'nonParallel', 'C651578'] },
         () => {
+          cy.setVersionHistoryRecordsPerPage(25);
+
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
           // Step 1: Open Item details from the Holdings accordion.
           openItemFromInventory();
 

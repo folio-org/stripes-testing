@@ -21,13 +21,13 @@ describe('eHoldings', () => {
         Permissions.moduleeHoldingsEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.getUserToken(userProperties.username, userProperties.password);
         EHoldingsPackages.unassignPackageViaAPI(testData.packageName);
       });
     });
 
     afterEach(() => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
+      EHoldingsPackages.unassignPackageViaAPI(testData.packageName);
       Users.deleteViaApi(user.userId);
     });
 
@@ -48,13 +48,12 @@ describe('eHoldings', () => {
         EHoldingsPackage.waitLoading(testData.packageName);
         EHoldingsPackage.checkTitleRowsShown();
         EHoldingsPackage.addToHoldings();
+        cy.getAdminToken(false);
+        EHoldingsPackage.waitForSelectionStatusViaApi();
         EHoldingsPackage.verifyHoldingStatus();
         EHoldingsPackage.filterTitles();
         cy.wait(3000);
         EHoldingsPackage.checkEmptyTitlesList();
-        // reset test data
-        EHoldingsPackage.removeFromHoldings();
-        EHoldingsPackage.verifyNotSelectedPackage();
       },
     );
   });

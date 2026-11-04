@@ -99,18 +99,23 @@ const removeMarcField = ({ inputFileName, outputFileName, fieldTag }) => {
   });
 };
 
-const downloadExportedMarcFile = (fileName) => {
+// jobExecution: the job yielded by exportFileViaApi. Without it, the newest finished export job of
+// the tenant is taken, which in parallel runs can belong to another spec
+const downloadExportedMarcFile = (fileName, jobExecution) => {
   const query =
     '(status=(COMPLETED OR COMPLETED_WITH_ERRORS OR FAIL)) sortby completedDate/sort.descending';
   const limit = '1';
   const queryString = new URLSearchParams({ limit, query });
 
   // get file id and job id
-  cy.okapiRequest({
-    method: 'GET',
-    path: `data-export/job-executions?${queryString}`,
-    isDefaultSearchParamsRequired: false,
-  })
+  (jobExecution
+    ? cy.wrap({ body: { jobExecutions: [jobExecution] } })
+    : cy.okapiRequest({
+      method: 'GET',
+      path: `data-export/job-executions?${queryString}`,
+      isDefaultSearchParamsRequired: false,
+    })
+  )
     .then(({ body: { jobExecutions } }) => {
       const {
         id,
@@ -201,6 +206,25 @@ const uploadFile = (fileName) => {
 export default {
   downloadCSVFile,
   downloadExportedMarcFile,
+  // For UI exports (no job object): finds the job by its exported file name, which is
+  // "<uploaded CSV name without .csv>-<job hrid>.mrc". Yields it for downloadExportedMarcFile
+  getExportJobByUploadedFileViaApi(uploadedFileName) {
+    const prefix = `${uploadedFileName.replace(/\.csv$/, '')}-`;
+    const findJob = (jobExecutions) => jobExecutions.find((job) => job.exportedFiles?.[0]?.fileName?.startsWith(prefix));
+    return recurse(
+      () => cy.okapiRequest({
+        path: 'data-export/job-executions',
+        searchParams: {
+          query:
+              '(status=(COMPLETED OR COMPLETED_WITH_ERRORS OR FAIL)) sortby completedDate/sort.descending',
+          limit: 100,
+        },
+        isDefaultSearchParamsRequired: false,
+      }),
+      ({ body }) => !!findJob(body.jobExecutions),
+      { timeout: 60_000, delay: 2_000 },
+    ).then(({ body }) => findJob(body.jobExecutions));
+  },
   downloadExportedMarcFileWithRecordHrid,
   waitLandingPageOpened,
   uploadFile,
@@ -350,7 +374,7 @@ export default {
    * @param {string} fileName - Name of the CSV file to upload (e.g., 'empty.csv')
    * @param {string} idType - Type of IDs to export ('instance', 'holdings', 'authority', etc.)
    * @param {string} jobProfileName - Name of the job profile to use for export
-   * @returns {Cypress.Chainable} Chain with job execution details
+   * @returns {Cypress.Chainable} Chain with job execution details (pass it to downloadExportedMarcFile)
    */
   exportFileViaApi(
     fileName,
