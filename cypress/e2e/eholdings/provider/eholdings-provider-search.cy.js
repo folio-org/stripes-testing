@@ -33,6 +33,7 @@ describe('eHoldings', () => {
       () => {
         EHoldingsProvidersSearch.byProvider('Gale Cengage');
         EHoldingsProviders.viewProvider();
+        EHoldingsProviders.verifyPackagesAvailable();
         EHoldingsProviders.clickActionsButtonInPackagesSection();
         EHoldingsProviders.bySelectionStatusOpen('Selected');
         EHoldingsProviders.verifyOnlySelectedPackagesInResults();
