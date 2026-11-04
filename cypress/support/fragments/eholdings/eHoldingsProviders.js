@@ -1,12 +1,10 @@
 import {
-  Accordion,
   Button,
   ListItem,
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
   PaneHeader,
-  RadioButton,
   Section,
   Spinner,
   TextField,
@@ -17,6 +15,8 @@ import {
   ValueChipRoot,
   DropdownMenu,
   Checkbox,
+  Group,
+  Selection,
 } from '../../../../interactors';
 import eHoldingsProviderView from './eHoldingsProviderView';
 import { FILTER_STATUSES } from './eholdingsConstants';
@@ -24,9 +24,6 @@ import getRandomPostfix from '../../utils/stringTools';
 
 // eslint-disable-next-line import/no-cycle
 const resultSection = Section({ id: 'search-results' });
-const selectionStatusAccordion = Accordion({
-  id: 'accordion-toggle-button-filter-packages-selected',
-});
 const packagesSection = Section({ id: 'providerShowProviderList' });
 const packagesActionsButton = packagesSection.find(Button('Actions'));
 const packagesAccordion = Button({
@@ -43,6 +40,9 @@ const providerInfAccordion = Button({
 const tagsSection = Section({ id: 'providerShowTags' });
 const closeButton = Button({ icon: 'times' });
 const packagesSearchField = packagesSection.find(TextField({ name: 'search' }));
+const selectionStatusSelectInTilesModal = DropdownMenu()
+  .find(Group({ title: 'Selection status' }))
+  .find(Selection());
 
 export default {
   waitLoading: () => {
@@ -85,12 +85,6 @@ export default {
     cy.expect(packagesSearchField.has({ value: query }));
   },
 
-  bySelectionStatus(selectionStatus) {
-    cy.do(selectionStatusAccordion.clickHeader());
-    cy.do(selectionStatusAccordion.find(RadioButton(selectionStatus)).click());
-    cy.do(Button('Search').click());
-  },
-
   viewPackage: (rowNumber = 0) => {
     cy.expect(Spinner().absent);
     cy.do(
@@ -102,7 +96,7 @@ export default {
   },
 
   bySelectionStatusOpen(selectionStatus) {
-    cy.do(DropdownMenu().find(RadioButton(selectionStatus)).click());
+    cy.do(selectionStatusSelectInTilesModal.choose(selectionStatus));
   },
 
   verifyOnlySelectedPackagesInResults() {
