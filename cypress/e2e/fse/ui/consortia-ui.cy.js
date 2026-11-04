@@ -1,14 +1,80 @@
 import ConsortiumMgr from '../../../support/fragments/settings/consortium-manager/consortium-manager';
+import ConsortiumManagerApp, {
+  settingsItems,
+} from '../../../support/fragments/consortium-manager/consortiumManagerApp';
+import DataImportLogsConsortiumManager, {
+  DATA_IMPORT_LOGS_COLUMNS,
+} from '../../../support/fragments/consortium-manager/data-import/dataImportLogsConsortiumManager';
+import DataExportLogsConsortiumManager, {
+  DATA_EXPORT_LOGS_COLUMNS,
+} from '../../../support/fragments/consortium-manager/data-export/dataExportLogsConsortiumManager';
+import SelectMembers from '../../../support/fragments/consortium-manager/modal/select-members';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Modals from '../../../support/fragments/modals';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import Users from '../../../support/fragments/users/users';
+import UsersCard from '../../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import { APPLICATION_NAMES, SORT_DIRECTIONS } from '../../../support/constants';
+
+// opens the app from the app list, or from the apps dropdown when it's not shown in the list
+const openApp = (appName) => {
+  cy.get('body').then(($body) => {
+    if ($body.find(`[data-test-app-list] a:contains("${appName}"):visible`).length) {
+      TopMenuNavigation.navigateToApp(appName);
+    } else {
+      TopMenuNavigation.openAppFromDropdown(appName);
+    }
+  });
+};
 
 describe('fse-consortia - UI (no data manipulation)', {}, () => {
+  let userTenants;
+  let allTenants;
+  let affiliationsCount;
+  let currentUserId;
+  let primaryTenant;
+  let otherTenants;
+
+  before(() => {
+    // hide sensitive data from the report
+    cy.allure().logCommandSteps(false);
+    cy.getAdminToken();
+    cy.allure().logCommandSteps();
+    // consortium data is the same for all the tests, so it's requested only once
+    cy.getAllTenants().then((tenants) => {
+      allTenants = tenants;
+    });
+    cy.getUserAffiliationsCount().then((count) => {
+      affiliationsCount = count;
+    });
+    cy.getUserTenants().then((tenants) => {
+      userTenants = tenants;
+      primaryTenant = tenants.filter((element) => element.isPrimary === true)[0];
+      otherTenants = tenants.filter((element) => element.isPrimary === false);
+      // the id of the logged-in user is taken from the affiliations, because the admin username
+      // can't be resolved to a single user on environments with anonymized data
+      currentUserId = tenants[0].userId;
+    });
+  });
+
   beforeEach(() => {
     // hide sensitive data from the report
     cy.allure().logCommandSteps(false);
+    // "testIsolation" is disabled, so the session of the previous test has to be dropped explicitly,
+    // otherwise the login form is not displayed
+    cy.logoutViaApi();
+    cy.clearCookies({ domain: null });
+    cy.clearLocalStorage();
     cy.loginAsAdmin({
       path: SettingsMenu.consortiumManagerPath,
       waiter: ConsortiumMgr.waitLoading,
     });
+    // authorize the API calls of the tests, without clearing cookies of the UI session
+    cy.getAdminToken(false);
     cy.allure().logCommandSteps();
   });
 
@@ -16,77 +82,331 @@ describe('fse-consortia - UI (no data manipulation)', {}, () => {
     `TC195512 - switch active affiliation ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['consortia-sanity', 'fse', 'ui', 'TC195512'] },
     () => {
-      cy.getAdminToken(false).then(() => {
-        cy.getUserAffiliationsCount().then((count) => {
-          cy.getUserTenants().then((userTenants) => {
-            if (count > 1) {
-              const primaryTenant = userTenants.filter((element) => element.isPrimary === true)[0];
-              ConsortiumMgr.checkCurrentTenantInTopMenu(primaryTenant.tenantName);
-              // get any tenant from the list, but not the first one (central)
-              const tenantNumber = Math.floor(Math.random() * (count - 1)) + 1;
-              cy.wait(2000);
-              // switch affiliation and verify that it was switched
-              ConsortiumMgr.switchActiveAffiliation(
-                primaryTenant.tenantName,
-                userTenants[tenantNumber].tenantName,
-              );
-              cy.wait(2000);
-              // switch back
-              ConsortiumMgr.switchActiveAffiliation(
-                userTenants[tenantNumber].tenantName,
-                primaryTenant.tenantName,
-              );
-            } else {
-              cy.log(
-                `Can't switch affiliation since there's only one assigned to the user ${Cypress.env(
-                  'diku_login',
-                )}`,
-              );
-            }
-          });
-        });
-      });
+      if (affiliationsCount > 1) {
+        ConsortiumMgr.checkCurrentTenantInTopMenu(primaryTenant.tenantName);
+        // get any tenant from the list, but not the first one (central)
+        const tenantNumber = Math.floor(Math.random() * (affiliationsCount - 1)) + 1;
+        cy.wait(2000);
+        // switch affiliation and verify that it was switched
+        ConsortiumMgr.switchActiveAffiliation(
+          primaryTenant.tenantName,
+          userTenants[tenantNumber].tenantName,
+        );
+        cy.wait(2000);
+        // switch back
+        ConsortiumMgr.switchActiveAffiliation(
+          userTenants[tenantNumber].tenantName,
+          primaryTenant.tenantName,
+        );
+      } else {
+        cy.log(
+          `Can't switch affiliation since there's only one assigned to the user ${Cypress.env(
+            'diku_login',
+          )}`,
+        );
+      }
     },
   );
-});
-
-describe('fse-consortia - UI (data manipulation)', () => {
-  beforeEach(() => {
-    // hide sensitive data from the report
-    cy.allure().logCommandSteps(false);
-    cy.loginAsAdmin({
-      path: SettingsMenu.consortiumManagerPath,
-      waiter: ConsortiumMgr.waitLoading,
-    });
-    cy.allure().logCommandSteps();
-  });
 
   it(
-    `TC195700 - Edit tenant name in "Consortium manager" settings ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['consortia', 'fse', 'ui', 'nonProd', 'TC195700'] },
+    `FDOPS-6042 - verify "Switch active affiliation" availability matches affiliations count ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['consortia-sanity', 'fse', 'ui', 'FDOPS-6042'] },
     () => {
-      cy.getUserTenants().then((userTenants) => {
-        // get non-primary tenants
-        const filteredTenants = userTenants.filter((element) => element.isPrimary === false);
-        ConsortiumMgr.selectMembership();
-        ConsortiumMgr.editTenant(`${filteredTenants[0].tenantName}`);
-        // change tenant name
-        ConsortiumMgr.editTenantName(
-          `${filteredTenants[0].tenantName}`,
-          `${filteredTenants[0].tenantName}_Edited`,
-        );
-        ConsortiumMgr.saveEditingTenantChangesClickActiveButton();
-        ConsortiumMgr.checkEditedTenantName(`${filteredTenants[0].tenantName}_Edited`);
+      // the option is shown only when the user has more than one affiliation
+      if (affiliationsCount > 1) {
+        ConsortiumMgr.switchActiveAffiliationExists();
+      } else {
+        ConsortiumMgr.switchActiveAffiliationIsAbsent();
+      }
+    },
+  );
 
-        // change name back to the original value
-        ConsortiumMgr.editTenant(`${filteredTenants[0].tenantName}_Edited`);
-        ConsortiumMgr.editTenantName(
-          `${filteredTenants[0].tenantName}_Edited`,
-          `${filteredTenants[0].tenantName}`,
+  it(
+    `FDOPS-6042 - cancel switching of active affiliation ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['consortia-sanity', 'fse', 'ui', 'FDOPS-6042'] },
+    () => {
+      if (affiliationsCount > 1) {
+        const otherTenant = otherTenants[Math.floor(Math.random() * otherTenants.length)];
+        ConsortiumMgr.checkCurrentTenantInTopMenu(primaryTenant.tenantName);
+        // select another affiliation, but close the modal without saving
+        ConsortiumMgr.openSelectAffiliationModal();
+        ConsortiumMgr.selectAffiliationInModal(otherTenant.tenantName);
+        ConsortiumMgr.clickCancelInSelectAffiliationModal();
+        // active affiliation should stay unchanged
+        ConsortiumMgr.checkCurrentTenantInTopMenu(primaryTenant.tenantName);
+      } else {
+        cy.log(
+          `Can't switch affiliation since there's only one assigned to the user ${Cypress.env(
+            'diku_login',
+          )}`,
         );
-        ConsortiumMgr.saveEditingTenantChangesClickActiveButton();
-        ConsortiumMgr.checkEditedTenantName(`${filteredTenants[0].tenantName}`);
+      }
+    },
+  );
+
+  it(
+    `FDOPS-6042 - verify "Membership" list matches consortium tenants ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['consortia-sanity', 'fse', 'ui', 'FDOPS-6042'] },
+    () => {
+      ConsortiumMgr.selectMembership();
+      cy.wait(2000);
+      cy.wrap(allTenants).each((tenant) => {
+        ConsortiumMgr.verifyTenantInList(tenant.name, tenant.code);
       });
     },
   );
+
+  it(
+    `FDOPS-6042 - verify "Consortium manager" app is displayed ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['consortia-sanity', 'fse', 'ui', 'FDOPS-6042'] },
+    () => {
+      openApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+      ConsortiumManagerApp.waitLoading();
+      ConsortiumManagerApp.verifySettingPaneIsDisplayed();
+      // no arguments - settings within each section are checked to be sorted alphabetically
+      ConsortiumManagerApp.verifyPaneIncludesSettings();
+      ConsortiumManagerApp.verifyChooseSettingsIsDisplayed();
+      ConsortiumManagerApp.verifySelectMembersButton();
+    },
+  );
+
+  it(
+    `FDOPS-6042 - verify "Select members" modal in "Consortium manager" app ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['consortia-sanity', 'fse', 'ui', 'FDOPS-6042'] },
+    () => {
+      const tenantNames = userTenants.map((element) => element.tenantName);
+
+      openApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+      ConsortiumManagerApp.waitLoading();
+      ConsortiumManagerApp.clickSelectMembers();
+      SelectMembers.waitLoading();
+      SelectMembers.verifyInitialStatusOfSearchAndFilterPane();
+      // all affiliations of the user are available for selection
+      SelectMembers.verifyAvailableTenants(tenantNames);
+      // search narrows the list down to the searched member
+      SelectMembers.searchTenant(primaryTenant.tenantName);
+      SelectMembers.verifyAvailableTenants([primaryTenant.tenantName]);
+      SelectMembers.verifyResetAllButtonEnabled();
+      // reset brings all the members back
+      SelectMembers.clickResetAll();
+      SelectMembers.verifyAvailableTenants(tenantNames);
+      // close the modal without saving to keep the members selection unchanged
+      SelectMembers.clickCancel();
+      ConsortiumManagerApp.waitLoading();
+    },
+  );
+
+  it(
+    `FDOPS-6042 - verify affiliations of the user in "Users" app ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['consortia-sanity', 'fse', 'ui', 'FDOPS-6042'] },
+    () => {
+      openApp(APPLICATION_NAMES.USERS);
+      Users.waitLoading();
+      // close service point modal if it appears
+      Modals.closeModalWithEscapeIfAny();
+      UsersSearchPane.searchByKeywords(currentUserId);
+      UsersSearchPane.openUser(currentUserId);
+      UsersCard.verifyUserCardOpened();
+      // the badge shows the number of affiliations of the user
+      UsersCard.verifyAffiliationsQuantity(`${affiliationsCount}`);
+      UsersCard.expandAffiliationsAccordion();
+      // only the primary affiliation is verified, since the list can contain dozens of members
+      UsersCard.verifyAffiliationsDetails(primaryTenant.tenantName, 1, primaryTenant.tenantName);
+    },
+  );
+
+  it(
+    `FDOPS-6042 - verify data import logs of consortium members ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['consortia-sanity', 'fse', 'ui', 'FDOPS-6042'] },
+    () => {
+      // logs count of the central tenant to compare with the count displayed in the UI
+      DataImportLogsConsortiumManager.getLogsTotalCountViaApi().then((logsCount) => {
+        openApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        ConsortiumManagerApp.waitLoading();
+        // all affiliations of the user are selected as members by default
+        ConsortiumManagerApp.chooseSettingsItem(settingsItems.dataImport);
+        DataImportLogsConsortiumManager.verifyDataImportPane({ hasLogs: logsCount > 0 });
+        DataImportLogsConsortiumManager.verifyMemberDropdownFilterPlaceholder();
+
+        // check logs of the central tenant against the API
+        ConsortiumManagerApp.selectTenantFromDropdown(primaryTenant.tenantName);
+        ConsortiumManagerApp.verifySelectedMember(primaryTenant.tenantName);
+        if (logsCount > 0) {
+          DataImportLogsConsortiumManager.waitLoading();
+          DataImportLogsConsortiumManager.verifyLogsFound(logsCount);
+          // logs are sorted by "Ended running" in descending order by default
+          DataImportLogsConsortiumManager.verifyListSortedBy(
+            DATA_IMPORT_LOGS_COLUMNS.ENDED_RUNNING,
+            SORT_DIRECTIONS.DESCENDING,
+          );
+          DataImportLogsConsortiumManager.clickColumnHeader(DATA_IMPORT_LOGS_COLUMNS.ENDED_RUNNING);
+          DataImportLogsConsortiumManager.verifyListSortedBy(
+            DATA_IMPORT_LOGS_COLUMNS.ENDED_RUNNING,
+            SORT_DIRECTIONS.ASCENDING,
+          );
+        } else {
+          cy.log(`There are no data import logs in ${primaryTenant.tenantName}`);
+        }
+
+        // logs of another member are retrieved from the member tenant
+        if (otherTenants.length > 0) {
+          const memberTenant = otherTenants[Math.floor(Math.random() * otherTenants.length)];
+          ConsortiumManagerApp.selectTenantFromDropdown(memberTenant.tenantName);
+          ConsortiumManagerApp.verifySelectedMember(memberTenant.tenantName);
+          DataImportLogsConsortiumManager.verifyDataImportPane({ hasLogs: false });
+        } else {
+          cy.log(
+            `Can't check logs of another member since there's only one affiliation assigned to the user ${Cypress.env(
+              'diku_login',
+            )}`,
+          );
+        }
+      });
+    },
+  );
+
+  it(
+    `FDOPS-6042 - verify data export logs of consortium members ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['consortia-sanity', 'fse', 'ui', 'FDOPS-6042'] },
+    () => {
+      // records count of the central tenant to compare with the count displayed in the UI
+      DataExportLogsConsortiumManager.getRecordsTotalCountViaApi().then((recordsCount) => {
+        openApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+        ConsortiumManagerApp.waitLoading();
+        ConsortiumManagerApp.chooseSettingsItem(settingsItems.dataExport);
+        DataExportLogsConsortiumManager.verifyDataExportPane({ hasLogs: recordsCount > 0 });
+        DataExportLogsConsortiumManager.verifyMemberDropdownFilterPlaceholder();
+
+        // check logs of the central tenant against the API
+        ConsortiumManagerApp.selectTenantFromDropdown(primaryTenant.tenantName);
+        ConsortiumManagerApp.verifySelectedMember(primaryTenant.tenantName);
+        if (recordsCount > 0) {
+          DataExportLogsConsortiumManager.waitLoading();
+          DataExportLogsConsortiumManager.verifyRecordsFound(recordsCount);
+          // logs are sorted by "Ended running" in descending order by default
+          DataExportLogsConsortiumManager.verifyListSortedBy(
+            DATA_EXPORT_LOGS_COLUMNS.ENDED_RUNNING,
+            SORT_DIRECTIONS.DESCENDING,
+          );
+          DataExportLogsConsortiumManager.clickColumnHeader(DATA_EXPORT_LOGS_COLUMNS.ENDED_RUNNING);
+          DataExportLogsConsortiumManager.verifyListSortedBy(
+            DATA_EXPORT_LOGS_COLUMNS.ENDED_RUNNING,
+            SORT_DIRECTIONS.ASCENDING,
+          );
+        } else {
+          cy.log(`There are no data export logs in ${primaryTenant.tenantName}`);
+        }
+
+        // logs of another member are retrieved from the member tenant
+        if (otherTenants.length > 0) {
+          const memberTenant = otherTenants[Math.floor(Math.random() * otherTenants.length)];
+          ConsortiumManagerApp.selectTenantFromDropdown(memberTenant.tenantName);
+          ConsortiumManagerApp.verifySelectedMember(memberTenant.tenantName);
+          DataExportLogsConsortiumManager.verifyDataExportPane({ hasLogs: false });
+        } else {
+          cy.log(
+            `Can't check logs of another member since there's only one affiliation assigned to the user ${Cypress.env(
+              'diku_login',
+            )}`,
+          );
+        }
+      });
+    },
+  );
+
+  it(
+    `FDOPS-6042 - verify "Shared" and "Held by" facets in "Inventory" ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['consortia-sanity', 'fse', 'ui', 'FDOPS-6042'] },
+    () => {
+      openApp(APPLICATION_NAMES.INVENTORY);
+      InventorySearchAndFilter.waitLoading();
+      // close service point modal if it appears
+      Modals.closeModalWithEscapeIfAny();
+      // consortia specific facet
+      InventorySearchAndFilter.verifyAccordionExistance('Held by');
+
+      InventorySearchAndFilter.byKeywords();
+      // the "Shared" facet is not displayed in every release, so it's checked only when shown
+      cy.get('body').then(($body) => {
+        const isSharedFacetShown = [...$body.find('[id^="accordion-toggle-button-"]')].some(
+          (element) => (element.textContent || '').trim() === 'Shared',
+        );
+        if (isSharedFacetShown) {
+          // shared instances are marked with the shared icon in the result list
+          InventorySearchAndFilter.byShared('Yes');
+          InventorySearchAndFilter.verifySharedIconInRow(0);
+        } else {
+          cy.log('The "Shared" facet is not displayed in the "Inventory" search pane');
+        }
+      });
+
+      if (otherTenants.length > 0) {
+        const memberTenant = otherTenants[Math.floor(Math.random() * otherTenants.length)];
+        // the current tenant is pre-selected in the "Held by" filter in ECS environments
+        InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        InventorySearchAndFilter.expandAccordionByName('Held by');
+        // the member name has to be typed in, options of all the members are not rendered at once
+        InventorySearchAndFilter.selectHeldByOption(memberTenant.tenantName);
+        cy.wait(2000);
+        // shared instances held by the member have the "Consortial holdings" accordion
+        cy.get('body').then(($body) => {
+          if ($body.find('#list-inventory [data-row-index]').length > 0) {
+            InventoryInstances.selectInstance();
+            InstanceRecordView.waitLoading();
+            InstanceRecordView.verifyConsortialHoldingsAccordion();
+          } else {
+            cy.log(`There are no shared instances held by ${memberTenant.tenantName}`);
+          }
+        });
+      } else {
+        cy.log(
+          `Can't check the "Held by" facet since there's only one affiliation assigned to the user ${Cypress.env(
+            'diku_login',
+          )}`,
+        );
+      }
+      InventorySearchAndFilter.resetAll();
+    },
+  );
 });
+
+// describe('fse-consortia - UI (data manipulation)', () => {
+//   beforeEach(() => {
+//     // hide sensitive data from the report
+//     cy.allure().logCommandSteps(false);
+//     cy.loginAsAdmin({
+//       path: SettingsMenu.consortiumManagerPath,
+//       waiter: ConsortiumMgr.waitLoading,
+//     });
+//     cy.allure().logCommandSteps();
+//   });
+
+//   it(
+//     `TC195700 - Edit tenant name in "Consortium manager" settings ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+//     { tags: ['consortia', 'fse', 'ui', 'nonProd', 'TC195700'] },
+//     () => {
+//       cy.getUserTenants().then((userTenants) => {
+//         // get non-primary tenants
+//         const filteredTenants = userTenants.filter((element) => element.isPrimary === false);
+//         ConsortiumMgr.selectMembership();
+//         ConsortiumMgr.editTenant(`${filteredTenants[0].tenantName}`);
+//         // change tenant name
+//         ConsortiumMgr.editTenantName(
+//           `${filteredTenants[0].tenantName}`,
+//           `${filteredTenants[0].tenantName}_Edited`,
+//         );
+//         ConsortiumMgr.saveEditingTenantChangesClickActiveButton();
+//         ConsortiumMgr.checkEditedTenantName(`${filteredTenants[0].tenantName}_Edited`);
+
+//         // change name back to the original value
+//         ConsortiumMgr.editTenant(`${filteredTenants[0].tenantName}_Edited`);
+//         ConsortiumMgr.editTenantName(
+//           `${filteredTenants[0].tenantName}_Edited`,
+//           `${filteredTenants[0].tenantName}`,
+//         );
+//         ConsortiumMgr.saveEditingTenantChangesClickActiveButton();
+//         ConsortiumMgr.checkEditedTenantName(`${filteredTenants[0].tenantName}`);
+//       });
+//     },
+//   );
+// });

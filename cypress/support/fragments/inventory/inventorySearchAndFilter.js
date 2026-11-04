@@ -1184,6 +1184,15 @@ export default {
     cy.do(Accordion(accordionName).clickHeader());
   },
 
+  // expands the accordion only when it's collapsed, the initial state depends on applied filters
+  expandAccordionByName(accordionName) {
+    const targetAccordion = Accordion(accordionName);
+    cy.then(() => targetAccordion.open()).then((isOpen) => {
+      if (!isOpen) cy.do(targetAccordion.clickHeader());
+      cy.expect(targetAccordion.has({ open: true }));
+    });
+  },
+
   // To be removed after the checkboxes turn into a MultiSelect
   verifyFilterOptionCount(accordionName, optionName, expectedCount) {
     cy.expect(
@@ -1806,6 +1815,13 @@ export default {
     const targetIcon = MultiColumnListCell({ content: title }).find(Icon({ shared: true }));
     if (isShared) cy.expect(targetIcon.exists());
     else cy.expect(targetIcon.absent());
+  },
+
+  // checks the shared icon by the row number, when the title of the record is unknown
+  verifySharedIconInRow: (row = 0, isShared = true) => {
+    const targetCell = MultiColumnListCell({ row, innerHTML: including('sharedIcon') });
+    if (isShared) cy.expect(targetCell.exists());
+    else cy.expect(targetCell.absent());
   },
 
   verifyCheckboxOptionPresentInAccordion(accordionName, optionName, isShown = true) {
