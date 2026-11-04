@@ -9,12 +9,11 @@ describe('Export Manager', () => {
   let userWithoutTransferExports;
 
   before('Create test data', () => {
-    cy.createTempUser([
-      Permissions.settingsUsersCRUD.gui,
-      Permissions.transferExports.gui,
-    ]).then((userProperties) => {
-      userWithTransferExports = userProperties;
-    });
+    cy.createTempUser([Permissions.settingsUsersCRUD.gui, Permissions.transferExports.gui]).then(
+      (userProperties) => {
+        userWithTransferExports = userProperties;
+      },
+    );
 
     cy.createTempUser([Permissions.settingsUsersCRUD.gui]).then((userProperties) => {
       userWithoutTransferExports = userProperties;
@@ -41,6 +40,9 @@ describe('Export Manager', () => {
 
       // #6 Re-login as user without Transfer exports permission
       // FOLIO landing page is displayed
+      // Log out through the UI first: clearing cookies under the still open session makes its
+      // token refresh fail and redirects to the logout error page instead of the login form
+      cy.logout();
       cy.login(userWithoutTransferExports.username, userWithoutTransferExports.password, {
         path: TopMenu.settingsUserPath,
         waiter: () => cy.wait(5000),
