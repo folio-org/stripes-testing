@@ -20,6 +20,7 @@ import {
 } from '../../constants';
 import FundDetails from '../finance/funds/fundDetails';
 import TransactionDetails from '../finance/transactions/transactionDetails';
+import TagsPane from '../tagsPane';
 import InvoiceLineEditForm from './invoiceLineEditForm';
 import DeleteInvoiceLineModal from './modal/deleteInvoiceLineModal';
 
@@ -51,6 +52,12 @@ export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
     cy.wait(ms);
     cy.expect(invoiceLineDetailsPaneHeader.exists());
+  },
+  openTagsPane() {
+    TagsPane.openTagsPane(invoiceLineDetailsPane);
+  },
+  verifyTagsCount(count) {
+    TagsPane.verifyTagsCount(invoiceLineDetailsPane, count);
   },
   openInvoiceLineEditForm() {
     cy.do([invoiceLineDetailsPaneHeader.find(actionsButton).click(), editButton.click()]);

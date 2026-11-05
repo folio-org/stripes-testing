@@ -14,6 +14,7 @@
 import {
   Button,
   Checkbox,
+  HTML,
   including,
   MultiSelect,
   MultiSelectMenu,
@@ -23,6 +24,7 @@ import {
   Selection,
   SelectionList,
   SelectionOption,
+  Spinner,
   TextField,
   ValueChipRoot,
 } from '../../../interactors';
@@ -33,6 +35,10 @@ const RESET_BUTTON_SELECTOR_ATTRIBUTE = 'data-cy-filters-pane-reset-all-filters-
 const ACCORDION_TOGGLE_SELECTOR = 'button[id*="accordion-toggle-button-"]';
 
 const resetAllButton = Button({ text: COMMON_BUTTON_LABELS.RESET_ALL });
+// Search box of the currently opened Selection dropdown (closed dropdowns stay in the DOM, hidden by CSS)
+const openedSelectionFilterInput =
+  '[class^=selectionListRoot] input[class^=selectionFilter]:visible';
+const searchLoadingIcon = Spinner({ className: including('icon-spinner-ellipsis') });
 
 const findFilterSectionByLabel = (filtersPane, label) => filtersPane.find(Section({ label }));
 
@@ -65,6 +71,75 @@ export default {
    */
   assertResetAllButtonState(filtersPane, { disabled }) {
     cy.expect(filtersPane.find(resetAllButton).has({ disabled }));
+  },
+
+  /**
+   * Asserts that filter accordions with the given labels are displayed in the filters pane.
+   *
+   * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
+   * @param {string[]} [labels=[]] - The visible labels of the filter accordions.
+   * @param {object} [options={}]
+   * @param {boolean} [options.expanded] - When set, also asserts each accordion is expanded/collapsed.
+   *
+   * @example
+   * FiltersPane.assertFilterAccordions(ordersFiltersPane, ['Status', 'Fund code']);
+   * FiltersPane.assertFilterAccordions(ordersFiltersPane, ['Status'], { expanded: false });
+   */
+  assertFilterAccordions(filtersPane, labels = [], options = {}) {
+    const { expanded } = options;
+
+    cy.expect(
+      labels.map((label) => {
+        const filterSection = findFilterSectionByLabel(filtersPane, label);
+
+        return expanded === undefined ? filterSection.exists() : filterSection.has({ expanded });
+      }),
+    );
+  },
+
+  /**
+   * Asserts whether the clear (×) button is shown next to a filter accordion label.
+   *
+   * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
+   * @param {string} filterLabel - The visible label of the filter's accordion section element.
+   * @param {boolean} [visible=true] - Whether the clear button is expected to be shown.
+   *
+   * @example
+   * FiltersPane.assertFilterClearButton(ordersFiltersPane, 'Fiscal year', false);
+   */
+  assertFilterClearButton(filtersPane, filterLabel, visible = true) {
+    const clearButton = findFilterSectionByLabel(filtersPane, filterLabel).find(
+      Button({ icon: 'times-circle-solid' }),
+    );
+
+    cy.expect(visible ? clearButton.exists() : clearButton.absent());
+  },
+
+  /**
+   * Waits until the search triggered by a filter change is finished:
+   * the "..." loading icon in the search field must be gone.
+   *
+   * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
+   *
+   * @example
+   * FiltersPane.waitForSearchCompleted(ordersFiltersPane);
+   */
+  waitForSearchCompleted(filtersPane) {
+    cy.wait(2000);
+    cy.expect(filtersPane.find(searchLoadingIcon).absent());
+  },
+
+  /**
+   * Waits until all filter accordions are loaded: no loading icons ("...")
+   * are left in the filters pane.
+   *
+   * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
+   *
+   * @example
+   * FiltersPane.waitForFiltersLoaded(ordersFiltersPane);
+   */
+  waitForFiltersLoaded(filtersPane) {
+    cy.expect(filtersPane.find(Spinner()).absent());
   },
 
   /**
@@ -189,12 +264,13 @@ export default {
    *
    * @param {Interactor} filtersPane - Interactor scoped to the filters pane.
    * @param {string} filterLabel - The visible label of the filter's accordion section element.
-   * @param {string} value - The expected selected value label.
+   * @param {string} value - The expected selected value label. Pass empty string to assert no value is selected.
    * @param {object} [options={}]
    * @param {boolean} [options.expandAccordion=true] - Whether to expand the accordion first.
    *
    * @example
    * FiltersPane.assertSelectionFilterValue(ordersFiltersPane, 'poNumberPrefix', 'PREF-01');
+   * FiltersPane.assertSelectionFilterValue(ordersFiltersPane, 'poNumberPrefix', '');
    */
   assertSelectionFilterValue(filtersPane, filterLabel, value, options = {}) {
     const { expandAccordion = true } = options;
@@ -203,10 +279,12 @@ export default {
       this.expandFilterAccordion(filtersPane, filterLabel);
     }
 
+    const filterSelection = findFilterSectionByLabel(filtersPane, filterLabel).find(Selection());
+
     cy.expect(
-      findFilterSectionByLabel(filtersPane, filterLabel)
-        .find(Selection())
-        .has({ singleValue: value }),
+      value
+        ? filterSelection.has({ singleValue: value })
+        : filterSelection.find(HTML({ className: including('singleValue-') })).absent(),
     );
   },
 
@@ -221,13 +299,14 @@ export default {
    * @param {string[]} [values=[]] - Option labels to assert (supports partial match via `including`).
    * @param {object} [options={}]
    * @param {boolean} [options.expandAccordion=true] - Whether to expand the accordion first.
+   * @param {string} [options.placeholder] - When set, also asserts the placeholder of the options search box.
    *
    * @example
    * FiltersPane.assertSelectionFilterOptionsValues(ordersFiltersPane, 'poNumberPrefix', ['PREF-01', 'PREF-02']);
    * FiltersPane.assertSelectionFilterOptionsValues(ordersFiltersPane, 'poNumberPrefix', []);
    */
   assertSelectionFilterOptionsValues(filtersPane, filterLabel, values = [], options = {}) {
-    const { expandAccordion = true } = options;
+    const { expandAccordion = true, placeholder } = options;
 
     if (expandAccordion) {
       this.expandFilterAccordion(filtersPane, filterLabel);
@@ -238,6 +317,9 @@ export default {
     const filterSelectionDropdown = SelectionList();
 
     cy.do(filterSelection.open());
+    if (placeholder) {
+      cy.expect(filterSelectionDropdown.has({ placeholder }));
+    }
     if (values.length) {
       values.forEach((value) => {
         cy.expect(filterSelectionDropdown.find(SelectionOption(including(value))).exists());
@@ -245,6 +327,36 @@ export default {
     } else {
       cy.expect(filterSelectionDropdown.find(SelectionOption()).absent());
     }
+  },
+
+  /**
+   * Types text into the search box of an opened Selection (dropdown) filter and asserts
+   * the options are filtered and the typed text is highlighted in the matching option.
+   *
+   * @param {string} text - Text to type.
+   *
+   * @example
+   * FiltersPane.filterSelectionOptions('FY2025');
+   */
+  filterSelectionOptions(text) {
+    cy.do(SelectionList().filter(text));
+    cy.expect([
+      SelectionList()
+        .find(SelectionOption(including(text)))
+        .exists(),
+      SelectionList().has({ highlighted: text }),
+    ]);
+  },
+
+  /**
+   * Presses Enter in the search box of an opened Selection (dropdown) filter
+   * to select the highlighted option.
+   *
+   * @example
+   * FiltersPane.selectHighlightedSelectionOption();
+   */
+  selectHighlightedSelectionOption() {
+    cy.get(openedSelectionFilterInput).type('{downArrow}{enter}');
   },
 
   /**

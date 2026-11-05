@@ -527,25 +527,18 @@ describe('Inventory', () => {
       },
     );
 
-    it(
-      'C343217 Filter Items by Tags (vega)',
-      { tags: ['extendedPath', 'vega', 'C343217'] },
-      () => {
-        const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter(
-          'Barcode',
-          testData.folioInstances[0].barcodes[0],
-        );
-        HoldingsRecordEdit.openTags();
-        HoldingsRecordEdit.addTag(tagName);
+    it('C343217 Filter Items by Tags (vega)', { tags: ['extendedPath', 'vega', 'C343217'] }, () => {
+      const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', testData.folioInstances[0].barcodes[0]);
+      HoldingsRecordEdit.openTags();
+      HoldingsRecordEdit.addTag(tagName);
 
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.filterItemsByTag(tagName);
-        InventorySearchAndFilter.checkRowsCount(1);
-      },
-    );
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.filterItemsByTag(tagName);
+      InventorySearchAndFilter.checkRowsCount(1);
+    });
   });
 });
 
@@ -774,7 +767,7 @@ describe('Inventory', () => {
 
     it(
       'C397329 Verify that permission: "Settings (Tags): Can enable or disable tags for all apps" works as expected (vega)',
-      { tags: ['criticalPath', 'vega', 'C397329'] },
+      { tags: ['criticalPath', 'vega', 'C397329', 'nonParallel'] },
       () => {
         TagsGeneral.changeEnableTagsStatus('disable');
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);
