@@ -71,6 +71,7 @@ const buttonExportSelected = authorityActionsDropDownMenu.find(
 );
 const buttonNew = authorityActionsDropDownMenu.find(Button('New'));
 const marcAuthUpdatesCsvBtn = Button('MARC authority headings updates (CSV)');
+const failedLinkedBibUpdatesCsvBtn = Button('Failed updates: linked bibliographic fields (CSV)');
 const actionsMenuSortBySection = authorityActionsDropDownMenu.find(
   Section({ menuSectionLabel: 'Sort by' }),
 );
@@ -201,6 +202,18 @@ export default {
   clickHeadingsUpdatesButton() {
     cy.do([actionsButton.click(), marcAuthUpdatesCsvBtn.click()]);
   },
+  openActionsMenuAndVerifyReportOptions() {
+    cy.do(actionsButton.click());
+    cy.expect([
+      actionsMenuReportsSection.exists(),
+      marcAuthUpdatesCsvBtn.exists(),
+      failedLinkedBibUpdatesCsvBtn.exists(),
+    ]);
+  },
+  // The report has no modal - the job starts right after the click (Actions menu must be open)
+  clickFailedLinkedBibUpdatesReportButton() {
+    cy.do(failedLinkedBibUpdatesCsvBtn.click());
+  },
   verifyHeadingsUpdatesButtonAbsent() {
     cy.do(actionsButton.click());
     cy.expect(marcAuthUpdatesCsvBtn.absent());
@@ -260,6 +273,16 @@ export default {
       Callout(
         including(
           `Authority headings updates report (Job ID ${jobId}) is being generated. Go to the Export manager app to download report. It may take a few minutes for the report to complete.`,
+        ),
+      ).exists(),
+    );
+  },
+
+  checkCalloutAfterFailedLinkedBibUpdatesReport: (jobId) => {
+    cy.expect(
+      Callout(
+        including(
+          `Failed linked bibliographic fields updates report (Job ID ${jobId}) is being generated. Go to the Export manager app to download report. It may take a few minutes for the report to complete.`,
         ),
       ).exists(),
     );
@@ -816,6 +839,42 @@ export default {
 
   verifySharedAccordionOpen(isOpened) {
     cy.expect(accordionShared.has({ open: isOpened }));
+  },
+
+  expandSharedAccordionIfCollapsed() {
+    cy.then(() => accordionShared.open()).then((isOpen) => {
+      if (!isOpen) cy.do(accordionShared.clickHeader());
+    });
+    cy.expect(accordionShared.has({ open: true }));
+  },
+
+  clickClearIconInSharedFacet() {
+    cy.do(accordionShared.find(Button({ icon: 'times-circle-solid' })).click());
+  },
+
+  // Counter values depend on the shared data in the env - only check that they are displayed
+  verifyCountersShownInSharedFacet() {
+    ['Yes', 'No'].forEach((optionName) => {
+      this.getRecordsCountInOptionsInSharedFacet(optionName).then((count) => {
+        expect(count, `"${optionName}" counter`).to.match(/\d/);
+      });
+    });
+  },
+
+  // Rows with / without the "Shared" icon exist in the shown list (or don't - then none of that
+  // kind is shown); retries while the list updates
+  verifyResultRowsSharedIconPresence({ hasShared, hasLocal }) {
+    cy.get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .should(($rows) => {
+        const sharedRowsCount = $rows.filter((_, row) => Boolean(row.querySelector('[class*="sharedIcon"]'))).length;
+        const localRowsCount = $rows.length - sharedRowsCount;
+        expect($rows.length, 'number of rows').to.be.greaterThan(0);
+        if (hasShared) expect(sharedRowsCount, 'rows with Shared icon').to.be.greaterThan(0);
+        else expect(sharedRowsCount, 'rows with Shared icon').to.equal(0);
+        if (hasLocal) expect(localRowsCount, 'rows without Shared icon').to.be.greaterThan(0);
+        else expect(localRowsCount, 'rows without Shared icon').to.equal(0);
+      });
   },
 
   clickAccordionByName(accordionName) {
@@ -2031,7 +2090,7 @@ export default {
                 authorities[0].id === authorityId
               );
             },
-            { limit: 20, timeout: 30000, delay: 1000 },
+            { limit: 25, timeout: 35000, delay: 1000 },
           )
           .then(() => authorityId);
       });
