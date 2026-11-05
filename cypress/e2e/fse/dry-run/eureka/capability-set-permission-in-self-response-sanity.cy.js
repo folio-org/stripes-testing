@@ -69,6 +69,7 @@ describe(
               ),
             ).to.have.lengthOf(1);
           });
+          cy.logout();
           cy.allure().logCommandSteps(false);
           cy.login(userB.username, userB.password);
           cy.allure().logCommandSteps();
