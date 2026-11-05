@@ -217,8 +217,6 @@ describe('fse-consortia - UI (no data manipulation)', {}, () => {
 
       if (otherTenants.length > 0) {
         const memberTenant = otherTenants[Math.floor(Math.random() * otherTenants.length)];
-        // the current tenant is pre-selected in the "Held by" filter in ECS environments
-        InventorySearchAndFilter.clearDefaultHeldbyFilter();
         InventorySearchAndFilter.expandAccordionByName('Held by');
         // the member name has to be typed in, options of all the members are not rendered at once
         InventorySearchAndFilter.selectHeldByOption(memberTenant.tenantName);
