@@ -1384,6 +1384,37 @@ export default {
     ]);
   },
 
+  // User filters ("Updated by", "Created by (Invoice Line)", etc.): "Find user" link + "Select User" modal
+  filterByUser(filterLabel, userName) {
+    FiltersPane.expandFilterAccordion(invoiceFiltersSection, filterLabel);
+    cy.do(filterSectionByLabel(filterLabel).find(Button('Find User')).click());
+    SelectUser.selectUser(userName);
+    FiltersPane.waitForSearchCompleted(invoiceFiltersSection);
+  },
+
+  // The selected user is shown as the full name ("Last, First") in a read-only field of the facet
+  verifyUserFilterSelected(filterLabel, userName) {
+    cy.expect(
+      filterSectionByLabel(filterLabel)
+        .find(TextField({ value: including(userName) }))
+        .exists(),
+    );
+  },
+
+  // Date filters ("Date updated", "Date created (Invoice Line)", etc.): From/To fields + Apply button
+  filterByDateRange(filterLabel, { from, to } = {}) {
+    FiltersPane.filterByDateRange(invoiceFiltersSection, filterLabel, { from, to });
+    FiltersPane.waitForSearchCompleted(invoiceFiltersSection);
+  },
+
+  verifyDateRangeFilterError(filterLabel, error) {
+    cy.expect(
+      filterSectionByLabel(filterLabel)
+        .find(HTML(including(error)))
+        .exists(),
+    );
+  },
+
   verifyInvoicesAbsentInResults(invoiceNumbers = []) {
     cy.expect(
       invoiceNumbers.map((invoiceNumber) => invoiceResultsPane.find(MultiColumnListCell({ content: invoiceNumber })).absent()),

@@ -354,6 +354,11 @@ export default {
     resource: 'UI-Invoice Invoice',
     action: CAPABILITY_ACTIONS.EDIT,
   },
+  uiInvoiceInvoiceCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Invoice Invoice',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
   uiTagsManage: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Tags',
