@@ -147,6 +147,51 @@ export default {
     ]);
   },
 
+  // The not-exact match placeholder ("<query> would be here") must show the whole query, not cut
+  // off, and be left-aligned. A text check alone passes for CSS truncation (the full text stays in
+  // the DOM), so the layout is measured: the rendered text range must stay inside the cell, the
+  // cell must not scroll horizontally, and the text must start at the cell's content-left edge
+  verifyNotExactMatchPlaceholderLayout(value) {
+    const EPSILON = 1;
+    const LEFT_ALIGNMENT_TOLERANCE = 2;
+
+    cy.do(
+      MultiColumnListCell(including(value)).perform((cell) => {
+        const cellRect = cell.getBoundingClientRect();
+        const range = cell.ownerDocument.createRange();
+        range.selectNodeContents(cell);
+        const textRect = range.getBoundingClientRect();
+        const { paddingLeft, borderLeftWidth } =
+          cell.ownerDocument.defaultView.getComputedStyle(cell);
+        const contentLeft = cellRect.left + parseFloat(borderLeftWidth) + parseFloat(paddingLeft);
+
+        expect(cell.textContent, 'placeholder text').to.include(value);
+        expect(cell.textContent, 'placeholder text').to.include('would be here');
+        expect(textRect.left, 'text should not be clipped on the left').to.be.at.least(
+          cellRect.left - EPSILON,
+        );
+        expect(textRect.right, 'text should not be clipped on the right').to.be.at.most(
+          cellRect.right + EPSILON,
+        );
+        // the cell hides its overflow, so a too long query could also be clipped vertically
+        expect(textRect.top, 'text should not be clipped on the top').to.be.at.least(
+          cellRect.top - EPSILON,
+        );
+        expect(textRect.bottom, 'text should not be clipped on the bottom').to.be.at.most(
+          cellRect.bottom + EPSILON,
+        );
+        // scrollWidth/clientWidth are integer-rounded, hence +1
+        expect(cell.scrollWidth, 'cell should not overflow horizontally').to.be.at.most(
+          cell.clientWidth + 1,
+        );
+        expect(
+          Math.abs(textRect.left - contentLeft),
+          'text should be aligned by the left edge of the cell',
+        ).to.be.at.most(LEFT_ALIGNMENT_TOLERANCE);
+      }),
+    );
+  },
+
   checkResultWithValue(
     auth,
     value,
