@@ -11,9 +11,15 @@ import {
   SearchField,
   Section,
   ValueChipRoot,
+  HTML,
   including,
 } from '../../../../../interactors';
-import { COMMON_BUTTON_LABELS, DEFAULT_WAIT_TIME } from '../../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  DEFAULT_WAIT_TIME,
+  RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
+} from '../../../constants';
+import FiltersPane from '../../filtersPane';
 
 const selectOrganizationModal = Modal(including('Select Organization'));
 const filtersPane = selectOrganizationModal.find(Pane('Search & filter'));
@@ -42,6 +48,21 @@ const searchOrganization = (organizationSearchValue, searchIndex) => {
 export default {
   verifyModalView() {
     cy.expect([closeButton.has({ disabled: false, visible: true })]);
+  },
+  verifyModalElements({ expandedFilters = [], collapsedFilters = [] } = {}) {
+    const organizationsPane = selectOrganizationModal.find(Pane('Organizations'));
+
+    cy.expect([
+      searchField.has({ selectedFilterText: 'All', value: '' }),
+      searchButton.has({ disabled: true }),
+      filtersPane.find(Button(COMMON_BUTTON_LABELS.RESET_ALL)).has({ disabled: true }),
+      organizationsPane.has({ subtitle: 'Enter search criteria to start search' }),
+      organizationsPane.find(HTML(including(RESULTS_PANE_CHOOSE_FILTER_MESSAGE))).exists(),
+      closeButton.has({ disabled: false }),
+      selectOrganizationModal.find(Button({ icon: 'times' })).has({ disabled: false }),
+    ]);
+    FiltersPane.assertFilterAccordions(filtersPane, expandedFilters, { expanded: true });
+    FiltersPane.assertFilterAccordions(filtersPane, collapsedFilters, { expanded: false });
   },
   selectFromResultsList: (rowNumber = 0) => {
     cy.do(selectOrganizationModal.find(MultiColumnListRow({ index: rowNumber })).click());

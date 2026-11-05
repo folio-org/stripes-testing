@@ -7,6 +7,7 @@ import {
   Orders,
 } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import TagsPane from '../../support/fragments/tagsPane';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
@@ -74,33 +75,33 @@ describe('Orders', () => {
 
       // Step 2: Click "Show tags" icon at the top right of "Purchase order" pane
       OrderDetails.openTagsPane();
-      OrderDetails.verifyTagsPaneElements(0);
+      TagsPane.verifyTagsPaneElements(0);
 
       // Step 3: Expand the dropdown in "Tags" pane and enter tag name
-      OrderDetails.fillInTagName(testData.poTagName);
-      OrderDetails.verifyAddTagOptionDisplayed(testData.poTagName);
+      TagsPane.fillInTagName(testData.poTagName);
+      TagsPane.verifyAddTagOptionDisplayed(testData.poTagName);
 
       // Step 4: Click on "Add tag for: <entered value>" line below the text box
-      OrderDetails.clickAddTagOption(testData.poTagName);
+      TagsPane.clickAddTagOption(testData.poTagName);
       InteractorsTools.checkCalloutMessage(NEW_TAG_CREATED_MESSAGE);
-      OrderDetails.verifyTagsPaneElements(1, [testData.poTagName]);
+      TagsPane.verifyTagsPaneElements(1, [testData.poTagName]);
       cy.wait(1000);
       OrderDetails.verifyTagsCount(1);
 
       // Step 5: Close "Tags" pane by clicking "X" button
-      OrderDetails.closeTagsPane();
+      TagsPane.closeTagsPane();
       OrderDetails.verifyTagsCount(1);
       cy.wait(1000);
 
       // Step 6: Click "Show tags" icon at the top right of the order's detail view
       OrderDetails.openTagsPane();
-      OrderDetails.verifyTagsPaneElements(1, [testData.poTagName]);
+      TagsPane.verifyTagsPaneElements(1, [testData.poTagName]);
 
       // Step 7: Expand "Tags" dropdown and select any available value
-      OrderDetails.selectExistingTag(testData.existingTag.label);
-      OrderDetails.verifyTagOptionSelected(testData.existingTag.label);
-      OrderDetails.closeTagsDropdown();
-      OrderDetails.verifyTagsPaneElements(2, [testData.poTagName, testData.existingTag.label]);
+      TagsPane.selectExistingTag(testData.existingTag.label);
+      TagsPane.verifyTagOptionSelected(testData.existingTag.label);
+      TagsPane.closeTagsDropdown();
+      TagsPane.verifyTagsPaneElements(2, [testData.poTagName, testData.existingTag.label]);
       OrderDetails.verifyTagsCount(2);
 
       // Step 8: Click PO line record in "PO lines" accordion on "Purchase order" pane
@@ -109,31 +110,31 @@ describe('Orders', () => {
 
       // Step 9: Click "Show tags" icon at the top right of "PO Line details" pane
       OrderLineDetails.openTagsPane();
-      OrderLineDetails.verifyTagsPaneElements(0);
+      TagsPane.verifyTagsPaneElements(0);
 
       // Step 10: Expand the dropdown in "Tags" pane and enter tag name
-      OrderLineDetails.fillInTagName(testData.polTagName);
-      OrderLineDetails.verifyAddTagOptionDisplayed(testData.polTagName);
+      TagsPane.fillInTagName(testData.polTagName);
+      TagsPane.verifyAddTagOptionDisplayed(testData.polTagName);
 
       // Step 11: Click on "Add tag for: <entered value>" line below the text box
-      OrderLineDetails.clickAddTagOption(testData.polTagName);
+      TagsPane.clickAddTagOption(testData.polTagName);
       InteractorsTools.checkCalloutMessage(NEW_TAG_CREATED_MESSAGE);
-      OrderLineDetails.verifyTagsPaneElements(1, [testData.polTagName]);
+      TagsPane.verifyTagsPaneElements(1, [testData.polTagName]);
       OrderLineDetails.verifyTagsCount(1);
 
       // Step 12: Close "Tags" pane by clicking "X" button
-      OrderLineDetails.closeTagsPane();
+      TagsPane.closeTagsPane();
       OrderLineDetails.verifyTagsCount(1);
 
       // Step 13: Click "Show tags" icon at the top right of the PO line detail view
       OrderLineDetails.openTagsPane();
-      OrderLineDetails.verifyTagsPaneElements(1, [testData.polTagName]);
+      TagsPane.verifyTagsPaneElements(1, [testData.polTagName]);
 
       // Step 14: Expand "Tags" dropdown and select any available value
-      OrderLineDetails.selectExistingTag(testData.existingTag.label);
-      OrderLineDetails.verifyTagOptionSelected(testData.existingTag.label);
-      OrderLineDetails.closeTagsDropdown();
-      OrderLineDetails.verifyTagsPaneElements(2, [testData.polTagName, testData.existingTag.label]);
+      TagsPane.selectExistingTag(testData.existingTag.label);
+      TagsPane.verifyTagOptionSelected(testData.existingTag.label);
+      TagsPane.closeTagsDropdown();
+      TagsPane.verifyTagsPaneElements(2, [testData.polTagName, testData.existingTag.label]);
       OrderLineDetails.verifyTagsCount(2);
     },
   );
