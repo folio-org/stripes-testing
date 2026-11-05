@@ -154,6 +154,13 @@ export default {
     cy.xpath(`//div[contains(text(), '${name}')]`).should('be.visible');
   },
 
+  // verifies that the "Membership" list contains a row with the given tenant name and code
+  verifyTenantInList(tenantName, tenantCode) {
+    cy.contains('div[class*="mclCell-"]', tenantName)
+      .parent('div[class*="mclRow-"]')
+      .should('contain.text', tenantCode ?? tenantName);
+  },
+
   checkOptionsExist() {
     cy.expect(NavListItem('Membership').exists());
     cy.expect(NavListItem('Central ordering').exists());
