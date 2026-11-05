@@ -63,6 +63,8 @@ const addRoutingListButton = routingListSection.find(Button('Add routing list'))
 const titleLookUpButton = Button('Title look-up');
 const receivingResultsList = MultiColumnList({ id: 'receivings-list' });
 
+const POL_LOOKUP_TRIGGER = 'POL number look-up';
+
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
     cy.wait(ms);
@@ -814,6 +816,10 @@ export default {
 
   clickTitleLookUpButton() {
     cy.do(titleLookUpButton.click());
+  },
+
+  clickPOLNumberLookUpButton() {
+    cy.do(Button(POL_LOOKUP_TRIGGER).click());
   },
 
   fillTitleLookup(titleName) {
