@@ -28,12 +28,14 @@ import {
   TextField,
 } from '../../../../interactors';
 import {
+  INVOICE_FILTERS_LABELS,
   INVOICE_RESULTS_ACTIONS_LABELS,
   INVOICE_RESULTS_LIST_COLUMNS,
   INVOICE_SEARCH_INDEX_LABELS,
   INVOICE_STATUSES,
   ORDER_LINE_FILTER_LABELS,
   RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
+  RESULTS_PANE_NOT_FOUND_MESSAGE,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import { randomFourDigitNumber } from '../../utils/stringTools';
@@ -1245,12 +1247,16 @@ export default {
     cy.expect(invoiceFiltersSection.find(searchIndexSelect).has({ value: searchIndexLabel }));
   },
 
-  assertNoFiltersApplied() {
-    this.assertSearchIndexValue(INVOICE_SEARCH_INDEX_LABELS.ALL);
-    FiltersPane.assertResetAllButtonState(invoiceFiltersSection, { disabled: true });
+  verifyChooseFilterMessage() {
     cy.expect(
       invoiceResultsPane.find(HTML(including(RESULTS_PANE_CHOOSE_FILTER_MESSAGE))).exists(),
     );
+  },
+
+  assertNoFiltersApplied() {
+    this.assertSearchIndexValue(INVOICE_SEARCH_INDEX_LABELS.ALL);
+    FiltersPane.assertResetAllButtonState(invoiceFiltersSection, { disabled: true });
+    this.verifyChooseFilterMessage();
   },
 
   clearAllFilters(options = {}) {
@@ -1259,10 +1265,123 @@ export default {
 
   filterByMultiSelectOptions(filterLabel, options) {
     FiltersPane.filterByMultiSelectOptions(invoiceFiltersSection, filterLabel, options);
+    FiltersPane.waitForSearchCompleted(invoiceFiltersSection);
   },
 
   filterByTags(tags = []) {
     this.filterByMultiSelectOptions(ORDER_LINE_FILTER_LABELS.TAGS, tags);
+  },
+
+  assertFilterAccordions(labels = [], options = {}) {
+    FiltersPane.assertFilterAccordions(invoiceFiltersSection, labels, options);
+  },
+
+  clearFilter(filterLabel) {
+    FiltersPane.clearFilter(invoiceFiltersSection, filterLabel);
+    FiltersPane.waitForSearchCompleted(invoiceFiltersSection);
+  },
+
+  assertMultiSelectFilterValues:
+    FiltersPane.buildMultiSelectFilterValuesAssertion(invoiceFiltersSection),
+
+  waitForFiltersLoaded() {
+    FiltersPane.waitForFiltersLoaded(invoiceFiltersSection);
+  },
+
+  verifySearchFormInitialState() {
+    this.assertSearchIndexValue(INVOICE_SEARCH_INDEX_LABELS.ALL);
+    cy.expect([
+      searchForm.has({ value: '' }),
+      invoiceFiltersSection.find(searchButton).has({ disabled: true }),
+    ]);
+    FiltersPane.assertResetAllButtonState(invoiceFiltersSection, { disabled: true });
+  },
+
+  assertResetAllButtonState({ disabled }) {
+    FiltersPane.assertResetAllButtonState(invoiceFiltersSection, { disabled });
+  },
+
+  assertFilterClearButton(filterLabel, visible = true) {
+    FiltersPane.assertFilterClearButton(invoiceFiltersSection, filterLabel, visible);
+  },
+
+  verifyResultsPaneEmptyState() {
+    cy.expect([
+      invoiceResultsPane
+        .find(PaneHeader({ subtitle: 'Enter search criteria to start search' }))
+        .exists(),
+      invoiceResultsPane.find(actionsButton).has({ disabled: false }),
+    ]);
+    this.verifyChooseFilterMessage();
+  },
+
+  verifyNoResultsFound() {
+    cy.expect(invoiceResultsPane.find(HTML(including(RESULTS_PANE_NOT_FOUND_MESSAGE))).exists());
+    this.checkZeroSearchResultsHeader();
+  },
+
+  assertSelectionFilterValue: FiltersPane.buildSelectionFilterValueAssertion(invoiceFiltersSection),
+
+  assertSelectionFilterOptions(filterLabel, values = [], options = {}) {
+    FiltersPane.assertSelectionFilterOptionsValues(
+      invoiceFiltersSection,
+      filterLabel,
+      values,
+      options,
+    );
+  },
+
+  filterSelectionOptions(text) {
+    FiltersPane.filterSelectionOptions(text);
+  },
+
+  selectHighlightedSelectionOption() {
+    FiltersPane.selectHighlightedSelectionOption();
+    FiltersPane.waitForSearchCompleted(invoiceFiltersSection);
+  },
+
+  assertCheckboxFilterValues: FiltersPane.buildCheckboxFilterValuesAssertion(invoiceFiltersSection),
+
+  verifyVendorNameFilter() {
+    const vendorNameSection = invoiceFiltersSection.find(Section({ id: 'vendorId' }));
+
+    FiltersPane.expandFilterAccordion(invoiceFiltersSection, INVOICE_FILTERS_LABELS.VENDOR_NAME);
+    cy.expect([
+      vendorNameSection.find(TextField()).has({ disabled: true }),
+      vendorNameSection.find(Button('Organization look-up')).exists(),
+    ]);
+  },
+
+  clickOrganizationLookUp() {
+    cy.do(
+      invoiceFiltersSection
+        .find(Section({ id: 'vendorId' }))
+        .find(Button('Organization look-up'))
+        .click(),
+    );
+  },
+
+  assertMultiSelectFilterOptions:
+    FiltersPane.buildMultiSelectFilterOptionsValuesAssertion(invoiceFiltersSection),
+
+  removeMultiSelectChips(filterLabel, values = []) {
+    FiltersPane.removeMultiSelectChips(invoiceFiltersSection, filterLabel, values);
+    FiltersPane.waitForSearchCompleted(invoiceFiltersSection);
+  },
+
+  assertInvoicesInResults(invoiceNumbers = []) {
+    const recordsFound = `${invoiceNumbers.length} record${invoiceNumbers.length === 1 ? '' : 's'} found`;
+
+    cy.expect([
+      ...invoiceNumbers.map((invoiceNumber) => invoiceResultsPane.find(MultiColumnListCell({ content: invoiceNumber })).exists()),
+      invoiceResultsPane.find(PaneHeader({ subtitle: recordsFound })).exists(),
+    ]);
+  },
+
+  verifyInvoicesAbsentInResults(invoiceNumbers = []) {
+    cy.expect(
+      invoiceNumbers.map((invoiceNumber) => invoiceResultsPane.find(MultiColumnListCell({ content: invoiceNumber })).absent()),
+    );
   },
 
   editInvoiceLine: () => {
@@ -1358,15 +1477,14 @@ export default {
   },
 
   selectStatusFilter: (status) => {
-    cy.wait(500);
-    cy.do([
+    // Expands the accordion only if it's collapsed (a plain click would collapse an expanded one)
+    FiltersPane.expandFilterAccordion(invoiceFiltersSection, INVOICE_FILTERS_LABELS.INVOICE_STATUS);
+    cy.do(
       invoiceFiltersSection
         .find(Section({ id: 'status' }))
-        .find(Button({ ariaLabel: 'Status filter list' }))
+        .find(Checkbox(status))
         .click(),
-      cy.wait(1000),
-      Checkbox(status).click(),
-    ]);
+    );
   },
 
   selectVendorFilter: (organization) => {
