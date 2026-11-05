@@ -28,6 +28,8 @@ import {
   TextField,
 } from '../../../../interactors';
 import {
+  COMMON_BUTTON_LABELS,
+  DATE_RANGE_FIELD_LABELS,
   INVOICE_FILTERS_LABELS,
   INVOICE_RESULTS_ACTIONS_LABELS,
   INVOICE_RESULTS_LIST_COLUMNS,
@@ -100,6 +102,10 @@ const invoiceDateFilterSection = Section({ id: 'invoiceDate' });
 const approvalDateFilterSection = Section({ id: 'approvalDate' });
 const tagsFilterSection = Section({ id: 'tags.tagList' });
 const tagsMultiSelect = tagsFilterSection.find(MultiSelect({ id: 'acq-tags-filter' }));
+const filterSectionByLabel = (label) => invoiceFiltersSection.find(Section({ label }));
+const fromField = TextField(DATE_RANGE_FIELD_LABELS.FROM);
+const toField = TextField(DATE_RANGE_FIELD_LABELS.TO);
+const applyButton = Button(COMMON_BUTTON_LABELS.APPLY);
 
 const getDefaultInvoice = ({
   batchGroupId,
@@ -1514,8 +1520,45 @@ export default {
         .click(),
       approvalDateFilterSection.find(TextField({ name: 'startDate' })).fillIn(dateFrom),
       approvalDateFilterSection.find(TextField({ name: 'endDate' })).fillIn(dateTo),
-      approvalDateFilterSection.find(Button('Apply')).click(),
+      approvalDateFilterSection.find(applyButton).click(),
     ]);
+  },
+
+  // Amount range filters ("Lock total", "Total amount"): From/To fields + Apply button
+  fillAmountRangeFilter(filterLabel, { from = '', to = '' } = {}) {
+    const filterSection = filterSectionByLabel(filterLabel);
+
+    FiltersPane.expandFilterAccordion(invoiceFiltersSection, filterLabel);
+    cy.do([filterSection.find(fromField).fillIn(from), filterSection.find(toField).fillIn(to)]);
+    cy.expect([
+      filterSection.find(fromField).has({ value: from }),
+      filterSection.find(toField).has({ value: to }),
+      filterSection.find(applyButton).has({ disabled: false }),
+    ]);
+  },
+
+  applyAmountRangeFilter(filterLabel) {
+    cy.do(filterSectionByLabel(filterLabel).find(applyButton).click());
+    FiltersPane.waitForSearchCompleted(invoiceFiltersSection);
+  },
+
+  // Clears From/To field with the "x" icon inside the field
+  clearAmountRangeField(filterLabel, fieldLabel) {
+    const field = filterSectionByLabel(filterLabel).find(TextField(fieldLabel));
+
+    cy.do(field.clear());
+    cy.expect(field.has({ value: '' }));
+  },
+
+  // Pass an empty error to check the field has no error
+  verifyAmountRangeFieldError(filterLabel, fieldLabel, error = '') {
+    const field = filterSectionByLabel(filterLabel).find(TextField(fieldLabel));
+
+    cy.expect(
+      error
+        ? field.has({ error, errorBorder: true, errorIcon: true })
+        : field.has({ errorBorder: false, errorIcon: false }),
+    );
   },
 
   selectInvoiceDateFilter: (dateFrom, dateTo) => {
@@ -1526,7 +1569,7 @@ export default {
         .click(),
       invoiceDateFilterSection.find(TextField({ name: 'startDate' })).fillIn(dateFrom),
       invoiceDateFilterSection.find(TextField({ name: 'endDate' })).fillIn(dateTo),
-      invoiceDateFilterSection.find(Button('Apply')).click(),
+      invoiceDateFilterSection.find(applyButton).click(),
     ]);
   },
 
