@@ -4,6 +4,7 @@ import {
   Checkbox,
   Form,
   Label,
+  MultiSelect,
   NavListItem,
   Pane,
   TextField,
@@ -39,6 +40,10 @@ export default {
     } else {
       cy.do(userCustomFieldsCheckbox.uncheckIfSelected());
     }
+  },
+
+  selectCustomFieldPatronIdentifier(fieldName) {
+    cy.do(MultiSelect({ placeholder: 'None' }).choose(fieldName));
   },
 
   verifyCheckboxIsChecked(checkBoxId, alias) {

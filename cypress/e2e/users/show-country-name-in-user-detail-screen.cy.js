@@ -1,84 +1,76 @@
 import Permissions from '../../support/dictionary/permissions';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import TopMenu from '../../support/fragments/topMenu';
-import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
-import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Users', () => {
   const testData = {
-    user: {},
-    patronGroup: {
-      name: getTestEntityValue('PatronGroup'),
-      description: 'Patron_group_description',
-    },
-    newUser: {
-      personal: {
-        lastName: getTestEntityValue('TestUser'),
-        email: 'test@folio.org',
-        address: {
-          type: 'Home',
-          country: 'Australia',
-        },
-      },
-      status: 'Active',
-      preferredContact: 'Email',
+    testUser: {},
+    targetUser: {},
+    address: {
+      type: 'Home',
+      country: 'Australia',
+      countryId: 'AU',
     },
   };
 
   before('Create test data', () => {
-    cy.getAdminToken();
-    PatronGroups.createViaApi(testData.patronGroup.name, testData.patronGroup.description).then(
-      (patronGroupResponse) => {
-        testData.patronGroup.id = patronGroupResponse;
-        cy.createTempUser([
-          Permissions.uiUsersView.gui,
-          Permissions.uiUsersCreate.gui,
-          Permissions.uiUserEdit.gui,
-        ]).then((userProperties) => {
-          testData.user = userProperties;
-          cy.login(testData.user.username, testData.user.password, {
+    cy.getAdminToken().then(() => {
+      cy.wrap(true)
+        .then(() => {
+          cy.createTempUser([Permissions.uiUsersView.gui]).then((userProperties) => {
+            testData.testUser = userProperties;
+          });
+          cy.createTempUser([]).then((userProperties) => {
+            testData.targetUser = userProperties;
+            cy.getUsers({ query: `username=${userProperties.username}` }).then(([user]) => {
+              cy.getAddressTypesApi({ query: `addressType=="${testData.address.type}"` }).then(
+                (addressTypes) => {
+                  cy.updateUser({
+                    ...user,
+                    personal: {
+                      ...user.personal,
+                      addresses: [
+                        {
+                          addressTypeId: addressTypes[0].id,
+                          countryId: testData.address.countryId,
+                          primaryAddress: true,
+                        },
+                      ],
+                    },
+                  });
+                },
+              );
+            });
+          });
+        })
+        .then(() => {
+          cy.login(testData.testUser.username, testData.testUser.password, {
             path: TopMenu.usersPath,
             waiter: UsersSearchPane.waitLoading,
           });
         });
-      },
-    );
+    });
   });
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    Users.deleteViaApi(testData.user.userId);
-    cy.getUsers({ query: `patronGroup=="${testData.patronGroup.id}"` }).then(([user]) => {
-      Users.deleteViaApi(user.id);
-    });
-    PatronGroups.deleteViaApi(testData.patronGroup.id);
+    Users.deleteViaApi(testData.testUser.userId);
+    Users.deleteViaApi(testData.targetUser.userId);
   });
 
   it(
     'C434139 Show country name in user detail screen (vega)',
     { tags: ['extendedPath', 'vega', 'C434139'] },
     () => {
-      UsersSearchResultsPane.openNewUser();
-      UserEdit.fillLastFirstNames(testData.newUser.personal.lastName);
-      UserEdit.fillEmailAddress(testData.newUser.personal.email);
-      UserEdit.changePatronGroup(
-        `${testData.patronGroup.name} (${testData.patronGroup.description})`,
-        { setExpirationDateIfModalExists: true },
-      );
-      UserEdit.changeStatus(testData.newUser.status);
-      UserEdit.chooseUserType('Patron');
-      UserEdit.changePreferredContact(testData.newUser.preferredContact);
-      UserEdit.addAddressWithCountry(
-        testData.newUser.personal.address.type,
-        testData.newUser.personal.address.country,
-      );
-      UserEdit.saveAndClose();
+      // Step 1: Search for the user with address and open their detail view
+      UsersSearchPane.searchByKeywords(testData.targetUser.lastName);
+      UsersSearchPane.selectUserFromList(testData.targetUser.lastName);
+      Users.verifyUserDetailsPane();
 
-      // Verify country field in address table
-      Users.verifyCountryOnUserDetailsPane(testData.newUser.personal.address.country);
+      // Step 2: Navigate to Contact information accordion and expand it
+      // Step 3: Verify Country field is present with the correct value
+      Users.verifyCountryOnUserDetailsPane(testData.address.country);
     },
   );
 });
