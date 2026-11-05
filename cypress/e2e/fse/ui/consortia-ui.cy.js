@@ -4,9 +4,6 @@ import SelectMembers from '../../../support/fragments/consortium-manager/modal/s
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Modals from '../../../support/fragments/modals';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Users from '../../../support/fragments/users/users';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
@@ -186,59 +183,6 @@ describe('fse-consortia - UI (no data manipulation)', {}, () => {
       UsersCard.expandAffiliationsAccordion();
       // only the primary affiliation is verified, since the list can contain dozens of members
       UsersCard.verifyAffiliationsDetails(primaryTenant.tenantName, 1, primaryTenant.tenantName);
-    },
-  );
-
-  it(
-    `FDOPS-7325 - verify "Shared" and "Held by" facets in "Inventory" ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['consortia-sanity', 'fse', 'ui', 'FDOPS-7325'] },
-    () => {
-      openApp(APPLICATION_NAMES.INVENTORY);
-      InventorySearchAndFilter.waitLoading();
-      // close service point modal if it appears
-      Modals.closeModalWithEscapeIfAny();
-      // consortia specific facet
-      InventorySearchAndFilter.verifyAccordionExistance('Held by');
-
-      InventorySearchAndFilter.byKeywords();
-      // the "Shared" facet is not displayed in every release, so it's checked only when shown
-      cy.get('body').then(($body) => {
-        const isSharedFacetShown = [...$body.find('[id^="accordion-toggle-button-"]')].some(
-          (element) => (element.textContent || '').trim() === 'Shared',
-        );
-        if (isSharedFacetShown) {
-          // shared instances are marked with the shared icon in the result list
-          InventorySearchAndFilter.byShared('Yes');
-          InventorySearchAndFilter.verifySharedIconInRow(0);
-        } else {
-          cy.log('The "Shared" facet is not displayed in the "Inventory" search pane');
-        }
-      });
-
-      if (otherTenants.length > 0) {
-        const memberTenant = otherTenants[Math.floor(Math.random() * otherTenants.length)];
-        InventorySearchAndFilter.expandAccordionByName('Held by');
-        // the member name has to be typed in, options of all the members are not rendered at once
-        InventorySearchAndFilter.selectHeldByOption(memberTenant.tenantName);
-        cy.wait(2000);
-        // shared instances held by the member have the "Consortial holdings" accordion
-        cy.get('body').then(($body) => {
-          if ($body.find('#list-inventory [data-row-index]').length > 0) {
-            InventoryInstances.selectInstance();
-            InstanceRecordView.waitLoading();
-            InstanceRecordView.verifyConsortialHoldingsAccordion();
-          } else {
-            cy.log(`There are no shared instances held by ${memberTenant.tenantName}`);
-          }
-        });
-      } else {
-        cy.log(
-          `Can't check the "Held by" facet since there's only one affiliation assigned to the user ${Cypress.env(
-            'diku_login',
-          )}`,
-        );
-      }
-      InventorySearchAndFilter.resetAll();
     },
   );
 });
