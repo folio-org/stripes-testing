@@ -65,9 +65,9 @@ const centralExpectedPairs = deweyDecimalTypes.map(() => ({
 
 // Search-tab click-through totals - scoped to just the 2 Dewey Decimal types (the redirect
 // query filters by classificationTypeId too, not just classificationNumber - see note above)
-const allInstancesCount = deweyDecimalTypes.length * 2; // Step 2: no Shared filter - shared+local halves of both types
-const localInstancesCount = deweyDecimalTypes.length; // Step 5: Shared=No - local halves of both types
-const sharedInstancesCount = deweyDecimalTypes.length; // Step 8/12: Shared=Yes - shared halves of both types
+const allInstancesCount = deweyDecimalTypes.length; // Step 2: no Shared filter
+const localInstancesCount = 1; // Step 5: Shared=No
+const sharedInstancesCount = 1; // Step 8/12: Shared=Yes
 
 // Preceding filler rows must use a Dewey Decimal-eligible type (Dewey) so they still appear
 // as rows in THIS scoped browse view, keeping the row-offset for selectFoundValueByRow

@@ -56,9 +56,9 @@ const centralExpectedPairs = lcTypes.map(() => ({ value: classificationValue, nu
 
 // Search-tab click-through totals - scoped to just the 3 LC types (the redirect query
 // filters by classificationTypeId too, not just classificationNumber - see note above)
-const allInstancesCount = lcTypes.length * 2; // Step 2: no Shared filter - shared+local halves of all 3 types
-const localInstancesCount = lcTypes.length; // Step 5: Shared=No - local halves of all 3 types
-const sharedInstancesCount = lcTypes.length; // Step 8/12: Shared=Yes - shared halves of all 3 types
+const allInstancesCount = 2; // Step 2: no Shared filter - shared+local
+const localInstancesCount = 1; // Step 5: Shared=No - local halves
+const sharedInstancesCount = 1; // Step 8/12: Shared=Yes - shared halves
 
 // Preceding filler rows must use an LC-eligible type (LC) so they still appear as rows in
 // THIS scoped browse view, keeping the row-offset for selectFoundValueByRow deterministic

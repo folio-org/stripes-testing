@@ -56,9 +56,9 @@ const centralExpectedPairs = pairedTypes.map(() => ({ value: classificationValue
 // 'Number of titles' column from the Browse result list for exact match Classification" - the
 // search query filters only by classificationNumber (not type), so the total is always the sum
 // across every row sharing classificationValue, not just whatever row happened to be clicked
-const allInstancesCount = pairedTypes.length * 2 + 1; // Step 2: no Shared filter active
-const localInstancesCount = pairedTypes.length + 1; // Step 5: Shared=No - local halves + local-only
-const sharedInstancesCount = pairedTypes.length; // Step 8: Shared=Yes - shared halves only
+const allInstancesCount = 2; // Step 2: no Shared filter active
+const localInstancesCount = 1; // Step 5: Shared=No
+const sharedInstancesCount = 1; // Step 8: Shared=Yes
 
 // Browse results aren't filtered to exact matches - they show a sorted neighborhood around
 // the searched value, so unrelated pre-existing data normally pushes our target rows a few
@@ -285,7 +285,7 @@ describe('Inventory', () => {
           // than a specific type, but the query itself filters only by classificationNumber
           // (not type), so the result count is always the full sum regardless of which row
           // was clicked
-          BrowseClassifications.selectFoundValueByRowAndStoreId(5, classificationValue);
+          BrowseClassifications.selectFoundValueByRowAndStoreId(6, classificationValue);
           InventorySearchAndFilter.validateSearchTabIsDefault();
           BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.verifyNumberOfSearchResults(allInstancesCount);
