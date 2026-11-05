@@ -1,6 +1,5 @@
-import { and, including } from '@interactors/html';
+import { including } from '@interactors/html';
 import {
-  Badge,
   Button,
   Checkbox,
   InfoRow,
@@ -16,11 +15,6 @@ import {
   Warning,
   MultiColumnListHeader,
   HTML,
-  MultiSelect,
-  MultiSelectMenu,
-  MultiSelectOption,
-  Pane,
-  ValueChipRoot,
 } from '../../../../interactors';
 import {
   DEFAULT_WAIT_TIME,
@@ -32,6 +26,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 import ExportDetails from '../exportManager/exportDetails';
 import TransactionDetails from '../finance/transactions/transactionDetails';
 import InventoryInstance from '../inventory/inventoryInstance';
+import TagsPane from '../tagsPane';
 import CancelConfirmationModal from './modals/cancelConfirmationModal';
 import SelectInstanceModal from './modals/selectInstanceModal';
 import OrderLineEditForm from './orderLineEditForm';
@@ -69,10 +64,6 @@ const relatedInvoiceLinesSection = orderLineDetailsSection.find(
   Section({ id: 'relatedInvoiceLines' }),
 );
 const customFieldsAccordion = orderLineDetailsSection.find(Section({ id: 'customFieldsPOLine' }));
-const tagsButton = orderLineDetailsSection.find(Button({ id: 'clickable-show-tags' }));
-const tagsPane = Pane('Tags');
-const tagsMultiSelect = tagsPane.find(MultiSelect({ id: 'input-tag' }));
-const addTagOption = (tagName) => MultiSelectMenu().find(MultiSelectOption(and(including('Add tag for:'), including(tagName))));
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -905,62 +896,10 @@ export default {
   },
 
   openTagsPane() {
-    cy.do(tagsButton.click());
-    cy.expect(tagsPane.exists());
-  },
-
-  closeTagsPane() {
-    cy.do(
-      tagsPane
-        .find(PaneHeader())
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
-    cy.expect(tagsPane.absent());
+    TagsPane.openTagsPane(orderLineDetailsSection);
   },
 
   verifyTagsCount(count) {
-    cy.expect(tagsButton.find(Badge()).has({ value: String(count) }));
-  },
-
-  verifyTagsPaneElements(count = 0, tags = []) {
-    cy.expect([
-      tagsPane.has({ subtitle: count === 1 ? '1 Tag' : `${count} Tags` }),
-      tagsMultiSelect.has({ selectedCount: count }),
-      ...tags.map((tag) => tagsMultiSelect.find(ValueChipRoot(tag)).exists()),
-    ]);
-
-    if (count === 0) {
-      cy.expect(tagsMultiSelect.has({ placeholder: 'Enter a tag.' }));
-    }
-  },
-
-  fillInTagName(tagName) {
-    cy.do([tagsMultiSelect.open(), tagsMultiSelect.filter(tagName)]);
-    cy.wait(500);
-    cy.do(tagsMultiSelect.open());
-  },
-
-  verifyAddTagOptionDisplayed(tagName) {
-    cy.expect([tagsMultiSelect.has({ filterValue: tagName }), addTagOption(tagName).exists()]);
-  },
-
-  clickAddTagOption(tagName) {
-    cy.do(addTagOption(tagName).click());
-  },
-
-  selectExistingTag(tagName) {
-    cy.do([
-      tagsMultiSelect.open(),
-      MultiSelectMenu().find(MultiSelectOption(tagName)).clickSegment(),
-    ]);
-  },
-
-  verifyTagOptionSelected(tagName) {
-    cy.expect(MultiSelectMenu().find(MultiSelectOption(tagName)).has({ selected: true }));
-  },
-
-  closeTagsDropdown() {
-    cy.do(tagsMultiSelect.close());
+    TagsPane.verifyTagsCount(orderLineDetailsSection, count);
   },
 };

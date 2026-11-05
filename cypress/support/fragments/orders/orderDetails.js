@@ -1,7 +1,5 @@
 import {
   Accordion,
-  and,
-  Badge,
   Button,
   Checkbox,
   DropdownMenu,
@@ -16,10 +14,6 @@ import {
   PaneHeader,
   Section,
   Select,
-  MultiSelect,
-  MultiSelectMenu,
-  MultiSelectOption,
-  ValueChipRoot,
 } from '../../../../interactors';
 import {
   DEFAULT_WAIT_TIME,
@@ -28,6 +22,7 @@ import {
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import ExportDetails from '../exportManager/exportDetails';
+import TagsPane from '../tagsPane';
 import InventoryInstance from '../inventory/inventoryInstance';
 import Receivings from '../receiving/receiving';
 import CloseConfirmationModal from './modals/closeConfirmationModal';
@@ -57,10 +52,6 @@ const relatedInvoicesSection = orderDetailsPane.find(Section({ id: 'relatedInvoi
 const headerDetail = orderDetailsPane.find(PaneHeader({ id: 'paneHeaderorder-details' }));
 
 const iconTimes = Button({ icon: 'times' });
-const tagsButton = orderDetailsPane.find(Button({ id: 'clickable-show-tags' }));
-const tagsPane = Pane('Tags');
-const tagsMultiSelect = tagsPane.find(MultiSelect({ id: 'input-tag' }));
-const addTagOption = (tagName) => MultiSelectMenu().find(MultiSelectOption(and(including('Add tag for:'), including(tagName))));
 
 const invoicesList = MultiColumnList({ id: 'orderInvoices' });
 
@@ -518,62 +509,10 @@ export default {
   },
 
   openTagsPane() {
-    cy.do(tagsButton.click());
-    cy.expect(tagsPane.exists());
-  },
-
-  closeTagsPane() {
-    cy.do(
-      tagsPane
-        .find(PaneHeader())
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
-    cy.expect(tagsPane.absent());
+    TagsPane.openTagsPane(orderDetailsPane);
   },
 
   verifyTagsCount(count) {
-    cy.expect(tagsButton.find(Badge()).has({ value: String(count) }));
-  },
-
-  verifyTagsPaneElements(count = 0, tags = []) {
-    cy.expect([
-      tagsPane.has({ subtitle: count === 1 ? '1 Tag' : `${count} Tags` }),
-      tagsMultiSelect.has({ selectedCount: count }),
-      ...tags.map((tag) => tagsMultiSelect.find(ValueChipRoot(tag)).exists()),
-    ]);
-
-    if (count === 0) {
-      cy.expect(tagsMultiSelect.has({ placeholder: 'Enter a tag.' }));
-    }
-  },
-
-  fillInTagName(tagName) {
-    cy.do([tagsMultiSelect.open(), tagsMultiSelect.filter(tagName)]);
-    cy.wait(500);
-    cy.do(tagsMultiSelect.open());
-  },
-
-  verifyAddTagOptionDisplayed(tagName) {
-    cy.expect([tagsMultiSelect.has({ filterValue: tagName }), addTagOption(tagName).exists()]);
-  },
-
-  clickAddTagOption(tagName) {
-    cy.do(addTagOption(tagName).click());
-  },
-
-  selectExistingTag(tagName) {
-    cy.do([
-      tagsMultiSelect.open(),
-      MultiSelectMenu().find(MultiSelectOption(tagName)).clickSegment(),
-    ]);
-  },
-
-  verifyTagOptionSelected(tagName) {
-    cy.expect(MultiSelectMenu().find(MultiSelectOption(tagName)).has({ selected: true }));
-  },
-
-  closeTagsDropdown() {
-    cy.do(tagsMultiSelect.close());
+    TagsPane.verifyTagsCount(orderDetailsPane, count);
   },
 };

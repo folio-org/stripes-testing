@@ -2838,6 +2838,18 @@ export default {
     FiltersPaneHelper.assertResetAllButtonState(filtersPane, { disabled });
   },
 
+  expandFilterAccordion(filterLabel) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, filterLabel);
+  },
+
+  assertFilterAccordions(labels = []) {
+    FiltersPaneHelper.assertFilterAccordions(filtersPane, labels);
+  },
+
+  clearSearchField() {
+    cy.get('#order-lines-filters-pane-content').find('#input-record-search').clear();
+  },
+
   clearAllFilters(filterLabel) {
     FiltersPaneHelper.clearAllFilters(filtersPane, filterLabel);
     this.assertResetAllButtonState({ disabled: true });
@@ -2845,6 +2857,7 @@ export default {
 
   clearFilter(filterLabel) {
     FiltersPaneHelper.clearFilter(filtersPane, filterLabel);
+    FiltersPaneHelper.waitForSearchCompleted(filtersPane);
   },
 
   filterByCheckboxOptions(filterLabel, options = []) {
@@ -2853,6 +2866,7 @@ export default {
 
   filterByMultiSelectOptions(filterLabel, options = []) {
     FiltersPaneHelper.filterByMultiSelectOptions(filtersPane, filterLabel, options);
+    FiltersPaneHelper.waitForSearchCompleted(filtersPane);
   },
 
   filterByRush(options) {

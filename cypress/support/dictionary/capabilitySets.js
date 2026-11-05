@@ -334,6 +334,31 @@ export default {
     resource: 'UI-Organizations',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiAgreementsAgreementsView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Agreements Agreements',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiFinanceFundBudgetView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Finance Fund-Budget',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInvoiceInvoiceView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Invoice Invoice',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiInvoiceInvoiceEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Invoice Invoice',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
+  uiTagsManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Tags',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
   uiInventoryInstanceEdit: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Instance',

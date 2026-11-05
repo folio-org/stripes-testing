@@ -278,6 +278,11 @@ export default {
     cy.do([actionsButton.click(), DropdownMenu().find(Button('Edit')).click()]);
     OrderTemplateForm.waitLoading();
   },
+
+  checkFundRestrictionErrorToastPresent() {
+    cy.expect(Callout(including(FUND_RESTRICTION_ERROR)).exists());
+  },
+
   checkFundRestrictionErrorToastAbsent() {
     cy.expect(Callout(including(FUND_RESTRICTION_ERROR)).absent());
   },

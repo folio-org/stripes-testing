@@ -22,12 +22,19 @@ export const ORGANIZATION_DETAILS_FIELDS = {
 };
 
 export const ORGANIZATION_FILTER_LABELS = {
+  ACQUISITION_UNIT: 'Acquisition unit',
   COUNTRY: 'Country',
+  CREATED_BY: 'Created by',
+  DATE_CREATED: 'Date created',
+  DATE_UPDATED: 'Date updated',
   IS_DONOR: 'Is donor',
   IS_VENDOR: 'Is vendor',
-  LANGUAGE: 'Language',
+  LANGUAGE: 'Languages',
   ORGANIZATIONS_STATUS: 'Organizations status',
   PAYMENT_METHOD: 'Payment method',
+  TAGS: 'Tags',
+  TYPES: 'Types',
+  UPDATED_BY: 'Updated by',
 };
 
 export const ORGANIZATION_CATEGORIES = {

@@ -586,6 +586,7 @@ export default {
 
   clickExpandAllAccordions() {
     cy.do(orderTemplateForm.find(Button(COMMON_BUTTON_LABELS.EXPAND_ALL)).click());
+    cy.wait(3000);
   },
 
   /* Fields visibility */
