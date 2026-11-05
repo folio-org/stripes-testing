@@ -1,7 +1,11 @@
 import { createInteractor, HTML, including, TextField } from '@interactors/html';
 import Button from './button';
 
-const open = (el) => el.getAttribute('aria-expanded') === 'true';
+// aria-expanded, aria-labelledby and role live on the combobox (the filter input on large screens),
+// not on the container.
+const combobox = (el) => el.querySelector('[role=combobox]');
+
+const open = (el) => combobox(el).getAttribute('aria-expanded') === 'true';
 
 const control =
   ({ shouldOpen = true } = {}) => async (interactor) => {
@@ -33,8 +37,8 @@ export const MultiSelectMenu = HTML.extend('multiselect dropdown')
     id: (el) => el.id,
     optionCount: (el) => el.querySelectorAll('li').length,
     optionList: (el) => [...el.querySelectorAll('li')].map(({ textContent }) => textContent),
-    error: (el) => el.querySelector('[class=^=multiSelectError-]').textContent,
-    warning: (el) => el.querySelector('[class=^=multiSelectWarning-]').textContent,
+    error: (el) => el.querySelector('[class^=multiSelectError-]').textContent,
+    warning: (el) => el.querySelector('[class^=multiSelectWarning-]').textContent,
     loading: (el) => el.querySelector('[class^=spinner-]'),
   });
 
@@ -124,12 +128,11 @@ const set = async (interactor, values) => {
 
 export default createInteractor('multi select')
   .locator((el) => {
-    const filterfield = el.querySelector('[role=searchbox]');
-    const ariaLabelledby = filterfield.getAttribute('aria-labelledby').split(' ')[0];
-    const label = document.getElementById(ariaLabelledby);
-    return (label && label.textContent) || '';
+    const ariaLabelledby = (combobox(el)?.getAttribute('aria-labelledby') || '').split(' ')[0];
+    const label = ariaLabelledby && document.getElementById(ariaLabelledby);
+    return (label && label.textContent) || el.querySelector('label')?.textContent || '';
   })
-  .selector('[role=application][class^=multiSelectContainer-]')
+  .selector('[class^=multiSelectContainer-]')
   .filters({
     open,
     label: (el) => el.querySelector('label').textContent,
@@ -150,7 +153,7 @@ export default createInteractor('multi select')
     focused: (el) => Boolean(el.querySelector(':focus')),
     focusedValue: (el) => el.querySelector('ul').querySelector('button:focus').parentNode.textContent,
     error: (el) => el.querySelector('[class^=multiSelectError-]')?.textContent ?? '',
-    ariaLabelledby: (el) => el.querySelector('[role=combobox]').getAttribute('aria-labelledby'),
+    ariaLabelledby: (el) => combobox(el).getAttribute('aria-labelledby'),
     span: (el) => el.querySelector('span').textContent,
     disabled: (el) => el.querySelector('button[class^=multiSelectToggleButton-]').disabled,
   })

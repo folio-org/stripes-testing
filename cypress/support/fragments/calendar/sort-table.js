@@ -56,40 +56,42 @@ export const assertCalendarsIsProperlySorted = (calendars, sortProperty) => {
 };
 
 export const assertRowsAreProperlySorted = (rows, sortProperty) => {
-  const jobs = [];
-  const sortPropertyToHeaderName = {
-    servicePoint: 'Service point',
-    startDate: 'Start date',
-    endDate: 'End date',
-    calendarName: 'Calendar name',
-    currentStatus: 'Current status',
+  const columnNames = [
+    'Service point',
+    'Calendar name',
+    'Start date',
+    'End date',
+    'Current status',
+  ];
+  const sortPropertyToColumnIndex = {
+    servicePoint: 0,
+    calendarName: 1,
+    startDate: 2,
+    endDate: 3,
+    currentStatus: 4,
   };
+  const columnsToCheck = [...new Set([0, sortPropertyToColumnIndex[sortProperty]])];
 
-  rows.forEach((row, index) => {
-    const cellValue = row[sortProperty];
+  // The table can hold dozens of rows, so it is compared in one command: a check per row
+  // produces so many steps that writing the Allure results after the test times out.
+  // Errors thrown here are retried until the table matches or the timeout is reached.
+  cy.do(
+    Pane('Current calendar assignments').perform((pane) => {
+      rows.forEach((row, index) => {
+        const rowElement = pane.querySelector(`[data-row-inner="${index}"]`);
+        if (!rowElement) throw new Error(`Row with index ${index} is not found`);
 
-    jobs.push(
-      Pane('Current calendar assignments').find(MultiColumnListRow({ index })).exists(),
-      Pane('Current calendar assignments')
-        .find(MultiColumnListRow({ index }))
-        .find(MultiColumnListCell({ column: 'Service point', content: row.servicePoint }))
-        .exists(),
-    );
-
-    if (sortProperty !== 'servicePoint') {
-      jobs.push(
-        Pane('Current calendar assignments')
-          .find(MultiColumnListRow({ index }))
-          .find(
-            MultiColumnListCell({
-              column: sortPropertyToHeaderName[sortProperty],
-              content: cellValue,
-            }),
-          )
-          .exists(),
-      );
-    }
-  });
-
-  cy.do(jobs);
+        const cells = [...rowElement.querySelectorAll('div[class*=mclCell-]')];
+        columnsToCheck.forEach((columnIndex) => {
+          const expected = columnIndex === 0 ? row.servicePoint : row[sortProperty];
+          const actual = cells[columnIndex]?.textContent;
+          if (actual !== expected) {
+            throw new Error(
+              `Row ${index}, column "${columnNames[columnIndex]}": expected "${expected}", but found "${actual}"`,
+            );
+          }
+        });
+      });
+    }),
+  );
 };
