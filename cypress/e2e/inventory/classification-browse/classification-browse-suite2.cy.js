@@ -931,12 +931,11 @@ describe('Inventory', () => {
         InventorySearchAndFilter.selectBrowseOption(testData.classificationOption);
         InventorySearchAndFilter.browseSearch(testData.searchQuery);
         verifySearchResult();
-        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.searchQuery);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
-          'Query search',
-          `classifications.classificationNumber=="${testData.searchQuery}"`,
-        );
-        InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
+        BrowseClassifications.selectFoundValueByRowAndStoreId(5, testData.searchQuery, {
+          classificationBrowseId: testData.classificationBrowseId,
+        });
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId('Query search');
+        BrowseClassifications.verifyClickedInstanceDisplayedInSearch([testData.instanceTitle]);
         InventoryInstances.checkSearchResultCount(/1 record found/);
         InventorySearchAndFilter.switchToBrowseTab();
         verifySearchResult();
@@ -1056,12 +1055,14 @@ describe('Inventory', () => {
         InventorySearchAndFilter.browseSearch(testData.negativeSearchQuery);
         verifySearchResult();
         BrowseClassifications.clickOnSearchResult(`${testData.negativeSearchQuery}would be here`);
-        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.positiveSearchQuery);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
+        BrowseClassifications.selectFoundValueByValueAndStoreId(testData.positiveSearchQuery, {
+          storeTitle: true,
+          classificationBrowseId: testData.classificationBrowseId,
+        });
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(
           testData.querySearchOption,
-          `classifications.classificationNumber=="${testData.positiveSearchQuery}"`,
         );
-        InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
+        BrowseClassifications.verifyClickedInstanceDisplayedInSearch([testData.instanceTitle]);
         InventoryInstances.checkSearchResultCount(/1 record found/);
         InventorySearchAndFilter.switchToBrowseTab();
         verifySearchResult();
@@ -1175,12 +1176,13 @@ describe('Inventory', () => {
         );
         InventorySearchAndFilter.browseSearch(testData.searchQuery);
         verifySearchResult();
-        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.searchQuery);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
+        BrowseClassifications.selectFoundValueByRowAndStoreId(5, testData.searchQuery, {
+          classificationBrowseId: testData.classificationBrowseId,
+        });
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(
           testData.querySearchOption,
-          `classifications.classificationNumber=="${testData.searchQuery}"`,
         );
-        InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
+        BrowseClassifications.verifyClickedInstanceDisplayedInSearch([testData.instanceTitle]);
         InventoryInstances.checkSearchResultCount(/1 record found/);
         InventorySearchAndFilter.switchToBrowseTab();
         verifySearchResult();

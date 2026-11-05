@@ -330,10 +330,11 @@ describe('Inventory', () => {
           BrowseClassifications.verifyNumberOfTitlesInRow(i, '1');
         }
 
-        BrowseClassifications.selectFoundValueByRow(5, testData.classificationValue);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
+        BrowseClassifications.selectFoundValueByRowAndStoreId(5, testData.classificationValue, {
+          classificationBrowseId: testData.classificationBrowseId,
+        });
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(
           testData.querySearchOption,
-          `classifications.classificationNumber=="${testData.classificationValue}"`,
         );
         testData.instances.forEach((instance) => {
           InventorySearchAndFilter.verifyInstanceDisplayed(instance.instanceTitle);
@@ -518,10 +519,11 @@ describe('Inventory', () => {
         BrowseClassifications.verifyRowValueIsBold(5, testData.classificationValue);
         BrowseClassifications.verifyNumberOfTitlesInRow(5, '1');
 
-        BrowseClassifications.selectFoundValueByRow(5, testData.classificationValue);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
+        BrowseClassifications.selectFoundValueByRowAndStoreId(5, testData.classificationValue, {
+          classificationBrowseId: testData.classificationBrowseId,
+        });
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(
           testData.querySearchOption,
-          `classifications.classificationNumber=="${testData.classificationValue}"`,
         );
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instances[2].instanceTitle);
         InventoryInstances.checkSearchResultCount(/1 record found/);
@@ -703,10 +705,11 @@ describe('Inventory', () => {
           BrowseClassifications.verifyNumberOfTitlesInRow(i, '1');
         }
 
-        BrowseClassifications.selectFoundValueByRow(5, testData.classificationValue);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
+        BrowseClassifications.selectFoundValueByRowAndStoreId(5, testData.classificationValue, {
+          classificationBrowseId: testData.classificationBrowseId,
+        });
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(
           testData.querySearchOption,
-          `classifications.classificationNumber=="${testData.classificationValue}"`,
         );
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instances[4].instanceTitle);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instances[5].instanceTitle);
@@ -926,11 +929,11 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifySearchResultIncludingValue(expectedResult);
           });
         });
+        BrowseClassifications.storeClassificationId(testData.searchResults[0], {
+          classificationBrowseId: testData.classificationBrowseId,
+        });
         InventorySearchAndFilter.selectFoundItemFromBrowse(testData.searchResults[0]);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
-          'Query search',
-          'classifications.classificationNumber=="m1 33a"',
-        );
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId('Query search');
         testData.instanceTitles.forEach((title) => {
           InventorySearchAndFilter.verifyInstanceDisplayed(title);
         });
@@ -1366,10 +1369,12 @@ describe('Inventory', () => {
           if (callNumbersToBeFound.includes(query)) {
             InventorySearchAndFilter.verifySearchResult(query);
             if (query === testData.searchQueries[4]) {
+              BrowseClassifications.storeClassificationId(query, {
+                classificationBrowseId: testData.classificationBrowseId,
+              });
               InventorySearchAndFilter.selectFoundItemFromBrowse(query);
-              InventorySearchAndFilter.verifySearchOptionAndQuery(
+              BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(
                 testData.querySearchOption,
-                testData.querySearchValue,
               );
               InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
               InventorySearchAndFilter.switchToBrowseTab();
