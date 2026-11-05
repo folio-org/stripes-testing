@@ -709,6 +709,9 @@ export default {
     cy.do(listInventoryPreviousPagingButton.click());
   },
 
+  verifyListInventoryPreviousButtonDisabled: (isDisabled = true) => cy.expect(listInventoryPreviousPagingButton.has({ disabled: isDisabled })),
+  verifyListInventoryNextButtonDisabled: (isDisabled = true) => cy.expect(listInventoryNextPagingButton.has({ disabled: isDisabled })),
+
   checkContributorsColumResult(cellContent) {
     cy.expect(
       MultiColumnList({ id: 'list-inventory' })

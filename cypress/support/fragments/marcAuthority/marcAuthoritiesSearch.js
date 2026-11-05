@@ -12,6 +12,7 @@ import {
   TextArea,
   TextField,
   PaneContent,
+  Modal,
 } from '../../../../interactors';
 import marcAuthorities from './marcAuthorities';
 import { REFERENCES_FILTER_CHECKBOXES } from '../../constants';
@@ -20,6 +21,11 @@ const rootSection = Section({ id: 'pane-authorities-filters' });
 const referencesFilterAccordion = Accordion('References');
 const dateCreatedAccordion = Accordion('Date created');
 const dateUpdatedAccordion = Accordion('Date updated');
+// In the MARC authority plug-in the Inventory search pane stays mounted behind the modal and has
+// its own "Date created" accordion - the plug-in one has to be addressed through the modal
+const pluginDateCreatedAccordion = Modal({ id: 'find-authority-modal' }).find(
+  Accordion('Date created'),
+);
 const authorityList = MultiColumnList({ id: 'authority-result-list' });
 const collapseButton = Button({ icon: 'caret-left' });
 const expandButton = Button({ icon: 'caret-right' });
@@ -228,6 +234,34 @@ export default {
       dateCreatedAccordion.find(dateToField).fillIn(toDate),
       dateCreatedAccordion.find(applyButton).click(),
     ]);
+  },
+
+  expandDateCreatedAccordionInPlugin() {
+    cy.then(() => pluginDateCreatedAccordion.open()).then((isOpen) => {
+      if (!isOpen) cy.do(pluginDateCreatedAccordion.clickHeader());
+    });
+    cy.expect([
+      pluginDateCreatedAccordion.has({ open: true }),
+      pluginDateCreatedAccordion.find(dateFromField).exists(),
+      pluginDateCreatedAccordion.find(dateToField).exists(),
+      pluginDateCreatedAccordion.find(applyButton).exists(),
+    ]);
+  },
+
+  // Fills the already expanded "Date created" accordion (doesn't toggle it, unlike filterByDateCreated)
+  fillDateCreatedInPlugin(fromDate, toDate) {
+    cy.do([
+      pluginDateCreatedAccordion.find(dateFromField).fillIn(fromDate),
+      pluginDateCreatedAccordion.find(dateToField).fillIn(toDate),
+    ]);
+    cy.expect([
+      pluginDateCreatedAccordion.find(dateFromField).has({ value: fromDate }),
+      pluginDateCreatedAccordion.find(dateToField).has({ value: toDate }),
+    ]);
+  },
+
+  applyDateCreatedInPlugin() {
+    cy.do(pluginDateCreatedAccordion.find(applyButton).click());
   },
 
   verifyDateCreatedAccordionCollapsed() {
