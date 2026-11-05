@@ -145,6 +145,21 @@ export default {
     cy.expect(selectMembersModal.absent());
   },
 
+  // closes the modal without applying the current members selection
+  clickCancel() {
+    cy.do(cancelButton.click());
+    cy.expect(selectMembersModal.absent());
+  },
+
+  verifyResetAllButtonEnabled(isEnabled = true) {
+    cy.expect(resetAllButton.is({ disabled: !isEnabled }));
+  },
+
+  clickResetAll() {
+    cy.do(resetAllButton.click());
+    cy.wait(1000);
+  },
+
   verifyStatusOfSelectMembersModal(members, total, allMembersSelected) {
     this.waitLoading();
     this.verifyInitialStatusOfSearchAndFilterPane();
