@@ -709,6 +709,9 @@ export default {
     cy.do(listInventoryPreviousPagingButton.click());
   },
 
+  verifyListInventoryPreviousButtonDisabled: (isDisabled = true) => cy.expect(listInventoryPreviousPagingButton.has({ disabled: isDisabled })),
+  verifyListInventoryNextButtonDisabled: (isDisabled = true) => cy.expect(listInventoryNextPagingButton.has({ disabled: isDisabled })),
+
   checkContributorsColumResult(cellContent) {
     cy.expect(
       MultiColumnList({ id: 'list-inventory' })
@@ -1067,6 +1070,16 @@ export default {
         .find(MultiSelectOption(including(status)))
         .click(),
     ]);
+  },
+
+  // Expands the Item status facet and verifies the given option labels are listed, without
+  // selecting any of them
+  verifyItemStatusFacetOptionsExist(statuses) {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-itemStatus' }).click(),
+      MultiSelect({ id: 'itemStatus-multiselect' }).open(),
+    ]);
+    cy.expect(statuses.map((status) => MultiSelectOption(including(status)).exists()));
   },
 
   selectBrowseOption(option) {

@@ -46,13 +46,14 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile, false);
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeading);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(
         'C423515 MARC tag box validation in Create a new MARC Authority record window (promin)',
-        { tags: ['extendedPath', 'promin', 'C423515'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C423515'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           MarcAuthority.setValid008DropdownValues();

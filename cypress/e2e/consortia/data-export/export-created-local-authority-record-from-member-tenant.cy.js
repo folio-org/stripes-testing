@@ -76,6 +76,7 @@ describe('Data Export', () => {
     after('Delete users, data', () => {
       cy.withinTenant(Affiliations.Consortia, () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(LC_NAME_AUTHORITY_FILE, false);
         if (users?.userId) Users.deleteViaApi(users.userId);
       });
       cy.withinTenant(Affiliations.College, () => {
@@ -88,7 +89,7 @@ describe('Data Export', () => {
 
     it(
       'C436900 Export of created Local MARC authority record from Member tenant (consortia) (promin)',
-      { tags: ['criticalPathECS', 'promin', 'C436900'] },
+      { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C436900'] },
       () => {
         MarcAuthorities.clickActionsAndNewAuthorityButton();
         QuickMarcEditor.checkPaneheaderContains('New local MARC authority record');

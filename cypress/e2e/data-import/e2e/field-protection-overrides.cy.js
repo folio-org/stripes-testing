@@ -43,7 +43,7 @@ describe('Data Import', () => {
     let firstFieldId = null;
     let secondFieldId = null;
     let instanceHrid = null;
-    let userId = null;
+    let user = null;
     const jobProfileToRun = DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS;
     // unique file name to upload
     const fileNameForCreatingInstance = `C17018autotestFileCreateInstance${getRandomPostfix()}.mrc`;
@@ -155,35 +155,15 @@ describe('Data Import', () => {
           query: `"field"=="${protectedFields.firstField}"`,
         }).then((list) => {
           if (list) {
-            list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+            list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id, true));
           }
         });
         MarcFieldProtection.getListViaApi({
           query: `"field"=="${protectedFields.secondField}"`,
         }).then((list) => {
           if (list) {
-            list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+            list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id, true));
           }
-        });
-        MarcFieldProtection.createViaApi({
-          indicator1: '*',
-          indicator2: '*',
-          subfield: 'a',
-          data: '*',
-          source: 'USER',
-          field: protectedFields.firstField,
-        }).then((resp) => {
-          firstFieldId = resp.id;
-        });
-        MarcFieldProtection.createViaApi({
-          indicator1: '*',
-          indicator2: '*',
-          subfield: '*',
-          data: '*',
-          source: 'USER',
-          field: protectedFields.secondField,
-        }).then((resp) => {
-          secondFieldId = resp.id;
         });
       });
 
@@ -193,12 +173,7 @@ describe('Data Import', () => {
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
       ]).then((userProperties) => {
-        userId = userProperties.userId;
-
-        cy.login(userProperties.username, userProperties.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+        user = userProperties;
       });
     });
 
@@ -206,10 +181,24 @@ describe('Data Import', () => {
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
-      cy.getAdminToken().then(() => {
-        Users.deleteViaApi(userId);
-        MarcFieldProtection.deleteViaApi(firstFieldId);
-        MarcFieldProtection.deleteViaApi(secondFieldId);
+      cy.getAdminToken(false).then(() => {
+        MarcFieldProtection.deleteViaApi(firstFieldId, true);
+        MarcFieldProtection.deleteViaApi(secondFieldId, true);
+        MarcFieldProtection.getListViaApi({
+          query: `"field"=="${protectedFields.firstField}"`,
+        }).then((list) => {
+          if (list) {
+            list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id, true));
+          }
+        });
+        MarcFieldProtection.getListViaApi({
+          query: `"field"=="${protectedFields.secondField}"`,
+        }).then((list) => {
+          if (list) {
+            list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id, true));
+          }
+        });
+        Users.deleteViaApi(user.userId);
         // delete profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForOverride.profileName);
@@ -236,8 +225,34 @@ describe('Data Import', () => {
 
     it(
       'C17018 Check that field protection overrides work properly during data import (promin)',
-      { tags: ['criticalPath', 'promin', 'C17018', 'shiftLeft'] },
+      { tags: ['criticalPath', 'promin', 'nonParallel', 'C17018', 'shiftLeft'] },
       () => {
+        MarcFieldProtection.createViaApi({
+          indicator1: '*',
+          indicator2: '*',
+          subfield: 'a',
+          data: '*',
+          source: 'USER',
+          field: protectedFields.firstField,
+        }).then((resp) => {
+          firstFieldId = resp.id;
+        });
+        MarcFieldProtection.createViaApi({
+          indicator1: '*',
+          indicator2: '*',
+          subfield: '*',
+          data: '*',
+          source: 'USER',
+          field: protectedFields.secondField,
+        }).then((resp) => {
+          secondFieldId = resp.id;
+        });
+
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
+
         // create Field mapping profiles
         FieldMappingProfiles.createMappingProfileForUpdatesMarc(marcBibMappingProfile);
         FieldMappingProfileView.checkCreatedMappingProfile(

@@ -42,7 +42,7 @@ describe('Data Import', () => {
     const marcFieldProtected = ['507', '920'];
     const marcFieldProtectionId = [];
     let instanceHrid = null;
-    let userId = null;
+    let user = null;
 
     // data from .mrc file
     const dataFromField001 = 'ocn894025734';
@@ -103,34 +103,13 @@ describe('Data Import', () => {
     };
 
     before('Create test data and login', () => {
-      cy.getAdminToken().then(() => {
-        marcFieldProtected.forEach((field) => {
-          MarcFieldProtection.createViaApi({
-            indicator1: '*',
-            indicator2: '*',
-            subfield: '*',
-            data: '*',
-            source: 'USER',
-            field,
-          }).then((resp) => {
-            const id = resp.id;
-            marcFieldProtectionId.push(id);
-          });
-        });
-      });
-
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
       ]).then((userProperties) => {
-        userId = userProperties.userId;
-
-        cy.login(userProperties.username, userProperties.password, {
-          path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.waitLoading,
-        });
+        user = userProperties;
       });
     });
 
@@ -138,9 +117,16 @@ describe('Data Import', () => {
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);
-      cy.getAdminToken().then(() => {
-        Users.deleteViaApi(userId);
-        marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteViaApi(field));
+      cy.getAdminToken(false).then(() => {
+        Users.deleteViaApi(user.userId);
+        marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteViaApi(field, true));
+        marcFieldProtected.forEach((field) => {
+          MarcFieldProtection.getListViaApi({
+            query: `"field"=="${field}"`,
+          }).then((list) => {
+            list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id, true));
+          });
+        });
         // delete profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileUpdate.profileName);
@@ -178,8 +164,39 @@ describe('Data Import', () => {
 
     it(
       'C17017 Check that field protection settings work properly during data import (promin)',
-      { tags: ['criticalPath', 'promin', 'C17017'] },
+      { tags: ['criticalPath', 'promin', 'nonParallel', 'C17017'] },
       () => {
+        cy.getAdminToken()
+          .then(() => {
+            marcFieldProtected.forEach((field) => {
+              MarcFieldProtection.getListViaApi({
+                query: `"field"=="${field}"`,
+              }).then((list) => {
+                list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id, true));
+              });
+            });
+          })
+          .then(() => {
+            marcFieldProtected.forEach((field) => {
+              MarcFieldProtection.createViaApi({
+                indicator1: '*',
+                indicator2: '*',
+                subfield: '*',
+                data: '*',
+                source: 'USER',
+                field,
+              }).then((resp) => {
+                const id = resp.id;
+                marcFieldProtectionId.push(id);
+              });
+            });
+          });
+
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.mappingProfilePath,
+          waiter: FieldMappingProfiles.waitLoading,
+        });
+
         // create mapping profile
         createInstanceMappingProfileForCreate(mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);

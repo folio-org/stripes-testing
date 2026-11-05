@@ -3,11 +3,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { Permissions } from '../../../support/dictionary';
 import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
+import EHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitles';
 
 describe('eHoldings', () => {
   describe('Titles', () => {
     const testData = {
       title: 'Journal of lipid research',
+      titleId: '41327',
       publicationType: 'Journal',
       peerReviewed: 'Yes',
       titleType: 'Managed',
@@ -23,26 +25,24 @@ describe('eHoldings', () => {
       cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
         testData.C9240UserProperties = userProperties;
       });
-      EHoldingsTitlesSearch.getViaApi({
-        'filter[name]': testData.title,
-        'filter[type]': testData.publicationType.toLowerCase(),
-      }).then((res) => {
-        testData.alternateTitles = res[0].attributes.alternateTitles
+      // by id: the KB has more than one title with this name, and only this one has subjects
+      EHoldingsTitles.getTitleByIdViaApi(testData.titleId).then(({ body: { data } }) => {
+        testData.alternateTitles = data.attributes.alternateTitles
           .map((el) => el.alternateTitle)
           .join('; ');
-        testData.ISSNPrint = res[0].attributes.identifiers.filter(
+        testData.ISSNPrint = data.attributes.identifiers.filter(
           (el) => el.type === 'ISSN' && el.subtype === 'Print',
         )[0].id;
-        testData.ISSNOnline = res[0].attributes.identifiers.filter(
+        testData.ISSNOnline = data.attributes.identifiers.filter(
           (el) => el.type === 'ISSN' && el.subtype === 'Online',
         )[0].id;
-        testData.publisher = res[0].attributes.publisherName;
-        testData.subjects = res[0].attributes.subjects[0].subject;
+        testData.publisher = data.attributes.publisherName;
+        testData.subjects = data.attributes.subjects[0].subject;
       });
     });
 
     after('Deleting created user', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Users.deleteViaApi(testData.userProperties.userId);
     });
 
@@ -50,16 +50,12 @@ describe('eHoldings', () => {
       'C360543 Check the content of "Title information" accordion in "Title" detail record (promin)',
       { tags: ['extendedPath', 'promin', 'C360543'] },
       () => {
-        cy.waitForAuthRefresh(() => {
-          cy.login(testData.C9240UserProperties.username, testData.C9240UserProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: EHoldingsTitlesSearch.waitLoading,
-          });
-          cy.reload();
-          EHoldingsTitlesSearch.waitLoading();
-        }, 20_000);
+        cy.login(testData.C9240UserProperties.username, testData.C9240UserProperties.password, {
+          path: TopMenu.eholdingsPath,
+          waiter: EHoldingsTitlesSearch.waitLoading,
+        });
 
-        cy.visit(`${TopMenu.eholdingsPath}/titles/41327`);
+        cy.visit(`${TopMenu.eholdingsPath}/titles/${testData.titleId}`);
         EHoldingsTitle.waitLoading(testData.title);
         EHoldingsTitle.checkTitleInformationField('Alternate title(s)', testData.alternateTitles);
         EHoldingsTitle.checkTitleInformationField('Publication type', testData.publicationType);

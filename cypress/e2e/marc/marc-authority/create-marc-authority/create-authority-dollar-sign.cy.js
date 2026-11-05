@@ -86,13 +86,14 @@ describe('MARC', () => {
 
       after('Delete test data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(testData.authoritySourceFile, false);
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI(testData.authorityHeadingPrefix);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
       it(
         'C451559 Create "MARC authority" record which has "$" sign ("{dollar}" code) (promin)',
-        { tags: ['extendedPath', 'promin', 'C451559'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C451559'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           MarcAuthority.setValid008DropdownValues();

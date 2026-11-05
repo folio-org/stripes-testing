@@ -3,6 +3,7 @@ import { DEFAULT_WAIT_TIME } from '../constants';
 
 const CURRENT_VERSION = 'Current version';
 const ORIGINAL_VERSION = 'Original version';
+const SYSTEM_MAINTENANCE_UPDATE = 'System maintenance update';
 const CHANGED = 'Changed';
 const SHOW_ALL = 'Show all';
 
@@ -15,6 +16,7 @@ export default {
       index,
       isCurrent = false,
       isOriginal = false,
+      isSystemMaintenanceUpdate = false,
       isChangedListAbsent = false,
       source,
     },
@@ -28,6 +30,7 @@ export default {
       source,
       isCurrent && CURRENT_VERSION,
       isOriginal && ORIGINAL_VERSION,
+      isSystemMaintenanceUpdate && SYSTEM_MAINTENANCE_UPDATE,
       ...(changedFields || []),
     ].filter(Boolean);
 

@@ -35,6 +35,7 @@ import InvoiceStates from './invoiceStates';
 import UpdatePOLinePaymentStatusModal from './modal/updatePOLinePaymentStatusModal';
 import VoucherView from './voucherView';
 import FundDetails from '../finance/funds/fundDetails';
+import TagsPane from '../tagsPane';
 
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 
@@ -66,6 +67,12 @@ export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
     cy.wait(ms);
     cy.expect(invoiceDetailsPane.exists());
+  },
+  openTagsPane() {
+    TagsPane.openTagsPane(invoiceDetailsPane);
+  },
+  verifyTagsCount(count) {
+    TagsPane.verifyTagsCount(invoiceDetailsPane, count);
   },
   expandActionsDropdown() {
     cy.wait(4000);

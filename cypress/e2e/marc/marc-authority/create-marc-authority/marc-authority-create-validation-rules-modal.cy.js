@@ -65,13 +65,14 @@ describe('MARC', () => {
 
       after('Delete users, data', () => {
         cy.getAdminToken();
+        MarcAuthorities.setAuthoritySourceFileActivityViaAPI(LC_NAME_AUTHORITY_FILE, false);
         MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C523594*');
         Users.deleteViaApi(user.userId);
       });
 
       it(
         'C523594 "MARC validation rules check" modal appears during create of MARC authority record (promin)',
-        { tags: ['extendedPath', 'promin', 'C523594'] },
+        { tags: ['extendedPath', 'promin', 'nonParallel', 'C523594'] },
         () => {
           MarcAuthorities.clickActionsAndNewAuthorityButton();
           QuickMarcEditor.waitLoading();
