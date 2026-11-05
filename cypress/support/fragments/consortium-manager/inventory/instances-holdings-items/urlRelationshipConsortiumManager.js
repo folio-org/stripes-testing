@@ -4,6 +4,8 @@ import { MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 
+export const URL_RELATIONSHIP_ENTITY_TYPE = 'URL relationship term';
+
 const id = uuid();
 const optionName = 'URL relationship';
 

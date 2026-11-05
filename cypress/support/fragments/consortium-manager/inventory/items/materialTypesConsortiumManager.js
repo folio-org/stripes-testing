@@ -1,7 +1,11 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader } from '../../../../../../interactors';
+import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
+import { INVENTORY_SETTINGS_TABS } from '../../../settings/inventory/settingsInventory';
+
+export const MATERIAL_TYPE_ENTITY_TYPE = 'material type';
 
 const id = uuid();
 
@@ -11,6 +15,10 @@ export const typeActions = {
 };
 
 export default {
+  waitLoading() {
+    ConsortiaControlledVocabularyPaneset.waitLoading(INVENTORY_SETTINGS_TABS.MATERIAL_TYPES);
+  },
+
   createViaApi(type) {
     return cy.getConsortiaId().then((consortiaId) => {
       cy.okapiRequest({

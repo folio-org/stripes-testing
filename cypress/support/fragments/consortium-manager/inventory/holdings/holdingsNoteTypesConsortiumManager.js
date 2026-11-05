@@ -1,9 +1,11 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
-import { MultiColumnListHeader } from '../../../../../../interactors';
+import { Headline, MultiColumnListHeader, Pane } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 
 const id = uuid();
+const paneName = 'Holdings note types';
+const pane = Pane(paneName);
 
 export const typeActions = {
   edit: 'edit',
@@ -43,7 +45,9 @@ export default {
   },
 
   choose() {
-    ConsortiumManagerApp.chooseSecondMenuItem('Holdings note types');
+    ConsortiumManagerApp.chooseSecondMenuItem(paneName);
+    cy.expect(pane.find(Headline(paneName)).exists());
+
     ['Name', 'Source', 'Last updated', 'Member libraries', 'Actions'].forEach((header) => {
       cy.expect(MultiColumnListHeader(header).exists());
     });

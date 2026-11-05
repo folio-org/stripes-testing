@@ -1,7 +1,10 @@
 import uuid from 'uuid';
 import { REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader } from '../../../../../../interactors';
+import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
+
+export const RESOURCE_IDENTIFIER_ENTITY_TYPE = 'resource identifier type';
 
 const id = uuid();
 
@@ -11,6 +14,10 @@ export const typeActions = {
 };
 
 export default {
+  waitLoading() {
+    ConsortiaControlledVocabularyPaneset.waitLoading('Resource identifier types');
+  },
+
   createViaApi(type) {
     return cy.getConsortiaId().then((consortiaId) => {
       cy.okapiRequest({
