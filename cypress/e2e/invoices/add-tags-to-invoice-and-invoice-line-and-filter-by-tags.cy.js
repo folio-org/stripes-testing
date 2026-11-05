@@ -179,12 +179,10 @@ describe('Invoices', () => {
 
       // Step 19: Additionally select tag assigned to Invoice #2
       Invoices.filterByTags([testData.secondInvoiceTag.label]);
-      Invoices.checkSearchResultsContent({
-        records: [
-          { invoiceNumber: testData.secondInvoice.vendorInvoiceNo },
-          { invoiceNumber: testData.firstInvoice.vendorInvoiceNo },
-        ],
-      });
+      Invoices.assertInvoicesInResults([
+        testData.firstInvoice.vendorInvoiceNo,
+        testData.secondInvoice.vendorInvoiceNo,
+      ]);
     },
   );
 });
