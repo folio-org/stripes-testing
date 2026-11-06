@@ -709,8 +709,12 @@ export default {
     ]);
   },
 
-  verifyViewPaneContentExists() {
-    cy.expect(marcViewSection.exists());
+  verifyViewPaneContentExists(isExist = true) {
+    if (isExist) cy.expect(marcViewSection.exists());
+    else {
+      cy.wait(2000);
+      cy.expect(marcViewSection.absent());
+    }
   },
 
   getViewPaneContent() {

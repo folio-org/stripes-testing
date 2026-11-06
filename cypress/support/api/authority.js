@@ -79,6 +79,32 @@ Cypress.Commands.add(
   },
 );
 
+// quickMARC maps a new record's 001/010 prefix to a source file using mod-source-record-manager's cached
+// mapping parameters, refreshed only after 60 s without any access. Checks now, then twice more 70 s apart
+// (polling more often would keep the stale cache alive). Get a token for the right tenant before calling.
+Cypress.Commands.add('waitForAuthoritySourceFileInMappingViaAPI', (sourceFileId, attempt = 1) => {
+  const maxAttempts = 3;
+  cy.okapiRequest({
+    path: 'mapping-metadata/type/marc-authority',
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    const sourceFiles = JSON.parse(body.mappingParams).authoritySourceFiles || [];
+    const isFound = sourceFiles.some(({ id }) => id === sourceFileId);
+    cy.log(
+      `Source file ${sourceFileId} in quickMARC mapping parameters (check ${attempt}/${maxAttempts}): ${isFound}`,
+    );
+    if (isFound) return;
+    if (attempt === maxAttempts) {
+      throw new Error(
+        `Authority source file ${sourceFileId} is not in the quickMARC mapping parameters after ` +
+          `${maxAttempts} checks (stale mod-source-record-manager cache)`,
+      );
+    }
+    cy.wait(70_000);
+    cy.waitForAuthoritySourceFileInMappingViaAPI(sourceFileId, attempt + 1);
+  });
+});
+
 Cypress.Commands.add('deleteAuthoritySourceFileViaAPI', (id, ignoreErrors = false) => {
   cy.okapiRequest({
     method: 'DELETE',

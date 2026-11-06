@@ -26,6 +26,9 @@ const dateUpdatedAccordion = Accordion('Date updated');
 const pluginDateCreatedAccordion = Modal({ id: 'find-authority-modal' }).find(
   Accordion('Date created'),
 );
+const pluginDateUpdatedAccordion = Modal({ id: 'find-authority-modal' }).find(
+  Accordion('Date updated'),
+);
 const authorityList = MultiColumnList({ id: 'authority-result-list' });
 const collapseButton = Button({ icon: 'caret-left' });
 const expandButton = Button({ icon: 'caret-right' });
@@ -262,6 +265,33 @@ export default {
 
   applyDateCreatedInPlugin() {
     cy.do(pluginDateCreatedAccordion.find(applyButton).click());
+  },
+
+  expandDateUpdatedAccordionInPlugin() {
+    cy.then(() => pluginDateUpdatedAccordion.open()).then((isOpen) => {
+      if (!isOpen) cy.do(pluginDateUpdatedAccordion.clickHeader());
+    });
+    cy.expect([
+      pluginDateUpdatedAccordion.has({ open: true }),
+      pluginDateUpdatedAccordion.find(dateFromField).exists(),
+      pluginDateUpdatedAccordion.find(dateToField).exists(),
+      pluginDateUpdatedAccordion.find(applyButton).exists(),
+    ]);
+  },
+
+  fillDateUpdatedInPlugin(fromDate, toDate) {
+    cy.do([
+      pluginDateUpdatedAccordion.find(dateFromField).fillIn(fromDate),
+      pluginDateUpdatedAccordion.find(dateToField).fillIn(toDate),
+    ]);
+    cy.expect([
+      pluginDateUpdatedAccordion.find(dateFromField).has({ value: fromDate }),
+      pluginDateUpdatedAccordion.find(dateToField).has({ value: toDate }),
+    ]);
+  },
+
+  applyDateUpdatedInPlugin() {
+    cy.do(pluginDateUpdatedAccordion.find(applyButton).click());
   },
 
   verifyDateCreatedAccordionCollapsed() {
