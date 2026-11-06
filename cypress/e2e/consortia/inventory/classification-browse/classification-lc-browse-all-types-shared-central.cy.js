@@ -214,6 +214,7 @@ describe('Inventory', () => {
             });
             cy.reload();
           }, 20_000);
+          cy.getToken(user.username, user.password);
           InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.switchToBrowseTab();
           testClassifications.forEach((row) => {
@@ -244,11 +245,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.browseSearch(thirdExact.value);
           BrowseClassifications.verifySearchResultsTable();
           BrowseClassifications.verifyValueInResultTableIsHighlighted(thirdExact.value);
+          BrowseClassifications.storeClassificationId(thirdExact.value);
           InventorySearchAndFilter.selectFoundItemFromBrowse(thirdExact.value);
-          InventorySearchAndFilter.verifySearchOptionAndQuery(
-            'Query search',
-            `classifications.classificationNumber=="${thirdExact.value}"`,
-          );
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId();
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.switchToBrowseTab();
           BrowseClassifications.verifySearchResultsTable();

@@ -24,7 +24,6 @@ describe('Inventory', () => {
         type: 'Topical term',
       },
       classification: 'C877081BR\\140 .\\\\J6',
-      classificationEscaped: 'C877081BR\\\\140 .\\\\\\\\J6',
       marcFile: {
         marc: 'marcBibC877081.mrc',
         fileName: `testMarcFileC877081.${randomFourDigitNumber()}.mrc`,
@@ -78,6 +77,7 @@ describe('Inventory', () => {
       'C877081 Import MARC bib record with backslash character in some fields and check Instance detail view pane / browse pane (promin)',
       { tags: ['extendedPath', 'promin', 'C877081'] },
       () => {
+        cy.getToken(user.username, user.password);
         // Step 4. Check Instance detail view:
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyInstanceIsOpened(testData.instanceTitle);
@@ -100,10 +100,9 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifySearchResultIncludingValue(testData.classification);
 
         // Step 6. Click on found value
-        BrowseClassifications.selectFoundValueByRow(5, testData.classification);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
+        BrowseClassifications.selectFoundValueByRowAndStoreId(5, testData.classification);
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(
           querySearchOption.classifications,
-          `classifications.classificationNumber=="${testData.classificationEscaped}"`,
         );
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
 

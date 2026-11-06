@@ -27,7 +27,6 @@ const classificationBrowseId = defaultClassificationBrowseIdsAlgorithms[2].id; /
 const classificationBrowseAlgorithm = defaultClassificationBrowseIdsAlgorithms[2].algorithm;
 const sharedAccordionName = 'Shared';
 const querySearchOption = 'Query search';
-const searchQuery = `classifications.classificationNumber=="${classificationValue}"`;
 
 // Classification identifier types created by this test
 const localCentralTypeName = `AT_C471480_ClassifType_${randomPostfix}`;
@@ -57,9 +56,9 @@ const centralExpectedPairs = lcTypes.map(() => ({ value: classificationValue, nu
 
 // Search-tab click-through totals - scoped to just the 3 LC types (the redirect query
 // filters by classificationTypeId too, not just classificationNumber - see note above)
-const allInstancesCount = lcTypes.length * 2; // Step 2: no Shared filter - shared+local halves of all 3 types
-const localInstancesCount = lcTypes.length; // Step 5: Shared=No - local halves of all 3 types
-const sharedInstancesCount = lcTypes.length; // Step 8/12: Shared=Yes - shared halves of all 3 types
+const allInstancesCount = 2; // Step 2: no Shared filter - shared+local
+const localInstancesCount = 1; // Step 5: Shared=No - local halves
+const sharedInstancesCount = 1; // Step 8/12: Shared=Yes - shared halves
 
 // Preceding filler rows must use an LC-eligible type (LC) so they still appear as rows in
 // THIS scoped browse view, keeping the row-offset for selectFoundValueByRow deterministic
@@ -267,9 +266,9 @@ describe('Inventory', () => {
           // Step 2: click an exact match row - redirected to Query search. The redirect
           // query also filters by classificationTypeId here, scoped to the 3 types
           // configured for "Library of Congress classification" (see C471479)
-          BrowseClassifications.selectFoundValueByRow(5, classificationValue);
+          BrowseClassifications.selectFoundValueByRowAndStoreId(5, classificationValue);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(querySearchOption, searchQuery);
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.verifyNumberOfSearchResults(allInstancesCount);
           InventorySearchAndFilter.checkSharedAndLocalInstancesInResultList();
 
@@ -301,9 +300,9 @@ describe('Inventory', () => {
           });
 
           // Step 5: click exact match - Local halves of the 3 LC types only
-          BrowseClassifications.selectFoundValueByRow(5, classificationValue);
+          BrowseClassifications.selectFoundValueByRowAndStoreId(5, classificationValue);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(querySearchOption, searchQuery);
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.verifyNumberOfSearchResults(localInstancesCount);
           InventorySearchAndFilter.checkNoSharedInstancesInResultList();
 
@@ -341,9 +340,9 @@ describe('Inventory', () => {
           });
 
           // Step 8: click exact match - Shared halves of the 3 LC types only
-          BrowseClassifications.selectFoundValueByRow(5, classificationValue);
+          BrowseClassifications.selectFoundValueByRowAndStoreId(5, classificationValue);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(querySearchOption, searchQuery);
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.verifyNumberOfSearchResults(sharedInstancesCount);
           InventorySearchAndFilter.checkSharedInstancesInResultList();
 
@@ -380,9 +379,9 @@ describe('Inventory', () => {
           });
 
           // Step 12: click exact match on Central - Shared halves of the 3 LC types only
-          BrowseClassifications.selectFoundValueByRow(5, classificationValue);
+          BrowseClassifications.selectFoundValueByRowAndStoreId(5, classificationValue);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(querySearchOption, searchQuery);
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.verifyNumberOfSearchResults(sharedInstancesCount);
           InventorySearchAndFilter.checkSharedInstancesInResultList();
         },

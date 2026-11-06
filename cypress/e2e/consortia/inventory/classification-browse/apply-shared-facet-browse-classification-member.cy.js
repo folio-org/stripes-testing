@@ -154,12 +154,9 @@ describe('Inventory', () => {
           BrowseClassifications.verifyValueInResultTableIsHighlighted(classificationValues[0]);
           BrowseContributors.checkValueAbsentInResults(classificationValues[1]);
 
-          BrowseClassifications.selectFoundValueByValue(classificationValues[0]);
+          BrowseClassifications.selectFoundValueByValueAndStoreId(classificationValues[0]);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(
-            querySearchOption,
-            `classifications.classificationNumber=="${classificationValues[0]}"`,
-          );
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.checkSharedInstancesInResultList();
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.verifySearchResult(instanceTitles[0]);
@@ -186,12 +183,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'Yes', false);
           InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'No', true);
 
-          BrowseClassifications.selectFoundValueByValue(classificationValues[1]);
+          BrowseClassifications.selectFoundValueByValueAndStoreId(classificationValues[1]);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(
-            querySearchOption,
-            `classifications.classificationNumber=="${classificationValues[1]}"`,
-          );
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.checkNoSharedInstancesInResultList();
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.verifySearchResult(instanceTitles[1]);
@@ -219,12 +213,9 @@ describe('Inventory', () => {
           BrowseClassifications.verifyValueInResultTableIsHighlighted(classificationValues[0]);
           BrowseContributors.checkRecordPresentInSearchResults(classificationValues[1]);
 
-          BrowseClassifications.selectFoundValueByValue(classificationValues[0]);
+          BrowseClassifications.selectFoundValueByValueAndStoreId(classificationValues[0]);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(
-            querySearchOption,
-            `classifications.classificationNumber=="${classificationValues[0]}"`,
-          );
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.verifySearchResult(instanceTitles[0]);
           InventorySearchAndFilter.toggleAccordionByName(sharedAccordionName);

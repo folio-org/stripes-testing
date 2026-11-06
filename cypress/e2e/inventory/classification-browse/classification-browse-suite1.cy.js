@@ -330,18 +330,17 @@ describe('Inventory', () => {
           BrowseClassifications.verifyNumberOfTitlesInRow(i, '1');
         }
 
-        BrowseClassifications.selectFoundValueByRow(5, testData.classificationValue);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
-          testData.querySearchOption,
-          `classifications.classificationNumber=="${testData.classificationValue}"`,
-        );
-        testData.instances.forEach((instance) => {
-          InventorySearchAndFilter.verifyInstanceDisplayed(instance.instanceTitle);
+        BrowseClassifications.selectFoundValueByRowAndStoreId(5, testData.classificationValue, {
+          classificationBrowseId: testData.classificationBrowseId,
         });
-        InventorySearchAndFilter.verifyInstanceDisplayed(
-          testData.instanceTitleWithLocalClassification,
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(
+          testData.querySearchOption,
         );
-        InventoryInstances.checkSearchResultCount(/11 records found/);
+        BrowseClassifications.verifyClickedInstanceDisplayedInSearch([
+          ...testData.instances.map((instance) => instance.instanceTitle),
+          testData.instanceTitleWithLocalClassification,
+        ]);
+        InventoryInstances.checkSearchResultCount(/1 record found/);
       },
     );
   });
@@ -518,10 +517,11 @@ describe('Inventory', () => {
         BrowseClassifications.verifyRowValueIsBold(5, testData.classificationValue);
         BrowseClassifications.verifyNumberOfTitlesInRow(5, '1');
 
-        BrowseClassifications.selectFoundValueByRow(5, testData.classificationValue);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
+        BrowseClassifications.selectFoundValueByRowAndStoreId(5, testData.classificationValue, {
+          classificationBrowseId: testData.classificationBrowseId,
+        });
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(
           testData.querySearchOption,
-          `classifications.classificationNumber=="${testData.classificationValue}"`,
         );
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instances[2].instanceTitle);
         InventoryInstances.checkSearchResultCount(/1 record found/);
@@ -703,14 +703,17 @@ describe('Inventory', () => {
           BrowseClassifications.verifyNumberOfTitlesInRow(i, '1');
         }
 
-        BrowseClassifications.selectFoundValueByRow(5, testData.classificationValue);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
+        BrowseClassifications.selectFoundValueByRowAndStoreId(5, testData.classificationValue, {
+          classificationBrowseId: testData.classificationBrowseId,
+        });
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(
           testData.querySearchOption,
-          `classifications.classificationNumber=="${testData.classificationValue}"`,
         );
-        InventorySearchAndFilter.verifyInstanceDisplayed(testData.instances[4].instanceTitle);
-        InventorySearchAndFilter.verifyInstanceDisplayed(testData.instances[5].instanceTitle);
-        InventoryInstances.checkSearchResultCount(/2 records found/);
+        BrowseClassifications.verifyClickedInstanceDisplayedInSearch([
+          testData.instances[4].instanceTitle,
+          testData.instances[5].instanceTitle,
+        ]);
+        InventoryInstances.checkSearchResultCount(/1 record found/);
       },
     );
   });
@@ -814,14 +817,13 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifySearchResultIncludingValue(expectedResult);
           });
         });
-        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.searchResults[0]);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
-          'Query search',
-          'classifications.classificationNumber=="hd1691 .i5 1967"',
-        );
-        testData.instanceTitles.forEach((title) => {
-          InventorySearchAndFilter.verifyInstanceDisplayed(title);
+        BrowseClassifications.selectFoundValueByValueAndStoreId(testData.searchResults[0], {
+          storeTitle: true,
+          classificationBrowseId: testData.classificationBrowseId,
         });
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId('Query search');
+        BrowseClassifications.verifyClickedInstanceDisplayedInSearch(testData.instanceTitles);
+        InventoryInstances.checkSearchResultCount(/1 record found/);
       },
     );
   });
@@ -926,14 +928,13 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifySearchResultIncludingValue(expectedResult);
           });
         });
-        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.searchResults[0]);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
-          'Query search',
-          'classifications.classificationNumber=="m1 33a"',
-        );
-        testData.instanceTitles.forEach((title) => {
-          InventorySearchAndFilter.verifyInstanceDisplayed(title);
+        BrowseClassifications.selectFoundValueByValueAndStoreId(testData.searchResults[0], {
+          storeTitle: true,
+          classificationBrowseId: testData.classificationBrowseId,
         });
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId('Query search');
+        BrowseClassifications.verifyClickedInstanceDisplayedInSearch(testData.instanceTitles);
+        InventoryInstances.checkSearchResultCount(/1 record found/);
       },
     );
   });
@@ -1036,14 +1037,13 @@ describe('Inventory', () => {
             InventorySearchAndFilter.verifySearchResultIncludingValue(expectedResult);
           });
         });
-        InventorySearchAndFilter.selectFoundItemFromBrowse(testData.searchResults[0]);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
-          'Query search',
-          'classifications.classificationNumber=="hd1691 .i5 1967"',
-        );
-        testData.instanceTitles.forEach((title) => {
-          InventorySearchAndFilter.verifyInstanceDisplayed(title);
+        BrowseClassifications.selectFoundValueByValueAndStoreId(testData.searchResults[0], {
+          storeTitle: true,
+          classificationBrowseId: testData.classificationBrowseId,
         });
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId('Query search');
+        BrowseClassifications.verifyClickedInstanceDisplayedInSearch(testData.instanceTitles);
+        InventoryInstances.checkSearchResultCount(/1 record found/);
       },
     );
   });
@@ -1220,7 +1220,6 @@ describe('Inventory', () => {
       ],
       classificationOption: 'Library of Congress classification',
       querySearchOption: 'Query search',
-      querySearchValue: `classifications.classificationNumber=="BJ1533.C5${randomLetters}"`,
       instanceTitle: `AT_C468180_FolioInstance_${getRandomPostfix()}`,
       classificationIdentifierTypeIds: [
         CLASSIFICATION_IDENTIFIER_TYPES.LC,
@@ -1366,10 +1365,12 @@ describe('Inventory', () => {
           if (callNumbersToBeFound.includes(query)) {
             InventorySearchAndFilter.verifySearchResult(query);
             if (query === testData.searchQueries[4]) {
+              BrowseClassifications.storeClassificationId(query, {
+                classificationBrowseId: testData.classificationBrowseId,
+              });
               InventorySearchAndFilter.selectFoundItemFromBrowse(query);
-              InventorySearchAndFilter.verifySearchOptionAndQuery(
+              BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(
                 testData.querySearchOption,
-                testData.querySearchValue,
               );
               InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
               InventorySearchAndFilter.switchToBrowseTab();
@@ -2402,11 +2403,10 @@ describe('Inventory', () => {
           `${testData.numberOfTitles}`,
         );
 
-        BrowseClassifications.selectFoundValueByValue(testData.classificationNumber);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
-          querySearchOption,
-          `classifications.classificationNumber=="${testData.classificationNumber}"`,
-        );
+        BrowseClassifications.selectFoundValueByValueAndStoreId(testData.classificationNumber, {
+          classificationBrowseId: testData.allBrowseId,
+        });
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
         InventorySearchAndFilter.verifyWarningIconForSearchResult(instsanceTitles[0]);
         InventorySearchAndFilter.verifyWarningIconForSearchResult(instsanceTitles[1]);
         InventorySearchAndFilter.checkRowsCount(testData.numberOfTitles);
