@@ -342,6 +342,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForCreatingInstance);
         Logs.checkJobStatus(fileNameForCreatingInstance, JOB_STATUS_NAMES.COMPLETED);
+        Logs.waitForJobLogEntriesViaApi(fileNameForCreatingInstance);
         Logs.openFileDetails(fileNameForCreatingInstance);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -379,6 +380,7 @@ describe('Data Import', () => {
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(fileNameForProtect);
           Logs.checkJobStatus(fileNameForProtect, JOB_STATUS_NAMES.COMPLETED);
+          Logs.waitForJobLogEntriesViaApi(fileNameForProtect);
           Logs.openFileDetails(fileNameForProtect);
           [
             FileDetails.columnNameInResultList.srsMarc,
@@ -429,6 +431,7 @@ describe('Data Import', () => {
           JobProfiles.runImportFile();
           Logs.waitFileIsImported(fileNameForOverride);
           Logs.checkJobStatus(fileNameForOverride, JOB_STATUS_NAMES.COMPLETED);
+          Logs.waitForJobLogEntriesViaApi(fileNameForOverride);
           Logs.openFileDetails(fileNameForOverride);
           [
             FileDetails.columnNameInResultList.srsMarc,

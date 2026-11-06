@@ -68,7 +68,8 @@ describe('MARC', () => {
         });
 
         cy.then(() => {
-          cy.wait(70_000); // wait for created source file to be processed by scheduled job
+          cy.getAdminToken(false);
+          cy.waitForAuthoritySourceFileInMappingViaAPI(customSourceId);
           cy.getAdminToken(false);
 
           MarcAuthorities.createMarcAuthorityViaAPI('', customSource.digits, [

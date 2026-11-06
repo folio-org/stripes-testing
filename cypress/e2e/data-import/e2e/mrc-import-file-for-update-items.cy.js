@@ -366,6 +366,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForImportCreate);
         Logs.checkJobStatus(nameMarcFileForImportCreate, JOB_STATUS_NAMES.COMPLETED);
+        Logs.waitForJobLogEntriesViaApi(nameMarcFileForImportCreate);
         Logs.openFileDetails(nameMarcFileForImportCreate);
         [
           FileDetails.columnNameInResultList.srsMarc,
@@ -470,6 +471,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(nameMarcFileForImportUpdate);
         Logs.checkJobStatus(nameMarcFileForImportUpdate, JOB_STATUS_NAMES.COMPLETED);
+        Logs.waitForJobLogEntriesViaApi(nameMarcFileForImportUpdate);
         Logs.openFileDetails(nameMarcFileForImportUpdate);
         [
           FileDetails.columnNameInResultList.srsMarc,

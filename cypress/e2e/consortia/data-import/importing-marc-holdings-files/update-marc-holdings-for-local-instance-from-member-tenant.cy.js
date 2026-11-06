@@ -111,8 +111,8 @@ describe('Data Import', () => {
               csvFileName,
               'holding',
               DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.HOLDINGS,
-            ).then(() => {
-              ExportFile.downloadExportedMarcFile(exportedFileName);
+            ).then((exportJob) => {
+              ExportFile.downloadExportedMarcFile(exportedFileName, exportJob);
               DataImport.editMarcFieldsInAllRecords(exportedFileName, editedFileName, {
                 editFields: [
                   { tag: '562', content: `$a ${updated562Value}` },

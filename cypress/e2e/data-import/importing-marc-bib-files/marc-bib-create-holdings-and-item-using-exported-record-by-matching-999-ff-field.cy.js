@@ -111,8 +111,8 @@ describe('Data Import', () => {
         })
         .then(() => {
           // Step 8: Export instance as MARC via API and download to fixtures
-          return ExportFile.exportFileViaApi(csvFileName).then(() => {
-            ExportFile.downloadExportedMarcFile(exportedMarcFileName);
+          return ExportFile.exportFileViaApi(csvFileName).then((exportJob) => {
+            ExportFile.downloadExportedMarcFile(exportedMarcFileName, exportJob);
           });
         })
         .then(() => {

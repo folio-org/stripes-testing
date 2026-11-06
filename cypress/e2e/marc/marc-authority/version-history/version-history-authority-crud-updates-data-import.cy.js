@@ -326,13 +326,14 @@ describe('MARC', () => {
         () => {
           // ---- Prepare and run update 1 entirely via API ----
           cy.getAdminToken(false);
+          exportedFileName1 = `AT_C663338_export1_${randomPostfix}.mrc`;
           ExportFile.exportFileViaApi(
             authorityUUIDsFileName,
             'authority',
             DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.AUTHORITY,
-          );
-          exportedFileName1 = `AT_C663338_export1_${randomPostfix}.mrc`;
-          ExportFile.downloadExportedMarcFile(exportedFileName1);
+          ).then((exportJob) => {
+            ExportFile.downloadExportedMarcFile(exportedFileName1, exportJob);
+          });
           editedFileName1 = `AT_C663338_edited1_${randomPostfix}.mrc`;
 
           cy.then(() => {
@@ -408,13 +409,14 @@ describe('MARC', () => {
 
           // ---- Prepare and run update 2 entirely via API ----
           cy.getAdminToken(false);
+          exportedFileName2 = `AT_C663338_export2_${randomPostfix}.mrc`;
           ExportFile.exportFileViaApi(
             authorityUUIDsFileName,
             'authority',
             DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.AUTHORITY,
-          );
-          exportedFileName2 = `AT_C663338_export2_${randomPostfix}.mrc`;
-          ExportFile.downloadExportedMarcFile(exportedFileName2);
+          ).then((exportJob) => {
+            ExportFile.downloadExportedMarcFile(exportedFileName2, exportJob);
+          });
           editedFileName2 = `AT_C663338_edited2_${randomPostfix}.mrc`;
 
           cy.then(() => {

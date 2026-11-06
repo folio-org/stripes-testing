@@ -1099,9 +1099,8 @@ export const EHOLDINGS_TITLE_HEADERS = [
   'Coverage Statement',
   'Managed Embargo',
   'Custom Embargo',
-  'Title Show To Patrons',
+  // MODEXPW-645 removed 'Title Show To Patrons' and renamed 'Url' to 'Title Url' (UI side: UIEH-1530)
   'Title Proxy',
-  'Url',
   'Title Access Status Type',
   'Custom Value 1',
   'Custom Value 2',

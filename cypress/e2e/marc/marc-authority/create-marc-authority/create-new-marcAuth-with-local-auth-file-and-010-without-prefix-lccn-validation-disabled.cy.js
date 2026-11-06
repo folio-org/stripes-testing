@@ -68,7 +68,8 @@ describe('MARC', () => {
             MarcAuthorities.toggleAuthorityLccnValidationRule({ enable: false });
           })
           .then(() => {
-            cy.wait(70_000); // wait for new source file to be processed
+            cy.getAdminToken();
+            cy.waitForAuthoritySourceFileInMappingViaAPI(localAuthFile.id);
             cy.getAdminToken();
             cy.login(users.userProperties.username, users.userProperties.password, {
               path: TopMenu.marcAuthorities,

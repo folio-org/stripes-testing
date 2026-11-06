@@ -153,7 +153,8 @@ export default createInteractor('multi select')
     focused: (el) => Boolean(el.querySelector(':focus')),
     focusedValue: (el) => el.querySelector('ul').querySelector('button:focus').parentNode.textContent,
     error: (el) => el.querySelector('[class^=multiSelectError-]')?.textContent ?? '',
-    ariaLabelledby: (el) => combobox(el).getAttribute('aria-labelledby'),
+    // STCOM-1517 appends the value-status id ("<labelId> multi-value-status-<id>"); match on the label id
+    ariaLabelledby: (el) => (combobox(el).getAttribute('aria-labelledby') || '').split(' ')[0],
     span: (el) => el.querySelector('span').textContent,
     disabled: (el) => el.querySelector('button[class^=multiSelectToggleButton-]').disabled,
   })
