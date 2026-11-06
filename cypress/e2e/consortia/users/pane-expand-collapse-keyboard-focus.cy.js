@@ -37,7 +37,7 @@ describe('Consortia', () => {
       });
 
       it(
-        'C1464333 - Focus remains on the Expand/Collapse pane button after collapsing a pane using the keyboard',
+        'C1464333 - Focus remains on the Expand/Collapse pane button after collapsing a pane using the keyboard (helios)',
         { tags: ['smokeECS', 'helios', 'C1464333'] },
         () => {
           // Step 2: Move focus to the "Collapse pane" button with Tab
@@ -51,7 +51,7 @@ describe('Consortia', () => {
       );
 
       it(
-        'C1464334 - Focus remains on the Expand/Collapse pane button after re-expanding a collapsed pane using the keyboard',
+        'C1464334 - Focus remains on the Expand/Collapse pane button after re-expanding a collapsed pane using the keyboard (helios)',
         { tags: ['smokeECS', 'helios', 'C1464334'] },
         () => {
           // Precondition: the pane is collapsed with the keyboard and "Expand pane" has focus
@@ -65,7 +65,7 @@ describe('Consortia', () => {
       );
 
       it(
-        'C1464335 - Expand/Collapse pane button toggles with both Enter and Space keys while retaining focus',
+        'C1464335 - Expand/Collapse pane button toggles with both Enter and Space keys while retaining focus (helios)',
         { tags: ['criticalPathECS', 'helios', 'C1464335'] },
         () => {
           // Step 1: Move focus to the "Collapse pane" button with Tab
@@ -89,7 +89,7 @@ describe('Consortia', () => {
       );
 
       it(
-        'C1464336 - Tab order after collapsing a pane by keyboard moves forward and does not jump to "Skip to main content"',
+        'C1464336 - Tab order after collapsing a pane by keyboard moves forward and does not jump to "Skip to main content" (helios)',
         { tags: ['criticalPathECS', 'helios', 'C1464336'] },
         () => {
           // Steps 1-2: Move focus to the "Collapse pane" button with Tab and collapse the pane with Enter

@@ -78,7 +78,7 @@ describe('Users', () => {
     });
 
     it(
-      'C1453638 - "Preferred contact" multi-select field: available options, default value, and edit behavior',
+      'C1453638 - "Preferred contact" multi-select field: available options, default value, and edit behavior (helios)',
       { tags: ['extendedPath', 'helios', 'C1453638'] },
       () => {
         // Step 1: Click "Actions" → "New"
@@ -131,7 +131,7 @@ describe('Users', () => {
     );
 
     it(
-      'C1453639 - "Preferred contact" field: "Please select contact type" validation when no value is selected',
+      'C1453639 - "Preferred contact" field: "Please select contact type" validation when no value is selected (helios)',
       { tags: ['extendedPath', 'helios', 'C1453639'] },
       () => {
         const { username } = testData.existingUsers.C1453639;
@@ -164,7 +164,7 @@ describe('Users', () => {
     );
 
     it(
-      'C1464338 - Preferred contact selection persists on a new user record after save',
+      'C1464338 - Preferred contact selection persists on a new user record after save (helios)',
       { tags: ['criticalPath', 'helios', 'C1464338'] },
       () => {
         const savedContacts = [CONTACTS.email, CONTACTS.mail];
@@ -201,7 +201,7 @@ describe('Users', () => {
     );
 
     it(
-      'C1464339 - Preferred contact selection persists after editing an existing user record',
+      'C1464339 - Preferred contact selection persists after editing an existing user record (helios)',
       { tags: ['extendedPath', 'helios', 'C1464339'] },
       () => {
         const { username } = testData.existingUsers.C1464339;

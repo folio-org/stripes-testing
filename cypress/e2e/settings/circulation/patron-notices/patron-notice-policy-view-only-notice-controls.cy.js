@@ -56,7 +56,7 @@ describe('Patron notices', () => {
     });
 
     it(
-      'C1464324 - View-only user cannot add or delete notice cards in a patron notice policy',
+      'C1464324 - View-only user cannot add or delete notice cards in a patron notice policy (helios)',
       { tags: ['criticalPath', 'helios', 'C1464324'] },
       () => {
         // Step 1: Open the existing policy; it opens in read-only view without an Edit action
@@ -69,7 +69,7 @@ describe('Patron notices', () => {
     );
 
     it(
-      'C1464331 - Drag & drop reorder unavailable in view-only patron notice policy',
+      'C1464331 - Drag & drop reorder unavailable in view-only patron notice policy (helios)',
       { tags: ['extendedPath', 'helios', 'C1464331'] },
       () => {
         // Step 1: Open the existing policy; it opens in read-only view without an Edit action
