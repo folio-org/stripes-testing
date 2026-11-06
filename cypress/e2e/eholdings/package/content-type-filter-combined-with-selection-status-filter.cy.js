@@ -20,9 +20,10 @@ describe('eHoldings', () => {
     const customPackageName = `AT_C1453688_SelectedEBook_${randomPostfix}`;
     const testData = {};
 
-    const toSlug = (value) => String(value)
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, '');
+    const toSlug = (value) =>
+      String(value)
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '');
 
     // Triggers the given UI action and returns the package names the API actually returned for
     // the resulting filter/query combination (filtered defensively by the same criteria, in
@@ -49,16 +50,20 @@ describe('eHoldings', () => {
       action();
       return cy
         .wait(`@${alias}`, { timeout: 80_000 })
-        .then(({ response }) => response.body.data
-          .filter(
-            (pkg) => (selected === undefined || pkg.attributes.isSelected === selected) &&
+        .then(({ response }) =>
+          response.body.data
+            .filter(
+              (pkg) =>
+                (selected === undefined || pkg.attributes.isSelected === selected) &&
                 (type === undefined || pkg.attributes.contentType === type),
-          )
-          .map(
-            (pkg) => `${pkg.attributes.name}${
-              pkg.attributes.customDisplayName ? ` (${pkg.attributes.customDisplayName})` : ''
-            }`,
-          ));
+            )
+            .map(
+              (pkg) =>
+                `${pkg.attributes.name}${
+                  pkg.attributes.customDisplayName ? ` (${pkg.attributes.customDisplayName})` : ''
+                }`,
+            ),
+        );
     };
 
     const verifyResultsMatch = (packageNames) => {

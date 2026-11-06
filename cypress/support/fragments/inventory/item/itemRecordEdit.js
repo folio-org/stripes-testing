@@ -59,10 +59,14 @@ const addBoundWithAndAnalyticsButton = boundWithAndAnalyticsAccordion.find(
 const addBoundWithAndAnalyticsModal = Modal('Add Bound-with and analytics');
 const buttonCancel = Button('Cancel');
 const buttonSaveAndClose = Button('Save & close');
-const boundWithModalInput = (index = 0) => TextField({ testid: 'bound-with-modal-input', dataIndex: `${index}` });
-const instanceHridField = (index) => TextField({ name: `boundWithTitles[${index}].briefInstance.hrid` });
-const instanceTitleField = (index) => TextField({ name: `boundWithTitles[${index}].briefInstance.title` });
-const holdingsHridField = (index) => TextField({ name: `boundWithTitles[${index}].briefHoldingsRecord.hrid` });
+const boundWithModalInput = (index = 0) =>
+  TextField({ testid: 'bound-with-modal-input', dataIndex: `${index}` });
+const instanceHridField = (index) =>
+  TextField({ name: `boundWithTitles[${index}].briefInstance.hrid` });
+const instanceTitleField = (index) =>
+  TextField({ name: `boundWithTitles[${index}].briefInstance.title` });
+const holdingsHridField = (index) =>
+  TextField({ name: `boundWithTitles[${index}].briefHoldingsRecord.hrid` });
 
 function clickAddStatisticalCodeButton() {
   cy.do(Button('Add statistical code').click());

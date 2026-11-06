@@ -720,9 +720,11 @@ export default {
   },
   getClassificationOptionsList() {
     cy.do(addClassificationButton.click());
-    return cy.then(() => classificationSection
-      .find(Select({ name: 'classifications[0].classificationTypeId' }))
-      .optionsText());
+    return cy.then(() =>
+      classificationSection
+        .find(Select({ name: 'classifications[0].classificationTypeId' }))
+        .optionsText(),
+    );
   },
   deleteStatisticalCode(statisticalCode) {
     cy.do(rootSection.find(Button({ ariaLabel: 'Delete this item' })).click());

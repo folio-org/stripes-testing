@@ -50,7 +50,9 @@ const API = {
   deleteViaApiByName(name) {
     return this.getViaApi().then((classificationIdentifierTypes) => {
       classificationIdentifierTypes
-        .filter((classificationIdentifierType) => new RegExp(name).test(classificationIdentifierType.name))
+        .filter((classificationIdentifierType) =>
+          new RegExp(name).test(classificationIdentifierType.name),
+        )
         .map((classificationIdentifierType) => this.deleteViaApi(classificationIdentifierType.id));
     });
   },

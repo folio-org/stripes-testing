@@ -77,9 +77,11 @@ const NOTICE_CARD_CONTROLS = {
 const getControl = (el, control) => el.querySelector(NOTICE_CARD_CONTROLS[control].selector);
 const getDragHandle = (el) => getControl(el, 'dragHandle');
 // Edit form cards keep the label next to the drag handle; read-only view cards have a plain header
-const getNoticeLabel = (el) => el.querySelector('[data-test-notice-card-drag-handle] > span:last-child') ??
+const getNoticeLabel = (el) =>
+  el.querySelector('[data-test-notice-card-drag-handle] > span:last-child') ??
   el.querySelector('[data-testid="header"]');
-const isLeftOf = (left, right) => left.getBoundingClientRect().right <= right.getBoundingClientRect().left;
+const isLeftOf = (left, right) =>
+  left.getBoundingClientRect().right <= right.getBoundingClientRect().left;
 // Selected option label of a notice card dropdown; empty string when nothing is selected
 const getSelectedLabel = (el, testId) => {
   const select = el.querySelector(`select[data-testid="${testId}"]`);
@@ -95,20 +97,23 @@ const NoticeCard = HTML.extend('notice card')
     hasAddNoticeAboveIcon: (el) => Boolean(getControl(el, 'addNoticeAbove')),
     hasDeleteNoticeIcon: (el) => Boolean(getControl(el, 'deleteNotice')),
     dragHandleLeftOfLabel: (el) => isLeftOf(getDragHandle(el), getNoticeLabel(el)),
-    addIconLeftOfDeleteIcon: (el) => isLeftOf(getControl(el, 'addNoticeAbove'), getControl(el, 'deleteNotice')),
+    addIconLeftOfDeleteIcon: (el) =>
+      isLeftOf(getControl(el, 'addNoticeAbove'), getControl(el, 'deleteNotice')),
     templateName: (el) => getSelectedLabel(el, 'templateSelect'),
     format: (el) => getSelectedLabel(el, 'formatSelect'),
     triggeringEvent: (el) => getSelectedLabel(el, 'triggeringEventSelect'),
   })
   .actions({
-    focusDragHandle: ({ perform }) => perform((el) => {
-      const dragHandle = getDragHandle(el);
-      dragHandle.scrollIntoView({ block: 'center' });
-      dragHandle.focus();
-    }),
+    focusDragHandle: ({ perform }) =>
+      perform((el) => {
+        const dragHandle = getDragHandle(el);
+        dragHandle.scrollIntoView({ block: 'center' });
+        dragHandle.focus();
+      }),
   });
 
-const noticeCard = (sectionName, index) => Section({ id: noticeSections[sectionName].id }).find(NoticeCard(`Notice ${index + 1}`));
+const noticeCard = (sectionName, index) =>
+  Section({ id: noticeSections[sectionName].id }).find(NoticeCard(`Notice ${index + 1}`));
 
 export const actionsButtons = {
   edit: Button({ id: 'dropdown-clickable-edit-item' }),
@@ -431,10 +436,14 @@ export default {
       descriptionField.has({ value: '' }),
       activeCheckbox.has({ checked: false }),
     ]);
-    Object.values(sections).forEach((specialSection) => cy.expect(specialSection.find(addNoticeButton).has({ disabled: false, visible: true })));
+    Object.values(sections).forEach((specialSection) =>
+      cy.expect(specialSection.find(addNoticeButton).has({ disabled: false, visible: true })),
+    );
   },
   checkAfterSaving: (patronNoticePolicy) => {
-    Object.values(patronNoticePolicy).forEach((prop) => cy.expect(PaneSet().find(KeyValue({ value: prop }))));
+    Object.values(patronNoticePolicy).forEach((prop) =>
+      cy.expect(PaneSet().find(KeyValue({ value: prop }))),
+    );
   },
 
   checkNoticeActions(patronNoticePolicy) {

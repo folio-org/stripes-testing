@@ -188,12 +188,18 @@ export default {
     const uniqueValues = [...new Set(expectedPairs.map(({ value }) => value))];
 
     return cy.recurse(
-      () => uniqueValues.reduce(
-        (chain, value) => chain.then((accumulatedItems) => this.getClassificationNumbersViaApi(classificationBrowseId, value).then((response) => accumulatedItems.concat(
-          response.body.items.filter((item) => item.classificationNumber === value),
-        ))),
-        cy.wrap([]),
-      ),
+      () =>
+        uniqueValues.reduce(
+          (chain, value) =>
+            chain.then((accumulatedItems) =>
+              this.getClassificationNumbersViaApi(classificationBrowseId, value).then((response) =>
+                accumulatedItems.concat(
+                  response.body.items.filter((item) => item.classificationNumber === value),
+                ),
+              ),
+            ),
+          cy.wrap([]),
+        ),
       (allItems) => {
         const actualCounts = allItems.map((item) => item.totalRecords).sort();
         const expectedCounts = expectedPairs.map(({ number }) => number).sort();

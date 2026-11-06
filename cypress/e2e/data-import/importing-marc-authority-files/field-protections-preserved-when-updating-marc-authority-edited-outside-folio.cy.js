@@ -42,14 +42,15 @@ const tags = {
 // indexes - needed because this record has 2 occurrences of 430 (and, after the update, 2
 // occurrences of 645), and MarcAuthority.checkInfoButton() needs an explicit rowIndex to target
 // one specific occurrence rather than whichever one the interactor picks by default
-const getRowIndexesByTag = (tag) => cy.get('div[id=quick-marc-editor-rows]>div[class*=quickMarcEditorRow]').then(($rows) => {
-  const indexes = [];
-  $rows.each((index, el) => {
-    const tagInput = el.querySelector('input[name*=".tag"]');
-    if (tagInput && tagInput.value === tag) indexes.push(index);
+const getRowIndexesByTag = (tag) =>
+  cy.get('div[id=quick-marc-editor-rows]>div[class*=quickMarcEditorRow]').then(($rows) => {
+    const indexes = [];
+    $rows.each((index, el) => {
+      const tagInput = el.querySelector('input[name*=".tag"]');
+      if (tagInput && tagInput.value === tag) indexes.push(index);
+    });
+    return indexes;
   });
-  return indexes;
-});
 
 describe('Data Import', () => {
   describe('Importing MARC Authority files', () => {

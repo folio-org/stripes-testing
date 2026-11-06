@@ -438,7 +438,8 @@ export default {
   },
 
   openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
-  openInstanceNotesAccordion: () => cy.do(Button({ id: 'accordion-toggle-button-instance-details-notes' }).click()),
+  openInstanceNotesAccordion: () =>
+    cy.do(Button({ id: 'accordion-toggle-button-instance-details-notes' }).click()),
   checkAuthorityAppIconInSection: (sectionId, value, isPresent) => {
     if (isPresent) {
       cy.expect(
@@ -1344,10 +1345,12 @@ export default {
     });
   },
 
-  verifyResourceIdentifierAbsent: (value) => cy.expect(identifiersAccordion.find(MultiColumnListCell(including(value))).absent()),
-  verifyInstanceLanguage: (language) => cy.expect(
-    descriptiveDataAccordion.find(KeyValue('Language')).has({ value: including(language) }),
-  ),
+  verifyResourceIdentifierAbsent: (value) =>
+    cy.expect(identifiersAccordion.find(MultiColumnListCell(including(value))).absent()),
+  verifyInstanceLanguage: (language) =>
+    cy.expect(
+      descriptiveDataAccordion.find(KeyValue('Language')).has({ value: including(language) }),
+    ),
   verifyInstancePhysicalcyDescription: (description) => {
     cy.expect(
       descriptiveDataAccordion.find(KeyValue('Physical description')).has({ value: description }),
@@ -1645,14 +1648,15 @@ export default {
       const sharingInstanceId = interception.response.body.instanceIdentifier;
       const consortiaId = interception.request.url.split('/consortia/')[1].split('/')[0];
       return cy.recurse(
-        () => cy.okapiRequest({
-          path: `consortia/${consortiaId}/sharing/instances`,
-          searchParams: {
-            instanceIdentifier: sharingInstanceId,
-          },
-          isDefaultSearchParamsRequired: false,
-          failOnStatusCode: false,
-        }),
+        () =>
+          cy.okapiRequest({
+            path: `consortia/${consortiaId}/sharing/instances`,
+            searchParams: {
+              instanceIdentifier: sharingInstanceId,
+            },
+            isDefaultSearchParamsRequired: false,
+            failOnStatusCode: false,
+          }),
         (response) => response.body.sharingInstances[0].status === 'COMPLETE',
         {
           limit: 30,
@@ -1967,11 +1971,12 @@ export default {
       }
     });
   },
-  checkInstanceHrId: (expectedInstanceHrId) => cy.expect(
-    instanceDetailsSection
-      .find(KeyValue('Instance HRID'))
-      .has({ value: including(expectedInstanceHrId) }),
-  ),
+  checkInstanceHrId: (expectedInstanceHrId) =>
+    cy.expect(
+      instanceDetailsSection
+        .find(KeyValue('Instance HRID'))
+        .has({ value: including(expectedInstanceHrId) }),
+    ),
 
   verifySharedIconByTitle(title) {
     cy.expect(
@@ -2148,11 +2153,11 @@ export default {
     const holdingSection = Accordion(including(holdingsLocation));
     const targetEl = whileMoving
       ? holdingSection
-        .find(MultiColumnListCell({ columnIndex: 1, row: itemIndex }))
-        .find(TextField({ value: `${orderValue}` }))
+          .find(MultiColumnListCell({ columnIndex: 1, row: itemIndex }))
+          .find(TextField({ value: `${orderValue}` }))
       : holdingSection.find(
-        MultiColumnListCell({ columnIndex: 0, row: itemIndex, content: `${orderValue}` }),
-      );
+          MultiColumnListCell({ columnIndex: 0, row: itemIndex, content: `${orderValue}` }),
+        );
     cy.expect(targetEl.exists());
   },
 

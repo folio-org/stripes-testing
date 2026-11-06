@@ -60,6 +60,6 @@ afterEach(function logDataImportJobsOnFailure() {
 try {
   // eslint-disable-next-line global-require, import/extensions
   require('../../cypress.local.js').support?.();
-} catch (e) {
+} catch {
   // cypress.local.js is optional
 }
