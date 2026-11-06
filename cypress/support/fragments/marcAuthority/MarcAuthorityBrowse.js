@@ -27,7 +27,12 @@ const searchOptions = {
 
 // TODO: redefine section id
 const rootSection = Section({ id: 'authority-search-results-pane' });
-const presentedColumns = ['Authorized/Reference', 'Heading/Reference', 'Type of heading'];
+const presentedColumns = [
+  'Authorized/Reference',
+  'Heading/Reference',
+  'Type of heading',
+  'Number of titles',
+];
 const rootPaneAuthoritiesFilters = Section({ id: 'pane-authorities-filters' });
 const defaultMainFilterValue = { htmlValue: '', visibleValue: searchOptions.selectBrowseOption };
 const searchButton = Button({ id: 'submit-authorities-search' });
