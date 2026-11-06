@@ -213,6 +213,19 @@ export default {
         );
       }
 
+      if (record.adjustments) {
+        cy.expect(
+          invoiceLinesSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: INVOICE_LINES_TABLE_COLUMN_HEADERS.ADJUSTMENTS,
+              }),
+            )
+            .has({ content: including(record.adjustments) }),
+        );
+      }
+
       if (record.total) {
         cy.expect(
           invoiceLinesSection
@@ -344,6 +357,14 @@ export default {
         cy.expect(invoiceDetailsPane.find(KeyValue(field)).absent());
       });
     }
+  },
+
+  checkInvoiceFundDistributionSectionAbsent() {
+    cy.expect(invoiceFundDistributionSection.absent());
+  },
+
+  checkInvoiceLevelAdjustmentsSectionAbsent() {
+    cy.expect(invoiceLevelAdjustmentsSection.absent());
   },
 
   checkInvoiceFundDistributionColumnItem(rowIndex, columnName, value) {
