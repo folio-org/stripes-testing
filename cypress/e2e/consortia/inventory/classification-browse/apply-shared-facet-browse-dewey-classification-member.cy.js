@@ -132,6 +132,7 @@ describe('Inventory', () => {
         'C471473 Apply "Shared" facet to browse classifications result list during browsing by "Dewey Decimal classification" option when Dewey is selected in settings (consortia) (promin)',
         { tags: ['criticalPathECS', 'promin', 'nonParallel', 'C471473'] },
         () => {
+          cy.getToken(user.username, user.password);
           classificationValues.forEach((classification) => {
             BrowseClassifications.waitForClassificationNumberToAppear(
               classification,
@@ -168,12 +169,9 @@ describe('Inventory', () => {
           BrowseContributors.checkValueAbsentInResults(classificationValues[1]);
 
           // Step 4: Click on shared classification - redirected to search
-          BrowseClassifications.selectFoundValueByValue(classificationValues[0]);
+          BrowseClassifications.selectFoundValueByValueAndStoreId(classificationValues[0]);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(
-            querySearchOption,
-            `classifications.classificationNumber=="${classificationValues[0]}"`,
-          );
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.checkSharedInstancesInResultList();
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.verifySearchResult(instanceTitles[0]);
@@ -204,12 +202,9 @@ describe('Inventory', () => {
           InventorySearchAndFilter.verifyCheckboxInAccordion(sharedAccordionName, 'No', true);
 
           // Step 8: Click on local classification - redirected to search
-          BrowseClassifications.selectFoundValueByValue(classificationValues[1]);
+          BrowseClassifications.selectFoundValueByValueAndStoreId(classificationValues[1]);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(
-            querySearchOption,
-            `classifications.classificationNumber=="${classificationValues[1]}"`,
-          );
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.checkNoSharedInstancesInResultList();
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.verifySearchResult(instanceTitles[1]);
@@ -241,12 +236,9 @@ describe('Inventory', () => {
           BrowseContributors.checkRecordPresentInSearchResults(classificationValues[1]);
 
           // Step 12: Click on any result - redirected to search with both checkboxes
-          BrowseClassifications.selectFoundValueByValue(classificationValues[0]);
+          BrowseClassifications.selectFoundValueByValueAndStoreId(classificationValues[0]);
           InventorySearchAndFilter.validateSearchTabIsDefault();
-          InventorySearchAndFilter.verifySearchOptionAndQuery(
-            querySearchOption,
-            `classifications.classificationNumber=="${classificationValues[0]}"`,
-          );
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.verifySearchResult(instanceTitles[0]);
           InventorySearchAndFilter.toggleAccordionByName(sharedAccordionName);

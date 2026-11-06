@@ -2,8 +2,10 @@ import { HTML, including } from '@interactors/html';
 import {
   Accordion,
   Button,
+  Calendar,
   Callout,
   Checkbox,
+  Datepicker,
   Dropdown,
   DropdownMenu,
   Form,
@@ -18,6 +20,7 @@ import {
   Pane,
   Popover,
   RepeatableFieldItem,
+  Section,
   Select,
   TextArea,
   TextField,
@@ -49,6 +52,9 @@ const physicalResourceDetailsAccordion = Accordion('Physical resource details');
 const electronicResourceDetailsAccordion = Accordion({ id: 'e-resources-details' });
 const eResourcesDetailsAccordion = Accordion('E-resources details');
 const donorInformationAccordion = Accordion('Donor information');
+const invoiceInformationSection = Section({ id: 'invoice-information' });
+const invoiceAdjustmentsSection = Section({ id: 'invoice-adjustments' });
+const addAdjustmentButton = Button('Add adjustment');
 const nameField = TextField({ name: 'profile.name' });
 const searchField = TextField({ id: 'input-record-search' });
 const permanentLocationField = TextField('Permanent');
@@ -2168,5 +2174,61 @@ export default {
     if (shouldBeFocused) {
       cy.expect(donorField.has({ focused: true }));
     }
+  },
+
+  // Invoice date calendar interactions
+  setInvoiceDateToChooseDate: () => {
+    // Invoice date has a unique [data-test-date-picker] wrapper; its "Accepted values" button
+    // is the first such button in the invoice-information section (options: Today / Choose date)
+    cy.get('#invoice-information [data-test-date-picker] [data-test-accepted-values-list] button')
+      .first()
+      .click();
+    cy.expect(DropdownMenu({ visible: true }).exists());
+    cy.do(DropdownMenu({ visible: true }).find(Button('Choose date')).click());
+  },
+  openInvoiceDateCalendar: () => {
+    cy.do(invoiceInformationSection.find(Datepicker()).openCalendar());
+    cy.expect(Calendar().exists());
+  },
+  selectCalendarActiveDay: (day) => {
+    cy.do(Calendar().clickActiveDay(day));
+    cy.expect(Calendar().absent());
+  },
+  verifyInvoiceDateHasNoError: () => {
+    cy.expect(invoiceInformationSection.find(Datepicker()).has({ error: false }));
+  },
+
+  // C358992 - Invoice adjustments Pro rate / Relation to total
+  addInvoiceLevelAdjustment: () => {
+    cy.do(invoiceAdjustmentsSection.find(addAdjustmentButton).click());
+  },
+  openProRateAcceptedValues: () => {
+    // Pro rate is the first [data-test-accepted-values-list] in the adjustment row
+    cy.get(
+      '#invoice-adjustments [data-test-repeatable-field-list-item]:first [data-test-accepted-values-list]:eq(0) > button',
+    ).click();
+    cy.expect(DropdownMenu({ visible: true }).exists());
+  },
+  openRelationToTotalAcceptedValues: () => {
+    // Relation to total is the second [data-test-accepted-values-list] in the adjustment row
+    cy.get(
+      '#invoice-adjustments [data-test-repeatable-field-list-item]:first [data-test-accepted-values-list]:eq(1) > button',
+    ).click();
+    cy.expect(DropdownMenu({ visible: true }).exists());
+  },
+  selectAdjustmentAcceptedValue: (value) => {
+    cy.do(DropdownMenu({ visible: true }).find(Button(value)).click());
+  },
+  closeAcceptedValuesDropdown: () => {
+    cy.do(invoiceAdjustmentsSection.click());
+    cy.expect(DropdownMenu({ visible: true }).absent());
+  },
+  clearProRateField: () => {
+    cy.do(
+      invoiceAdjustmentsSection
+        .find(RepeatableFieldItem({ index: 0 }))
+        .find(TextField('Pro rate'))
+        .fillIn(''),
+    );
   },
 };

@@ -159,6 +159,7 @@ describe('Inventory', () => {
           cy.reload();
           InventoryInstances.waitContentLoading();
         }, 20_000);
+        cy.getToken(user.username, user.password);
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOptionFromClassificationGroup(
           BROWSE_CLASSIFICATION_OPTIONS.DEWEY_DECIMAL,
@@ -206,11 +207,9 @@ describe('Inventory', () => {
         BrowseClassifications.checkNumberOfTitlesInRow(classificationTestData[2].value, '1');
 
         // Step 4: Click on exact match result
+        BrowseClassifications.storeClassificationId(classificationTestData[2].value);
         BrowseCallNumber.clickOnResult(classificationTestData[2].value);
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
-          querySearchOption,
-          `classifications.classificationNumber=="${classificationTestData[2].value}"`,
-        );
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
         InventorySearchAndFilter.verifyInstanceDisplayed(instanceTitle);
         InventorySearchAndFilter.verifyNumberOfSearchResults(1);
         InventorySearchAndFilter.switchToBrowseTab();

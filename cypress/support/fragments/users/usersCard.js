@@ -1129,6 +1129,11 @@ export default {
     cy.expect(preferredEmailCommunicationsField.find(HTML(including(preference))).absent());
   },
 
+  // Multiple values are shown as a list, e.g. "Mail (primary address) and Email"
+  verifyPreferredContact(value) {
+    cy.expect(contactInfoSection.find(KeyValue('Preferred contact')).has({ value }));
+  },
+
   verifyUserDetailsPaneOpen() {
     cy.expect(rootSection.exists());
   },

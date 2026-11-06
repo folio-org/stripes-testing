@@ -26,6 +26,7 @@ import {
   Selection,
   SelectionOption,
   MultiSelectOption,
+  MultiSelectMenu,
   Spinner,
   TextArea,
   TextField,
@@ -464,6 +465,84 @@ export default {
     this.clearPreferredContact();
 
     cy.do(preferredContactSelect.choose(contact));
+  },
+
+  verifyPreferredContactRequired() {
+    cy.expect(preferredContactSelect.has({ label: including('Preferred contact*') }));
+  },
+
+  verifyPreferredContactSelected(contacts) {
+    cy.expect(preferredContactSelect.has({ selected: contacts }));
+  },
+
+  verifyPreferredContactRemoveIcons(contacts) {
+    contacts.forEach((contact) => {
+      cy.expect(
+        preferredContactSelect
+          .find(ValueChipRoot(contact))
+          .find(Button({ icon: 'times' }))
+          .exists(),
+      );
+    });
+  },
+
+  openPreferredContactDropdown() {
+    cy.do(preferredContactSelect.open());
+    this.verifyPreferredContactDropdownOpen();
+  },
+
+  closePreferredContactDropdown() {
+    cy.do(preferredContactSelect.close());
+  },
+
+  verifyPreferredContactDropdownOpen() {
+    cy.expect(preferredContactSelect.has({ open: true }));
+  },
+
+  // The dropdown must be open; with exact = true no other options may be listed
+  verifyPreferredContactOptions(options, { exact = true } = {}) {
+    options.forEach((option) => {
+      cy.expect(MultiSelectMenu().find(MultiSelectOption(option)).exists());
+    });
+    if (exact) cy.expect(MultiSelectMenu().has({ optionCount: options.length }));
+  },
+
+  // Unlike changePreferredContact(), keeps the dropdown open after selecting. With synthetic
+  // events (bare click, or mousemove/mousedown/mouseup/click) the open MultiSelection can later
+  // re-add the selected option on its own (e.g. "Mail, Mail"), so a real mouse click is used
+  clickPreferredContactOption(contact) {
+    cy.expect(MultiSelectMenu().find(MultiSelectOption(contact)).exists());
+    cy.contains('[class^=multiSelectMenu] [class^=multiSelectOption-]', contact).realClick();
+  },
+
+  setPreferredContacts(contacts) {
+    cy.do(preferredContactSelect.set(contacts));
+  },
+
+  removePreferredContact(contact) {
+    cy.do(
+      preferredContactSelect
+        .find(ValueChipRoot(contact))
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.expect(preferredContactSelect.find(ValueChipRoot(contact)).absent());
+  },
+
+  // Moves focus out of "Preferred contact" so the field is marked as touched. A synthetic click
+  // doesn't move focus, so focus is moved explicitly
+  leavePreferredContactField() {
+    cy.do(phoneField.focus());
+  },
+
+  // The MultiSelect "error" filter expects the class to start with "feedbackError", but here it
+  // starts with "multiSelectError", so the message element is located inside the field instead
+  verifyPreferredContactError(error) {
+    cy.expect(
+      preferredContactSelect
+        .find(HTML({ className: including('feedbackError'), text: error }))
+        .exists(),
+    );
   },
 
   changeBarcode(barcode) {

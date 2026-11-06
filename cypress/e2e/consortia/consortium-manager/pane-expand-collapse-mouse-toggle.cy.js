@@ -30,7 +30,7 @@ describe('Consortia', () => {
     });
 
     it(
-      'C1464337 - Toggling a pane with the mouse works as before — no regression in ECS and non-ECS apps (keyboard focus fix)',
+      'C1464337 - Toggling a pane with the mouse works as before — no regression in ECS and non-ECS apps (keyboard focus fix) (helios)',
       { tags: ['criticalPathECS', 'helios', 'C1464337'] },
       () => {
         // Precondition: "Consortium manager" is open on the central tenant

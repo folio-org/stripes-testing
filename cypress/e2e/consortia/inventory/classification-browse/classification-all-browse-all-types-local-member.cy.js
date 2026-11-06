@@ -238,6 +238,7 @@ describe('Inventory', () => {
             });
             cy.reload();
           }, 20_000);
+          cy.getToken(user.username, user.password);
           InventoryInstances.waitContentLoading();
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
           InventorySearchAndFilter.switchToBrowseTab();
@@ -263,11 +264,9 @@ describe('Inventory', () => {
           BrowseClassifications.verifyValueInResultTableIsHighlighted(
             testClassifications[11].value,
           );
+          BrowseClassifications.storeClassificationId(testClassifications[11].value);
           InventorySearchAndFilter.selectFoundItemFromBrowse(testClassifications[11].value);
-          InventorySearchAndFilter.verifySearchOptionAndQuery(
-            'Query search',
-            `classifications.classificationNumber=="${testClassifications[11].value}"`,
-          );
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId();
           // Number of found Instance records matches to the value in "Number of titles" column from the Browse result list for selected Classification
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           // Return to browse
