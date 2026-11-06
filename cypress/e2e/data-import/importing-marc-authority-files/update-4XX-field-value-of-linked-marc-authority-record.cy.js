@@ -240,7 +240,9 @@ describe('Data Import', () => {
           'Default authority',
           'Authorities',
         );
-        ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
+        ExportFile.getExportJobByUploadedFileViaApi(testData.csvFile).then((exportJob) => {
+          ExportFile.downloadExportedMarcFile(testData.exportedMarcFile, exportJob);
+        });
 
         // change exported file
         DataImport.replace999SubfieldsInPreupdatedFile(

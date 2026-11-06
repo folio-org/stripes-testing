@@ -140,7 +140,11 @@ describe('Inventory', () => {
           InventoryInstance.openItemByBarcode(itemData.barcode);
           ItemRecordView.waitLoading();
           ItemRecordView.verifyItemStatus('Checked out');
-          ItemRecordView.checkItemCirculationHistory(todayDate, servicePoint.name, user.username);
+          ItemRecordView.checkItemCirculationHistory(
+            todayDate,
+            servicePoint.name,
+            `${user.lastName}, ${user.firstName}`,
+          );
           ItemRecordView.duplicateItem();
           ItemRecordNew.waitLoading(itemData.instanceTitle);
           ItemRecordNew.addBarcode(newItemBarcode);
@@ -150,7 +154,7 @@ describe('Inventory', () => {
           InstanceRecordView.verifyInstanceRecordViewOpened();
           InventoryHoldings.checkIfExpanded(`${holdingsPermanentLocation} >`, true);
           InventoryInstance.openItemByBarcode(newItemBarcode);
-          ItemRecordView.checkItemCirculationHistory('-', 'No value set-', '-');
+          ItemRecordView.checkItemCirculationHistoryEmpty();
         },
       );
     },

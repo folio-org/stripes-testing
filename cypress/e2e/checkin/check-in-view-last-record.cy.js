@@ -76,7 +76,11 @@ describe('Check in', () => {
       CheckInPane.verifyResultCells();
       CheckInActions.openItemDetails(ITEM_BARCODE);
       ItemRecordView.waitLoading();
-      ItemRecordView.checkItemCirculationHistory(todayDate, servicePoint.name, userData.username);
+      ItemRecordView.checkItemCirculationHistory(
+        todayDate,
+        servicePoint.name,
+        `${userData.lastName}, ${userData.firstName}`,
+      );
 
       cy.visit(TopMenu.checkInPath);
       CheckInActions.waitLoading();
@@ -85,7 +89,11 @@ describe('Check in', () => {
       CheckInPane.verifyResultCells();
       CheckInActions.openItemDetails(ITEM_BARCODE);
       ItemRecordView.waitLoading();
-      ItemRecordView.checkItemCirculationHistory(todayDate, servicePoint.name, userData.username);
+      ItemRecordView.checkItemCirculationHistory(
+        todayDate,
+        servicePoint.name,
+        `${userData.lastName}, ${userData.firstName}`,
+      );
     },
   );
 });

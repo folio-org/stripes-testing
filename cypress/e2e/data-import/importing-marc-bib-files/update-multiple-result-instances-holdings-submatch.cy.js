@@ -101,8 +101,8 @@ describe('Data Import', () => {
           FileManager.createFile(`cypress/fixtures/${csvFileName}`, instanceId);
         })
         .then(() => {
-          return ExportFile.exportFileViaApi(csvFileName).then(() => {
-            return ExportFile.downloadExportedMarcFile(exportedMarcFileName);
+          return ExportFile.exportFileViaApi(csvFileName).then((exportJob) => {
+            return ExportFile.downloadExportedMarcFile(exportedMarcFileName, exportJob);
           });
         })
         .then(() => {

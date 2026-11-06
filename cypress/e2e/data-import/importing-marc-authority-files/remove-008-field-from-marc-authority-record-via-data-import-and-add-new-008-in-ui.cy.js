@@ -112,8 +112,8 @@ describe('Data Import', () => {
             csvFile,
             'authority',
             'Default authority export job profile',
-          ).then(() => {
-            ExportFile.downloadExportedMarcFile(exportedMarcFile);
+          ).then((exportJob) => {
+            ExportFile.downloadExportedMarcFile(exportedMarcFile, exportJob);
           });
         })
         .then(() => {

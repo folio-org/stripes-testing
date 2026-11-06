@@ -183,7 +183,9 @@ describe('MARC', () => {
             DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES.AUTHORITY.split(' export')[0],
             'Authorities',
           );
-          ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
+          ExportFile.getExportJobByUploadedFileViaApi(testData.csvFile).then((exportJob) => {
+            ExportFile.downloadExportedMarcFile(testData.exportedMarcFile, exportJob);
+          });
 
           // Edit the exported .mrc file — update the 1XX heading with " UPD" suffix
           DataImport.editMarcFile(

@@ -89,7 +89,7 @@ describe('Circulation log', () => {
       InventorySearchAndFilter.searchByParameter('Barcode', itemBarcode);
       ItemRecordView.waitLoading();
       // Click on the "Circulation history" accordion to expand it => Check the "Most recent check in"
-      ItemRecordView.checkItemCirculationHistory('-', 'No value set-', 'No value set-');
+      ItemRecordView.checkItemCirculationHistoryEmpty();
       // Navigate to the "Check in" app and check in that Item by pasting the copied Items barcode to the input filled => Hit "Enter" button
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
@@ -104,7 +104,7 @@ describe('Circulation log', () => {
       ItemRecordView.checkItemCirculationHistory(
         todayDate,
         testData.servicePoint.name,
-        userData.username,
+        `${userData.lastName}, ${userData.firstName}`,
       );
     },
   );

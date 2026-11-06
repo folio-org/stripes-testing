@@ -7,7 +7,6 @@ import getRandomPostfix, {
   getRandomLetters,
   randomNDigitNumber,
 } from '../../../../support/utils/stringTools';
-import { AUTHORITY_TYPES } from '../../../../support/constants';
 
 describe('MARC', () => {
   describe('MARC authority', () => {
@@ -81,6 +80,10 @@ describe('MARC', () => {
           });
           MarcAuthorities.searchBeats(testData.authorityHeading);
           MarcAuthorities.verifyRecordFound(testData.authorityHeading);
+          MarcAuthority.waitLoading();
+          MarcAuthority.contains(testData.authorityHeading);
+          MarcAuthorities.closeMarcViewPane();
+          MarcAuthorities.verifyViewPaneContentExists(false);
 
           // Steps 3-6 (via API): User B deletes the record while User A's search results remain visible
           cy.then(() => {
@@ -88,10 +91,10 @@ describe('MARC', () => {
             MarcAuthority.deleteViaAPI(authorityId);
             cy.recurse(
               () => MarcAuthorities.getMarcAuthoritiesViaApi({
-                query: `keyword="${testData.authorityHeading}" and authRefType=="${AUTHORITY_TYPES.AUTHORIZED}"`,
+                query: `id==${authorityId}`,
               }),
               (foundAuthorities) => foundAuthorities.length === 0,
-              { limit: 10, timeout: 12000, delay: 1000 },
+              { limit: 18, timeout: 20000, delay: 1000 },
             );
             cy.getToken(userA.username, userA.password);
           }).then(() => {

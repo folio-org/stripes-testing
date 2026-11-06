@@ -387,8 +387,11 @@ describe('Data Import', () => {
           `cypress/fixtures/${csvFileName}`,
           `${testData.instanceId1}\n${testData.instanceId2}`,
         );
-        ExportFile.exportFileViaApi(csvFileName, 'instance', exportJobProfile.name);
-        ExportFile.downloadExportedMarcFile(exportedMarcFileName);
+        ExportFile.exportFileViaApi(csvFileName, 'instance', exportJobProfile.name).then(
+          (exportJob) => {
+            ExportFile.downloadExportedMarcFile(exportedMarcFileName, exportJob);
+          },
+        );
 
         // Step 16: Update 901 subfield values in record 1 (which has the 901 field)
         DataImport.editMarcFile(
