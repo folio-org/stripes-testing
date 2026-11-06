@@ -1,13 +1,19 @@
 import {
   Button,
+  Card,
   Checkbox,
+  KeyValue,
+  RepeatableField,
   SearchField,
   Section,
+  Select,
   Selection,
   SelectionList,
   TextField,
   Warning,
   including,
+  not,
+  or,
 } from '../../../../interactors';
 import {
   ACCOUNT_STATUSES,
@@ -33,6 +39,8 @@ const clearButton = Button({ icon: 'times-circle-solid' });
 const polLookUpButton = Button('POL look-up');
 const unsavedChangesMessage = 'There are unsaved changes';
 const subTotalSelector = '#subTotal';
+const adjustmentsField = invoiceLineEditFormRoot.find(RepeatableField({ id: 'adjustments' }));
+const getAdjustmentCard = (index) => adjustmentsField.find(Card({ headerStart: `Adjustment ${index + 1}` }));
 
 const infoFields = {
   description: informationSection.find(TextField({ id: 'description' })),
@@ -154,6 +162,104 @@ export default {
       cy.do(infoFields.subTotal.fillIn(invoiceLine.subTotal));
       cy.do(infoFields.subTotal.has({ value: invoiceLine.subTotal }));
     }
+    if (invoiceLine.adjustment) {
+      // Edits an existing line-level adjustment
+      const { index, description, value, type, relationToTotal, exportToAccounting } =
+        invoiceLine.adjustment;
+
+      if (description) {
+        cy.do(TextField({ name: `adjustments[${index}].description` }).fillIn(description));
+      }
+      if (value) {
+        cy.do(TextField({ name: `adjustments[${index}].value` }).fillIn(value));
+      }
+      if (type) {
+        cy.do(getAdjustmentCard(index).find(KeyValue('Type')).find(Button(type)).click());
+      }
+      if (relationToTotal) {
+        cy.do(Select({ name: `adjustments[${index}].relationToTotal` }).choose(relationToTotal));
+      }
+      if (exportToAccounting) {
+        const exportCheckbox = Checkbox({ name: `adjustments[${index}].exportToAccounting` });
+
+        cy.do(exportCheckbox.checkIfNotSelected());
+        cy.expect(exportCheckbox.has({ checked: true }));
+      }
+    }
+    if (invoiceLine.deleteLineLevelAdjustments) {
+      // Line-level adjustments go before invoice-level ones, so remove button #0 is always a line-level one
+      for (let i = 0; i < invoiceLine.deleteLineLevelAdjustments; i++) {
+        cy.do(adjustmentsField.clickRemove(0));
+      }
+      // Invoice-level adjustments can not be removed: their trash buttons are disabled
+      cy.expect(adjustmentsField.find(Button({ icon: 'trash', disabled: false })).absent());
+    }
+  },
+
+  checkAdjustmentSelectOptions(fieldName, { included = [], excluded = [] } = {}, index = 0) {
+    const select = invoiceLineEditFormRoot.find(
+      Select({ name: `adjustments[${index}].${fieldName}` }),
+    );
+
+    included.forEach((option) => {
+      cy.expect(select.has({ optionsText: including(option) }));
+    });
+    excluded.forEach((option) => {
+      cy.expect(select.has({ optionsText: not(including(option)) }));
+    });
+  },
+
+  checkAdjustmentsCount(count) {
+    if (count) {
+      cy.expect(
+        adjustmentsField
+          .find(TextField({ name: `adjustments[${count - 1}].description` }))
+          .exists(),
+      );
+    }
+    cy.expect(
+      adjustmentsField.find(TextField({ name: `adjustments[${count}].description` })).absent(),
+    );
+  },
+
+  checkAdjustment({ index = 0, description, value, type, relationToTotal }) {
+    if (description) {
+      cy.expect(
+        TextField({ name: `adjustments[${index}].description` }).has({ value: description }),
+      );
+    }
+    if (value) {
+      cy.expect(TextField({ name: `adjustments[${index}].value` }).has({ value }));
+    }
+    if (type) {
+      cy.expect(
+        getAdjustmentCard(index)
+          .find(KeyValue('Type'))
+          .find(Button(type, { disabled: or(true, false) }))
+          .has({ className: including('primary'), disabled: or(true, false) }),
+      );
+    }
+    if (relationToTotal) {
+      cy.expect(
+        Select({ name: `adjustments[${index}].relationToTotal` }).has({
+          checkedOptionText: relationToTotal,
+        }),
+      );
+    }
+  },
+
+  checkAdjustmentsEditable({ editable = [], readOnly = [] } = {}) {
+    const checkAdjustment = (index, disabled) => {
+      cy.expect([
+        TextField({ name: `adjustments[${index}].description` }).has({ disabled }),
+        getAdjustmentCard(index)
+          .find(Button({ icon: 'trash' }))
+          .has({ disabled }),
+      ]);
+    };
+
+    editable.forEach((index) => checkAdjustment(index, false));
+    readOnly.forEach((index) => checkAdjustment(index, true));
   },
 
   cancelWithUnsavedChanges({ keepEditing = false } = {}) {
