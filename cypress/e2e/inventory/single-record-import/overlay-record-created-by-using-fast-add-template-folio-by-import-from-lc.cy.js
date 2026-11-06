@@ -10,12 +10,14 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 
 const testData = {
   user: {},
   identifierType: 'LCCN',
   lccnIdentifier: '08020755',
   instanceSource: 'FOLIO',
+  OCLCAuthentication: '100481406/PAOLF',
 };
 const fastAddRecord = {
   resourceTitle: 'Wayeeses, the white wolf, from "Northern trails,"',
@@ -57,6 +59,8 @@ describe('Inventory', () => {
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(testData.OCLCAuthentication);
 
         cy.login(testData.user.username, testData.user.password);
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
