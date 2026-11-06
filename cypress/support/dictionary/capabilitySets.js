@@ -349,6 +349,21 @@ export default {
     resource: 'UI-Invoice Invoice',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiInvoiceInvoiceEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Invoice Invoice',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
+  uiInvoiceInvoiceCreate: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Invoice Invoice',
+    action: CAPABILITY_ACTIONS.CREATE,
+  },
+  uiTagsManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Tags',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
   uiInventoryInstanceEdit: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Instance',

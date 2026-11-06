@@ -758,7 +758,7 @@ describe('Inventory', () => {
 
     it(
       'C397329 Verify that permission: "Settings (Tags): Can enable or disable tags for all apps" works as expected (vega)',
-      { tags: ['criticalPath', 'vega', 'C397329'] },
+      { tags: ['criticalPath', 'vega', 'C397329', 'nonParallel'] },
       () => {
         TagsGeneral.changeEnableTagsStatus('disable');
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVOICES);

@@ -461,6 +461,8 @@ export default {
   },
 
   changePreferredContact(contact = 'Email') {
+    this.clearPreferredContact();
+
     cy.do(preferredContactSelect.choose(contact));
   },
 
@@ -478,6 +480,10 @@ export default {
 
   clearUsername() {
     cy.do(usernameField.clear());
+  },
+
+  clearPreferredContact() {
+    cy.do(preferredContactSelect.clear());
   },
 
   verifyUsernameAlreadyExistsError() {

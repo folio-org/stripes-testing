@@ -2841,6 +2841,10 @@ export default {
     FiltersPaneHelper.expandFilterAccordion(filtersPane, filterLabel);
   },
 
+  assertFilterAccordions(labels = []) {
+    FiltersPaneHelper.assertFilterAccordions(filtersPane, labels);
+  },
+
   clearSearchField() {
     cy.get('#order-lines-filters-pane-content').find('#input-record-search').clear();
   },
@@ -2852,6 +2856,7 @@ export default {
 
   clearFilter(filterLabel) {
     FiltersPaneHelper.clearFilter(filtersPane, filterLabel);
+    FiltersPaneHelper.waitForSearchCompleted(filtersPane);
   },
 
   filterByDateRange(filterLabel, { from, to }) {
@@ -2864,6 +2869,7 @@ export default {
 
   filterByMultiSelectOptions(filterLabel, options = []) {
     FiltersPaneHelper.filterByMultiSelectOptions(filtersPane, filterLabel, options);
+    FiltersPaneHelper.waitForSearchCompleted(filtersPane);
   },
 
   filterByRush(options) {
