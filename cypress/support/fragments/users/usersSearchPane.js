@@ -13,6 +13,13 @@ import {
   TextField,
 } from '../../../../interactors';
 
+const searchPaneTitle = 'Search & filter';
+const resultsPane = Pane({ id: 'users-search-results-pane' });
+const collapseSearchPaneButton = Button({
+  ariaLabelledby: 'collapse-filter-pane-button-tooltip-text',
+});
+const expandSearchPaneButton = Button({ ariaLabelledby: 'expand-filter-pane-button-tooltip-text' });
+
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
 const waitClick = () => {
   cy.wait(1500);
@@ -160,5 +167,42 @@ export default {
         .find(Button({ ariaLabel: 'Close ' }))
         .click(),
     );
+  },
+
+  tabToCollapseSearchPaneButton() {
+    // Keyboard navigation starts at the "Search & filter" pane header (a focusable region),
+    // so the next Tab moves focus to its "Collapse Search & filter pane" button
+    cy.do(PaneHeader(searchPaneTitle).focus());
+    cy.realPress('Tab');
+    this.verifyCollapseSearchPaneButtonFocused();
+  },
+
+  // key: 'Enter' or 'Space'; activates the focused Expand/Collapse button
+  pressKeyOnFocusedPaneButton(key) {
+    cy.realPress(key);
+  },
+
+  pressTab() {
+    cy.realPress('Tab');
+  },
+
+  verifySearchPaneCollapsed() {
+    cy.expect([Pane(searchPaneTitle).absent(), expandSearchPaneButton.exists()]);
+  },
+
+  verifySearchPaneExpanded() {
+    cy.expect([Pane(searchPaneTitle).exists(), collapseSearchPaneButton.exists()]);
+  },
+
+  verifyCollapseSearchPaneButtonFocused() {
+    cy.expect(collapseSearchPaneButton.has({ focused: true }));
+  },
+
+  verifyExpandSearchPaneButtonFocused() {
+    cy.expect(expandSearchPaneButton.has({ focused: true }));
+  },
+
+  verifyResultsPaneActionsButtonFocused() {
+    cy.expect(resultsPane.find(Button('Actions')).has({ focused: true }));
   },
 };
