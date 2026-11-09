@@ -122,8 +122,12 @@ describe('Users', () => {
         UserEdit.verifyPreferredContactOptions([CONTACTS.email, CONTACTS.sms], { exact: false });
         UserEdit.closePreferredContactDropdown();
 
-        // Step 9: Select "Email" and save; the detail pane lists both values
-        UserEdit.changePreferredContact(CONTACTS.email);
+        // Step 9: Select "Email" in addition to "Mail (primary address)" and save; the detail pane
+        // lists both values (changePreferredContact would clear the current selection first)
+        UserEdit.openPreferredContactDropdown();
+        UserEdit.clickPreferredContactOption(CONTACTS.email);
+        UserEdit.closePreferredContactDropdown();
+        UserEdit.verifyPreferredContactSelected([CONTACTS.mail, CONTACTS.email]);
         UserEdit.saveEditedUser();
         Users.ensureAccordionOpen('Contact information');
         UsersCard.verifyPreferredContact(`${CONTACTS.mail} and ${CONTACTS.email}`);
