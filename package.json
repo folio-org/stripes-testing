@@ -6,8 +6,8 @@
   "license": "Apache-2.0",
   "scripts": {
     "build-mod-descriptor": "stripes mod descriptor --full --strict | jq '.[]' > module-descriptor.json ",
-    "lint": "eslint . --ext=js",
-    "lint:fix": "eslint --fix --quiet",
+    "lint": "stripes-lint .",
+    "lint:fix": "stripes-lint --fix --quiet",
     "prepare": "husky install",
     "prettier": "prettier .",
     "prettier:fix": "prettier --write",
@@ -90,19 +90,12 @@
     "bigtest": {
       "chromedriver": "107.0.0",
       "tsx": "3.14.0"
-    },
-    "@folio/eslint-config-stripes": {
-      "sharp": "0.32.6"
     }
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
   "devDependencies": {
-    "@babel/eslint-parser": "^7.19.1",
-    "@folio/eslint-config-stripes": "^8.0.0",
+    "@folio/eslint-config-stripes": "^10.0.0",
     "@types/node": "^24",
-    "eslint": "^7.32.0",
-    "eslint-import-resolver-webpack": "^0.13.9",
-    "eslint-plugin-cypress": "^2.11.2",
     "husky": "^8.0.3",
     "lint-staged": "^15.4.3",
     "prettier": "^3.0.2",

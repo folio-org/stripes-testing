@@ -1131,11 +1131,9 @@ export default {
     }
   },
   collapseAll() {
-    cy.get('#pane-instancedetails').find('button').contains('Expand all').first()
-      .click();
+    cy.get('#pane-instancedetails').find('button').contains('Expand all').first().click();
     cy.wait(1500);
-    cy.get('#pane-instancedetails').find('button').contains('Collapse all').first()
-      .click();
+    cy.get('#pane-instancedetails').find('button').contains('Collapse all').first().click();
     cy.wait(1500);
   },
   openAcquisitionAccordion() {

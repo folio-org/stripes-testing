@@ -189,7 +189,9 @@ describe('Orders', () => {
         return Ledgers.createViaApi({
           ...Ledgers.getDefaultLedger(),
           fiscalYearOneId: f.get(R.FY).id,
-        }).then((ledger) => f.set(R.LEDGER, ledger, (v) => Ledgers.deleteLedgerViaApi(v.id, false)));
+        }).then((ledger) =>
+          f.set(R.LEDGER, ledger, (v) => Ledgers.deleteLedgerViaApi(v.id, false)),
+        );
       })
       .step((f) => {
         // Precondition 2: Active Fund A

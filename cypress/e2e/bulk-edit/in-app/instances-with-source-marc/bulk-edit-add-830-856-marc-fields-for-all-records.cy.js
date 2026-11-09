@@ -279,7 +279,8 @@ describe(
                 (record) => expect(record.get('856')[0].ind1).to.eq('4'),
                 (record) => expect(record.get('856')[0].ind2).to.eq('0'),
                 (record) => expect(record.get('856')[0].subf[0][0]).to.eq('u'),
-                (record) => expect(record.get('856')[0].subf[0][1]).to.eq(electronicAccessFields.uri),
+                (record) =>
+                  expect(record.get('856')[0].subf[0][1]).to.eq(electronicAccessFields.uri),
                 (record) => expect(record.get('856')[0].subf[1][0]).to.eq('z'),
                 (record) => {
                   expect(record.get('856')[0].subf[1][1]).to.eq(

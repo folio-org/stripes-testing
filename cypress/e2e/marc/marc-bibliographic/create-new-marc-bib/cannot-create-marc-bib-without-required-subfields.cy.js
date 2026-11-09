@@ -55,7 +55,6 @@ describe('MARC', () => {
       let field981Id;
       let indicator1Id;
       let indicator2Id;
-      let createdInstanceId;
 
       before('Create user and configure validation rules', () => {
         cy.getAdminToken();

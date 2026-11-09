@@ -59,7 +59,6 @@ describe('MARC', () => {
       let subfieldLId;
       let field981Id;
       let createdInstanceId;
-      let derivedInstanceId;
 
       before('Create user, import MARC file, and configure validation rules', () => {
         cy.getAdminToken();

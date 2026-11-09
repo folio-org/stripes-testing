@@ -26,7 +26,9 @@ describe('Invoices', () => {
 
           return Organizations.createOrganizationViaApi(organization, { returnBody: true }).then(
             (org) => {
-              return currentFlow.set(R.ORG, org, () => Organizations.deleteOrganizationViaApi(org.id));
+              return currentFlow.set(R.ORG, org, () =>
+                Organizations.deleteOrganizationViaApi(org.id),
+              );
             },
           );
         })
@@ -36,7 +38,9 @@ describe('Invoices', () => {
             vendorId: currentFlow.get(R.ORG).id,
             invoiceStatus: INVOICE_STATUSES.OPEN,
           }).then((invoice1) => {
-            return currentFlow.set(R.INVOICE_1, invoice1, () => Invoices.deleteInvoiceViaApi(invoice1.id));
+            return currentFlow.set(R.INVOICE_1, invoice1, () =>
+              Invoices.deleteInvoiceViaApi(invoice1.id),
+            );
           });
         })
         .step((currentFlow) => {
@@ -45,7 +49,9 @@ describe('Invoices', () => {
             vendorId: currentFlow.get(R.ORG).id,
             invoiceStatus: INVOICE_STATUSES.OPEN,
           }).then((invoice2) => {
-            return currentFlow.set(R.INVOICE_2, invoice2, () => Invoices.deleteInvoiceViaApi(invoice2.id));
+            return currentFlow.set(R.INVOICE_2, invoice2, () =>
+              Invoices.deleteInvoiceViaApi(invoice2.id),
+            );
           });
         })
         .step((currentFlow) => {
@@ -53,7 +59,9 @@ describe('Invoices', () => {
           return cy
             .createTempUser([Permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui])
             .then((userProperties) => {
-              return currentFlow.set(R.USER, userProperties, () => Users.deleteViaApi(userProperties.userId));
+              return currentFlow.set(R.USER, userProperties, () =>
+                Users.deleteViaApi(userProperties.userId),
+              );
             });
         })
         .step((currentFlow) => {

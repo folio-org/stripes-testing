@@ -78,7 +78,9 @@ describe.skip('Agreements', () => {
         })
         .step((currentFlow) => {
           return cy.createTagApi({ label: isolatingTagName }).then((id) => {
-            return currentFlow.set(R.TAG, { id, label: isolatingTagName }, () => cy.deleteTagApi(id, true));
+            return currentFlow.set(R.TAG, { id, label: isolatingTagName }, () =>
+              cy.deleteTagApi(id, true),
+            );
           });
         })
         .step((currentFlow) => {
@@ -101,14 +103,18 @@ describe.skip('Agreements', () => {
             ...Agreements.defaultAgreement,
             name: agreement1Name,
             tags: [{ value: isolatingTagName }],
-          }).then((agreement) => currentFlow.set(R.AGREEMENT_1, agreement, () => Agreements.deleteViaApi(agreement.id)));
+          }).then((agreement) =>
+            currentFlow.set(R.AGREEMENT_1, agreement, () => Agreements.deleteViaApi(agreement.id)),
+          );
         })
         .step((currentFlow) => {
           return Agreements.createViaApi({
             ...Agreements.defaultAgreement,
             name: agreement2Name,
             tags: [{ value: isolatingTagName }],
-          }).then((agreement) => currentFlow.set(R.AGREEMENT_2, agreement, () => Agreements.deleteViaApi(agreement.id)));
+          }).then((agreement) =>
+            currentFlow.set(R.AGREEMENT_2, agreement, () => Agreements.deleteViaApi(agreement.id)),
+          );
         })
         .step((currentFlow) => {
           const lines = [];
@@ -122,11 +128,11 @@ describe.skip('Agreements', () => {
                 tags: [{ value: isolatingTagName }],
                 resource: res
                   ? {
-                    id: res.id,
-                    name: res.name,
-                    class: res.class,
-                    _object: res,
-                  }
+                      id: res.id,
+                      name: res.name,
+                      class: res.class,
+                      _object: res,
+                    }
                   : null,
                 ...(res ? {} : { type: 'detached' }),
               }).then((line) => {
@@ -166,20 +172,32 @@ describe.skip('Agreements', () => {
               attributes: { name: packageName, contentType: 'E-Book' },
             },
           })
-            .then(({ data }) => EHoldingsPackages.getPackageByIdViaApi(data.id, {
-              searchParams: { include: 'resources' },
-            }))
-            .then(({ body }) => currentFlow.set(R.E_HOLDING_PACKAGE, body, () => EHoldingsPackages.deletePackageViaAPI(packageName)));
+            .then(({ data }) =>
+              EHoldingsPackages.getPackageByIdViaApi(data.id, {
+                searchParams: { include: 'resources' },
+              }),
+            )
+            .then(({ body }) =>
+              currentFlow.set(R.E_HOLDING_PACKAGE, body, () =>
+                EHoldingsPackages.deletePackageViaAPI(packageName),
+              ),
+            );
         })
         .step((currentFlow) => {
           return EHoldingsTitles.createEHoldingTitleVIaApi({
             packageId: currentFlow.get(R.E_HOLDING_PACKAGE).data.id,
             titleName,
           })
-            .then((title) => EHoldingsTitles.getTitleByIdViaApi(title.id, {
-              searchParams: { include: 'resources' },
-            }))
-            .then(({ body }) => currentFlow.set(R.E_HOLDING_TITLE, body, () => EHoldingsTitles.deleteTitleByIdViaApi(body.data.id)));
+            .then((title) =>
+              EHoldingsTitles.getTitleByIdViaApi(title.id, {
+                searchParams: { include: 'resources' },
+              }),
+            )
+            .then(({ body }) =>
+              currentFlow.set(R.E_HOLDING_TITLE, body, () =>
+                EHoldingsTitles.deleteTitleByIdViaApi(body.data.id),
+              ),
+            );
         })
         .step((currentFlow) => {
           return cy

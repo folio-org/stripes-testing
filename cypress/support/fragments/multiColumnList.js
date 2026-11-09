@@ -39,9 +39,11 @@ const scrollHeaderIntoView = (listInteractor, column) => {
 
 const getPaginationButton = (listInteractor, label) => listInteractor.find(Button(label));
 
-const getNextButton = (listInteractor) => getPaginationButton(listInteractor, COMMON_BUTTON_LABELS.NEXT);
+const getNextButton = (listInteractor) =>
+  getPaginationButton(listInteractor, COMMON_BUTTON_LABELS.NEXT);
 
-const getPreviousButton = (listInteractor) => getPaginationButton(listInteractor, COMMON_BUTTON_LABELS.PREVIOUS);
+const getPreviousButton = (listInteractor) =>
+  getPaginationButton(listInteractor, COMMON_BUTTON_LABELS.PREVIOUS);
 
 // When multi-column list doesn't have a loading indicator, and the Next or Previous
 // button is clicked, we wait for the first row to change, not for the loading to complete.
@@ -50,12 +52,14 @@ const waitFirstRowChanged = (listInteractor) => {
 
   return cy
     .then(() => listInteractor.perform(getFirstRowContent))
-    .should((prevContent) => listInteractor.perform((el) => {
-      const currentContent = getFirstRowContent(el);
-      if (!prevContent || !currentContent || currentContent === prevContent) {
-        throw new Error('Page has not changed yet');
-      }
-    }));
+    .should((prevContent) =>
+      listInteractor.perform((el) => {
+        const currentContent = getFirstRowContent(el);
+        if (!prevContent || !currentContent || currentContent === prevContent) {
+          throw new Error('Page has not changed yet');
+        }
+      }),
+    );
 };
 
 /**
@@ -215,13 +219,15 @@ const api = {
   getColumnValues(listInteractor, column, options = {}) {
     const { normalizeValue = defaultNormalizeValue } = options;
 
-    return cy.then(() => listInteractor.perform((el) => {
-      const headers = [...el.querySelectorAll('div[class*=mclHeader-]')];
-      const colIndex = headers.findIndex((h) => h.textContent.trim() === column) + 1;
-      return [
-        ...el.querySelectorAll(`[data-row-index] div[class*=mclCell-]:nth-child(${colIndex})`),
-      ].map((cell) => normalizeValue(cell.textContent));
-    }));
+    return cy.then(() =>
+      listInteractor.perform((el) => {
+        const headers = [...el.querySelectorAll('div[class*=mclHeader-]')];
+        const colIndex = headers.findIndex((h) => h.textContent.trim() === column) + 1;
+        return [
+          ...el.querySelectorAll(`[data-row-index] div[class*=mclCell-]:nth-child(${colIndex})`),
+        ].map((cell) => normalizeValue(cell.textContent));
+      }),
+    );
   },
 
   assertColumnValuesSorted(listInteractor, column, options = {}) {
@@ -394,14 +400,18 @@ const api = {
   navigateToLastPage(listInteractor, { hasLoadingIndicator = true } = {}) {
     const clickNextUntilDisabled = () => {
       return cy
-        .then(() => listInteractor.perform((el) => {
-          const nextButton = el.querySelector('[data-test-next-paging-button]');
-          return nextButton.disabled;
-        }))
+        .then(() =>
+          listInteractor.perform((el) => {
+            const nextButton = el.querySelector('[data-test-next-paging-button]');
+            return nextButton.disabled;
+          }),
+        )
         .then((isDisabled) => {
           if (isDisabled) return null;
 
-          return this.clickNextPage(listInteractor, { hasLoadingIndicator }).then(() => clickNextUntilDisabled());
+          return this.clickNextPage(listInteractor, { hasLoadingIndicator }).then(() =>
+            clickNextUntilDisabled(),
+          );
         });
     };
 
@@ -412,14 +422,18 @@ const api = {
   navigateToFirstPage(listInteractor, { hasLoadingIndicator = true } = {}) {
     const clickPreviousUntilDisabled = () => {
       return cy
-        .then(() => listInteractor.perform((el) => {
-          const prevButton = el.querySelector('[data-test-prev-paging-button]');
-          return prevButton.disabled;
-        }))
+        .then(() =>
+          listInteractor.perform((el) => {
+            const prevButton = el.querySelector('[data-test-prev-paging-button]');
+            return prevButton.disabled;
+          }),
+        )
         .then((isDisabled) => {
           if (isDisabled) return null;
 
-          return this.clickPreviousPage(listInteractor, { hasLoadingIndicator }).then(() => clickPreviousUntilDisabled());
+          return this.clickPreviousPage(listInteractor, { hasLoadingIndicator }).then(() =>
+            clickPreviousUntilDisabled(),
+          );
         });
     };
 

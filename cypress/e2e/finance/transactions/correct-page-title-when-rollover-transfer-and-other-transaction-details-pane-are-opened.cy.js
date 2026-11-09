@@ -80,7 +80,11 @@ describe('Finance', () => {
               ...periods,
               series,
               code: `${series}${new Date(periods.periodStart).getFullYear()}`,
-            }).then((fiscalYear) => f.set(fiscalYearKey, fiscalYear, (v) => FiscalYears.deleteFiscalYearViaApi(v.id, false)));
+            }).then((fiscalYear) =>
+              f.set(fiscalYearKey, fiscalYear, (v) =>
+                FiscalYears.deleteFiscalYearViaApi(v.id, false),
+              ),
+            );
           });
         })
         .step((f) => {
@@ -88,21 +92,27 @@ describe('Finance', () => {
           return Ledgers.createViaApi({
             ...Ledgers.getDefaultLedger(),
             fiscalYearOneId: f.get(R.FY_CURRENT).id,
-          }).then((ledger) => f.set(R.LEDGER, ledger, (v) => Ledgers.deleteLedgerViaApi(v.id, false)));
+          }).then((ledger) =>
+            f.set(R.LEDGER, ledger, (v) => Ledgers.deleteLedgerViaApi(v.id, false)),
+          );
         })
         .step((f) => {
           // Precondition 3: Active Fund A related to the ledger with current budget
           return Funds.createViaApi({
             ...Funds.getDefaultFund(),
             ledgerId: f.get(R.LEDGER).id,
-          }).then((response) => f.set(R.FUND_A, response.fund, (v) => Funds.deleteFundViaApi(v.id, false)));
+          }).then((response) =>
+            f.set(R.FUND_A, response.fund, (v) => Funds.deleteFundViaApi(v.id, false)),
+          );
         })
         .step((f) => {
           // Precondition 3: Active Fund B related to the ledger with current budget
           return Funds.createViaApi({
             ...Funds.getDefaultFund(),
             ledgerId: f.get(R.LEDGER).id,
-          }).then((response) => f.set(R.FUND_B, response.fund, (v) => Funds.deleteFundViaApi(v.id, false)));
+          }).then((response) =>
+            f.set(R.FUND_B, response.fund, (v) => Funds.deleteFundViaApi(v.id, false)),
+          );
         })
         .step((f) => {
           // Precondition 3: Budget for Fund A in the first fiscal year with money allocation
@@ -228,7 +238,9 @@ describe('Finance', () => {
             ],
             subTotal: INVOICE_SUBTOTAL,
             releaseEncumbrance: false,
-          }).then((invoice) => f.set(R.INVOICE_1, invoice, (v) => Invoices.deleteInvoiceViaApi(v.id)));
+          }).then((invoice) =>
+            f.set(R.INVOICE_1, invoice, (v) => Invoices.deleteInvoiceViaApi(v.id)),
+          );
         })
         .step((f) => {
           // Precondition 10: Invoice #1 approved (creates Pending payment transaction)
@@ -252,7 +264,9 @@ describe('Finance', () => {
             ],
             subTotal: INVOICE_SUBTOTAL,
             releaseEncumbrance: false,
-          }).then((invoice) => f.set(R.INVOICE_2, invoice, (v) => Invoices.deleteInvoiceViaApi(v.id)));
+          }).then((invoice) =>
+            f.set(R.INVOICE_2, invoice, (v) => Invoices.deleteInvoiceViaApi(v.id)),
+          );
         })
         .step((f) => {
           // Precondition 12: Invoice #2 approved and paid (creates Payment transaction)
@@ -276,7 +290,9 @@ describe('Finance', () => {
             ],
             subTotal: CREDIT_INVOICE_SUBTOTAL,
             releaseEncumbrance: false,
-          }).then((invoice) => f.set(R.INVOICE_3, invoice, (v) => Invoices.deleteInvoiceViaApi(v.id)));
+          }).then((invoice) =>
+            f.set(R.INVOICE_3, invoice, (v) => Invoices.deleteInvoiceViaApi(v.id)),
+          );
         })
         .step((f) => {
           // Precondition 14: Credit Invoice #3 approved and paid (creates Credit transaction)

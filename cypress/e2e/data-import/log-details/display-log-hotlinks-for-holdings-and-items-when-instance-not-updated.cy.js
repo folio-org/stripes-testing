@@ -34,27 +34,28 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 // Minimal POST helper - the shared ViaApi helpers each cover only part of what this test needs
 // (e.g. no helper sets Item permanent location or Holdings temporary location), so profiles are
 // built directly against the exact mappingFields the backend expects.
-const createMappingProfileViaApi = (name, existingRecordType, mappingFields) => cy
-  .okapiRequest({
-    method: 'POST',
-    path: 'data-import-profiles/mappingProfiles',
-    body: {
-      profile: {
-        name,
-        incomingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
-        existingRecordType,
-        mappingDetails: {
-          name: existingRecordType.toLowerCase(),
-          recordType: existingRecordType,
-          mappingFields,
+const createMappingProfileViaApi = (name, existingRecordType, mappingFields) =>
+  cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'data-import-profiles/mappingProfiles',
+      body: {
+        profile: {
+          name,
+          incomingRecordType: EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+          existingRecordType,
+          mappingDetails: {
+            name: existingRecordType.toLowerCase(),
+            recordType: existingRecordType,
+            mappingFields,
+          },
         },
+        addedRelations: [],
+        deletedRelations: [],
       },
-      addedRelations: [],
-      deletedRelations: [],
-    },
-    isDefaultSearchParamsRequired: false,
-  })
-  .then((response) => response.body);
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => response.body);
 
 describe('Data Import', () => {
   describe('Log details', () => {
@@ -137,7 +138,9 @@ describe('Data Import', () => {
               acceptedValues: {},
             },
           ])
-            .then((body) => NewActionProfile.createActionProfileViaApi(instanceActionProfile, body.id))
+            .then((body) =>
+              NewActionProfile.createActionProfileViaApi(instanceActionProfile, body.id),
+            )
             .then((response) => {
               testData.instanceActionProfileId = response.body.id;
             });
@@ -156,7 +159,9 @@ describe('Data Import', () => {
               },
             ],
           )
-            .then((body) => NewActionProfile.createActionProfileViaApi(holdingsActionProfileForCreate, body.id))
+            .then((body) =>
+              NewActionProfile.createActionProfileViaApi(holdingsActionProfileForCreate, body.id),
+            )
             .then((response) => {
               testData.holdingsActionProfileForCreateId = response.body.id;
             });
@@ -194,7 +199,9 @@ describe('Data Import', () => {
               acceptedValues: {},
             },
           ])
-            .then((body) => NewActionProfile.createActionProfileViaApi(itemActionProfileForCreate, body.id))
+            .then((body) =>
+              NewActionProfile.createActionProfileViaApi(itemActionProfileForCreate, body.id),
+            )
             .then((response) => {
               testData.itemActionProfileForCreateId = response.body.id;
             });
@@ -214,7 +221,9 @@ describe('Data Import', () => {
               },
             ],
           )
-            .then((body) => NewActionProfile.createActionProfileViaApi(holdingsActionProfileForUpdate, body.id))
+            .then((body) =>
+              NewActionProfile.createActionProfileViaApi(holdingsActionProfileForUpdate, body.id),
+            )
             .then((response) => {
               testData.holdingsActionProfileForUpdateId = response.body.id;
             });
@@ -229,7 +238,9 @@ describe('Data Import', () => {
               acceptedValues: {},
             },
           ])
-            .then((body) => NewActionProfile.createActionProfileViaApi(itemActionProfileForUpdate, body.id))
+            .then((body) =>
+              NewActionProfile.createActionProfileViaApi(itemActionProfileForUpdate, body.id),
+            )
             .then((response) => {
               testData.itemActionProfileForUpdateId = response.body.id;
             });
@@ -279,70 +290,72 @@ describe('Data Import', () => {
           // Job profile 2: Instance match is an anchor only (no action of its own - the Instance
           // is never updated), with two sibling submatches (Holdings, Item) each leading to its
           // own Update action.
-          cy.then(() => cy
-            .okapiRequest({
-              method: 'POST',
-              path: 'data-import-profiles/jobProfiles',
-              body: {
-                profile: { name: jobProfileForUpdateName, dataType: 'MARC' },
-                addedRelations: [
-                  {
-                    masterProfileId: null,
-                    masterWrapperId: null,
-                    masterProfileType: 'JOB_PROFILE',
-                    detailProfileId: testData.instanceMatchProfileId,
-                    detailWrapperId: null,
-                    detailProfileType: 'MATCH_PROFILE',
-                    order: 0,
-                  },
-                  {
-                    masterProfileId: testData.instanceMatchProfileId,
-                    masterWrapperId: null,
-                    masterProfileType: 'MATCH_PROFILE',
-                    detailProfileId: testData.holdingsMatchProfileId,
-                    detailWrapperId: null,
-                    detailProfileType: 'MATCH_PROFILE',
-                    order: 0,
-                    reactTo: 'MATCH',
-                  },
-                  {
-                    masterProfileId: testData.holdingsMatchProfileId,
-                    masterWrapperId: null,
-                    masterProfileType: 'MATCH_PROFILE',
-                    detailProfileId: testData.holdingsActionProfileForUpdateId,
-                    detailWrapperId: null,
-                    detailProfileType: 'ACTION_PROFILE',
-                    order: 0,
-                    reactTo: 'MATCH',
-                  },
-                  {
-                    masterProfileId: testData.instanceMatchProfileId,
-                    masterWrapperId: null,
-                    masterProfileType: 'MATCH_PROFILE',
-                    detailProfileId: testData.itemMatchProfileId,
-                    detailWrapperId: null,
-                    detailProfileType: 'MATCH_PROFILE',
-                    order: 1,
-                    reactTo: 'MATCH',
-                  },
-                  {
-                    masterProfileId: testData.itemMatchProfileId,
-                    masterWrapperId: null,
-                    masterProfileType: 'MATCH_PROFILE',
-                    detailProfileId: testData.itemActionProfileForUpdateId,
-                    detailWrapperId: null,
-                    detailProfileType: 'ACTION_PROFILE',
-                    order: 0,
-                    reactTo: 'MATCH',
-                  },
-                ],
-                deletedRelations: [],
-              },
-              isDefaultSearchParamsRequired: false,
-            })
-            .then(({ body }) => {
-              testData.jobProfileForUpdateId = body.id;
-            }));
+          cy.then(() =>
+            cy
+              .okapiRequest({
+                method: 'POST',
+                path: 'data-import-profiles/jobProfiles',
+                body: {
+                  profile: { name: jobProfileForUpdateName, dataType: 'MARC' },
+                  addedRelations: [
+                    {
+                      masterProfileId: null,
+                      masterWrapperId: null,
+                      masterProfileType: 'JOB_PROFILE',
+                      detailProfileId: testData.instanceMatchProfileId,
+                      detailWrapperId: null,
+                      detailProfileType: 'MATCH_PROFILE',
+                      order: 0,
+                    },
+                    {
+                      masterProfileId: testData.instanceMatchProfileId,
+                      masterWrapperId: null,
+                      masterProfileType: 'MATCH_PROFILE',
+                      detailProfileId: testData.holdingsMatchProfileId,
+                      detailWrapperId: null,
+                      detailProfileType: 'MATCH_PROFILE',
+                      order: 0,
+                      reactTo: 'MATCH',
+                    },
+                    {
+                      masterProfileId: testData.holdingsMatchProfileId,
+                      masterWrapperId: null,
+                      masterProfileType: 'MATCH_PROFILE',
+                      detailProfileId: testData.holdingsActionProfileForUpdateId,
+                      detailWrapperId: null,
+                      detailProfileType: 'ACTION_PROFILE',
+                      order: 0,
+                      reactTo: 'MATCH',
+                    },
+                    {
+                      masterProfileId: testData.instanceMatchProfileId,
+                      masterWrapperId: null,
+                      masterProfileType: 'MATCH_PROFILE',
+                      detailProfileId: testData.itemMatchProfileId,
+                      detailWrapperId: null,
+                      detailProfileType: 'MATCH_PROFILE',
+                      order: 1,
+                      reactTo: 'MATCH',
+                    },
+                    {
+                      masterProfileId: testData.itemMatchProfileId,
+                      masterWrapperId: null,
+                      masterProfileType: 'MATCH_PROFILE',
+                      detailProfileId: testData.itemActionProfileForUpdateId,
+                      detailWrapperId: null,
+                      detailProfileType: 'ACTION_PROFILE',
+                      order: 0,
+                      reactTo: 'MATCH',
+                    },
+                  ],
+                  deletedRelations: [],
+                },
+                isDefaultSearchParamsRequired: false,
+              })
+              .then(({ body }) => {
+                testData.jobProfileForUpdateId = body.id;
+              }),
+          );
 
           // Build the incoming MARC bib file, import it (Job profile 1) to create the
           // Instance/Holdings/Item, then edit 001/003 for the second import (Step 16)

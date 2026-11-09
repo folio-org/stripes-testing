@@ -53,7 +53,6 @@ describe('MARC', () => {
           },
         ];
 
-        let createdInstanceId;
         let authorityId;
         let additionalAuthorityId;
         let user;
@@ -153,9 +152,10 @@ describe('MARC', () => {
             // Steps 10-12 (Via API): Delete the shared authority record
             MarcAuthority.deleteViaAPI(authorityId);
             cy.recurse(
-              () => MarcAuthorities.getMarcAuthoritiesViaApi({
-                query: `keyword="${testData.authorityTitle}" and authRefType=="Authorized"`,
-              }),
+              () =>
+                MarcAuthorities.getMarcAuthoritiesViaApi({
+                  query: `keyword="${testData.authorityTitle}" and authRefType=="Authorized"`,
+                }),
               (foundAuthorities) => foundAuthorities.length === 0,
               { limit: 10, timeout: 12000, delay: 1000 },
             );

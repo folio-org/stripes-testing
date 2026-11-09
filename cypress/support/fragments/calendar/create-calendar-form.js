@@ -163,8 +163,10 @@ export default {
 
   verifyOpeningsSubRowExists(rowIndex) {
     // clicking + stacks a second datepicker group inside the row's cells
-    cy.get(`[data-row-index="row-${rowIndex}"] [data-test-datepicker-container]`)
-      .should('have.length.gte', 2);
+    cy.get(`[data-row-index="row-${rowIndex}"] [data-test-datepicker-container]`).should(
+      'have.length.gte',
+      2,
+    );
   },
 
   clickTrashInExceptionsRow(rowIndex) {
@@ -341,10 +343,11 @@ export default {
   // Expects a calendar with one opening. The form also shows a "Closed" row for the rest of the
   // week, which is derived from the openings, so deleting the opening leaves no rows
   editExistingCalendarsAndSave(editExistingCalendarsData) {
-    const hoursRowTrashButton = (index) => Accordion('Hours of operation')
-      .find(MultiColumnListRow({ index }))
-      .find(MultiColumnListCell({ column: 'Actions' }))
-      .find(Button({ ariaLabel: 'trash' }));
+    const hoursRowTrashButton = (index) =>
+      Accordion('Hours of operation')
+        .find(MultiColumnListRow({ index }))
+        .find(MultiColumnListCell({ column: 'Actions' }))
+        .find(Button({ ariaLabel: 'trash' }));
 
     cy.do([
       TextField(including('Calendar name')).fillIn(editExistingCalendarsData.name),

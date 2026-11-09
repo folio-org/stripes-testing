@@ -28,12 +28,13 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `instance-formats/${id}`,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode: false,
-  }),
+  deleteViaApi: (id) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `instance-formats/${id}`,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+    }),
   getViaApi: (searchParams = { limit: 1 }) => {
     return cy
       .okapiRequest({
@@ -123,7 +124,8 @@ export default {
     const actionsCell = MultiColumnListCell({ columnIndex: 4 });
     cy.expect(row.exists());
     if (code) cy.expect(row.find(MultiColumnListCell({ columnIndex: 1, content: code })).exists());
-    if (source) cy.expect(row.find(MultiColumnListCell({ columnIndex: 2, content: source })).exists());
+    if (source)
+      cy.expect(row.find(MultiColumnListCell({ columnIndex: 2, content: source })).exists());
     if (actions.length === 0) {
       cy.expect(row.find(actionsCell).has({ content: '' }));
     } else {

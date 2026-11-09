@@ -212,7 +212,8 @@ export default {
     }).then(({ body }) => {
       const initialPackageIds = body.data
         .filter(
-          (specialPackage) => !specialPackage?.attributes?.isCustom &&
+          (specialPackage) =>
+            !specialPackage?.attributes?.isCustom &&
             specialPackage?.attributes?.name &&
             // TODO: can't see not complete package in response now
             // && specialPackage.attributes?.packageType !== 'Complete'
@@ -235,7 +236,8 @@ export default {
     }).then(({ body }) => {
       const initialPackageIds = body.data
         .filter(
-          (specialPackage) => !specialPackage?.attributes?.isCustom &&
+          (specialPackage) =>
+            !specialPackage?.attributes?.isCustom &&
             specialPackage?.attributes?.name &&
             specialPackage.attributes?.packageType !== 'Complete' &&
             // TODO: potencial issue with this package
@@ -515,7 +517,8 @@ export default {
       });
   },
 
-  verifyPackageRecordProxy: (proxyName) => cy.expect(KeyValue('Proxy', { value: proxyName }).exists()),
+  verifyPackageRecordProxy: (proxyName) =>
+    cy.expect(KeyValue('Proxy', { value: proxyName }).exists()),
 
   verifyDetailsPaneAbsent: (packageName) => {
     cy.expect(Pane(including(packageName)).absent());

@@ -163,12 +163,14 @@ const checkItemsQuantityInSummaryTable = (rowNumber, quantity) => {
 };
 
 const checkStatusInColumn = (specialStatus, specialColumnName, rowIndex = 0) => {
-  cy.then(() => specialColumnName.index()).then((index) => cy.expect(
-    resultsList
-      .find(MultiColumnListRow({ index: rowIndex }))
-      .find(MultiColumnListCell({ columnIndex: index }))
-      .has({ content: including(specialStatus) }),
-  ));
+  cy.then(() => specialColumnName.index()).then((index) =>
+    cy.expect(
+      resultsList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(MultiColumnListCell({ columnIndex: index }))
+        .has({ content: including(specialStatus) }),
+    ),
+  );
 };
 
 function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
@@ -461,7 +463,9 @@ export default {
         .perform((element) => {
           const extractedMatches = [];
           // get text contains e.g. 'Created (it00000000123)' and put it to an array
-          Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) => extractedMatches.push(el.innerText.match(/(Created \(it\d+\)|No action|-)/g)));
+          Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) =>
+            extractedMatches.push(el.innerText.match(/(Created \(it\d+\)|No action|-)/g)),
+          );
           // get the first element from an array
           const currentArray = extractedMatches[0];
 
@@ -479,7 +483,9 @@ export default {
           const extractedMatches = [];
 
           // get text contains e.g. 'Error' and put it to an array
-          Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) => extractedMatches.push(el.innerText.match(/(Error)/g)));
+          Array.from(element.querySelectorAll('[class*="baselineCell-"]')).map((el) =>
+            extractedMatches.push(el.innerText.match(/(Error)/g)),
+          );
           // get the first element from an array
           const currentArray = extractedMatches[0];
 
@@ -528,18 +534,22 @@ export default {
   },
 
   verifyTitleInAnyRow: (title, specialColumnName) => {
-    cy.then(() => specialColumnName.index()).then((index) => cy.expect(
-      resultsList.find(MultiColumnListCell({ columnIndex: index, content: title })).exists(),
-    ));
+    cy.then(() => specialColumnName.index()).then((index) =>
+      cy.expect(
+        resultsList.find(MultiColumnListCell({ columnIndex: index, content: title })).exists(),
+      ),
+    );
   },
 
   verifyTitle: (title, specialColumnName, rowIndex = 0) => {
-    cy.then(() => specialColumnName.index()).then((index) => cy.expect(
-      resultsList
-        .find(MultiColumnListRow({ index: rowIndex }))
-        .find(MultiColumnListCell({ columnIndex: index }))
-        .has({ content: title }),
-    ));
+    cy.then(() => specialColumnName.index()).then((index) =>
+      cy.expect(
+        resultsList
+          .find(MultiColumnListRow({ index: rowIndex }))
+          .find(MultiColumnListCell({ columnIndex: index }))
+          .has({ content: title }),
+      ),
+    );
   },
 
   verifyRecordsSortingOrder() {
@@ -580,19 +590,22 @@ export default {
   // ".../orders/lines/view/<id>") without clicking it, regardless of the link's status text
   // ("Created" or "Updated"), then resolves the parent order id via API. Used for things like
   // cleanup instead of navigating into the Orders app, which is far less stable than a DOM read
-  getOrderAndOrderLineIds: (rowNumber) => cy
-    .then(() => resultsList
-      .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
-      .find(MultiColumnListCell({ columnIndex: 7 }))
-      .find(Link({ href: including('/orders/lines/view') }))
-      .href())
-    .then((href) => {
-      const orderLineId = href.split('/').pop();
-      return OrderLines.getOrderLineByIdViaApi(orderLineId).then((poLine) => ({
-        orderLineId,
-        orderId: poLine.purchaseOrderId,
-      }));
-    }),
+  getOrderAndOrderLineIds: (rowNumber) =>
+    cy
+      .then(() =>
+        resultsList
+          .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+          .find(MultiColumnListCell({ columnIndex: 7 }))
+          .find(Link({ href: including('/orders/lines/view') }))
+          .href(),
+      )
+      .then((href) => {
+        const orderLineId = href.split('/').pop();
+        return OrderLines.getOrderLineByIdViaApi(orderLineId).then((poLine) => ({
+          orderLineId,
+          orderId: poLine.purchaseOrderId,
+        }));
+      }),
 
   verifyTitleHasLinkToJsonFile: (rowNumber) => {
     cy.expect(

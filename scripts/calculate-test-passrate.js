@@ -23,7 +23,10 @@ const threshold = 0.4; // 40%
 const calculateForStatus = status.Passed;
 
 function calculateRateForStatus(testCase, statusToCalculate) {
-  return testCase.testRuns.filter((tr) => tr.status_id === statusToCalculate).length / testCase.testRuns.length;
+  return (
+    testCase.testRuns.filter((tr) => tr.status_id === statusToCalculate).length /
+    testCase.testRuns.length
+  );
 }
 
 function calculatePassRateForTestRun() {
@@ -36,7 +39,7 @@ function calculatePassRateForTestRun() {
     });
     testRuns = JSON.parse(testRunsContent);
     console.log(`Reading the file: ${TEST_RUN_PATH}`);
-  } catch (err) {
+  } catch {
     console.log(`File does not exist: ${TEST_RUN_PATH}`);
   }
 
@@ -49,13 +52,17 @@ function calculatePassRateForTestRun() {
     ) {
       const passRate = calculateRateForStatus(test, calculateForStatus);
       if (passRate <= threshold) {
-        console.log(`Case ID: ${test.case_id}, Title: ${test.title}, Pass rate: ${(passRate * 100).toFixed(0)}%`);
+        console.log(
+          `Case ID: ${test.case_id}, Title: ${test.title}, Pass rate: ${(passRate * 100).toFixed(0)}%`,
+        );
         numberOfFilteredCases++;
       }
     }
   });
 
-  console.log(`Calculation with threshold ${threshold * 100}% for status ${calculateForStatus} completed.`);
+  console.log(
+    `Calculation with threshold ${threshold * 100}% for status ${calculateForStatus} completed.`,
+  );
   console.log(`Number of filtered cases: ${numberOfFilteredCases}`);
 }
 

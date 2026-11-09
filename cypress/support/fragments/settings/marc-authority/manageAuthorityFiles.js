@@ -65,9 +65,12 @@ const deleteModalMessage2 =
   'Are you sure you want to delete this authority file? After deletion, new records will no longer be able to be assigned to this authority file';
 const deleteModal = Modal('Delete authority file');
 const cancelDeletionButton = Button('No, do not delete');
-const deleteAssignedSourceFileErrorText = (sourceFileName) => `${sourceFileName} cannot be deleted. Existing authority records are already assigned to this authority file.`;
-const updateAssignedSourceFileErrorText = (sourceFileName) => `Changes to ${sourceFileName} cannot be saved. Existing authority records are already assigned to this authority file.`;
-const optimisticLockingErrorText = (sourceFileName) => `Changes to ${sourceFileName} cannot be saved because it is not the most recent version.`;
+const deleteAssignedSourceFileErrorText = (sourceFileName) =>
+  `${sourceFileName} cannot be deleted. Existing authority records are already assigned to this authority file.`;
+const updateAssignedSourceFileErrorText = (sourceFileName) =>
+  `Changes to ${sourceFileName} cannot be saved. Existing authority records are already assigned to this authority file.`;
+const optimisticLockingErrorText = (sourceFileName) =>
+  `Changes to ${sourceFileName} cannot be saved because it is not the most recent version.`;
 
 const waitLoading = () => {
   cy.expect(newButton.has({ disabled: false }));
@@ -566,7 +569,8 @@ export default {
 
   unsetAuthorityFileAsActiveViaApi(fileName) {
     cy.getAuthoritySourceFileDataViaAPI(fileName).then((sourceFile) => {
-      if (sourceFile) cy.setActiveAuthoritySourceFileViaAPI(sourceFile.id, sourceFile._version + 1, false);
+      if (sourceFile)
+        cy.setActiveAuthoritySourceFileViaAPI(sourceFile.id, sourceFile._version + 1, false);
     });
   },
 

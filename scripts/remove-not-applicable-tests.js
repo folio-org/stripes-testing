@@ -1,5 +1,11 @@
 /* eslint-disable no-console */
-const { status, getTestRunResults, getPlanDetails, updateTestCasesInPlanEntry, updateTestCasesInTestRunInPlanEntry } = require('./helpers/test.rail.helper');
+const {
+  status,
+  getTestRunResults,
+  getPlanDetails,
+  updateTestCasesInPlanEntry,
+  updateTestCasesInTestRunInPlanEntry,
+} = require('./helpers/test.rail.helper');
 const { createTestRailClient } = require('./helpers/api.client');
 require('dotenv').config();
 
@@ -7,7 +13,9 @@ const testUsername = process.env.TESTRAIL_API_USER;
 const testPassword = process.env.TESTRAIL_API_KEY;
 const runId = process.env.TESTRAIL_RUN_ID;
 const testStatusToRemoveFromTestRun = status.Failed;
-const printStatusName = Object.keys(status).find(key => status[key] === testStatusToRemoveFromTestRun);
+const printStatusName = Object.keys(status).find(
+  (key) => status[key] === testStatusToRemoveFromTestRun,
+);
 
 const testRailClient = createTestRailClient(testUsername, testPassword);
 const getTests = getTestRunResults.bind(null, testRailClient, runId);
@@ -23,7 +31,9 @@ function sleep(ms) {
 }
 
 async function removeTests() {
-  console.log(`All tests in status '${printStatusName}' will be REMOVED from the test run #${runId}, are you sure???`);
+  console.log(
+    `All tests in status '${printStatusName}' will be REMOVED from the test run #${runId}, are you sure???`,
+  );
   const timeout = 10; // seconds
   for (let i = 1; i <= timeout; i++) {
     console.log(`Reset in ${timeout - i} seconds... To abort press CTRL+C!`);

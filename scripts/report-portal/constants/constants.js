@@ -2,7 +2,7 @@ let TEAM_RESPONSIBLE_ONES = {};
 try {
   // eslint-disable-next-line global-require, import/extensions
   TEAM_RESPONSIBLE_ONES = require('../team-responsible-ones/team-responsible-ones');
-} catch (e) {
+} catch {
   // team-responsible-ones.js is gitignored and optional
 }
 

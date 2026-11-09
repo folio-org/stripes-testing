@@ -328,7 +328,8 @@ export default {
       cy.do([
         generalInformationAccordion.find(Select()).choose(including(configurations[key].title)),
       ]);
-      if (configurations[key].title === REMOTE_STORAGE_PROVIDER_NAMES.DEMATIC_TCP_IP) this.verifyDataSynchronizationSettingsAccordion(true);
+      if (configurations[key].title === REMOTE_STORAGE_PROVIDER_NAMES.DEMATIC_TCP_IP)
+        this.verifyDataSynchronizationSettingsAccordion(true);
       else this.verifyDataSynchronizationSettingsAccordion(false);
     });
     this.closeCreateConfigurationWithoutSaving();

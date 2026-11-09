@@ -78,7 +78,9 @@ describe('Data Import', () => {
         Invoices.getInvoiceViaApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then(
           ({ invoices }) => {
             if (invoices?.length) {
-              invoices.forEach(({ id }) => Invoices.deleteInvoiceViaApi(id, { failOnStatusCode: false }));
+              invoices.forEach(({ id }) =>
+                Invoices.deleteInvoiceViaApi(id, { failOnStatusCode: false }),
+              );
             }
           },
         );
@@ -135,7 +137,9 @@ describe('Data Import', () => {
           Invoices.getInvoiceViaApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then(
             ({ invoices }) => {
               if (invoices?.length) {
-                invoices.forEach(({ id }) => Invoices.deleteInvoiceViaApi(id, { failOnStatusCode: false }));
+                invoices.forEach(({ id }) =>
+                  Invoices.deleteInvoiceViaApi(id, { failOnStatusCode: false }),
+                );
               }
             },
           );
