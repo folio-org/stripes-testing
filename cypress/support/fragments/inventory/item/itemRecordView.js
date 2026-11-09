@@ -33,6 +33,10 @@ const itemDataAccordion = Accordion('Item data');
 const itemNotesAccordion = Accordion('Item notes');
 const itemEnumerationAccordion = Accordion('Enumeration data');
 const circulationHistoryAccordion = Accordion('Circulation history');
+// UIIN-3709: one row per check-in (newest first), loaded from GET /circulation/check-ins
+const circulationHistoryList = circulationHistoryAccordion.find(
+  MultiColumnList({ id: 'circulation-history-list' }),
+);
 const saveAndCloseBtn = Button('Save & close');
 const electronicAccessAccordion = Accordion('Electronic access');
 const tagsAccordion = Accordion('Tags');
@@ -430,11 +434,22 @@ export default {
   openHoldingsRecord(holding) {
     cy.do(itemViewPane.find(Link({ href: including(holding) })).click());
   },
-  checkItemCirculationHistory: (date, servicePointName, userName) => {
+  // Checks the newest check-in row; source is the staff member as "Last, First"
+  checkItemCirculationHistory: (date, servicePointName, source, row = 0) => {
+    const cell = (column) => circulationHistoryList.find(MultiColumnListCell({ row, column }));
     cy.expect([
-      circulationHistoryAccordion.find(KeyValue('Check in date')).has({ value: including(date) }),
-      circulationHistoryAccordion.find(KeyValue('Service point')).has({ value: servicePointName }),
-      circulationHistoryAccordion.find(KeyValue('Source')).has({ value: including(userName) }),
+      cell('Date').has({ content: including(date) }),
+      cell('Circ action').has({ content: 'Checked in' }),
+      cell('Source').has({ content: source }),
+      cell('Service point').has({ content: servicePointName }),
+    ]);
+  },
+  // No check-ins: the table shows a single row with empty values
+  checkItemCirculationHistoryEmpty: () => {
+    const cell = (column) => circulationHistoryList.find(MultiColumnListCell({ row: 0, column }));
+    cy.expect([
+      circulationHistoryList.has({ rowCount: 1 }),
+      ...['Date', 'Circ action', 'Source', 'Service point'].map((column) => cell(column).has({ content: or('-', 'No value set-') })),
     ]);
   },
 

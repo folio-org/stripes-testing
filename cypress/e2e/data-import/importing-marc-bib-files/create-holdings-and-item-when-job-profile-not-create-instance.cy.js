@@ -209,6 +209,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(fileNameForCreate);
         Logs.checkJobStatus(fileNameForCreate, JOB_STATUS_NAMES.COMPLETED);
+        Logs.waitForJobLogEntriesViaApi(fileNameForCreate);
         Logs.openFileDetails(fileNameForCreate);
         [
           FileDetails.columnNameInResultList.holdings,

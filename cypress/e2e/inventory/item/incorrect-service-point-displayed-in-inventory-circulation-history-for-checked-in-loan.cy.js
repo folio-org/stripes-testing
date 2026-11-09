@@ -159,7 +159,7 @@ describe('Inventory', () => {
           ItemRecordView.checkItemCirculationHistory(
             todayDate,
             firstServicePoint.name,
-            user.username,
+            `${user.lastName}, ${user.firstName}`,
           );
           ItemRecordView.closeDetailView();
 
@@ -177,7 +177,7 @@ describe('Inventory', () => {
           ItemRecordView.checkItemCirculationHistory(
             todayDate,
             secondServicePoint.name,
-            user.username,
+            `${user.lastName}, ${user.firstName}`,
           );
         },
       );

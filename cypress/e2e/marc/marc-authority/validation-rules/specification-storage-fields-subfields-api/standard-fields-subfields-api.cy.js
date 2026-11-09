@@ -72,7 +72,7 @@ describe('Specification Storage - Standard Fields Subfield API for MARC Authorit
 
   it(
     'C499784 Create Subfield Code of Standard Field for MARC authority spec (API) (promin)',
-    { tags: ['C499784', 'extendedPath', 'promin'] },
+    { tags: ['C499784', 'extendedPath', 'promin', 'nonParallel'] },
     () => {
       // Find a standard field (e.g., 100 - Heading--Personal Name)
       const standardField = findStandardFieldByTag('100');

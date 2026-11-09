@@ -5,6 +5,7 @@ import {
   KeyValue,
   Link,
   MetaSection,
+  MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
   Pane,
@@ -145,6 +146,9 @@ export default {
     if (!records.length) {
       cy.expect(adjustmentsSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
     }
+  },
+  checkAdjustmentsCount(count) {
+    cy.expect(adjustmentsSection.find(MultiColumnList()).has({ rowCount: count }));
   },
   checkRelatedInvoiceLineColumnItem(rowIndex, columnName, value) {
     cy.expect(

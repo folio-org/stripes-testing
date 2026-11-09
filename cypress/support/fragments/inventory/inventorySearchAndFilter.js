@@ -38,6 +38,7 @@ import InventoryActions from './inventoryActions';
 import InventoryInstance from './inventoryInstance';
 import InventoryInstances, { searchInstancesOptions } from './inventoryInstances';
 import InteractorsTools from '../../utils/interactorsTools';
+import ClassificationBrowseCapture from './search/classificationBrowseCapture';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
@@ -970,6 +971,9 @@ export default {
   },
 
   browseSearch(searchValue) {
+    // records classification browse responses (no-op for other browse types) so tests can
+    // read the backend id used by the browse -> search redirect
+    ClassificationBrowseCapture.register();
     cy.do([browseSearchInputField.fillIn(searchValue), searchButton.click()]);
   },
 

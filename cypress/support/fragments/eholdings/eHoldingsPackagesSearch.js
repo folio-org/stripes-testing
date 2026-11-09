@@ -1,6 +1,9 @@
 import {
   Accordion,
   RadioButton,
+  Selection,
+  SelectionList,
+  SelectionOption,
   TextField,
   Button,
   Checkbox,
@@ -17,7 +20,9 @@ import {
 import eHoldingsPackages from './eHoldingsPackages';
 
 const contentTypeAccordion = Accordion({ id: 'filter-packages-type' });
-const selectionStatusAccordion = Accordion({ id: 'filter-packages-selected' });
+// UIEH-1528: selection status + visibility, rendered as a Selection dropdown
+const selectionStatusAccordion = Accordion({ id: 'filter-packages-selectedVisibilityStatus' });
+const selectionStatusSelection = selectionStatusAccordion.find(Selection());
 const packageAccessAccordion = Accordion('Package access');
 const tagsAccordion = Accordion({ id: 'accordionTagFilter' });
 const byTagCheckbox = Checkbox('Search by tags only');
@@ -55,16 +60,18 @@ export default {
   },
   bySelectionStatus: (selectionStatus) => {
     cy.do(selectionStatusAccordion.clickHeader());
-    cy.do(selectionStatusAccordion.find(RadioButton(selectionStatus)).click());
+    cy.do(selectionStatusSelection.choose(selectionStatus));
     eHoldingsPackages.waitLoading();
   },
   // Opens the accordion, checks the given options, then closes it again so a following
   // bySelectionStatus() call (which always toggles the header open) still works as expected
   verifySelectionStatusOptions: (options) => {
     cy.do(selectionStatusAccordion.clickHeader());
+    cy.do(selectionStatusSelection.open());
     options.forEach((option) => {
-      cy.expect(selectionStatusAccordion.find(RadioButton(option)).exists());
+      cy.expect(SelectionList().find(SelectionOption(option)).exists());
     });
+    cy.do(selectionStatusSelection.toggle());
     cy.do(selectionStatusAccordion.clickHeader());
   },
   resetSelectionStatusFilter: () => {
@@ -72,7 +79,7 @@ export default {
     eHoldingsPackages.waitLoading();
   },
   verifySelectionStatusSelected: (status) => {
-    cy.expect(selectionStatusAccordion.find(RadioButton(status)).has({ checked: true }));
+    cy.expect(selectionStatusSelection.has({ singleValue: status }));
   },
   toggleSelectionStatusAccordion: () => {
     cy.do(selectionStatusAccordion.clickHeader());

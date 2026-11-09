@@ -74,8 +74,8 @@ describe('Data Import', () => {
           FileManager.createFile(`cypress/fixtures/${csvFile}`, instanceId);
         })
         .then(() => {
-          ExportFile.exportFileViaApi(csvFile).then(() => {
-            ExportFile.downloadExportedMarcFile(exportedMarcFile);
+          ExportFile.exportFileViaApi(csvFile).then((exportJob) => {
+            ExportFile.downloadExportedMarcFile(exportedMarcFile, exportJob);
           });
         })
         .then(() => {

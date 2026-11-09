@@ -359,6 +359,11 @@ export default {
     resource: 'UI-Invoice Invoice',
     action: CAPABILITY_ACTIONS.CREATE,
   },
+  uiInvoiceInvoicePayDifferentFy: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Invoice Invoice Pay-Different-Fy',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
   uiTagsManage: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Tags',

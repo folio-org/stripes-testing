@@ -63,6 +63,7 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFiles[0].fileName);
         Logs.checkJobStatus(marcFiles[0].fileName, JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.waitForJobLogEntriesViaApi(marcFiles[0].fileName);
         Logs.openFileDetails(marcFiles[0].fileName);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.NO_ACTION,
@@ -84,6 +85,7 @@ describe('Data Import', () => {
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
         Logs.waitFileIsImported(marcFiles[1].fileName);
+        Logs.waitForJobLogEntriesViaApi(marcFiles[1].fileName);
         Logs.openFileDetails(marcFiles[1].fileName);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.NO_ACTION,

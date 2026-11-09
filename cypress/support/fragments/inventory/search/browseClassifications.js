@@ -9,6 +9,8 @@ import {
   Button,
   or,
 } from '../../../../../interactors';
+import InventorySearchAndFilter from '../inventorySearchAndFilter';
+import ClassificationBrowseCapture from './classificationBrowseCapture';
 
 const browseInventoryPane = Pane('Browse inventory');
 const inventoryPane = Pane('Inventory');
@@ -238,6 +240,121 @@ export default {
     const alias = `getClassificationNumbersSearch${this.classificationNumbersInterceptCount}`;
     cy.intercept('GET', '**/browse/classification-numbers/*/instances**').as(alias);
     return alias;
+  },
+
+  // Redirect from browse to search uses the id of the clicked browse item
+  // (query=(classificationId=="<id>")), which only the backend response knows.
+  // Resolves that id for the clicked classification number, in order of preference:
+  // 1) the captured browse response item at rowIndex (table row N maps to items[N]);
+  // 2) the first captured item with the exact number (and typeId, if given);
+  // 3) the browse API (same matching).
+  getClassificationId(
+    classificationNumber,
+    { rowIndex, typeId, classificationBrowseId = 'all' } = {},
+  ) {
+    const isMatch = (item) => {
+      return (
+        item?.id &&
+        item.classificationNumber === classificationNumber &&
+        (!typeId || item.classificationTypeId === typeId)
+      );
+    };
+    // deferred with cy.then so the captured items are read after the preceding browse commands ran
+    return cy.then(() => {
+      const captured = ClassificationBrowseCapture.getItems();
+      const found =
+        (rowIndex !== undefined && isMatch(captured[rowIndex]) ? captured[rowIndex] : undefined) ||
+        captured.find(isMatch);
+      if (found) return cy.wrap(found.id, { log: false });
+      return this.getClassificationNumbersViaApi(classificationBrowseId, classificationNumber).then(
+        (response) => {
+          const match = response.body.items.find(isMatch);
+          expect(
+            Boolean(match),
+            `browse item with classification number "${classificationNumber}"`,
+          ).to.equal(true);
+          return match.id;
+        },
+      );
+    });
+  },
+
+  // Remembers the backend id of the classification about to be clicked in browse results
+  storeClassificationId(classificationNumber, options = {}) {
+    this.getClassificationId(classificationNumber, options).then((id) => {
+      ClassificationBrowseCapture.setClickedId(id);
+      cy.log(`Clicked classification id: ${id}`);
+    });
+  },
+
+  // Remembers the text of the Title column of the given browse row. Browse row order is not
+  // stable between runs, so this is how a test learns which instance a row stands for
+  // (rows with "Number of titles" = 1 show that instance's title).
+  storeRowTitle(rowIndex) {
+    cy.do(
+      MultiColumnListCell({ row: rowIndex, column: 'Title' }).perform((element) => {
+        const title = element.textContent.trim();
+        ClassificationBrowseCapture.setClickedTitle(title);
+        cy.log(`Clicked row title: ${title}`);
+      }),
+    );
+  },
+
+  // Clicks the browse row and remembers the backend id and the title of the clicked item
+  selectFoundValueByRowAndStoreId(rowIndex, value, options = {}) {
+    this.storeClassificationId(value, { rowIndex, ...options });
+    this.storeRowTitle(rowIndex);
+    this.selectFoundValueByRow(rowIndex, value);
+  },
+
+  // Same as storeRowTitle, but finds the row by the exact (case-sensitive) text of its
+  // Classification cell - for clicks done by value, when the row index is not known.
+  // Only meaningful for rows with "Number of titles" = 1.
+  storeRowTitleByValue(value) {
+    cy.do(
+      MultiColumnListCell({ content: value, columnIndex: 0 }).perform((element) => {
+        const cells = element.parentElement.querySelectorAll('div[class*="mclCell-"]');
+        const title = cells[1]?.textContent?.trim();
+        ClassificationBrowseCapture.setClickedTitle(title);
+        cy.log(`Clicked row title: ${title}`);
+      }),
+    );
+  },
+
+  // storeTitle (opt-in) additionally remembers the title of the clicked row; leave it off
+  // for rows with several titles
+  selectFoundValueByValueAndStoreId(value, { storeTitle = false, ...options } = {}) {
+    this.storeClassificationId(value, options);
+    if (storeTitle) this.storeRowTitleByValue(value);
+    this.selectFoundValueByValue(value);
+  },
+
+  // Verifies the search query set by the browse -> search redirect is built from the stored id.
+  // A trailing "and (classificationTypeId==...)" clause is allowed (substring match).
+  verifyRedirectQueryUsesClickedClassificationId(querySearchOption = 'Query search') {
+    cy.then(() => {
+      const clickedClassificationId = ClassificationBrowseCapture.getClickedId();
+      expect(clickedClassificationId, 'stored classification id').to.be.a('string');
+      InventorySearchAndFilter.verifySearchOptionAndQuery(
+        querySearchOption,
+        `classificationId=="${clickedClassificationId}"`,
+      );
+    });
+  },
+
+  // Verifies the search page lists the instance whose browse row was clicked
+  // (title stored by selectFoundValueByRowAndStoreId); optionally limited to a set of
+  // expected titles to catch a bad read of the Title cell
+  verifyClickedInstanceDisplayedInSearch(expectedTitles) {
+    cy.then(() => {
+      const clickedTitle = ClassificationBrowseCapture.getClickedTitle();
+      if (expectedTitles) {
+        expect(expectedTitles, 'clicked row title is one of the expected titles').to.include(
+          clickedTitle,
+        );
+      }
+      InventorySearchAndFilter.verifyInstanceDisplayed(clickedTitle);
+    });
   },
 
   waitForBrowseResultsToLoad(alias) {

@@ -260,6 +260,26 @@ export default {
     cy.expect(Pane(policyName).exists());
   },
 
+  // The details Actions menu only renders the items the user has permissions for
+  verifyEditActionUnavailable(policyName) {
+    cy.do(Pane(policyName).find(actionsButton).click());
+    cy.expect(DropdownMenu().exists());
+    cy.expect(DropdownMenu().find(actionsButtons.edit).absent());
+  },
+
+  verifyReadOnlyNoticeCards(sectionName, count) {
+    Cypress._.times(count, (index) => {
+      cy.expect(
+        viewNoticeCard(sectionName, index).has({
+          hasDragHandle: false,
+          hasAddNoticeAboveIcon: false,
+          hasDeleteNoticeIcon: false,
+        }),
+      );
+    });
+    cy.expect([viewNoticeCard(sectionName, count).absent(), noticePolicyForm.absent()]);
+  },
+
   // notices: [{ templateName, format, triggeringEvent }] expected top-to-bottom
   verifyNoticeCards(sectionName, notices) {
     notices.forEach((notice, index) => {

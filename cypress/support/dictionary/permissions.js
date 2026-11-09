@@ -579,6 +579,10 @@ export default {
     internal: 'ui-circulation.settings.notice-policies',
     gui: 'Settings (Circulation): Can create, edit and remove notice policies',
   },
+  uiCirculationSettingsViewNoticePolicies: {
+    internal: 'ui-circulation.settings.view-notice-policies',
+    gui: 'Settings (Circulation): Can view notice policies',
+  },
   uiCirculationSettingsOtherSettings: {
     internal: 'ui-circulation.settings.other-settings',
     gui: 'Settings (Circulation): Can create, edit and remove other settings',

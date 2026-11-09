@@ -199,6 +199,7 @@ describe('Inventory', () => {
             });
             cy.reload();
           }, 20_000);
+          cy.getToken(user.username, user.password);
           InventoryInstances.waitContentLoading();
           InventorySearchAndFilter.switchToBrowseTab();
           testClassifications.slice(0, -1).forEach((row) => {
@@ -222,11 +223,9 @@ describe('Inventory', () => {
           BrowseClassifications.verifyValueInResultTableIsHighlighted(
             testClassifications[10].value,
           );
+          BrowseClassifications.storeClassificationId(testClassifications[10].value);
           InventorySearchAndFilter.selectFoundItemFromBrowse(testClassifications[10].value);
-          InventorySearchAndFilter.verifySearchOptionAndQuery(
-            'Query search',
-            `classifications.classificationNumber=="${testClassifications[10].value}"`,
-          );
+          BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId();
           InventorySearchAndFilter.verifyNumberOfSearchResults(1);
           InventorySearchAndFilter.switchToBrowseTab();
           BrowseClassifications.verifySearchResultsTable();

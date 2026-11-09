@@ -94,8 +94,8 @@ describe('Data Import', () => {
             csvFileName,
             'instance',
             'Default instances export job profile',
-          ).then(() => {
-            ExportFile.downloadExportedMarcFile(exportedMarcFileName);
+          ).then((exportJob) => {
+            ExportFile.downloadExportedMarcFile(exportedMarcFileName, exportJob);
           });
         })
         .then(() => {

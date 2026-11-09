@@ -21,10 +21,6 @@ describe('Inventory', () => {
         typeName: classificationIdentifierTypesDropdownDefaultOptions[4], // 'LC'
       },
     };
-    const escapedClassification = testData.classifications.classificationNumber.replace(
-      /"/g,
-      '\\"',
-    );
     const querySearchOption = 'Query search';
 
     let instanceId;
@@ -59,6 +55,7 @@ describe('Inventory', () => {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             });
+            cy.getToken(user.username, user.password);
             InventorySearchAndFilter.switchToBrowseTab();
             InventorySearchAndFilter.verifyCallNumberBrowsePane();
           });
@@ -89,14 +86,11 @@ describe('Inventory', () => {
         );
 
         // 2. Click on found value, which has double quotes
-        BrowseClassifications.selectFoundValueByRow(
+        BrowseClassifications.selectFoundValueByRowAndStoreId(
           5,
           testData.classifications.classificationNumber,
         );
-        InventorySearchAndFilter.verifySearchOptionAndQuery(
-          querySearchOption,
-          `classifications.classificationNumber=="${escapedClassification}"`,
-        );
+        BrowseClassifications.verifyRedirectQueryUsesClickedClassificationId(querySearchOption);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle);
         InventoryInstances.selectInstanceById(instanceId);
 

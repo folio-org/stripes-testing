@@ -99,6 +99,43 @@ export default {
         .click(),
     );
   },
+  // A job's status turns final before its record log entries are written, and the log details page
+  // loads them only once - opened too early, it shows an empty record list. Call before openFileDetails.
+  // Read-only and never fails: gives up quietly if the job is not found (e.g. other tenant) or has no entries.
+  waitForJobLogEntriesViaApi: (fileName, { timeout = 30_000, delay = 2_000 } = {}) => {
+    const baseName = fileName.replace(/\.[^.]+$/, '');
+    const getQuietly = (path, searchParams) => cy
+      .okapiRequest({
+        path,
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+        failOnStatusCode: false,
+      })
+      .then(({ status, body }) => (status === 200 ? body : null));
+    const waitForEntries = (jobId, timeLeft) => {
+      getQuietly(`metadata-provider/jobLogEntries/${jobId}`, { limit: 1 }).then((log) => {
+        if (log?.entries?.length) return;
+        if (timeLeft <= 0) {
+          cy.log(`No job log entries for ${fileName} after ${timeout} ms`);
+          return;
+        }
+        cy.wait(delay);
+        waitForEntries(jobId, timeLeft - delay);
+      });
+    };
+
+    getQuietly('metadata-provider/jobExecutions', {
+      fileName: `*${baseName}*`,
+      sortBy: 'completed_date,desc',
+      limit: 10,
+    }).then((body) => {
+      // the newest finished job of this file; a split file's parent has no entries of its own
+      const job = (body?.jobExecutions || []).find(
+        ({ status, subordinationType }) => ['COMMITTED', 'ERROR'].includes(status) && subordinationType !== 'COMPOSITE_PARENT',
+      );
+      if (job) waitForEntries(job.id, timeout);
+    });
+  },
   openFileDetails: (fileName) => {
     const newFileName = fileName.replace('.mrc', '');
 

@@ -96,7 +96,8 @@ describe('MARC', () => {
           baseUrl: `http://id.loc.gov/authorities-c422167/${customSourceCode}/`,
         }).then((body) => {
           customSourceFileId = body.id;
-          cy.wait(70_000); // wait for source to be processed by scheduled job
+          cy.waitForAuthoritySourceFileInMappingViaAPI(customSourceFileId);
+          cy.getAdminToken();
         });
 
         cy.createTempUser([

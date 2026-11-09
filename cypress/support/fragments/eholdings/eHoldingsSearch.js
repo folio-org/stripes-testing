@@ -8,7 +8,7 @@ const filterSections = {
   tags: searchPane.find(Section({ id: 'accordionTagFilter' })),
   sortOptions: searchPane.find(Section({ id: 'filter-providers-sort' })),
   // Packages filters
-  packagesSelected: searchPane.find(Section({ id: 'filter-packages-selected' })),
+  packagesSelected: searchPane.find(Section({ id: 'filter-packages-selectedVisibilityStatus' })),
   packagesTypes: searchPane.find(Section({ id: 'filter-packages-type' })),
   // Titles filters
   titlesSelected: searchPane.find(Section({ id: 'filter-titles-selected' })),

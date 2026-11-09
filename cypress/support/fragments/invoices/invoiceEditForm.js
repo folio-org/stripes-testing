@@ -2,17 +2,21 @@ import { HTML } from '@interactors/html';
 
 import {
   Button,
+  Card,
   Checkbox,
   KeyValue,
+  RepeatableField,
   SearchField,
   Section,
   Select,
   Selection,
   SelectionList,
+  SelectionOption,
   TextArea,
   TextField,
   FieldSet,
   including,
+  not,
   MultiSelect,
   MultiSelectOption,
   Pane,
@@ -47,6 +51,11 @@ const invoiceFormFieldSet = FieldSet({ id: 'invoice-form-links' });
 const linkNameTextField = TextField('Link name*');
 const externalUrlTextField = TextField('External URL');
 const currencySelection = Selection('Currency*');
+const adjustmentExpenseClassSelection = invoiceEditFormRoot.find(
+  Selection(including('Expense class')),
+);
+const adjustmentsField = invoiceEditFormRoot.find(RepeatableField({ id: 'adjustments' }));
+const getAdjustmentCard = (index) => adjustmentsField.find(Card({ headerStart: `Adjustment ${index + 1}` }));
 const unsavedChangesMessage = 'There are unsaved changes';
 const infoFields = {
   fiscalYear: informationSection.find(Button({ id: 'invoice-fiscal-year' })),
@@ -188,6 +197,94 @@ export default {
       ]);
       cy.wait(2000);
     }
+    if (invoice.adjustment) {
+      // Without "index" a new adjustment is added, with "index" an existing one is edited
+      const { index, description, value, type, prorate, relationToTotal } = invoice.adjustment;
+      const adjustmentIndex = index ?? 0;
+
+      if (index === undefined) {
+        cy.do(invoiceEditFormRoot.find(Button({ id: 'adjustments-add-button' })).click());
+      }
+      if (description) {
+        cy.do(
+          TextField({ name: `adjustments[${adjustmentIndex}].description` }).fillIn(description),
+        );
+      }
+      if (value) {
+        cy.do(TextField({ name: `adjustments[${adjustmentIndex}].value` }).fillIn(value));
+      }
+      if (type) {
+        cy.do(getAdjustmentCard(adjustmentIndex).find(KeyValue('Type')).find(Button(type)).click());
+      }
+      if (prorate) {
+        cy.do(Select({ name: `adjustments[${adjustmentIndex}].prorate` }).choose(prorate));
+      }
+      if (relationToTotal) {
+        cy.do(
+          Select({ name: `adjustments[${adjustmentIndex}].relationToTotal` }).choose(
+            relationToTotal,
+          ),
+        );
+      }
+    }
+    if (invoice.deleteAdjustments) {
+      // Removes the first N adjustments: remove button #0 is always the first card's trash
+      for (let i = 0; i < invoice.deleteAdjustments; i++) {
+        cy.do(adjustmentsField.clickRemove(0));
+      }
+    }
+    if (invoice.adjustmentProrate !== undefined) {
+      const prorateSelect = invoiceEditFormRoot.find(Select({ name: 'adjustments[0].prorate' }));
+
+      cy.do(prorateSelect.choose(invoice.adjustmentProrate));
+      cy.expect(
+        invoice.adjustmentProrate === ''
+          ? prorateSelect.has({ hasValue: false })
+          : prorateSelect.has({ checkedOptionText: invoice.adjustmentProrate }),
+      );
+    }
+    if (invoice.adjustmentRelationToTotal) {
+      cy.do(
+        invoiceEditFormRoot
+          .find(Select({ name: 'adjustments[0].relationToTotal' }))
+          .choose(invoice.adjustmentRelationToTotal),
+      );
+      this.checkAdjustmentRelationToTotal(invoice.adjustmentRelationToTotal);
+    }
+    if (invoice.addAdjustmentFundDistribution) {
+      cy.do(
+        invoiceEditFormRoot
+          .find(Button({ id: 'adjustments[0].fundDistributions-add-button' }))
+          .click(),
+      );
+      cy.expect(
+        invoiceEditFormRoot
+          .find(Button({ id: 'adjustments[0].fundDistributions[0].fundId' }))
+          .exists(),
+      );
+    }
+    if (invoice.adjustmentFund) {
+      const { name, code } = invoice.adjustmentFund;
+
+      cy.do([
+        invoiceEditFormRoot
+          .find(Button({ id: 'adjustments[0].fundDistributions[0].fundId' }))
+          .click(),
+        SelectionOption(`${name} (${code})`).click(),
+      ]);
+      cy.expect(
+        invoiceEditFormRoot
+          .find(Button({ id: 'adjustments[0].fundDistributions[0].fundId' }))
+          .has({ text: including(code) }),
+      );
+    }
+    if (invoice.adjustmentExpenseClass) {
+      cy.do([
+        adjustmentExpenseClassSelection.open(),
+        SelectionList().select(including(invoice.adjustmentExpenseClass)),
+      ]);
+      this.checkAdjustmentExpenseClass({ selected: invoice.adjustmentExpenseClass });
+    }
   },
   uploadFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
@@ -300,6 +397,71 @@ export default {
 
   verifyAcqUnitSelected(auName) {
     cy.expect(invoiceAcqUnitsMultiSelect.find(ValueChipRoot(auName)).exists());
+  },
+
+  checkAdjustmentsCount(count) {
+    // Adjustment fields are indexed without gaps, so the last index and the next one define the count
+    if (count) {
+      cy.expect(
+        adjustmentsField
+          .find(TextField({ name: `adjustments[${count - 1}].description` }))
+          .exists(),
+      );
+    }
+    cy.expect(
+      adjustmentsField.find(TextField({ name: `adjustments[${count}].description` })).absent(),
+    );
+  },
+
+  checkAdjustmentSelectOptions(fieldName, { included = [], excluded = [] } = {}, index = 0) {
+    const select = invoiceEditFormRoot.find(Select({ name: `adjustments[${index}].${fieldName}` }));
+
+    included.forEach((option) => {
+      cy.expect(select.has({ optionsText: including(option) }));
+    });
+    excluded.forEach((option) => {
+      cy.expect(select.has({ optionsText: not(including(option)) }));
+    });
+  },
+
+  checkAdjustmentRelationToTotal(relationToTotal, index = 0) {
+    cy.expect(
+      invoiceEditFormRoot
+        .find(Select({ name: `adjustments[${index}].relationToTotal` }))
+        .has({ checkedOptionText: relationToTotal }),
+    );
+  },
+
+  checkAdjustmentExpenseClass({ selected, options, error } = {}) {
+    if (selected !== undefined) {
+      cy.expect(adjustmentExpenseClassSelection.has({ singleValue: selected }));
+    }
+    if (options) {
+      cy.do(adjustmentExpenseClassSelection.open());
+      cy.expect(SelectionList().has({ optionCount: options.length }));
+      options.forEach((option) => {
+        cy.expect(SelectionList().has({ optionList: including(option) }));
+      });
+      cy.do(adjustmentExpenseClassSelection.toggle());
+    }
+    if (error) {
+      cy.expect(adjustmentExpenseClassSelection.has({ error }));
+    }
+    if (error === null) {
+      cy.expect(
+        adjustmentExpenseClassSelection
+          .find(HTML({ className: including('feedbackError') }))
+          .absent(),
+      );
+    }
+  },
+
+  checkAdjustmentFundDistributionAbsent(index = 0) {
+    cy.expect(
+      invoiceEditFormRoot
+        .find(Button({ id: `adjustments[${index}].fundDistributions[0].fundId` }))
+        .absent(),
+    );
   },
 
   clearField(fieldName) {

@@ -190,8 +190,8 @@ describe('Data Import', () => {
                 rec.csvFile,
                 'authority',
                 'Default authority export job profile',
-              ).then(() => {
-                ExportFile.downloadExportedMarcFile(rec.exportedFile);
+              ).then((exportJob) => {
+                ExportFile.downloadExportedMarcFile(rec.exportedFile, exportJob);
               });
             })
               .then(() => {
