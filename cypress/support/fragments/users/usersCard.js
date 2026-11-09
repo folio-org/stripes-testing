@@ -308,9 +308,9 @@ export default {
   openFeeFines(openFeesFines, closedFeesFines) {
     cy.do(feesFinesAccordion.clickHeader());
 
-    return (
-      openFeesFines  this.verifyQuantityOfOpenAndClosedFeeFines(openFeesFines, closedFeesFines)
-    );
+    if (openFeesFines !== undefined) {
+      this.verifyQuantityOfOpenAndClosedFeeFines(openFeesFines, closedFeesFines);
+    }
   },
 
   verifyQuantityOfOpenAndClosedFeeFines(openFeesFines, closedFeesFines) {
@@ -794,10 +794,7 @@ export default {
   verifyOpenedFeeFines(count, totalAmount) {
     cy.expect(
       feesFinesAccordion.find(ListItem(including('open'))).has({
-        text: and(
-          including(`${count} open`),
-          including(`Total: $${totalAmount}`),
-        ),
+        text: and(including(`${count} open`), including(`Total: $${totalAmount}`)),
       }),
     );
   },
