@@ -2231,4 +2231,30 @@ export default {
         .fillIn(''),
     );
   },
+
+  // C365107 - fund distribution inside an invoice adjustment
+  verifyProRateFieldValue: (value) => {
+    // accepted values are inserted wrapped in quotes
+    cy.expect(
+      invoiceAdjustmentsSection
+        .find(RepeatableFieldItem({ index: 0 }))
+        .find(TextField('Pro rate'))
+        .has({ value: including(value) }),
+    );
+  },
+  clickAddAdjustmentFundDistribution: () => {
+    const addFundDistributionButton = invoiceAdjustmentsSection.find(
+      Button('Add fund distribution'),
+    );
+    cy.expect(addFundDistributionButton.has({ disabled: false }));
+    cy.do(addFundDistributionButton.click());
+  },
+  openAdjustmentExpenseClassAcceptedValues: () => {
+    // The fund distribution row is nested in the adjustment row; its accepted values lists are
+    // "Fund ID" (first) and "Expense Class" (second)
+    cy.get(
+      '#invoice-adjustments [data-test-repeatable-field-list-item] [data-test-repeatable-field-list-item] [data-test-accepted-values-list]:eq(1) > button',
+    ).click();
+    cy.expect(DropdownMenu({ visible: true }).exists());
+  },
 };
