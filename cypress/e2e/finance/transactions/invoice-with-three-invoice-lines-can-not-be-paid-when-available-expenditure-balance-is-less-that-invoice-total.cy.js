@@ -195,6 +195,7 @@ describe('Finance', () => {
 
     after(() => {
       cy.getAdminToken();
+      Approvals.setApprovePayValueViaApi(false);
       Users.deleteViaApi(testData.user.userId);
       Invoices.deleteInvoiceViaApi(testData.invoice.id);
       Orders.deleteOrderViaApi(testData.order.id);

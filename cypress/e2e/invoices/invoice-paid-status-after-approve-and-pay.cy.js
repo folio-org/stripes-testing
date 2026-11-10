@@ -97,6 +97,7 @@ describe('Invoices', () => {
 
   after(() => {
     cy.getAdminToken();
+    Approvals.setApprovePayValueViaApi(false);
     Users.deleteViaApi(user.userId);
     Organizations.deleteOrganizationViaApi(organization.id);
     // Budget, Fund, Ledger, and FiscalYear cannot be deleted because they have related transactions from paid invoice
