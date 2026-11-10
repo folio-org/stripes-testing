@@ -1,4 +1,6 @@
+import moment from 'moment';
 import { Permissions } from '../../support/dictionary';
+import { createCalendar, deleteCalendar } from '../../support/fragments/calendar/calendar';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -35,6 +37,29 @@ describe('Check out', () => {
     cy.then(() => {
       testData.servicePoint = NewServicePoint.getDefaultServicePoint();
       ServicePoints.createViaApi(testData.servicePoint);
+      // Open every day, so check out works with any loan policy the circulation rules apply
+      // (calendar-dependent policies fail on a service point without opening hours)
+      createCalendar(
+        {
+          name: `AT_C380719_Calendar_${getRandomPostfix()}`,
+          assignments: [testData.servicePoint.id],
+          startDate: moment.utc().subtract(1, 'days').format('YYYY-MM-DD'),
+          endDate: moment.utc().add(1, 'years').format('YYYY-MM-DD'),
+          normalHours: [
+            'SUNDAY',
+            'MONDAY',
+            'TUESDAY',
+            'WEDNESDAY',
+            'THURSDAY',
+            'FRIDAY',
+            'SATURDAY',
+          ].map((day) => ({ startDay: day, startTime: '00:00', endDay: day, endTime: '23:59' })),
+          exceptions: [],
+        },
+        (response) => {
+          testData.calendarId = response.body.id;
+        },
+      );
     })
       .then(() => {
         // Get existing location and create inventory instances for item checkout
@@ -86,6 +111,9 @@ describe('Check out', () => {
         testData.servicePoint.id,
       ]);
     }).then(() => {
+      if (testData.calendarId) {
+        deleteCalendar(testData.calendarId);
+      }
       ServicePoints.deleteViaApi(testData.servicePoint.id);
       Users.deleteViaApi(testData.userA.userId);
       Users.deleteViaApi(testData.userB.userId);

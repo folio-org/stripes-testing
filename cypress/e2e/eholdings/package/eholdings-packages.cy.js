@@ -285,7 +285,13 @@ describe('eHoldings', () => {
                 cy.reload();
                 EHoldingsPackageView.waitLoading();
                 EHoldingsPackage.verifyTitleFound(titleName);
-                EHoldingsPackage.verifyTitleFound('SelectedTitle is set to hide');
+                EHoldingsPackages.verifyHiddenIconForTitleShown(titleName, true);
+                EHoldingsPackages.verifyHiddenIndicatorTooltipForTitle({
+                  titleName,
+                  pf: true,
+                  ftf: true,
+                  marc: true,
+                });
                 EHoldingsPackageView.verifyExclusionOptions({ pf: true, ftf: true, marc: true });
               });
           });

@@ -248,7 +248,7 @@ describe('Data Import', () => {
         const jsonItemTestData = [
           'Import Log for Record 01 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
           "Mapped Item is invalid: [Field 'materialType.id' is a required field and can not be null]",
-          'ERROR: invalid input syntax for type uuid: "arch" (22P02)',
+          'invalid input syntax for type uuid: "arch"',
         ];
 
         // upload .mrc file
@@ -413,7 +413,9 @@ describe('Data Import', () => {
             instanceHrid = hrid;
 
             JsonScreenView.openHoldingsTab();
-            ['KU/CC/DI/M', 'KU/CC/DI/A', 'E'].forEach((value) => JsonScreenView.verifyContentInTab(value));
+            ['KU/CC/DI/M', 'KU/CC/DI/A', 'E'].forEach((value) =>
+              JsonScreenView.verifyContentInTab(value),
+            );
             JsonScreenView.openItemTab();
             itemHrids.forEach((value) => JsonScreenView.verifyContentInTab(value));
 

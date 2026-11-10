@@ -11,7 +11,6 @@ import {
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListRow,
-  Pane,
   PaneHeader,
   Section,
   Tooltip,
@@ -70,11 +69,6 @@ const relatedInvoiceLinesSection = orderLineDetailsSection.find(
 const compareDateStrings = (left, right) => new Date(left) - new Date(right);
 const relatedInvoiceLinesList = relatedInvoiceLinesSection.find(MultiColumnList());
 const customFieldsAccordion = orderLineDetailsSection.find(Section({ id: 'customFieldsPOLine' }));
-// const tagsButton = orderLineDetailsSection.find(Button({ id: 'clickable-show-tags' }));
-const tagsPane = Pane('Tags');
-// const tagsMultiSelect = tagsPane.find(MultiSelect({ id: 'input-tag' }));
-// const addTagOption = (tagName) =>
-//   MultiSelectMenu().find(MultiSelectOption(and(including('Add tag for:'), including(tagName))));
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
