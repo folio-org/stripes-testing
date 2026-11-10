@@ -177,7 +177,9 @@ describe('Data Import', () => {
           'Default authority',
           'Authorities',
         );
-        ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
+        ExportFile.getExportJobByUploadedFileViaApi(testData.csvFile).then((exportJob) => {
+          ExportFile.downloadExportedMarcFile(testData.exportedMarcFile, exportJob);
+        });
 
         // Steps 3-4: Edit exported file — replace 400 field content
         DataImport.editMarcFile(

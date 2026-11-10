@@ -224,7 +224,7 @@ async function main() {
     // Clean up temp file
     try {
       fs.unlinkSync(tempFile);
-    } catch (err) {
+    } catch {
       // Ignore cleanup errors
     }
 

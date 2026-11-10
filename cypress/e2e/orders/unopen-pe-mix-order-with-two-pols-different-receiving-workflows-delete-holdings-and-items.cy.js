@@ -68,7 +68,8 @@ describe('Orders', () => {
   };
 
   const getPeMixOrderLine = ({ orderId, title, checkinItems, polLocations }) => {
-    const sumQuantity = (key) => polLocations.reduce((sum, location) => sum + (location[key] || 0), 0);
+    const sumQuantity = (key) =>
+      polLocations.reduce((sum, location) => sum + (location[key] || 0), 0);
 
     return {
       ...BasicOrderLine.getDefaultOrderLine({

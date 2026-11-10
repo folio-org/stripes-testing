@@ -4,7 +4,6 @@ const { getTestRunResults } = require('./helpers/test.rail.helper');
 const { createTestRailClient } = require('./helpers/api.client');
 require('dotenv').config();
 
-
 const testUsername = process.env.TESTRAIL_API_USER;
 const testPassword = process.env.TESTRAIL_API_KEY;
 const runId = process.env.TESTRAIL_RUN_ID;
@@ -28,7 +27,7 @@ function grepTestsFromTestRun() {
     });
     testRuns = JSON.parse(testRunsContent);
     console.log(`Reading the file: ${TEST_RUN_PATH}`);
-  } catch (err) {
+  } catch {
     console.log(`File does not exist: ${TEST_RUN_PATH}`);
     console.log('Creating new testRuns object...');
     testRuns = {};
@@ -41,7 +40,9 @@ function grepTestsFromTestRun() {
     .then((tests) => {
       console.log(`\nNumber of all tests in the #${runId} run: ${tests.length}\n`);
       tests.forEach((test) => {
-        const existingTestCase = testRuns.snapshot.test_cases.find((tc) => tc.case_id === test.case_id);
+        const existingTestCase = testRuns.snapshot.test_cases.find(
+          (tc) => tc.case_id === test.case_id,
+        );
         if (existingTestCase) {
           if (!existingTestCase.testRuns.some((tr) => tr.date === runDate) || alternativeVersion) {
             existingTestCase.testRuns.push({
@@ -68,18 +69,13 @@ function grepTestsFromTestRun() {
       });
     })
     .then(() => {
-      fs.writeFile(
-        TEST_RUN_PATH,
-        JSON.stringify(testRuns),
-        'utf8',
-        (err) => {
-          if (err) {
-            console.error('Error writing file', err);
-          } else {
-            console.log('File has been written');
-          }
-        },
-      );
+      fs.writeFile(TEST_RUN_PATH, JSON.stringify(testRuns), 'utf8', (err) => {
+        if (err) {
+          console.error('Error writing file', err);
+        } else {
+          console.log('File has been written');
+        }
+      });
     });
 }
 grepTestsFromTestRun();

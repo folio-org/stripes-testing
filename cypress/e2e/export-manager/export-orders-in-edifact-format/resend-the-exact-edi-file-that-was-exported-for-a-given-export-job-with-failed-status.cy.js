@@ -66,7 +66,8 @@ const USER_PERMISSIONS = [
   Permissions.uiOrganizationsViewEdit.gui,
 ];
 
-const getIntegrationName = (integration) => integration.integrationName ||
+const getIntegrationName = (integration) =>
+  integration.integrationName ||
   integration.name ||
   integration.exportTypeSpecificParameters.vendorEdiOrdersExportConfig.configName;
 
@@ -127,7 +128,9 @@ describe('Export Manager', () => {
           return Organizations.createOrganizationViaApi(organization).then((id) => {
             organization.id = id;
             order.vendor = id;
-            return f.set(R.ORGANIZATION, organization, (value) => Organizations.deleteOrganizationViaApi(value.id));
+            return f.set(R.ORGANIZATION, organization, (value) =>
+              Organizations.deleteOrganizationViaApi(value.id),
+            );
           });
         })
         .step((f) => {
@@ -145,13 +148,17 @@ describe('Export Manager', () => {
         .step((f) => {
           return MaterialTypes.createMaterialTypeViaApi(
             MaterialTypes.getDefaultMaterialType(),
-          ).then(({ body }) => f.set(R.MATERIAL_TYPE, body, (value) => MaterialTypes.deleteViaApi(value.id)));
+          ).then(({ body }) =>
+            f.set(R.MATERIAL_TYPE, body, (value) => MaterialTypes.deleteViaApi(value.id)),
+          );
         })
         .step((f) => {
           // Precondition 3: Order in 'Open' status with PO line set for integration method exists
           return cy
             .createOrderApi({ ...order })
-            .then(({ body }) => f.set(R.ORDER, body, (value) => Orders.deleteOrderViaApi(value.id, false)));
+            .then(({ body }) =>
+              f.set(R.ORDER, body, (value) => Orders.deleteOrderViaApi(value.id, false)),
+            );
         })
         .step((f) => {
           // Precondition 3: PO line with Acquisition method = Purchase and Automatic export = Active
@@ -175,7 +182,9 @@ describe('Export Manager', () => {
               volumes: [],
             },
             vendorDetail: { vendorAccount: organization.accounts[0].accountNo },
-          }).then((value) => f.set(R.ORDER_LINE, value, (line) => OrderLines.deleteOrderLineViaApi(line.id, false)));
+          }).then((value) =>
+            f.set(R.ORDER_LINE, value, (line) => OrderLines.deleteOrderLineViaApi(line.id, false)),
+          );
         })
         .step((f) => {
           return Orders.updateOrderViaApi({
@@ -203,7 +212,11 @@ describe('Export Manager', () => {
           f.set(R.INTEGRATION_FIRE_AT, fireAt.valueOf());
           return Integrations.createIntegrationViaApi(integration)
             .then(() => Integrations.getIntegrationConfigViaApi(integration.id))
-            .then((value) => f.set(R.INTEGRATION, value, (config) => Integrations.deleteIntegrationViaApi(config.id)));
+            .then((value) =>
+              f.set(R.INTEGRATION, value, (config) =>
+                Integrations.deleteIntegrationViaApi(config.id),
+              ),
+            );
         })
         .step(() => {
           // Precondition 4: Wait for the scheduled job to run and produce 'Failed' status

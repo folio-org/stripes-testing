@@ -16,7 +16,6 @@ describe('MARC', () => {
       };
 
       let user;
-      let instanceId;
       before('Create test data', () => {
         cy.createTempUser([
           Permissions.inventoryAll.gui,

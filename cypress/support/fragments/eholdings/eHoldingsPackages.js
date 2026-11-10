@@ -16,6 +16,8 @@ import {
   Link,
   PaneHeader,
   Tooltip,
+  MultiColumnListCell,
+  MultiColumnListRow,
 } from '../../../../interactors';
 import { FILTER_STATUSES } from './eholdingsConstants';
 import getRandomPostfix from '../../utils/stringTools';
@@ -36,6 +38,35 @@ const proxySelect = Select('Proxy');
 const customCoverageDate = KeyValue('Custom coverage dates');
 const startDateInput = TextField({ id: 'begin-coverage-0' });
 const endDateInput = TextField({ id: 'end-coverage-0' });
+const hiddenIcon = Icon({ eyeClosed: true });
+const hiddenTooltipTextParts = {
+  pf: 'Publication Finder',
+  ftf: 'Full Text Finder',
+  marc: 'MARC export',
+};
+
+// Tooltip of the "Hidden" indicator, listing the categories the package is hidden/excluded in
+const getHiddenIndicatorTooltipText = ({ pf = true, ftf = true, marc = true } = {}) => {
+  const options = { pf, ftf, marc };
+  const parts = Object.keys(hiddenTooltipTextParts)
+    .filter((key) => options[key])
+    .map((key) => hiddenTooltipTextParts[key]);
+  let joinedParts;
+  if (parts.length <= 1) {
+    joinedParts = parts.join('');
+  } else if (parts.length === 2) {
+    joinedParts = parts.join(' and ');
+  } else {
+    joinedParts = `${parts.slice(0, -1).join(', ')}, and ${parts[parts.length - 1]}`;
+  }
+  return `Package is set to hide/exclude in ${joinedParts}`;
+};
+
+const verifyHiddenIndicatorTooltip = (icon, categories) => {
+  cy.do(icon.hoverMouse());
+  cy.expect(Tooltip({ text: getHiddenIndicatorTooltipText(categories) }).exists());
+  cy.do(icon.unhoverMouse());
+};
 
 const defaultPackage = {
   data: {
@@ -212,7 +243,8 @@ export default {
     }).then(({ body }) => {
       const initialPackageIds = body.data
         .filter(
-          (specialPackage) => !specialPackage?.attributes?.isCustom &&
+          (specialPackage) =>
+            !specialPackage?.attributes?.isCustom &&
             specialPackage?.attributes?.name &&
             // TODO: can't see not complete package in response now
             // && specialPackage.attributes?.packageType !== 'Complete'
@@ -235,7 +267,8 @@ export default {
     }).then(({ body }) => {
       const initialPackageIds = body.data
         .filter(
-          (specialPackage) => !specialPackage?.attributes?.isCustom &&
+          (specialPackage) =>
+            !specialPackage?.attributes?.isCustom &&
             specialPackage?.attributes?.name &&
             specialPackage.attributes?.packageType !== 'Complete' &&
             // TODO: potencial issue with this package
@@ -268,10 +301,12 @@ export default {
   verifyHiddenIndicatorShown(packageName, isShown = true) {
     const icon = resultSection
       .find(ListItem({ className: including('list-item-'), h3Value: packageName }))
-      .find(Icon({ eyeClosed: true }));
+      .find(hiddenIcon);
     if (isShown) cy.expect(icon.exists());
     else cy.expect(icon.absent());
   },
+
+  getHiddenIndicatorTooltipText,
 
   verifyHiddenIndicatorTooltipInResultRow({
     packageName,
@@ -281,31 +316,37 @@ export default {
   } = {}) {
     const icon = resultSection
       .find(ListItem({ className: including('list-item-'), h3Value: packageName }))
-      .find(Icon({ eyeClosed: true }));
-    const tooltipTextParts = {
-      pf: 'Publication Finder',
-      ftf: 'Full Text Finder',
-      marc: 'MARC export',
-    };
-    const buildHiddenTooltipText = (options) => {
-      const parts = Object.keys(tooltipTextParts)
-        .filter((key) => options[key])
-        .map((key) => tooltipTextParts[key]);
-      let joinedParts;
-      if (parts.length <= 1) {
-        joinedParts = parts.join('');
-      } else if (parts.length === 2) {
-        joinedParts = parts.join(' and ');
-      } else {
-        joinedParts = `${parts.slice(0, -1).join(', ')}, and ${parts[parts.length - 1]}`;
-      }
-      return `Package is set to hide/exclude in ${joinedParts}`;
-    };
-    const text = buildHiddenTooltipText({ pf, ftf, marc });
+      .find(hiddenIcon);
 
-    cy.do(icon.hoverMouse());
-    cy.expect(Tooltip({ text }).exists());
-    cy.do(icon.unhoverMouse());
+    verifyHiddenIndicatorTooltip(icon, { pf, ftf, marc });
+  },
+
+  // Title row in a package's titles list - same tooltip text as in package search results
+  verifyHiddenIndicatorTooltipForTitle({ titleName, pf = true, ftf = true, marc = true } = {}) {
+    const icon = MultiColumnListRow({
+      innerText: including(`\n${titleName}\n`),
+      isContainer: false,
+    }).find(hiddenIcon);
+
+    verifyHiddenIndicatorTooltip(icon, { pf, ftf, marc });
+  },
+
+  verifyHiddenIconForTitleShown(titleName, isShown = true) {
+    const targetTitlRow = MultiColumnListRow({
+      innerText: including(`\n${titleName}\n`),
+      isContainer: false,
+    });
+    if (isShown) {
+      cy.expect([
+        targetTitlRow.find(hiddenIcon).exists(),
+        targetTitlRow.find(MultiColumnListCell(including('Hidden'))).exists(),
+      ]);
+    } else {
+      cy.expect([
+        targetTitlRow.find(hiddenIcon).absent(),
+        targetTitlRow.find(MultiColumnListCell(including('Hidden'))).absent(),
+      ]);
+    }
   },
 
   verifyPackageWithPackageDisplayNameExistsInResults(packageName, packageDisplayName) {
@@ -515,7 +556,8 @@ export default {
       });
   },
 
-  verifyPackageRecordProxy: (proxyName) => cy.expect(KeyValue('Proxy', { value: proxyName }).exists()),
+  verifyPackageRecordProxy: (proxyName) =>
+    cy.expect(KeyValue('Proxy', { value: proxyName }).exists()),
 
   verifyDetailsPaneAbsent: (packageName) => {
     cy.expect(Pane(including(packageName)).absent());

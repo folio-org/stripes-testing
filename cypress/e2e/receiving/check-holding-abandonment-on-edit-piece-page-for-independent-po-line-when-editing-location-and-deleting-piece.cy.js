@@ -73,9 +73,11 @@ describe('Receiving', () => {
       .then((materialType) => {
         testData.materialType = materialType;
       })
-      .then(() => cy.getAcquisitionMethodsApi({
-        query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-      }))
+      .then(() =>
+        cy.getAcquisitionMethodsApi({
+          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+        }),
+      )
       .then(({ body }) => {
         testData.acquisitionMethod = body.acquisitionMethods[0];
       });
@@ -135,7 +137,9 @@ describe('Receiving', () => {
       format: testData.orderLine.orderFormat,
     };
 
-    return Receiving.addPieceViaApi({ ...piece, holdingId: location1HoldingId }).then(() => Receiving.addPieceViaApi(piece, { locationId: testData.location2.id }));
+    return Receiving.addPieceViaApi({ ...piece, holdingId: location1HoldingId }).then(() =>
+      Receiving.addPieceViaApi(piece, { locationId: testData.location2.id }),
+    );
   };
 
   const createUserAndLogin = () => {

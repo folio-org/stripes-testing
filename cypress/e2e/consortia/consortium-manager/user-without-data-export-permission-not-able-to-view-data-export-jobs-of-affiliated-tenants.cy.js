@@ -21,7 +21,9 @@ describe('Consortia', () => {
     const permissionErrorMessage =
       'Could not load jobs data. User does not have required permissions.';
     // First member in alphabetical order is selected by default in "Member" dropdown
-    const [defaultMemberName] = [tenantNames.central, tenantNames.college].sort((a, b) => a.localeCompare(b));
+    const [defaultMemberName] = [tenantNames.central, tenantNames.college].sort((a, b) =>
+      a.localeCompare(b),
+    );
     const isMemberWithoutPermissionDefault = defaultMemberName === tenantNames.college;
     const verifyLogsNotLoadedWithoutPermission = () => {
       ConsortiumManagerApp.checkMessage(permissionErrorMessage, calloutTypes.error);

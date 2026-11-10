@@ -30,7 +30,6 @@ describe('MARC', () => {
       let field700;
       let field700Id;
       let field980Id;
-      let createdInstanceId;
 
       before('Create user and configure validation rules', () => {
         cy.getAdminToken();

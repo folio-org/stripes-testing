@@ -358,7 +358,8 @@ export default {
     expect(record['Number of bibliographic records linked']).to.eq(expectedLinkedCount);
   },
 
-  select: (specialInternalId) => cy.do(authoritiesList.find(Button({ href: including(specialInternalId) })).click()),
+  select: (specialInternalId) =>
+    cy.do(authoritiesList.find(Button({ href: including(specialInternalId) })).click()),
 
   selectFirst: (title) => cy.do(MultiColumnListRow({ index: 0 }).find(Button(title)).click()),
 
@@ -492,7 +493,8 @@ export default {
     ]);
   },
 
-  checkRow: (expectedHeadingReference) => cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
+  checkRow: (expectedHeadingReference) =>
+    cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
 
   checkRowsCount: (expectedRowsCount) => {
     cy.expect(authoritiesList.has({ rowCount: expectedRowsCount }));
@@ -504,11 +506,12 @@ export default {
     ]);
   },
 
-  checkRowUpdatedAndHighlighted: (expectedHeadingReference) => cy.expect(
-    authoritiesList
-      .find(MultiColumnListCell({ selected: true }, including(expectedHeadingReference)))
-      .exists(),
-  ),
+  checkRowUpdatedAndHighlighted: (expectedHeadingReference) =>
+    cy.expect(
+      authoritiesList
+        .find(MultiColumnListCell({ selected: true }, including(expectedHeadingReference)))
+        .exists(),
+    ),
 
   switchToBrowse: () => cy.do(Button({ id: 'segment-navigation-browse' }).click()),
 
@@ -882,7 +885,8 @@ export default {
 
   verifyCheckboxInAccordion(accordionName, checkboxValue, isChecked = null) {
     cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).exists());
-    if (isChecked !== null) cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).has({ checked: isChecked }));
+    if (isChecked !== null)
+      cy.expect(Accordion(accordionName).find(Checkbox(checkboxValue)).has({ checked: isChecked }));
   },
 
   verifyFilterOptionCount(accordionName, optionName, expectedCount) {
@@ -1029,7 +1033,8 @@ export default {
   fillAdvancedSearchField(rowIndex, value, searchOption, booleanOption, matchOption) {
     cy.do(AdvancedSearchRow({ index: rowIndex }).fillQuery(value));
     this.selectSearchOptionInAdvancedSearchModal(rowIndex, searchOption);
-    if (booleanOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectBoolean(rowIndex, booleanOption));
+    if (booleanOption)
+      cy.do(AdvancedSearchRow({ index: rowIndex }).selectBoolean(rowIndex, booleanOption));
     if (matchOption) this.selectMatchOptionInAdvancedSearchModal(rowIndex, matchOption);
   },
 
@@ -1653,7 +1658,9 @@ export default {
   // equivalence, unlike a plain string/numeric sort which would treat them as different letters
   checkResultsSortedWithDiacriticFolding(columnIndex = 2) {
     this.getResultsListByColumn(columnIndex).then((cells) => {
-      const expectedOrder = [...cells].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+      const expectedOrder = [...cells].sort((a, b) =>
+        a.localeCompare(b, undefined, { sensitivity: 'base' }),
+      );
       cy.expect(cells).to.deep.equal(expectedOrder);
     });
   },
@@ -1750,7 +1757,9 @@ export default {
       .then((rowsCount) => {
         if (rowsCount) {
           for (let i = 0; i < rowsCount; i++) {
-            cy.then(() => authoritiesList.find(MultiColumnListCell({ column, row: i })).content()).then((content) => {
+            cy.then(() =>
+              authoritiesList.find(MultiColumnListCell({ column, row: i })).content(),
+            ).then((content) => {
               actualValues.push(content);
             });
           }
@@ -1934,9 +1943,11 @@ export default {
     cy.do(MultiColumnListCell({ row: rowIndex, columnIndex: 2 }).find(Button()).click());
   },
 
-  checkRowByContent: (rowContent) => cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).exists()),
+  checkRowByContent: (rowContent) =>
+    cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).exists()),
 
-  checkRowAbsentByContent: (rowContent) => cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).absent()),
+  checkRowAbsentByContent: (rowContent) =>
+    cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).absent()),
 
   selectSearchOptionInDropdown(searchOption) {
     cy.do(selectField.choose(searchOption));
@@ -2064,11 +2075,12 @@ export default {
       .then((authorityId) => {
         return cy
           .recurse(
-            () => cy.okapiRequest({
-              path: 'search/authorities',
-              searchParams: { query: `id=="${authorityId}"` },
-              isDefaultSearchParamsRequired: false,
-            }),
+            () =>
+              cy.okapiRequest({
+                path: 'search/authorities',
+                searchParams: { query: `id=="${authorityId}"` },
+                isDefaultSearchParamsRequired: false,
+              }),
             (response) => {
               const authorities = response.body?.authorities;
               return (

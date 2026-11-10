@@ -43,7 +43,10 @@ describe('Calendar', () => {
         testCalendarResponse = calResponse.body;
       });
 
-      cy.loginAsAdmin({ path: TopMenu.settingsCalendarPath, waiter: Calendar.waitCalendarPaneToLoad });
+      cy.loginAsAdmin({
+        path: TopMenu.settingsCalendarPath,
+        waiter: Calendar.waitCalendarPaneToLoad,
+      });
     });
 
     after(() => {
@@ -54,31 +57,35 @@ describe('Calendar', () => {
       ServicePoints.deleteViaApi(testServicePoint.id);
     });
 
-    it('C360950 Edit -> Edit existing calendars (helios)', { tags: ['smoke', 'helios', 'C360950'] }, () => {
-      PaneActions.allCalendarsPane.openAllCalendarsPane();
-      PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
-      PaneActions.individualCalendarPane.selectEditAction({ calendarName: testCalendar.name });
-      PaneActions.individualCalendarPane.checkEditURLFromAllCalendarsPage();
-
-      // intercept http request; registered before the form is saved so the request isn't missed
-      cy.intercept(`**/calendar/calendars/${testCalendarResponse.id}`, (req) => {
-        if (req.method === 'PUT') {
-          req.continue((res) => {
-            expect(res.statusCode).equals(200);
-          });
-        }
-      }).as('editCalendar');
-
-      CreateCalendarForm.editExistingCalendarsAndSave(editExistingCalendarsData);
-
-      cy.wait('@editCalendar').then(() => {
-        openCalendarSettings();
+    it(
+      'C360950 Edit -> Edit existing calendars (helios)',
+      { tags: ['smoke', 'helios', 'C360950'] },
+      () => {
         PaneActions.allCalendarsPane.openAllCalendarsPane();
-        PaneActions.allCalendarsPane.checkCalendarExists(editExistingCalendarsData.name);
-        PaneActions.allCalendarsPane.selectCalendar(editExistingCalendarsData.name);
+        PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
+        PaneActions.individualCalendarPane.selectEditAction({ calendarName: testCalendar.name });
+        PaneActions.individualCalendarPane.checkEditURLFromAllCalendarsPage();
 
-        PaneActions.individualCalendarPane.checkEditExistingCalendars(editExistingCalendarsData);
-      });
-    });
+        // intercept http request; registered before the form is saved so the request isn't missed
+        cy.intercept(`**/calendar/calendars/${testCalendarResponse.id}`, (req) => {
+          if (req.method === 'PUT') {
+            req.continue((res) => {
+              expect(res.statusCode).equals(200);
+            });
+          }
+        }).as('editCalendar');
+
+        CreateCalendarForm.editExistingCalendarsAndSave(editExistingCalendarsData);
+
+        cy.wait('@editCalendar').then(() => {
+          openCalendarSettings();
+          PaneActions.allCalendarsPane.openAllCalendarsPane();
+          PaneActions.allCalendarsPane.checkCalendarExists(editExistingCalendarsData.name);
+          PaneActions.allCalendarsPane.selectCalendar(editExistingCalendarsData.name);
+
+          PaneActions.individualCalendarPane.checkEditExistingCalendars(editExistingCalendarsData);
+        });
+      },
+    );
   });
 });

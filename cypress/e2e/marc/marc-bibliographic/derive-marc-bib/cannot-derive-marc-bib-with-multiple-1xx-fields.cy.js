@@ -28,7 +28,6 @@ describe('MARC', () => {
       };
 
       const createdRecordIDs = [];
-      let instanceId;
 
       before('Create user and data', () => {
         cy.createTempUser([
