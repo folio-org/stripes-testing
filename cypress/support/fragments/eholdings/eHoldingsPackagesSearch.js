@@ -118,18 +118,19 @@ export default {
   },
   byTag: (specialTag) => {
     cy.do(tagsAccordion.clickHeader());
-    cy.do(tagsAccordion.find(byTagCheckbox).click());
+    cy.do(tagsAccordion.find(byTagCheckbox).checkIfNotSelected());
+    cy.wait(100);
+    cy.do(tagsAccordion.find(byTagCheckbox).checkIfNotSelected());
     cy.do(tagsAccordion.find(MultiSelect()).filter(specialTag));
     cy.do(tagsAccordion.find(MultiSelectOption(specialTag)).click());
     eHoldingsPackages.waitLoading();
   },
   verifyTagAbsent(specialTag) {
-    cy.do([
-      tagsAccordion.clickHeader(),
-      tagsAccordion.find(byTagCheckbox).click(),
-      tagsAccordion.find(byTagCheckbox).click(),
-      tagsAccordion.find(Button({ ariaLabel: 'open menu' })).click(),
-    ]);
+    cy.do(tagsAccordion.clickHeader());
+    cy.do(tagsAccordion.find(byTagCheckbox).checkIfNotSelected());
+    cy.wait(100);
+    cy.do(tagsAccordion.find(byTagCheckbox).checkIfNotSelected());
+    cy.do(tagsAccordion.find(Button({ ariaLabel: 'open menu' })).click());
     cy.expect(tagsAccordion.find(MultiSelectOption(including(specialTag))).absent());
   },
   resetTagFilter: () => {

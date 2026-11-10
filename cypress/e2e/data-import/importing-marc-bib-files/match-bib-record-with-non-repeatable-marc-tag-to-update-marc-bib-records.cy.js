@@ -271,7 +271,9 @@ describe('Data Import', () => {
         TopMenuNavigation.navigateToApp(APPLICATION_NAMES.DATA_EXPORT);
         ExportFile.uploadFile(testData.nameForCSVFile);
         ExportFile.exportWithCreatedJobProfile(testData.nameForCSVFile, exportJobProfile);
-        ExportFile.downloadExportedMarcFile(testData.exportedFile);
+        ExportFile.getExportJobByUploadedFileViaApi(testData.nameForCSVFile).then((exportJob) => {
+          ExportFile.downloadExportedMarcFile(testData.exportedFile, exportJob);
+        });
         FileManager.deleteFile(`cypress/fixtures/${testData.nameForCSVFile}`);
         FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*');
 
