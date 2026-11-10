@@ -133,10 +133,10 @@ export default {
     );
   },
 
-  editPickupServicePoint() {
-    cy.do(pickupServicePointSelect.choose(this.servicePoint));
+  editPickupServicePoint(servicePointName = this.servicePoint) {
+    cy.do(pickupServicePointSelect.choose(servicePointName));
     this.saveAndClose();
-    cy.expect(pickupServicePointKeyValue.has({ value: this.servicePoint }));
+    cy.expect(pickupServicePointKeyValue.has({ value: servicePointName }));
   },
 
   editAndCheckAwaitingDeliveryRequest(instanceRecordData, request) {

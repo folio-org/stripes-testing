@@ -51,10 +51,38 @@ export default {
       }),
     );
   },
-  openInstanceTab: () => cy.do(instanceTab.click()),
-  openItemTab: () => cy.do(itemTab.click()),
-  openHoldingsTab: () => cy.do(holdingsTab.click()),
-  openOrderTab: () => cy.do(orderTab.click()),
+  openInstanceTab: () => {
+    cy.do(instanceTab.click());
+    cy.do(
+      instanceTab.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+  openItemTab: () => {
+    cy.do(itemTab.click());
+    cy.do(
+      itemTab.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+  openHoldingsTab: () => {
+    cy.do(holdingsTab.click());
+    cy.do(
+      holdingsTab.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+  openOrderTab: () => {
+    cy.do(orderTab.click());
+    cy.do(
+      orderTab.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
   openAuthorityTab: () => {
     cy.do(authorityTab.click());
     cy.do(
