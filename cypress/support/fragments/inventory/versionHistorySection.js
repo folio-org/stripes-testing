@@ -285,7 +285,7 @@ export default {
   clickOnSourceLinkInCard(index = 0) {
     const targetCard = rootSection.find(Card({ index }));
     cy.do(targetCard.find(Link({ href: including('/users/preview/') })).click());
-    UsersCard.waitLoading();
+    UsersCard.verifyUserCardOpened();
   },
 
   verifyOriginalVersionCard({ index = 1, firstName, lastName, changes = [] } = {}) {

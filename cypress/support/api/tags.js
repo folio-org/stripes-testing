@@ -32,7 +32,7 @@ Cypress.Commands.add('deleteTagApi', (tagId, ignoreErrors = false) => {
 // Pass `isPackage: true` with the package's own id to tag the package itself instead.
 Cypress.Commands.add(
   'addTagsToEHoldingsEntityApi',
-  ({ entityId, entityName, tags, isPackage = false } = {}) => {
+  ({ entityId, entityName, tags, isPackage = false, packageContentType = 'Unknown' } = {}) => {
     return cy.okapiRequest({
       method: 'PUT',
       path: `eholdings/${isPackage ? 'packages' : 'resources'}/${entityId}/tags`,
@@ -42,6 +42,7 @@ Cypress.Commands.add(
           attributes: {
             name: entityName,
             tags: { tagList: tags },
+            ...(isPackage ? { contentType: packageContentType } : {}),
           },
         },
       },

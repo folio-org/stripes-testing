@@ -93,6 +93,7 @@ describe('MARC', () => {
           Users.deleteViaApi(userB.userId);
         });
 
+        // Will FAIL until https://folio-org.atlassian.net/browse/UIIN-3470 is done
         it(
           'C663355 Check "Source" field in "Version history" pane when "MARC authority" record was updated by user from different tenant and user has permission to view users (consortia) (promin)',
           { tags: ['extendedPathECS', 'promin', 'C663355'] },
@@ -168,7 +169,7 @@ describe('MARC', () => {
             VersionHistorySection.verifySourceIsALink(0, true);
             VersionHistorySection.clickOnSourceLinkInCard(0);
             UsersCard.verifyUserCardOpened();
-            // TO DO: add verification for correct user record after https://folio-org.atlassian.net/browse/UIIN-3470 is done
+            UsersCard.verifyUserLastFirstNameInCard(userB.lastName, userB.firstName);
           },
         );
       });
