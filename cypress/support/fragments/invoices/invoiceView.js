@@ -12,6 +12,7 @@ import {
   Pane,
   PaneHeader,
   Section,
+  Tooltip,
 } from '../../../../interactors';
 import {
   DEFAULT_WAIT_TIME,
@@ -42,6 +43,13 @@ const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 // header section
 const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails' });
 const actionsButton = Button('Actions');
+const versionHistoryButton = Button({ icon: 'clock' });
+
+// version history: invoice details pane is replaced with the version view,
+// version history pane reuses the order line pane id
+const versionViewPane = Pane({ id: 'invoice-version-view' });
+const versionViewPaneHeader = PaneHeader({ id: 'paneHeaderinvoice-version-view' });
+const versionHistoryPane = Section({ id: 'versions-history-pane-order-line' });
 const newBlankLineButton = Button('New blank line');
 const cancelButton = Button('Cancel');
 // invoice lines section
@@ -361,6 +369,30 @@ export default {
 
   checkInvoiceFundDistributionSectionAbsent() {
     cy.expect(invoiceFundDistributionSection.absent());
+  },
+
+  openVersionHistory() {
+    cy.do(invoiceDetailsPaneHeader.find(versionHistoryButton).click());
+    cy.wait(2000);
+    cy.expect(versionHistoryPane.exists());
+  },
+
+  checkVersionHistoryButtonTooltip() {
+    cy.do(invoiceDetailsPaneHeader.find(versionHistoryButton).hoverMouse());
+    cy.expect(Tooltip().has({ text: 'Version history' }));
+  },
+
+  checkVersionHistoryModeControls() {
+    cy.expect([
+      versionViewPaneHeader.find(actionsButton).absent(),
+      versionViewPaneHeader.find(versionHistoryButton).has({ disabled: true }),
+      versionViewPaneHeader.find(Button({ id: 'clickable-show-tags' })).has({ disabled: true }),
+    ]);
+  },
+
+  closeVersionView() {
+    cy.do(versionViewPaneHeader.find(Button({ icon: 'times' })).click());
+    cy.expect([versionViewPane.absent(), versionHistoryPane.absent()]);
   },
 
   checkInvoiceLevelAdjustmentsSectionAbsent() {

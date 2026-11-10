@@ -33,6 +33,10 @@ const invoiceLineDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceLin
 const actionsButton = Button('Actions');
 const editButton = Button('Edit');
 const deleteButton = Button('Delete');
+const versionHistoryButton = Button({ icon: 'clock' });
+
+const versionViewPaneHeader = PaneHeader({ id: 'paneHeaderinvoice-line-version-view' });
+const versionHistoryPane = Section({ id: 'versions-history-pane-invoice-line-pane' });
 
 // invoice lines details information
 const informationSection = invoiceLineDetailsPane.find(Section({ id: 'invoiceLineInformation' }));
@@ -59,6 +63,19 @@ export default {
   },
   verifyTagsCount(count) {
     TagsPane.verifyTagsCount(invoiceLineDetailsPane, count);
+  },
+  openVersionHistory() {
+    cy.do(invoiceLineDetailsPaneHeader.find(versionHistoryButton).click());
+    cy.wait(2000);
+    cy.expect(versionHistoryPane.exists());
+    cy.wait(1000);
+  },
+  checkVersionHistoryModeControls() {
+    cy.expect([
+      versionViewPaneHeader.find(actionsButton).absent(),
+      versionViewPaneHeader.find(versionHistoryButton).has({ disabled: true }),
+      versionViewPaneHeader.find(Button({ id: 'clickable-show-tags' })).has({ disabled: true }),
+    ]);
   },
   openInvoiceLineEditForm() {
     cy.do([invoiceLineDetailsPaneHeader.find(actionsButton).click(), editButton.click()]);
