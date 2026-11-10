@@ -96,17 +96,19 @@ describe.skip('Orders', () => {
       fundId: fund.id,
       allocated: 1000,
       budgetStatus,
-    }).then((budget) => Budgets.updateBudgetViaApi({
-      ...budget,
-      statusExpenseClasses: [
-        {
-          status: BUDGET_STATUSES.ACTIVE,
-          expenseClassId: expenseClass.id,
-        },
-      ],
-    }).then(() => {
-      f.set(budgetKey, budget, () => Budgets.deleteViaApi(budget.id, false));
-    }));
+    }).then((budget) =>
+      Budgets.updateBudgetViaApi({
+        ...budget,
+        statusExpenseClasses: [
+          {
+            status: BUDGET_STATUSES.ACTIVE,
+            expenseClassId: expenseClass.id,
+          },
+        ],
+      }).then(() => {
+        f.set(budgetKey, budget, () => Budgets.deleteViaApi(budget.id, false));
+      }),
+    );
   };
 
   before(() => {
@@ -179,7 +181,9 @@ describe.skip('Orders', () => {
           name: `Electronic_${getRandomPostfix()}`,
           code: `EL${getRandomPostfix()}`,
         }).then((ec) => {
-          f.set(R.EXPENSE_CLASS, ec, () => ExpenseClasses.deleteExpenseClassViaApi(ec.id, { failOnStatusCode: false }));
+          f.set(R.EXPENSE_CLASS, ec, () =>
+            ExpenseClasses.deleteExpenseClassViaApi(ec.id, { failOnStatusCode: false }),
+          );
         });
       })
       // Precondition 4: Create budget for Fund A in FY1 with expense class

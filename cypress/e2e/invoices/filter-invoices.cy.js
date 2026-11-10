@@ -56,7 +56,9 @@ describe.skip('Invoices', () => {
     flow
       .step((currentFlow) => {
         return cy.createTagApi({ label: isolatingTagName }).then((id) => {
-          return currentFlow.set(R.TAG, { id, label: isolatingTagName }, () => cy.deleteTagApi(id, true));
+          return currentFlow.set(R.TAG, { id, label: isolatingTagName }, () =>
+            cy.deleteTagApi(id, true),
+          );
         });
       })
       .step((currentFlow) => {
@@ -66,7 +68,9 @@ describe.skip('Invoices', () => {
 
         return cy.then(() => {
           currentFlow
-            .set(R.FISCAL_YEAR, fiscalYear, () => FiscalYears.deleteFiscalYearViaApi(fiscalYear.id, false))
+            .set(R.FISCAL_YEAR, fiscalYear, () =>
+              FiscalYears.deleteFiscalYearViaApi(fiscalYear.id, false),
+            )
             .set(R.FUND, fund, () => Funds.deleteFundViaApi(fund.id, false))
             .set(R.BUDGET, budget, () => Budgets.deleteViaApi(budget.id, false));
         });
@@ -76,7 +80,9 @@ describe.skip('Invoices', () => {
 
         return Organizations.createOrganizationViaApi(organization, { returnBody: true }).then(
           (responseOrganizations) => {
-            return currentFlow.set(R.ORGANIZATION, responseOrganizations, () => Organizations.deleteOrganizationViaApi(responseOrganizations));
+            return currentFlow.set(R.ORGANIZATION, responseOrganizations, () =>
+              Organizations.deleteOrganizationViaApi(responseOrganizations),
+            );
           },
         );
       })
@@ -102,7 +108,11 @@ describe.skip('Invoices', () => {
           reEncumber: true,
           vendor: currentFlow.get(R.ORGANIZATION).id,
           tags: { tagList: [currentFlow.get(R.TAG).label] },
-        }).then((orderResponse) => currentFlow.set(R.ORDER, orderResponse, () => Orders.deleteOrderViaApi(orderResponse.id, false)));
+        }).then((orderResponse) =>
+          currentFlow.set(R.ORDER, orderResponse, () =>
+            Orders.deleteOrderViaApi(orderResponse.id, false),
+          ),
+        );
       })
       .step((currentFlow) => {
         return OrderLines.createOrderLineViaApi({
@@ -137,7 +147,11 @@ describe.skip('Invoices', () => {
             materialSupplier: currentFlow.get(R.ORGANIZATION).id,
             volumes: [],
           },
-        }).then((orderLineResponse) => currentFlow.set(R.ORDER_LINE, orderLineResponse, () => OrderLines.deleteOrderLineViaApi(orderLineResponse.id, false)));
+        }).then((orderLineResponse) =>
+          currentFlow.set(R.ORDER_LINE, orderLineResponse, () =>
+            OrderLines.deleteOrderLineViaApi(orderLineResponse.id, false),
+          ),
+        );
       })
       .step((currentFlow) => {
         return Orders.updateOrderViaApi({
@@ -158,7 +172,11 @@ describe.skip('Invoices', () => {
           subTotal: 100,
           tags: [currentFlow.get(R.TAG).label],
         })
-          .then((invoiceResponse) => currentFlow.set(R.INVOICE, invoiceResponse, () => Invoices.deleteInvoiceViaApi(invoiceResponse.id)))
+          .then((invoiceResponse) =>
+            currentFlow.set(R.INVOICE, invoiceResponse, () =>
+              Invoices.deleteInvoiceViaApi(invoiceResponse.id),
+            ),
+          )
           .then(() => {
             Invoices.changeInvoiceStatusViaApi({
               invoice: currentFlow.get(R.INVOICE),
@@ -170,7 +188,9 @@ describe.skip('Invoices', () => {
         return cy
           .createTempUser([Permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui])
           .then((userProperties) => {
-            currentFlow.set(R.USER, userProperties, () => Users.deleteViaApi(userProperties.userId));
+            currentFlow.set(R.USER, userProperties, () =>
+              Users.deleteViaApi(userProperties.userId),
+            );
 
             cy.login(userProperties.username, userProperties.password);
           });

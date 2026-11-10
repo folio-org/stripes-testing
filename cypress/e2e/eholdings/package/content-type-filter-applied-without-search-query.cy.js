@@ -20,9 +20,10 @@ describe('eHoldings', () => {
     // Step 10 covers every content type except "All" (default) and "E-Journal" (exercised
     // separately in steps 4-8)
     const remainingContentTypes = Object.values(EHOLDINGS_PACKAGE_CONTENT_TYPES).filter(
-      (type) => ![EHOLDINGS_PACKAGE_CONTENT_TYPES.ALL, EHOLDINGS_PACKAGE_CONTENT_TYPES.E_JOURNAL].includes(
-        type,
-      ),
+      (type) =>
+        ![EHOLDINGS_PACKAGE_CONTENT_TYPES.ALL, EHOLDINGS_PACKAGE_CONTENT_TYPES.E_JOURNAL].includes(
+          type,
+        ),
     );
 
     // URL slug FOLIO uses for each content type's filter[type] query param value
@@ -40,11 +41,14 @@ describe('eHoldings', () => {
       EHoldingsPackagesSearch.selectContentType(type);
       return cy
         .wait(`@${alias}`, { timeout: 80_000 })
-        .then(({ response }) => response.body.data
-          .filter((pkg) => pkg.attributes.contentType === type)
-          .map(
-            (pkg) => `${pkg.attributes.name}${pkg.attributes.customDisplayName ? ` (${pkg.attributes.customDisplayName})` : ''}`,
-          ));
+        .then(({ response }) =>
+          response.body.data
+            .filter((pkg) => pkg.attributes.contentType === type)
+            .map(
+              (pkg) =>
+                `${pkg.attributes.name}${pkg.attributes.customDisplayName ? ` (${pkg.attributes.customDisplayName})` : ''}`,
+            ),
+        );
     };
 
     const verifyResultsMatch = (packageNames) => {

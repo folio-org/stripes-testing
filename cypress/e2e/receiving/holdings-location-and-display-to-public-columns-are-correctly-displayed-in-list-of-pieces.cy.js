@@ -71,9 +71,11 @@ describe('Receiving', () => {
       .then((materialType) => {
         testData.materialType = materialType;
       })
-      .then(() => cy.getAcquisitionMethodsApi({
-        query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
-      }))
+      .then(() =>
+        cy.getAcquisitionMethodsApi({
+          query: `value="${ACQUISITION_METHOD_NAMES_IN_PROFILE.PURCHASE_AT_VENDOR_SYSTEM}"`,
+        }),
+      )
       .then(({ body }) => {
         testData.acquisitionMethod = body.acquisitionMethods[0];
       });
@@ -140,10 +142,12 @@ describe('Receiving', () => {
       ...fourthPiece,
       displayOnHolding: true,
       displayToPublic: true,
-    }).then(() => Pieces.updateOrderPiecesStatusesBatchViaApi({
-      pieceIds: [fourthPiece.id, fifthPiece.id],
-      receivingStatus: RECEIVING_PIECE_STATUSES.UNRECEIVABLE,
-    }));
+    }).then(() =>
+      Pieces.updateOrderPiecesStatusesBatchViaApi({
+        pieceIds: [fourthPiece.id, fifthPiece.id],
+        receivingStatus: RECEIVING_PIECE_STATUSES.UNRECEIVABLE,
+      }),
+    );
   };
 
   // Sequence 10 stays expected in the new Loc 4 holding and is displayed to public

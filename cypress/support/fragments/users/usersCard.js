@@ -308,9 +308,9 @@ export default {
   openFeeFines(openFeesFines, closedFeesFines) {
     cy.do(feesFinesAccordion.clickHeader());
 
-    return (
-      openFeesFines && this.verifyQuantityOfOpenAndClosedFeeFines(openFeesFines, closedFeesFines)
-    );
+    if (openFeesFines !== undefined) {
+      this.verifyQuantityOfOpenAndClosedFeeFines(openFeesFines, closedFeesFines);
+    }
   },
 
   verifyQuantityOfOpenAndClosedFeeFines(openFeesFines, closedFeesFines) {
@@ -794,7 +794,7 @@ export default {
   verifyOpenedFeeFines(count, totalAmount) {
     cy.expect(
       feesFinesAccordion.find(ListItem(including('open'))).has({
-        text: including(`${count.toString()} open` && `Total: $${totalAmount.toString()}`),
+        text: and(including(`${count} open`), including(`Total: $${totalAmount}`)),
       }),
     );
   },
@@ -1346,12 +1346,18 @@ export default {
   },
 
   selectFilterOptionsInAffiliationsModal({ assigned = null, unassigned = null } = {}) {
-    if (assigned === true) cy.do(affiliationsAssignModal.find(assignedCheckbox).checkIfNotSelected());
-    else if (assigned === false) cy.do(affiliationsAssignModal.find(assignedCheckbox).uncheckIfSelected());
-    if (unassigned === true) cy.do(affiliationsAssignModal.find(unassignedCheckbox).checkIfNotSelected());
-    else if (unassigned === false) cy.do(affiliationsAssignModal.find(unassignedCheckbox).uncheckIfSelected());
-    if (assigned !== null) cy.expect(affiliationsAssignModal.find(assignedCheckbox).has({ checked: assigned }));
-    if (unassigned !== null) cy.expect(affiliationsAssignModal.find(unassignedCheckbox).has({ checked: unassigned }));
+    if (assigned === true)
+      cy.do(affiliationsAssignModal.find(assignedCheckbox).checkIfNotSelected());
+    else if (assigned === false)
+      cy.do(affiliationsAssignModal.find(assignedCheckbox).uncheckIfSelected());
+    if (unassigned === true)
+      cy.do(affiliationsAssignModal.find(unassignedCheckbox).checkIfNotSelected());
+    else if (unassigned === false)
+      cy.do(affiliationsAssignModal.find(unassignedCheckbox).uncheckIfSelected());
+    if (assigned !== null)
+      cy.expect(affiliationsAssignModal.find(assignedCheckbox).has({ checked: assigned }));
+    if (unassigned !== null)
+      cy.expect(affiliationsAssignModal.find(unassignedCheckbox).has({ checked: unassigned }));
   },
 
   verifyAffiliationChangeSuccessCallout() {

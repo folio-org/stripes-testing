@@ -33,11 +33,12 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `holdings-note-types/${id}`,
-    isDefaultSearchParamsRequired: false,
-  }),
+  deleteViaApi: (id) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `holdings-note-types/${id}`,
+      isDefaultSearchParamsRequired: false,
+    }),
   verifyConsortiumHoldingsNoteTypesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({ content: including(name), isContainer: true });
     const actionsCell = MultiColumnListCell({ columnIndex: 3 });

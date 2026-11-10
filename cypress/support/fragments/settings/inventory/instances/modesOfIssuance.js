@@ -29,11 +29,12 @@ export default {
         return response;
       });
   },
-  deleteViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `modes-of-issuance/${id}`,
-    isDefaultSearchParamsRequired: false,
-  }),
+  deleteViaApi: (id) =>
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `modes-of-issuance/${id}`,
+      isDefaultSearchParamsRequired: false,
+    }),
   verifyConsortiumModesOfIssuancesInTheList({ name, source = 'consortium', actions = [] }) {
     const row = MultiColumnListRow({
       content: including(name),

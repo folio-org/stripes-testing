@@ -38,13 +38,14 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 // NOTE: The existingMatchExpression field labels for HOLDINGS ('callNumber') and ITEM ('barcode')
 // are best-effort guesses at the internal FOLIO criterion-value-type identifiers; verify these
 // against the actual data-import-profiles/matchProfiles API if the profile creation fails.
-const createMatchProfileViaApi = (profileBody) => cy
-  .okapiRequest({
-    method: 'POST',
-    path: 'data-import-profiles/matchProfiles',
-    body: profileBody,
-  })
-  .then(({ body }) => body);
+const createMatchProfileViaApi = (profileBody) =>
+  cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'data-import-profiles/matchProfiles',
+      body: profileBody,
+    })
+    .then(({ body }) => body);
 
 describe('Inventory', () => {
   describe('Instance', () => {

@@ -483,7 +483,9 @@ export default {
         if (cell !== 'No value set-') {
           if (Array.isArray(cellContent)) {
             cellContent.forEach((content) => {
-              cy.expect(content).to.satisfy((cellValue) => cellContent.some((val) => cellValue.includes(val)));
+              cy.expect(content).to.satisfy((cellValue) =>
+                cellContent.some((val) => cellValue.includes(val)),
+              );
             });
           } else {
             cy.expect(cell).to.include(cellContent);

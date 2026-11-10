@@ -222,18 +222,19 @@ export default {
    * @param {string} filters.tenantId - "Held by" tenant selected in browse
    */
   clickOnFirstFoundResult({ shared, tenantId }) {
-    const isFound = (callNumber) => cy
-      .okapiRequest({
-        path: 'search/instances',
-        searchParams: {
-          query:
+    const isFound = (callNumber) =>
+      cy
+        .okapiRequest({
+          path: 'search/instances',
+          searchParams: {
+            query:
               `(itemFullCallNumbers=="${callNumber.replace(/"/g, '\\"')}") and shared=="${shared}" ` +
               `and holdings.tenantId=="${tenantId}" and staffSuppress=="false"`,
-          limit: 1,
-        },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then(({ body }) => body.totalRecords > 0);
+            limit: 1,
+          },
+          isDefaultSearchParamsRequired: false,
+        })
+        .then(({ body }) => body.totalRecords > 0);
     const clickFirstFound = (callNumbers) => {
       if (!callNumbers.length) {
         throw new Error(

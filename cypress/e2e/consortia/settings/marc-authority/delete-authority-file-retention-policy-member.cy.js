@@ -90,7 +90,8 @@ describe('MARC', () => {
           cy.getAdminToken();
           if (user) Users.deleteViaApi(user.userId);
           cy.setTenant(Affiliations.College);
-          if (createdAuthorityRecordId) MarcAuthorities.deleteViaAPI(createdAuthorityRecordId, true);
+          if (createdAuthorityRecordId)
+            MarcAuthorities.deleteViaAPI(createdAuthorityRecordId, true);
           cy.resetTenant();
           if (authorityFileId) {
             ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(testData.name);

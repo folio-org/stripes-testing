@@ -69,6 +69,11 @@ const relatedInvoiceLinesSection = orderLineDetailsSection.find(
 const compareDateStrings = (left, right) => new Date(left) - new Date(right);
 const relatedInvoiceLinesList = relatedInvoiceLinesSection.find(MultiColumnList());
 const customFieldsAccordion = orderLineDetailsSection.find(Section({ id: 'customFieldsPOLine' }));
+const tagsButton = orderLineDetailsSection.find(Button({ id: 'clickable-show-tags' }));
+const tagsPane = Pane('Tags');
+const tagsMultiSelect = tagsPane.find(MultiSelect({ id: 'input-tag' }));
+const addTagOption = (tagName) =>
+  MultiSelectMenu().find(MultiSelectOption(and(including('Add tag for:'), including(tagName))));
 
 export default {
   waitLoading(ms = DEFAULT_WAIT_TIME) {
@@ -194,8 +199,8 @@ export default {
   clickTheLinkInFundDetailsSection({ fundName, columnIndex = 0 } = {}) {
     const tableRow = fundName
       ? fundDistributionsSection.find(
-        MultiColumnListRow({ content: including(fundName), isContainer: true }),
-      )
+          MultiColumnListRow({ content: including(fundName), isContainer: true }),
+        )
       : fundDistributionsSection.find(MultiColumnListRow({ rowIndexInParent: 'row-0' }));
     const link = tableRow.find(MultiColumnListCell({ columnIndex })).find(Link());
 
