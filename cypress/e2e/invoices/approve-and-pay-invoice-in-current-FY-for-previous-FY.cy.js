@@ -262,6 +262,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
   after(() => {
     cy.getAdminToken().then(() => {
+      Approvals.setApprovePayValueViaApi(false);
       Users.deleteViaApi(testData.user.userId);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
     });

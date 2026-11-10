@@ -138,6 +138,16 @@ export default {
     });
     cy.do(currencySelection.toggle());
   },
+  checkFiscalYearOptions({ filter, options = [] } = {}) {
+    const fiscalYearSelection = Selection(including('Fiscal year'));
+
+    cy.do([fiscalYearSelection.open(), SelectionList().filter(filter)]);
+    cy.expect([
+      SelectionList().has({ highlighted: including(filter) }),
+      SelectionList().has({ optionList: options }),
+    ]);
+    cy.do(fiscalYearSelection.toggle());
+  },
   checkExchangeRate(exchangeRate) {
     cy.expect(extendedInfoFields.exchangeRate.has({ value: String(exchangeRate) }));
   },
@@ -184,6 +194,14 @@ export default {
     }
     if (invoice.paymentMethod) {
       cy.do(extendedInfoFields.paymentMethod.choose(invoice.paymentMethod));
+    }
+    if (invoice.lockTotalAmount) {
+      cy.do([
+        informationSection.find(Checkbox('Lock total')).checkIfNotSelected(),
+        informationSection
+          .find(TextField(including('Lock total amount')))
+          .fillIn(invoice.lockTotalAmount),
+      ]);
     }
     if (invoice.note) {
       cy.do(infoFields.note.fillIn(invoice.note));

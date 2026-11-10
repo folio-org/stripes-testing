@@ -70,6 +70,7 @@ export const INVOICE_VIEW_FIELDS = {
   FISCAL_YEAR: 'Fiscal year',
   INVOICE_DATE: 'Invoice date',
   INVOICE_STATUS: 'Status',
+  NOTE: 'Note',
   PAYMENT_DATE: 'Payment date',
   PAYMENT_METHOD: 'Payment method',
   SUB_TOTAL: 'Sub-total',
