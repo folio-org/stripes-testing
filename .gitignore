@@ -44,3 +44,6 @@ skills-lock.json
 .local/
 .playwright-cli
 .write-test
+
+.playwright-mcp
+cypress/e2e/_manual-run/
