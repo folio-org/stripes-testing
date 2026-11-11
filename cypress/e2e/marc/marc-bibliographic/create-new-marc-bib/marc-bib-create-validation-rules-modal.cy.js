@@ -16,6 +16,7 @@ describe('MARC', () => {
       };
 
       let user;
+      let instanceId;
       before('Create test data', () => {
         cy.createTempUser([
           Permissions.inventoryAll.gui,
@@ -59,6 +60,9 @@ describe('MARC', () => {
           QuickMarcEditor.checkCallout(testData.successMessage);
           cy.wait(2000);
           InventoryInstance.waitInventoryLoading();
+          InventoryInstance.getId().then((id) => {
+            instanceId = id;
+          });
         },
       );
     });

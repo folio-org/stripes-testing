@@ -28,6 +28,7 @@ describe('MARC', () => {
       };
 
       const createdRecordIDs = [];
+      let instanceId;
 
       before('Create user and data', () => {
         cy.createTempUser([
@@ -104,6 +105,9 @@ describe('MARC', () => {
 
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.checkAfterSaveAndCloseDerive();
+          InventoryInstance.getId().then((id) => {
+            instanceId = id;
+          });
         },
       );
     });

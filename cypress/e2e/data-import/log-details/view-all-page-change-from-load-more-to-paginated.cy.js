@@ -56,14 +56,18 @@ describe('Data Import', () => {
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
-        LogsViewAll.getNumberOfLogs().then((number) => {
-          const numberOfLogs = number;
-
-          LogsViewAll.verifyPreviousPagination();
-          LogsViewAll.clickNextPaginationButton();
-          LogsViewAll.verifyNextPagination(numberOfLogs);
-          LogsViewAll.clickPreviousPaginationButton();
-          LogsViewAll.verifyPreviousPagination();
+        LogsViewAll.getNumberOfLogs().then((numberOfLogs) => {
+          LogsViewAll.verifyPreviousPagination(numberOfLogs);
+          // Page switching is possible only when there are more logs than fit on one page (100)
+          if (numberOfLogs > 100) {
+            cy.log(`${numberOfLogs} logs found - checking page switching`);
+            LogsViewAll.clickNextPaginationButton();
+            LogsViewAll.verifyNextPagination(numberOfLogs);
+            LogsViewAll.clickPreviousPaginationButton();
+            LogsViewAll.verifyPreviousPagination(numberOfLogs);
+          } else {
+            cy.log(`${numberOfLogs} logs found (one page) - skipping page switching`);
+          }
         });
       },
     );
