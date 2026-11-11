@@ -389,7 +389,7 @@ describe('Fees&Fines', () => {
         // Fee/Fine 3: Fully paid - Refund ellipsis is also DISABLED (refund only available via Details page)
         UserAllFeesFines.checkRefundEllipsisEnabled(0);
 
-        // Fee/Fine 4: Fully transferred - Refund ellipsis is also DISABLED
+        // Fee/Fine 4: Fully transferred -  - Refund should be ENABLED (UIU-3549)
         UserAllFeesFines.checkRefundEllipsisEnabled(1);
 
         // To perform refund, need to open Fee/Fine Details page (not via ellipsis)
@@ -423,7 +423,7 @@ describe('Fees&Fines', () => {
         // Verify we're back on fee/fine history page
         UserAllFeesFines.verifyPageHeader(testData.user3.username);
 
-        // Verify Refund ellipsis option remains disabled after refund
+        // Verify Refund ellipsis option remains disabled after refund  - Refund should be ENABLED (UIU-3549)
         UserAllFeesFines.checkRefundEllipsisEnabled(0);
       },
     );
