@@ -204,8 +204,8 @@ export default {
     }
   },
 
-  verifyCheckboxState(checkBoxName, checked) {
-    cy.expect(Checkbox(checkBoxName).has({ checked: Boolean(checked) }));
+  verifyCheckboxState(checkBoxName, checked, { disabled = false } = {}) {
+    cy.expect(Checkbox(checkBoxName, { disabled, checked: Boolean(checked) }).exists());
   },
 
   clickCreateNewholdingsForLocation() {
