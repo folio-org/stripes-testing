@@ -58,9 +58,13 @@ export default {
     cy.do(contentTypeAccordion.find(Button({ icon: 'times-circle-solid' })).click());
     eHoldingsPackages.waitLoading();
   },
+  // Waits for the filtered search request: the previous results stay rendered until it returns,
+  // so reading the list right after choose() can pick a package that is not in the filtered results
   bySelectionStatus: (selectionStatus) => {
+    cy.intercept('GET', /\/eholdings\/packages\?/).as('getFilteredPackages');
     cy.do(selectionStatusAccordion.clickHeader());
     cy.do(selectionStatusSelection.choose(selectionStatus));
+    cy.wait('@getFilteredPackages');
     eHoldingsPackages.waitLoading();
   },
   // Opens the accordion, checks the given options, then closes it again so a following

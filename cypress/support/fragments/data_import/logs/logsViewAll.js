@@ -491,13 +491,14 @@ export default {
   },
 
   getNumberOfLogs: () => {
+    // the subtitle shows a "search criteria" hint until the logs load, then e.g. "2,909 logs found"
+    const logsCountPattern = /([\d,]+) logs? found/;
+
     return cy
       .get('#paneHeaderpane-results-subtitle')
       .invoke('text')
-      .then((text) => {
-        const numberOfLogs = text.trim().split(' ')[0];
-        return numberOfLogs;
-      });
+      .should('match', logsCountPattern)
+      .then((text) => Number(text.match(logsCountPattern)[1].replace(/,/g, '')));
   },
 
   searchByKeyword: (value) => {
@@ -536,8 +537,12 @@ export default {
     });
   },
 
-  verifyPreviousPagination: () => {
-    cy.expect([previousButton.has({ disabled: true }), nextButton.has({ disabled: false })]);
+  // numberOfLogs: total logs; when omitted, more than one page is assumed
+  verifyPreviousPagination: (numberOfLogs) => {
+    const hasNextPage = numberOfLogs === undefined || numberOfLogs > 100;
+    const lastRecordOnPage = hasNextPage ? 100 : numberOfLogs;
+
+    cy.expect([previousButton.has({ disabled: true }), nextButton.has({ disabled: !hasNextPage })]);
     cy.get('#pane-results')
       .find('div[class^="mclPrevNextPageInfoContainer-"]')
       .invoke('text')
@@ -545,7 +550,7 @@ export default {
     cy.get('#pane-results')
       .find('div[class^="mclPrevNextPageInfoContainer-"]')
       .invoke('text')
-      .should('include', '100');
+      .should('include', `${lastRecordOnPage}`);
   },
 
   verifyNextPagination: (number) => {

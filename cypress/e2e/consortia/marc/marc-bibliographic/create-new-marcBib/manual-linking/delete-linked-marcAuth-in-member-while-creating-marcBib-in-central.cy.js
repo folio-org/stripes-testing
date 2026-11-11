@@ -56,6 +56,7 @@ describe('MARC', () => {
         let authorityId;
         let additionalAuthorityId;
         let user;
+        let createdInstanceId;
 
         before('Create users and data', () => {
           cy.resetTenant();
@@ -111,7 +112,7 @@ describe('MARC', () => {
           cy.resetTenant();
           cy.getAdminToken();
           Users.deleteViaApi(user.userId);
-          InventoryInstance.deleteInstanceViaApi(createdInstanceId);
+          if (createdInstanceId) InventoryInstance.deleteInstanceViaApi(createdInstanceId);
           MarcAuthority.deleteViaAPI(authorityId, true);
           MarcAuthority.deleteViaAPI(additionalAuthorityId, true);
         });
@@ -164,6 +165,9 @@ describe('MARC', () => {
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
             InventoryInstance.waitLoading();
+            InventoryInstance.getId().then((id) => {
+              createdInstanceId = id;
+            });
 
             // Step 13 expected: MARC Authority icon NOT shown in detail view (Contributor)
             InventoryInstance.verifyRecordAndMarcAuthIconAbsence(

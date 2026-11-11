@@ -180,10 +180,6 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
 
-        if (createdInstanceId) {
-          InventoryInstance.deleteInstanceViaApi(createdInstanceId);
-        }
-
         // Restore Field 245 subfields to non-required
         if (subfieldAId) {
           cy.getSpecificationFieldSubfields(field245.id).then((resp) => {

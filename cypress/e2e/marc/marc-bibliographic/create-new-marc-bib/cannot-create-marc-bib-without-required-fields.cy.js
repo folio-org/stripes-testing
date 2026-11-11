@@ -83,10 +83,6 @@ describe('MARC', () => {
         cy.getAdminToken();
         Users.deleteViaApi(testData.userProperties.userId);
 
-        if (createdInstanceId) {
-          InventoryInstance.deleteInstanceViaApi(createdInstanceId);
-        }
-
         if (field700Id) {
           cy.getSpecificationFields(specId).then((resp) => {
             const field = findStandardField(resp.body.fields, testData.tag700);

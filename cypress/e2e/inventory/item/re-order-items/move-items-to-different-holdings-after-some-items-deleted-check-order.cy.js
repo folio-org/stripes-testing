@@ -193,7 +193,8 @@ describe('Inventory', () => {
                 testData.initialHoldingsAOrders[0],
                 true,
               );
-              InventoryInstance.checkItemOrderValueInHoldings(locationA.name, 1, 4, true);
+              // MODINV-1434: a moved item gets the highest order in the target holdings + 1
+              InventoryInstance.checkItemOrderValueInHoldings(locationA.name, 1, 2, true);
             });
         },
       );
