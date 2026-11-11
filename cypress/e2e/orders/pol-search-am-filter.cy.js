@@ -47,6 +47,9 @@ describe('Export Manager', () => {
 
       before(() => {
         cy.getAdminToken();
+        // The order has three PO lines
+        OrderLinesLimit.setPOLLimitViaApi(3);
+        cy.wait(2000); // Wait for POL limit to be applied before creating PO lines
         Organizations.getOrganizationViaApi({ query: `name="${VENDOR_NAMES.GOBI}"` }).then(
           (organization) => {
             order.vendor = organization.id;
@@ -72,7 +75,6 @@ describe('Export Manager', () => {
                         poLines[index].purchaseOrderId = purchaseOrderId;
                         poLines[index].physical.materialSupplier = order.vendor;
 
-                        OrderLinesLimit.setPOLLimitViaApi(3);
                         OrderLines.createOrderLineViaApi(poLines[index]);
                       });
                     });
@@ -104,13 +106,14 @@ describe('Export Manager', () => {
 
       after(() => {
         cy.getAdminToken();
+        OrderLinesLimit.setPOLLimitViaApi(1);
         Orders.deleteOrderViaApi(order.id);
         Users.deleteViaApi(user.userId);
       });
 
       it(
         'C350603 Searching POL by specifying acquisition method (thunderjet)',
-        { tags: ['criticalPath', 'thunderjet', 'C350603'] },
+        { tags: ['criticalPath', 'thunderjet', 'C350603', 'nonParallel'] },
         () => {
           Orders.selectOrderLines();
           Orders.resetFiltersIfActive();
