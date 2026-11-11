@@ -459,6 +459,11 @@ export default {
     resource: 'UI-Receiving',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiRequestsView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Requests',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventoryInstanceStaffSuppressedRecordsView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Instance Staff-Suppressed-Records',
