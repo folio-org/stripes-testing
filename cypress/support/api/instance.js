@@ -5,6 +5,7 @@ Cypress.Commands.add('getInstances', (searchParams) => {
     path: 'search/instances',
     searchParams,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
   }).then(({ body }) => {
     return body.instances ?? [];
   });

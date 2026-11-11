@@ -665,7 +665,7 @@ export default {
     cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
       (instance) => {
         instance.items?.forEach((item) => cy.deleteItemViaApi(item.id));
-        instance.holdings?.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+        instance.holdings?.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id, { skipWait: true }));
         InventoryInstance.deleteInstanceViaApi(instance.id);
       },
     );

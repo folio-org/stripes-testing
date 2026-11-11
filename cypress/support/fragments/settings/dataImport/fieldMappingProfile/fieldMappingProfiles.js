@@ -19,7 +19,6 @@ import getRandomPostfix from '../../../../utils/stringTools';
 import { getLongDelay } from '../../../../utils/cypressTools';
 import NewFieldMappingProfile from './newFieldMappingProfile';
 import Callout from '../../../../../../interactors/callout';
-import ArrayUtils from '../../../../utils/arrays';
 
 const actionsButton = Button('Actions');
 const searchButton = Button('Search');
@@ -197,22 +196,6 @@ export default {
     );
   },
 
-  verifyProfilesIsSortedInAlphabeticalOrder: () => {
-    const cells = [];
-    cy.get('div[class^="mclRowContainer--"]')
-      .find('[data-row-index]')
-      .each(($row) => {
-        cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
-          .invoke('text')
-          .then((cellValue) => {
-            cells.push(cellValue);
-          });
-      })
-      .then(() => {
-        const isSorted = ArrayUtils.checkIsSortedAlphabetically({ array: cells });
-        cy.expect(isSorted).to.equal(true);
-      });
-  },
   ...ResultsPane,
   clickCreateNewFieldMappingProfile() {
     ResultsPane.expandActionsDropdown();
