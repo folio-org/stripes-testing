@@ -173,7 +173,8 @@ const selectOrganizationByName = (organizationName) => {
   cy.expect(TextField({ value: `"${organizationName}"` }).exists());
 };
 
-const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
+const selectFromResultsList = (rowNumber = 0) =>
+  cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
 
 const addContributor = (profile) => {
   if (profile.contributor) {
@@ -354,8 +355,24 @@ const fillSummaryDescription = (text) => {
 };
 const fillMaterialType = (type) => cy.do(materialTypeField.fillIn(type));
 const fillStatus = (itemStatus) => cy.do(TextField('Status').fillIn(itemStatus));
-const fillPermanentLoanType = (loanType) => cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`));
-const fillInstanceStatusTerm = (statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) => cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`));
+const fillPermanentLoanType = (loanType) =>
+  cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`));
+const fillInstanceStatusTerm = (statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) =>
+  cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`));
+// Repeatable holdings mapping field with "Add these to existing" action; rows = array of rows,
+// each row is an array of subfields { name, path, value, required? }
+const getHoldingsRepeatableMappingField = (name, path, rows) => ({
+  name,
+  enabled: true,
+  path,
+  value: '',
+  subfields: rows.map((fields, order) => ({
+    order,
+    path,
+    fields: fields.map((field) => ({ enabled: true, ...field })),
+  })),
+  repeatableFieldAction: 'EXTEND_EXISTING',
+});
 const fillHoldingsType = (type) => {
   cy.wait(1000);
   cy.do(TextField('Holdings type').fillIn(`"${type}"`));
@@ -635,6 +652,9 @@ export default {
     }
     if (profile.polVendorReferenceNumber) {
       cy.do(TextField('Vendor reference number').fillIn(profile.polVendorReferenceNumber));
+    }
+    if (profile.subTotal) {
+      cy.do(TextField('Sub-total*').fillIn(profile.subTotal));
     }
     if (profile.subscriptionInfo) {
       cy.do(TextField('Subscription info').fillIn(profile.subscriptionInfo));
@@ -1353,53 +1373,115 @@ export default {
       });
     }
 
-    if (profile.uri) {
+    if (profile.temporaryLocation) {
       mappingFields.push({
-        name: 'electronicAccess',
+        name: 'temporaryLocationId',
         enabled: true,
-        path: 'holdings.electronicAccess[]',
-        value: '',
-        subfields: [
-          {
-            order: 0,
-            path: 'holdings.electronicAccess[]',
-            fields: [
-              {
-                name: 'relationshipId',
-                enabled: true,
-                path: 'holdings.electronicAccess[].relationshipId',
-                value: profile.relationship,
-              },
-              {
-                name: 'uri',
-                enabled: true,
-                required: true,
-                path: 'holdings.electronicAccess[].uri',
-                value: profile.uri,
-              },
-              {
-                name: 'linkText',
-                enabled: true,
-                path: 'holdings.electronicAccess[].linkText',
-                value: profile.linkText,
-              },
-              {
-                name: 'materialsSpecification',
-                enabled: true,
-                path: 'holdings.electronicAccess[].materialsSpecification',
-                value: profile.materialsSpecified,
-              },
-              {
-                name: 'publicNote',
-                enabled: true,
-                path: 'holdings.electronicAccess[].publicNote',
-                value: profile.urlPublicNote,
-              },
-            ],
-          },
-        ],
-        repeatableFieldAction: 'EXTEND_EXISTING',
+        path: 'holdings.temporaryLocationId',
+        value: `"${profile.temporaryLocation}"`,
+        subfields: [],
+        acceptedValues: {
+          locationId: profile.temporaryLocation,
+        },
       });
+    }
+
+    // Values are mapping expressions as typed in the UI form: a MARC reference ('981$a'),
+    // a quoted default value or a cascade ('985$a; else "default value"')
+    if (profile.formerHoldingsId) {
+      mappingFields.push(
+        getHoldingsRepeatableMappingField('formerIds', 'holdings.formerIds[]', [
+          [{ name: 'formerId', path: 'holdings.formerIds[]', value: profile.formerHoldingsId }],
+        ]),
+      );
+    }
+
+    // statisticalCodes: array of the codes as shown in the UI dropdown ('type: code - name')
+    if (profile.statisticalCodes?.length) {
+      mappingFields.push(
+        getHoldingsRepeatableMappingField(
+          'statisticalCodeIds',
+          'holdings.statisticalCodeIds[]',
+          profile.statisticalCodes.map((code) => [
+            {
+              name: 'statisticalCodeId',
+              path: 'holdings.statisticalCodeIds[]',
+              value: `"${code}"`,
+            },
+          ]),
+        ),
+      );
+    }
+
+    // each statements option: array of { statement, note, staffNote } mapping expressions
+    [
+      'holdingsStatements',
+      'holdingsStatementsForSupplements',
+      'holdingsStatementsForIndexes',
+    ].forEach((statementsType) => {
+      if (profile[statementsType]?.length) {
+        const path = `holdings.${statementsType}[]`;
+
+        mappingFields.push(
+          getHoldingsRepeatableMappingField(
+            statementsType,
+            path,
+            profile[statementsType].map(({ statement, note, staffNote }) => [
+              { name: 'statement', path: `${path}.statement`, value: statement },
+              { name: 'note', path: `${path}.note`, value: note },
+              { name: 'staffNote', path: `${path}.staffNote`, value: staffNote },
+            ]),
+          ),
+        );
+      }
+    });
+
+    if (profile.digitizationPolicy) {
+      mappingFields.push({
+        name: 'digitizationPolicy',
+        enabled: true,
+        path: 'holdings.digitizationPolicy',
+        value: profile.digitizationPolicy,
+        subfields: [],
+      });
+    }
+
+    // electronic access rows: either the single row given with uri/relationship/... of the profile
+    // or the electronicAccess array of such rows
+    const electronicAccessRows =
+      profile.electronicAccess ||
+      (profile.uri
+        ? [
+            {
+              relationship: profile.relationship,
+              uri: profile.uri,
+              linkText: profile.linkText,
+              materialsSpecified: profile.materialsSpecified,
+              urlPublicNote: profile.urlPublicNote,
+            },
+          ]
+        : []);
+
+    if (electronicAccessRows.length) {
+      const path = 'holdings.electronicAccess[]';
+
+      mappingFields.push(
+        getHoldingsRepeatableMappingField(
+          'electronicAccess',
+          path,
+          electronicAccessRows.map((row) => [
+            { name: 'relationshipId', path: `${path}.relationshipId`, value: row.relationship },
+            { name: 'uri', path: `${path}.uri`, value: row.uri, required: true },
+            { name: 'linkText', path: `${path}.linkText`, value: row.linkText },
+            {
+              name: 'materialsSpecification',
+              path: `${path}.materialsSpecification`,
+              value: row.materialsSpecified,
+            },
+            { name: 'publicNote', path: `${path}.publicNote`, value: row.urlPublicNote },
+          ]),
+        ),
+      );
     }
 
     return cy
@@ -1608,6 +1690,9 @@ export default {
   },
 
   clickClose: () => cy.do(closeButton.click()),
+
+  verifyShelvingOrderFieldDisabled: (isDisabled = true) =>
+    cy.expect(TextField('Shelving order', { disabled: isDisabled }).exists()),
 
   confirmCloseWithoutSaving: () => cy.do(closeWithoutSavingButton.click()),
 
@@ -2015,7 +2100,8 @@ export default {
 
   // Updates ONLY the Instance status term - see note on
   // createInstanceStatisticalCodeMappingProfileViaApi above
-  createInstanceStatusTermMappingProfileViaApi: ({ name, statusTerm }) => {
+  // catalogedDate is optional - a mapping expression, e.g. '###TODAY###'
+  createInstanceStatusTermMappingProfileViaApi: ({ name, statusTerm, catalogedDate }) => {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -2030,6 +2116,17 @@ export default {
               name: 'instance',
               recordType: 'INSTANCE',
               mappingFields: [
+                ...(catalogedDate
+                  ? [
+                      {
+                        name: 'catalogedDate',
+                        enabled: true,
+                        path: 'instance.catalogedDate',
+                        value: catalogedDate,
+                        subfields: [],
+                      },
+                    ]
+                  : []),
                 {
                   name: 'statusId',
                   enabled: true,
@@ -2205,5 +2302,31 @@ export default {
         .find(TextField('Pro rate'))
         .fillIn(''),
     );
+  },
+
+  // C365107 - fund distribution inside an invoice adjustment
+  verifyProRateFieldValue: (value) => {
+    // accepted values are inserted wrapped in quotes
+    cy.expect(
+      invoiceAdjustmentsSection
+        .find(RepeatableFieldItem({ index: 0 }))
+        .find(TextField('Pro rate'))
+        .has({ value: including(value) }),
+    );
+  },
+  clickAddAdjustmentFundDistribution: () => {
+    const addFundDistributionButton = invoiceAdjustmentsSection.find(
+      Button('Add fund distribution'),
+    );
+    cy.expect(addFundDistributionButton.has({ disabled: false }));
+    cy.do(addFundDistributionButton.click());
+  },
+  openAdjustmentExpenseClassAcceptedValues: () => {
+    // The fund distribution row is nested in the adjustment row; its accepted values lists are
+    // "Fund ID" (first) and "Expense Class" (second)
+    cy.get(
+      '#invoice-adjustments [data-test-repeatable-field-list-item] [data-test-repeatable-field-list-item] [data-test-accepted-values-list]:eq(1) > button',
+    ).click();
+    cy.expect(DropdownMenu({ visible: true }).exists());
   },
 };
