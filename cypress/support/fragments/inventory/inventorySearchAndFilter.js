@@ -713,8 +713,10 @@ export default {
     cy.do(listInventoryPreviousPagingButton.click());
   },
 
-  verifyListInventoryPreviousButtonDisabled: (isDisabled = true) => cy.expect(listInventoryPreviousPagingButton.has({ disabled: isDisabled })),
-  verifyListInventoryNextButtonDisabled: (isDisabled = true) => cy.expect(listInventoryNextPagingButton.has({ disabled: isDisabled })),
+  verifyListInventoryPreviousButtonDisabled: (isDisabled = true) =>
+    cy.expect(listInventoryPreviousPagingButton.has({ disabled: isDisabled })),
+  verifyListInventoryNextButtonDisabled: (isDisabled = true) =>
+    cy.expect(listInventoryNextPagingButton.has({ disabled: isDisabled })),
 
   checkContributorsColumResult(cellContent) {
     cy.expect(
@@ -1921,6 +1923,25 @@ export default {
       Accordion(dateAccordionName).find(dateFromField).has({ value: dateFrom }),
       Accordion(dateAccordionName).find(dateToField).has({ value: dateTo }),
     ]);
+  },
+
+  clickApplyInDateFilter(dateAccordionName) {
+    cy.do(Accordion(dateAccordionName).find(filterApplyButton).click());
+  },
+
+  // "Start date is greater than end date" is shown in the accordion, the boxes are not highlighted
+  checkDateOrderErrorInDateFilter(dateAccordionName) {
+    this.verifyErrorMessageInAccordion(Accordion(dateAccordionName), dateOrderErrorText);
+  },
+
+  verifyNoErrorsForDateFilterFields(dateAccordionName) {
+    this.verifyErrorMessageInTextField(Accordion(dateAccordionName).find(dateFromField), false);
+    this.verifyErrorMessageInTextField(Accordion(dateAccordionName).find(dateToField), false);
+    cy.expect(Accordion(dateAccordionName).find(HTML(dateOrderErrorText)).absent());
+  },
+
+  verifySearchResultsNotEmpty() {
+    cy.expect(paneResultsSection.find(MultiColumnListRow({ index: 0 })).exists());
   },
 
   checkErrorsForDateFilterFields(dateAccordionName, errorFrom, errorTo) {

@@ -19,6 +19,11 @@ export default {
     cy.do(saveButton.click());
   },
 
+  clickResetToDefault() {
+    cy.expect(resetToDefaultButton.has({ disabled: false }));
+    cy.do(resetToDefaultButton.click());
+  },
+
   verifyPaneContent() {
     cy.expect([
       localeSelect.exists(),

@@ -449,7 +449,9 @@ export default {
     const cell = (column) => circulationHistoryList.find(MultiColumnListCell({ row: 0, column }));
     cy.expect([
       circulationHistoryList.has({ rowCount: 1 }),
-      ...['Date', 'Circ action', 'Source', 'Service point'].map((column) => cell(column).has({ content: or('-', 'No value set-') })),
+      ...['Date', 'Circ action', 'Source', 'Service point'].map((column) =>
+        cell(column).has({ content: or('-', 'No value set-') }),
+      ),
     ]);
   },
 
@@ -461,11 +463,12 @@ export default {
     cy.do([TextField({ id: 'additem_barcode' }).fillIn(barcode), saveAndCloseBtn.click()]);
   },
 
-  verifyStatisticalCode: (code) => cy.expect(
-    MultiColumnList({ id: 'item-list-statistical-codes' })
-      .find(MultiColumnListCell({ content: code }))
-      .exists(),
-  ),
+  verifyStatisticalCode: (code) =>
+    cy.expect(
+      MultiColumnList({ id: 'item-list-statistical-codes' })
+        .find(MultiColumnListCell({ content: code }))
+        .exists(),
+    ),
 
   verifyLoanAndAvailabilitySection(data) {
     this.expandAll();
@@ -512,7 +515,8 @@ export default {
     ]);
   },
 
-  verifyFormerIdentifiers: (identifier) => cy.expect(KeyValue('Former identifier').has({ value: identifier })),
+  verifyFormerIdentifiers: (identifier) =>
+    cy.expect(KeyValue('Former identifier').has({ value: identifier })),
   verifyShelvingOrder: (orderValue) => cy.expect(shelvingOrderKeyValue.has({ value: orderValue })),
   verifyCallNumber: (callNumber) => cy.expect(KeyValue('Call number').has({ value: callNumber })),
   verifyItemPermanentLocation: (value) => {
@@ -548,17 +552,18 @@ export default {
     expect(convertedHoldingsDate).to.be.greaterThan(convertedItemsDate);
     expect(userId).to.eq(itemMetdata.updatedByUserId);
   },
-  getRecordLastUpdatedDate: () => cy.then(() => {
-    return cy
-      .get('div[class^="metaHeaderLabel-"]')
-      .invoke('text')
-      .then((text) => {
-        // extract only date and time
-        const colonIndex = text.indexOf(':');
-        const lastUpdatedDate = text.substring(colonIndex + 2).trim();
-        return lastUpdatedDate;
-      });
-  }),
+  getRecordLastUpdatedDate: () =>
+    cy.then(() => {
+      return cy
+        .get('div[class^="metaHeaderLabel-"]')
+        .invoke('text')
+        .then((text) => {
+          // extract only date and time
+          const colonIndex = text.indexOf(':');
+          const lastUpdatedDate = text.substring(colonIndex + 2).trim();
+          return lastUpdatedDate;
+        });
+    }),
   verifyItemCallNumberChangedAfterChangedInHoldings: (
     createdItemData,
     updatedItemData,
@@ -689,7 +694,8 @@ export default {
     cy.wait(1500);
   },
 
-  verifyEffectiveCallNumber: (effectiveCallNumber) => cy.expect(effectiveCallNumberKeyValue.has({ value: effectiveCallNumber })),
+  verifyEffectiveCallNumber: (effectiveCallNumber) =>
+    cy.expect(effectiveCallNumberKeyValue.has({ value: effectiveCallNumber })),
 
   verifyNoInfoIconsNextToCallNumberFields() {
     cy.expect([
@@ -736,6 +742,50 @@ export default {
 
   verifyRequestsCount: (count) => {
     cy.expect(loanAccordion.find(KeyValue('Requests', { value: count.toString() })).exists());
+  },
+
+  verifyRequestsLinkedToRequestsApp: () => {
+    cy.expect(
+      loanAccordion.find(Link({ href: including('/requests?filters=requestStatus') })).exists(),
+    );
+  },
+
+  // "Loan and availability": no borrower is shown as a dash ("No value set-")
+  verifyBorrower: (barcode) => {
+    cy.expect(
+      loanAccordion.find(KeyValue('Borrower', { value: barcode || 'No value set-' })).exists(),
+    );
+  },
+
+  verifyBorrowerLinkedToPatron: (userId) => {
+    cy.expect(
+      loanAccordion
+        .find(KeyValue('Borrower'))
+        .find(Link({ href: including(`/users/view/${userId}`) }))
+        .exists(),
+    );
+  },
+
+  // Item status is a link to the loan details only while the item is checked out
+  verifyItemStatusLinkedToLoan: (userId) => {
+    cy.expect(
+      loanAccordion
+        .find(KeyValue('Item status'))
+        .find(Link({ href: including(`/users/view/${userId}`) }))
+        .exists(),
+    );
+  },
+
+  verifyItemStatusIsNotLinked: () => {
+    cy.expect(loanAccordion.find(KeyValue('Item status')).find(Link()).absent());
+  },
+
+  verifyLoanAndDueDatesPopulated: (isPopulated = true) => {
+    ['Loan date', 'Due date'].forEach((label) => {
+      const emptyValue = loanAccordion.find(KeyValue(label, { value: 'No value set-' }));
+
+      cy.expect(isPopulated ? emptyValue.absent() : emptyValue.exists());
+    });
   },
 
   addTag: (tagName) => {
