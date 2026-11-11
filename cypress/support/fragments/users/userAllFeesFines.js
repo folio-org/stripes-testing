@@ -180,6 +180,16 @@ export default {
     cy.get('button').contains('Refund').should('have.attr', 'disabled');
     cy.get('body').type('{esc}');
   },
+  checkRefundEllipsisEnabled: (rowIndex) => {
+    cy.do(
+      feeFinesList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(Dropdown())
+        .open(),
+    );
+    cy.get('button').contains('Refund').should('not.have.attr', 'disabled');
+    cy.get('body').type('{esc}');
+  },
   checkErrorEllipsisDisabled: (rowIndex) => {
     cy.do(
       feeFinesList

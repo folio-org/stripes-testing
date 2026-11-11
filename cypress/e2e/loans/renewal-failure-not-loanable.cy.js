@@ -135,11 +135,11 @@ describe('Loans', () => {
       () => {
         const firstItemInfo = {
           itemBarcode: firstItemBarcode,
-          status: 'Item not renewed:item is not loanable, loan is not renewable',
+          status: 'Item not renewed:Item is not loanable., Loan is not renewable',
         };
         const secondItemInfo = {
           itemBarcode: secondItemBarcode,
-          status: 'Item not renewed:item is not loanable, loan is not renewable',
+          status: 'Item not renewed:Item is not loanable., Loan is not renewable',
         };
         const loanDetails = {
           action: 'Renewed through override',
