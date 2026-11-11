@@ -6,6 +6,7 @@ import {
   ConfirmationModal,
   Decorator,
   DecoratorWrapper,
+  DropdownMenu,
   Form,
   KeyValue,
   Modal,
@@ -177,6 +178,40 @@ const eResourceFields = {
   userLimit: orderLineDetails.eResourceDetails.find(TextField({ label: including('User limit') })),
   url: orderLineDetails.eResourceDetails.find(TextField({ label: including('URL') })),
 };
+
+// Invoice fields that accept quoted "Accepted values". The decorator wrapper holds both the text
+// field and its "Accepted values" button. Order follows the form, so the first invalid one is the
+// one the form focuses on Save
+const invoiceFields = {
+  'Invoice information -> Acquisitions units': invoiceDetails.invoiceInformation.find(
+    DecoratorWrapper({ label: 'Acquisitions units' }),
+  ),
+  'Invoice information -> Bill to name': invoiceDetails.invoiceInformation.find(
+    DecoratorWrapper({ label: 'Bill to name' }),
+  ),
+  'Invoice information -> Batch group': invoiceDetails.invoiceInformation.find(
+    DecoratorWrapper({ label: including('Batch group') }),
+  ),
+  'Invoice adjustments -> Pro rate': invoiceDetails.invoiceAdjustments.find(
+    DecoratorWrapper({ label: 'Pro rate' }),
+  ),
+  'Invoice adjustments -> Relation to total': invoiceDetails.invoiceAdjustments.find(
+    DecoratorWrapper({ label: 'Relation to total' }),
+  ),
+  'Extended information -> Payment method': invoiceDetails.extendedInformation.find(
+    DecoratorWrapper({ label: including('Payment method') }),
+  ),
+  'Extended information -> Currency': invoiceDetails.extendedInformation.find(
+    DecoratorWrapper({ label: including('Currency') }),
+  ),
+  'Invoice line adjustments -> Relation to total': invoiceDetails.invoiceLineAdjustments.find(
+    DecoratorWrapper({ label: 'Relation to total' }),
+  ),
+};
+const addAdjustmentButton = Button('Add adjustment');
+const acceptedValuesButton = Button(including('Accepted values'));
+const syntaxErrorMessage = 'Please correct the syntax to continue';
+const requiredFieldMessage = 'Please fill out this field';
 const incomingRecordTypes = {
   'MARC Bibliographic': 'MARC_BIBLIOGRAPHIC',
   'MARC Holdings': 'MARC_HOLDINGS',
@@ -820,5 +855,74 @@ export default {
 
   verifyName(name) {
     summaryFields.name.has({ value: name });
+  },
+
+  clearProfileName() {
+    cy.do(summaryFields.name.fillIn(''));
+  },
+  // "Name" is a required field, so the browser itself blocks the save and focuses the field
+  checkProfileNameRequiredError() {
+    cy.expect([
+      mappingProfileForm.exists(),
+      summaryFields.name.has({
+        focused: true,
+        nativeValidationMessage: including(requiredFieldMessage),
+      }),
+      saveAndCloseButton.has({ disabled: false }),
+    ]);
+  },
+  checkProfileNameIsValid() {
+    cy.expect(summaryFields.name.has({ nativeValidationMessage: '', valid: true }));
+  },
+
+  addInvoiceAdjustment() {
+    cy.do(invoiceDetails.invoiceAdjustments.find(addAdjustmentButton).click());
+  },
+  addInvoiceLineAdjustment() {
+    cy.do(invoiceDetails.invoiceLineAdjustments.find(addAdjustmentButton).click());
+  },
+  // fieldNames - keys of invoiceFields; the value is typed as is, so quote it for "Accepted values"
+  fillInvoiceFields(fieldNames, value) {
+    fieldNames.forEach((fieldName) => {
+      const textField = invoiceFields[fieldName].find(TextField());
+
+      cy.do([textField.fillIn(value), textField.blur()]);
+    });
+  },
+  checkInvoiceFieldsSyntaxError(fieldNames) {
+    fieldNames.forEach((fieldName) => {
+      cy.expect(
+        invoiceFields[fieldName]
+          .find(TextField())
+          .has({ error: syntaxErrorMessage, errorBorder: true, valid: false }),
+      );
+    });
+  },
+  checkInvoiceFieldsAreValid(fieldNames) {
+    fieldNames.forEach((fieldName) => {
+      cy.expect(
+        invoiceFields[fieldName]
+          .find(TextField())
+          .has({ error: undefined, errorBorder: false, valid: true }),
+      );
+    });
+  },
+  checkInvoiceFieldIsFocused(fieldName) {
+    cy.expect(invoiceFields[fieldName].find(TextField()).has({ focused: true }));
+  },
+  // Clears the field, then picks the first "Accepted values" option. Clearing is needed because
+  // multi-value fields (Acquisitions units) append a pick to the typed value instead of replacing it
+  selectFirstAcceptedValueInInvoiceFields(fieldNames) {
+    fieldNames.forEach((fieldName) => {
+      const textField = invoiceFields[fieldName].find(TextField());
+
+      cy.do([textField.fillIn(''), invoiceFields[fieldName].find(acceptedValuesButton).click()]);
+      cy.expect(DropdownMenu({ visible: true }).exists());
+      cy.then(() => DropdownMenu({ visible: true }).buttons()).then((buttons) => {
+        cy.wrap(buttons[0]).click();
+      });
+      // exactly one quoted value is left in the field
+      cy.expect(textField.has({ value: matching(/^"[^"]+"$/) }));
+    });
   },
 };

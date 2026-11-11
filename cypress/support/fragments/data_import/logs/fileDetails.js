@@ -576,6 +576,43 @@ export default {
     );
   },
 
+  // Record cells look like "7" or "2-10": compared part by part as numbers, so "10" goes after "9"
+  verifyRecordColumnIsInNumericalOrder({ expectedRowsCount } = {}) {
+    getMultiColumnListCellsValuesInResultsList(visibleColumnsInResultsList.RECORD.columnIndex).then(
+      (cells) => {
+        if (expectedRowsCount !== undefined) {
+          expect(cells, 'rows in the log').to.have.length(expectedRowsCount);
+        }
+
+        const numericParts = cells.map((cell) => cell.split('-').map(Number));
+        const compare = (a, b) => {
+          for (let i = 0; i < Math.max(a.length, b.length); i++) {
+            const difference = (a[i] ?? -1) - (b[i] ?? -1);
+
+            if (difference !== 0) return difference;
+          }
+          return 0;
+        };
+        const outOfOrder = numericParts
+          .map((parts, index) => ({
+            index,
+            previous: cells[index - 1],
+            current: cells[index],
+            parts,
+          }))
+          .filter(({ index, parts }) => index > 0 && compare(numericParts[index - 1], parts) > 0);
+
+        expect(
+          outOfOrder,
+          `Record column should be in numerical order, out of order at: ${outOfOrder
+            .slice(0, 5)
+            .map(({ index, previous, current }) => `[${index}] ${previous} > ${current}`)
+            .join('; ')}`,
+        ).to.have.length(0);
+      },
+    );
+  },
+
   verifyStatusHasLinkToOrder: (rowNumber) => {
     cy.expect(
       resultsList

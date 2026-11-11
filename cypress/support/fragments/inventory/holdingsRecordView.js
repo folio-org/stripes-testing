@@ -140,82 +140,107 @@ export default {
   // checks
   checkSource: (sourceValue) => cy.expect(KeyValue('Source', { value: sourceValue }).exists()),
   checkHrId: (expectedHrId) => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId })),
-  checkPermanentLocation: (expectedLocation) => cy.expect(KeyValue('Permanent', { value: including(expectedLocation) }).exists()),
-  checkTemporaryLocation: (expectedLocation) => cy.expect(KeyValue('Temporary', { value: including(expectedLocation) }).exists()),
-  checkEffectiveLocation: (expectedLocation) => cy.expect(
-    KeyValue('Effective location for holdings', { value: including(expectedLocation) }).exists(),
-  ),
+  checkPermanentLocation: (expectedLocation) =>
+    cy.expect(KeyValue('Permanent', { value: including(expectedLocation) }).exists()),
+  checkTemporaryLocation: (expectedLocation) =>
+    cy.expect(KeyValue('Temporary', { value: including(expectedLocation) }).exists()),
+  checkEffectiveLocation: (expectedLocation) =>
+    cy.expect(
+      KeyValue('Effective location for holdings', { value: including(expectedLocation) }).exists(),
+    ),
   checkReadOnlyFields: () => {},
   checkHoldingsType: (type) => cy.expect(KeyValue('Holdings type').has({ value: type })),
   checkFormerHoldingsId: (value) => cy.expect(KeyValue('Former holdings ID', { value }).exists()),
   checkIllPolicy: (value) => cy.expect(KeyValue('ILL policy', { value }).exists()),
-  checkDigitizationPolicy: (expectedPolicy) => cy.expect(KeyValue('Digitization policy', { value: expectedPolicy }).exists()),
-  checkRetentionPolicy: (expectedPolicy) => cy.expect(KeyValue('Retention policy', { value: expectedPolicy }).exists()),
-  checkAcquisitionMethod: (expectedMethod) => cy.expect(KeyValue('Acquisition method', { value: expectedMethod }).exists()),
-  checkOrderFormat: (expectedFormat) => cy.expect(KeyValue('Order format', { value: expectedFormat }).exists()),
-  checkReceiptStatus: (expectedStatus) => cy.expect(KeyValue('Receipt status', { value: expectedStatus }).exists()),
+  checkDigitizationPolicy: (expectedPolicy) =>
+    cy.expect(KeyValue('Digitization policy', { value: expectedPolicy }).exists()),
+  checkRetentionPolicy: (expectedPolicy) =>
+    cy.expect(KeyValue('Retention policy', { value: expectedPolicy }).exists()),
+  checkAcquisitionMethod: (expectedMethod) =>
+    cy.expect(KeyValue('Acquisition method', { value: expectedMethod }).exists()),
+  checkOrderFormat: (expectedFormat) =>
+    cy.expect(KeyValue('Order format', { value: expectedFormat }).exists()),
+  checkReceiptStatus: (expectedStatus) =>
+    cy.expect(KeyValue('Receipt status', { value: expectedStatus }).exists()),
 
-  checkURIIsNotEmpty: () => cy.expect(
-    electronicAccessAccordion
-      .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: '-' }))
-      .absent(),
-  ),
-  checkAdministrativeNote: (note) => cy.expect(
-    MultiColumnList({ id: 'administrative-note-list' })
-      .find(HTML(including(note)))
-      .exists(),
-  ),
-  checkExactContentInAdministrativeNote: (note, row = 0) => cy.expect(
-    MultiColumnList({ id: 'administrative-note-list' })
-      .find(MultiColumnListCell({ row, content: note }))
-      .exists(),
-  ),
-  checkHoldingsStatement: (statement) => cy.expect(
-    MultiColumnList({ id: 'list-holdingsStatement' })
-      .find(HTML(including(statement)))
-      .exists(),
-  ),
-  checkHoldingsStatementForIndexes: (statement) => cy.expect(
-    MultiColumnList({ id: 'list-holdingsStatementForIndexes' })
-      .find(HTML(including(statement)))
-      .exists(),
-  ),
-  checkStatisticalCode: (code) => cy.expect(
-    MultiColumnList({ id: 'list-statistical-codes' })
-      .find(MultiColumnListCell({ content: code }))
-      .exists(),
-  ),
-  checkHoldingsNote: (value, row = 0) => cy.expect(
-    MultiColumnList({ id: `list-holdings-notes-${row}` })
-      .find(MultiColumnListCell({ content: value }))
-      .exists(),
-  ),
-  checkHoldingsNoteByRow: (value = [], row = 0) => value.forEach((text) => {
+  checkURIIsNotEmpty: () =>
     cy.expect(
-      MultiColumnList({ id: 'list-holdings-notes-0' })
-        .find(MultiColumnListRow({ index: row }))
-        .find(MultiColumnListCell({ content: text }))
+      electronicAccessAccordion
+        .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: '-' }))
+        .absent(),
+    ),
+  checkAdministrativeNote: (note) =>
+    cy.expect(
+      MultiColumnList({ id: 'administrative-note-list' })
+        .find(HTML(including(note)))
         .exists(),
-    );
-  }),
-  checkHoldingsNoteByRowForDifferentNoteTypes: (value = [], row = 0) => value.forEach((text) => {
+    ),
+  checkExactContentInAdministrativeNote: (note, row = 0) =>
+    cy.expect(
+      MultiColumnList({ id: 'administrative-note-list' })
+        .find(MultiColumnListCell({ row, content: note }))
+        .exists(),
+    ),
+  checkHoldingsStatement: (statement) =>
+    cy.expect(
+      MultiColumnList({ id: 'list-holdingsStatement' })
+        .find(HTML(including(statement)))
+        .exists(),
+    ),
+  checkHoldingsStatementForSupplements: (statement) =>
+    cy.expect(
+      MultiColumnList({ id: 'list-holdingsStatementForSupplements' })
+        .find(HTML(including(statement)))
+        .exists(),
+    ),
+  checkHoldingsStatementForIndexes: (statement) =>
+    cy.expect(
+      MultiColumnList({ id: 'list-holdingsStatementForIndexes' })
+        .find(HTML(including(statement)))
+        .exists(),
+    ),
+  checkStatisticalCode: (code) =>
+    cy.expect(
+      MultiColumnList({ id: 'list-statistical-codes' })
+        .find(MultiColumnListCell({ content: code }))
+        .exists(),
+    ),
+  checkHoldingsNote: (value, row = 0) =>
     cy.expect(
       MultiColumnList({ id: `list-holdings-notes-${row}` })
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ content: text }))
+        .find(MultiColumnListCell({ content: value }))
         .exists(),
-    );
-  }),
-  checkMarkAsSuppressedFromDiscovery: () => cy.expect(
-    holdingsRecordViewSection
-      .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
-      .exists(),
-  ),
-  checkMarkAsSuppressedFromDiscoveryAbsent: () => cy.expect(
-    holdingsRecordViewSection
-      .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
-      .absent(),
-  ),
+    ),
+  checkHoldingsNoteByRow: (value = [], row = 0) =>
+    value.forEach((text) => {
+      cy.expect(
+        MultiColumnList({ id: 'list-holdings-notes-0' })
+          .find(MultiColumnListRow({ index: row }))
+          .find(MultiColumnListCell({ content: text }))
+          .exists(),
+      );
+    }),
+  checkHoldingsNoteByRowForDifferentNoteTypes: (value = [], row = 0) =>
+    value.forEach((text) => {
+      cy.expect(
+        MultiColumnList({ id: `list-holdings-notes-${row}` })
+          .find(MultiColumnListRow({ index: 0 }))
+          .find(MultiColumnListCell({ content: text }))
+          .exists(),
+      );
+    }),
+  checkMarkAsSuppressedFromDiscovery: () =>
+    cy.expect(
+      holdingsRecordViewSection
+        .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
+        .exists(),
+    ),
+  checkMarkAsSuppressedFromDiscoveryAbsent: () =>
+    cy.expect(
+      holdingsRecordViewSection
+        .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
+        .absent(),
+    ),
   checkElectronicAccess: (
     relationshipValue,
     uriValue,
@@ -277,17 +302,18 @@ export default {
     );
   },
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
-  getRecordLastUpdatedDate: () => cy.then(() => {
-    return cy
-      .get('div[class^="metaHeaderLabel-"]')
-      .invoke('text')
-      .then((text) => {
-        // extract only date and time
-        const colonIndex = text.indexOf(':');
-        const lastUpdatedDate = text.substring(colonIndex + 2).trim();
-        return lastUpdatedDate;
-      });
-  }),
+  getRecordLastUpdatedDate: () =>
+    cy.then(() => {
+      return cy
+        .get('div[class^="metaHeaderLabel-"]')
+        .invoke('text')
+        .then((text) => {
+          // extract only date and time
+          const colonIndex = text.indexOf(':');
+          const lastUpdatedDate = text.substring(colonIndex + 2).trim();
+          return lastUpdatedDate;
+        });
+    }),
   getId: () => {
     // parse hodling record id from current url
     cy.url().then((url) => cy.wrap(url.split('?')[0].split('/').at(-1)).as('holdingsRecorId'));
@@ -305,11 +331,12 @@ export default {
     cy.expect(holdingsRecordViewSection.exists());
     this.waitLoading();
   },
-  checkHoldingsStatementAbsent: (statement) => cy.expect(
-    MultiColumnList({ id: 'list-holdingsStatement' })
-      .find(HTML(including(statement)))
-      .absent(),
-  ),
+  checkHoldingsStatementAbsent: (statement) =>
+    cy.expect(
+      MultiColumnList({ id: 'list-holdingsStatement' })
+        .find(HTML(including(statement)))
+        .absent(),
+    ),
   checkInstanceTitle: (title) => {
     cy.expect(HTML(including(`Instance: ${title}`)).exists());
   },
@@ -521,7 +548,8 @@ export default {
     else cy.expect(actionsButton.absent());
   },
 
-  checkNumberOfItems: (numberOfItems) => cy.expect(numberOfItemsKeyValue.has({ value: numberOfItems })),
+  checkNumberOfItems: (numberOfItems) =>
+    cy.expect(numberOfItemsKeyValue.has({ value: numberOfItems })),
 
   copyHoldingsHrid() {
     cy.do(holdingHrIdKeyValue.find(Button({ icon: 'clipboard' })).click());

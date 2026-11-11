@@ -698,6 +698,7 @@ export default {
 
   clickListInventoryNextPaginationButton() {
     cy.do(listInventoryNextPagingButton.click());
+    cy.wait(1000);
   },
 
   checkListInventoryNextPaginationButtonEnabled() {

@@ -13,7 +13,6 @@ import {
 import NewActionProfile from './newActionProfile';
 import ResultsPane from '../resultsPane';
 import ActionProfileEditForm from './actionProfileEditForm';
-import ArrayUtils from '../../../../utils/arrays';
 
 const actionsButton = Button('Actions');
 const iconButton = Button({ icon: 'times' });
@@ -143,23 +142,5 @@ export default {
   },
   verifyProfileAbsentFromList: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell(profileName)).absent());
-  },
-
-  verifyProfilesIsSortedInAlphabeticalOrder: () => {
-    const cells = [];
-    cy.get('div[class^="mclRowContainer--"]')
-      .find('[data-row-index]')
-      .each(($row) => {
-        cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
-          .invoke('text')
-          .then((cellValue) => {
-            cy.wait(500);
-            cells.push(cellValue);
-          });
-      })
-      .then(() => {
-        const isSorted = ArrayUtils.checkIsSortedAlphabetically({ array: cells });
-        cy.expect(isSorted, 'Action profiles sorted alphabetically').to.equal(true);
-      });
   },
 };

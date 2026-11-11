@@ -6,6 +6,7 @@ import {
   Link,
   MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListHeader,
   MultiColumnListRow,
   Selection,
   SelectionList,
@@ -21,6 +22,31 @@ const searchResultList = MultiColumnList({ id: 'search-results-list' });
 const deleteSelectedLogsButton = Button('Delete selected logs');
 const times = Button({ icon: 'times' });
 const visitedLinkColor = 'rgb(47, 96, 159)';
+
+// Column headers of the logs list on the Data Import landing page, in the order they are sorted in the test cases
+export const LOGS_LIST_COLUMNS = {
+  FILE_NAME: 'File name',
+  STATUS: 'Status',
+  RECORDS: 'Records',
+  JOB_PROFILE: 'Job profile',
+  STARTED_RUNNING: 'Started running',
+  ENDED_RUNNING: 'Ended running',
+  RUN_BY: 'Run by',
+  ID: 'ID',
+};
+
+// How the landing page sorts every column: by the text (case-insensitive, by character code),
+// by the number or by the date
+const logsListColumnTypes = {
+  [LOGS_LIST_COLUMNS.FILE_NAME]: 'string',
+  [LOGS_LIST_COLUMNS.STATUS]: 'string',
+  [LOGS_LIST_COLUMNS.RECORDS]: 'number',
+  [LOGS_LIST_COLUMNS.JOB_PROFILE]: 'string',
+  [LOGS_LIST_COLUMNS.STARTED_RUNNING]: 'date',
+  [LOGS_LIST_COLUMNS.ENDED_RUNNING]: 'date',
+  [LOGS_LIST_COLUMNS.RUN_BY]: 'string',
+  [LOGS_LIST_COLUMNS.ID]: 'number',
+};
 
 const quantityRecordsInInvoice = {
   firstQuantity: '18',
@@ -38,6 +64,61 @@ export default {
   viewAllLogsButtonClick,
   selectAllLogs,
   deleteLogsButtonClick,
+
+  clickOnLogsListColumnHeader: (columnName) => {
+    // The last columns ("Run by", "ID") are out of sight until the list is scrolled to them
+    cy.do(MultiColumnList({ id: 'job-logs-list' }).scrollHeaderIntoView(columnName));
+    cy.do(MultiColumnList({ id: 'job-logs-list' }).find(MultiColumnListHeader(columnName)).click());
+  },
+
+  verifyLogsListIsSortedByColumn: (columnName, { descending = false } = {}) => {
+    const logsList = MultiColumnList({ id: 'job-logs-list' });
+    const columnType = logsListColumnTypes[columnName];
+    let values;
+
+    // Waits until the sort is applied to the column
+    cy.do(logsList.scrollHeaderIntoView(columnName));
+    cy.expect(
+      logsList
+        .find(
+          MultiColumnListHeader({
+            content: columnName,
+            sort: descending ? 'descending' : 'ascending',
+          }),
+        )
+        .exists(),
+    );
+    // The list refreshes by itself (other imports), so all its rows are read at once
+    cy.do(
+      logsList.perform((list) => {
+        const columnIndex = [...list.querySelectorAll('[role="columnheader"]')].findIndex(
+          (header) => header.textContent.trim() === columnName,
+        );
+
+        values = [...list.querySelectorAll('[data-row-index]')]
+          .map((row) =>
+            row.querySelectorAll('[class*="mclCell-"]')[columnIndex]?.textContent.trim(),
+          )
+          .filter(Boolean)
+          .map((value) => {
+            if (columnType === 'number') return parseFloat(value.replace(/,/g, ''));
+            if (columnType === 'date') return new Date(value).getTime();
+            return value.toUpperCase();
+          });
+      }),
+    );
+    cy.then(() => {
+      const expectedValues = [...values].sort((a, b) => {
+        if (columnType === 'string') return a < b ? -1 : Number(a > b);
+        return a - b;
+      });
+
+      if (descending) expectedValues.reverse();
+
+      expect(values.length, `rows with a value in "${columnName}"`).to.be.greaterThan(1);
+      expect(values, `"${columnName}" values`).to.deep.eq(expectedValues);
+    });
+  },
 
   openViewAllLogs: () => {
     cy.wait(1500);
@@ -104,14 +185,15 @@ export default {
   // Read-only and never fails: gives up quietly if the job is not found (e.g. other tenant) or has no entries.
   waitForJobLogEntriesViaApi: (fileName, { timeout = 30_000, delay = 2_000 } = {}) => {
     const baseName = fileName.replace(/\.[^.]+$/, '');
-    const getQuietly = (path, searchParams) => cy
-      .okapiRequest({
-        path,
-        searchParams,
-        isDefaultSearchParamsRequired: false,
-        failOnStatusCode: false,
-      })
-      .then(({ status, body }) => (status === 200 ? body : null));
+    const getQuietly = (path, searchParams) =>
+      cy
+        .okapiRequest({
+          path,
+          searchParams,
+          isDefaultSearchParamsRequired: false,
+          failOnStatusCode: false,
+        })
+        .then(({ status, body }) => (status === 200 ? body : null));
     const waitForEntries = (jobId, timeLeft) => {
       getQuietly(`metadata-provider/jobLogEntries/${jobId}`, { limit: 1 }).then((log) => {
         if (log?.entries?.length) return;
@@ -131,7 +213,8 @@ export default {
     }).then((body) => {
       // the newest finished job of this file; a split file's parent has no entries of its own
       const job = (body?.jobExecutions || []).find(
-        ({ status, subordinationType }) => ['COMMITTED', 'ERROR'].includes(status) && subordinationType !== 'COMPOSITE_PARENT',
+        ({ status, subordinationType }) =>
+          ['COMMITTED', 'ERROR'].includes(status) && subordinationType !== 'COMPOSITE_PARENT',
       );
       if (job) waitForEntries(job.id, timeout);
     });
