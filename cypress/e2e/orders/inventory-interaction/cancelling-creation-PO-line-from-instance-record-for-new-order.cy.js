@@ -85,9 +85,7 @@ describe('Orders', () => {
         });
         OrderEditForm.clickAddPolButton();
 
-        // Click "Cancel" button
         OrderLineEditForm.waitLoading();
-        OrderLineEditForm.clickCancelButton(true);
         OrderLineEditForm.checkNotAvailableInstanceData([
           { label: 'Title', conditions: { disabled: true } },
           { label: 'Publication date', conditions: { disabled: true } },
@@ -95,15 +93,13 @@ describe('Orders', () => {
           { label: 'Edition', conditions: { disabled: true } },
         ]);
 
-        // Click "Close without saving" button
-        AreYouSureModal.verifyAreYouSureForm(true);
-        AreYouSureModal.clickCloseWithoutSavingButton();
+        // Click "Cancel" button - "Are you sure?" popup is NOT displayed, user is on "Orders" pane
+        OrderLineEditForm.clickCancelButton();
         AreYouSureModal.verifyAreYouSureForm(false);
+        Orders.waitLoading();
 
         // Navigate to purchase order details pane
-        Orders.waitLoading();
         OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
-
         OrderDetails.verifyPOLCount(0);
       },
     );

@@ -75,13 +75,10 @@ describe('Orders', () => {
         NewOrderModal.enterOrderNumber(testData.order.poNumber);
         NewOrderModal.clickCreateButton();
 
-        // Click "Cancel" button
-        OrderLineEditForm.clickCancelButton(true);
-        AreYouSureModal.verifyAreYouSureForm(true);
-
-        // Click "Close without saving" button
-        AreYouSureModal.clickCloseWithoutSavingButton();
+        // Click "Cancel" button - "Are you sure?" popup is NOT displayed, user is on "Orders" pane
+        OrderLineEditForm.clickCancelButton();
         AreYouSureModal.verifyAreYouSureForm(false);
+        Orders.waitLoading();
 
         // Navigate to purchase order details pane
         OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
