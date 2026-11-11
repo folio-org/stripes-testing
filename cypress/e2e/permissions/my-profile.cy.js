@@ -14,7 +14,7 @@ describe('Permissions', () => {
       let userData;
       let servicePointId;
       const newPassword = generatePassword(12) + '!1';
-      const newInvalidPassword = generatePassword(12) + '!2';
+      const newWrongPassword = generatePassword(12) + '!2';
 
       before('Preconditions', () => {
         cy.getAdminToken().then(() => {
@@ -31,7 +31,10 @@ describe('Permissions', () => {
       });
 
       beforeEach('Login', () => {
-        cy.login(userData.username, userData.password);
+        cy.login(userData.username, userData.password, {
+          path: SettingsMenu.myProfilePath,
+          waiter: MyProfile.waitLoading,
+        });
       });
 
       after('Deleting created entities', () => {
@@ -43,11 +46,9 @@ describe('Permissions', () => {
         'C410871 Verify that my profile page title follows correct format (vega)',
         { tags: ['extendedPath', 'vega', 'C410871'] },
         () => {
-          cy.visit(SettingsMenu.myProfilePath);
           MyProfile.waitLoading();
           MyProfile.openChangePassword();
           ChangePassword.waitLoading();
-          cy.logout();
         },
       );
 
@@ -55,41 +56,46 @@ describe('Permissions', () => {
         'C374116 Verify that validation violations are displayed immediately in the "Change password" section (vega)',
         { tags: ['extendedPath', 'vega', 'C374116'] },
         () => {
-          cy.intercept('GET', '*/rules?limit=100').as('rules');
-          ChangePassword.openChangePasswordViaUserProfile();
-          ChangePassword.checkInitialState();
+          cy.intercept('GET', '/tenant/rules?*').as('rules');
+
+          MyProfile.openChangePassword();
 
           cy.wait('@rules', getLongDelay()).then((rulesResp) => {
             expect(rulesResp.response.statusCode).to.eq(200);
           });
 
-          cy.wait(5000);
-          ChangePassword.typeNewPassword('aA1!');
+          ChangePassword.checkInitialState();
+
+          ChangePassword.typeCurrentPassword('Q');
+          ChangePassword.typeSpecialCharactersCurrentNewPassword('{backspace}');
+          ChangePassword.typeNewPassword('aA1!#');
+          ChangePassword.typeSpecialCharactersIntoNewPassword('{backspace}');
           ChangePassword.verifyCurrentPasswordMessage(ChangePassword.messages.enterValue);
           ChangePassword.verifyNewPasswordMessage(ChangePassword.messages.notEnoughSymbols);
 
           ChangePassword.typeConfirmPassword('bB1!');
           ChangePassword.verifyConfirmPasswordMessage(ChangePassword.messages.mismatch);
-          cy.logout();
         },
       );
 
       it(
         'C375097 Verify that "Save" button is disabled in case of validation errors on "My profile" form (vega)',
-        { tags: ['extendedPathFlaky', 'vega', 'C375097'] },
+        { tags: ['extendedPath', 'vega', 'C375097'] },
         () => {
-          ChangePassword.openChangePasswordViaUserProfile();
+          MyProfile.openChangePassword();
           ChangePassword.checkInitialState();
 
-          cy.wait(5000);
-          ChangePassword.typeNewPassword('a');
+          ChangePassword.typeCurrentPassword('Q');
+          ChangePassword.typeSpecialCharactersCurrentNewPassword('{backspace}');
+          ChangePassword.typeNewPassword('Q2&3^eY');
+          ChangePassword.typeSpecialCharactersIntoNewPassword('{backspace}');
           ChangePassword.verifyNewPasswordMessage(ChangePassword.messages.notEnoughSymbols);
           ChangePassword.verifyCurrentPasswordMessage(ChangePassword.messages.enterValue);
           ChangePassword.verifySaveButtonInactive();
           ChangePassword.clearAllFields();
 
           ChangePassword.typeNewPassword(newPassword);
-          ChangePassword.typeConfirmPassword(newInvalidPassword);
+          ChangePassword.typeConfirmPassword(newWrongPassword);
           ChangePassword.verifyConfirmPasswordMessage(ChangePassword.messages.mismatch);
           ChangePassword.verifySaveButtonInactive();
           ChangePassword.clearAllFields();
@@ -103,13 +109,14 @@ describe('Permissions', () => {
           ChangePassword.verifySaveButtonInactive();
           ChangePassword.typeNewPassword(newPassword);
           ChangePassword.verifySaveButtonInactive();
-          ChangePassword.typeConfirmPassword(newInvalidPassword);
+          ChangePassword.typeConfirmPassword(newWrongPassword);
           ChangePassword.verifyConfirmPasswordMessage(ChangePassword.messages.mismatch);
           ChangePassword.verifySaveButtonInactive();
           ChangePassword.typeConfirmPassword(newPassword);
           ChangePassword.saveNewPassword();
-          cy.logout();
+          cy.wait(2000);
 
+          cy.logout();
           cy.login(userData.username, newPassword);
         },
       );

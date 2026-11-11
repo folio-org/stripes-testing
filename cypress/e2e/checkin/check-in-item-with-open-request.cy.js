@@ -213,6 +213,7 @@ describe('Check in', () => {
       CheckInPane.checkResultsInTheRow(checkInResultsData.statusForS);
 
       CheckInActions.checkActionsMenuOptions(['printTransitSlip', 'requestDetails']);
+      CheckInActions.openRequestDetails();
       CheckInActions.checkRequestDetails(itemData.barcode);
       CheckInActions.openCheckInPane();
 
@@ -225,7 +226,9 @@ describe('Check in', () => {
       CheckInPane.checkResultsInTheRow(checkInResultsData.statusForS1);
 
       CheckInActions.checkActionsMenuOptions(['printHoldSlip', 'requestDetails']);
+      CheckInActions.openRequestDetails();
       CheckInActions.checkRequestDetails(itemData.barcode);
+      cy.wait(3000); // wait for the request details modal to load
     },
   );
 });

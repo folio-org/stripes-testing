@@ -371,14 +371,14 @@ describe('Fees&Fines', () => {
         // Verify that 3 open fees/fines are loaded
         UserAllFeesFines.verifyFeeFineCount(3);
 
-        // Fee/Fine 1: Partially paid - Refund should be DISABLED
-        UserAllFeesFines.checkRefundEllipsisDisabled(0);
+        // Fee/Fine 1: Partially paid - Refund should be ENABLED (UIU-3549)
+        UserAllFeesFines.checkRefundEllipsisEnabled(0);
 
-        // Fee/Fine 2: Partially transferred - Refund should be DISABLED
-        UserAllFeesFines.checkRefundEllipsisDisabled(1);
+        // Fee/Fine 2: Partially transferred - Refund should be ENABLED (UIU-3549)
+        UserAllFeesFines.checkRefundEllipsisEnabled(1);
 
-        // Fee/Fine 5: Partially paid + partially transferred - Refund should be DISABLED
-        UserAllFeesFines.checkRefundEllipsisDisabled(2);
+        // Fee/Fine 5: Partially paid + partially transferred - Refund should be ENABLED (UIU-3549)
+        UserAllFeesFines.checkRefundEllipsisEnabled(2);
 
         // Switch to Closed tab to test fully paid/transferred fees
         UserAllFeesFines.goToClosedFeesFines();
@@ -387,10 +387,10 @@ describe('Fees&Fines', () => {
         UserAllFeesFines.verifyFeeFineCount(2);
 
         // Fee/Fine 3: Fully paid - Refund ellipsis is also DISABLED (refund only available via Details page)
-        UserAllFeesFines.checkRefundEllipsisDisabled(0);
+        UserAllFeesFines.checkRefundEllipsisEnabled(0);
 
         // Fee/Fine 4: Fully transferred - Refund ellipsis is also DISABLED
-        UserAllFeesFines.checkRefundEllipsisDisabled(1);
+        UserAllFeesFines.checkRefundEllipsisEnabled(1);
 
         // To perform refund, need to open Fee/Fine Details page (not via ellipsis)
         UserAllFeesFines.clickOnRowByIndex(0);
@@ -424,7 +424,7 @@ describe('Fees&Fines', () => {
         UserAllFeesFines.verifyPageHeader(testData.user3.username);
 
         // Verify Refund ellipsis option remains disabled after refund
-        UserAllFeesFines.checkRefundEllipsisDisabled(0);
+        UserAllFeesFines.checkRefundEllipsisEnabled(0);
       },
     );
   });

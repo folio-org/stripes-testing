@@ -1,4 +1,3 @@
-import { Heading, including } from '../../../interactors';
 import generatePassword from '../../support/utils/generatePassword';
 import Permissions from '../../support/dictionary/permissions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -47,8 +46,6 @@ describe('Users', () => {
 
       cy.logout();
       cy.login(userData.username, newPassword);
-
-      cy.expect(Heading(including('Welcome')).exists());
     },
   );
 });

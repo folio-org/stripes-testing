@@ -113,6 +113,7 @@ describe('Requests', () => {
       InTransit.unselectCheckboxPrintSlip();
       InTransit.closeModal();
       CheckInPane.checkResultsInTheRow(checkInResultsData.statusForS);
+      CheckInActions.openRequestDetails();
       CheckInActions.checkRequestDetails(itemData.barcodes[0]);
       RequestDetail.checkRequestStatus('Open - In transit');
       CheckInActions.openCheckInPane();
@@ -125,6 +126,7 @@ describe('Requests', () => {
       AwaitingPickupForARequest.unselectCheckboxPrintSlip();
       AwaitingPickupForARequest.closeModal();
       CheckInPane.checkResultsInTheRow(checkInResultsData.statusForS1);
+      CheckInActions.openRequestDetails();
       CheckInActions.checkRequestDetails(itemData.barcodes[0]);
       RequestDetail.checkRequestStatus('Open - Awaiting pickup');
       // Check the item out to the requester
