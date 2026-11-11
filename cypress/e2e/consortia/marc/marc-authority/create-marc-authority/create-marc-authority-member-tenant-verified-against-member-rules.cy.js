@@ -55,6 +55,7 @@ describe('MARC', () => {
         let memberField980Id;
         let memberField500Id;
         let memberField500OriginalData;
+        let authorityId;
 
         before('Create test data', () => {
           cy.resetTenant();
@@ -103,7 +104,12 @@ describe('MARC', () => {
             cy.syncSpecifications(memberSpecId);
           });
 
-          if (authorityId) MarcAuthority.deleteViaAPI(authorityId, true);
+          // the authority was created in the member tenant
+          if (authorityId) {
+            cy.withinTenant(Affiliations.College, () => {
+              MarcAuthority.deleteViaAPI(authorityId, true);
+            });
+          }
           if (user?.userId) Users.deleteViaApi(user.userId);
 
           cy.resetTenant();
@@ -278,6 +284,9 @@ describe('MARC', () => {
                 QuickMarcEditor.checkAfterSaveAndCloseAuthority();
                 MarcAuthority.contains(auth100Content);
                 InteractorsTools.checkNoErrorCallouts();
+                MarcAuthority.getId().then((id) => {
+                  authorityId = id;
+                });
               });
           },
         );

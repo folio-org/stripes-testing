@@ -118,12 +118,14 @@ export default {
     fillMarcFieldProtection(fieldData);
     save();
   },
+  // source is optional in the API, but a rule (or its mapping-profile override) without it breaks
+  // MARC update imports with an NPE; USER is what the Settings UI sends
   createViaApi: (fieldBody) => {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'field-protection-settings/marc',
-        body: fieldBody,
+        body: { source: 'USER', ...fieldBody },
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => {
@@ -168,8 +170,10 @@ export default {
 
   // checks
   verifyListOfExistingSettingsIsDisplayed: () => cy.expect(fieldProtectionList.exists()),
-  verifyFieldProtectionIsCreated: (data) => cy.expect(fieldProtectionList.find(MultiColumnListCell({ content: data })).exists()),
-  verifyNewButtonAbsent: () => cy.expect(Pane({ id: 'controlled-vocab-pane' }).find(newButton).absent()),
+  verifyFieldProtectionIsCreated: (data) =>
+    cy.expect(fieldProtectionList.find(MultiColumnListCell({ content: data })).exists()),
+  verifyNewButtonAbsent: () =>
+    cy.expect(Pane({ id: 'controlled-vocab-pane' }).find(newButton).absent()),
   verifyNewRow(rowNumber = 0) {
     cy.expect([
       MultiColumnListRow({ rowIndexInParent: `row-${rowNumber}` })

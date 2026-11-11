@@ -54,6 +54,7 @@ describe('MARC', () => {
         let memberField980Id;
         let memberField500Id;
         let memberField500OriginalData;
+        let authorityId;
 
         before('Create test data', () => {
           cy.resetTenant();
@@ -252,6 +253,9 @@ describe('MARC', () => {
                 QuickMarcEditor.checkAfterSaveAndCloseAuthority();
                 MarcAuthority.contains(auth100Content);
                 InteractorsTools.checkNoErrorCallouts();
+                MarcAuthority.getId().then((id) => {
+                  authorityId = id;
+                });
               });
           },
         );

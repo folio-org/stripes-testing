@@ -1,3 +1,31 @@
+// Hyphens are dropped and whitespace is collapsed, so "Default - Delete" and "Default Delete"
+// compare the same way (a leftover double space would sort before any letter)
+const normalizeForAlphabeticalSort = (str) => str.trim().toLowerCase().replace(/-/g, '').replace(/\s+/g, ' ');
+
+// Mirrors "sortBy <field>" of FOLIO storage modules (RMB): ORDER BY lower(f_unaccent(<field>)) in a
+// Postgres locale collation, which ignores punctuation and spaces when comparing. Use it for lists
+// that the backend sorts, e.g. the Data import profiles (UI sends "sortBy name")
+const normalizeLikeBackendSort = (str) => str
+  .normalize('NFD')
+  .replace(/[̀-ͯ]/g, '')
+  .toLowerCase()
+  .replace(/[^\p{L}\p{N}]/gu, '');
+
+const getOutOfOrderPairs = ({ array = [], normalize = normalizeForAlphabeticalSort } = {}) => {
+  const pairs = [];
+
+  for (let i = 1; i < array.length; i++) {
+    const previous = normalize(array[i - 1]);
+    const current = normalize(array[i]);
+
+    if (previous.localeCompare(current) > 0) {
+      pairs.push({ index: i - 1, previous: array[i - 1], current: array[i] });
+    }
+  }
+
+  return pairs;
+};
+
 export default {
   getRandomElement(arr) {
     const rand = Math.floor(Math.random() * arr.length);
@@ -35,26 +63,18 @@ export default {
     return true;
   },
 
-  checkIsSortedAlphabetically({ array = [], accuracy = 5 } = {}) {
-    if (array.length === 0) return true;
+  normalizeLikeBackendSort,
+  getOutOfOrderPairs,
 
-    let outOfOrderCount = 0;
+  // accuracy - allowed share (in %) of out-of-order neighbours; 0 means strictly sorted
+  checkIsSortedAlphabetically({
+    array = [],
+    accuracy = 5,
+    normalize = normalizeForAlphabeticalSort,
+  } = {}) {
+    const outOfOrderCount = getOutOfOrderPairs({ array, normalize }).length;
 
-    for (let i = 1; i < array.length; i++) {
-      const normalize = (str) => str.trim().toLowerCase().replace(/-/g, '');
-
-      const prev = normalize(array[i - 1]);
-      const current = normalize(array[i]);
-
-      if (prev.localeCompare(current) > 0) {
-        outOfOrderCount++;
-        if ((outOfOrderCount * 100) / array.length >= accuracy) {
-          return false;
-        }
-      }
-    }
-
-    return true;
+    return outOfOrderCount === 0 || (outOfOrderCount * 100) / array.length < accuracy;
   },
 };
 

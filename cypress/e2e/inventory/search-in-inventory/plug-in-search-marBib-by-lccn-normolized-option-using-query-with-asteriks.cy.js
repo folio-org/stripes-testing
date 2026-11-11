@@ -90,7 +90,6 @@ describe('Inventory', () => {
     after(() => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      Users.deleteViaApi(preconditionUserId);
       createdRecordIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
       });

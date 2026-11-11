@@ -201,10 +201,6 @@ describe('MARC', () => {
           InventoryInstance.deleteInstanceViaApi(createdInstanceId);
         }
 
-        if (derivedInstanceId) {
-          InventoryInstance.deleteInstanceViaApi(derivedInstanceId);
-        }
-
         // Restore Field 245 subfields to non-required
         if (subfieldAId) {
           cy.getSpecificationFieldSubfields(field245.id).then((resp) => {
