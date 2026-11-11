@@ -31,7 +31,6 @@ describe('Organizations', () => {
       Organizations.selectOrganization(testData.organization.name);
       Organizations.editOrganization();
       Organizations.editOrganizationName(testData.organization);
-      Organizations.saveOrganization();
       Organizations.checkOrganizationInfo({
         name: `${testData.organization.name}-edited`,
         code: testData.organization.code,

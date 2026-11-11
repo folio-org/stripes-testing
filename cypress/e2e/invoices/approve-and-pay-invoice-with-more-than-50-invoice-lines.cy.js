@@ -175,6 +175,7 @@ describe('Invoices', () => {
 
   after(() => {
     cy.getAdminToken();
+    Approvals.setApprovePayValueViaApi(false);
     Users.deleteViaApi(user.userId);
     OrderLinesLimit.setPOLLimitViaApi(1);
   });

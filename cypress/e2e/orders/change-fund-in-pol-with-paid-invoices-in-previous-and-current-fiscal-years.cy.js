@@ -174,6 +174,7 @@ describe('Orders', () => {
                         OrderLines.editPOLInOrder();
                         OrderLines.changeFundInPOLWithoutSaveInPercents(0, secondFund, '100');
                         OrderLines.saveOrderLine();
+                        cy.wait(3000);
 
                         TopMenuNavigation.openAppFromDropdown('Finance');
                         FinanceHelp.searchByName(defaultLedger.name);
@@ -200,6 +201,7 @@ describe('Orders', () => {
                           periodStartForSecondFY,
                           periodEndForSecondFY,
                         );
+                        cy.wait(3000);
                       });
                     },
                   );

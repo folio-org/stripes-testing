@@ -92,6 +92,7 @@ describe('Invoices', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken().then(() => {
+      Approvals.setApprovePayValueViaApi(false);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Users.deleteViaApi(testData.user.userId);
     });
