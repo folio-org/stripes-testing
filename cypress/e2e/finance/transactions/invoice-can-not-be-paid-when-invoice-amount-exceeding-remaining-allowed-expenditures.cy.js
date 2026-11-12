@@ -22,6 +22,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { Approvals } from '../../../support/fragments/settings/invoices';
 
 describe('Finance', () => {
   describe('Transactions', () => {
@@ -257,6 +258,7 @@ describe('Finance', () => {
 
     after(() => {
       cy.getAdminToken();
+      Approvals.setApprovePayValueViaApi(false);
       Users.deleteViaApi(user.userId);
     });
 

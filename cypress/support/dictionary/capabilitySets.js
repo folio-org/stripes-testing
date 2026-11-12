@@ -334,6 +334,11 @@ export default {
     resource: 'UI-Organizations',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiOrganizationsDelete: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Organizations',
+    action: CAPABILITY_ACTIONS.DELETE,
+  },
   uiAgreementsAgreementsView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Agreements Agreements',
@@ -358,6 +363,26 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Invoice Invoice',
     action: CAPABILITY_ACTIONS.CREATE,
+  },
+  uiInvoiceInvoiceDelete: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Invoice Invoice',
+    action: CAPABILITY_ACTIONS.DELETE,
+  },
+  uiInvoiceInvoiceApprove: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Invoice Invoice Approve',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiInvoiceInvoiceCancel: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Invoice Invoice Cancel',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiInvoiceInvoicePay: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Invoice Invoice Pay',
+    action: CAPABILITY_ACTIONS.EXECUTE,
   },
   uiInvoiceInvoicePayDifferentFy: {
     type: CAPABILITY_TYPES.PROCEDURAL,
@@ -598,6 +623,21 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'Acquisitions-Units Memberships',
     action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  acquisitionUnitsSettingsUserAssignmentManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'Acquisition Units Settings User Assignment',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiInvoiceInvoicesAcquisitionsUnitsAssign: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Invoice Invoices Acquisitions Units Assign',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
+  uiInvoiceInvoicesAcquisitionsUnitsManage: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Invoice Invoices Acquisitions Units Manage',
+    action: CAPABILITY_ACTIONS.EXECUTE,
   },
   circulationStorageManage: {
     type: CAPABILITY_TYPES.DATA,

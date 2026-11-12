@@ -20,6 +20,7 @@ import Permissions from '../../support/dictionary/permissions';
 import { InvoiceView, Invoices } from '../../support/fragments/invoices';
 import ApproveInvoiceModal from '../../support/fragments/invoices/modal/approveInvoiceModal';
 import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
+import { Approvals } from '../../support/fragments/settings/invoices';
 
 describe('Invoices', { retries: { runMode: 1 } }, () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -184,6 +185,7 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
 
   after(() => {
     cy.getAdminToken();
+    Approvals.setApprovePayValueViaApi(false);
     Users.deleteViaApi(testData.user.userId);
   });
 

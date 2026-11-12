@@ -56,6 +56,7 @@ const infoFields = {
 const formFields = {
   [INVOICE_LINE_VIEW_FIELDS.DESCRIPTION]: infoFields.description,
   'POL number': infoFields.polNumber,
+  'Fund ID': fundDistributionSection.find(Button({ id: 'fundDistributions[0].fundId' })),
   'Expense class': fundDistributionSection.find(
     Button({ id: 'fundDistributions[0].expenseClassId' }),
   ),
@@ -119,11 +120,11 @@ export default {
   setDropDownValue(option) {
     cy.do([SelectionList().filter(option), SelectionList().select(including(option))]);
   },
-  selectDropDownValue(label, option) {
+  selectDropDownValue(label, option, { exactMatch = false } = {}) {
     cy.do([
       Selection(including(label)).open(),
       SelectionList().filter(option),
-      SelectionList().select(including(option)),
+      SelectionList().select(exactMatch ? option : including(option)),
     ]);
   },
   selectExpenseClass(expenseClass) {
@@ -161,6 +162,10 @@ export default {
     if (invoiceLine.subTotal) {
       cy.do(infoFields.subTotal.fillIn(invoiceLine.subTotal));
       cy.do(infoFields.subTotal.has({ value: invoiceLine.subTotal }));
+    }
+    if (invoiceLine.releaseEncumbrance) {
+      cy.do(infoFields.releaseEncumbrance.checkIfNotSelected());
+      cy.expect(infoFields.releaseEncumbrance.has({ checked: true }));
     }
     if (invoiceLine.adjustment) {
       // Edits an existing line-level adjustment
@@ -361,8 +366,8 @@ export default {
     }
   },
 
-  checkAccountNumberSelected(value) {
-    cy.expect(accountNumberField.has({ value: including(value) }));
+  checkAccountNumberSelected(value, { exactMatch = false } = {}) {
+    cy.expect(accountNumberField.has({ singleValue: exactMatch ? value : including(value) }));
   },
 
   clearField(fieldName) {
@@ -379,6 +384,10 @@ export default {
     if (fieldName === INVOICE_LINE_VIEW_FIELDS.QUANTITY) {
       cy.do(infoFields.quantity.focus());
       cy.do(infoFields.quantity.find(clearButton).click());
+    }
+
+    if (fieldName === 'POL number') {
+      cy.do(infoFields.polNumber.find(clearButton).click());
     }
   },
 };

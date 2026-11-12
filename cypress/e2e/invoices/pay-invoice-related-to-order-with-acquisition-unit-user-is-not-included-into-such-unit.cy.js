@@ -111,6 +111,7 @@ describe('Invoices', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
+    Approvals.setApprovePayValueViaApi(false);
     AcquisitionUnits.unAssignUserViaApi(testData.membershipAdminId);
     AcquisitionUnits.deleteAcquisitionUnitViaApi(testData.acqUnit.id);
     Users.deleteViaApi(testData.user.userId);

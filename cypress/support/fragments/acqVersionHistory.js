@@ -1,4 +1,13 @@
-import { Button, Card, including, not, PaneHeader, Section } from '../../../interactors';
+import {
+  Accordion,
+  Button,
+  Card,
+  including,
+  KeyValue,
+  not,
+  PaneHeader,
+  Section,
+} from '../../../interactors';
 import { DEFAULT_WAIT_TIME } from '../constants';
 
 const CURRENT_VERSION = 'Current version';
@@ -97,6 +106,40 @@ export default {
         .find(PaneHeader())
         .has({ text: including(`${count} ${count === 1 ? 'version' : 'versions'}`) }),
     );
+  },
+
+  // entityType of the version view: 'invoice' → #invoice-version-view
+  checkHighlightedFieldsInVersionView(entityType, labels = [], { notHighlighted = [] } = {}) {
+    if (!labels.length && !notHighlighted.length) {
+      cy.get(`#${entityType}-version-view mark`).should('not.exist');
+      return;
+    }
+    cy.get(`#${entityType}-version-view mark`).should(($marks) => {
+      const highlightedTexts = [...$marks].map((el) => el.textContent.trim());
+
+      labels.forEach((label) => {
+        expect(highlightedTexts, `"${label}" is highlighted`).to.include(label);
+      });
+      notHighlighted.forEach((label) => {
+        expect(highlightedTexts, `"${label}" is not highlighted`).not.to.include(label);
+      });
+    });
+  },
+
+  checkFieldsInVersionView(entityType, fields = []) {
+    fields.forEach(({ key, value }) => {
+      cy.expect(
+        Section({ id: `${entityType}-version-view` })
+          .find(KeyValue(key))
+          .has({ value: including(value) }),
+      );
+    });
+  },
+
+  checkAccordionInVersionView(entityType, label, { isPresent = true } = {}) {
+    const accordion = Section({ id: `${entityType}-version-view` }).find(Accordion(label));
+
+    cy.expect(isPresent ? accordion.exists() : accordion.absent());
   },
 
   closeVersionHistory(entityType) {
