@@ -1381,6 +1381,9 @@ export default {
       DropdownMenu()
         .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.CLASSIFICATION))
         .has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox(BULK_EDIT_TABLE_COLUMN_HEADERS.INVENTORY_INSTANCES.SET_FOR_DELETION))
+        .has({ checked: false }),
     ]);
   },
 

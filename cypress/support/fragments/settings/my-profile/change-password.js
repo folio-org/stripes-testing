@@ -19,7 +19,8 @@ export default {
   },
 
   openChangePasswordViaUserProfile() {
-    cy.do([myProfile.open(), myProfile.find(Button('Change Password')).click()]);
+    cy.do(myProfile.open());
+    cy.do(myProfile.find(Button('Change Password')).click());
     this.waitLoading();
   },
 
@@ -37,6 +38,11 @@ export default {
     cy.wait(500);
   },
 
+  typeSpecialCharactersCurrentNewPassword(characters) {
+    cy.get('#current-password').type(characters);
+    cy.wait(500);
+  },
+
   verifyCurrentPasswordMessage(message) {
     cy.expect(currentPasswordField.has({ error: message }));
     cy.wait(500);
@@ -44,6 +50,11 @@ export default {
 
   typeNewPassword(password) {
     cy.do([newPasswordField.fillIn(password), newPasswordField.blur()]);
+    cy.wait(500);
+  },
+
+  typeSpecialCharactersIntoNewPassword(characters) {
+    cy.get('#new-password').type(characters);
     cy.wait(500);
   },
 

@@ -50,7 +50,7 @@ describe('INN-Reach Integration', () => {
 
     it(
       'C411863 Verify that record meta data is present on staff slips (vega)',
-      { tags: ['extendedPathFlaky', 'vega', 'C411863'] },
+      { tags: ['extendedPath', 'vega', 'C411863'] },
       () => {
         StaffSlips.chooseStaffClip(staffSlip);
         StaffSlip.edit(staffSlip);
@@ -62,7 +62,7 @@ describe('INN-Reach Integration', () => {
         EditStaffClips.saveAndClose();
         StaffSlip.checkLastUpdateInfo(
           undefined,
-          'Unknown user',
+          `${userData.lastName}, ${userData.firstName} ${userData.personal.middleName}`,
           dateTools.getCurrentUTCTime().replace(',', ''),
         );
       },

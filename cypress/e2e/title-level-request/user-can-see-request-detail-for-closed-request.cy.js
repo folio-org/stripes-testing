@@ -183,13 +183,14 @@ describe('Request Detail. TLR', () => {
 
   it(
     'C350556 Check that the user can see "Request Detail" for request after it is Closed (vega) (TaaS)',
-    { tags: ['extendedPathFlaky', 'vega', 'C350556'] },
+    { tags: ['extendedPath', 'vega', 'C350556'] },
     () => {
       Requests.selectItemRequestLevel();
       Requests.findCreatedRequest(instanceData.title);
       Requests.selectFirstRequest(instanceData.title);
       RequestDetail.waitLoading();
       Requests.cancelRequest();
+      cy.wait(5000);
       cy.reload();
       Requests.selectFirstRequest(instanceData.title);
       RequestDetail.verifySectionsVisibility();

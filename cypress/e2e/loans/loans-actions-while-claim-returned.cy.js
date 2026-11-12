@@ -162,7 +162,7 @@ describe('Loans', () => {
         RenewConfirmationModal.verifyRenewConfirmationModal([
           {
             itemBarcode: secondItemBarcode,
-            status: 'Item not renewed:item is Claimed returned',
+            status: 'Item not renewed:Item is Claimed returned',
           },
           {
             itemBarcode: firstItemBarcode,
@@ -192,7 +192,7 @@ describe('Loans', () => {
           {
             itemBarcode: secondItemBarcode,
             column: 'Alert details',
-            alertDetails: 'Due date change failed: item is Claimed returned',
+            alertDetails: 'Due date change failed: Item is Claimed returned',
             status: ITEM_STATUS_NAMES.CLAIMED_RETURNED,
           },
           {

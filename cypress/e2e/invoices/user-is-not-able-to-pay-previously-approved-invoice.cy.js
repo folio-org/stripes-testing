@@ -64,6 +64,7 @@ describe('Invoices', () => {
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
+          cy.wait(2000);
         });
 
         ServicePoints.getViaApi().then((servicePoint) => {
@@ -100,8 +101,10 @@ describe('Invoices', () => {
             Orders.openOrder();
           },
         );
+        cy.wait(2000);
         cy.visit(TopMenu.invoicesPath);
         Invoices.createRolloverInvoiceWithFY(invoice, organization.name, defaultFiscalYear);
+        cy.wait(3000);
       });
     });
 
@@ -138,6 +141,7 @@ describe('Invoices', () => {
       Invoices.selectInvoiceLine();
       Invoices.openPOLFromInvoiceLineInCurrentPage(`${orderNumber}-1`);
       OrderLines.viewPO();
+      cy.wait(2000);
       Orders.unOpenOrderAndDeleteItems();
       Orders.selectInvoiceInRelatedInvoicesList(invoice.invoiceNumber);
       InvoiceView.checkInvoiceCanNotBeApprovedWarning(
