@@ -202,6 +202,16 @@ export default {
     resource: 'UI-Tenant-Settings Settings Locale',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiConsortiaSettingsSettingsMembershipView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Consortia-Settings Settings Membership',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiConsortiaSettingsSettingsMembershipEdit: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Consortia-Settings Settings Membership',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
 
   // Data capability sets
   capabilities: {

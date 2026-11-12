@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
@@ -11,8 +12,12 @@ import ConfirmCreate from '../../../../support/fragments/consortium-manager/moda
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
 import PatronGroupsConsortiumManager from '../../../../support/fragments/consortium-manager/users/patronGroupsConsortiumManager';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
+import SettingsUsers, {
+  SETTINGS_TABS,
+} from '../../../../support/fragments/settings/users/settingsUsers';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
@@ -90,6 +95,7 @@ describe('Consortium manager', () => {
             path: TopMenu.consortiumManagerPath,
             waiter: ConsortiumManagerApp.waitLoading,
           });
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
 
           SelectMembers.selectAllMembers();
           ConsortiumManagerApp.verifyStatusOfConsortiumManager();
@@ -182,9 +188,34 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.checkMessage(
             messages.deleted('patron group', testData.newPatronGroup.group),
           );
-          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.newPatronGroup.group,
             tenantNames.central,
+            [
+              testData.newPatronGroup.group,
+              testData.newPatronGroup.desc,
+              testData.newPatronGroup.expirationOffsetInDays,
+              '',
+              tenantNames.central,
+            ],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.editPatronGroup.group,
+            tenantNames.university,
+            [
+              testData.editPatronGroup.group,
+              testData.editPatronGroup.desc,
+              testData.editPatronGroup.expirationOffsetInDays,
+              '',
+              tenantNames.university,
+            ],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          // Checked after the rows above: they wait for the list to reload after the delete
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+            testData.newPatronGroup.group,
+            tenantNames.college,
           );
 
           ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.tempPatronGroup);
@@ -206,8 +237,10 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.clickCancel();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
-          cy.visit(SettingsMenu.patronGroups);
-          cy.wait(4000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.USERS);
+          SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
+          PatronGroups.waitLoading();
+          PatronGroups.verifyPatronGroupsPane();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
               testData.newPatronGroup.group,
@@ -219,15 +252,19 @@ describe('Consortium manager', () => {
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(SettingsMenu.patronGroups);
-          cy.wait(4000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.USERS);
+          SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
+          PatronGroups.waitLoading();
+          PatronGroups.verifyPatronGroupsPane();
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.newPatronGroup.group,
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-          cy.visit(SettingsMenu.patronGroups);
-          cy.wait(4000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.USERS);
+          SettingsUsers.selectSettingsTab(SETTINGS_TABS.PATRON_GROUPS);
+          PatronGroups.waitLoading();
+          PatronGroups.verifyPatronGroupsPane();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [
               testData.editPatronGroup.group,
