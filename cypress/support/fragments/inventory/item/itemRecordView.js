@@ -744,6 +744,50 @@ export default {
     cy.expect(loanAccordion.find(KeyValue('Requests', { value: count.toString() })).exists());
   },
 
+  verifyRequestsLinkedToRequestsApp: () => {
+    cy.expect(
+      loanAccordion.find(Link({ href: including('/requests?filters=requestStatus') })).exists(),
+    );
+  },
+
+  // "Loan and availability": no borrower is shown as a dash ("No value set-")
+  verifyBorrower: (barcode) => {
+    cy.expect(
+      loanAccordion.find(KeyValue('Borrower', { value: barcode || 'No value set-' })).exists(),
+    );
+  },
+
+  verifyBorrowerLinkedToPatron: (userId) => {
+    cy.expect(
+      loanAccordion
+        .find(KeyValue('Borrower'))
+        .find(Link({ href: including(`/users/view/${userId}`) }))
+        .exists(),
+    );
+  },
+
+  // Item status is a link to the loan details only while the item is checked out
+  verifyItemStatusLinkedToLoan: (userId) => {
+    cy.expect(
+      loanAccordion
+        .find(KeyValue('Item status'))
+        .find(Link({ href: including(`/users/view/${userId}`) }))
+        .exists(),
+    );
+  },
+
+  verifyItemStatusIsNotLinked: () => {
+    cy.expect(loanAccordion.find(KeyValue('Item status')).find(Link()).absent());
+  },
+
+  verifyLoanAndDueDatesPopulated: (isPopulated = true) => {
+    ['Loan date', 'Due date'].forEach((label) => {
+      const emptyValue = loanAccordion.find(KeyValue(label, { value: 'No value set-' }));
+
+      cy.expect(isPopulated ? emptyValue.absent() : emptyValue.exists());
+    });
+  },
+
   addTag: (tagName) => {
     cy.expect(tagsAccordion.find(Spinner()).absent());
     cy.intercept('PUT', '**/inventory/items/*').as('addTag');

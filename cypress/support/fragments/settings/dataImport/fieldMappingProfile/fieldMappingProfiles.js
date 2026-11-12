@@ -10,6 +10,7 @@ import {
   Form,
   MultiColumnList,
   DropdownMenu,
+  Checkbox,
 } from '../../../../../../interactors';
 import mappingDetails from './mappingDetails';
 import ResultsPane from '../resultsPane';
@@ -23,6 +24,7 @@ import Callout from '../../../../../../interactors/callout';
 const actionsButton = Button('Actions');
 const searchButton = Button('Search');
 const resultsPane = Pane({ id: 'pane-results' });
+const mappingProfilesList = MultiColumnList({ id: 'mapping-profiles-list' });
 const searchField = TextField({ id: 'input-search-mapping-profiles-field' });
 const deleteButton = Button('Delete');
 const editButton = Button('Edit');
@@ -77,7 +79,7 @@ export default {
     cy.do(searchField.focus());
     cy.do(Button({ id: 'input-mapping-profiles-search-field-clear-button' }).click());
   },
-  waitLoading: () => cy.expect(MultiColumnListRow({ index: 0 }).exists()),
+  waitLoading: () => cy.expect(mappingProfilesList.find(MultiColumnListRow({ index: 0 })).exists()),
   createMappingProfile: (mappingProfile) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillMappingProfile(mappingProfile);
@@ -167,15 +169,28 @@ export default {
   },
   checkListOfExistingProfilesIsDisplayed: () => {
     cy.wait(2000);
-    cy.expect(
-      PaneContent({ id: 'pane-results-content' })
-        .find(MultiColumnList({ id: 'mapping-profiles-list' }))
-        .exists(),
-    );
+    cy.expect(PaneContent({ id: 'pane-results-content' }).find(mappingProfilesList).exists());
   },
-  checkNewMappingProfileFormIsOpened: () => cy.expect(Form({ id: 'mapping-profiles-form' }).exists()),
+  checkNewMappingProfileFormIsOpened: () =>
+    cy.expect(Form({ id: 'mapping-profiles-form' }).exists()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
-  verifyMappingProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
+  verifyNoCheckboxesInList: () => {
+    cy.expect(mappingProfilesList.find(Checkbox()).absent());
+  },
+  // Only "New field mapping profile" is in the "Actions" menu - no selecting and exporting of the profiles
+  verifyActionsMenuOptions: () => {
+    cy.do(resultsPane.find(actionsButton).click());
+    cy.expect([
+      Button('New field mapping profile').exists(),
+      Button('Export selected').absent(),
+      Button('Select all').absent(),
+      Button('Deselect all').absent(),
+    ]);
+    cy.do(resultsPane.find(actionsButton).click());
+    cy.expect(DropdownMenu().absent());
+  },
+  verifyMappingProfileAbsent: () =>
+    cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
   verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),
   verifySearchResult: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
@@ -241,15 +256,15 @@ export default {
         description: '',
         mappingDetails: isDeleteProfile
           ? {
-            // eslint-disable-next-line no-unused-vars
-            ...(({ marcMappingOption, mappingFields, ...rest }) => rest)(
-              mappingDetails[existingRecordType],
-            ),
-          }
+              // eslint-disable-next-line no-unused-vars
+              ...(({ marcMappingOption, mappingFields, ...rest }) => rest)(
+                mappingDetails[existingRecordType],
+              ),
+            }
           : {
-            ...mappingDetails[existingRecordType],
-            mappingFields: updatedMappingFields,
-          },
+              ...mappingDetails[existingRecordType],
+              mappingFields: updatedMappingFields,
+            },
       },
       addedRelations: [],
       deletedRelations: [],
