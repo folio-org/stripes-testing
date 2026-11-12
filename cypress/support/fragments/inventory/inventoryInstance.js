@@ -1463,8 +1463,11 @@ export default {
   verifyHoldingLocation(content) {
     cy.expect(MultiColumnListCell({ content: including(content) }).exists());
   },
-  openHoldingItem({ name = '', barcode = 'No barcode', shouldOpen = true }) {
-    const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
+  // holdingId tells apart holdings with the same location name
+  openHoldingItem({ name = '', holdingId, barcode = 'No barcode', shouldOpen = true }) {
+    const holdingsSection = holdingId
+      ? Accordion({ id: including(holdingId) })
+      : Accordion({ label: including(`Holdings: ${name}`) });
 
     if (shouldOpen) {
       cy.do(holdingsSection.clickHeader());
@@ -1482,10 +1485,13 @@ export default {
 
     return ItemRecordView;
   },
-  checkHoldingsTableContent({ name, records = [], shouldOpen = true } = {}) {
-    const holdingsSection = Accordion({
-      label: including(`${HOLDING_TABLE_CONTENT.HOLDINGS} ${name}`),
-    });
+  // holdingId tells apart holdings with the same location name
+  checkHoldingsTableContent({ name, holdingId, records = [], shouldOpen = true } = {}) {
+    const holdingsSection = holdingId
+      ? Accordion({ id: including(holdingId) })
+      : Accordion({
+        label: including(`${HOLDING_TABLE_CONTENT.HOLDINGS} ${name}`),
+      });
 
     if (shouldOpen) {
       cy.do(holdingsSection.clickHeader());
