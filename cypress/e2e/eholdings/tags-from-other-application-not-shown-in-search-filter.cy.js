@@ -35,14 +35,10 @@ describe('eHoldings', () => {
   });
 
   beforeEach('Login to the application', () => {
-    cy.waitForAuthRefresh(() => {
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
-      cy.reload();
-      InventoryInstances.waitContentLoading();
-    }, 20_000);
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: TopMenu.inventoryPath,
+      waiter: InventoryInstances.waitContentLoading,
+    });
   });
 
   after('Deleting created user', () => {
@@ -66,10 +62,11 @@ describe('eHoldings', () => {
 
       TopMenuNavigation.navigateToApp(APPLICATION_NAMES.EHOLDINGS);
       EHoldingsPackagesSearch.verifyTagAbsent(testData.tag);
+      // Tags accordion stays open after switching tabs
       EHoldingSearch.switchToPackages();
-      EHoldingsPackagesSearch.verifyTagAbsent(testData.tag);
+      EHoldingsPackagesSearch.verifyTagAbsent(testData.tag, false);
       EHoldingSearch.switchToTitles();
-      EHoldingsPackagesSearch.verifyTagAbsent(testData.tag);
+      EHoldingsPackagesSearch.verifyTagAbsent(testData.tag, false);
     },
   );
 });
