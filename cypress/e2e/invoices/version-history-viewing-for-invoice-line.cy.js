@@ -351,7 +351,7 @@ describe('Invoices', () => {
     testData.budgets.forEach(({ id }) => Budgets.deleteViaApi(id, false));
     testData.funds.forEach(({ id }) => Funds.deleteFundViaApi(id, false));
     Ledgers.deleteLedgerViaApi(testData.ledger.id, false);
-    ExpenseClasses.deleteExpenseClassViaApi(testData.expenseClass.id);
+    ExpenseClasses.deleteExpenseClassViaApi(testData.expenseClass.id, { failOnStatusCode: false });
     Organizations.deleteOrganizationViaApi(testData.organization.id);
   });
 
