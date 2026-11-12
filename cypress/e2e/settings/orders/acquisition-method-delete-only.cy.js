@@ -1,5 +1,8 @@
 import { v4 as uuid } from 'uuid';
-import { POL_CREATE_INVENTORY_SETTINGS } from '../../../support/constants';
+import {
+  ACQUISITION_METHOD_NAMES,
+  POL_CREATE_INVENTORY_SETTINGS,
+} from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../../support/fragments/orders/newOrder';
@@ -16,6 +19,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Orders', () => {
   describe('Settings (Orders)', () => {
+    const systemAcquisitionMethod = ACQUISITION_METHOD_NAMES.GIFT;
     const testData = {
       acquisitionMethod1: {
         id: uuid(),
@@ -127,7 +131,17 @@ describe('Orders', () => {
         AcquisitionMethods.checkcreatedAM(testData.acquisitionMethod2.value);
         AcquisitionMethods.deleteAcquisitionMethod(testData.acquisitionMethod1.value);
         AcquisitionMethods.deleteAcquisitionMethod(testData.acquisitionMethod2.value, false);
-        AcquisitionMethods.checkSystemAcquisitionMethodCannotBeDeleted('Purchase');
+        // Edit icon is available, Trash icon is not available for system methods
+        AcquisitionMethods.checkSystemAcquisitionMethodCannotBeDeleted(systemAcquisitionMethod);
+
+        // Click "Edit" icon in a row with the existing system Acquisition method
+        AcquisitionMethods.clickEditAcquisitionMethod(systemAcquisitionMethod);
+        AcquisitionMethods.checkSystemAcquisitionMethodEditMode(systemAcquisitionMethod);
+
+        // Click "Cancel" button - the row is unchanged
+        AcquisitionMethods.clickCancelEditAcquisitionMethod(systemAcquisitionMethod);
+        AcquisitionMethods.checkAcquisitionMethodRowInViewMode(systemAcquisitionMethod);
+        AcquisitionMethods.checkSystemAcquisitionMethodCannotBeDeleted(systemAcquisitionMethod);
       },
     );
   });

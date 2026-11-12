@@ -147,6 +147,7 @@ describe('Orders', () => {
       cy.wait(4000);
       Invoices.approveInvoice();
       Invoices.payInvoice();
+      cy.wait(4000);
     });
     cy.createTempUser([
       permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,

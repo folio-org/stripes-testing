@@ -50,7 +50,6 @@ describe('Organizations', () => {
             Organizations.selectOrganization(testData.organizations.org1.name);
             Organizations.editOrganization();
             Organizations.editOrganizationName(testData.organizations.org1);
-            Organizations.saveOrganization();
             Organizations.checkOrganizationInfo({
               name: `${testData.organizations.org1.name}-edited`,
               code: testData.organizations.org1.code,
@@ -64,7 +63,6 @@ describe('Organizations', () => {
             Organizations.selectOrganizationInCurrentPage(testData.organizations.org2.name);
             Organizations.editOrganization();
             Organizations.editOrganizationName(testData.organizations.org2);
-            Organizations.saveOrganization();
             Organizations.checkOrganizationInfo({
               name: `${testData.organizations.org2.name}-edited`,
               code: testData.organizations.org2.code,
@@ -88,7 +86,6 @@ describe('Organizations', () => {
             Organizations.editOrganizationName({
               name: `${testData.organizations.org1.name}-twice`,
             });
-            Organizations.saveOrganization();
             Organizations.checkOrganizationInfo({
               name: `${testData.organizations.org1.name}-twice-edited`,
               code: testData.organizations.org1.code,

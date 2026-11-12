@@ -449,7 +449,9 @@ export default {
     const cell = (column) => circulationHistoryList.find(MultiColumnListCell({ row: 0, column }));
     cy.expect([
       circulationHistoryList.has({ rowCount: 1 }),
-      ...['Date', 'Circ action', 'Source', 'Service point'].map((column) => cell(column).has({ content: or('-', 'No value set-') })),
+      ...['Date', 'Circ action', 'Source', 'Service point'].map((column) =>
+        cell(column).has({ content: or('-', 'No value set-') }),
+      ),
     ]);
   },
 
@@ -461,11 +463,12 @@ export default {
     cy.do([TextField({ id: 'additem_barcode' }).fillIn(barcode), saveAndCloseBtn.click()]);
   },
 
-  verifyStatisticalCode: (code) => cy.expect(
-    MultiColumnList({ id: 'item-list-statistical-codes' })
-      .find(MultiColumnListCell({ content: code }))
-      .exists(),
-  ),
+  verifyStatisticalCode: (code) =>
+    cy.expect(
+      MultiColumnList({ id: 'item-list-statistical-codes' })
+        .find(MultiColumnListCell({ content: code }))
+        .exists(),
+    ),
 
   verifyLoanAndAvailabilitySection(data) {
     this.expandAll();
@@ -512,7 +515,8 @@ export default {
     ]);
   },
 
-  verifyFormerIdentifiers: (identifier) => cy.expect(KeyValue('Former identifier').has({ value: identifier })),
+  verifyFormerIdentifiers: (identifier) =>
+    cy.expect(KeyValue('Former identifier').has({ value: identifier })),
   verifyShelvingOrder: (orderValue) => cy.expect(shelvingOrderKeyValue.has({ value: orderValue })),
   verifyCallNumber: (callNumber) => cy.expect(KeyValue('Call number').has({ value: callNumber })),
   verifyItemPermanentLocation: (value) => {
@@ -548,17 +552,18 @@ export default {
     expect(convertedHoldingsDate).to.be.greaterThan(convertedItemsDate);
     expect(userId).to.eq(itemMetdata.updatedByUserId);
   },
-  getRecordLastUpdatedDate: () => cy.then(() => {
-    return cy
-      .get('div[class^="metaHeaderLabel-"]')
-      .invoke('text')
-      .then((text) => {
-        // extract only date and time
-        const colonIndex = text.indexOf(':');
-        const lastUpdatedDate = text.substring(colonIndex + 2).trim();
-        return lastUpdatedDate;
-      });
-  }),
+  getRecordLastUpdatedDate: () =>
+    cy.then(() => {
+      return cy
+        .get('div[class^="metaHeaderLabel-"]')
+        .invoke('text')
+        .then((text) => {
+          // extract only date and time
+          const colonIndex = text.indexOf(':');
+          const lastUpdatedDate = text.substring(colonIndex + 2).trim();
+          return lastUpdatedDate;
+        });
+    }),
   verifyItemCallNumberChangedAfterChangedInHoldings: (
     createdItemData,
     updatedItemData,
@@ -689,7 +694,8 @@ export default {
     cy.wait(1500);
   },
 
-  verifyEffectiveCallNumber: (effectiveCallNumber) => cy.expect(effectiveCallNumberKeyValue.has({ value: effectiveCallNumber })),
+  verifyEffectiveCallNumber: (effectiveCallNumber) =>
+    cy.expect(effectiveCallNumberKeyValue.has({ value: effectiveCallNumber })),
 
   verifyNoInfoIconsNextToCallNumberFields() {
     cy.expect([
@@ -787,6 +793,10 @@ export default {
     cy.expect(Pane(including('Item')).find(Link(instanceTitle)).exists());
   },
 
+  clickInstanceTitleLink(instanceTitle) {
+    cy.do(Pane(including('Item')).find(Link(instanceTitle)).click());
+  },
+
   clickVersionHistoryButton() {
     cy.do(versionHistoryButton.click());
   },
@@ -813,7 +823,7 @@ export default {
     );
   },
 
-  removePieceFromBoundItem(content) {
+  removePieceFromBoundItem(content, { confirm = true } = {}) {
     const removeBtn = boundPiecesDataAccordion
       .find(MultiColumnListRow({ content: including(content), isContainer: false }))
       .find(Button({ button: true }));
@@ -821,9 +831,33 @@ export default {
     cy.expect(removeBtn.exists());
     cy.do(removeBtn.click());
     cy.expect(confirmationModal.exists());
-    cy.expect(confirmationModal.has({ message: 'Remove this piece from the bound item?' }));
-    cy.do(confirmationModal.confirm(COMMON_BUTTON_LABELS.REMOVE));
+    cy.expect([
+      confirmationModal.has({ message: 'Remove this piece from the bound item?' }),
+      confirmationModal.find(Button(COMMON_BUTTON_LABELS.CANCEL)).has({ disabled: false }),
+      confirmationModal.find(Button(COMMON_BUTTON_LABELS.REMOVE)).has({ disabled: false }),
+    ]);
+    cy.do(
+      confirm
+        ? confirmationModal.confirm(COMMON_BUTTON_LABELS.REMOVE)
+        : confirmationModal.cancel(COMMON_BUTTON_LABELS.CANCEL),
+    );
     cy.expect(confirmationModal.absent());
+  },
+
+  checkBoundPiecesDataTable({ columns = [], rows = [] } = {}) {
+    const boundPiecesList = boundPiecesDataAccordion.find(MultiColumnList());
+
+    columns.forEach((column) => {
+      cy.expect(boundPiecesList.has({ columns: including(column) }));
+    });
+    cy.expect(boundPiecesList.has({ rowCount: rows.length }));
+    rows.forEach((rowContent) => {
+      const row = boundPiecesList.find(
+        MultiColumnListRow({ content: including(rowContent), isContainer: false }),
+      );
+
+      cy.expect([row.exists(), row.find(Button({ button: true })).exists()]);
+    });
   },
 
   markItemAsRestricted: () => {

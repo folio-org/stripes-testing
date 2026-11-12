@@ -213,6 +213,7 @@ describe('Finance', () => {
 
     after(() => {
       cy.getAdminToken();
+      Approvals.setApprovePayValueViaApi(false);
       Users.deleteViaApi(testData.user.userId);
     });
 

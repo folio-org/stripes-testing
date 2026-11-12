@@ -103,6 +103,7 @@ describe('Invoices', () => {
         }
       });
 
+      OrderLinesLimit.setPOLLimitViaApi(1);
       Orders.deleteOrderViaApi(testData.order.id);
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Users.deleteViaApi(testData.user.userId);
@@ -111,7 +112,7 @@ describe('Invoices', () => {
 
   it(
     'C366532 Creating invoice from order with three POLs, changing POLs order (thunderjet) (TaaS)',
-    { tags: ['extendedPath', 'thunderjet', 'C366532'] },
+    { tags: ['extendedPath', 'thunderjet', 'C366532', 'nonParallel'] },
     () => {
       Orders.searchByParameter('PO number', testData.order.poNumber);
       Orders.selectFromResultsList(testData.order.poNumber);
@@ -155,7 +156,7 @@ describe('Invoices', () => {
         {
           vendorInvoiceNo: testData.invoice.invoiceNumber,
           invoiceLineNumber: '1',
-          invoiceDate: new Date(testData.invoice.invoiceDate).toLocaleDateString('en-US'),
+          invoiceDate: testData.invoice.invoiceDate,
           vendorCode: testData.organization.code,
           status: testData.invoice.status,
           quantity: testData.orderLines[0].quantity,

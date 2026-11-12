@@ -37,8 +37,8 @@ import { getFullName } from '../../support/utils/users';
 describe('Orders', () => {
   const entityType = 'order-line';
   // versions created in preconditions, from most recent to least recent:
-  // "Physical unit price" edit, opening the order, original version
-  const versionsCount = 3;
+  // "Physical unit price" edit, opening the order, system maintenance update (backend re-save), original version
+  const versionsCount = 4;
   const originalVersionIndex = versionsCount - 1;
   // all fields listed as "Changed" on the card, the same fields are highlighted in version view
   const updatedUnitPrice = 20;
@@ -63,6 +63,7 @@ describe('Orders', () => {
     const expectedCards = [
       { isCurrent: true, changedFields: unitPriceEditChangedFields },
       { changedFields: orderOpeningChangedFields },
+      { isSystemMaintenanceUpdate: true },
       { isOriginal: true },
     ];
 

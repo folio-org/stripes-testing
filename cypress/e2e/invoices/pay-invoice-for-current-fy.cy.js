@@ -132,6 +132,11 @@ describe('Invoices', { retries: { runMode: 1 } }, () => {
     Approvals.setApprovePayValueViaApi(isApprovePayEnabled);
   });
 
+  after('Disable "Approve and pay in one click" option', () => {
+    cy.getAdminToken();
+    Approvals.setApprovePayValueViaApi(false);
+  });
+
   describe(
     '"Invoice: Pay invoices in a different fiscal year" permission is NOT assigned to a user',
     { retries: { runMode: 1 } },

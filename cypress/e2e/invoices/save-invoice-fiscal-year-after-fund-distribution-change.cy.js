@@ -134,9 +134,11 @@ describe('Invoices', () => {
             FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
               secondFiscalYear.id = secondFiscalYearResponse.id;
             });
+            cy.wait(5_000); // wait for fiscal year creation to complete
             cy.visit(TopMenu.invoicesPath);
             Invoices.createRolloverInvoice(invoice, organization.name);
             Invoices.createInvoiceLineFromPol(orderNumber);
+            cy.wait(5_000); // wait for invoice line creation to complete
           });
         });
       });
@@ -176,6 +178,7 @@ describe('Invoices', () => {
       Invoices.selectInvoiceLine();
       Invoices.editInvoiceLine();
       Invoices.changeFundInLine(secondFund);
+      cy.wait(5_000); // wait for fund distribution change to complete
 
       cy.visit(TopMenu.ledgerPath);
       FinanceHelp.searchByName(firstLedger.name);
@@ -211,6 +214,7 @@ describe('Invoices', () => {
         periodStartForSecondFY,
         periodEndForSecondFY,
       );
+      cy.wait(5_000); // wait for fiscal year details update to complete
 
       cy.visit(TopMenu.invoicesPath);
       Invoices.searchByNumber(invoice.invoiceNumber);

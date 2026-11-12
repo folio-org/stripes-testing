@@ -6,6 +6,7 @@ import {
   including,
   not,
   MultiColumnListCell,
+  MultiColumnListRow,
   Link,
   PaneHeader,
   MultiColumnList,
@@ -586,11 +587,17 @@ export default {
       cy.expect(unreceivableSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
     }
   },
-  openEditPieceModal({ row = 0, section = 'Expected' } = {}) {
+  openEditPieceModal({ row = 0, section = 'Expected', displaySummary } = {}) {
     const isExpected = section === 'Expected';
-    const itemEdit = isExpected
+    let itemEdit = isExpected
       ? expectedSection.find(MultiColumnListCell({ row, column: 'Display summary' }))
       : receivedSection.find(MultiColumnListCell({ row, column: 'Barcode' }));
+
+    if (displaySummary) {
+      itemEdit = (isExpected ? expectedSection : receivedSection).find(
+        MultiColumnListCell({ column: 'Display summary', content: displaySummary }),
+      );
+    }
 
     cy.do(itemEdit.click());
 
@@ -644,6 +651,10 @@ export default {
     InventoryInstance.waitInventoryLoading();
 
     return InventoryInstance;
+  },
+  openInstanceDetailsByTitle(instanceTitle) {
+    cy.do(receivingDetailsSection.find(Link(instanceTitle)).click());
+    InventoryInstance.waitInventoryLoading();
   },
   openOrderLineDetails() {
     cy.do(orderLineDetailsSection.find(KeyValue('POL number')).find(Link()).click());
@@ -716,6 +727,44 @@ export default {
         .find(Link())
         .exists(),
     );
+  },
+
+  checkBoundItemsTableContent(records = []) {
+    const { BARCODE, STATUS, DISPLAY_SUMMARY, CALL_NUMBER } = RECEIVING_BOUND_ITEMS_COLUMN_LABELS;
+
+    records.forEach(({ barcode, status, displaySummary, callNumber }, row) => {
+      // Rows order is not defined, so a row with barcode is found by its barcode link
+      if (barcode) {
+        const boundItemRow = boundItemsList.find(
+          MultiColumnListRow({ content: including(barcode), isContainer: false }),
+        );
+
+        cy.expect(boundItemRow.find(Link(barcode)).exists());
+        [status, displaySummary, callNumber]
+          .filter((content) => content !== undefined)
+          .forEach((content) => {
+            cy.expect(boundItemRow.has({ content: including(content) }));
+          });
+        return;
+      }
+
+      const cells = {
+        [BARCODE]: barcode,
+        [STATUS]: status,
+        [DISPLAY_SUMMARY]: displaySummary,
+        [CALL_NUMBER]: callNumber,
+      };
+
+      Object.entries(cells).forEach(([column, content]) => {
+        if (content !== undefined) {
+          cy.expect(
+            boundItemsList
+              .find(MultiColumnListCell({ column, row }))
+              .has({ content: including(content) }),
+          );
+        }
+      });
+    });
   },
 
   assertBoundItemsPaginationControlsDisabled({ previous = true, next = true } = {}) {

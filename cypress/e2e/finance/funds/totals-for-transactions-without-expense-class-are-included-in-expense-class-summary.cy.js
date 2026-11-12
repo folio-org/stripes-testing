@@ -25,6 +25,7 @@ import {
 import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
 import { CodeTools, DateTools, NumberTools, StringTools } from '../../../support/utils';
 import { ExpenseClasses } from '../../../support/fragments/settings/finance';
+import OrderLinesLimit from '../../../support/fragments/settings/orders/orderLinesLimit';
 import FinanceDetails from '../../../support/fragments/finance/financeDetails';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { Invoices } from '../../../support/fragments/invoices';
@@ -422,7 +423,9 @@ describe('Finance', () => {
         testData.locale = locale;
       });
 
-      createExpenseClasses()
+      // Order 1 has three PO lines
+      OrderLinesLimit.setPOLLimitViaApi(3)
+        .then(createExpenseClasses)
         .then(createConsecutiveFiscalYears)
         .then(createLedgerA)
         .then(createFundAWithBudget)
@@ -447,6 +450,7 @@ describe('Finance', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
+        OrderLinesLimit.setPOLLimitViaApi(1);
         Users.deleteViaApi(testData.user.userId);
         Organizations.deleteOrganizationViaApi(testData.organization.id);
       });

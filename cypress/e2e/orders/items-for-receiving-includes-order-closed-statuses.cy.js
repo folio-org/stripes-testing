@@ -12,6 +12,7 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import Helper from '../../support/fragments/finance/financeHelper';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventoryItems from '../../support/fragments/inventory/item/inventoryItems';
 import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
 import Organizations from '../../support/fragments/organizations/organizations';
 import Receiving from '../../support/fragments/receiving/receiving';
@@ -105,24 +106,16 @@ describe('Orders', () => {
                               },
                             );
                           });
-                          // get items and update barcodes
-                          cy.getInstance({
-                            limit: 1,
-                            expandAll: true,
-                            query: `"id"=="${testData.instance.id}"`,
+                          // get items created for the PO line and update barcodes
+                          InventoryItems.getItemViaApi({
+                            query: `purchaseOrderLineIdentifier=="${orderLine.id}"`,
                           })
-                            .then((instanceData) => {
-                              instanceData.items.forEach((item) => {
-                                cy.getItems({ limit: 1, query: `"hrid"=="${item.hrid}"` }).then(
-                                  (originalItemData) => {
-                                    const itemBarcode = Helper.getRandomBarcode();
-                                    const itemData = originalItemData;
-                                    itemData.barcode = itemBarcode;
+                            .then((items) => {
+                              items.forEach((item) => {
+                                const itemBarcode = Helper.getRandomBarcode();
 
-                                    cy.updateItemViaApi(itemData);
-                                    itemBarcodes.push(itemBarcode);
-                                  },
-                                );
+                                cy.updateItemViaApi({ ...item, barcode: itemBarcode });
+                                itemBarcodes.push(itemBarcode);
                               });
                             })
                             .then(() => {
