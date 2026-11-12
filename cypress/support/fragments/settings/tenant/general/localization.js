@@ -62,6 +62,18 @@ export default {
   verifyLocaleSelected(language) {
     cy.expect(localeSelect.has({ value: language.value }));
   },
+  // The locale of the tenant as it is saved on the server (it is applied to all the users)
+  verifyTenantLocaleSavedViaApi(language) {
+    cy.recurse(
+      () => cy.getTenantLocaleApi(),
+      (tenantLocale) => tenantLocale.locale === language.value,
+      {
+        limit: 10,
+        delay: 1000,
+        timeout: 15_000,
+      },
+    );
+  },
   changeTimezone(timezone) {
     cy.do(timeZoneSelect.choose(timezone));
     cy.expect(timeZoneSelect.has({ value: timezone }));
