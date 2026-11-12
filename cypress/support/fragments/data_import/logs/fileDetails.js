@@ -426,6 +426,19 @@ export default {
     cy.do(previousButton.click());
   },
 
+  // range: [from, to] of the records shown on the page, e.g. [1, 100]
+  verifyPagination({ range, isPreviousDisabled, isNextDisabled }) {
+    cy.expect([
+      previousButton.has({ disabled: isPreviousDisabled }),
+      nextButton.has({ disabled: isNextDisabled }),
+    ]);
+    // The range is the text between the Previous and Next buttons, e.g. "1 - 100"
+    cy.get('#search-results-list-prev-paging-button')
+      .parent()
+      .invoke('text')
+      .should('match', new RegExp(`${range[0]}\\s*-\\s*${range[1]}`));
+  },
+
   paginateThroughAllPages(numberOfPages) {
     for (let i = 0; i < numberOfPages; i++) {
       this.clickNextPaginationButton();

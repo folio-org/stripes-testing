@@ -34,6 +34,18 @@ Cypress.Commands.add('getSettingsEntriesByScope', (scope) => {
   });
 });
 
+// The locale chosen by the user in "My profile" > "Language & localization"
+Cypress.Commands.add('getUserLocaleSettingApi', (userId) => {
+  return cy.okapiRequest({
+    method: 'GET',
+    path: 'settings/entries',
+    searchParams: {
+      query: `(scope==stripes-core.prefs.manage and key==localeSettings and userId==${userId})`,
+    },
+    isDefaultSearchParamsRequired: false,
+  });
+});
+
 Cypress.Commands.add('getNcipConfigCheck', () => {
   return cy.okapiRequest({
     method: 'GET',

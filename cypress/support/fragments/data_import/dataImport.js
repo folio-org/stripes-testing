@@ -404,12 +404,22 @@ export default {
     });
   },
 
-  // Builds a MARC file from scratch (one record) - see buildMarcRecord above for the field spec.
+  // Builds a MARC file from scratch - see buildMarcRecord above for the field spec.
   // For cases the API is too strict for (negative tests) or where import itself is under test.
-  // Single-record for now; buildMarcRecord stays separate so multi-record can be added later.
-  createMarcFile({ fileName, recordType = EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC, fields } = {}) {
-    const record = buildMarcRecord(recordType, fields);
-    return FileManager.createFile(`cypress/fixtures/${fileName}`, record.as('iso2709'));
+  // One record: pass `fields`. Several records: pass `records` - an array of field lists, one per
+  // record (the records are just concatenated, that is how a multi-record MARC file looks).
+  createMarcFile({
+    fileName,
+    recordType = EXISTING_RECORD_NAMES.MARC_BIBLIOGRAPHIC,
+    fields,
+    records,
+  } = {}) {
+    const recordsFields = records ?? [fields];
+    const content = recordsFields
+      .map((recordFields) => buildMarcRecord(recordType, recordFields).as('iso2709'))
+      .join('');
+
+    return FileManager.createFile(`cypress/fixtures/${fileName}`, content);
   },
 
   replace999SubfieldsInPreupdatedFile(exportedFileName, preUpdatedFileName, finalFileName) {

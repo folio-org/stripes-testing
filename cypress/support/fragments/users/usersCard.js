@@ -1003,6 +1003,14 @@ export default {
     cy.do(actionsButton.click());
   },
 
+  // The date and time as they are shown in the user's locale, e.g. "11/11/2026, 3:04 PM"
+  getLastUpdatedDateAndTime() {
+    return cy
+      .contains(/Record last updated:/)
+      .invoke('text')
+      .then((text) => text.split('updated: ')[1]);
+  },
+
   verifyLastUpdatedDate() {
     const updatedDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
     cy.expect(
