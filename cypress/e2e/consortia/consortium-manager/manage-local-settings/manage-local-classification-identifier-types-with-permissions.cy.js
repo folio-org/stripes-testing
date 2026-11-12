@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
@@ -11,8 +12,12 @@ import ClassificationIdentifierTypesConsortiumManager from '../../../../support/
 import ConfirmCreate from '../../../../support/fragments/consortium-manager/modal/confirm-create';
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import ClassificationIdentifierTypes from '../../../../support/fragments/settings/inventory/instances/classificationIdentifierTypes';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
@@ -152,9 +157,22 @@ describe('Consortium manager', () => {
               testData.newClassificationIdentifierType.name,
             ),
           );
-          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.newClassificationIdentifierType.name,
             tenantNames.central,
+            [testData.newClassificationIdentifierType.name, 'local', '', tenantNames.central],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.editClassificationIdentifierType.name,
+            tenantNames.university,
+            [testData.editClassificationIdentifierType.name, 'local', '', tenantNames.university],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          // Checked after the rows above: they wait for the list to reload after the delete
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+            testData.newClassificationIdentifierType.name,
+            tenantNames.college,
           );
 
           ConsortiaControlledVocabularyPaneset.createViaUi(
@@ -182,23 +200,32 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.clickCancel();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
-          cy.visit(SettingsMenu.classificationTypes);
-          cy.wait(4000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(
+            INVENTORY_SETTINGS_TABS.CLASSIFICATION_IDENTIFIER_TYPES,
+          );
+          ClassificationIdentifierTypes.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.newClassificationIdentifierType.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(SettingsMenu.classificationTypes);
-          cy.wait(4000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(
+            INVENTORY_SETTINGS_TABS.CLASSIFICATION_IDENTIFIER_TYPES,
+          );
+          ClassificationIdentifierTypes.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.newClassificationIdentifierType.name,
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-          cy.visit(SettingsMenu.classificationTypes);
-          cy.wait(4000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(
+            INVENTORY_SETTINGS_TABS.CLASSIFICATION_IDENTIFIER_TYPES,
+          );
+          ClassificationIdentifierTypes.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.editClassificationIdentifierType.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],

@@ -4,12 +4,14 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { NewOrder, Orders } from '../../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import OrderLines from '../../../support/fragments/orders/orderLines';
+import SelectInstanceModal from '../../../support/fragments/orders/modals/selectInstanceModal';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('Orders', () => {
@@ -80,15 +82,23 @@ describe('Orders', () => {
 
             Orders.createOrderViaApi(testData.order).then((orderResponse) => {
               testData.order = orderResponse;
-              cy.loginAsCollegeAdmin({
+              cy.resetTenant();
+              cy.loginAsAdmin({
                 path: TopMenu.ordersPath,
                 waiter: Orders.waitLoading,
               });
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
+              Orders.waitLoading();
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
               Orders.searchByParameter('PO number', testData.order.poNumber);
               Orders.selectFromResultsList(testData.order.poNumber);
               OrderLines.addPOLine();
-              OrderLines.selectRandomInstanceInTitleLookUP(testData.firstSharedInstance.title, 0);
-              OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+              OrderLines.clickTitleLookUp();
+              InventorySearchAndFilter.clearDefaultHeldbyFilter();
+              SelectInstanceModal.searchByName(testData.firstSharedInstance.title);
+              SelectInstanceModal.selectInstance();
+              OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.name);
               OrderLines.backToEditingOrder();
               Orders.openOrder();
             });
@@ -111,7 +121,7 @@ describe('Orders', () => {
 
     after('Delete user, data', () => {
       cy.resetTenant();
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Users.deleteViaApi(testData.userProperties.userId);
       cy.setTenant(Affiliations.College);
       Orders.updateOrderViaApi({ ...testData.order, workflowStatus: 'Pending' });
@@ -131,7 +141,10 @@ describe('Orders', () => {
         Orders.selectFromResultsList(testData.order.poNumber);
         OrderLines.selectPOLInOrder();
         OrderLines.changeInstanceConnectionInActions();
-        OrderLines.selectInstanceInSelectInstanceModal(testData.secondSharedInstance.title, 0);
+        SelectInstanceModal.waitLoading();
+        InventorySearchAndFilter.clearDefaultHeldbyFilter();
+        SelectInstanceModal.searchByName(testData.secondSharedInstance.title);
+        SelectInstanceModal.selectInstance();
         OrderLines.submitCreateNewInChangeTitleModal('Keep Holdings');
         OrderLines.openInstanceInPOL(testData.secondSharedInstance.title);
         InventoryInstance.checkInstanceTitle(testData.secondSharedInstance.title);
