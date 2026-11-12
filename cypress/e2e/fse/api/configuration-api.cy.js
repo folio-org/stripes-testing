@@ -30,7 +30,7 @@ describe('fse-configurations', { retries: { runMode: 1 } }, () => {
 
   it(
     `TC196440 - OAI-PMH general configuration verification for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'api', 'sanity', 'oai-pmh', 'configurations', 'TC196440'] },
+    { tags: ['fse', 'api', 'eureka-sanity', 'oai-pmh', 'configurations', 'TC196440'] },
     () => {
       cy.getOaiPmhGeneralConfigViaApi().then((response) => {
         cy.expect(response.status).to.eq(200);
