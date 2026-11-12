@@ -3,6 +3,7 @@ import { REQUEST_METHOD } from '../../../../constants';
 import { MultiColumnListHeader } from '../../../../../../interactors';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
+import { getPublicationResults } from '../../../../utils/consortium';
 
 const id = uuid();
 
@@ -40,26 +41,23 @@ export default {
   },
 
   getFormatByNameAndTenant(name, tenantId) {
-    return cy.getConsortiaId().then((consortiaId) => {
-      cy.getPublications([tenantId], '/instance-formats?limit=2000&offset=0').then(
-        (publicationId) => {
-          cy.okapiRequest({
-            method: REQUEST_METHOD.GET,
-            path: `consortia/${consortiaId}/publications/${publicationId}/results`,
-          }).then(({ body }) => {
-            const formats = JSON.parse(
-              body.publicationResults.find((publication) => publication.tenantId === tenantId)
-                .response,
-            ).instanceFormats;
-            return formats.find((format) => format.name === name);
-          });
-        },
-      );
-    });
+    return cy
+      .getPublications([tenantId], '/instance-formats?limit=2000&offset=0')
+      .then((publicationId) => getPublicationResults(publicationId))
+      .then(({ publicationResults }) => {
+        const tenantResult = publicationResults.find(
+          (publication) => publication.tenantId === tenantId,
+        );
+        // null (not undefined) so Cypress doesn't yield the previous subject
+        return (
+          tenantResult?.response.instanceFormats.find((format) => format.name === name) || null
+        );
+      });
   },
 
   deleteFormatByNameAndTenant(name, tenantId) {
     this.getFormatByNameAndTenant(name, tenantId).then((format) => {
+      if (!format) return;
       cy.setTenant(tenantId);
       cy.okapiRequest({
         method: REQUEST_METHOD.DELETE,

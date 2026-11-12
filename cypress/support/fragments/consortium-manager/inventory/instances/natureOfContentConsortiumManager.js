@@ -3,33 +3,31 @@ import { MultiColumnListHeader } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 import ConsortiumManagerApp from '../../consortiumManagerApp';
 import ConsortiaControlledVocabularyPaneset from '../../consortiaControlledVocabularyPaneset';
+import { getPublicationResults } from '../../../../utils/consortium';
 
 const id = uuid();
 
 export default {
   getNatureOfContentByNameAndTenant(name, tenantId) {
-    return cy.getConsortiaId().then((consortiaId) => {
-      cy.getPublications([tenantId], '/nature-of-content-terms?limit=2000&offset=0').then(
-        (publicationId) => {
-          cy.okapiRequest({
-            method: REQUEST_METHOD.GET,
-            path: `consortia/${consortiaId}/publications/${publicationId}/results`,
-          }).then(({ body }) => {
-            const natureOfContentTerms = JSON.parse(
-              body.publicationResults.find((publication) => publication.tenantId === tenantId)
-                .response,
-            ).natureOfContentTerms;
-            return natureOfContentTerms.find(
-              (natureOfContentTerm) => natureOfContentTerm.name === name,
-            );
-          });
-        },
-      );
-    });
+    return cy
+      .getPublications([tenantId], '/nature-of-content-terms?limit=2000&offset=0')
+      .then((publicationId) => getPublicationResults(publicationId))
+      .then(({ publicationResults }) => {
+        const tenantResult = publicationResults.find(
+          (publication) => publication.tenantId === tenantId,
+        );
+        // null (not undefined) so Cypress doesn't yield the previous subject
+        return (
+          tenantResult?.response.natureOfContentTerms.find(
+            (natureOfContentTerm) => natureOfContentTerm.name === name,
+          ) || null
+        );
+      });
   },
 
   deleteNatureOfContentByNameAndTenant(name, tenantId) {
     this.getNatureOfContentByNameAndTenant(name, tenantId).then((natureOfContentTerm) => {
+      if (!natureOfContentTerm) return;
       cy.setTenant(tenantId);
       cy.okapiRequest({
         method: REQUEST_METHOD.DELETE,

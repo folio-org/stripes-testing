@@ -90,15 +90,17 @@ describe('Consortia', () => {
           Departments.getViaApi({
             limit: 1,
             query: `name=="${sharedDepartment4.name}"`,
-          }).then((department) => {
+          }).then(([department]) => {
+            // Record is absent when the test failed before sharing it
+            if (!department) return;
             DepartmentsConsortiumManager.deleteViaApi({
               payload: {
                 name: sharedDepartment4.name,
                 code: sharedDepartment4.code,
-                id: department[0].id,
+                id: department.id,
                 source: 'consortium',
               },
-              settingId: department[0].id,
+              settingId: department.id,
               url: '/departments',
             });
           });

@@ -60,6 +60,7 @@ describe('Consortia', () => {
       () => {
         ConsortiumManager.verifyConsortiumManagerOnPage();
         ConsortiumManager.switchActiveAffiliationExists();
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
         ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
         ConsortiumManager.verifyConsortiumManagerIsAbsent();
       },
