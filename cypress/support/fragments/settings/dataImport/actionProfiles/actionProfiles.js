@@ -9,6 +9,8 @@ import {
   PaneContent,
   HTML,
   MultiColumnList,
+  Checkbox,
+  DropdownMenu,
 } from '../../../../../../interactors';
 import NewActionProfile from './newActionProfile';
 import ResultsPane from '../resultsPane';
@@ -17,6 +19,7 @@ import ActionProfileEditForm from './actionProfileEditForm';
 const actionsButton = Button('Actions');
 const iconButton = Button({ icon: 'times' });
 const resultsPane = Pane({ id: 'pane-results' });
+const actionProfilesList = MultiColumnList({ id: 'action-profiles-list' });
 const viewPane = Pane({ id: 'view-action-profile-pane' });
 const searchField = TextField({ id: 'input-search-action-profiles-field' });
 
@@ -90,7 +93,7 @@ export default {
     cy.do(searchField.focus());
     cy.do(Button({ id: 'input-action-profiles-search-field-clear-button' }).click());
   },
-  waitLoading: () => cy.expect(MultiColumnListRow({ index: 0 }).exists()),
+  waitLoading: () => cy.expect(actionProfilesList.find(MultiColumnListRow({ index: 0 })).exists()),
   create: (actionProfile, mappingProfileName) => {
     openNewActionProfileForm();
     cy.wait(1000);
@@ -128,14 +131,26 @@ export default {
 
   checkListOfExistingProfilesIsDisplayed: () => {
     cy.wait(2000);
-    cy.expect(
-      PaneContent({ id: 'pane-results-content' })
-        .find(MultiColumnList({ id: 'action-profiles-list' }))
-        .exists(),
-    );
+    cy.expect(PaneContent({ id: 'pane-results-content' }).find(actionProfilesList).exists());
   },
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
-  verifyActionProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
+  verifyNoCheckboxesInList: () => {
+    cy.expect(actionProfilesList.find(Checkbox()).absent());
+  },
+  // Only "New action profile" is in the "Actions" menu - no selecting and exporting of the profiles
+  verifyActionsMenuOptions: () => {
+    cy.do(resultsPane.find(actionsButton).click());
+    cy.expect([
+      Button('New action profile').exists(),
+      Button('Export selected').absent(),
+      Button('Select all').absent(),
+      Button('Deselect all').absent(),
+    ]);
+    cy.do(resultsPane.find(actionsButton).click());
+    cy.expect(DropdownMenu().absent());
+  },
+  verifyActionProfileAbsent: () =>
+    cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
   verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),
   verifySearchResult: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
