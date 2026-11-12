@@ -76,15 +76,15 @@ describe('Consortia', () => {
           NatureOfContent.getViaApi({
             limit: 1,
             query: `name=="${natureContent4.name}"`,
-          }).then((nocResp) => {
-            const nocId = nocResp.natureOfContentTerms[0].id;
+          }).then(({ natureOfContentTerms: [natureOfContentTerm] }) => {
+            if (!natureOfContentTerm) return;
             NatureOfContentConsortiumManager.deleteViaApi({
               payload: {
                 name: natureContent4.name,
-                id: nocId,
+                id: natureOfContentTerm.id,
                 source: 'consortium',
               },
-              settingId: nocId,
+              settingId: natureOfContentTerm.id,
               url: '/nature-of-content-terms',
             });
           });

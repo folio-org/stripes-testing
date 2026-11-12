@@ -76,15 +76,16 @@ describe('Consortia', () => {
           InstanceNoteTypes.getInstanceNoteTypesViaApi({
             limit: 1,
             query: `name=="${instanceNote4.name}"`,
-          }).then((intResp) => {
-            const citId = intResp.instanceNoteTypes[0].id;
+          }).then(({ instanceNoteTypes: [instanceNoteType] }) => {
+            // Record is absent when the test failed before sharing it
+            if (!instanceNoteType) return;
             InstanceNoteTypesConsortiumManager.deleteViaApi({
               payload: {
                 name: instanceNote4.name,
-                id: citId,
+                id: instanceNoteType.id,
                 source: 'consortium',
               },
-              settingId: citId,
+              settingId: instanceNoteType.id,
               url: '/instance-note-types',
             });
           });

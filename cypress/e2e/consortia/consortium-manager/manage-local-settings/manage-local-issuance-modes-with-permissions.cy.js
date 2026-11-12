@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
@@ -11,8 +12,12 @@ import ConfirmCreate from '../../../../support/fragments/consortium-manager/moda
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
 import ModesOfIssuanceConsortiumManager from '../../../../support/fragments/consortium-manager/inventory/instances/modesOfIssuanceConsortiumManager';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import ModesOfIssuance from '../../../../support/fragments/settings/inventory/instances/modesOfIssuance';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
@@ -146,9 +151,22 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.checkMessage(
             messages.deleted('mode of issuance', testData.newIssuanceMode.name),
           );
-          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.newIssuanceMode.name,
             tenantNames.central,
+            [testData.newIssuanceMode.name, 'local', '', tenantNames.central],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.editIssuanceMode.name,
+            tenantNames.university,
+            [testData.editIssuanceMode.name, 'local', '', tenantNames.university],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          // Checked after the rows above: they wait for the list to reload after the delete
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+            testData.newIssuanceMode.name,
+            tenantNames.college,
           );
 
           ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.tempIssuanceMode);
@@ -170,20 +188,26 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.clickCancel();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
-          cy.visit(SettingsMenu.patronGroups);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.MODES_OF_ISSUANCE);
+          ModesOfIssuance.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.newIssuanceMode.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(SettingsMenu.formats);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.MODES_OF_ISSUANCE);
+          ModesOfIssuance.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.newIssuanceMode.name,
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-          cy.visit(SettingsMenu.formats);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.MODES_OF_ISSUANCE);
+          ModesOfIssuance.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.editIssuanceMode.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],

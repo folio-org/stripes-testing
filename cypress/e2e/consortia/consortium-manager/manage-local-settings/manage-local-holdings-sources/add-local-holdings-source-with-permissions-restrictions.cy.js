@@ -1,7 +1,6 @@
 import moment from 'moment';
 import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
-import Permissions from '../../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
   actionIcons,
 } from '../../../../../support/fragments/consortium-manager/consortiaControlledVocabularyPaneset';
@@ -37,7 +36,7 @@ describe('Consortia', () => {
           CapabilitySets.uiConsortiaSettingsConsortiumManagerView,
           CapabilitySets.uiInventorySettingsHoldingsSourcesView,
         ];
-        const capabSetsUserACollege = [CapabilitySets.uiOrganizationsView]; // Organizations view - using permission for now
+        const capabSetsUserACollege = [CapabilitySets.uiOrganizationsView];
         const capabSetsUserAUniversity = [CapabilitySets.uiInventorySettingsHoldingsSourcesView];
 
         // User B capability sets (holdings sources view in all tenants)
@@ -56,8 +55,6 @@ describe('Consortia', () => {
             cy.assignAffiliationToUser(Affiliations.College, userA.userId);
             cy.setTenant(Affiliations.College);
             cy.assignCapabilitiesToExistingUser(userA.userId, [], capabSetsUserACollege);
-            // Assign Organizations view permission in College for User A
-            cy.assignPermissionsToExistingUser(userA.userId, [Permissions.uiOrganizationsView.gui]);
 
             cy.resetTenant();
             cy.assignAffiliationToUser(Affiliations.University, userA.userId);

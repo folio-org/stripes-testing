@@ -50,9 +50,6 @@ describe('Consortia', () => {
       tenants.forEach(({ tenantId, descriptor }) => {
         cy.setTenant(tenantId);
         ExportFile.exportFileViaApi(testData.logs[descriptor].fileName);
-        DataExportLogsConsortiumManager.getRecordsTotalCountViaApi().then((count) => {
-          testData.logs[descriptor].count = count;
-        });
       });
 
       cy.setTenant(collegeTenant.tenantId);
@@ -134,9 +131,11 @@ describe('Consortia', () => {
         ConsortiumManagerApp.verifySelectedMember(defaultMemberTenant.tenantName);
 
         // Step 7: Check data in "Data export" logs table for default selected member
-        DataExportLogsConsortiumManager.verifyRecordsFound(
-          testData.logs[defaultMemberTenant.descriptor].count,
-        );
+        // Count is read right before the check: parallel specs keep adding export jobs
+        cy.setTenant(defaultMemberTenant.tenantId);
+        DataExportLogsConsortiumManager.getRecordsTotalCountViaApi().then((count) => {
+          DataExportLogsConsortiumManager.verifyRecordsFound(count);
+        });
         DataExportLogsConsortiumManager.verifyLogWithFileNameDisplayed(
           testData.logs[defaultMemberTenant.descriptor].fileName,
         );
@@ -173,9 +172,10 @@ describe('Consortia', () => {
         ConsortiumManagerApp.selectTenantFromDropdown(otherMemberTenant.tenantName);
         ConsortiumManagerApp.verifySelectedMember(otherMemberTenant.tenantName);
         DataExportLogsConsortiumManager.waitLoading();
-        DataExportLogsConsortiumManager.verifyRecordsFound(
-          testData.logs[otherMemberTenant.descriptor].count,
-        );
+        cy.setTenant(otherMemberTenant.tenantId);
+        DataExportLogsConsortiumManager.getRecordsTotalCountViaApi().then((count) => {
+          DataExportLogsConsortiumManager.verifyRecordsFound(count);
+        });
         DataExportLogsConsortiumManager.verifyLogWithFileNameDisplayed(
           testData.logs[otherMemberTenant.descriptor].fileName,
         );

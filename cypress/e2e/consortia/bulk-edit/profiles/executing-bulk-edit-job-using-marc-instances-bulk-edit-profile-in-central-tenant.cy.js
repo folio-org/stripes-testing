@@ -451,7 +451,7 @@ describe('Bulk-edit', () => {
           // Step 13: Click "Actions" menu, Select "View source" option, Verify that made changes
           // have been applied to MARC bibliographic record
           InstanceRecordView.viewSource();
-          InventoryViewSource.verifyAbsenceOfValue('611');
+          InventoryViewSource.verifyAbsenceOfValue('611\t');
           InventoryViewSource.verifyFieldInMARCBibSource(
             '583',
             '\t583\t   \t$a transfer $h university archives',

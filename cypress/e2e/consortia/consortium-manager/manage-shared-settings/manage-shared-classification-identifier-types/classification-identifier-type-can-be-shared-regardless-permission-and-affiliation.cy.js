@@ -82,15 +82,16 @@ describe('Consortia', () => {
           ClassificationTypes.getClassificationTypesViaApi({
             limit: 1,
             query: `name=="${classificationType4.name}"`,
-          }).then((citResp) => {
-            const citId = citResp.classificationTypes[0].id;
+          }).then(({ classificationTypes: [classificationType] }) => {
+            // Record is absent when the test failed before sharing it
+            if (!classificationType) return;
             ClassificationIdentifierTypesConsortiumManager.deleteViaApi({
               payload: {
                 name: classificationType4.name,
-                id: citId,
+                id: classificationType.id,
                 source: 'consortium',
               },
-              settingId: citId,
+              settingId: classificationType.id,
               url: '/classification-types',
             });
           });
