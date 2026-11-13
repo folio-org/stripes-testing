@@ -10,6 +10,11 @@ const messages = {
   mismatch: 'New and confirm password does not match. Retype your password.',
   enterValue: 'Please enter a value.',
   notEnoughSymbols: 'The password length must be minimum 8 symbols.',
+  noNumber: 'The password must contain at least one numeric character.',
+  noSpecialCharacter: 'The password must contain at least one special character.',
+  noLowerAndUpperCase: 'The password must contain both lowercase and uppercase letters.',
+  consecutiveWhitespaces: 'The password must not contain consecutive white space characters.',
+  containsUsername: 'The password must not contain your username.',
 };
 
 export default {
@@ -59,7 +64,8 @@ export default {
   },
 
   verifyNewPasswordMessage(message) {
-    cy.expect(newPasswordField.has({ error: message }));
+    // some messages come with a leading space (" The password must not contain your username.")
+    cy.expect(newPasswordField.has({ error: including(message) }));
     cy.wait(500);
   },
 
