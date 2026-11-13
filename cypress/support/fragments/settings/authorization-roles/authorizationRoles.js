@@ -34,6 +34,13 @@ import {
 } from '../../../constants';
 
 const rolesPane = Pane('Authorization roles');
+// Panes of Settings > Authorization roles which are measured in the browser (not in Consortium manager)
+const rolesListingPaneSelector = '#settings-system-roles-list';
+const roleDetailPaneSelector = '#role-detail-pane';
+// px: tolerance for fractional widths, the smallest widths of panes which are not "collapsed"
+const paneEdgeTolerance = 2;
+const minListingPaneWidth = 100;
+const minDetailPaneWidth = 200;
 // "+ New" in Settings, "New" in Consortium manager:
 const newButton = Button(or('+ New', 'New'));
 const actionsButton = Button('Actions');
@@ -788,6 +795,75 @@ export default {
         .click(),
     );
     cy.expect(Pane(roleName).absent());
+  },
+
+  // The widths of the panes are measured (getBoundingClientRect) and compared with the paneset
+  // which holds them, the checks are retried until the panes settle after opening/closing/resizing
+  // Only the listing pane is shown and it fills the whole paneset: no blank space on the right
+  verifyRolesListingPaneFillsAvailableWidth() {
+    cy.get(roleDetailPaneSelector).should('not.exist');
+    cy.get(rolesListingPaneSelector)
+      .closest('[class*=paneset]')
+      .should(($paneset) => {
+        const paneset = $paneset[0].getBoundingClientRect();
+        const listing = $paneset.find(rolesListingPaneSelector)[0].getBoundingClientRect();
+
+        expect(listing.left, 'left edge of the listing pane').to.be.closeTo(
+          paneset.left,
+          paneEdgeTolerance,
+        );
+        expect(
+          listing.right,
+          'right edge of the listing pane (blank space otherwise)',
+        ).to.be.closeTo(paneset.right, paneEdgeTolerance);
+      });
+  },
+
+  // Listing and detail panes are next to each other, together they fill the whole paneset
+  // and none of them is collapsed
+  verifyRolesListingAndDetailPanesFitWidth() {
+    cy.get(rolesListingPaneSelector)
+      .closest('[class*=paneset]')
+      .should(($paneset) => {
+        const paneset = $paneset[0].getBoundingClientRect();
+        const listingPane = $paneset.find(rolesListingPaneSelector)[0];
+        const detailPane = $paneset.find(roleDetailPaneSelector)[0];
+
+        expect(detailPane, 'role detail pane').to.exist;
+        const listing = listingPane.getBoundingClientRect();
+        const detail = detailPane.getBoundingClientRect();
+
+        expect(listing.width, 'width of the listing pane').to.be.greaterThan(minListingPaneWidth);
+        expect(detail.width, 'width of the role detail pane').to.be.greaterThan(minDetailPaneWidth);
+        expect(listing.left, 'left edge of the listing pane').to.be.closeTo(
+          paneset.left,
+          paneEdgeTolerance,
+        );
+        expect(detail.left, 'gap between the panes').to.be.closeTo(
+          listing.right,
+          paneEdgeTolerance,
+        );
+        expect(detail.right, 'right edge of the role detail pane').to.be.closeTo(
+          paneset.right,
+          paneEdgeTolerance,
+        );
+      });
+  },
+
+  // "Edit role" page is as wide as the window and is not collapsed
+  verifyRoleEditPageFitsWindow() {
+    cy.contains('h2', 'Edit role')
+      .closest('section')
+      .should(($editPane) => {
+        const edit = $editPane[0].getBoundingClientRect();
+        const windowWidth = $editPane[0].ownerDocument.defaultView.innerWidth;
+
+        expect(edit.width, 'width of the "Edit role" page').to.be.greaterThan(minDetailPaneWidth);
+        expect(edit.right, 'right edge of the "Edit role" page').to.be.closeTo(
+          windowWidth,
+          paneEdgeTolerance,
+        );
+      });
   },
 
   verifyGeneralInformationWhenCollapsed: (updatedDate) => {

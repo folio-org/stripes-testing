@@ -1490,6 +1490,18 @@ export default {
     ]);
   },
 
+  verifyResetPasswordEmailSentTo(email) {
+    cy.expect([
+      resetPasswordModal.has({ content: including('A reset password link was sent to:') }),
+      resetPasswordModal.has({ content: including(email) }),
+    ]);
+  },
+
+  closeResetPasswordModal() {
+    cy.do(resetPasswordModal.dismiss());
+    cy.expect(resetPasswordModal.absent());
+  },
+
   verifyResetLink(expectedLink) {
     cy.expect(resetPasswordInput.has({ value: expectedLink }));
   },
