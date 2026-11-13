@@ -29,7 +29,7 @@ describe('Eureka', () => {
       cy.getPasswordValidationRulesApi().then(({ body }) => {
         const disabledRule = body.rules.find(({ name }) => name === disabledRuleName);
 
-        expect(disabledRule, `the rule "${disabledRuleName}" exists`).to.exist;
+        expect(disabledRule, `the rule "${disabledRuleName}" exists`).to.not.equal(undefined);
         // Disabled by default, so the rule is changed only if someone has enabled it
         if (disabledRule.state !== 'Disabled') {
           cy.updatePasswordValidationRuleApi({ ...disabledRule, state: 'Disabled' });

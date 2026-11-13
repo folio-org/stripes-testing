@@ -829,7 +829,7 @@ export default {
         const listingPane = $paneset.find(rolesListingPaneSelector)[0];
         const detailPane = $paneset.find(roleDetailPaneSelector)[0];
 
-        expect(detailPane, 'role detail pane').to.exist;
+        expect(detailPane, 'role detail pane').to.not.equal(undefined);
         const listing = listingPane.getBoundingClientRect();
         const detail = detailPane.getBoundingClientRect();
 

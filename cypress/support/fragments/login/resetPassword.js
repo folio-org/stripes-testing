@@ -11,7 +11,7 @@ export default {
   getLinkFromEmailBody(emailBody, linkText) {
     const linkMatch = emailBody.match(new RegExp(`href=([^>\\s]+)>${linkText}</a>`));
 
-    expect(linkMatch, `the link "${linkText}" is in the email`).to.not.be.null;
+    expect(linkMatch, `the link "${linkText}" is in the email`).to.not.equal(null);
 
     return linkMatch[1].replace(/&#61;/g, '=').replace(/&amp;/g, '&');
   },
