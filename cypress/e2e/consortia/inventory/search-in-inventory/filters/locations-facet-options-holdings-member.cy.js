@@ -11,6 +11,7 @@ import { INSTANCE_SOURCE_NAMES, ITEM_STATUS_NAMES } from '../../../../../support
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import InventoryHoldings from '../../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryItems from '../../../../../support/fragments/inventory/item/inventoryItems';
+import Locations from '../../../../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
@@ -74,11 +75,13 @@ describe('Inventory', () => {
               user = userProperties;
 
               InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C471484');
-              cy.getLocations({
-                limit: 3,
-                query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
-              }).then(() => {
-                locations[Affiliations.College].push(...Cypress.env('locations'));
+              // member tenants have no 3 active locations of their own - use the shared AT_Loc_N ones
+              [1, 2, 3].forEach((index) => {
+                Locations.getOrCreateTenantLocationViaApi(Affiliations.College, index).then(
+                  (location) => {
+                    locations[Affiliations.College].push(location);
+                  },
+                );
               });
               cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
                 loanTypeIds[Affiliations.College] = loanTypes[0].id;
@@ -89,11 +92,12 @@ describe('Inventory', () => {
 
               cy.setTenant(Affiliations.University);
               InventoryInstances.deleteFullInstancesByTitleViaApi('AT_C471484');
-              cy.getLocations({
-                limit: 3,
-                query: '(isActive=true and name<>"AT_*" and name<>"auto*")',
-              }).then(() => {
-                locations[Affiliations.University].push(...Cypress.env('locations'));
+              [1, 2, 3].forEach((index) => {
+                Locations.getOrCreateTenantLocationViaApi(Affiliations.University, index).then(
+                  (location) => {
+                    locations[Affiliations.University].push(location);
+                  },
+                );
               });
               cy.getLoanTypes({ limit: 1, query: 'name<>"AT_*"' }).then((loanTypes) => {
                 loanTypeIds[Affiliations.University] = loanTypes[0].id;
@@ -186,7 +190,7 @@ describe('Inventory', () => {
 
         after('Delete user, data', () => {
           cy.resetTenant();
-          cy.getAdminToken();
+          cy.getAdminToken(false);
           cy.setTenant(Affiliations.College);
           Users.deleteViaApi(user.userId);
           InventoryInstances.deleteFullInstancesByTitleViaApi(instancePrefix);
