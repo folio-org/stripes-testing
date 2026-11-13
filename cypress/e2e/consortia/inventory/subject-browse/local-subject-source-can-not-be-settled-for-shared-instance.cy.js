@@ -86,9 +86,9 @@ describe('Inventory', () => {
           InstanceRecordEdit.waitLoading();
           InstanceRecordEdit.addSubjectSource(localSubjectSourceOnCollege.name);
           InstanceRecordEdit.saveAndClose();
-          InstanceRecordEdit.verifyErrorMessage(
-            `400: insert or update on table "instance_subject_source" violates foreign key constraint "fk_source_id": Key (source_id)=(${localSubjectSourceOnCollege.id}) is not present in table "subject_source".`,
-          );
+          // MODINVSTOR-1626 changed the wording of this foreign key error - check its key parts only
+          InstanceRecordEdit.verifyErrorMessage('400: ');
+          InstanceRecordEdit.verifyErrorMessage(localSubjectSourceOnCollege.id);
         },
       );
     });
