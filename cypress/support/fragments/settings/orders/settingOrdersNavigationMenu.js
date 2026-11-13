@@ -61,4 +61,7 @@ export default {
   selectOrderTemplateCategories: () => {
     cy.do(NavListItem('Order template categories').click());
   },
+  selectOrderEmailTemplates: () => {
+    cy.do(NavListItem('Order email templates').click());
+  },
 };
