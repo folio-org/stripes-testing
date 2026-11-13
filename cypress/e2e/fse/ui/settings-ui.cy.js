@@ -150,13 +150,17 @@ describe('fse-settings - UI (data manipulation part of sanity AQA suite - works 
       AuthorizationRoles.clickSaveButton();
       AuthorizationRoles.checkAfterSaveEdit(ebscoSupportRoleName);
 
-      // Step 4: Verify the capability set's state was toggled in the view pane
+      // Step 4: Verify the capability set's state was toggled in the view pane.
+      // The view pane only lists capability sets assigned to the role: if it was
+      // just assigned it shows up checked, if it was just unassigned it no longer
+      // appears there at all.
       AuthorizationRoles.clickOnCapabilitySetsAccordion();
       cy.then(() => {
-        AuthorizationRoles.verifyCapabilitySetCheckboxChecked(
-          firstCapabilitySet,
-          !firstCapabilitySet.checked,
-        );
+        if (firstCapabilitySet.checked) {
+          AuthorizationRoles.verifyCapabilitySetCheckboxAbsent(firstCapabilitySet);
+        } else {
+          AuthorizationRoles.verifyCapabilitySetCheckboxChecked(firstCapabilitySet, true);
+        }
       });
 
       // Step 5: Revert - open edit mode again and restore the original state

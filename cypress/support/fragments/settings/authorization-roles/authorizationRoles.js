@@ -451,6 +451,18 @@ export default {
     cy.expect(targetCheckbox.has({ checked: isSelected }));
   },
 
+  // The view pane only lists capability sets currently assigned to the role, so an
+  // unassigned (unchecked) one is not just unchecked - its row is not rendered at all.
+  verifyCapabilitySetCheckboxAbsent: ({ table, resource, action, type }) => {
+    const targetTable = type && !table ? type : table;
+    cy.expect(
+      capabilitySetsAccordion
+        .find(capabilityTables[targetTable])
+        .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }))
+        .absent(),
+    );
+  },
+
   clickOnCheckedDisabledCheckbox: ({ table, resource, action, type }) => {
     const targetTable = type && !table ? type : table;
     const targetCheckbox = capabilitiesAccordion.find(capabilityTables[targetTable]).find(
