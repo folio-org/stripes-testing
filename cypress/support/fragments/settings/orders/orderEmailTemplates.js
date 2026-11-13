@@ -1,6 +1,7 @@
 import {
   Accordion,
   Button,
+  DropdownMenu,
   KeyValue,
   NavListItem,
   Pane,
@@ -68,5 +69,19 @@ export default {
 
   verifyRecordLastUpdated() {
     cy.expect(recordLastUpdatedAccordion.exists());
+  },
+
+  openActionsMenu(templateName) {
+    cy.do(Pane(templateName).find(Button(COMMON_BUTTON_LABELS.ACTIONS)).click());
+    cy.expect(DropdownMenu({ visible: true }).exists());
+  },
+
+  verifyActionsMenuOptions(options) {
+    options.forEach((option) => {
+      cy.expect(DropdownMenu({ visible: true }).find(Button(option)).exists());
+    });
+    cy.then(() => DropdownMenu({ visible: true }).buttons()).then((buttons) => {
+      expect(Array.from(buttons).map((button) => button.textContent.trim())).to.deep.equal(options);
+    });
   },
 };
