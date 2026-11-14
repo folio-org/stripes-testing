@@ -316,6 +316,33 @@ export default {
     });
   },
 
+  // Reads the resource, action and current checked state of the first displayed
+  // capability set row, so a test can toggle it (and revert) without depending
+  // on a specific capability set being present or on its current state.
+  getFirstDisplayedCapabilitySet: (table = CAPABILITY_TYPES.DATA) => {
+    const firstRow = capabilitySetsAccordion
+      .find(capabilityTables[table])
+      .find(MultiColumnListRow({ index: 0, isContainer: false }));
+    let resource;
+    let action;
+    let checked;
+    cy.do(
+      firstRow.find(MultiColumnListCell({ column: 'Resource' })).perform((el) => {
+        resource = el.textContent.trim();
+      }),
+    );
+    cy.then(() => {
+      cy.do(
+        firstRow.find(Checkbox({ isWrapper: false })).perform((el) => {
+          const input = el.querySelector('input');
+          checked = input.checked;
+          action = (input.getAttribute('aria-label') || '').replace(resource, '').trim();
+        }),
+      );
+    });
+    return cy.then(() => ({ table, resource, action, checked }));
+  },
+
   selectCapabilityCheckbox: ({ table, resource, action, type }, isSelected = true) => {
     const targetTable = type && !table ? type : table;
     let targetRowIndex;
@@ -422,6 +449,18 @@ export default {
       .find(capabilityTables[targetTable])
       .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }));
     cy.expect(targetCheckbox.has({ checked: isSelected }));
+  },
+
+  // The view pane only lists capability sets currently assigned to the role, so an
+  // unassigned (unchecked) one is not just unchecked - its row is not rendered at all.
+  verifyCapabilitySetCheckboxAbsent: ({ table, resource, action, type }) => {
+    const targetTable = type && !table ? type : table;
+    cy.expect(
+      capabilitySetsAccordion
+        .find(capabilityTables[targetTable])
+        .find(Checkbox({ ariaLabel: `${action} ${resource}`, isWrapper: false }))
+        .absent(),
+    );
   },
 
   clickOnCheckedDisabledCheckbox: ({ table, resource, action, type }) => {
