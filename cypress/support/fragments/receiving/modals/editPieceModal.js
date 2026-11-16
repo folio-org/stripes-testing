@@ -45,6 +45,8 @@ const actionsDropdownButton = Button({ dataTestID: 'dropdown-trigger-button' });
 const unreceiveButton = Button('Unreceive');
 const expectButton = Button(RECEIVING_PIECE_FORM_ACTIONS_LABELS.EXPECT);
 const statusLogList = editPieceModal.find(MultiColumnList({ id: 'piece-status-change-log' }));
+const locationSelection = editPieceModal.find(Selection({ name: 'locationId' }));
+const locationLookUpButton = editPieceModal.find(Button({ id: 'location-lookup-locationId' }));
 
 const editPieceFields = {
   [RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_SUMMARY]: editPieceModal.find(
@@ -143,12 +145,23 @@ export default {
   selectHolding(holdingName) {
     cy.do(editPieceModal.find(Selection({ name: 'holdingId' })).choose(including(holdingName)));
   },
-  verifySelectedLocation(locationName) {
-    cy.expect(
-      editPieceModal
-        .find(TextField({ name: 'locationId' }))
-        .has({ value: including(locationName) }),
-    );
+  verifySelectedLocation(locationName, { isSelection = false } = {}) {
+    if (isSelection) {
+      cy.expect(locationSelection.has({ singleValue: including(locationName) }));
+    } else {
+      cy.expect(
+        editPieceModal
+          .find(TextField({ name: 'locationId' }))
+          .has({ value: including(locationName) }),
+      );
+    }
+  },
+  selectLocation(locationName) {
+    cy.do(locationSelection.choose(including(locationName)));
+  },
+  clickLocationLookUpButton() {
+    cy.do(locationLookUpButton.click());
+    SelectLocationModal.waitLoading();
   },
   checkFieldsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
@@ -251,6 +264,12 @@ export default {
   },
   clickMarkLateButton(isSuccess = true) {
     cy.do(markLateButton.click());
+    if (isSuccess) {
+      InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
+    }
+  },
+  clickSaveAndCreateAnotherButton(isSuccess = true) {
+    cy.do(saveAndCreateAnotherButton.click());
     if (isSuccess) {
       InteractorsTools.checkCalloutMessage(ReceivingStates.pieceSavedSuccessfully);
     }

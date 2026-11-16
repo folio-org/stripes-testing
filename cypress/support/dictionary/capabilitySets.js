@@ -469,6 +469,16 @@ export default {
     resource: 'UI-Receiving',
     action: CAPABILITY_ACTIONS.CREATE,
   },
+  uiReceivingDelete: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Receiving',
+    action: CAPABILITY_ACTIONS.DELETE,
+  },
+  uiReceivingEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Receiving',
+    action: CAPABILITY_ACTIONS.EDIT,
+  },
   uiReceivingView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Receiving',
