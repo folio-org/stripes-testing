@@ -110,6 +110,13 @@ describe('MARC', () => {
             })
             .then(() => {
               cy.setTenant(Affiliations.College);
+              // quickMARC rejects 852 $b with a location missing from the cached mapping parameters
+              cy.waitForIdInMappingParametersViaAPI({
+                recordType: 'marc-holdings',
+                paramsKey: 'locations',
+                id: locations[Affiliations.College].id,
+                label: 'Location',
+              });
               CallNumberBrowseSettings.assignCallNumberTypesViaApi({
                 name: BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL,
                 callNumberTypes: [],

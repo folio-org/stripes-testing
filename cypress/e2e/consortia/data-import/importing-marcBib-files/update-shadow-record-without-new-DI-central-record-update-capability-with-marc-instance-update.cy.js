@@ -222,7 +222,10 @@ describe('Data Import', () => {
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImportedForConsortia(testData.marcFile.updatedFileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+          Logs.checkJobStatus(
+            testData.marcFile.updatedFileName,
+            JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS,
+          );
           Logs.openFileDetails(testData.marcFile.updatedFileName);
           [
             FileDetails.columnNameInResultList.srsMarc,

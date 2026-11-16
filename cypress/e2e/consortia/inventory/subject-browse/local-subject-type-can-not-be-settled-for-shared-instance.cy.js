@@ -86,9 +86,9 @@ describe('Inventory', () => {
           InstanceRecordEdit.waitLoading();
           InstanceRecordEdit.addSubjectType(localSubjectTypeOnCollege.name);
           InstanceRecordEdit.saveAndClose();
-          InstanceRecordEdit.verifyErrorMessage(
-            `400: insert or update on table "instance_subject_type" violates foreign key constraint "fk_type_id": Key (type_id)=(${localSubjectTypeOnCollege.id}) is not present in table "subject_type".`,
-          );
+          // MODINVSTOR-1626 changed the wording of this foreign key error - check its key parts only
+          InstanceRecordEdit.verifyErrorMessage('400: ');
+          InstanceRecordEdit.verifyErrorMessage(localSubjectTypeOnCollege.id);
         },
       );
     });

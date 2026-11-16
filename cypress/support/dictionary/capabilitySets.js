@@ -197,6 +197,11 @@ export default {
     resource: 'Settings Myprofile Enabled',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiMyprofileSettingsChangePasswordView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Myprofile Settings Change-Password',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiTenantSettingsSettingsLocaleManage: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Tenant-Settings Settings Locale',
