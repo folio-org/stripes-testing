@@ -29,6 +29,7 @@ const saveAndKeepEditingBtn = Button('Save & keep editing');
 
 const adminDataFields = {
   barcode: administrativeDataSection.find(TextField('Barcode')),
+  accessionNumber: administrativeDataSection.find(TextField('Accession number')),
 };
 
 const itemDataFields = {
@@ -213,6 +214,7 @@ export default {
 
   fillItemRecordFields({
     barcode,
+    accessionNumber,
     materialType,
     copyNumber,
     loanType,
@@ -220,11 +222,16 @@ export default {
     callNumber,
     callNumberSuffix,
     volume,
+    displaySummary,
     enumeration,
     chronology,
   } = {}) {
     if (barcode) {
       cy.do(adminDataFields.barcode.fillIn(barcode));
+    }
+
+    if (accessionNumber) {
+      cy.do(adminDataFields.accessionNumber.fillIn(accessionNumber));
     }
 
     if (materialType) {
@@ -241,6 +248,8 @@ export default {
 
     if (callNumberPrefix && callNumber) {
       this.addEffectiveCallNumber(callNumberPrefix, callNumber);
+    } else if (callNumber) {
+      this.addCallNumberValue(callNumber);
     }
 
     if (callNumberSuffix) {
@@ -249,6 +258,10 @@ export default {
 
     if (volume) {
       this.addVolume(volume);
+    }
+
+    if (displaySummary) {
+      this.addDisplaySummary(displaySummary);
     }
 
     if (enumeration) {
