@@ -731,4 +731,9 @@ export default {
     resource: 'UI-Users Manual-Pay',
     action: CAPABILITY_ACTIONS.EXECUTE,
   },
+  uiCirculationSettingsLoanPoliciesManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Circulation Settings Loan-Policies',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
 };
