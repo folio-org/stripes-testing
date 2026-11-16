@@ -188,6 +188,13 @@ export default {
     cy.expect(createItemCheckbox.has({ checked: true }));
   },
 
+  setBoundCheckbox(checked) {
+    const boundCheckbox = editPieceModal.find(Checkbox(RECEIVING_PIECE_FORM_FIELD_LABELS.BOUND));
+
+    cy.do(boundCheckbox.click());
+    cy.expect(boundCheckbox.has({ checked }));
+  },
+
   checkDisplayOnHoldingCheckbox() {
     cy.do(displayOnHoldingCheckbox.click());
   },
