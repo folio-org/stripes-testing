@@ -326,6 +326,15 @@ export default {
       cy.expect(expectedSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
     }
   },
+  checkReceivedPiecesPresent(barcodes = []) {
+    barcodes.forEach((barcode) => {
+      cy.expect(
+        receivedPiecesList
+          .find(MultiColumnListRow({ content: including(barcode), isContainer: false }))
+          .exists(),
+      );
+    });
+  },
   checkReceivedTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.sequence) {
