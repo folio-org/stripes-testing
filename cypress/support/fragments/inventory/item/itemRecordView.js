@@ -867,6 +867,20 @@ export default {
     cy.expect(confirmationModal.absent());
   },
 
+  // Checks a cell in the column of the row found by its content (e.g. display summary)
+  verifyBoundPiecesDataCell({ rowContent, column, content }) {
+    cy.expect(
+      boundPiecesDataAccordion
+        .find(MultiColumnListRow({ content: including(rowContent), isContainer: false }))
+        .find(MultiColumnListCell({ column }))
+        .has({ content }),
+    );
+  },
+
+  verifyBarcodeLinkInBoundPiecesData(barcode) {
+    cy.expect(boundPiecesDataAccordion.find(MultiColumnList()).find(Link(barcode)).exists());
+  },
+
   checkBoundPiecesDataTable({ columns = [], rows = [] } = {}) {
     const boundPiecesList = boundPiecesDataAccordion.find(MultiColumnList());
 
