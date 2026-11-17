@@ -3,6 +3,7 @@ import {
   Checkbox,
   KeyValue,
   Section,
+  Select,
   TextField,
   MultiSelect,
   MultiSelectOption,
@@ -26,7 +27,23 @@ const itemDetailsFields = {
   publishedDate: itemDetailsSection.find(TextField({ name: 'publishedDate' })),
   edition: itemDetailsSection.find(TextField({ name: 'edition' })),
   acquisitionUnits: itemDetailsSection.find(MultiSelect({ id: 'title-acq-units' })),
+  contributor: (index) => {
+    return itemDetailsSection.find(TextField({ name: `contributors[${index}].contributor` }));
+  },
+  contributorNameType: (index) => {
+    return itemDetailsSection.find(
+      Select({ name: `contributors[${index}].contributorNameTypeId` }),
+    );
+  },
+  productId: (index) => {
+    return itemDetailsSection.find(TextField({ name: `productIds[${index}].productId` }));
+  },
+  productIdType: (index) => {
+    return itemDetailsSection.find(Select({ name: `productIds[${index}].productIdType` }));
+  },
 };
+const addContributorButton = itemDetailsSection.find(Button({ id: 'contributors-add-button' }));
+const addProductIdButton = itemDetailsSection.find(Button({ id: 'productIds-add-button' }));
 
 const lineDetailsFields = {
   poLineNumber: lineDetailsSection.find(TextField({ name: 'poLine.poLineNumber', disabled: true })),
@@ -106,6 +123,16 @@ export default {
     if (edition) {
       cy.do(itemDetailsFields.edition.fillIn(edition));
     }
+  },
+  addContributor({ name, nameType, index = 0 }) {
+    cy.do(addContributorButton.click());
+    cy.do(itemDetailsFields.contributor(index).fillIn(name));
+    cy.do(itemDetailsFields.contributorNameType(index).choose(nameType));
+  },
+  addProductId({ value, type, index = 0 }) {
+    cy.do(addProductIdButton.click());
+    cy.do(itemDetailsFields.productId(index).fillIn(value));
+    cy.do(itemDetailsFields.productIdType(index).choose(type));
   },
   selectAcquisitionUnit(acquisitionUnitName) {
     cy.do(itemDetailsFields.acquisitionUnits.open());

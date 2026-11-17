@@ -180,6 +180,7 @@ export default {
       expect(interception.response.body.errors[0].message).to.equal(expectedErrorMessage);
     }
   },
+  // record.rowIndex - optional row to check (e.g. from getExpectedRowIndexByContent), defaults to array position
   checkExpectedTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.sequence) {
@@ -187,7 +188,7 @@ export default {
           expectedSection
             .find(
               MultiColumnListCell({
-                row: index,
+                row: record.rowIndex ?? index,
                 column: EXPECTED_TABLE_COLUMN_HEADERS.SEQUENCE,
               }),
             )
@@ -199,7 +200,7 @@ export default {
           expectedSection
             .find(
               MultiColumnListCell({
-                row: index,
+                row: record.rowIndex ?? index,
                 column: EXPECTED_TABLE_COLUMN_HEADERS.HOLDINGS_LOCATION,
               }),
             )
@@ -211,7 +212,7 @@ export default {
           expectedSection
             .find(
               MultiColumnListCell({
-                row: index,
+                row: record.rowIndex ?? index,
                 column: EXPECTED_TABLE_COLUMN_HEADERS.DISPLAY_TO_PUBLIC,
               }),
             )
@@ -224,7 +225,7 @@ export default {
           expectedSection
             .find(
               MultiColumnListCell({
-                row: index,
+                row: record.rowIndex ?? index,
                 column: EXPECTED_TABLE_COLUMN_HEADERS.STATUS,
               }),
             )
@@ -236,7 +237,7 @@ export default {
           expectedSection
             .find(
               MultiColumnListCell({
-                row: index,
+                row: record.rowIndex ?? index,
                 column: EXPECTED_TABLE_COLUMN_HEADERS.COPY_NUMBER,
               }),
             )
@@ -248,7 +249,7 @@ export default {
           expectedSection
             .find(
               MultiColumnListCell({
-                row: index,
+                row: record.rowIndex ?? index,
                 column: EXPECTED_TABLE_COLUMN_HEADERS.DISPLAY_SUMMARY,
               }),
             )
@@ -260,7 +261,7 @@ export default {
           expectedSection
             .find(
               MultiColumnListCell({
-                row: index,
+                row: record.rowIndex ?? index,
                 column: EXPECTED_TABLE_COLUMN_HEADERS.ENUMERATION,
               }),
             )
@@ -271,7 +272,10 @@ export default {
         cy.expect(
           expectedSection
             .find(
-              MultiColumnListCell({ row: index, column: EXPECTED_TABLE_COLUMN_HEADERS.CHRONOLOGY }),
+              MultiColumnListCell({
+                row: record.rowIndex ?? index,
+                column: EXPECTED_TABLE_COLUMN_HEADERS.CHRONOLOGY,
+              }),
             )
             .has({ content: including(record.chronology) }),
         );
@@ -280,7 +284,10 @@ export default {
         cy.expect(
           expectedSection
             .find(
-              MultiColumnListCell({ row: index, column: EXPECTED_TABLE_COLUMN_HEADERS.COMMENT }),
+              MultiColumnListCell({
+                row: record.rowIndex ?? index,
+                column: EXPECTED_TABLE_COLUMN_HEADERS.COMMENT,
+              }),
             )
             .has({ content: including(record.comment) }),
         );
@@ -290,11 +297,23 @@ export default {
           expectedSection
             .find(
               MultiColumnListCell({
-                row: index,
+                row: record.rowIndex ?? index,
                 column: EXPECTED_TABLE_COLUMN_HEADERS.PIECE_FORMAT,
               }),
             )
             .has({ content: including(record.format) }),
+        );
+      }
+      if (record.expectedReceiptDate) {
+        cy.expect(
+          expectedSection
+            .find(
+              MultiColumnListCell({
+                row: record.rowIndex ?? index,
+                column: EXPECTED_TABLE_COLUMN_HEADERS.EXPECTED_RECEIPT_DATE,
+              }),
+            )
+            .has({ content: record.expectedReceiptDate }),
         );
       }
     });
@@ -302,6 +321,22 @@ export default {
     if (!records.length) {
       cy.expect(expectedSection.has({ text: including(THE_LIST_CONTAINS_NO_ITEMS) }));
     }
+  },
+  // rowContent - any text of the piece row, e.g. piece format
+  getExpectedRowIndexByContent(rowContent) {
+    return cy
+      .then(() => expectedSection
+        .find(MultiColumnListRow({ isContainer: true, content: including(rowContent) }))
+        .rowIndexInParent())
+      .then((rowIndex) => Number(rowIndex.replace('row-', '')));
+  },
+  checkExpectedPieceStatus(displaySummary, status) {
+    cy.expect(
+      expectedSection
+        .find(MultiColumnListRow({ content: including(displaySummary), isContainer: false }))
+        .find(MultiColumnListCell({ column: EXPECTED_TABLE_COLUMN_HEADERS.STATUS }))
+        .has({ content: status }),
+    );
   },
   checkReceivedPiecesPresent(barcodes = []) {
     barcodes.forEach((barcode) => {
@@ -575,12 +610,14 @@ export default {
   },
   openEditPieceModal({ row = 0, section = 'Expected', displaySummary } = {}) {
     const isExpected = section === 'Expected';
-    let itemEdit = isExpected
-      ? expectedSection.find(MultiColumnListCell({ row, column: 'Display summary' }))
-      : receivedSection.find(MultiColumnListCell({ row, column: 'Barcode' }));
+    const pieceSection =
+      { Expected: expectedSection, Unreceivable: unreceivableSection }[section] || receivedSection;
+    let itemEdit = pieceSection.find(
+      MultiColumnListCell({ row, column: isExpected ? 'Display summary' : 'Barcode' }),
+    );
 
     if (displaySummary) {
-      itemEdit = (isExpected ? expectedSection : receivedSection).find(
+      itemEdit = pieceSection.find(
         MultiColumnListCell({ column: 'Display summary', content: displaySummary }),
       );
     }
