@@ -1221,6 +1221,29 @@ export default {
     );
   },
 
+  // The "Effective location (item)" options in a consortium can be shown with the tenant name:
+  // "Location name (Tenant name)(counter)"
+  verifyEcsLocationFilterOptionCount(
+    accordionName,
+    locationName,
+    locationTenantName,
+    expectedCount,
+  ) {
+    const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
+    const escapedLocation = locationName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    const escapedTenant = locationTenantName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    cy.do(multiSelect.open());
+    cy.expect(
+      multiSelect
+        .find(
+          MultiSelectOption(
+            matching(new RegExp(`^${escapedLocation}(?: \\(${escapedTenant}\\))?\\(\\d+\\)$`)),
+          ),
+        )
+        .has({ totalRecords: expectedCount }),
+    );
+  },
+
   verifyMultiSelectFilterOptionCountGreaterOrEqual(accordionName, optionName, minCount) {
     const multiSelect = paneFilterSection.find(Accordion(accordionName)).find(MultiSelect());
     const escapedValue = optionName.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
