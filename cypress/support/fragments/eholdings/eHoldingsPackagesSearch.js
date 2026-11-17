@@ -129,8 +129,11 @@ export default {
     cy.do(tagsAccordion.find(MultiSelectOption(specialTag)).click());
     eHoldingsPackages.waitLoading();
   },
-  verifyTagAbsent(specialTag) {
-    cy.do(tagsAccordion.clickHeader());
+  // the Tags accordion state is shared by the Providers/Packages/Titles tabs,
+  // so pass openAccordion = false when it was already opened on another tab
+  verifyTagAbsent(specialTag, openAccordion = true) {
+    if (openAccordion) cy.do(tagsAccordion.clickHeader());
+    cy.expect(tagsAccordion.has({ open: true }));
     cy.do(tagsAccordion.find(byTagCheckbox).checkIfNotSelected());
     cy.wait(100);
     cy.do(tagsAccordion.find(byTagCheckbox).checkIfNotSelected());

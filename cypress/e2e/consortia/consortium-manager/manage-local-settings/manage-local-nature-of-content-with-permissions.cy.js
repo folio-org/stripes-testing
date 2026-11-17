@@ -1,4 +1,5 @@
 import { getTestEntityValue } from '../../../../support/utils/stringTools';
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
@@ -12,8 +13,12 @@ import ConfirmCreate from '../../../../support/fragments/consortium-manager/moda
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
 import NatureOfContentConsortiumManager from '../../../../support/fragments/consortium-manager/inventory/instances/natureOfContentConsortiumManager';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import NatureOfContent from '../../../../support/fragments/settings/inventory/instances/natureOfContent';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 
 const testData = {
@@ -146,9 +151,22 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.checkMessage(
             messages.deleted('nature of content term', testData.newNatureOfContent.name),
           );
-          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.newNatureOfContent.name,
             tenantNames.central,
+            [testData.newNatureOfContent.name, 'local', '', tenantNames.central],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.editNatureOfContent.name,
+            tenantNames.university,
+            [testData.editNatureOfContent.name, 'local', '', tenantNames.university],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          // Checked after the rows above: they wait for the list to reload after the delete
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+            testData.newNatureOfContent.name,
+            tenantNames.college,
           );
 
           ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.tempNatureOfContent);
@@ -170,23 +188,26 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.clickCancel();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
-          cy.visit(SettingsMenu.natureOfContent);
-          cy.wait(5000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.NATURE_OF_CONTENT);
+          NatureOfContent.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.newNatureOfContent.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(SettingsMenu.natureOfContent);
-          cy.wait(5000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.NATURE_OF_CONTENT);
+          NatureOfContent.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.newNatureOfContent.name,
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-          cy.visit(SettingsMenu.natureOfContent);
-          cy.wait(5000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.NATURE_OF_CONTENT);
+          NatureOfContent.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.editNatureOfContent.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],

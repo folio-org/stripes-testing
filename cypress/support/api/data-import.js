@@ -136,3 +136,33 @@ Cypress.Commands.add('dataImportGetJobByStatus', (jobStatus) => {
     isDefaultSearchParamsRequired: false,
   });
 });
+
+// quickMARC and data import map records using mod-source-record-manager's cached mapping parameters,
+// refreshed only after 60 s without any access (MODSOURMAN-1469). Checks that reference data with the
+// given id (e.g. a new location) is in them: now, then twice more 70 s apart (polling more often would
+// keep the stale cache alive). Set the tenant and get a token for it before calling.
+Cypress.Commands.add(
+  'waitForIdInMappingParametersViaAPI',
+  ({ recordType, paramsKey, id, label = paramsKey }, attempt = 1) => {
+    const maxAttempts = 3;
+    cy.okapiRequest({
+      path: `mapping-metadata/type/${recordType}`,
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      const entries = JSON.parse(body.mappingParams)[paramsKey] || [];
+      const isFound = entries.some((entry) => entry.id === id);
+      cy.log(
+        `${label} ${id} in ${recordType} mapping parameters (check ${attempt}/${maxAttempts}): ${isFound}`,
+      );
+      if (isFound) return;
+      if (attempt === maxAttempts) {
+        throw new Error(
+          `${label} ${id} is not in the ${recordType} mapping parameters after ${maxAttempts} checks ` +
+            '(stale mod-source-record-manager cache, MODSOURMAN-1469)',
+        );
+      }
+      cy.wait(70_000);
+      cy.waitForIdInMappingParametersViaAPI({ recordType, paramsKey, id, label }, attempt + 1);
+    });
+  },
+);

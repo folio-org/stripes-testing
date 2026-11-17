@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
@@ -11,8 +12,12 @@ import ConfirmCreate from '../../../../support/fragments/consortium-manager/moda
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
 import AlternativeTitleTypesConsortiumManager from '../../../../support/fragments/consortium-manager/inventory/instances/alternativeTitleTypesConsortiumManager';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import AlternativeTitleTypes from '../../../../support/fragments/settings/inventory/instances/alternativeTitleTypes';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
@@ -146,9 +151,22 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.checkMessage(
             messages.deleted('alternative title type', testData.newAlternativeTitleType.name),
           );
-          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.newAlternativeTitleType.name,
             tenantNames.central,
+            [testData.newAlternativeTitleType.name, 'local', '', tenantNames.central],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.editAlternativeTitleType.name,
+            tenantNames.university,
+            [testData.editAlternativeTitleType.name, 'local', '', tenantNames.university],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          // Checked after the rows above: they wait for the list to reload after the delete
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+            testData.newAlternativeTitleType.name,
+            tenantNames.college,
           );
 
           ConsortiaControlledVocabularyPaneset.createViaUi(
@@ -173,23 +191,26 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.clickCancel();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
-          cy.visit(SettingsMenu.alternativeTitleTypes);
-          cy.wait(4000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.ALTERNATIVE_TITLE_TYPES);
+          AlternativeTitleTypes.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.newAlternativeTitleType.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(SettingsMenu.alternativeTitleTypes);
-          cy.wait(4000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.ALTERNATIVE_TITLE_TYPES);
+          AlternativeTitleTypes.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.newAlternativeTitleType.name,
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-          cy.visit(SettingsMenu.alternativeTitleTypes);
-          cy.wait(4000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.ALTERNATIVE_TITLE_TYPES);
+          AlternativeTitleTypes.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.editAlternativeTitleType.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],

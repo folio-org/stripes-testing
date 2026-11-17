@@ -18,7 +18,11 @@ import {
   ValueChipRoot,
   calloutTypes,
 } from '../../../../../interactors';
-import { COMMON_BUTTON_LABELS, ITEM_STATUS_NAMES } from '../../../constants';
+import {
+  COMMON_BUTTON_LABELS,
+  ITEM_STATUS_NAMES,
+  THE_LIST_CONTAINS_NO_ITEMS,
+} from '../../../constants';
 import dateTools from '../../../utils/dateTools';
 import MCLHelper from '../../multiColumnList';
 import ConfirmDeleteItemModal from '../modals/confirmDeleteItemModal';
@@ -888,8 +892,31 @@ export default {
     cy.expect(confirmationModal.absent());
   },
 
+  // Checks a cell in the column of the row found by its content (e.g. display summary)
+  verifyBoundPiecesDataCell({ rowContent, column, content }) {
+    cy.expect(
+      boundPiecesDataAccordion
+        .find(MultiColumnListRow({ content: including(rowContent), isContainer: false }))
+        .find(MultiColumnListCell({ column }))
+        .has({ content }),
+    );
+  },
+
+  verifyBarcodeLinkInBoundPiecesData(barcode) {
+    cy.expect(boundPiecesDataAccordion.find(MultiColumnList()).find(Link(barcode)).exists());
+  },
+
   checkBoundPiecesDataTable({ columns = [], rows = [] } = {}) {
     const boundPiecesList = boundPiecesDataAccordion.find(MultiColumnList());
+
+    // Without pieces the accordion shows the empty message instead of the table
+    if (!rows.length) {
+      cy.expect([
+        boundPiecesList.absent(),
+        boundPiecesDataAccordion.has({ content: including(THE_LIST_CONTAINS_NO_ITEMS) }),
+      ]);
+      return;
+    }
 
     columns.forEach((column) => {
       cy.expect(boundPiecesList.has({ columns: including(column) }));

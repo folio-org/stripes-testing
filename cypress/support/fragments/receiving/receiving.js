@@ -24,6 +24,7 @@ import {
   ORDER_LINE_FILTER_LABELS,
   RECEIVING_PIECE_FORM_ACTIONS_LABELS,
   RECEIVING_RECEIVED_PIECE_FILTER_LABELS,
+  RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
   UNRECEIVABLE_TABLE_COLUMN_HEADERS,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -221,6 +222,21 @@ export default {
   clearAllFilters() {
     FiltersPaneHelper.clearAllFilters(filtersPane);
     this.assertResetAllButtonState({ disabled: true });
+  },
+
+  assertNoFiltersApplied() {
+    this.assertResetAllButtonState({ disabled: true });
+    cy.expect(
+      receivingResultsSection.find(HTML(including(RESULTS_PANE_CHOOSE_FILTER_MESSAGE))).exists(),
+    );
+  },
+
+  clearFilter(filterLabel) {
+    FiltersPaneHelper.clearFilter(filtersPane, filterLabel);
+  },
+
+  assertCheckboxFilterValues(filterLabel, values, options) {
+    FiltersPaneHelper.assertCheckboxFilterValues(filtersPane, filterLabel, values, options);
   },
 
   filterByMultiSelectOptions(filterLabel, values, options) {

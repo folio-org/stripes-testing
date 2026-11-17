@@ -34,6 +34,7 @@ const bindItemFields = {
 const selectAllPiecesCheckbox = bindPiecesForm.find(Checkbox({ ariaLabel: 'Select all pieces' }));
 const confirmBindingModal = Modal({ id: 'confirm-binding-modal' });
 const transferRequestsButton = confirmBindingModal.find(Button('Transfer'));
+const doNotTransferRequestsButton = confirmBindingModal.find(Button('Do not transfer'));
 
 const checkItemCreated = (barcode) => {
   InteractorsTools.checkCalloutMessage(
@@ -104,6 +105,9 @@ export default {
       cy.expect(pieceCheckbox.has({ checked: true }));
     });
   },
+  checkPieceCheckboxState(displaySummary, checked) {
+    cy.expect(getPieceRow(displaySummary).find(Checkbox()).has({ checked }));
+  },
   checkPieceRowContent(displaySummary, contents = []) {
     contents.forEach((content) => {
       cy.expect(getPieceRow(displaySummary).has({ content: including(content) }));
@@ -164,12 +168,16 @@ export default {
     }
   },
   // With open requests on pieces items the "Transfer requests" confirmation modal appears
-  clickBindButton({ itemCreated = true, barcode, hasOpenRequests = false } = {}) {
+  // With errorMessage the error toast appears and the form stays open
+  clickBindButton({ itemCreated = true, barcode, hasOpenRequests = false, errorMessage } = {}) {
     cy.expect(bindButton.has({ disabled: false }));
     cy.do(bindButton.click());
 
     if (hasOpenRequests) {
       cy.expect(confirmBindingModal.exists());
+    } else if (errorMessage) {
+      InteractorsTools.checkCalloutErrorMessage(errorMessage);
+      cy.expect(bindButton.exists());
     } else if (itemCreated) {
       checkItemCreated(barcode);
     } else {
@@ -179,17 +187,22 @@ export default {
   checkTransferRequestsModal(barcodes = []) {
     cy.expect([
       confirmBindingModal.has({
-        message: including(
-          `There are requests on the following pieces: ${barcodes.join(', ')}. Transfer requests to the new record?`,
-        ),
+        message: including('There are requests on the following pieces: '),
       }),
+      ...barcodes.map((barcode) => confirmBindingModal.has({ message: including(barcode) })),
+      confirmBindingModal.has({ message: including('. Transfer requests to the new record?') }),
       confirmBindingModal.find(Button('Cancel')).has({ disabled: false }),
       transferRequestsButton.has({ disabled: false }),
-      confirmBindingModal.find(Button('Do not transfer')).has({ disabled: false }),
+      doNotTransferRequestsButton.has({ disabled: false }),
     ]);
   },
   clickTransferRequestsButton({ barcode } = {}) {
     cy.do(transferRequestsButton.click());
+    cy.expect(confirmBindingModal.absent());
+    checkItemCreated(barcode);
+  },
+  clickDoNotTransferRequestsButton({ barcode } = {}) {
+    cy.do(doNotTransferRequestsButton.click());
     cy.expect(confirmBindingModal.absent());
     checkItemCreated(barcode);
   },

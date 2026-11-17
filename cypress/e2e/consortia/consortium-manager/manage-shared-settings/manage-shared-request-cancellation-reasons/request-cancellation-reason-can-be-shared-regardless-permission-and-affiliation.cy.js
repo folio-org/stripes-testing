@@ -83,14 +83,16 @@ describe('Consortia', () => {
           cy.getCancellationReasonsApi({
             limit: 1,
             query: `name=="${firstCancelReason.name}"`,
-          }).then((cancellationReasons) => {
+          }).then(([cancellationReason]) => {
+            // Record is absent when the test failed before sharing it
+            if (!cancellationReason) return;
             RequestCancellationReasonsConsortiumManager.deleteViaApi({
               payload: {
                 name: firstCancelReason.name,
-                id: cancellationReasons[0].id,
+                id: cancellationReason.id,
                 source: 'consortium',
               },
-              settingId: cancellationReasons[0].id,
+              settingId: cancellationReason.id,
               url: '/cancellation-reason-storage/cancellation-reasons',
             });
           });
