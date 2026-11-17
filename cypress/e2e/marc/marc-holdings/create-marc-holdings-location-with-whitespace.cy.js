@@ -51,6 +51,13 @@ describe('MARC', () => {
             Locations.createViaApi(testData.locationData);
           })
           .then(() => {
+            // quickMARC rejects 852 $b with a location missing from the cached mapping parameters
+            cy.waitForIdInMappingParametersViaAPI({
+              recordType: 'marc-holdings',
+              paramsKey: 'locations',
+              id: testData.locationData.id,
+              label: 'Location',
+            });
             cy.login(testData.user.username, testData.user.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,

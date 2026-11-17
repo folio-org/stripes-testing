@@ -3,18 +3,34 @@ import Permissions from '../../../../../support/dictionary/permissions';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../../support/utils/stringTools';
+import FileManager from '../../../../../support/utils/fileManager';
+import getRandomPostfix, { randomNDigitNumber } from '../../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       describe('Automated linking', () => {
         let userData;
+        // Natural ids (010 $a) of the 3 authorities - other fixtures share them. Each run replaces the
+        // digits with random ones of the same length (the MARC directory stays valid), so automated
+        // linking finds only this run's authorities.
+        const naturalIds = [
+          { authFile: 'marcAuthFileForC388519-1.mrc', prefix: 'n', digits: '83169267' },
+          { authFile: 'marcAuthFileForC388519-2.mrc', prefix: 'no', digits: '2021056177' },
+          { authFile: 'marcAuthFileForC388519-3.mrc', prefix: 'nb', digits: '98017694' },
+        ].map((naturalId) => ({
+          ...naturalId,
+          newDigits: `${randomNDigitNumber(naturalId.digits.length)}`,
+          editedAuthFile: `${naturalId.authFile.replace('.mrc', '')}_${getRandomPostfix()}.mrc`,
+        }));
+        const [leeId, chinId, sprouseId] = naturalIds.map(
+          ({ prefix, newDigits }) => `${prefix}${newDigits}`,
+        );
+        const idUrl = 'http://id.loc.gov/authorities/names/';
         const linkableFields = [
           100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810,
           811, 830,
@@ -23,37 +39,37 @@ describe('MARC', () => {
           {
             rowIndex: 32,
             tag: '700',
-            content: '$a test $0 n 83169267',
-            newContent: '$a test $0 n83169267',
+            content: `$a test $0 n ${naturalIds[0].newDigits}`,
+            newContent: `$a test $0 ${leeId}`,
             secondBox: '2',
             thirdBox: '\\',
             fourthBox: '$a C388519Lee, Stan, $d 1922-2018',
             fifthBox: '',
-            sixthBox: '$0 http://id.loc.gov/authorities/names/n83169267',
+            sixthBox: `$0 ${idUrl}${leeId}`,
             seventhBox: '',
             isLinked: true,
           },
           {
             rowIndex: 33,
             tag: '700',
-            content: '$0 nb98017694 $2 tst $e author',
+            content: `$0 ${sprouseId} $2 tst $e author`,
             secondBox: '2',
             thirdBox: '\\',
             fourthBox: '$a C388519Sprouse, Chris',
             fifthBox: '$e author',
-            sixthBox: '$0 http://id.loc.gov/authorities/names/nb98017694',
+            sixthBox: `$0 ${idUrl}${sprouseId}`,
             seventhBox: '$2 tst',
             isLinked: true,
           },
           {
             rowIndex: 34,
             tag: '700',
-            content: '$0 no2021056177 $a Chin S. $d unknown',
+            content: `$0 ${chinId} $a Chin S. $d unknown`,
             secondBox: '2',
             thirdBox: '\\',
             fourthBox: '$a C388519Chin, Staceyann, $d 1972- $t Crossfire. $h Spoken word',
             fifthBox: '',
-            sixthBox: '$0 http://id.loc.gov/authorities/names/no2021056177',
+            sixthBox: `$0 ${idUrl}${chinId}`,
             seventhBox: '',
             isLinked: true,
           },
@@ -71,7 +87,7 @@ describe('MARC', () => {
             secondBox: '2',
             thirdBox: '\\',
             content: '$a test 2 $0 nt4433',
-            newContent: '$a test 2 $0 http://id.loc.gov/authorities/names/no2021056177',
+            newContent: `$a test 2 $0 ${idUrl}${chinId}`,
             isLinked: false,
           },
         ];
@@ -80,11 +96,10 @@ describe('MARC', () => {
           tag: '700',
           secondBox: '2',
           thirdBox: '\\',
-          content: '$a test 4 $0 n83169267',
+          content: `$a test 4 $0 ${leeId}`,
         };
 
         const createdRecordIDs = [];
-        const naturalIds = ['n83169267', 'no2021056177', 'nb98017694'];
         const marcFiles = [
           {
             marc: 'marcBibFileForC388519.mrc',
@@ -94,21 +109,21 @@ describe('MARC', () => {
             propertyName: 'instance',
           },
           {
-            marc: 'marcAuthFileForC388519-1.mrc',
+            marc: naturalIds[0].editedAuthFile,
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
             propertyName: 'authority',
           },
           {
-            marc: 'marcAuthFileForC388519-2.mrc',
+            marc: naturalIds[1].editedAuthFile,
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
             propertyName: 'authority',
           },
           {
-            marc: 'marcAuthFileForC388519-3.mrc',
+            marc: naturalIds[2].editedAuthFile,
             fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
@@ -117,18 +132,8 @@ describe('MARC', () => {
         ];
 
         before('Create test data', () => {
-          // Making sure there are no duplicate authority records in the system before auto-linking
-          cy.getAdminToken().then(() => {
-            naturalIds.forEach((id) => {
-              MarcAuthorities.getMarcAuthoritiesViaApi({
-                limit: 200,
-                query: `naturalId="${id}*" and authRefType=="Authorized"`,
-              }).then((records) => {
-                records.forEach((record) => {
-                  MarcAuthority.deleteViaAPI(record.id);
-                });
-              });
-            });
+          naturalIds.forEach(({ authFile, editedAuthFile, digits, newDigits }) => {
+            DataImport.editMarcFile(authFile, editedAuthFile, [digits], [newDigits]);
           });
 
           cy.getAdminToken();
@@ -171,6 +176,9 @@ describe('MARC', () => {
                 MarcAuthority.deleteViaAPI(id);
               }
             });
+          });
+          naturalIds.forEach(({ editedAuthFile }) => {
+            FileManager.deleteFile(`cypress/fixtures/${editedAuthFile}`);
           });
         });
 

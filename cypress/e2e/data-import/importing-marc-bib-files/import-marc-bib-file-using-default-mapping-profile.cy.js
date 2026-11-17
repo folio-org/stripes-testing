@@ -30,13 +30,13 @@ describe('Data Import', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
+      cy.getAdminToken(false);
       Users.deleteViaApi(user.userId);
     });
 
     it(
       'C2325 Import a MARC Bib file using the default mapping profile (promin)',
-      { tags: ['criticalPath', 'promin', 'C2325'] },
+      { tags: ['criticalPath', 'promin', 'C2325', 'nonParallel'] },
       () => {
         // upload a marc file
         DataImport.verifyUploadState();
@@ -46,7 +46,8 @@ describe('Data Import', () => {
         JobProfiles.runImportFile();
         DataImport.checkIsLandingPageOpened();
         Logs.checkFileIsRunning(marcFileName);
-        cy.wait(200000);
+        // 200 records: the import time depends on the load of the environment
+        Logs.waitFileIsImported(marcFileName, 10 * 60_000);
         Logs.checkJobStatus(marcFileName, JOB_STATUS_NAMES.COMPLETED);
       },
     );

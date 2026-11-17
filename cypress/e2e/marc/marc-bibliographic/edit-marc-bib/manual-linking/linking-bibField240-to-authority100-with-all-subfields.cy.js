@@ -8,12 +8,52 @@ import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAu
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../../support/utils/stringTools';
+import FileManager from '../../../../../support/utils/fileManager';
+import getRandomPostfix, { getRandomLetters } from '../../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       describe('Manual linking', () => {
+        // unique token in the authority 100 $q (not a controlled subfield of 240): the Keyword search
+        // returns only this run's record, which the Search tab then opens automatically
+        const uniqueToken = getRandomLetters(10);
+        const editedAuthFileName = `marcAuthFileForC380763_${getRandomPostfix()}.mrc`;
+        // the fixture's 100 field with the token added to $q
+        const authority100Content = [
+          '$a C380763Dowland, John,',
+          '$b num 1',
+          '$c test purpose',
+          '$d 1563?-1626.',
+          '$e author',
+          '$j Follower of',
+          `$q (valery pilko ${uniqueToken})`,
+          '$f pass (read only)',
+          '$h pass (read only)',
+          '$k pass (read only)',
+          '$l epass (read only)',
+          '$m pass (read only)',
+          '$n pass (read only)',
+          '$o pass (read only)',
+          '$r pass (read only)',
+          '$s pass (read only)',
+          '$t pass (read only)',
+          '$p pass (read only)',
+          '$g pass (read only)',
+          '$i field001',
+          '$w lld',
+          '$1 https://test2auth',
+          '$2 private source',
+          '$4 NO Relationship (R)',
+          '$5 no',
+          '$6 with linkage',
+          '$7 testData provenance (R)',
+          '$8 testField link and sequence number (R)',
+          '$v Form subdivision (R)',
+          '$x General subdivision (R)',
+          '$y Chronological subdivision (R)',
+          '$z Geographic subdivision (R)',
+        ].join(' ');
         const testData = {
           tag240: '240',
           tag240content:
@@ -24,11 +64,8 @@ describe('MARC', () => {
             'PASS (editable) test fail fail fail fail fail fail fail fail fail fail fail',
           placeholderMessage:
             'PASS (editable) test fail fail fail fail fail fail fail fail fail fail fail would be here',
-          authorityMarkedValue:
-            'Dowland, John, num 1 test purpose 1563?-1626. (valery pilko) pass (read only) pass (read only) epass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only)',
+          authorityMarkedValue: `Dowland, John, num 1 test purpose 1563?-1626. (valery pilko ${uniqueToken}) pass (read only) pass (read only) epass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only)`,
           tag240rowindex: 28,
-          authority100FieldValue:
-            'C380763Dowland, John, num 1 test purpose 1563?-1626. (valery pilko) pass (read only) pass (read only) epass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only)',
           changesSavedCallout:
             'This record has successfully saved and is in process. Changes may not appear immediately.',
         };
@@ -42,7 +79,7 @@ describe('MARC', () => {
             propertyName: 'instance',
           },
           {
-            marc: 'marcAuthFileForC380763.mrc',
+            marc: editedAuthFileName,
             fileName: `testMarcFileC380763${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 1,
@@ -73,6 +110,9 @@ describe('MARC', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C380763*');
+          DataImport.editMarcFieldsInAllRecords('marcAuthFileForC380763.mrc', editedAuthFileName, {
+            editFields: [{ tag: '100', content: authority100Content }],
+          });
 
           cy.createTempUser([
             Permissions.inventoryAll.gui,
@@ -108,6 +148,7 @@ describe('MARC', () => {
             InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
             MarcAuthority.deleteViaAPI(createdAuthorityIDs[1]);
           });
+          FileManager.deleteFile(`cypress/fixtures/${editedAuthFileName}`);
         });
 
         it(
@@ -128,8 +169,8 @@ describe('MARC', () => {
             MarcAuthorities.checkSearchOption(testData.browseSearchOption);
             MarcAuthorities.checkSearchInput('');
             MarcAuthorities.verifyEmptyAuthorityField();
+            // the single search result opens automatically
             MarcAuthorities.searchByParameter(testData.searchOption, testData.authorityMarkedValue);
-            MarcAuthorities.selectTitle(testData.authority100FieldValue);
             InventoryInstance.clickLinkButton();
             QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
             QuickMarcEditor.checkUnlinkTooltipText(28, 'Unlink from MARC Authority record');

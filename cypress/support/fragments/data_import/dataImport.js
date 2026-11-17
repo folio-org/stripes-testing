@@ -68,6 +68,7 @@ const uploadFileIfDeleteButtonNotDisplayed = (filePathName, fileName) => {
         cy.log('Delete Files button is displayed - File upload already in progress. Skipping test');
       } else {
         cy.log('Delete Files button is not displayed');
+        DiFailureLog.rememberUpload(fileName);
         cy.expect(sectionPaneJobsTitle.exists());
         cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
         cy.wait(15000);
@@ -80,6 +81,7 @@ const uploadBunchOfDifferentFiles = (fileNames) => {
   const arrayOfFiles = [];
   for (let i = 0; i < fileNames.length; i++) {
     arrayOfFiles.push(fileNames[i]);
+    DiFailureLog.rememberUpload(fileNames[i]);
   }
   cy.get('input[type=file]').attachFile(arrayOfFiles);
   cy.wait(5000);
@@ -96,6 +98,7 @@ const uploadBunchOfFiles = (editedFileName, numberOfFiles, finalFileName) => {
 
       FileManager.createFile(`cypress/fixtures/${fileName}`, actualContent);
       arrayOfFiles.push(fileName);
+      DiFailureLog.rememberUpload(fileName);
     });
   }
   cy.get('input[type=file]').attachFile(arrayOfFiles);
@@ -257,6 +260,7 @@ export default {
   },
 
   uploadExportedFile(fileName) {
+    DiFailureLog.rememberUpload(fileName);
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
     cy.get('div[class^="progressInfo-"]', getLongDelay()).should('not.exist');
   },

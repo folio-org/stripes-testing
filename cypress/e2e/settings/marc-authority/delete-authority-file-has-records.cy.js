@@ -48,8 +48,8 @@ describe('MARC', () => {
           testData.baseURL,
         ).then((sourceId) => {
           authorityFileId = sourceId;
-          // Wait for source file to be processed before creating MARC authority record
-          cy.wait(70_000);
+          // the MARC authority record gets the source file only once it is in the mapping parameters
+          cy.waitForAuthoritySourceFileInMappingViaAPI(sourceId);
           cy.getAdminToken();
           MarcAuthorities.createMarcAuthorityViaAPI(
             testData.prefix,
