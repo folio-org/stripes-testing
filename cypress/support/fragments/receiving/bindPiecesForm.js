@@ -104,6 +104,9 @@ export default {
       cy.expect(pieceCheckbox.has({ checked: true }));
     });
   },
+  checkPieceCheckboxState(displaySummary, checked) {
+    cy.expect(getPieceRow(displaySummary).find(Checkbox()).has({ checked }));
+  },
   checkPieceRowContent(displaySummary, contents = []) {
     contents.forEach((content) => {
       cy.expect(getPieceRow(displaySummary).has({ content: including(content) }));
@@ -164,12 +167,16 @@ export default {
     }
   },
   // With open requests on pieces items the "Transfer requests" confirmation modal appears
-  clickBindButton({ itemCreated = true, barcode, hasOpenRequests = false } = {}) {
+  // With errorMessage the error toast appears and the form stays open
+  clickBindButton({ itemCreated = true, barcode, hasOpenRequests = false, errorMessage } = {}) {
     cy.expect(bindButton.has({ disabled: false }));
     cy.do(bindButton.click());
 
     if (hasOpenRequests) {
       cy.expect(confirmBindingModal.exists());
+    } else if (errorMessage) {
+      InteractorsTools.checkCalloutErrorMessage(errorMessage);
+      cy.expect(bindButton.exists());
     } else if (itemCreated) {
       checkItemCreated(barcode);
     } else {

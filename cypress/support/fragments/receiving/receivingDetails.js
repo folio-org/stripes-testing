@@ -757,7 +757,7 @@ export default {
     MultiColumnListHelper.assertPaginationControlsDisabled(boundItemsAccordion, { previous, next });
   },
 
-  filterReceivedPiecesByOptions(optionLabels = []) {
+  filterReceivedPiecesByOptions(optionLabels = [], { checked = true } = {}) {
     const actionsBtn = receivedSection.find(Button(COMMON_BUTTON_LABELS.ACTIONS));
 
     cy.do(actionsBtn.click());
@@ -765,7 +765,17 @@ export default {
       const checkbox = DropdownMenu().find(Checkbox(label));
 
       cy.do(checkbox.click());
-      cy.expect(checkbox.has({ checked: true, disabled: false }));
+      cy.expect(checkbox.has({ checked, disabled: false }));
+    });
+    cy.do(actionsBtn.click());
+  },
+
+  assertReceivedPiecesFilterOptions(options = []) {
+    const actionsBtn = receivedSection.find(Button(COMMON_BUTTON_LABELS.ACTIONS));
+
+    cy.do(actionsBtn.click());
+    options.forEach(({ label, checked }) => {
+      cy.expect(DropdownMenu().find(Checkbox(label)).has({ checked }));
     });
     cy.do(actionsBtn.click());
   },
