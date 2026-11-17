@@ -828,6 +828,10 @@ export default {
     );
   },
 
+  verifyResultsCount(count) {
+    cy.get('[data-row-index]').should('have.length', count);
+  },
+
   clickResetAllButton() {
     cy.expect(resetAllButton.has({ disabled: false }));
     cy.do(resetAllButton.click());
@@ -974,5 +978,11 @@ export default {
 
   navigateToFirstPage() {
     MultiColumnListHelper.navigateToFirstPage(recordsList);
+  },
+
+  verifyRequestStatusInList(status) {
+    cy.expect(
+      requestsResultsSection.find(MultiColumnListCell({ content: including(status) })).exists(),
+    );
   },
 };
