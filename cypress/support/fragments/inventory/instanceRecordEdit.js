@@ -760,6 +760,10 @@ export default {
       );
     }
   },
+  clickCancelButton: () => {
+    cy.do(cancelButton.click());
+    cy.expect(Pane({ id: 'instance-form' }).absent());
+  },
   closeCancelEditingModal: () => {
     cy.do(
       Modal({ id: 'cancel-editing-confirmation' })

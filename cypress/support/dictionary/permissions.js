@@ -825,6 +825,10 @@ export default {
     internal: 'ui-data-export.edit',
     gui: 'Data export: Can upload files, export, download files and view logs',
   },
+  dataExportEnableApp: {
+    internal: 'module.data-export.enabled',
+    gui: 'Module Data-Export Enabled',
+  },
   // TODO: move to capability when it will be implemented
   consortiaCentralAll: {
     internal: 'consortia.data-import.central-record-update.all',
