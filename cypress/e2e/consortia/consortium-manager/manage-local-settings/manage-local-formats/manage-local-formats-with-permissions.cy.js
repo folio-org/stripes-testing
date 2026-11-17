@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Permissions from '../../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
@@ -11,8 +12,12 @@ import ConfirmCreate from '../../../../../support/fragments/consortium-manager/m
 import SelectMembers from '../../../../../support/fragments/consortium-manager/modal/select-members';
 import FormatsConsortiumManager from '../../../../../support/fragments/consortium-manager/inventory/instances/formatsConsortiumManager';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SettingsMenu from '../../../../../support/fragments/settingsMenu';
+import Formats from '../../../../../support/fragments/settings/inventory/instances/formats';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenu from '../../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../../../support/utils/stringTools';
 
@@ -152,9 +157,27 @@ describe('Consortium manager', () => {
           );
           ConsortiaControlledVocabularyPaneset.confirmDelete();
           ConsortiumManagerApp.checkMessage(messages.deleted('format', testData.newFormat.name));
-          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.newFormat.name,
             tenantNames.central,
+            [testData.newFormat.name, testData.newFormat.code, 'local', '', tenantNames.central],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.editFormat.name,
+            tenantNames.university,
+            [
+              testData.editFormat.name,
+              testData.editFormat.code,
+              'local',
+              '',
+              tenantNames.university,
+            ],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+            testData.newFormat.name,
+            tenantNames.college,
           );
 
           ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.tempFormat);
@@ -176,18 +199,24 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.clickCancel();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
-          cy.visit(SettingsMenu.formats);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.FORMATS);
+          Formats.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.newFormat.name, testData.newFormat.code, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(SettingsMenu.formats);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.FORMATS);
+          Formats.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(testData.newFormat.name);
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-          cy.visit(SettingsMenu.formats);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.FORMATS);
+          Formats.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.editFormat.name, testData.editFormat.code, 'local', ''],
             [actionIcons.edit, actionIcons.trash],

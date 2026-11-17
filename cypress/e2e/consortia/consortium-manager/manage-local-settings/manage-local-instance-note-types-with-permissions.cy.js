@@ -1,3 +1,4 @@
+import { APPLICATION_NAMES } from '../../../../support/constants';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
 import Permissions from '../../../../support/dictionary/permissions';
 import ConsortiaControlledVocabularyPaneset, {
@@ -11,8 +12,12 @@ import ConfirmCreate from '../../../../support/fragments/consortium-manager/moda
 import SelectMembers from '../../../../support/fragments/consortium-manager/modal/select-members';
 import InstanceNoteTypesConsortiumManager from '../../../../support/fragments/consortium-manager/inventory/instances/instanceNoteTypesConsortiumManager';
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import InstanceNoteTypes from '../../../../support/fragments/settings/inventory/instances/instanceNoteTypes';
+import SettingsInventory, {
+  INVENTORY_SETTINGS_TABS,
+} from '../../../../support/fragments/settings/inventory/settingsInventory';
 import TopMenu from '../../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import Users from '../../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
@@ -146,9 +151,21 @@ describe('Consortium manager', () => {
           ConsortiumManagerApp.checkMessage(
             messages.deleted('instance note type', testData.newInstanceNoteType.name),
           );
-          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
             testData.newInstanceNoteType.name,
             tenantNames.central,
+            [testData.newInstanceNoteType.name, 'local', '', tenantNames.central],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsInTheList(
+            testData.editInstanceNoteType.name,
+            tenantNames.university,
+            [testData.editInstanceNoteType.name, 'local', '', tenantNames.university],
+            [actionIcons.edit, actionIcons.trash],
+          );
+          ConsortiaControlledVocabularyPaneset.verifyRecordIsNotInTheList(
+            testData.newInstanceNoteType.name,
+            tenantNames.college,
           );
 
           ConsortiaControlledVocabularyPaneset.createViaUi(false, testData.tempInstanceNoteType);
@@ -170,23 +187,26 @@ describe('Consortium manager', () => {
           ConsortiaControlledVocabularyPaneset.clickCancel();
           ConsortiaControlledVocabularyPaneset.verifyNewButtonDisabled(false);
 
-          cy.visit(SettingsMenu.instanceNoteTypes);
-          cy.wait(4000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.INSTANCE_NOTE_TYPES);
+          InstanceNoteTypes.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.newInstanceNoteType.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.central, tenantNames.college);
-          cy.visit(SettingsMenu.instanceNoteTypes);
-          cy.wait(4000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.INSTANCE_NOTE_TYPES);
+          InstanceNoteTypes.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordNotInTheList(
             testData.newInstanceNoteType.name,
           );
 
           ConsortiumManager.switchActiveAffiliation(tenantNames.college, tenantNames.university);
-          cy.visit(SettingsMenu.instanceNoteTypes);
-          cy.wait(4000);
+          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.SETTINGS, APPLICATION_NAMES.INVENTORY);
+          SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.INSTANCE_NOTE_TYPES);
+          InstanceNoteTypes.waitLoading();
           ConsortiaControlledVocabularyPaneset.verifyRecordInTheList(
             [testData.editInstanceNoteType.name, 'local', ''],
             [actionIcons.edit, actionIcons.trash],

@@ -81,15 +81,15 @@ describe('Consortia', () => {
           cy.getAlternativeTitlesTypes({
             limit: 1,
             query: `name=="${alternativeTitleTypes4.name}"`,
-          }).then((atpResp) => {
-            const atpId = atpResp[0].id;
+          }).then(([alternativeTitleType]) => {
+            if (!alternativeTitleType) return;
             AlternativeTitleTypesConsortiumManager.deleteViaApi({
               payload: {
                 name: alternativeTitleTypes4.name,
-                id: atpId,
+                id: alternativeTitleType.id,
                 source: 'consortium',
               },
-              settingId: atpId,
+              settingId: alternativeTitleType.id,
               url: '/alternative-title-types',
             });
           });

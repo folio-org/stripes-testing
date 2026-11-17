@@ -27,7 +27,8 @@ const fieldActions = {
 };
 const closeModalButton = Button('Close');
 const changesModalColumns = ['Action', 'Field', 'Changed from', 'Changed to'];
-const changesModalHeaderDefaultRegexp = /\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{1,2} (AM|PM).*/;
+// AM/PM is optional: the 24-hour clock is shown when the locale of the tenant or the user has it
+const changesModalHeaderDefaultRegexp = /\d{1,2}\/\d{1,2}\/\d{4}, \d{1,2}:\d{1,2}(\s?(AM|PM))?.*/;
 const changesModal = Modal(matching(changesModalHeaderDefaultRegexp));
 
 export default {
@@ -228,6 +229,19 @@ export default {
       ]);
     } else if (isShown) cy.expect(targetModal.find(MultiColumnListRow({ content })).exists());
     else cy.expect(targetModal.find(MultiColumnListRow({ content })).absent());
+  },
+
+  // The row of the field is found by its name only, so it doesn't matter whether the field was
+  // added or edited; value - the text of the "Changed to" column, e.g. 'true'
+  checkChangedToValueInModal(field, value) {
+    const targetModal = Modal(matching(changesModalHeaderDefaultRegexp));
+
+    cy.expect(
+      targetModal
+        .find(MultiColumnListRow({ content: including(field), isContainer: false }))
+        .find(MultiColumnListCell({ columnIndex: 3, content: value }))
+        .exists(),
+    );
   },
 
   checkChangeInModalWithIndicators(action, field, indicators, fromContent, toContent) {

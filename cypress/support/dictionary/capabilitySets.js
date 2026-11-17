@@ -197,10 +197,25 @@ export default {
     resource: 'Settings Myprofile Enabled',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiMyprofileSettingsChangePasswordView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Myprofile Settings Change-Password',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiTenantSettingsSettingsLocaleManage: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Tenant-Settings Settings Locale',
     action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiConsortiaSettingsSettingsMembershipView: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Consortia-Settings Settings Membership',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiConsortiaSettingsSettingsMembershipEdit: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Consortia-Settings Settings Membership',
+    action: CAPABILITY_ACTIONS.EDIT,
   },
 
   // Data capability sets
@@ -453,6 +468,16 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Receiving',
     action: CAPABILITY_ACTIONS.CREATE,
+  },
+  uiReceivingDelete: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Receiving',
+    action: CAPABILITY_ACTIONS.DELETE,
+  },
+  uiReceivingEdit: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Receiving',
+    action: CAPABILITY_ACTIONS.EDIT,
   },
   uiReceivingView: {
     type: CAPABILITY_TYPES.DATA,

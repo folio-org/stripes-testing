@@ -63,7 +63,7 @@ describe('MARC', () => {
             testData.baseURL,
           ).then((sourceId) => {
             authorityFileId = sourceId;
-            cy.wait(70_000); // source file should be processed by scheduled job before assigning
+            cy.waitForAuthoritySourceFileInMappingViaAPI(sourceId);
 
             cy.getAdminToken(false);
             MarcAuthorities.createMarcAuthorityViaAPI(
@@ -87,7 +87,8 @@ describe('MARC', () => {
           cy.resetTenant();
           cy.getAdminToken();
           if (user) Users.deleteViaApi(user.userId);
-          if (createdAuthorityRecordId) MarcAuthorities.deleteViaAPI(createdAuthorityRecordId, true);
+          if (createdAuthorityRecordId)
+            MarcAuthorities.deleteViaAPI(createdAuthorityRecordId, true);
           if (authorityFileId) {
             ManageAuthorityFiles.unsetAuthorityFileAsActiveViaApi(testData.name);
             cy.deleteAuthoritySourceFileViaAPI(authorityFileId, true);

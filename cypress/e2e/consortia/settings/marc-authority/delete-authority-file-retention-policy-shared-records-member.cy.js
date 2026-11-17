@@ -61,7 +61,7 @@ describe('MARC', () => {
             testData.baseURL,
           ).then((sourceId) => {
             authorityFileId = sourceId;
-            cy.wait(70_000); // source file should be processed by scheduled job before assigning
+            cy.waitForAuthoritySourceFileInMappingViaAPI(sourceId);
             // Create a Shared MARC authority record assigned to the file in Central tenant
             cy.getAdminToken(false);
             MarcAuthorities.createMarcAuthorityViaAPI(

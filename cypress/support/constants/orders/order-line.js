@@ -306,6 +306,7 @@ export const ORDER_LINE_FILTER_LABELS = {
   ACTUAL_RECEIPT_DATE: 'Actual receipt date',
   ACQUISITION_UNIT: 'Acquisition unit',
   ACQUISITION_METHOD: 'Acquisition method',
+  BINDERY_ACTIVE: 'Bindery active',
   COLLECTION: 'Collection',
   CREATED_BY: 'Created by',
   DATE_CREATED: 'Date created',

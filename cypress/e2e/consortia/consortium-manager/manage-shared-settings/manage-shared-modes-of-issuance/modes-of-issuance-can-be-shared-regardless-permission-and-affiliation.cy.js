@@ -78,6 +78,7 @@ describe('Consortia', () => {
             limit: 1,
             query: `name=="${modesIssuance4.name}"`,
           }).then(({ id }) => {
+            if (!id) return;
             ModesOfIssuanceConsortiumManager.deleteViaApi({
               payload: {
                 name: modesIssuance4.name,

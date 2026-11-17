@@ -64,7 +64,8 @@ const unsavedChangesText = Modal().find(
 );
 const keepEditingButton = Modal().find(Button('Keep editing'));
 const continueWithoutSavingButton = Modal().find(Button('Continue without saving'));
-const closeIconButton = Button({ icon: 'times' });
+// pane close button only: its aria-label is "Close <pane title>", tag chip remove buttons also use the 'times' icon
+const closeIconButton = Button({ icon: 'times', ariaLabel: including('Close ') });
 const accessStatusTypeDropdown = Select({ id: 'eholdings-access-type-id' });
 const nameFieldInEditForm = TextArea({ name: 'customDisplayName' });
 const titlesList = MultiColumnList({ id: 'package-title-list' });
@@ -103,11 +104,13 @@ export default {
     cy.url().then((url) => {
       const packageId = url.split('?')[0].split('/').at(-1);
       recurse(
-        () => cy.okapiRequest({
-          path: `eholdings/packages/${packageId}`,
-          isDefaultSearchParamsRequired: false,
-        }),
-        ({ body: { data } }) => data.attributes.isSelected === isSelected &&
+        () =>
+          cy.okapiRequest({
+            path: `eholdings/packages/${packageId}`,
+            isDefaultSearchParamsRequired: false,
+          }),
+        ({ body: { data } }) =>
+          data.attributes.isSelected === isSelected &&
           data.attributes.selectedCount === (isSelected ? data.attributes.titleCount : 0),
         {
           timeout: 3 * 60_000,

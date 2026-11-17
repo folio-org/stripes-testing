@@ -6,6 +6,9 @@ import {
   Callout,
   TextField,
   MultiColumnList,
+  MultiColumnListRow,
+  Checkbox,
+  DropdownMenu,
   including,
 } from '../../../../../../interactors';
 import ResultsPane from '../resultsPane';
@@ -15,6 +18,7 @@ import NewMatchProfile from './newMatchProfile';
 const actionsButton = Button('Actions');
 const viewPane = Pane({ id: 'view-match-profile-pane' });
 const resultsPane = Pane({ id: 'pane-results' });
+const matchProfilesList = MultiColumnList({ id: 'match-profiles-list' });
 
 const waitCreatingMatchProfile = () => {
   cy.expect(resultsPane.find(actionsButton).exists());
@@ -107,12 +111,30 @@ export default {
 
   verifyListOfExistingProfilesIsDisplayed: () => {
     cy.wait(2000);
-    cy.expect(resultsPane.find(MultiColumnList({ id: 'match-profiles-list' })).exists());
+    cy.expect(resultsPane.find(matchProfilesList).exists());
   },
   selectMatchProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
+  waitLoading: () => cy.expect(matchProfilesList.find(MultiColumnListRow({ index: 0 })).exists()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
-  verifyMatchProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
-  verifySearchFieldIsEmpty: () => cy.expect(TextField({ id: 'input-search-match-profiles-field' }).has({ value: '' })),
+  verifyNoCheckboxesInList: () => {
+    cy.expect(matchProfilesList.find(Checkbox()).absent());
+  },
+  // Only "New match profile" is in the "Actions" menu - no selecting and exporting of the profiles
+  verifyActionsMenuOptions: () => {
+    cy.do(resultsPane.find(actionsButton).click());
+    cy.expect([
+      Button('New match profile').exists(),
+      Button('Export selected').absent(),
+      Button('Select all').absent(),
+      Button('Deselect all').absent(),
+    ]);
+    cy.do(resultsPane.find(actionsButton).click());
+    cy.expect(DropdownMenu().absent());
+  },
+  verifyMatchProfileAbsent: () =>
+    cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
+  verifySearchFieldIsEmpty: () =>
+    cy.expect(TextField({ id: 'input-search-match-profiles-field' }).has({ value: '' })),
   verifySearchResult: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
   },
