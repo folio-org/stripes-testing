@@ -8,10 +8,14 @@ const modalMessage =
 const deleteHoldingsButtons = {
   [DELETE_HOLDINGS_ACTIONS.CANCEL]: () => deleteHoldingsModal.find(Button('Cancel')),
   [DELETE_HOLDINGS_ACTIONS.KEEP_HOLDINGS]: () => deleteHoldingsModal.find(Button('Keep Holdings')),
-  [DELETE_HOLDINGS_ACTIONS.DELETE_HOLDINGS]: () => deleteHoldingsModal.find(Button('Delete Holdings')),
+  [DELETE_HOLDINGS_ACTIONS.DELETE_HOLDINGS]: () =>
+    deleteHoldingsModal.find(Button('Delete Holdings')),
 };
 
 export default {
+  verifyModalAbsent() {
+    cy.expect(deleteHoldingsModal.absent());
+  },
   deleteHoldingsModal({ action, locations = [] }) {
     const holdingsToDelete = locations.map((location) => location.name);
     cy.expect(deleteHoldingsModal.has({ header: 'Delete Holdings' }));
