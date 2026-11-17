@@ -37,6 +37,8 @@ const itemDataFields = {
   copyNumber: itemEditForm.find(TextField({ name: 'copyNumber' })),
   callNumber: itemEditForm.find(TextArea({ id: 'additem_callnumber' })),
   chronology: itemEditForm.find(TextArea({ id: 'additem_chronology' })),
+  displaySummary: itemEditForm.find(TextField('Display summary')),
+  enumeration: itemEditForm.find(TextArea('Enumeration')),
 };
 
 const loanDataFields = {
@@ -272,6 +274,12 @@ export default {
       this.addChronology(chronology);
     }
   },
+  // fieldNames - e.g. ['barcode', 'accessionNumber']
+  clearItemRecordFields(fieldNames = []) {
+    const fields = { ...adminDataFields, ...itemDataFields };
+
+    fieldNames.forEach((fieldName) => cy.do(fields[fieldName].fillIn('')));
+  },
   chooseItemPermanentLoanType: (permanentLoanType) => {
     cy.do(loanDataFields.loanType.choose(permanentLoanType));
     cy.expect(loanDataFields.loanType.has({ checkedOptionText: permanentLoanType }));
@@ -357,11 +365,11 @@ export default {
   },
 
   addDisplaySummary(displaySummary) {
-    cy.do(TextField('Display summary').fillIn(displaySummary));
+    cy.do(itemDataFields.displaySummary.fillIn(displaySummary));
   },
 
   addEnumeration(value) {
-    cy.do(TextArea('Enumeration').fillIn(value));
+    cy.do(itemDataFields.enumeration.fillIn(value));
   },
 
   addChronology(value) {
