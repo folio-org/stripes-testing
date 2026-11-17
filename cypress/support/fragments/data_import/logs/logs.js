@@ -180,6 +180,28 @@ export default {
         .click(),
     );
   },
+  // Number of logs the Data Import landing page can list (same filters as ui-data-import's logs request)
+  getLandingPageLogsTotalCountViaApi: () => {
+    const searchParams = [
+      'limit=1',
+      'statusAny=COMMITTED',
+      'statusAny=ERROR',
+      'statusAny=CANCELLED',
+      // OCLC single record import job profiles (create / update instance)
+      'profileIdNotAny=d0ebb7b0-2f0f-11eb-adc1-0242ac120002',
+      'profileIdNotAny=91f9b8d6-d80e-4727-9783-73fb53e3c786',
+      `excludeJobProfileName=${encodeURIComponent('Bulk operations data import job profile-*')}`,
+      `fileNameNotAny=${encodeURIComponent('No file name')}`,
+      'subordinationTypeNotAny=COMPOSITE_PARENT',
+    ].join('&');
+
+    return cy
+      .okapiRequest({
+        path: `metadata-provider/jobExecutions?${searchParams}`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.totalRecords);
+  },
   // A job's status turns final before its record log entries are written, and the log details page
   // loads them only once - opened too early, it shows an empty record list. Call before openFileDetails.
   // Read-only and never fails: gives up quietly if the job is not found (e.g. other tenant) or has no entries.
@@ -342,14 +364,20 @@ export default {
       .should('have.css', 'color', visitedLinkColor);
   },
 
-  waitFileIsImported: (fileName) => {
+  // timeout (ms): for long imports - waits longer than the global interactor timeout
+  waitFileIsImported: (fileName, timeout) => {
     const newFileName = fileName.replace(/\.mrc$/i, '');
 
-    cy.expect(
-      MultiColumnList({ id: 'job-logs-list' })
-        .find(Button(including(newFileName)))
-        .exists(),
-    );
+    if (timeout) {
+      // the landing page refreshes the logs list itself; the job row appears once the import has finished
+      cy.contains('#job-logs-list', newFileName, { timeout });
+    } else {
+      cy.expect(
+        MultiColumnList({ id: 'job-logs-list' })
+          .find(Button(including(newFileName)))
+          .exists(),
+      );
+    }
   },
 
   openJobProfile: (jobProfileName) => {

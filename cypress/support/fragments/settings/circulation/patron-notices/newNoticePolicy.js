@@ -115,6 +115,9 @@ const NoticeCard = HTML.extend('notice card')
 const noticeCard = (sectionName, index) =>
   Section({ id: noticeSections[sectionName].id }).find(NoticeCard(`Notice ${index + 1}`));
 
+const viewNoticeCard = (sectionName, index) =>
+  Section({ id: noticeSections[sectionName].viewId }).find(NoticeCard(`Notice ${index + 1}`));
+
 export const actionsButtons = {
   edit: Button({ id: 'dropdown-clickable-edit-item' }),
   duplicate: Button({ id: 'dropdown-clickable-duplicate-item' }),

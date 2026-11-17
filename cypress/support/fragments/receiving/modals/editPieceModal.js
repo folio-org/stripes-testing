@@ -2,6 +2,7 @@ import {
   Accordion,
   Button,
   Checkbox,
+  IconButton,
   KeyValue,
   MetaSection,
   MultiColumnList,
@@ -9,6 +10,8 @@ import {
   Pane,
   Select,
   Selection,
+  SelectionList,
+  SelectionOption,
   TextArea,
   TextField,
   matching,
@@ -47,6 +50,7 @@ const expectButton = Button(RECEIVING_PIECE_FORM_ACTIONS_LABELS.EXPECT);
 const statusLogList = editPieceModal.find(MultiColumnList({ id: 'piece-status-change-log' }));
 const locationSelection = editPieceModal.find(Selection({ name: 'locationId' }));
 const locationLookUpButton = editPieceModal.find(Button({ id: 'location-lookup-locationId' }));
+const holdingSelection = editPieceModal.find(Selection({ name: 'holdingId' }));
 
 const editPieceFields = {
   [RECEIVING_PIECE_FORM_FIELD_LABELS.DISPLAY_SUMMARY]: editPieceModal.find(
@@ -162,6 +166,30 @@ export default {
   clickLocationLookUpButton() {
     cy.do(locationLookUpButton.click());
     SelectLocationModal.waitLoading();
+  },
+  verifyHoldingOptions(holdingNames = []) {
+    cy.do(holdingSelection.open());
+    cy.expect(SelectionList().has({ optionCount: holdingNames.length }));
+
+    holdingNames.forEach((holdingName) => {
+      cy.expect(
+        SelectionList()
+          .find(SelectionOption(including(holdingName)))
+          .exists(),
+      );
+    });
+
+    cy.do(holdingSelection.toggle());
+  },
+  // Clears the location picked via "Create new holdings for location" and brings back the holdings dropdown
+  clearSelectedLocation() {
+    cy.do(
+      editPieceModal
+        .find(TextField({ name: 'locationId' }))
+        .find(IconButton({ icon: 'times-circle-solid' }))
+        .click(),
+    );
+    cy.expect(holdingSelection.exists());
   },
   checkFieldsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {

@@ -215,6 +215,12 @@ export default {
     MultiColumnListHelper.assertRowCount(receivingResultsList, titles.length);
   },
 
+  assertReceivingResultsCells(rowsConfig) {
+    cy.expect(receivingResultsList.exists());
+    MultiColumnListHelper.assertRowsCellsContent(receivingResultsList, rowsConfig);
+    MultiColumnListHelper.assertRowCount(receivingResultsList, rowsConfig.length);
+  },
+
   assertResetAllButtonState({ disabled }) {
     FiltersPaneHelper.assertResetAllButtonState(filtersPane, { disabled });
   },
