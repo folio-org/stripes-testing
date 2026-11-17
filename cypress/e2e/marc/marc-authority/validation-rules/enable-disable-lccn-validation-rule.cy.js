@@ -48,7 +48,7 @@ describe('MARC Authority - Validation rules', () => {
 
   it(
     'C569562 Enable / disable MARC authority "LCCN" structure validation rule (API) (promin)',
-    { tags: ['C569562', 'criticalPath', 'promin'] },
+    { tags: ['C569562', 'criticalPath', 'promin', 'nonParallel'] },
     () => {
       cy.getUserToken(user.username, user.password);
 

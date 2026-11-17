@@ -5,21 +5,26 @@ const MAX_FILES = 3;
 const MAX_ENTRIES = 20;
 const PREFIX = '[DI diagnostics]';
 
-const rememberUpload = (fileName) => {
+// accepts a file name, a fixture path or an attachFile object ({ filePath, fileName })
+const rememberUpload = (file) => {
+  const path = typeof file === 'string' ? file : file?.fileName || file?.filePath;
+  // DI names the job after the uploaded file, without folders
+  const fileName = path?.split('/').pop();
   if (!fileName) return;
   const files = Cypress.env(ENV_KEY) || [];
   Cypress.env(ENV_KEY, [...files.filter((name) => name !== fileName), fileName].slice(-MAX_FILES));
 };
 
-const getQuietly = (path, searchParams) => cy
-  .okapiRequest({
-    path,
-    searchParams,
-    isDefaultSearchParamsRequired: false,
-    failOnStatusCode: false,
-    customTimeout: 30_000,
-  })
-  .then(({ status, body }) => (status === 200 ? body : null));
+const getQuietly = (path, searchParams) =>
+  cy
+    .okapiRequest({
+      path,
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+      failOnStatusCode: false,
+      customTimeout: 30_000,
+    })
+    .then(({ status, body }) => ({ status, body: status === 200 ? body : null }));
 
 // "error" of the record plus "error" of every related*Info (an object or an array of objects)
 const errorsOf = (entry) => {
@@ -37,8 +42,13 @@ const logJobsOfFile = (fileName) => {
   // split jobs are named "<timestamp>-<name>_<part>.<ext>", so match on the name without its extension
   const baseName = fileName.replace(/\.[^.]+$/, '');
   getQuietly('metadata-provider/jobExecutions', { fileName: `*${baseName}*`, limit: 10 }).then(
-    (body) => {
-      const jobs = body?.jobExecutions || [];
+    ({ status, body }) => {
+      // the session is the test user's; without data import permissions the search gets 403
+      if (!body) {
+        cy.log(`${PREFIX} ${fileName}: job search failed (HTTP ${status})`);
+        return;
+      }
+      const jobs = body.jobExecutions || [];
       if (!jobs.length) {
         cy.log(`${PREFIX} ${fileName}: no jobs found`);
         return;
@@ -50,8 +60,17 @@ const logJobsOfFile = (fileName) => {
         // a composite parent has no records of its own; its children do
         if (job.subordinationType === 'COMPOSITE_PARENT') return;
         getQuietly(`metadata-provider/jobLogEntries/${job.id}`, { limit: MAX_ENTRIES }).then(
-          (log) => {
-            (log?.entries || []).forEach((entry) => {
+          ({ status, body: log }) => {
+            if (!log) {
+              cy.log(`${PREFIX} ${job.fileName}: job log request failed (HTTP ${status})`);
+              return;
+            }
+            // e.g. a job that failed before any record was processed
+            if (!log.entries?.length) {
+              cy.log(`${PREFIX} ${job.fileName}: record log is empty`);
+              return;
+            }
+            log.entries.forEach((entry) => {
               const errors = errorsOf(entry);
               cy.log(
                 `${PREFIX} record ${entry.sourceRecordOrder}: ${entry.sourceRecordActionStatus || '-'}` +

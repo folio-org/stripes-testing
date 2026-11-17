@@ -869,7 +869,9 @@ export default {
     cy.get('div[class^="mclRowContainer--"]')
       .find('[data-row-index]')
       .should(($rows) => {
-        const sharedRowsCount = $rows.filter((_, row) => Boolean(row.querySelector('[class*="sharedIcon"]'))).length;
+        const sharedRowsCount = $rows.filter((_, row) =>
+          Boolean(row.querySelector('[class*="sharedIcon"]')),
+        ).length;
         const localRowsCount = $rows.length - sharedRowsCount;
         expect($rows.length, 'number of rows').to.be.greaterThan(0);
         if (hasShared) expect(sharedRowsCount, 'rows with Shared icon').to.be.greaterThan(0);
@@ -1447,6 +1449,26 @@ export default {
       .then((res) => {
         return res.body.authorities || [];
       });
+  },
+
+  // Waits until all given authority records are searchable: mod-search indexes them asynchronously,
+  // so a search (or an API helper reading search/authorities) right after an import can miss them
+  waitForAuthoritiesInSearchViaApi(authorityIds, { timeout = 60_000, delay = 2_000 } = {}) {
+    return cy.recurse(
+      () =>
+        this.getMarcAuthoritiesViaApi({
+          query: `id==(${authorityIds.join(' or ')})`,
+          limit: 500,
+        }),
+      (authorities) =>
+        authorityIds.every((id) => authorities.some((authority) => authority.id === id)),
+      {
+        timeout,
+        delay,
+        limit: Math.ceil(timeout / delay) + 1,
+        error: `Not all ${authorityIds.length} authority records are searchable after ${timeout / 1000} s`,
+      },
+    );
   },
 
   waitAuthorityLinked(authorityId, numberOfTitles = null) {
