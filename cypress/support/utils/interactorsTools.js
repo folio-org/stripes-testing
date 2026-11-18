@@ -230,4 +230,18 @@ export default {
   checkModalMessage(title, message) {
     cy.expect(Modal(including(title)).has({ message: including(message) }));
   },
+  // Presses "Enter" on the MultiColumnList row that has focus (or contains the focused element).
+  // MCL handles Enter on a row only when the row itself is the event target, and focus can be on
+  // one of its cells (not typeable for cy.type()); cy.trigger() fires at the element under the
+  // center of the row (a cell), so the keydown is dispatched on the row element itself
+  pressEnterOnFocusedMclRow() {
+    cy.focused()
+      .closest('[class^="mclRow-"]')
+      .then(($row) => {
+        const win = $row[0].ownerDocument.defaultView;
+        const enterKeydown = new win.Event('keydown', { bubbles: true, cancelable: true });
+        Object.assign(enterKeydown, { key: 'Enter', code: 'Enter', keyCode: 13, which: 13 });
+        $row[0].dispatchEvent(enterKeydown);
+      });
+  },
 };
