@@ -74,6 +74,10 @@ const scrollParams = {
   value: 600,
 };
 const renewalBlockMessage = 'Patron blocked from renewing';
+const renewalFailureMessages = {
+  notRenewable: renewConfirmationTable.content.statusDetails,
+  outsideDueDateSchedule: 'Renewal date falls outside of date ranges in the loan policy',
+};
 
 const checkLoansPage = () => {
   cy.expect(PaneHeader(including(headers.loansPage)).exists());
@@ -84,17 +88,17 @@ const checkLoansPage = () => {
   cy.expect(Modal({ content: including(loanInfo.notRenewed) }).exists());
 };
 
-const checkModalTable = (modalTitle, itemData) => {
+const checkModalTable = (
+  modalTitle,
+  itemData,
+  statusDetails = renewConfirmationTable.content.statusDetails,
+) => {
   const modal = Modal(modalTitle);
   cy.expect([
     modal
       .find(MultiColumnListCell({ content: including(renewConfirmationTable.content.status) }))
       .exists(),
-    modal
-      .find(
-        MultiColumnListCell({ content: including(renewConfirmationTable.content.statusDetails) }),
-      )
-      .exists(),
+    modal.find(MultiColumnListCell({ content: including(statusDetails) })).exists(),
     MultiColumnListHeader(renewConfirmationTable.headers.renewalStatus).exists(),
     MultiColumnListHeader(renewConfirmationTable.headers.title).exists(),
     MultiColumnListHeader(renewConfirmationTable.headers.itemStatus).exists(),
@@ -120,26 +124,31 @@ const generateInitialLink = (userId, loanId) => `users/${userId}/loans/view/${lo
 
 export default {
   renewalBlockMessage,
+  renewalFailureMessages,
   checkLoansPage,
   generateInitialLink,
-  renewWithoutOverrideAccess(itemData) {
+  waitLoanDetailsLoading() {
+    cy.expect(PaneHeader(including(headers.loansPage)).exists());
+  },
+
+  renewWithoutOverrideAccess(itemData, statusDetails) {
     checkLoansPage();
 
-    checkModalTable(headers.renewConfirmation, itemData);
+    checkModalTable(headers.renewConfirmation, itemData, statusDetails);
 
     cy.expect(Button(buttonLabels.override).absent());
     cy.do(Button(buttonLabels.close).click());
   },
 
-  renewWithOverrideAccess(itemData) {
+  renewWithOverrideAccess(itemData, statusDetails) {
     checkLoansPage();
 
-    checkModalTable(headers.renewConfirmation, itemData);
+    checkModalTable(headers.renewConfirmation, itemData, statusDetails);
 
     cy.expect([Button(buttonLabels.override).exists(), Button(buttonLabels.close).exists()]);
   },
 
-  startOverriding(itemData) {
+  startOverriding(itemData, statusDetails) {
     cy.do(Button(buttonLabels.override).click());
 
     cy.expect([
@@ -152,7 +161,7 @@ export default {
         .exists(),
     ]);
 
-    checkModalTable(headers.override, itemData);
+    checkModalTable(headers.override, itemData, statusDetails);
 
     cy.expect([
       TextArea(fieldLabels.additionalInfo).exists(),
