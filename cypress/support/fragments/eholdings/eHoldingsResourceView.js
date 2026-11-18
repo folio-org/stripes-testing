@@ -48,7 +48,8 @@ const resourceSettingsAccordionButton = Button({
 const customCoverageDatesKeyValue = KeyValue('Custom coverage dates');
 const customCoverageStatementKeyValue = KeyValue('Custom coverage statement');
 const customEmbargoPeriodKeyValue = KeyValue('Custom embargo period');
-const showToPatronsKeyValue = KeyValue('Show to patrons');
+// UIEH-1539: replaced "Show to patrons"
+const hideExcludeTitleKeyValue = KeyValue('Hide/exclude title');
 const proxyKeyValue = KeyValue('Proxy');
 const proxiedURLKeyValue = KeyValue('Proxied URL');
 const customUrlKeyValue = KeyValue('Custom');
@@ -244,7 +245,7 @@ export default {
   verifyResourceSettingsAccordion() {
     this.expandResourceSettingsAccordion();
     cy.expect(resourceSettingsAccordion.exists());
-    cy.expect(showToPatronsKeyValue.exists());
+    cy.expect(hideExcludeTitleKeyValue.exists());
     cy.expect(proxyKeyValue.exists());
   },
 

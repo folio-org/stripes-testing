@@ -9,12 +9,32 @@ import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAu
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
-import getRandomPostfix from '../../../../../support/utils/stringTools';
+import FileManager from '../../../../../support/utils/fileManager';
+import getRandomPostfix, { randomNDigitNumber } from '../../../../../support/utils/stringTools';
 
 describe('MARC', () => {
   describe('MARC Bibliographic', () => {
     describe('Edit MARC bib', () => {
       describe('Automated linking', () => {
+        // Natural ids (010 $a) of the 9 authorities, also in $0 of the bib's linkable fields - other
+        // fixtures share them. Each run replaces the digits with random ones of the same length
+        // (the MARC directory stays valid), so automated linking finds only this run's authorities.
+        const naturalIdDigits = [
+          '77020005',
+          '83169269',
+          '2014052263',
+          '2011137755',
+          '98017694',
+          '91065740',
+          '2008001079',
+          '2009024487',
+          '79023810',
+        ];
+        const uniqueNaturalIdDigits = naturalIdDigits.map(
+          (digits) => `${randomNDigitNumber(digits.length)}`,
+        );
+        const editedBibFileName = `marcBibFileForC388518_${getRandomPostfix()}.mrc`;
+        const editedAuthFileName = `marcAuthFileForC388518_${getRandomPostfix()}.mrc`;
         const testData = {
           tag700: '700',
           createdRecordIDs: [],
@@ -26,14 +46,14 @@ describe('MARC', () => {
 
         const marcFiles = [
           {
-            marc: 'marcBibFileForC388518.mrc',
+            marc: editedBibFileName,
             fileName: `C388518 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_INSTANCE_AND_SRS,
             numOfRecords: 1,
             propertyName: 'instance',
           },
           {
-            marc: 'marcAuthFileForC388518.mrc',
+            marc: editedAuthFileName,
             fileName: `C388518 testMarcFile${getRandomPostfix()}.mrc`,
             jobProfileToRun: DEFAULT_JOB_PROFILE_NAMES.CREATE_AUTHORITY,
             numOfRecords: 9,
@@ -52,6 +72,18 @@ describe('MARC', () => {
           cy.getAdminToken();
           // make sure there are no duplicate authority records in the system
           MarcAuthorities.deleteMarcAuthorityByTitleViaAPI('C388518*');
+          DataImport.editMarcFile(
+            'marcBibFileForC388518.mrc',
+            editedBibFileName,
+            naturalIdDigits,
+            uniqueNaturalIdDigits,
+          );
+          DataImport.editMarcFile(
+            'marcAuthFileForC388518.mrc',
+            editedAuthFileName,
+            naturalIdDigits,
+            uniqueNaturalIdDigits,
+          );
 
           marcFiles.forEach((marcFile) => {
             DataImport.uploadFileViaApi(
@@ -94,6 +126,8 @@ describe('MARC', () => {
           testData.createdRecordIDs.forEach((id, index) => {
             if (index) MarcAuthority.deleteViaAPI(id, true);
           });
+          FileManager.deleteFile(`cypress/fixtures/${editedBibFileName}`);
+          FileManager.deleteFile(`cypress/fixtures/${editedAuthFileName}`);
         });
 
         it(

@@ -16,15 +16,7 @@ let user;
 const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,
   barcode: `barcode-${getRandomPostfix()}`,
-  // Remote location
-  get firstLocationId() {
-    return annexLocationId;
-  },
   firstLocationName: LOCATION_NAMES.ANNEX_UI,
-  // Non-remote location
-  get secondLocationId() {
-    return popularReadingCollectionLocationId;
-  },
   secondLocationName: LOCATION_NAMES.POPULAR_READING_COLLECTION_UI,
 };
 const successCalloutMessage =
@@ -39,10 +31,10 @@ describe('Remote Storage', () => {
       permissions.remoteStorageCRUD.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.getLocations({ query: `name=${LOCATION_NAMES.ANNEX_UI}` }).then((locations) => {
+      cy.getLocations({ query: `name=${item.firstLocationName}` }).then((locations) => {
         item.firstLocationId = locations.id;
       });
-      cy.getLocations({ query: `name=${LOCATION_NAMES.POPULAR_READING_COLLECTION_UI}` }).then(
+      cy.getLocations({ query: `name=${item.secondLocationName}` }).then(
         (locations) => {
           item.secondLocationId = locations.id;
         },
@@ -109,6 +101,7 @@ describe('Remote Storage', () => {
       InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
       InventorySearchAndFilter.selectSearchResultItem();
       ItemRecordView.closeDetailView();
+      cy.wait(5000); // wait for the item to be loaded
       InventoryInstance.openMoveItemsWithinAnInstance();
 
       InventoryInstance.moveItemToAnotherHolding({

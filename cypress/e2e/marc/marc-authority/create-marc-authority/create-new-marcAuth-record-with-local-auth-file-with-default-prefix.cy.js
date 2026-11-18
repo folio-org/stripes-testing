@@ -55,7 +55,7 @@ describe('MARC', () => {
               localAuthFile.isActive,
             ).then((sourceId) => {
               localAuthFile.id = sourceId;
-              cy.wait(70_000); // waiting for the file to be processed
+              cy.waitForAuthoritySourceFileInMappingViaAPI(sourceId);
               cy.getAdminToken();
             });
           })

@@ -306,6 +306,16 @@ export default {
     cy.expect([Pane(name).exists(), holdingStatusAccordion.has({ content: including(status) })]);
   },
 
+  // UIEH-1539: a selected package with some titles deselected shows "N of M titles selected"
+  verifySelectedPackageDetailView(name) {
+    cy.expect([
+      Pane(name).exists(),
+      holdingStatusAccordion.has({
+        content: or(including('Selected'), including('titles selected')),
+      }),
+    ]);
+  },
+
   verifyCalloutMessage: (message) => {
     cy.expect(
       Callout({

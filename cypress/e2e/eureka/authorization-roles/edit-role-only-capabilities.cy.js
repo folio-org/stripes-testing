@@ -123,16 +123,15 @@ describe('Eureka', () => {
       });
 
       const appNameRegExpPart = `(${testData.originalApplications[0]}|${testData.originalApplications[1]})`;
-      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\(${appNameRegExpPart}-.{1,}or.{1,}${appNameRegExpPart}-.{1,}`;
+      // other applications (e.g. app-inventory) may be listed before the platform ones
+      const regExpBase = `\\?limit=\\d{1,}&query=applicationId==\\((.{1,}or.{1,})?${appNameRegExpPart}-.{1,}or.{1,}${appNameRegExpPart}-.{1,}`;
       const capabilitiesCallRegExp = new RegExp(`\\/capabilities${regExpBase}`);
       const capabilitySetsCallRegExp = new RegExp(`\\/capability-sets${regExpBase}`);
 
       after('Delete user, role', () => {
         cy.getAdminToken(true);
-        Users.deleteViaApi(testData.user.userId);
-        cy.deleteCapabilitySetsFromRoleApi(testData.roleId);
-        cy.deleteCapabilitiesFromRoleApi(testData.roleId);
-        cy.deleteAuthorizationRoleApi(testData.roleId);
+        Users.deleteViaApi(testData.user?.userId);
+        cy.deleteAuthorizationRoleApi(testData.roleId, true);
       });
 
       it(

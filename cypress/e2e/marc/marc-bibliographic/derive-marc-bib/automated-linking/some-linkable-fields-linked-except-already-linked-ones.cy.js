@@ -42,6 +42,8 @@ describe('MARC', () => {
             rowIndex: 82,
             value: 'C388643 Lee, Stan, 1922-2018',
             tag: 700,
+            authorityTag: '100',
+            naturalId: 'n83169267388643',
             boxFourth: '$a C388643 Lee, Stan, $d 1922-2018',
             boxFifth: '$e creator.',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n83169267388643',
@@ -52,6 +54,8 @@ describe('MARC', () => {
             value:
               'C388643 Delaware Symposium on Language Studies. Delaware symposia on language studies 1985',
             tag: 711,
+            authorityTag: '111',
+            naturalId: 'n84745425388643',
             boxFourth:
               '$a C388643 Delaware Symposium on Language Studies. $t Delaware symposia on language studies $f 1985',
             boxFifth: '',
@@ -62,6 +66,8 @@ describe('MARC', () => {
             rowIndex: 86,
             value: 'C388643 Gone with the wind (Motion picture : 1939)',
             tag: 730,
+            authorityTag: '130',
+            naturalId: 'n79066095388643',
             boxFourth: '$a C388643 Gone with the wind $g (Motion picture : $f 1939)',
             boxFifth: '',
             boxSixth: '$0 http://id.loc.gov/authorities/names/n79066095388643',
@@ -175,37 +181,43 @@ describe('MARC', () => {
               });
             });
 
-            cy.loginAsAdmin({
-              path: TopMenu.inventoryPath,
-              waiter: InventoryInstances.waitContentLoading,
-            }).then(() => {
-              InventoryInstances.searchByTitle(createdRecordsIDs[0]);
-              InventoryInstances.selectInstance();
-              InventoryInstance.editMarcBibliographicRecord();
-
-              linkableFields.forEach((tag) => {
-                QuickMarcEditor.setRulesForField(tag, true);
-              });
-
-              preLinkedFields.forEach((linking) => {
-                QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
-                MarcAuthorities.switchToSearch();
-                InventoryInstance.verifySelectMarcAuthorityModal();
-                InventoryInstance.verifySearchOptions();
-                InventoryInstance.searchResults(linking.value);
-                InventoryInstance.clickLinkButton();
-                QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
-              });
-
-              QuickMarcEditor.pressSaveAndClose();
-              QuickMarcEditor.checkAfterSaveAndClose();
-              InventoryInstance.waitLoading();
-
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.inventoryPath,
-                waiter: InventoryInstances.waitContentLoading,
-              });
+            linkableFields.forEach((tag) => {
+              QuickMarcEditor.setRulesForField(tag, true);
             });
+
+            // the imported authorities are indexed asynchronously - linking reads them from search
+            cy.then(() => {
+              MarcAuthorities.waitForAuthoritiesInSearchViaApi(createdRecordsIDs.slice(1));
+            })
+              .then(() => {
+                preLinkedFields.forEach((field) => {
+                  MarcAuthorities.getMarcAuthoritiesViaApi({
+                    query: `naturalId=="${field.naturalId}" and authRefType=="Authorized"`,
+                  }).then(([authority]) => {
+                    field.authorityId = authority.id;
+                  });
+                });
+              })
+              .then(() => {
+                // Precondition: 700, 711, 730 are linked (repeatable tags - linked by row index)
+                QuickMarcEditor.linkMarcRecordsViaApi({
+                  bibId: createdRecordsIDs[0],
+                  authorityIds: preLinkedFields.map((field) => field.authorityId),
+                  bibFieldTags: preLinkedFields.map((field) => `${field.tag}`),
+                  authorityFieldTags: preLinkedFields.map((field) => field.authorityTag),
+                  // controlled subfields from the authority + the bib's own uncontrolled ones
+                  finalBibFieldContents: preLinkedFields.map((field) =>
+                    [field.boxFourth, field.boxFifth].filter(Boolean).join(' '),
+                  ),
+                  bibFieldIndexes: preLinkedFields.map((field) => field.rowIndex),
+                });
+              })
+              .then(() => {
+                cy.login(userData.username, userData.password, {
+                  path: TopMenu.inventoryPath,
+                  waiter: InventoryInstances.waitContentLoading,
+                });
+              });
           });
         });
 

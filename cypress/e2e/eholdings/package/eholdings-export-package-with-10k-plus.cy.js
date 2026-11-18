@@ -61,7 +61,7 @@ describe('eHoldings', () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();
         EHoldingsPackages.openPackage();
-        EHoldingsPackageView.verifyDetailViewPage(testData.packageName, testData.selectedStatus);
+        EHoldingsPackageView.verifySelectedPackageDetailView(testData.packageName);
         EHoldingsPackageView.openExportModal({ exportDisabled: true });
         EHoldingsPackageView.clickExportSelectedPackageFields();
         testData.packageExportFields.forEach((packageField) => {

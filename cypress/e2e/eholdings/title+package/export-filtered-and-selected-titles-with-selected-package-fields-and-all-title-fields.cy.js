@@ -94,8 +94,9 @@ describe('eHoldings', () => {
           EHoldingsPackageView.verifyPackageDetailViewIsOpened(
             testData.package.name,
             testData.package.countTotalTitles,
-            testData.selectedStatus,
+            '',
           );
+          EHoldingsPackageView.verifySelectedPackageDetailView(testData.package.name);
           cy.wait('@getTitlesOriginal').its('response.statusCode').should('eq', 200);
           cy.wait(1000);
 

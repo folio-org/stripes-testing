@@ -25,6 +25,7 @@ describe('Inventory', () => {
     {
       retries: {
         runMode: 1,
+        openMode: 1,
       },
     },
     () => {
@@ -122,7 +123,7 @@ describe('Inventory', () => {
       });
 
       afterEach('Delete test data', () => {
-        cy.getAdminToken().then(() => {
+        cy.getAdminToken(false).then(() => {
           UserEdit.changeServicePointPreferenceViaApi(user.userId, [
             firstServicePoint.id,
             secondServicePoint.id,
@@ -144,7 +145,7 @@ describe('Inventory', () => {
           FilterItems.toggleItemStatusAccordion();
           cy.wait(1000);
           FilterItems.toggleStatus(itemStatus);
-          InventorySearchAndFilter.resetAll();
+          InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
 
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.CHECK_IN);
           CheckInActions.waitLoading();
@@ -171,6 +172,7 @@ describe('Inventory', () => {
           TopMenuNavigation.navigateToApp(APPLICATION_NAMES.INVENTORY);
           InventorySearchAndFilter.waitLoading();
           InventorySearchAndFilter.byKeywords(itemData.instanceTitle);
+          InventoryInstances.selectInstanceByTitle(itemData.instanceTitle);
           InventoryHoldings.checkIfExpanded(`${holdingsPermanentLocation} >`, true);
           InventoryInstance.openItemByBarcode(itemData.barcode);
           ItemRecordView.waitLoading();
@@ -179,6 +181,9 @@ describe('Inventory', () => {
             secondServicePoint.name,
             `${user.lastName}, ${user.firstName}`,
           );
+          // log out in the UI first: on a retry, beforeEach's getAdminToken clears cookies while this
+          // page (Check in) is still open - it then logs out itself and ends the new admin session (401)
+          cy.logout();
         },
       );
     },
