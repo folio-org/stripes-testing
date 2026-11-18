@@ -46,6 +46,7 @@ const expectedPiecesAccordionId = 'expected';
 const receivedPiecesAccordionId = 'received';
 const receiveButton = Button('Receive');
 const unreceiveButton = Button('Unreceive');
+const selectAllPiecesCheckbox = Checkbox({ ariaLabel: 'Select all pieces' });
 const expectButton = Button(RECEIVING_PIECE_FORM_ACTIONS_LABELS.EXPECT);
 const addPieceModal = Modal({ id: 'add-piece-modal' });
 const addPieceButton = Button('Add piece');
@@ -230,11 +231,15 @@ export default {
     this.assertResetAllButtonState({ disabled: true });
   },
 
-  assertNoFiltersApplied() {
-    this.assertResetAllButtonState({ disabled: true });
+  verifyChooseFilterMessage() {
     cy.expect(
       receivingResultsSection.find(HTML(including(RESULTS_PANE_CHOOSE_FILTER_MESSAGE))).exists(),
     );
+  },
+
+  assertNoFiltersApplied() {
+    this.assertResetAllButtonState({ disabled: true });
+    this.verifyChooseFilterMessage();
   },
 
   clearFilter(filterLabel) {
@@ -569,8 +574,13 @@ export default {
   },
 
   receiveAll: () => {
-    cy.do([Checkbox({ ariaLabel: 'Select all pieces' }).clickInput(), receiveButton.click()]);
+    cy.do([selectAllPiecesCheckbox.clickInput(), receiveButton.click()]);
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
+  },
+
+  unreceiveAll: () => {
+    cy.do([selectAllPiecesCheckbox.clickInput(), unreceiveButton.click()]);
+    InteractorsTools.checkCalloutMessage(ReceivingStates.pieceUnreceivedSuccessfully);
   },
 
   clickOnInstance: () => {
