@@ -103,8 +103,7 @@ describe('Agreements', () => {
           // Step 12: Press "Enter" keyboard button
           // Verify "Select package" modal window is closed
           // Verify the highlighted "Title" record is linked and displayed in the new Agreement line
-          cy.focused().type('{enter}');
-          SelectEHoldingsModal.verifySelectPackageModalIsClosed();
+          SelectEHoldingsModal.selectFocusedRecordByEnter();
           NewAgreementLine.verifyLinkedEResourceIsDisplayed(highlightedTitle);
         });
       },

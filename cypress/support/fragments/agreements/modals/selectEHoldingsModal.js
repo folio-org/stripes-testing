@@ -11,6 +11,7 @@ import {
   including,
   or,
 } from '../../../../../interactors';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const selectPackageModal = Modal({ id: 'find-package-title-modal' });
 const searchFilterPane = Section({ title: 'Search & filter' });
@@ -132,6 +133,11 @@ export default {
 
   selectRecord(recordName) {
     cy.contains('#find-package-title-modal [class^="mclRow-"]', recordName).click();
+    this.verifySelectPackageModalIsClosed();
+  },
+
+  selectFocusedRecordByEnter() {
+    InteractorsTools.pressEnterOnFocusedMclRow();
     this.verifySelectPackageModalIsClosed();
   },
 
