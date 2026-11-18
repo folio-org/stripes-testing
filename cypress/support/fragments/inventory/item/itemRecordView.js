@@ -448,6 +448,17 @@ export default {
       cell('Service point').has({ content: servicePointName }),
     ]);
   },
+  // Checks any row in the circulation history; `object` is optional (defaults to empty value)
+  checkItemCirculationHistoryRow: ({ date, object, circAction, source, servicePoint }, row = 0) => {
+    const cell = (column) => circulationHistoryList.find(MultiColumnListCell({ row, column }));
+    cy.expect([
+      cell('Date').has({ content: including(date) }),
+      cell('Object').has({ content: object || or('-', 'No value set-') }),
+      cell('Circ action').has({ content: circAction }),
+      cell('Source').has({ content: source }),
+      cell('Service point').has({ content: servicePoint }),
+    ]);
+  },
   // No check-ins: the table shows a single row with empty values
   checkItemCirculationHistoryEmpty: () => {
     const cell = (column) => circulationHistoryList.find(MultiColumnListCell({ row: 0, column }));

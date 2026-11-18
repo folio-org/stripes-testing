@@ -401,7 +401,8 @@ export default {
     cy.do(Button('Reset all').click());
     cy.wait(1000);
   },
-  selectAwaitingDeliveryRequest: () => cy.do(Checkbox({ name: 'Open - Awaiting delivery' }).click()),
+  selectAwaitingDeliveryRequest: () =>
+    cy.do(Checkbox({ name: 'Open - Awaiting delivery' }).click()),
   selectAwaitingPickupRequest: () => cy.do(Checkbox({ name: 'Open - Awaiting pickup' }).click()),
   selectInTransitRequest: () => cy.do(Checkbox({ name: 'Open - In transit' }).click()),
   selectNotYetFilledRequest() {
@@ -421,29 +422,33 @@ export default {
     cy.wait(2000);
   },
 
-  selectRequest: (title, rowIndex) => cy.do(
-    requestsPane
-      .find(MultiColumnListCell({ row: rowIndex, content: title }))
-      .find(Link(including(title)))
-      .click(),
-  ),
+  selectRequest: (title, rowIndex) =>
+    cy.do(
+      requestsPane
+        .find(MultiColumnListCell({ row: rowIndex, content: title }))
+        .find(Link(including(title)))
+        .click(),
+    ),
 
   openTagsPane: () => cy.do(showTagsButton.click()),
-  closePane: (title) => cy.do(
-    Pane({ title })
-      .find(IconButton({ ariaLabel: 'Close ' }))
-      .click(),
-  ),
+  closePane: (title) =>
+    cy.do(
+      Pane({ title })
+        .find(IconButton({ ariaLabel: 'Close ' }))
+        .click(),
+    ),
   selectHoldsRequestType: () => cy.do(holdCheckbox.click()),
   selectPagesRequestType: () => cy.do(pageCheckbox.click()),
   selectRecallsRequestType: () => cy.do(recallCheckbox.click()),
-  verifyNoResultMessage: (noResultMessage) => cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists()),
+  verifyNoResultMessage: (noResultMessage) =>
+    cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists()),
   navigateToApp(appName) {
     cy.wait(1000);
     cy.do([appsButton.click(), Button(appName).click()]);
     cy.wait(2000);
   },
-  verifyCreatedRequest: (title) => cy.expect(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).exists()),
+  verifyCreatedRequest: (title) =>
+    cy.expect(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).exists()),
 
   verifySearchInputValue: (value) => {
     cy.expect(TextField({ id: 'input-request-search' }).has({ value }));
@@ -459,7 +464,9 @@ export default {
   },
   verifyColumnsPresence() {
     cy.expect([
-      [...this.columns, this.sortingColumns].forEach(({ title }) => MultiColumnListHeader(title).exists()),
+      [...this.columns, this.sortingColumns].forEach(({ title }) =>
+        MultiColumnListHeader(title).exists(),
+      ),
     ]);
   },
 
@@ -773,30 +780,33 @@ export default {
     cy.wait(2000);
   },
 
-  getRequestIdViaApi: (searchParams) => cy
-    .okapiRequest({
-      path: 'circulation/requests',
-      searchParams,
-    })
-    .then((res) => res.body.requests[0].id),
+  getRequestIdViaApi: (searchParams) =>
+    cy
+      .okapiRequest({
+        path: 'circulation/requests',
+        searchParams,
+      })
+      .then((res) => res.body.requests[0].id),
 
   verifyShowTagsButtonIsDisabled: () => {
     cy.expect(showTagsButton.has({ disabled: true }));
   },
 
-  createNewRequestViaApi: (requestBody) => cy.okapiRequest({
-    method: 'POST',
-    path: 'circulation/requests',
-    body: requestBody,
-    isDefaultSearchParamsRequired: false,
-  }),
+  createNewRequestViaApi: (requestBody) =>
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'circulation/requests',
+      body: requestBody,
+      isDefaultSearchParamsRequired: false,
+    }),
 
-  createNewEcsRequestViaApi: (requestBody) => cy.okapiRequest({
-    method: 'POST',
-    path: 'circulation-bff/requests',
-    body: requestBody,
-    isDefaultSearchParamsRequired: false,
-  }),
+  createNewEcsRequestViaApi: (requestBody) =>
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'circulation-bff/requests',
+      body: requestBody,
+      isDefaultSearchParamsRequired: false,
+    }),
 
   filterRequestsByServicePoints(servicePoint) {
     cy.wait(5000);
@@ -1028,6 +1038,12 @@ export default {
   verifyRequestStatusInList(status) {
     cy.expect(
       requestsResultsSection.find(MultiColumnListCell({ content: including(status) })).exists(),
+    );
+  },
+
+  verifyItemBarcodeInList(barcode) {
+    cy.expect(
+      requestsResultsSection.find(MultiColumnListCell({ content: including(barcode) })).exists(),
     );
   },
 };

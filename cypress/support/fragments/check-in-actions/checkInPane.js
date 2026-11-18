@@ -1,5 +1,5 @@
 import { matching, HTML, including } from '@interactors/html';
-import { MultiColumnListCell, MultiColumnListRow } from '../../../../interactors';
+import { Button, MultiColumnListCell, MultiColumnListRow } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 export default {
@@ -79,12 +79,14 @@ export default {
   },
 
   checkResultsInTheRow(allContentToCheck, rowNumber = 0) {
-    allContentToCheck.forEach((contentToCheck) => cy.expect(
-      MultiColumnListCell({
-        row: rowNumber,
-        content: contentToCheck,
-      }).exists(),
-    ));
+    allContentToCheck.forEach((contentToCheck) =>
+      cy.expect(
+        MultiColumnListCell({
+          row: rowNumber,
+          content: contentToCheck,
+        }).exists(),
+      ),
+    );
   },
 
   checkItemIsNotCheckedIn(itemBarcode) {
@@ -108,5 +110,41 @@ export default {
           .absent(),
       );
     }
+  },
+
+  verifyInHouseUseAriaLabel(rowNumber = 0) {
+    cy.get(
+      `#list-items-checked-in [data-row-index="row-${rowNumber}"] [aria-label="In-house use, Yes"]`,
+    ).should('exist');
+  },
+
+  clickActionsForRow(rowNumber = 0) {
+    cy.do(Button({ id: `available-actions-button-${rowNumber}` }).click());
+  },
+
+  verifyActionsMenuContainsOnlyItemDetails() {
+    cy.expect([
+      Button('Item details').exists(),
+      Button('Loan details').absent(),
+      Button('Patron details').absent(),
+      Button('New Fee/Fine').absent(),
+    ]);
+  },
+
+  verifyActionsMenuContainsCheckedOutOptions() {
+    cy.expect([
+      Button('Loan details').exists(),
+      Button('Patron details').exists(),
+      Button('Item details').exists(),
+      Button('New Fee/Fine').exists(),
+    ]);
+  },
+
+  clickItemDetailsFromOpenMenu() {
+    cy.do(Button('Item details').click());
+  },
+
+  verifyItemBarcodeAbsentInResults(itemBarcode) {
+    cy.expect(MultiColumnListRow(including(itemBarcode)).absent());
   },
 };
