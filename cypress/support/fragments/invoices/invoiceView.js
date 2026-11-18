@@ -169,6 +169,18 @@ export default {
         );
       }
 
+      if (record.poStatus) {
+        cy.expect(
+          invoiceLinesSection
+            .find(
+              MultiColumnListCell({
+                row: index,
+                column: INVOICE_LINES_TABLE_COLUMN_HEADERS.PO_STATUS,
+              }),
+            )
+            .has({ content: including(record.poStatus) }),
+        );
+      }
       if (record.receiptStatus) {
         cy.expect(
           invoiceLinesSection

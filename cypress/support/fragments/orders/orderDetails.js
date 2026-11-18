@@ -84,6 +84,14 @@ export default {
       cy.expect(orderDetailsPane.find(KeyValue(label)).has(conditions));
     });
   },
+  clickOnOrganizationFromOrder(organizationName) {
+    cy.do(
+      orderDetailsPane
+        .find(KeyValue(ORDER_VIEW_FIELD_LABELS.VENDOR))
+        .find(Link(organizationName))
+        .click(),
+    );
+  },
   checkFieldsHasCopyIcon(fields = []) {
     fields.forEach(({ label }) => {
       cy.expect(

@@ -57,6 +57,10 @@ export const ORDER_LINE_PAYMENT_STATUSES_API = {
   PAYMENT_NOT_REQUIRED: 'Payment Not Required',
 };
 
+export const ORDER_LINE_RECEIPT_STATUSES_API = {
+  RECEIPT_NOT_REQUIRED: 'Receipt Not Required',
+};
+
 export const ORDER_FORMAT_NAMES_IN_PROFILE = {
   ELECTRONIC_RESOURCE: 'Electronic Resource',
   PE_MIX: 'P/E Mix',
