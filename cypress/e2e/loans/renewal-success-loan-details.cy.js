@@ -1,21 +1,22 @@
 import uuid from 'uuid';
 
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import LoanPolicyActions from '../../support/fragments/circulation/loan-policy';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import { Permissions } from '../../support/dictionary';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import UserEdit from '../../support/fragments/users/userEdit';
 import Checkout from '../../support/fragments/checkout/checkout';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import { default as LoanPolicy, default as LoanPolicyActions } from '../../support/fragments/circulation/loan-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import Loans from '../../support/fragments/users/userDefaultObjects/loans';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Loans', () => {
   describe('Loans: Renewals', () => {
@@ -23,10 +24,9 @@ describe('Loans', () => {
       folioInstances: InventoryInstances.generateFolioInstances(),
       servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     };
-    const loanPolicyId = uuid();
     const loanPolicyData = {
-      id: loanPolicyId,
-      name: `Test loan policy ${loanPolicyId}`,
+      id: uuid(),
+      name: `Test loan policy C580 ${getTestEntityValue()}`,
     };
     let itemBarcode;
 
@@ -50,7 +50,7 @@ describe('Loans', () => {
         })
         .then(() => {
           LoanPolicyActions.createRenewableLoanPolicyApi(loanPolicyData);
-          CirculationRules.addRuleViaApi({ t: testData.loanTypeId }, { i: loanPolicyData.id }).then(
+          CirculationRules.addRuleViaApi({ t: testData.loanTypeId }, { l: loanPolicyData.id }).then(
             (newRule) => {
               testData.addedRule = newRule;
             },
@@ -78,6 +78,7 @@ describe('Loans', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
+      CirculationRules.deleteRuleViaApi(testData.addedRule);
       InventoryInstances.deleteInstanceViaApi({
         instance: testData.folioInstances[0],
         servicePoint: testData.servicePoint,
@@ -87,6 +88,10 @@ describe('Loans', () => {
       ServicePoints.deleteViaApi(testData.servicePoint.id);
       Locations.deleteViaApi(testData.defaultLocation);
       Users.deleteViaApi(testData.user.userId);
+      cy.deleteLoanType(testData.loanTypeId);
+      if (testData.loanPolicy && testData.loanPolicy.id) {
+        LoanPolicy.deleteApi(testData.loanPolicy.id);
+      }
     });
 
     it(
@@ -103,7 +108,12 @@ describe('Loans', () => {
         UserLoans.renewItem(itemBarcode, true);
         LoanDetails.checkAction(0, 'Renewed');
         LoanDetails.checkRenewalCount();
-      },
+        Loans.getApi(testData.user.userId).then(([loan]) => {
+          cy.getLoanHistory(loan.id).then(([renewedAction]) => {
+            LoanDetails.checkDueDate(0, renewedAction.loan.dueDate);
+          });
+        });
+      }
     );
   });
 });

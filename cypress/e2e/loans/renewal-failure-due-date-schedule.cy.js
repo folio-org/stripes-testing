@@ -39,6 +39,7 @@ describe(
     };
     const renewOverrideUserData = { ...renewUserData };
     let LOAN_POLICY_ID;
+    let fixedDueDateScheduleId;
     let loanPolicyData = {};
     let itemData1 = {};
     let itemData2 = {};
@@ -46,19 +47,20 @@ describe(
 
     beforeEach(() => {
       LOAN_POLICY_ID = uuid();
+      fixedDueDateScheduleId = uuid();
       loanPolicyData = {
         id: LOAN_POLICY_ID,
-        name: `Test loan policy ${LOAN_POLICY_ID}`,
+        name: `AT_C570_LoanPolicy_${getRandomPostfix()}`,
       };
       itemData1 = {
-        title: `CY_Test instance ${getRandomPostfix()}`,
+        title: `AT_C570_Instance_${getRandomPostfix()}`,
         status: 'Checked out',
         requests: '0',
         barcode: generateItemBarcode(),
         loanPolicy: loanPolicyData.name,
       };
       itemData2 = {
-        title: `CY_Test instance ${getRandomPostfix()}`,
+        title: `AT_C570_Instance_${getRandomPostfix()}`,
         status: 'Checked out',
         requests: '0',
         barcode: generateItemBarcode(),
@@ -161,14 +163,28 @@ describe(
             ],
           });
         })
-        // create loan policy with due date schedule that doesn't contain current date
+        // create renewal due date schedule that doesn't contain current (system) date
         .then(() => {
           const currentDate = new Date();
-          const pastDate = new Date(currentDate);
-          pastDate.setDate(currentDate.getDate() - 30);
-          const futureDate = new Date(currentDate);
-          futureDate.setDate(currentDate.getDate() + 30);
+          const scheduleFrom = new Date(currentDate);
+          scheduleFrom.setDate(currentDate.getDate() - 60);
+          const scheduleTo = new Date(currentDate);
+          scheduleTo.setDate(currentDate.getDate() - 30);
 
+          cy.createFixedDueDateSchedule({
+            id: fixedDueDateScheduleId,
+            name: `AT_C570_Schedule_${getRandomPostfix()}`,
+            schedules: [
+              {
+                from: scheduleFrom.toISOString(),
+                to: scheduleTo.toISOString(),
+                due: scheduleTo.toISOString(),
+              },
+            ],
+          });
+        })
+        // create loan policy that renews from system date limited by the schedule above
+        .then(() => {
           cy.createLoanPolicy({
             id: loanPolicyData.id,
             name: loanPolicyData.name,
@@ -185,6 +201,12 @@ describe(
             renewalsPolicy: {
               numberAllowed: 5,
               renewFromId: 'SYSTEM_DATE',
+              differentPeriod: true,
+              period: {
+                duration: 3,
+                intervalId: 'Weeks',
+              },
+              alternateFixedDueDateScheduleId: fixedDueDateScheduleId,
             },
           });
         })
@@ -260,30 +282,34 @@ describe(
           cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
           InventoryInstance.deleteInstanceViaApi(instance.id);
         });
-        cy.deleteLoanPolicy(LOAN_POLICY_ID);
+        cy.deleteLoanPolicy(LOAN_POLICY_ID).then(() => {
+          cy.deleteFixedDueDateSchedule(fixedDueDateScheduleId);
+        });
       });
     });
 
     it(
       "C570 Renewal: failure because renewal date is not in loan policy's due date schedule (vega)",
-      { tags: ['extendedPath', 'vega', 'system', 'C570'] },
+      { tags: ['extendedPath', 'vega', 'C570'] },
       () => {
+        const { outsideDueDateSchedule } = RenewalActions.renewalFailureMessages;
+
         // Step 1: Log in as User A (without override permission) and attempt to renew
         cy.login(renewUserData.username, renewUserData.password, {
           path: RenewalActions.generateInitialLink(renewUserData.id, loanId1),
-          waiter: () => cy.wait(10000),
+          waiter: RenewalActions.waitLoanDetailsLoading,
         });
-        RenewalActions.renewWithoutOverrideAccess(itemData1);
+        RenewalActions.renewWithoutOverrideAccess(itemData1, outsideDueDateSchedule);
 
         // Step 2: Log in as User B (with override permission) and attempt to renew
         cy.login(renewOverrideUserData.username, renewOverrideUserData.password, {
           path: RenewalActions.generateInitialLink(renewOverrideUserData.id, loanId2),
-          waiter: () => cy.wait(10000),
+          waiter: RenewalActions.waitLoanDetailsLoading,
         });
-        RenewalActions.renewWithOverrideAccess(itemData2);
+        RenewalActions.renewWithOverrideAccess(itemData2, outsideDueDateSchedule);
 
         // Step 3-4: Click override, fill required information
-        RenewalActions.startOverriding(itemData2);
+        RenewalActions.startOverriding(itemData2, outsideDueDateSchedule);
         RenewalActions.fillOverrideInfo();
 
         // Step 5: Override the renewal
