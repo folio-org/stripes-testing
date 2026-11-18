@@ -8,9 +8,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-// The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
-// #freeze pipeline deadlock
-describe.skip('Eureka', () => {
+describe('Eureka', () => {
   describe('Settings', () => {
     describe('Authorization roles', () => {
       const randomPostfix = getRandomPostfix();
@@ -54,11 +52,9 @@ describe.skip('Eureka', () => {
         });
       });
 
-      // The test is freezing in pipeline, so skipping it for now. Needs to be investigated and fixed.
-      // #freeze pipeline deadlock
-      it.skip(
+      it(
         'C1602452 Authorization roles listing pane fills available width after role detail pane is closed (eureka)',
-        { tags: ['extendedPathBroken', 'eureka', 'C1602452Broken'] },
+        { tags: ['extendedPath', 'eureka', 'C1602452'] },
         () => {
           const [firstRole, secondRole] = testData.roles;
 
