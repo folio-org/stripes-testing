@@ -84,3 +84,13 @@ export const UNRECEIVABLE_TABLE_COLUMN_HEADERS = {
   REQUEST: 'Request',
   CALL_NUMBER: 'Call number',
 };
+
+export const RECEIVING_REMOVE_FROM_PACKAGE_MESSAGES = {
+  CONFIRMATION:
+    'Removing this title from the package will delete all related pieces and delete any related inventory Holdings and Items. Holdings that contain items that are not related to this order and receiving title will not be deleted.',
+  DELETE_HOLDINGS:
+    'One or more related Holdings do not reference any other pieces or items. Do you want to delete them?',
+  SUCCESS: 'Related pieces and any related inventory Holdings and Items have been deleted.',
+  RECEIVED_PIECES_ERROR:
+    "Unable to remove the title as there are pieces with a 'Received' status associated with it",
+};
