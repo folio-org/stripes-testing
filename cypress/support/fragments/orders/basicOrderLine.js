@@ -25,6 +25,7 @@ const getDefaultOrderLine = ({
   acquisitionMethod = '',
   automaticExport = false,
   listUnitPrice = 1,
+  currency = 'USD',
   poLineEstimatedPrice,
   fundDistribution = [],
   productIds = [],
@@ -45,7 +46,7 @@ const getDefaultOrderLine = ({
     contributors: [],
     cost: {
       listUnitPrice,
-      currency: 'USD',
+      currency,
       discountType: 'percentage',
       quantityPhysical: quantity,
       poLineEstimatedPrice,

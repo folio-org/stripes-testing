@@ -21,6 +21,17 @@ export const ORGANIZATION_DETAILS_FIELDS = {
   VENDOR: 'Vendor',
 };
 
+export const ORGANIZATION_DETAILS_ACCORDIONS = {
+  SUMMARY: 'Summary',
+  CONTACT_INFORMATION: 'Contact information',
+  CONTACT_PEOPLE: 'Contact people',
+  INTERFACE: 'Interface',
+  VENDOR_INFORMATION: 'Vendor information',
+  VENDOR_TERMS: 'Vendor terms',
+  INTEGRATION_DETAILS: 'Integration details',
+  ACCOUNTS: 'Accounts',
+};
+
 export const ORGANIZATION_FILTER_LABELS = {
   ACQUISITION_UNIT: 'Acquisition unit',
   COUNTRY: 'Country',
