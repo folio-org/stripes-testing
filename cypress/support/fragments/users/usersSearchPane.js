@@ -7,11 +7,20 @@ import {
   MultiColumnListCell,
   MultiColumnListRow,
   MultiSelect,
+  MultiSelectOption,
   Pane,
   PaneHeader,
   Select,
   TextField,
 } from '../../../../interactors';
+
+// IDs of the fixed filter accordions in the Users Search & filter pane
+export const usersFilterAccordionIds = {
+  status: 'users-filter-accordion-status',
+  patronGroup: 'users-filter-accordion-patron-group',
+  departments: 'users-filter-accordion-departments',
+  tags: 'users-filter-accordion-tags',
+};
 
 const searchPaneTitle = 'Search & filter';
 const resultsPane = Pane({ id: 'users-search-results-pane' });
@@ -204,5 +213,69 @@ export default {
 
   verifyResultsPaneActionsButtonFocused() {
     cy.expect(resultsPane.find(Button('Actions')).has({ focused: true }));
+  },
+
+  verifySearchButtonEnabled(enabled = true) {
+    cy.expect(Button({ id: 'submit-user-search' }).has({ disabled: !enabled }));
+  },
+
+  verifyResetAllButtonEnabled(enabled = true) {
+    cy.expect(Button({ id: 'clickable-reset-all' }).has({ disabled: !enabled }));
+  },
+
+  // accordionId: the HTML id of the accordion element (e.g. 'users-filter-accordion-status').
+  // Scoping via the DOM id is more reliable than the Accordion interactor's .find() because the
+  // clear button lives in the FilterAccordionHeader's headerWrapper, which the BigTest interactor
+  // may not search. The button[icon="times-circle-solid"] attribute selector matches the IconButton.
+  verifyFilterAccordionClearButtonExists(accordionId, exists = true) {
+    if (exists) {
+      cy.get(`#${accordionId} button[icon="times-circle-solid"]`).should('exist');
+    } else {
+      cy.get(`#${accordionId} button[icon="times-circle-solid"]`).should('not.exist');
+    }
+  },
+
+  clickFilterAccordionClearButton(accordionId) {
+    cy.get(`#${accordionId} button[icon="times-circle-solid"]`).click();
+  },
+
+  selectPatronGroupFilter(patronGroupName) {
+    cy.do(
+      Accordion({ id: 'users-filter-accordion-patron-group' })
+        .find(Checkbox(patronGroupName))
+        .click(),
+    );
+  },
+
+  // For SINGLE_CHECKBOX and RADIO_BUTTON custom field types (render as CheckboxFilter)
+  selectCustomFieldCheckboxFilter(accordionId, optionLabel) {
+    cy.do(Accordion({ id: accordionId }).find(Checkbox(optionLabel)).click());
+  },
+
+  // For MULTI_SELECT_DROPDOWN and SINGLE_SELECT_DROPDOWN custom field types (render as MultiSelectionFilter)
+  selectCustomFieldMultiSelectFilter(accordionId, optionLabel) {
+    cy.do(MultiSelect({ ariaLabelledby: accordionId }).open());
+    cy.wait(1000);
+    cy.get(`#${accordionId} input[class*=multiSelectFilterField]`).type(optionLabel);
+    cy.wait(1000);
+    cy.do(MultiSelectOption(including(optionLabel)).click());
+    cy.wait(1000);
+  },
+
+  // Departments MultiSelectionFilter uses id="departments-filter" instead of aria-labelledby,
+  // so it must be located by id rather than ariaLabelledby.
+  selectDepartmentsFilter(departmentName) {
+    cy.do(MultiSelect({ id: 'departments-filter' }).open());
+    cy.wait(1000);
+    cy.get(`#${usersFilterAccordionIds.departments} input[class*=multiSelectFilterField]`).type(
+      departmentName,
+    );
+    cy.wait(1000);
+    cy.do(MultiSelectOption(including(departmentName)).click());
+    cy.wait(1000);
+  },
+
+  clickResetAllFilters() {
+    cy.do(Button({ id: 'clickable-reset-all' }).click());
   },
 };

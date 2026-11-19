@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   Checkbox,
@@ -8,12 +9,22 @@ import {
   NavListItem,
   Pane,
   TextField,
+  ValueChipRoot,
 } from '../../../../../interactors';
 
 const checkoutForm = Form({ id: 'checkout-form' });
-const getPrefPatronIdentifier = (otherSettings) => otherSettings.body.circulationSettings[0]?.value?.prefPatronIdentifier || '';
+const getPrefPatronIdentifier = (otherSettings) =>
+  otherSettings.body.circulationSettings[0]?.value?.prefPatronIdentifier || '';
 const timeoutDurationTextField = TextField({ id: 'checkoutTimeoutDuration' });
 const userCustomFieldsCheckbox = Checkbox({ id: 'useCustomFieldsAsIdentifiers' });
+const barcodeCheckbox = Checkbox({ id: 'barcode-checkbox' });
+const usernameCheckbox = Checkbox({ id: 'username-checkbox' });
+const saveButton = Button({ id: 'clickable-savescanid' });
+// Two MultiSelects exist in the form. The patron identifiers one has no label prop, so
+// its BigTest locator resolves to ''. The "Custom fields at checkout" one has a label,
+// so its locator resolves to that label text. MultiSelect('') uniquely targets the
+// patron identifiers dropdown without relying on placeholder, id, or index.
+const patronIdentifiersMultiSelect = MultiSelect('');
 
 export default {
   waitLoading() {
@@ -22,7 +33,7 @@ export default {
       checkoutForm.exists(),
       checkoutForm.find(Label('Patron id(s) for checkout scanning*')).exists(),
     ]);
-    cy.wait(2000);
+    cy.wait(5000);
   },
 
   openTabCirculationOtherSettings() {
@@ -43,7 +54,7 @@ export default {
   },
 
   selectCustomFieldPatronIdentifier(fieldName) {
-    cy.do(MultiSelect({ placeholder: 'None' }).choose(fieldName));
+    cy.do(patronIdentifiersMultiSelect.choose(fieldName));
   },
 
   verifyCheckboxIsChecked(checkBoxId, alias) {
@@ -61,6 +72,7 @@ export default {
 
   saveOtherSettings() {
     cy.do(Button('Save').click());
+    this.waitLoading();
   },
 
   selectPatronIdsForCheckoutScanning(optionsNames, checkoutTimeoutDuration) {
@@ -132,6 +144,70 @@ export default {
         this.setOtherSettingsViaApi({ prefPatronIdentifier: updatedValue });
       }
     });
+  },
+
+  checkBarcodeCheckbox() {
+    cy.do(barcodeCheckbox.checkIfNotSelected());
+  },
+
+  uncheckBarcodeCheckbox() {
+    cy.do(barcodeCheckbox.uncheckIfSelected());
+  },
+
+  verifyBarcodeCheckboxChecked(checked = true) {
+    cy.expect(barcodeCheckbox.has({ checked }));
+  },
+
+  checkUsernameCheckbox() {
+    cy.do(usernameCheckbox.checkIfNotSelected());
+  },
+
+  verifyUsernameCheckboxChecked(checked = true) {
+    cy.expect(usernameCheckbox.has({ checked }));
+  },
+
+  verifySaveButtonEnabled(enabled = true) {
+    cy.expect(saveButton.has({ disabled: !enabled }));
+  },
+
+  verifyCustomFieldsDropdownVisible(visible = true) {
+    if (visible) {
+      cy.expect(patronIdentifiersMultiSelect.exists());
+    } else {
+      cy.expect(patronIdentifiersMultiSelect.absent());
+    }
+  },
+
+  // ValueChipRoot unscoped: "Custom fields at checkout" MultiSelect is never given chips in this
+  // test, so all chips on the page belong to the patron identifiers dropdown.
+  verifyCustomFieldsDropdownEmpty() {
+    cy.expect(ValueChipRoot().absent());
+  },
+
+  verifyCustomFieldsDropdownHasValue(fieldName) {
+    cy.expect(ValueChipRoot(fieldName).exists());
+  },
+
+  removeCustomFieldFromDropdown(fieldName) {
+    cy.do(
+      ValueChipRoot(fieldName)
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
+  verifyWarningMessage(visible = true) {
+    if (visible) {
+      cy.expect(HTML(including('Please select to continue')).exists());
+    } else {
+      cy.expect(HTML(including('Please select to continue')).absent());
+    }
+  },
+
+  uncheckAllPatronIdentifierCheckboxes() {
+    cy.do(barcodeCheckbox.uncheckIfSelected());
+    cy.do(usernameCheckbox.uncheckIfSelected());
+    cy.do(userCustomFieldsCheckbox.uncheckIfSelected());
   },
 
   verifyOtherSettingsContainsParams(params) {

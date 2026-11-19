@@ -549,6 +549,11 @@ export default {
     cy.do(barcodeField.fillIn(barcode));
   },
 
+  waitLoadingCreateUser() {
+    cy.expect(barcodeField.exists());
+    cy.wait(1000);
+  },
+
   clearFirstName() {
     cy.do(firstNameField.clear());
   },
