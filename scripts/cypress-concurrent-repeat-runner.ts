@@ -391,7 +391,7 @@ const runWorkerPool = async (config: SpecRunConfig, output: OutputPaths): Promis
   const startedAt = Date.now();
   let peakConcurrency = 0;
   const renderProgress = (): void => {
-    const runNumbers = [...activeRuns].sort((first, second) => first - second).join(', ');
+    const runNumbers = Array.from(activeRuns).sort((first, second) => first - second).join(', ');
     const progress = `[Progress] elapsed ${formatElapsed(startedAt)} | completed ${results.length}/${config.runs} | active ${state.active} (${runNumbers})`;
 
     [progress]
