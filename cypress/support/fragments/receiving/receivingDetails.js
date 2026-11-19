@@ -39,6 +39,7 @@ const instanceDetailsLink = receivingDetailsSection.find(
 const titleInformationSection = receivingDetailsSection.find(Section({ id: 'information' }));
 const orderLineDetailsSection = receivingDetailsSection.find(Section({ id: 'polDetails' }));
 const expectedSection = receivingDetailsSection.find(Section({ id: 'expected' }));
+const expectedActionsButton = expectedSection.find(Button('Actions'));
 const receivedSection = receivingDetailsSection.find(Section({ id: 'received' }));
 const unreceivableSection = receivingDetailsSection.find(Section({ id: 'unreceivable' }));
 const routingListSection = receivingDetailsSection.find(Section({ id: 'routing-list' }));
@@ -74,6 +75,7 @@ const ADD_PIECE_BUTTON_LABEL = 'Add piece';
 const buttons = {
   Actions: receinvingDetailsHeader.find(Button('Actions')),
   Edit: Button('Edit'),
+  'Remove from package': Button('Remove from package'),
   'Collapse all': receivingDetailsSection.find(Button('Collapse all')),
 };
 
@@ -647,20 +649,27 @@ export default {
 
     return ReceivingEditForm;
   },
+  clickRemoveFromPackageOption() {
+    cy.do([buttons.Actions.click(), buttons['Remove from package'].click()]);
+  },
+  verifyRemoveFromPackageOptionDisplayed(isDisplayed = true) {
+    cy.do(buttons.Actions.click());
+    cy.expect(buttons['Remove from package'][isDisplayed ? 'exists' : 'absent']());
+  },
   editReceivingItem() {
     cy.do([buttons.Edit.click()]);
     ReceivingEditForm.waitLoading();
   },
   verifyEditButtonIsInactive() {
     cy.do(buttons.Actions.click());
-    cy.expect(Button('Edit').has({ disabled: true }));
+    cy.expect(buttons.Edit.has({ disabled: true }));
   },
   verifyAddPieceButtonAbsent() {
-    cy.do(expectedSection.find(Button('Actions')).click());
+    cy.do(expectedActionsButton.click());
     cy.expect(Button(ADD_PIECE_BUTTON_LABEL).absent());
   },
   openReceiveListEditForm({ isOrderClosed = false } = {}) {
-    cy.do([expectedSection.find(Button('Actions')).click(), Button('Receive').click()]);
+    cy.do([expectedActionsButton.click(), Button('Receive').click()]);
 
     // For a closed order the "Order closed" modal appears before the form
     if (!isOrderClosed) {

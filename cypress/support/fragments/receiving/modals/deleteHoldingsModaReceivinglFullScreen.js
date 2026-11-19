@@ -15,10 +15,10 @@ export default {
   verifyModalAbsent() {
     cy.expect(deleteHoldingsModal.absent());
   },
-  deleteHoldingsModal({ action, locations = [] }) {
+  deleteHoldingsModal({ action, locations = [], message = modalMessage }) {
     const holdingsToDelete = locations.map((location) => location.name);
     cy.expect(deleteHoldingsModal.has({ header: 'Delete Holdings' }));
-    cy.expect(deleteHoldingsModal.has({ message: including(modalMessage) }));
+    cy.expect(deleteHoldingsModal.has({ message: including(message) }));
 
     Object.values(deleteHoldingsButtons).forEach((button) => {
       cy.expect(button().has({ visible: true, disabled: false }));
