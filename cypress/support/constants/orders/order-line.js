@@ -58,6 +58,7 @@ export const ORDER_LINE_PAYMENT_STATUSES_API = {
 };
 
 export const ORDER_LINE_RECEIPT_STATUSES_API = {
+  FULLY_RECEIVED: 'Fully Received',
   RECEIPT_NOT_REQUIRED: 'Receipt Not Required',
 };
 
