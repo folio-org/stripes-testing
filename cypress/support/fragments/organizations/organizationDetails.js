@@ -44,6 +44,12 @@ export default {
     return IntegrationViewForm;
   },
 
+  checkAccordionsDisplayed(accordionLabels = []) {
+    accordionLabels.forEach((label) => {
+      cy.expect(organizationDetailsSection.find(Accordion(label)).exists());
+    });
+  },
+
   checkOrganizationDetails(information = []) {
     information.forEach(({ key, value }) => {
       cy.expect(summarySection.find(KeyValue(key)).has({ value: including(String(value)) }));

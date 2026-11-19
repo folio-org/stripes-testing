@@ -226,12 +226,14 @@ export default {
   checkWarningMessage(message) {
     cy.expect(orderLineDetailsSection.find(Warning()).has({ message }));
   },
-  checkPurchaseOrderClosedWarning({ reason } = {}) {
-    cy.expect(
-      orderLineDetailsSection
-        .find(Warning({ message: including(OrderStates.purchaseOrderClosedWarning({ reason })) }))
-        .exists(),
-    );
+  checkPurchaseOrderClosedWarning({ reason, isDisplayed = true } = {}) {
+    const message = OrderStates.purchaseOrderClosedWarning({ reason });
+
+    if (isDisplayed) {
+      cy.expect(orderLineDetailsSection.find(Warning({ message: including(message) })).exists());
+    } else {
+      cy.expect(orderLineDetailsSection.find(HTML(including(message))).absent());
+    }
   },
   checkContributorsSectionContent(contributors = []) {
     contributors.forEach(({ name, type }) => {
