@@ -223,7 +223,13 @@ export default {
   },
 
   fillRoleNameDescription(roleName, roleDescription = '') {
-    cy.do([roleNameInput.fillIn(roleName), roleDescriptionInput.fillIn(roleDescription)]);
+    cy.do([
+      roleNameInput.fillIn(roleName),
+      roleDescriptionInput.fillIn(roleDescription),
+      // the role form stores the description only on blur (UISAUTHCOM-70); without it, a later
+      // re-render (e.g. a capability checkbox click) resets the field and the old description is saved
+      roleDescriptionInput.blur(),
+    ]);
     this.verifyNameDescriptionInEditForm(roleName, roleDescription);
   },
 
@@ -826,12 +832,14 @@ export default {
       .closest('[class*=paneset]')
       .should(($paneset) => {
         const paneset = $paneset[0].getBoundingClientRect();
-        const listingPane = $paneset.find(rolesListingPaneSelector)[0];
-        const detailPane = $paneset.find(roleDetailPaneSelector)[0];
+        const $listingPane = $paneset.find(rolesListingPaneSelector);
+        const $detailPane = $paneset.find(roleDetailPaneSelector);
 
-        expect(detailPane, 'role detail pane').to.not.equal(undefined);
-        const listing = listingPane.getBoundingClientRect();
-        const detail = detailPane.getBoundingClientRect();
+        // assert on numbers only: a failed test makes the Allure plugin JSON.stringify the "actual"
+        // of every assertion, and a DOM element there throws "Invalid string length" - the run hangs
+        expect($detailPane.length, 'number of role detail panes').to.equal(1);
+        const listing = $listingPane[0].getBoundingClientRect();
+        const detail = $detailPane[0].getBoundingClientRect();
 
         expect(listing.width, 'width of the listing pane').to.be.greaterThan(minListingPaneWidth);
         expect(detail.width, 'width of the role detail pane').to.be.greaterThan(minDetailPaneWidth);
