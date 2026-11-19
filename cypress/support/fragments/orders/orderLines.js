@@ -35,6 +35,7 @@ import {
   ORDER_LINE_FILTER_LABELS,
   RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
   RESULTS_PANE_NOT_FOUND_MESSAGE,
+  THE_LIST_CONTAINS_NO_ITEMS,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -164,6 +165,7 @@ const submitOrderLine = () => {
     }
   });
 };
+const titleLookupTrigger = Button({ id: 'find-instance-trigger' });
 
 // Filters
 const donorFilterAccordion = Accordion(ORDER_LINE_FILTER_LABELS.DONOR);
@@ -363,7 +365,15 @@ export default {
   },
 
   addPackageTitle: () => {
-    cy.do(Button({ id: 'find-instance-trigger' }).click());
+    cy.do(titleLookupTrigger.click());
+  },
+
+  clickAddPackageTitleButton: () => {
+    cy.do(packageTitlesSection.find(Button('Add')).click());
+  },
+
+  clickInstanceTitleLookup() {
+    cy.do(titleLookupTrigger.click());
   },
 
   varifyAddingInstanceTPackageTitle: (instanceTitle, polNumber) => {
@@ -373,8 +383,18 @@ export default {
     cy.expect(packageTitlesSection.find(Link(instanceTitle)).exists());
   },
 
-  verifyPackageTitleExists: (instanceTitle) => {
-    cy.expect(packageTitlesSection.find(Link(instanceTitle)).exists());
+  verifyPackageTitleExists: (instanceTitle, shouldExist = true) => {
+    cy.expect(packageTitlesSection.find(Link(instanceTitle))[shouldExist ? 'exists' : 'absent']());
+  },
+
+  // clicks a non-link cell of the row (not the title link) to open the related receiving title edit form
+  clickPackageTitleRow: (instanceTitle) => {
+    cy.do(
+      packageTitlesSection
+        .find(MultiColumnListRow({ content: including(instanceTitle), isContainer: false }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .click(),
+    );
   },
 
   verifyPackageTitlesAccordionExists: () => {
@@ -382,7 +402,12 @@ export default {
   },
 
   verifyPackageTitlesCount: (count) => {
-    cy.expect(packageTitlesSection.find(MultiColumnList()).has({ rowCount: count }));
+    if (count === 0) {
+      // empty list is rendered as a message instead of a multi column list
+      cy.expect(packageTitlesSection.find(HTML(including(THE_LIST_CONTAINS_NO_ITEMS))).exists());
+    } else {
+      cy.expect(packageTitlesSection.find(MultiColumnList()).has({ rowCount: count }));
+    }
   },
 
   backToEditingOrder: () => {
