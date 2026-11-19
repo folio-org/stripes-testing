@@ -35,6 +35,7 @@ import {
   ORDER_LINE_FILTER_LABELS,
   RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
   RESULTS_PANE_NOT_FOUND_MESSAGE,
+  THE_LIST_CONTAINS_NO_ITEMS,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -237,8 +238,7 @@ export default {
 
   selectFund: (fundName) => {
     cy.wait(4000);
-    cy.get('#FundDistribution').find('a').contains(fundName).invoke('removeAttr', 'target')
-      .click();
+    cy.get('#FundDistribution').find('a').contains(fundName).invoke('removeAttr', 'target').click();
   },
 
   resetFilters: () => {
@@ -369,6 +369,10 @@ export default {
     cy.do(Button({ id: 'accordion-toggle-button-linkedInstances' }).click());
   },
 
+  clickAddPackageTitleButton: () => {
+    cy.do(packageTitlesSection.find(Button('Add')).click());
+  },
+
   clickInstanceTitleLookup() {
     cy.do(titleLookupTrigger.click());
   },
@@ -380,8 +384,18 @@ export default {
     cy.expect(packageTitlesSection.find(Link(instanceTitle)).exists());
   },
 
-  verifyPackageTitleExists: (instanceTitle) => {
-    cy.expect(packageTitlesSection.find(Link(instanceTitle)).exists());
+  verifyPackageTitleExists: (instanceTitle, shouldExist = true) => {
+    cy.expect(packageTitlesSection.find(Link(instanceTitle))[shouldExist ? 'exists' : 'absent']());
+  },
+
+  // clicks a non-link cell of the row (not the title link) to open the related receiving title edit form
+  clickPackageTitleRow: (instanceTitle) => {
+    cy.do(
+      packageTitlesSection
+        .find(MultiColumnListRow({ content: including(instanceTitle), isContainer: false }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .click(),
+    );
   },
 
   verifyPackageTitlesAccordionExists: () => {
@@ -389,7 +403,12 @@ export default {
   },
 
   verifyPackageTitlesCount: (count) => {
-    cy.expect(packageTitlesSection.find(MultiColumnList()).has({ rowCount: count }));
+    if (count === 0) {
+      // empty list is rendered as a message instead of a multi column list
+      cy.expect(packageTitlesSection.find(HTML(including(THE_LIST_CONTAINS_NO_ITEMS))).exists());
+    } else {
+      cy.expect(packageTitlesSection.find(MultiColumnList()).has({ rowCount: count }));
+    }
   },
 
   backToEditingOrder: () => {
@@ -2173,8 +2192,7 @@ export default {
   },
 
   openPageConnectedInstance: () => {
-    cy.get('#itemDetails').find('a').contains('Connected').invoke('removeAttr', 'target')
-      .click();
+    cy.get('#itemDetails').find('a').contains('Connected').invoke('removeAttr', 'target').click();
   },
 
   cancelPOL: () => {
@@ -2266,7 +2284,8 @@ export default {
     );
   },
 
-  getAssignedPOLNumber: () => cy.then(() => Accordion('Purchase order line').find(KeyValue('POL number')).value()),
+  getAssignedPOLNumber: () =>
+    cy.then(() => Accordion('Purchase order line').find(KeyValue('POL number')).value()),
 
   verifyPOLDetailsIsOpened: () => {
     cy.expect(orderLineDetailsPane.find(paneHeaderOrderLinesDetailes).exists());

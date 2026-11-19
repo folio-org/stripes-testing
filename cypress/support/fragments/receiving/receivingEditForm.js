@@ -55,6 +55,7 @@ const lineDetailsFields = {
 
 const cancelButton = receivingEditForm.find(Button('Cancel'));
 const saveAndCloseButton = receivingEditForm.find(Button('Save & close'));
+const removeFromPackageButton = receivingEditForm.find(Button('Remove from package'));
 const acqUnitsInputSelector = '#title-acq-units input';
 const acqUnitsRemoveButton = itemDetailsFields.acquisitionUnits.find(
   ValueChipRoot().find(Button({ icon: 'times' })),
@@ -80,7 +81,8 @@ export default {
   },
   checkItemDetailsFields({ title }) {
     if (title) {
-      cy.expect(itemDetailsFields.title.has({ value: title }));
+      // "Title" field is enabled for package POL titles and disabled for non-package ones
+      cy.expect(itemDetailsFields.titleInput.has({ value: title }));
     }
   },
   verifyTitleFieldEnabled(isEnabled = true) {
@@ -159,6 +161,12 @@ export default {
   clickCancelButton() {
     cy.expect(cancelButton.has({ disabled: false }));
     cy.do(cancelButton.click());
+  },
+  verifyRemoveFromPackageButtonDisplayed(isDisplayed = true) {
+    cy.expect(removeFromPackageButton[isDisplayed ? 'exists' : 'absent']());
+  },
+  clickRemoveFromPackageButton() {
+    cy.do(removeFromPackageButton.click());
   },
   clickSaveButton({ itemSaved = true } = {}) {
     cy.expect(saveAndCloseButton.has({ disabled: false }));
