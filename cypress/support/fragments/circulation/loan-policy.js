@@ -2,8 +2,13 @@ import uuid from 'uuid';
 import {
   Button,
   Checkbox,
+  IconButton,
+  including,
   KeyValue,
   NavListItem,
+  PaneHeader,
+  Popover,
+  RadioButton,
   Select,
   TextArea,
   TextField,
@@ -35,6 +40,24 @@ const textFieldAlternateLoanPeriodDuration = TextField({
 const selectAlternateLoanPeriodInterval = Select({
   name: 'requestManagement.holds.alternateCheckoutLoanPeriod.intervalId',
 });
+const checkBoxRenewalPeriodDifferent = Checkbox({ id: 'renewalsPolicy.differentPeriod' });
+const textFieldRenewalPeriodDuration = TextField({ name: 'renewalsPolicy.period.duration' });
+const selectRenewalPeriodInterval = Select({ name: 'renewalsPolicy.period.intervalId' });
+const checkBoxUnlimitedRenewals = Checkbox({ id: 'renewalsPolicy.unlimited' });
+const checkBoxAutomaticRenewals = Checkbox('Automatic renewals');
+const automaticRenewalsInfoIcon = IconButton({ icon: 'info' });
+const automaticRenewalsInfoPopover = Popover({
+  content: including(
+    'Automatic renewals are available for loans with intervals of one day or longer.',
+  ),
+});
+const radioButtonOnDueDate = RadioButton({ id: 'attemptFirstRenewal.onDueDate' });
+const radioButtonDaysBeforeDueDate = RadioButton({ id: 'attemptFirstRenewal.daysBefore' });
+const textFieldDaysBeforeDueDate = TextField({ name: 'renewalsPolicy.daysBefore' });
+const textFieldAdditionalRetries = TextField({ id: 'automaticRenewalRetryPeriodInDays' });
+const cancelButton = Button('Cancel');
+const closeWithoutSavingButton = Button('Close without saving');
+const selectAllKey = Cypress.platform === 'darwin' ? 'Meta' : 'Control';
 
 const getDefaultRollingLoanPolicy = (limit = '') => {
   const defaultLoanPolicy = {
@@ -216,6 +239,217 @@ export default {
     }
   },
 
+  enableAutomaticRenewals() {
+    cy.do(checkBoxAutomaticRenewals.checkIfNotSelected());
+  },
+
+  fillDaysBeforeDueDate(days) {
+    cy.do([textFieldDaysBeforeDueDate.click(), textFieldDaysBeforeDueDate.fillIn(days.toString())]);
+  },
+
+  fillAdditionalRetries(attempts) {
+    cy.do([
+      textFieldAdditionalRetries.click(),
+      textFieldAdditionalRetries.fillIn(attempts.toString()),
+    ]);
+  },
+
+  verifyDaysBeforeDueDateSelected() {
+    cy.expect(radioButtonDaysBeforeDueDate.has({ checked: true }));
+  },
+
+  verifyAutomaticRenewalsChecked(checked) {
+    cy.expect(checkBoxAutomaticRenewals.has({ checked }));
+  },
+
+  verifyNewLoanPolicyFormOpened() {
+    cy.expect(PaneHeader('New loan policy').exists());
+  },
+
+  verifyAutomaticRenewalsCheckboxAbsent() {
+    cy.expect(checkBoxAutomaticRenewals.absent());
+  },
+
+  fillNumberOfRenewalsAllowed(number) {
+    cy.do(textFieldNumberOfRenewalsAllowed.fillIn(number.toString()));
+  },
+
+  verifyAttemptFirstRenewalRequired() {
+    cy.get('[id="attempt-first-renewal-label"] [class*="asterisk"]').should('exist');
+  },
+
+  verifyDaysBeforeRadioExists() {
+    cy.expect(radioButtonDaysBeforeDueDate.exists());
+  },
+
+  clickAutomaticRenewalsInfoIcon() {
+    cy.get('[data-testid="automaticRenewal"]').scrollIntoView();
+    cy.do(automaticRenewalsInfoIcon.click());
+  },
+
+  verifyAutomaticRenewalsInfoPopover() {
+    cy.expect(automaticRenewalsInfoPopover.exists());
+  },
+
+  selectDaysBeforeRadio() {
+    cy.do(radioButtonDaysBeforeDueDate.click());
+  },
+
+  typeDaysBeforeDueDate(chars) {
+    cy.get('[name="renewalsPolicy.daysBefore"]')
+      .realClick()
+      .realPress([selectAllKey, 'a'])
+      .realPress('Backspace')
+      .realType(chars);
+  },
+
+  typeAdditionalRetries(chars) {
+    cy.get('[id="automaticRenewalRetryPeriodInDays"]')
+      .realClick()
+      .realPress([selectAllKey, 'a'])
+      .realPress('Backspace')
+      .realType(chars);
+  },
+
+  verifyDaysBeforeFieldEmpty() {
+    cy.expect(textFieldDaysBeforeDueDate.has({ hasValue: false }));
+  },
+
+  verifyDaysBeforeFieldHasValue() {
+    cy.expect(textFieldDaysBeforeDueDate.has({ hasValue: true }));
+  },
+
+  verifyDaysBeforeFieldValue(value) {
+    cy.expect(textFieldDaysBeforeDueDate.has({ value }));
+  },
+
+  verifyDaysBeforeValidationError(message) {
+    cy.expect(textFieldDaysBeforeDueDate.has({ error: message }));
+  },
+
+  verifyDaysBeforeNoValidationError() {
+    cy.expect(textFieldDaysBeforeDueDate.has({ error: undefined }));
+  },
+
+  verifyAdditionalRetriesFieldEmpty() {
+    cy.expect(textFieldAdditionalRetries.has({ hasValue: false }));
+  },
+
+  verifyAdditionalRetriesFieldHasValue() {
+    cy.expect(textFieldAdditionalRetries.has({ hasValue: true }));
+  },
+
+  verifyAdditionalRetriesFieldValue(value) {
+    cy.expect(textFieldAdditionalRetries.has({ value }));
+  },
+
+  verifyAdditionalRetriesValidationError(message) {
+    cy.expect(textFieldAdditionalRetries.has({ error: message }));
+  },
+
+  verifyAdditionalRetriesNoValidationError() {
+    cy.expect(textFieldAdditionalRetries.has({ error: undefined }));
+  },
+
+  fillLoanPolicyName(name) {
+    cy.do(textBoxName.fillIn(name));
+  },
+
+  enableLoanable() {
+    cy.do(checkBoxLoanable.checkIfNotSelected());
+  },
+
+  chooseLoanProfile(profile) {
+    cy.do(selectLoanProfile.choose(profile));
+    cy.wait(500);
+  },
+
+  fillLoanPeriod(duration, interval) {
+    cy.do([
+      textFieldPeriodDuration.fillIn(duration.toString()),
+      selectPeriodInterval.choose(interval),
+    ]);
+  },
+
+  chooseClosedLibraryDueDateManagement(option) {
+    cy.do(selectClosedLibraryDueDateManagement.choose(option));
+  },
+
+  enableRenewable() {
+    cy.do(checkBoxRenewable.checkIfNotSelected());
+  },
+
+  disableRenewable() {
+    cy.do(checkBoxRenewable.uncheckIfSelected());
+  },
+
+  enableUnlimitedRenewals() {
+    cy.do(checkBoxUnlimitedRenewals.checkIfNotSelected());
+  },
+
+  chooseRenewFrom(option) {
+    cy.do(selectRenewFrom.choose(option));
+  },
+
+  enableRenewalPeriodDifferent() {
+    cy.do(checkBoxRenewalPeriodDifferent.checkIfNotSelected());
+  },
+
+  fillRenewalPeriod(duration, interval) {
+    cy.do([
+      textFieldRenewalPeriodDuration.fillIn(duration.toString()),
+      selectRenewalPeriodInterval.choose(interval),
+    ]);
+  },
+
+  disableAutomaticRenewals() {
+    cy.do(checkBoxAutomaticRenewals.uncheckIfSelected());
+  },
+
+  selectOnDueDateRadio() {
+    cy.do(radioButtonOnDueDate.click());
+  },
+
+  clearAdditionalRetries() {
+    cy.do([textFieldAdditionalRetries.click(), textFieldAdditionalRetries.fillIn('')]);
+  },
+
+  verifyAttemptFirstRenewalSectionAbsent() {
+    cy.expect(radioButtonOnDueDate.absent());
+  },
+
+  verifyAttemptAdditionalRetriesSectionAbsent() {
+    cy.expect(textFieldAdditionalRetries.absent());
+  },
+
+  verifyAutomaticRenewalsSectionAbsent() {
+    cy.expect(KeyValue('Automatic renewals').absent());
+  },
+
+  clickCancelButton() {
+    cy.do(cancelButton.click());
+  },
+
+  clickCloseWithoutSavingButton() {
+    cy.do(closeWithoutSavingButton.click());
+  },
+
+  verifyEditModeOpened(name) {
+    cy.expect(PaneHeader(name).exists());
+  },
+
+  verifyAttemptFirstRenewalSectionVisible() {
+    cy.expect(radioButtonOnDueDate.has({ checked: true }));
+  },
+
+  verifyAttemptAdditionalRetriesSectionVisible() {
+    cy.expect(textFieldAdditionalRetries.exists());
+  },
+
+  verifyAdditionalRetriesValue(value) {
+    cy.expect(textFieldAdditionalRetries.has({ value }));
+  },
+
   verifyKeyValue(verifyKey, verifyValue) {
     cy.expect(KeyValue(verifyKey, { value: verifyValue }).exists());
   },
@@ -257,6 +491,7 @@ export default {
         method: 'POST',
         path: 'loan-policy-storage/loan-policies',
         body: loanPolicy,
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => {
         return body;
@@ -266,6 +501,7 @@ export default {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `loan-policy-storage/loan-policies/${id}`,
+      isDefaultSearchParamsRequired: false,
     });
   },
   getApi(searchParams) {
