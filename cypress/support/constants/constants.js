@@ -1690,6 +1690,12 @@ export const SYSTEM_FIELDS = ['000', '001', '005', '008', '999'];
 
 export const DEFAULT_WAIT_TIME = 4000;
 
+export const CURRENCY_CODES = {
+  EUR: 'EUR',
+  GBP: 'GBP',
+  USD: 'USD',
+};
+
 export const API_PATH = {
   INVOICE_STORAGE_SETTINGS: 'invoice-storage/settings',
   ORDERS_STORAGE_SETTINGS: 'orders-storage/settings',

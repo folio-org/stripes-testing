@@ -973,13 +973,13 @@ export default {
     cy.wait('@waiterForReceivingTitlesQueryCompleted');
   },
 
-  checkPurchaseOrderClosedWarning({ reason } = {}) {
-    cy.expect(
-      rootsection
-        .find(
-          Warning({ message: including(ReceivingStates.purchaseOrderClosedWarning({ reason })) }),
-        )
-        .exists(),
-    );
+  checkPurchaseOrderClosedWarning({ reason, isDisplayed = true } = {}) {
+    const message = ReceivingStates.purchaseOrderClosedWarning({ reason });
+
+    if (isDisplayed) {
+      cy.expect(rootsection.find(Warning({ message: including(message) })).exists());
+    } else {
+      cy.expect(rootsection.find(HTML(including(message))).absent());
+    }
   },
 };

@@ -48,4 +48,10 @@ export default {
 
     return IntegrationViewForm;
   },
+
+  checkAccordionsDisplayed(accordionLabels = []) {
+    accordionLabels.forEach((label) => {
+      cy.expect(organizationDetailsSection.find(Accordion(label)).exists());
+    });
+  },
 };
