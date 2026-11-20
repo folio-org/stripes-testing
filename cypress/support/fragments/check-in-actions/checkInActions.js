@@ -3,6 +3,7 @@ import moment from 'moment';
 import uuid from 'uuid';
 import {
   Button,
+  Checkbox,
   KeyValue,
   Modal,
   MultiColumnList,
@@ -47,6 +48,7 @@ const editButton = Button('Edit');
 const closeButton = Button('Close');
 const closeIconButton = Button({ icon: 'times' });
 const saveCloseButton = Button('Save & close');
+const inHouseUseCheckbox = Checkbox({ id: 'inHouseUseCheckbox' });
 const actionsButtons = {
   loanDetails: loanDetailsButton,
   patronDetails: patronDetailsButton,
@@ -391,11 +393,13 @@ export default {
   },
 
   checkFeeFinesDetailsByFields(allContentToCheck) {
-    Object.entries(allContentToCheck).forEach(([label, value]) => cy.expect(
-      KeyValue(label)
-        .find(HTML(including(value)))
-        .exists(),
-    ));
+    Object.entries(allContentToCheck).forEach(([label, value]) =>
+      cy.expect(
+        KeyValue(label)
+          .find(HTML(including(value)))
+          .exists(),
+      ),
+    );
   },
 
   closeModalIfPresent() {
@@ -405,5 +409,17 @@ export default {
         cy.wait(500);
       }
     });
+  },
+
+  verifyInHouseUseCheckbox(checked) {
+    cy.expect(inHouseUseCheckbox.has({ checked }));
+  },
+
+  checkInHouseUseCheckbox() {
+    cy.do(inHouseUseCheckbox.click());
+  },
+
+  verifyBarcodeFieldIsEmpty() {
+    cy.expect(itemBarcodeField.has({ value: '' }));
   },
 };
