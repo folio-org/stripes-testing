@@ -333,10 +333,11 @@ export default {
     }
   },
   checkColumnValues({ columnIndex, value }) {
-    cy.then(() => exportJobsList.rowCount()).then((rowsCount) => {
+    cy.then(() => jobsDetailsPane.find(MultiColumnList()).rowCount()).then((rowsCount) => {
       [...Array(rowsCount).keys()].forEach((index) => {
         cy.expect(
-          exportJobsList
+          jobsDetailsPane
+            .find(MultiColumnList())
             .find(MultiColumnListRow({ index }))
             .find(MultiColumnListCell({ columnIndex }))
             // Supports both single and multiple values for the column, e.g. jobType can be "EDIFACT orders export" or ["EDIFACT orders export", "CLAIMS"]
@@ -460,17 +461,17 @@ export default {
     cy.do(Button('Download').click());
   },
 
-  rerunJob() {
+  rerunJob({ waitMs = 7_000 } = {}) {
     // Need to wait while Button will be loaded for click
     cy.wait(7000);
     cy.do(Button('Actions').click());
     // Need to wait while Button will be loaded for click
     cy.wait(7000);
     cy.do(Button('Rerun').click());
-    cy.wait(7000);
+    cy.wait(waitMs);
   },
 
-  resendJob({ waitMs = 7_000 }) {
+  resendJob({ waitMs = 7_000 } = {}) {
     cy.wait(waitMs);
     cy.do(Button(COMMON_BUTTON_LABELS.ACTIONS).click());
     cy.wait(waitMs);

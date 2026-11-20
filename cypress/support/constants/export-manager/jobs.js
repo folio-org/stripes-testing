@@ -46,6 +46,11 @@ export const EXPORT_MANAGER_EDI_JOB_FIELD_LABELS = {
   ERROR_DETAILS: 'Error details',
 };
 
+export const EXPORT_MANAGER_JOB_ERROR_DETAILS = {
+  RESEND_TRANSMISSION_METHOD_NOT_FTP:
+    'Transmission method must be FTP in order to resend exported file (EdifactException)',
+};
+
 export const EXPORT_MANAGER_JOB_STATUSES = {
   FAILED: 'FAILED',
   IN_PROGRESS: 'IN_PROGRESS',
