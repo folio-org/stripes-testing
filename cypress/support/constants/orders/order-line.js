@@ -191,6 +191,7 @@ export const POLINE_DETAILS_FIELDS = {
   CREATED_ON: 'Created on',
   EXPENSE_CLASS: 'Expense class',
   ESTIMATED_PRICE: 'Estimated price',
+  ROLLOVER_ADJUSTMENT: 'Rollover adjustment',
   EXCHANGE_RATE: 'Exchange rate',
   CURRENT_EXCHANGE_RATE: 'Current exchange rate',
   USE_SET_EXCHANGE_RATE: 'Use set exchange rate',

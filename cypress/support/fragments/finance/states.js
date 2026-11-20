@@ -2,6 +2,7 @@ export default {
   fundSavedSuccessfully: 'Fund has been saved',
   fiscalYearSavedSuccessfully: 'Fiscal year has been saved',
   budgetCreatedSuccessfully: 'Budget (?:\\S+) successfully created for fund (?:\\S+)',
+  budgetSavedSuccessfully: (budgetName) => `Budget ${budgetName} has been saved`,
   budgetHasNotBeenCreated: 'Budget has not been created',
   budgetExportStartedSuccessfully: 'Export of (?:\\S+) data has started',
   budgetExportCompletedSuccessfully: '(?:\\S+) data was successfully exported',
