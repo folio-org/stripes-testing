@@ -1,7 +1,7 @@
-export const formatCurrency = (value, { locale, currency }) => new Intl.NumberFormat(locale, { style: 'currency', currency, currencySign: 'accounting' }).format(
-  value,
-);
-export const formatNumber = (value, { locale = 'en-US' } = {}) => new Intl.NumberFormat(locale).format(value);
+export const formatCurrency = (value, { locale, currency, currencySign = 'accounting' }) =>
+  new Intl.NumberFormat(locale, { style: 'currency', currency, currencySign }).format(value);
+export const formatNumber = (value, { locale = 'en-US' } = {}) =>
+  new Intl.NumberFormat(locale).format(value);
 
 export function isFloat(val) {
   if (typeof val === 'string' && val.trim() === '') return false;
