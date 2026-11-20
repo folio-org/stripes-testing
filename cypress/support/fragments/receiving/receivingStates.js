@@ -20,6 +20,7 @@ export default {
 
   // errors
   barcodeIsNotUnique: 'Barcode must be unique, piece and item data could not be updated.',
+  pieceMustBeLate: 'The piece must have "Late" status to process.',
   lastSynchronizedPieceNotDeleted:
     'The piece was not deleted because you cannot delete all pieces when ordering and receiving quantity are synchronized.',
 

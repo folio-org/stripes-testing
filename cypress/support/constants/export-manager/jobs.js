@@ -33,3 +33,29 @@ export const EXPORT_MANAGER_CLAIMING_CSV_JOB_FIELD_LABELS = {
   TITLE_FROM_PIECE: 'Title from piece',
   VENDOR_ORDER_NUMBER: 'Vendor order number',
 };
+
+export const EXPORT_MANAGER_EDI_JOB_FIELD_LABELS = {
+  JOB_ID: 'Job ID',
+  STATUS: 'Status',
+  START_TIME: 'Start time',
+  END_TIME: 'End time',
+  SOURCE: 'Source',
+  ORGANIZATION: 'Organization',
+  EXPORT_METHOD: 'Export method',
+  SENT_TO: 'Sent to',
+  FILE_NAME: 'File name',
+  DESCRIPTION: 'Description',
+  ERROR_DETAILS: 'Error details',
+};
+
+export const EXPORT_MANAGER_JOB_ERROR_DETAILS = {
+  RESEND_TRANSMISSION_METHOD_NOT_FTP:
+    'Transmission method must be FTP in order to resend exported file (EdifactException)',
+};
+
+export const EXPORT_MANAGER_JOB_STATUS_MAPPING = {
+  [EXPORT_MANAGER_JOB_STATUSES.FAILED]: 'Failed',
+  [EXPORT_MANAGER_JOB_STATUSES.IN_PROGRESS]: 'In progress',
+  [EXPORT_MANAGER_JOB_STATUSES.SCHEDULED]: 'Scheduled',
+  [EXPORT_MANAGER_JOB_STATUSES.SUCCESSFUL]: 'Successful',
+};

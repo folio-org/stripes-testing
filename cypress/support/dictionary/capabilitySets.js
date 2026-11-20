@@ -469,6 +469,11 @@ export default {
     resource: 'UI-Receiving',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiClaimsClaimingView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Claims Claiming',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiRequestsView: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Requests',
@@ -493,6 +498,11 @@ export default {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Export-Manager Export-Manager',
     action: CAPABILITY_ACTIONS.VIEW,
+  },
+  uiExportManagerExportManagerManage: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Export-Manager Export-Manager',
+    action: CAPABILITY_ACTIONS.MANAGE,
   },
   dataExportManage: {
     type: CAPABILITY_TYPES.DATA,
