@@ -73,6 +73,15 @@ export default {
       .then(({ body }) => body);
   },
 
+  // Runs "Pieces claiming batch job" which moves overdue pieces to "Late" status
+  processClaimingViaApi() {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'orders-storage/claiming/process',
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   // https://s3.amazonaws.com/foliodocs/api/mod-orders/r/pieces.html#orders_pieces__id__delete
   deleteOrderPieceViaApi(pieceId, { failOnStatusCode = false } = {}) {
     return cy
