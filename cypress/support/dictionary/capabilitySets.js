@@ -409,6 +409,11 @@ export default {
     resource: 'UI-Tags',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
+  uiTagsView: {
+    type: CAPABILITY_TYPES.DATA,
+    resource: 'UI-Tags',
+    action: CAPABILITY_ACTIONS.VIEW,
+  },
   uiInventoryInstanceEdit: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Inventory Instance',
@@ -744,6 +749,11 @@ export default {
   uiCirculationSettingsLoanPoliciesManage: {
     type: CAPABILITY_TYPES.SETTINGS,
     resource: 'UI-Circulation Settings Loan-Policies',
+    action: CAPABILITY_ACTIONS.MANAGE,
+  },
+  uiCirculationSettingsOtherSettingsManage: {
+    type: CAPABILITY_TYPES.SETTINGS,
+    resource: 'UI-Circulation Settings Other-Settings',
     action: CAPABILITY_ACTIONS.MANAGE,
   },
 };
