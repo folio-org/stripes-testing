@@ -32,6 +32,7 @@ mcp.json
 parallelWorkers.json
 cypress/e2e/failed.cy.js
 scripts/report-portal/team-responsible-ones/team-responsible-ones.js
+scripts/report-portal/team-emails/team-emails.js
 environments.js
 CLAUDE.md
 .claude
