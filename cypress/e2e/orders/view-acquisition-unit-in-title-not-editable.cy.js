@@ -137,7 +137,7 @@ describe('Orders', () => {
 
       ReceivingDetails.expandTitleInformationAccordion();
       ReceivingDetails.verifyAcquisitionUnitInTitleInformation(acquisitionUnit.name, true);
-      ReceivingDetails.verifyEditButtonIsInactive();
+      ReceivingDetails.verifyEditButtonState({ disabled: true });
     },
   );
 });

@@ -11,6 +11,16 @@ export default {
       .then(({ body }) => body);
   },
 
+  // https://s3.amazonaws.com/foliodocs/api/mod-orders/r/pieces.html#orders_pieces__id__get
+  // Returns the full response, so the status code can be asserted
+  getOrderPieceByIdViaApi(pieceId) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: `orders/pieces/${pieceId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
   // https://s3.amazonaws.com/foliodocs/api/mod-orders/r/pieces.html#orders_pieces_post
   createOrderPieceViaApi(orderPiece) {
     return cy

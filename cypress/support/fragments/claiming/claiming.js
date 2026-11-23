@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  Datepicker,
   HTML,
   Modal,
   MultiColumnList,
@@ -29,6 +30,8 @@ const filtersPane = Pane({ id: 'claiming-filters-pane' });
 const actionsButton = Button('Actions');
 const claimingList = MultiColumnList({ id: 'claiming-list' });
 const sendClaimModal = Modal(including('Send claim'));
+const delayClaimModal = Modal(including('Delay claim'));
+const delayToField = delayClaimModal.find(Datepicker());
 const searchField = SearchField();
 const claimingDateField = TextField({ name: including('claimingDate') });
 const internalNoteField = TextArea('Internal note');
@@ -70,6 +73,21 @@ export default {
   clickSaveAndCloseInSendClaimModal() {
     cy.do(sendClaimModal.find(saveAndCloseButton).click());
     cy.expect(sendClaimModal.absent());
+  },
+
+  clickDelayClaimOption() {
+    cy.do(Button('Delay claim').click());
+    cy.expect(delayClaimModal.exists());
+  },
+
+  fillDelayToDate(date) {
+    cy.do(delayToField.fillIn(date));
+    cy.expect(delayToField.has({ inputValue: date }));
+  },
+
+  clickSaveAndCloseInDelayClaimModal() {
+    cy.do(delayClaimModal.find(saveAndCloseButton).click());
+    cy.expect(delayClaimModal.absent());
   },
 
   sendClaim() {

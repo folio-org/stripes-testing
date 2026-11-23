@@ -35,6 +35,7 @@ export const CLAIMING_RESULTS_LIST_COLUMNS = {
 };
 
 export const CLAIMING_CALLOUT_MESSAGES = {
+  CLAIMS_DELAYED: 'Claims are successfully delayed.',
   CLAIMS_PROCESSING:
     'Claims are currently being processed. Please check Export manager for job status.',
 };
