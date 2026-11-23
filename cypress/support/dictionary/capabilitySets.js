@@ -264,6 +264,11 @@ export default {
     resource: 'UI-Users Loans',
     action: CAPABILITY_ACTIONS.VIEW,
   },
+  uiUsersLoansClaimItemReturnedExecute: {
+    type: CAPABILITY_TYPES.PROCEDURAL,
+    resource: 'UI-Users Loans-Claim-Item-Returned',
+    action: CAPABILITY_ACTIONS.EXECUTE,
+  },
   uiUsersLoansRenew: {
     type: CAPABILITY_TYPES.DATA,
     resource: 'UI-Users Loans-Renew',

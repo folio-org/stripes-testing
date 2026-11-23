@@ -222,4 +222,34 @@ export default {
         return body.ecsTlrFeatureEnabled;
       });
   },
+
+  enableConsortiaTlrViaApi() {
+    cy.okapiRequest({
+      method: 'GET',
+      path: 'tlr/settings',
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      cy.okapiRequest({
+        method: 'PUT',
+        path: 'tlr/settings',
+        isDefaultSearchParamsRequired: false,
+        body: { ...body, ecsTlrFeatureEnabled: true },
+      });
+    });
+  },
+
+  disableConsortiaTlrViaApi() {
+    cy.okapiRequest({
+      method: 'GET',
+      path: 'tlr/settings',
+      isDefaultSearchParamsRequired: false,
+    }).then(({ body }) => {
+      cy.okapiRequest({
+        method: 'PUT',
+        path: 'tlr/settings',
+        isDefaultSearchParamsRequired: false,
+        body: { ...body, ecsTlrFeatureEnabled: false },
+      });
+    });
+  },
 };
