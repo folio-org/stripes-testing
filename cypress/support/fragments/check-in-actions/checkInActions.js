@@ -415,6 +415,14 @@ export default {
     cy.expect(inHouseUseCheckbox.has({ checked }));
   },
 
+  verifyInHouseUseCheckboxVisible(isVisible) {
+    if (isVisible) {
+      cy.expect(inHouseUseCheckbox.exists());
+    } else {
+      cy.expect(inHouseUseCheckbox.absent());
+    }
+  },
+
   checkInHouseUseCheckbox() {
     cy.do(inHouseUseCheckbox.click());
   },
