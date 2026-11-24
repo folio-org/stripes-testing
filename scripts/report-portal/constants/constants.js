@@ -6,6 +6,13 @@ try {
   // team-responsible-ones.js is gitignored and optional
 }
 
+let TEAM_EMAILS = {};
+try {
+  // eslint-disable-next-line global-require, import/extensions
+  TEAM_EMAILS = require('../team-emails/team-emails');
+} catch (e) {
+  // team-emails.js is gitignored and optional
+}
 const TEAM_NAMES = {
   ATHENA: 'Athena',
   EUREKA: 'Eureka',
@@ -25,6 +32,8 @@ const TEAMS = [
 ];
 
 module.exports = {
+  TEAM_NAMES,
+  TEAM_EMAILS,
   LAUNCHES: {
     NIGHTLY: 'runNightlyCypressEurekaTests',
     QG: 'folioQualityGates',
