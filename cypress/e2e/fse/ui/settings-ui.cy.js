@@ -13,6 +13,7 @@ import SettingsInventory, {
   INVENTORY_SETTINGS_TABS,
 } from '../../../support/fragments/settings/inventory/settingsInventory';
 import DisplaySettings from '../../../support/fragments/settings/inventory/instance-holdings-item/displaySettings';
+import ReportingSettings from '../../../support/fragments/settings/reporting/reportingSettings';
 import {
   CAPABILITY_TYPES,
   DEFAULT_DATA_EXPORT_JOB_PROFILE_NAMES,
@@ -104,6 +105,19 @@ describe('fse-settings - UI (no data manipulation)', () => {
       SettingsInventory.goToSettingsInventory();
       SettingsInventory.selectSettingsTab(INVENTORY_SETTINGS_TABS.DISPLAY_SETTINGS);
       DisplaySettings.waitloading();
+    },
+  );
+
+  it(
+    `FDOPS-7549 - verify Reporting settings are displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'ldp', 'reporting', 'settings', 'FDOPS-7549'] },
+    () => {
+      SettingsMenu.selectMenuOption('Reporting');
+      ReportingSettings.waitLoading();
+      ReportingSettings.verifySettingsOptions();
+      // "Database configuration" is not opened on purpose: it contains credentials
+      ReportingSettings.openRecordLimits();
+      ReportingSettings.verifyRecordLimitsFields();
     },
   );
 });

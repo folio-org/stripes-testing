@@ -36,6 +36,7 @@ const notesPath = '/settings/notes/general';
 const permissionSetPath = '/settings/users/perms?layer=add';
 const lostItemsRequiringActualCost = '/users/lost-items';
 const listsPath = '/lists';
+const reportingPath = '/ldp';
 const coursesPath = '/cr/courses';
 const consortiumManagerPath = '/consortia-settings';
 const settingsAuthorityFilesPath = '/settings/marc-authorities/manage-authority-files';
@@ -101,6 +102,7 @@ export default {
   settingsUserPath,
   lostItemsRequiringActualCost,
   listsPath,
+  reportingPath,
   consortiumManagerPath,
   coursesPath,
   settingsAuthorityFilesPath,

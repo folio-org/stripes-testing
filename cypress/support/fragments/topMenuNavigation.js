@@ -2,6 +2,16 @@ import { HTML, Link, NavListItem, NavItemList, Button } from '../../../interacto
 import { AppList } from '../../../interactors/applist';
 
 export default {
+  // opens the app from the app list, or from the apps dropdown when it's not shown in the list
+  openApp(appName, subSection) {
+    cy.get('body').then(($body) => {
+      if ($body.find(`[data-test-app-list] a:contains("${appName}"):visible`).length) {
+        this.navigateToApp(appName, subSection);
+      } else {
+        this.openAppFromDropdown(appName, subSection);
+      }
+    });
+  },
   navigateToApp(appName, subSection) {
     return cy.wrap(true).then(() => {
       cy.wait(2000);

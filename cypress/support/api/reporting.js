@@ -1,8 +1,29 @@
-Cypress.Commands.add('getLdpTables', () => {
+Cypress.Commands.add('getLdpTables', ({ failOnStatusCode = true } = {}) => {
   cy.okapiRequest({
     method: 'GET',
     path: 'ldp/db/tables',
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
+  });
+});
+
+Cypress.Commands.add('getLdpColumns', (schema, table, { failOnStatusCode = true } = {}) => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: 'ldp/db/columns',
+    searchParams: { schema, table },
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
+  });
+});
+
+Cypress.Commands.add('postLdpQuery', (body, { failOnStatusCode = true } = {}) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'ldp/db/query',
+    body,
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   });
 });
 
