@@ -58,7 +58,8 @@ describe('Users', () => {
       name: getTestEntityValue('fixed-cal-absent'),
       loanable: true,
       loansPolicy: {
-        closedLibraryDueDateManagementId: CLOSED_LIBRARY_DUE_DATE_MANAGEMENT.CURRENT_DUE_DATE,
+        closedLibraryDueDateManagementId:
+          CLOSED_LIBRARY_DUE_DATE_MANAGEMENT.END_OF_THE_NEXT_OPEN_DAY,
         fixedDueDateScheduleId: '',
         profileId: LOAN_PROFILE.FIXED,
       },
