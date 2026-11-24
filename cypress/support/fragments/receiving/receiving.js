@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, matching } from '@interactors/html';
 
 import {
   Accordion,
@@ -24,6 +24,7 @@ import {
   ORDER_LINE_FILTER_LABELS,
   RECEIVING_PIECE_FORM_ACTIONS_LABELS,
   RECEIVING_RECEIVED_PIECE_FILTER_LABELS,
+  RECEIVING_TITLE_FILTER_LABELS,
   RESULTS_PANE_CHOOSE_FILTER_MESSAGE,
   UNRECEIVABLE_TABLE_COLUMN_HEADERS,
 } from '../../constants';
@@ -31,7 +32,9 @@ import InteractorsTools from '../../utils/interactorsTools';
 import FiltersPaneHelper from '../filtersPane';
 import SelectOrderLinesModal from '../invoices/modal/selectOrderLinesModal';
 import MultiColumnListHelper from '../multiColumnList';
+import SelectUser from '../invoices/modal/selectUser';
 import SelectLocationModal from '../orders/modals/selectLocationModal';
+import SelectOrganizationModal from '../orders/modals/selectOrganizationModal';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import deleteHoldingsModalReceivingFullScreen from './modals/deleteHoldingsModaReceivinglFullScreen';
 import ReceivingDetails from './receivingDetails';
@@ -246,6 +249,57 @@ export default {
     FiltersPaneHelper.clearFilter(filtersPane, filterLabel);
   },
 
+  // User filters ("Created by", "Updated by", etc.): "Find user" link + "Select User" modal
+  filterByUser(filterLabel, userName) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, filterLabel);
+    cy.do(
+      filtersPane
+        .find(Section({ label: filterLabel }))
+        .find(Button(matching(/^find user$/i)))
+        .click(),
+    );
+    SelectUser.selectUser(userName);
+    FiltersPaneHelper.waitForSearchCompleted(filtersPane);
+  },
+
+  // The selected user is shown as the full name ("Last, First") in a read-only field of the facet
+  // Pass an empty userName to verify that no user is selected in the facet
+  verifyUserFilterSelected(filterLabel, userName) {
+    cy.expect(
+      filtersPane
+        .find(Section({ label: filterLabel }))
+        .find(TextField({ value: userName ? including(userName) : '' }))
+        .exists(),
+    );
+  },
+
+  filterByVendor(vendor) {
+    FiltersPaneHelper.expandFilterAccordion(filtersPane, RECEIVING_TITLE_FILTER_LABELS.VENDOR);
+    cy.do(filtersPane.find(Button('Organization look-up')).click());
+    SelectOrganizationModal.verifyModalView();
+    SelectOrganizationModal.findOrganization(vendor);
+    FiltersPaneHelper.waitForSearchCompleted(filtersPane);
+  },
+
+  // Date filters ("Received date", "Receipt due", etc.): From/To fields + Apply button
+  filterByDateRange(filterLabel, { from, to } = {}) {
+    FiltersPaneHelper.filterByDateRange(filtersPane, filterLabel, { from, to });
+    FiltersPaneHelper.waitForSearchCompleted(filtersPane);
+  },
+
+  assertDateRangeFilterValues(filterLabel, { from, to } = {}) {
+    FiltersPaneHelper.assertDateRangeFilterValues(filtersPane, filterLabel, { from, to });
+  },
+
+  verifyDateRangeFilterError(filterLabel, error) {
+    cy.expect(
+      filtersPane
+        .find(Section({ label: filterLabel }))
+        .find(HTML(including(error)))
+        .exists(),
+    );
+  },
+
   assertCheckboxFilterValues(filterLabel, values, options) {
     FiltersPaneHelper.assertCheckboxFilterValues(filtersPane, filterLabel, values, options);
   },
@@ -256,6 +310,11 @@ export default {
 
   filterByCheckboxes(filterLabel, values, options) {
     FiltersPaneHelper.filterByCheckboxes(filtersPane, filterLabel, values, options);
+  },
+
+  filterBySelect(filterLabel, value) {
+    FiltersPaneHelper.filterBySelect(filtersPane, filterLabel, value);
+    FiltersPaneHelper.waitForSearchCompleted(filtersPane);
   },
 
   filterByTags(tags = []) {

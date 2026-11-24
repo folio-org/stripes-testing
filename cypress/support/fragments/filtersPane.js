@@ -405,7 +405,7 @@ export default {
   clearFilter(filtersPane, filterLabel) {
     cy.do(
       findFilterSectionByLabel(filtersPane, filterLabel)
-        .find(Button({ icon: 'times-circle-solid' }))
+        .find(Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected') }))
         .click(),
     );
   },

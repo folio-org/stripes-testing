@@ -56,6 +56,8 @@ const lineDetailsFields = {
 const cancelButton = receivingEditForm.find(Button('Cancel'));
 const saveAndCloseButton = receivingEditForm.find(Button('Save & close'));
 const removeFromPackageButton = receivingEditForm.find(Button('Remove from package'));
+const claimingActiveCheckbox = receivingEditForm.find(Checkbox({ name: 'claimingActive' }));
+const claimingIntervalField = receivingEditForm.find(TextField({ name: 'claimingInterval' }));
 const acqUnitsInputSelector = '#title-acq-units input';
 const acqUnitsRemoveButton = itemDetailsFields.acquisitionUnits.find(
   ValueChipRoot().find(Button({ icon: 'times' })),
@@ -76,19 +78,25 @@ export default {
     }
 
     if (lineDetails) {
-      this.checLineDetailsFields(lineDetails);
+      this.checkLineDetailsFields(lineDetails);
     }
   },
-  checkItemDetailsFields({ title }) {
+  checkItemDetailsFields({ title, claimingActive, claimingInterval } = {}) {
     if (title) {
       // "Title" field is enabled for package POL titles and disabled for non-package ones
       cy.expect(itemDetailsFields.titleInput.has({ value: title }));
+    }
+    if (claimingActive !== undefined) {
+      cy.expect(claimingActiveCheckbox.has({ checked: claimingActive }));
+    }
+    if (claimingInterval !== undefined) {
+      cy.expect(claimingIntervalField.has({ value: claimingInterval }));
     }
   },
   verifyTitleFieldEnabled(isEnabled = true) {
     cy.expect(itemDetailsFields.titleInput.has({ disabled: !isEnabled }));
   },
-  checLineDetailsFields({ poLineNumber, receivingNote, mustAcknowledgeReceivingNote }) {
+  checkLineDetailsFields({ poLineNumber, receivingNote, mustAcknowledgeReceivingNote }) {
     if (poLineNumber) {
       cy.expect(lineDetailsFields.poLineNumber.has({ value: poLineNumber }));
     }
@@ -112,7 +120,14 @@ export default {
       this.fillLineDetailsFields(lineDetails);
     }
   },
-  fillItemDetailsFields({ title, publisher, publishedDate, edition }) {
+  fillItemDetailsFields({
+    title,
+    publisher,
+    publishedDate,
+    edition,
+    claimingActive,
+    claimingInterval,
+  }) {
     if (title) {
       cy.do(itemDetailsFields.titleInput.fillIn(title));
       cy.expect(itemDetailsFields.titleInput.has({ value: title }));
@@ -125,6 +140,13 @@ export default {
     }
     if (edition) {
       cy.do(itemDetailsFields.edition.fillIn(edition));
+    }
+    if (claimingActive !== undefined) {
+      cy.do(claimingActiveCheckbox.click());
+    }
+    if (claimingInterval !== undefined) {
+      cy.do(claimingIntervalField.fillIn(claimingInterval));
+      cy.expect(claimingIntervalField.has({ value: claimingInterval }));
     }
   },
   addContributor({ name, nameType, index = 0 }) {
@@ -190,6 +212,13 @@ export default {
   verifySaveButtonEnabled(isEnabled = true) {
     cy.expect(saveAndCloseButton.has({ disabled: !isEnabled }));
   },
+  verifyCancelButtonEnabled(isEnabled = true) {
+    cy.expect(cancelButton.has({ disabled: !isEnabled }));
+  },
+  verifyClaimingIntervalEnabled(isEnabled) {
+    cy.expect(claimingIntervalField.has({ disabled: !isEnabled }));
+  },
+
   verifyAcquisitionUnitsDropdownDisabled() {
     cy.get(acqUnitsInputSelector).should('be.disabled');
   },

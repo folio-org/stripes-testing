@@ -557,9 +557,7 @@ export default {
   },
 
   verifyJobsCountInResults(expectedCount) {
-    cy.then(() => exportEdiJobsList.rowCount()).then((actualCount) => {
-      expect(actualCount).to.equal(expectedCount);
-    });
+    cy.expect(exportEdiJobsList.has({ rowCount: expectedCount }));
   },
 
   verifySearchButtonDisabled(isDisabled = true) {
