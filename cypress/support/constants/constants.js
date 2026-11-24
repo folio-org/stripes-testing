@@ -27,6 +27,8 @@ export const APPLICATION_NAMES = {
   RECEIVING: 'Receiving',
   DEVELOPER: 'Developer',
   LISTS: 'Lists',
+  REPORTING: 'Reporting',
+  MY_PROFILE: 'My profile',
 };
 
 export const REQUEST_METHOD = {

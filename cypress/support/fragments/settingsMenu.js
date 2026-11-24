@@ -60,7 +60,6 @@ export default {
   invoiceBGConfigPath: 'settings/invoice/batch-group-configuration',
   invoiceVoucherPath: 'settings/invoice/voucher-number',
 
-  ldpPath: 'settings/ldp',
   licensesPath: 'settings/licenses',
   localKbAdminPath: 'settings/local-kb-admin',
   myProfilePath: 'settings/myprofile',
