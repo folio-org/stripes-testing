@@ -109,8 +109,8 @@ describe('fse-settings - UI (no data manipulation)', () => {
   );
 
   it(
-    `FDOPS-XXXX - verify Reporting settings are displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['fse', 'ui', 'ldp', 'reporting', 'settings', 'FDOPS-XXXX'] },
+    `FDOPS-7549 - verify Reporting settings are displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'ldp', 'reporting', 'settings', 'FDOPS-7549'] },
     () => {
       SettingsMenu.selectMenuOption('Reporting');
       ReportingSettings.waitLoading();

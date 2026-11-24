@@ -99,8 +99,8 @@ describe('fse-ldp-reporting', () => {
   );
 
   it(
-    `FDOPS-XXXX - Get columns of a reporting table ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['ldp', 'fse', 'api', 'reporting', 'FDOPS-XXXX'] },
+    `FDOPS-7543 - Get columns of a reporting table ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['ldp', 'fse', 'api', 'reporting', 'FDOPS-7543'] },
     () => {
       getReportingTable().then((table) => {
         if (!table) {
@@ -120,8 +120,8 @@ describe('fse-ldp-reporting', () => {
   );
 
   it(
-    `FDOPS-XXXX - Run read-only query against reporting DB ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['ldp', 'fse', 'api', 'reporting', 'FDOPS-XXXX'] },
+    `FDOPS-7544 - Run read-only query against reporting DB ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['ldp', 'fse', 'api', 'reporting', 'FDOPS-7544'] },
     () => {
       getReportingTable().then((table) => {
         if (!table) {
@@ -158,8 +158,8 @@ describe('fse-ldp-reporting', () => {
   );
 
   it(
-    `FDOPS-XXXX - Reporting app settings are readable ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['ldp', 'fse', 'api', 'reporting', 'FDOPS-XXXX'] },
+    `FDOPS-7545 - Reporting app settings are readable ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['ldp', 'fse', 'api', 'reporting', 'FDOPS-7545'] },
     () => {
       cy.getSettingsEntriesByScope('ui-ldp.admin').then((response) => {
         cy.expect(response.status).to.eq(200);

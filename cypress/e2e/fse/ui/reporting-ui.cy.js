@@ -30,8 +30,8 @@ describe('fse-ldp-reporting - UI (no data manipulation)', () => {
   });
 
   it(
-    `FDOPS-XXXX - verify Reporting app is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['ldp', 'fse', 'ui', 'reporting', 'FDOPS-XXXX'] },
+    `FDOPS-7546 - verify Reporting app is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['ldp', 'fse', 'ui', 'reporting', 'FDOPS-7546'] },
     () => {
       TopMenuNavigation.openApp(APPLICATION_NAMES.REPORTING);
       Reporting.waitLoading();
@@ -42,8 +42,8 @@ describe('fse-ldp-reporting - UI (no data manipulation)', () => {
   );
 
   it(
-    `FDOPS-XXXX - verify Reporting database info is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['ldp', 'fse', 'ui', 'reporting', 'FDOPS-XXXX'] },
+    `FDOPS-7547 - verify Reporting database info is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['ldp', 'fse', 'ui', 'reporting', 'FDOPS-7547'] },
     () => {
       TopMenuNavigation.openApp(APPLICATION_NAMES.REPORTING);
       Reporting.waitLoading();
@@ -77,8 +77,8 @@ describe('fse-ldp-reporting - UI (data manipulation)', () => {
   });
 
   it(
-    `FDOPS-XXXX - verify query can be built and submitted in Reporting app for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
-    { tags: ['nonProd', 'fse', 'ui', 'reporting', 'ldp', 'FDOPS-YYYYY'] },
+    `FDOPS-7548 - verify query can be built and submitted in Reporting app for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['nonProd', 'fse', 'ui', 'reporting', 'ldp', 'FDOPS-7548'] },
     () => {
       if (!reportingTable) {
         cy.log('Reporting DB is not configured for this tenant, skipping test');
