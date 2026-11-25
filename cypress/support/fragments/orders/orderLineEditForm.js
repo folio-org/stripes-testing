@@ -31,6 +31,7 @@ import {
   ORDER_AND_ORDER_LINE_BUTTONS,
   ORDER_FORMAT_NAMES,
   POLINE_DETAILS_FIELDS,
+  POLINE_FUND_DISTRIBUTION_COLUMNS,
   SUPPRESS_INSTANCE_FROM_DISCOVERY_INFO,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -274,6 +275,17 @@ const costDetailsFields = {
   ),
 };
 
+const costDetailsFieldsByLabel = {
+  [POLINE_DETAILS_FIELDS.PHYSICAL_UNIT_PRICE]: costDetailsFields.physicalUnitPrice,
+  [POLINE_DETAILS_FIELDS.ELECTRONIC_UNIT_PRICE]: costDetailsFields.electronicUnitPrice,
+  [POLINE_DETAILS_FIELDS.ESTIMATED_PRICE]: costDetailsSection.find(
+    KeyValue(including(POLINE_DETAILS_FIELDS.ESTIMATED_PRICE)),
+  ),
+  [POLINE_DETAILS_FIELDS.ROLLOVER_ADJUSTMENT]: costDetailsSection.find(
+    KeyValue(including(POLINE_DETAILS_FIELDS.ROLLOVER_ADJUSTMENT)),
+  ),
+};
+
 const locationFields = {
   newHoldingLocation: (index = 0) =>
     locationSection.find(TextField({ name: `locations[${index}].locationId` })),
@@ -298,6 +310,10 @@ const fundDistributionFields = {
     fundDistributionDetailsSection
       .find(RepeatableFieldItem({ index }))
       .find(Selection(including('Expense class'))),
+  [POLINE_FUND_DISTRIBUTION_COLUMNS.AMOUNT]: (index = 0) =>
+    fundDistributionDetailsSection
+      .find(RepeatableFieldItem({ index }))
+      .find(KeyValue(POLINE_FUND_DISTRIBUTION_COLUMNS.AMOUNT)),
 };
 
 const buttons = {
@@ -355,7 +371,15 @@ export default {
     cy.expect(ongoingOrderSection.absent());
   },
   checkCostDetailsSection(fields = []) {
-    this.checkFieldsConditions({ fields, section: costDetailsFields });
+    fields.forEach(({ key, value, label, conditions, absent }) => {
+      const field = key ? costDetailsFieldsByLabel[key] : costDetailsFields[label];
+
+      if (absent) {
+        cy.expect(field.absent());
+      } else {
+        cy.expect(field.has(key ? { value: including(value) } : conditions));
+      }
+    });
   },
   checkCostDetailsFieldsAbsent(labels = []) {
     labels.forEach((label) => {
@@ -803,6 +827,10 @@ export default {
     cy.expect(fundDistributionDetailsSection.find(AcqFundDistribution()).has({ rowCount: 0 }));
   },
 
+  clickClearRolloverAdjustmentButton() {
+    cy.do(costDetailsSection.find(Button({ ariaLabel: 'times-circle-solid' })).click());
+  },
+
   checkRemainingAmountToBeDistributed(remainingAmount) {
     cy.expect(
       fundDistributionDetailsSection
@@ -1017,8 +1045,12 @@ export default {
   },
 
   checkFundDistributionSection(fields = []) {
-    fields.forEach(({ label, index = 0, conditions }) => {
-      cy.expect(fundDistributionFields[label](index).has(conditions));
+    fields.forEach(({ key, value, label, index = 0, conditions }) => {
+      cy.expect(
+        fundDistributionFields[key || label](index).has(
+          key ? { value: including(value) } : conditions,
+        ),
+      );
     });
   },
 
