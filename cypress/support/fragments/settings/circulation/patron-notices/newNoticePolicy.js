@@ -1,5 +1,6 @@
 import getRandomPostfix from '../../../../utils/stringTools';
 import {
+  Accordion,
   Button,
   TextArea,
   NavListItem,
@@ -117,6 +118,12 @@ const noticeCard = (sectionName, index) =>
 
 const viewNoticeCard = (sectionName, index) =>
   Section({ id: noticeSections[sectionName].viewId }).find(NoticeCard(`Notice ${index + 1}`));
+
+const viewSections = {
+  loan: Accordion({ id: 'viewLoanNotices' }),
+  request: Accordion({ id: 'viewRequestNotices' }),
+  feeFine: Accordion({ id: 'viewFeeFineNotices' }),
+};
 
 export const actionsButtons = {
   edit: Button({ id: 'dropdown-clickable-edit-item' }),
@@ -540,6 +547,80 @@ export default {
       actionsButtons.edit.click(),
     ]);
     cy.wait(2000);
+  },
+
+  verifyNewButton() {
+    cy.expect(newButton.has({ text: 'New' }));
+  },
+
+  verifyFormatOptions(sectionName, options, index = 0) {
+    cy.expect(this.noticeFields(sectionName, index).format.has({ optionsText: options }));
+  },
+
+  // The Send field appears only for time-based triggering events, such as fee/fine events
+  fillNoticeRow(sectionName, { template, format, triggeringEvent, send }, index = 0) {
+    const { noticeId } = noticeSections[sectionName];
+    const fields = this.noticeFields(sectionName, index);
+
+    if (template) {
+      cy.do(fields.template.choose(template));
+      cy.expect(fields.template.has({ selectedOptionLabel: template }));
+    }
+    if (format) {
+      cy.do(fields.format.choose(format));
+      cy.expect(fields.format.has({ selectedOptionLabel: format }));
+    }
+    if (triggeringEvent) {
+      cy.do(fields.trigger.choose(triggeringEvent));
+      cy.expect(fields.trigger.has({ selectedOptionLabel: triggeringEvent }));
+    }
+    if (send) {
+      const sendField = Select({ name: `${noticeId}Notices[${index}].sendOptions.sendHow` });
+      cy.expect(sendField.exists());
+      cy.do(sendField.choose(send));
+      cy.expect(sendField.has({ selectedOptionLabel: send }));
+    }
+  },
+
+  verifyFormatError(sectionName, error, index = 0) {
+    cy.expect(this.noticeFields(sectionName, index).format.has({ error }));
+  },
+
+  verifyFormIsOpened() {
+    cy.expect(noticePolicyForm.exists());
+  },
+
+  verifySaveButtonDisabled(isDisabled) {
+    cy.expect(saveButton.has({ disabled: isDisabled }));
+  },
+
+  openEditForm(policyName) {
+    const policyPane = Pane(policyName);
+    const editButton = DropdownMenu().find(actionsButtons.edit);
+
+    cy.expect(policyPane.find(actionsButton).exists());
+    cy.do(policyPane.find(actionsButton).click());
+    cy.expect(editButton.exists());
+    cy.do(editButton.click());
+    cy.expect([noticePolicyForm.exists(), nameField.has({ value: policyName })]);
+  },
+
+  cancelAndCloseWithoutSaving() {
+    cy.do(cancelButton.click());
+    cy.expect(unsavedChangesModal.find(HTML(including('There are unsaved changes'))).exists());
+    cy.do(unsavedChangesModal.find(Button('Close without saving')).click());
+    cy.expect(noticePolicyForm.absent());
+  },
+
+  verifyNoticeInDetails(sectionName, { template, format, triggeringEvent }) {
+    const section = viewSections[sectionName];
+
+    cy.expect(section.exists());
+    if (template) cy.expect(section.find(KeyValue('Template')).has({ value: template }));
+    if (format) cy.expect(section.find(KeyValue('Format')).has({ value: format }));
+    if (triggeringEvent) {
+      cy.expect(section.find(KeyValue('Triggering event')).has({ value: triggeringEvent }));
+    }
   },
 
   getPatronNoticePoliciesByNameViaAPI() {

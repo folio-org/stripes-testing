@@ -2331,4 +2331,55 @@ export default {
         .has({ error: '' }),
     );
   },
+
+  expandContactInformationAccordion() {
+    cy.do(contactInformationAccordion.expand());
+    cy.expect(contactInformationAccordion.has({ open: true }));
+  },
+
+  selectPreferredContact(option) {
+    cy.do(preferredContactSelect.choose(option));
+    cy.expect(preferredContactSelect.has({ selected: including(option) }));
+  },
+
+  // The arrow keys move the cursor through the options, and Enter selects the option under it
+  selectPreferredContactWithKeyboard(option) {
+    cy.do(preferredContactSelect.focus());
+    cy.realPress('ArrowDown');
+    cy.expect(preferredContactSelect.has({ open: true }));
+    const pressArrowDownUntilCursored = (attemptsLeft) => {
+      cy.get('[class^=multiSelectOption-]')
+        .filter((_, el) => el.textContent.replace(/[+-]$/, '') === option)
+        .then(($option) => {
+          if ($option.attr('class').includes('Cursor') || attemptsLeft === 0) return;
+          cy.realPress('ArrowDown');
+          pressArrowDownUntilCursored(attemptsLeft - 1);
+        });
+    };
+    pressArrowDownUntilCursored(5);
+    cy.expect(MultiSelectOption(option).has({ cursored: true }));
+    cy.realPress('Enter');
+    cy.expect(preferredContactSelect.has({ selected: including(option) }));
+  },
+
+  verifyMobilePhoneField({ value, required }) {
+    cy.expect(mobilePhoneField.has({ value, required }));
+  },
+
+  // The browser validates the required field before the form does, so its message is shown
+  verifyMobilePhoneNativeValidationMessage(expectedMessage) {
+    this.assertNativeValidationMessage(mobilePhoneField, expectedMessage);
+  },
+
+  clearMobilePhone() {
+    cy.do(mobilePhoneField.fillIn(''));
+    cy.expect(mobilePhoneField.has({ value: '' }));
+  },
+
+  cancelAndCloseWithoutSaving() {
+    cy.do(cancelButton.click());
+    cy.expect(areYouSureForm.find(closeWithoutSavingButton).exists());
+    cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
+    cy.expect(rootPane.absent());
+  },
 };

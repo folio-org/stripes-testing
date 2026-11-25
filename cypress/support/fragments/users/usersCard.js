@@ -5,6 +5,7 @@ import {
   Badge,
   Button,
   Checkbox,
+  DropdownMenu,
   Image,
   KeyValue,
   List,
@@ -1372,5 +1373,29 @@ export default {
     InteractorsTools.checkCalloutMessage(affiliationChangeSuccessCalloutText);
     InteractorsTools.dismissCallout(affiliationChangeSuccessCalloutText);
     InteractorsTools.checkCalloutExists(affiliationChangeSuccessCalloutText, false);
+  },
+
+  openActions() {
+    cy.expect(actionsButton.exists());
+    cy.do(actionsButton.click());
+    cy.expect(DropdownMenu().exists());
+  },
+
+  closeActions() {
+    cy.do(actionsButton.click());
+    cy.expect(DropdownMenu().absent());
+  },
+
+  verifyEditAction() {
+    cy.expect(DropdownMenu().find(Button('Edit')).exists());
+  },
+
+  expandContactInformationAccordion() {
+    cy.do(contactInfoSection.expand());
+    cy.expect(contactInfoSection.has({ open: true }));
+  },
+
+  verifyMobilePhone(value) {
+    cy.expect(contactInfoSection.find(KeyValue('Mobile phone')).has({ value }));
   },
 };
