@@ -26,16 +26,7 @@ describe('fse-receiving - UI (no data manipulation)', () => {
     `TC195378 - verify that receiving page is displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['sanity', 'fse', 'ui', 'receiving', 'TC195378'] },
     () => {
-      cy.get('body').then(($body) => {
-        if (
-          $body.find(`[data-test-app-list] a:contains("${APPLICATION_NAMES.RECEIVING}"):visible`)
-            .length
-        ) {
-          TopMenuNavigation.navigateToApp(APPLICATION_NAMES.RECEIVING);
-        } else {
-          TopMenuNavigation.openAppFromDropdown(APPLICATION_NAMES.RECEIVING);
-        }
-      });
+      TopMenuNavigation.openApp(APPLICATION_NAMES.RECEIVING);
       Receiving.verifyPageDisplayed();
       Receiving.verifySearchAndActionsAvailable();
     },

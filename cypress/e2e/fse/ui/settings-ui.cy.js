@@ -5,6 +5,7 @@ import SoftwareVersions from '../../../support/fragments/settings/softwareVersio
 import ConsortiumManager from '../../../support/fragments/settings/consortium-manager/consortium-manager';
 import Modals from '../../../support/fragments/modals';
 import AuthorizationRoles from '../../../support/fragments/settings/authorization-roles/authorizationRoles';
+import ReportingSettings from '../../../support/fragments/settings/reporting/reportingSettings';
 import { CAPABILITY_TYPES } from '../../../support/constants';
 import { Localization } from '../../../support/fragments/settings/tenant/general';
 
@@ -40,6 +41,19 @@ describe('fse-settings - UI (no data manipulation)', () => {
       cy.visit(SettingsMenu.consortiumManagerPath);
       ConsortiumManager.waitLoading();
       ConsortiumManager.checkOptionsExist();
+    },
+  );
+
+  it(
+    `FDOPS-7549 - verify Reporting settings are displayed for ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
+    { tags: ['fse', 'ui', 'ldp', 'reporting', 'settings', 'FDOPS-7549'] },
+    () => {
+      SettingsMenu.selectMenuOption('Reporting');
+      ReportingSettings.waitLoading();
+      ReportingSettings.verifySettingsOptions();
+      // "Database configuration" is not opened on purpose: it contains credentials
+      ReportingSettings.openRecordLimits();
+      ReportingSettings.verifyRecordLimitsFields();
     },
   );
 });

@@ -9,17 +9,6 @@ import UsersCard from '../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import { APPLICATION_NAMES } from '../../../support/constants';
 
-// opens the app from the app list, or from the apps dropdown when it's not shown in the list
-const openApp = (appName) => {
-  cy.get('body').then(($body) => {
-    if ($body.find(`[data-test-app-list] a:contains("${appName}"):visible`).length) {
-      TopMenuNavigation.navigateToApp(appName);
-    } else {
-      TopMenuNavigation.openAppFromDropdown(appName);
-    }
-  });
-};
-
 describe('fse-consortia - UI (no data manipulation)', {}, () => {
   let userTenants;
   let allTenants;
@@ -131,7 +120,7 @@ describe('fse-consortia - UI (no data manipulation)', {}, () => {
     `FDOPS-7320 - verify "Consortium manager" app is displayed ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['consortia-sanity', 'fse', 'ui', 'FDOPS-7320'] },
     () => {
-      openApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+      TopMenuNavigation.openApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
       ConsortiumManagerApp.waitLoading();
       ConsortiumManagerApp.verifySettingPaneIsDisplayed();
       // no arguments - settings within each section are checked to be sorted alphabetically
@@ -147,7 +136,7 @@ describe('fse-consortia - UI (no data manipulation)', {}, () => {
     () => {
       const tenantNames = userTenants.map((element) => element.tenantName);
 
-      openApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
+      TopMenuNavigation.openApp(APPLICATION_NAMES.CONSORTIUM_MANAGER);
       ConsortiumManagerApp.waitLoading();
       ConsortiumManagerApp.clickSelectMembers();
       SelectMembers.waitLoading();
@@ -171,7 +160,7 @@ describe('fse-consortia - UI (no data manipulation)', {}, () => {
     `FDOPS-7322 - verify affiliations of the user in "Users" app ${Cypress.config('baseUrl')} - ${Cypress.env('OKAPI_TENANT')}`,
     { tags: ['consortia-sanity', 'fse', 'ui', 'FDOPS-7322'] },
     () => {
-      openApp(APPLICATION_NAMES.USERS);
+      TopMenuNavigation.openApp(APPLICATION_NAMES.USERS);
       Users.waitLoading();
       // close service point modal if it appears
       Modals.closeModalWithEscapeIfAny();
