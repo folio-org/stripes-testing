@@ -17,6 +17,20 @@ export const RECEIVING_TITLE_SEARCH_INDEXES = {
   VENDOR_REF_NUMBER: 'poLine.vendorDetail.referenceNumbers',
 };
 
+export const RECEIVING_TITLE_FILTER_LABELS = {
+  CREATED_BY: 'Created by',
+  CREATED_BY_PIECE: 'Created by (Piece)',
+  DATE_UPDATED: 'Date updated',
+  DATE_UPDATED_PIECE: 'Date updated (Piece)',
+  EXPECTED_RECEIPT_DATE: 'Expected receipt date',
+  ORDER_STATUS: 'Order status',
+  RECEIPT_DUE: 'Receipt due',
+  RECEIVED_DATE: 'Received date',
+  UPDATED_BY: 'Updated by',
+  UPDATED_BY_PIECE: 'Updated by (Piece)',
+  VENDOR: 'Vendor',
+};
+
 export const RECEIVING_TITLE_ACCORDION_NAMES = {
   TITLE_INFORMATION: 'Title information',
   POL_DETAILS: 'POL details',

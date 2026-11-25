@@ -38,7 +38,8 @@ export default {
     cy.expect(sendClaimModal.exists());
   },
   // The message depends on whether the organization has a claiming integration
-  verifyModalView({ hasIntegration = false } = {}) {
+  // internalNote / externalNote values are checked only when passed (empty string checks empty field)
+  verifyModalView({ hasIntegration = false, internalNote, externalNote } = {}) {
     const { WITH_INTEGRATION, WITHOUT_INTEGRATION } = SEND_CLAIM_MESSAGES;
 
     cy.expect([
@@ -51,8 +52,14 @@ export default {
         required: true,
         empty: true,
       }),
-      internalNoteField.has({ label: RECEIVING_PIECE_CLAIM_MODAL_FIELD_LABELS.INTERNAL_NOTE }),
-      externalNoteField.has({ label: RECEIVING_PIECE_CLAIM_MODAL_FIELD_LABELS.EXTERNAL_NOTE }),
+      internalNoteField.has({
+        label: RECEIVING_PIECE_CLAIM_MODAL_FIELD_LABELS.INTERNAL_NOTE,
+        ...(internalNote !== undefined && { value: internalNote }),
+      }),
+      externalNoteField.has({
+        label: RECEIVING_PIECE_CLAIM_MODAL_FIELD_LABELS.EXTERNAL_NOTE,
+        ...(externalNote !== undefined && { value: externalNote }),
+      }),
       cancelButton.has({ disabled: false }),
       saveAndCloseButton.has({ disabled: false }),
     ]);

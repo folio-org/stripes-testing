@@ -122,6 +122,29 @@ export default {
       titleInformationSection.find(Button({ id: 'accordion-toggle-button-information' })).click(),
     );
   },
+  verifyTitleInformationAccordionExpanded(isExpanded = true) {
+    cy.expect(
+      Button({ id: 'accordion-toggle-button-information' }).has({
+        ariaExpanded: isExpanded ? 'true' : 'false',
+      }),
+    );
+  },
+  verifyTitleInformationClaimingDetails({ claimingActive, claimingInterval } = {}) {
+    if (claimingActive !== undefined) {
+      cy.expect(
+        titleInformationSection
+          .find(Checkbox({ disabled: true }))
+          .has({ checked: claimingActive, disabled: true }),
+      );
+    }
+    if (claimingInterval !== undefined) {
+      cy.expect(
+        titleInformationSection
+          .find(KeyValue('Claiming interval'))
+          .has({ value: including(claimingInterval) }),
+      );
+    }
+  },
   toggleMetadataAccordion(isOpen = true) {
     const metaSection = titleInformationSection.find(MetaSection());
 
@@ -685,9 +708,10 @@ export default {
     cy.do([buttons.Edit.click()]);
     ReceivingEditForm.waitLoading();
   },
-  verifyEditButtonIsInactive() {
+  verifyEditButtonState({ disabled = true } = {}) {
     cy.do(buttons.Actions.click());
-    cy.expect(buttons.Edit.has({ disabled: true }));
+    cy.expect(buttons.Edit.has({ disabled }));
+    cy.do(buttons.Actions.click());
   },
   verifyAddPieceButtonAbsent() {
     cy.do(expectedActionsButton.click());
